@@ -1,0 +1,68 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import("//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+module_out_path = "distributed_hardware_fwk/dh_manager_test"
+
+config("module_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "include",
+    "${utils_path}/include",
+    "${utils_path}/include/log",
+    "${utils_path}/include/eventbus",
+    "${common_path}/log/include",
+    "${common_path}/utils/include",
+    "${services_path}/distributedhardwarefwkserviceimpl/include",
+    "${services_path}/distributedhardwarefwkserviceimpl/include/task",
+    "${services_path}/distributedhardwarefwkserviceimpl/include/utils",
+    "//utils/native/base/include",
+  ]
+}
+
+ohos_unittest("DistributedHardwareManagerTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "distributed_hardware_manager_test.cpp"
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "//third_party/googletest:gtest_main",
+    "//third_party/googletest:gmock_main",
+    "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils",
+    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl"
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"DistributedHardwareManagerTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "eventhandler:libeventhandler",
+    "hiviewdfx_hilog_native:libhilog",
+    "dsoftbus_standard:softbus_client",
+  ]
+}
+
+group("distributed_hardware_manager_test") {
+  testonly = true
+  deps = [ ":DistributedHardwareManagerTest" ]
+}
