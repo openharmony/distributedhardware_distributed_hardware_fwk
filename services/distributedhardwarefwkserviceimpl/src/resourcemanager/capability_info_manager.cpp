@@ -224,9 +224,8 @@ int32_t CapabilityInfoManager::RemoveCapabilityInfoByKey(const std::string &key)
         return ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY;
     }
     // 1. Clear the cache in the memory.
-    if (globalCapInfoMap_.find(key) != globalCapInfoMap_.end()) {
-        globalCapInfoMap_.erase(key);
-    }
+    globalCapInfoMap_.erase(key);
+
     // 2. Delete the corresponding record from the database.(use key)
     if (dbAdapterPtr_->RemoveDataByKey(key) != DH_FWK_SUCCESS) {
         DHLOGE("Remove capability Device Data failed, key: %s", GetAnonyString(key).c_str());

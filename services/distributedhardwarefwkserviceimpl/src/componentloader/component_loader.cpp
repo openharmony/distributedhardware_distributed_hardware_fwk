@@ -236,7 +236,7 @@ int32_t ComponentLoader::ParseConfig()
     int32_t ret;
     DHLOGI("ParseConfig start");
     std::string jsonStr = Readfile(COMPONENTSLOAD_PROFILE_PATH);
-    if (jsonStr.length() <= 0) {
+    if (jsonStr.length() == 0) {
         DHLOGE("profile is empty return");
         return ERR_DH_FWK_LOADER_COMPONENT_PROFILE_IS_EMPTY;
     }
