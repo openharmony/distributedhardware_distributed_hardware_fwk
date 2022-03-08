@@ -12,10 +12,12 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+import(
+    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
 
 ohos_shared_library("distributedhardwareutils") {
   include_dirs = [
+    "//third_party/openssl:libcrypto_static",
     "//utils/native/base/include",
     "//utils/system/safwk/native/include",
     "${common_path}/log/include",
@@ -27,11 +29,14 @@ ohos_shared_library("distributedhardwareutils") {
 
   sources = [
     "src/anonymous_string.cpp",
+    "src/dh_utils_tool.cpp",
     "src/log/dh_log.cpp",
-    "src/dh_utils_tool.cpp"
   ]
 
-  deps = [ "//utils/native/base:utils" ]
+  deps = [
+    "//third_party/openssl:libcrypto_static",
+    "//utils/native/base:utils",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",
@@ -42,9 +47,9 @@ ohos_shared_library("distributedhardwareutils") {
   external_deps = [
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "dsoftbus_standard:softbus_client",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "dsoftbus_standard:softbus_client",
   ]
 
   subsystem_name = "distributedhardware"

@@ -29,22 +29,27 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "EnableTask"
 
-EnableTask::EnableTask(const std::string &networkId, const std::string &devId, const std::string &dhId)
-    : Task(networkId, devId, dhId)
+EnableTask::EnableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
+    : Task(networkId, uuid, dhId)
 {
     SetTaskType(TaskType::ENABLE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::DO_ENABLE });
-    DHLOGD("id = %s, devId = %s", GetId().c_str(), GetAnonyString(devId).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(uuid).c_str());
 }
 
 EnableTask::~EnableTask()
 {
-    DHLOGD("id = %s, devId = %s", GetId().c_str(), GetAnonyString(GetDevId()).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
 }
 
 void EnableTask::DoTask()
 {
-    DHLOGD("id = %s, devId = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetDevId()).c_str(), GetDhId().c_str());
+    std::thread(&EnableTask::DoTaskInner, this).detach();
+}
+
+void EnableTask::DoTaskInner()
+{
+    DHLOGD("id = %s, uuid = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetDhId().c_str());
     SetTaskState(TaskState::RUNNING);
     auto result = RegisterHardware();
     auto state = (result == DH_FWK_SUCCESS) ? TaskState::SUCCESS : TaskState::FAIL;
@@ -55,9 +60,9 @@ void EnableTask::DoTask()
 
 int32_t EnableTask::RegisterHardware()
 {
-    auto result = ComponentManager::GetInstance().Enable(GetNetworkId(), GetDevId(), GetDhId());
-    DHLOGI("enable task %s, id = %s, devId = %s, dhId = %s", (result == DH_FWK_SUCCESS) ? "success" : "failed",
-        GetId().c_str(), GetAnonyString(GetDevId()).c_str(), GetDhId().c_str());
+    auto result = ComponentManager::GetInstance().Enable(GetNetworkId(), GetUUID(), GetDhId());
+    DHLOGI("enable task %s, id = %s, uuid = %s, dhId = %s", (result == DH_FWK_SUCCESS) ? "success" : "failed",
+        GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetDhId().c_str());
     return result;
 }
 }

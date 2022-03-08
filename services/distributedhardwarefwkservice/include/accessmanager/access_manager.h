@@ -41,7 +41,7 @@ public:
     static std::shared_ptr<AccessManager> GetInstance();
     int32_t Init();
     int32_t UnInit();
-    bool IsDeviceOnline(const std::string &deviceId);
+    bool IsDeviceOnline(const std::string &uuid);
     virtual void OnRemoteDied() override;
     virtual void OnDeviceOnline(const DmDeviceInfo &deviceInfo) override;
     virtual void OnDeviceOffline(const DmDeviceInfo &deviceInfo) override;

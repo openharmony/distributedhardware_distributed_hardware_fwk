@@ -27,9 +27,9 @@ class ComponentEnable : public std::enable_shared_from_this<ComponentEnable>, pu
 public:
     ComponentEnable();
     virtual ~ComponentEnable();
-    int32_t Enable(const std::string &devId, const std::string &dhId, const EnableParam &param,
+    int32_t Enable(const std::string &uuid, const std::string &dhId, const EnableParam &param,
         IDistributedHardwareSource *handler);
-    int32_t OnRegisterResult(const std::string &devId, const std::string &dhId, int32_t status,
+    int32_t OnRegisterResult(const std::string &uuid, const std::string &dhId, int32_t status,
         const std::string &data) override;
 
 private:

@@ -29,13 +29,13 @@ namespace DistributedHardware {
 class Task : public std::enable_shared_from_this<Task> {
 public:
     Task() = delete;
-    Task(const std::string &networkId, const std::string &devId, const std::string &dhId);
+    Task(const std::string &networkId, const std::string &uuid, const std::string &dhId);
     virtual ~Task();
     virtual void DoTask() = 0;
 
     std::string GetId();
     std::string GetNetworkId();
-    std::string GetDevId();
+    std::string GetUUID();
     std::string GetDhId();
     TaskType GetTaskType();
     void SetTaskType(TaskType taskType);
@@ -54,7 +54,7 @@ public:
 private:
     std::string id_;
     std::string networkId_;
-    std::string devId_;
+    std::string uuid_;
     std::string dhId_;
     TaskType taskType_ { TaskType::UNKNOWN };
     std::vector<TaskStep> taskSteps_;

@@ -61,11 +61,11 @@ int32_t ComponentManagerTest::Enable(int32_t timeout, int32_t status)
     auto compEnable = std::make_shared<ComponentEnable>();
     EnableParam parameters;
     std::future<int32_t> future;
-    auto handler = [&future, timeout, status, compEnable](std::string devId, std::string dhId,
+    auto handler = [&future, timeout, status, compEnable](std::string uuid, std::string dhId,
         const EnableParam &parameters, std::shared_ptr<RegisterCallback> callback) {
-        future = std::async(std::launch::async, [timeout, compEnable, devId, dhId, status]() {
+        future = std::async(std::launch::async, [timeout, compEnable, uuid, dhId, status]() {
             std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
-            return compEnable->OnRegisterResult(devId, dhId, status, "");
+            return compEnable->OnRegisterResult(uuid, dhId, status, "");
         });
         return DH_FWK_SUCCESS;
     };
@@ -87,11 +87,11 @@ int32_t ComponentManagerTest::Disable(int32_t timeout, int32_t status)
     auto compDisable = std::make_shared<ComponentDisable>();
 
     std::future<int32_t> future;
-    auto handler = [&future, timeout, status, compDisable](std::string devId, std::string dhId,
+    auto handler = [&future, timeout, status, compDisable](std::string uuid, std::string dhId,
         std::shared_ptr<UnregisterCallback> callback) {
-        future = std::async(std::launch::async, [timeout, compDisable, devId, dhId, status]() {
+        future = std::async(std::launch::async, [timeout, compDisable, uuid, dhId, status]() {
             std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
-            return compDisable->OnUnregisterResult(devId, dhId, status, "");
+            return compDisable->OnUnregisterResult(uuid, dhId, status, "");
         });
         return DH_FWK_SUCCESS;
     };

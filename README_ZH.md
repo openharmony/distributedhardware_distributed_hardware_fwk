@@ -28,13 +28,13 @@
 ├── sa_profile                              # 分布式硬件管理框架的SA配置信息
 ├── services                                # 分布式硬件管理框架的SA具体实现
 │   └── distributedhardwarefwkservice       # 分布式硬件管理框架的服务层
-│       └── AccessManager                   # 硬件接入管理
+│       └── accessmanager                   # 硬件接入管理
 │   └── distributedhardwarefwkserviceimpl   # 分布式硬件管理框架的服务实现层
-│       ├── ResourceManager                 # 硬件资源管理
-│       ├── ComponentManager                # 分布式硬件部件管理
-│       ├── LocalHardwareManager            # 本地硬件信息管理
-│       ├── ComponentLoader                 # 部件加载管理
-│       └── VersionManager                  # 版本管理
+│       ├── resourcemanager                 # 硬件资源管理
+│       ├── componentmanager                # 分布式硬件部件管理
+│       ├── localhardwaremanager            # 本地硬件信息管理
+│       ├── componentloader                 # 部件加载管理
+│       └── versionmanager                  # 版本管理
 └── utils                                   # 分布式硬件管理框架为各个部件提供的工具类
 ```
 

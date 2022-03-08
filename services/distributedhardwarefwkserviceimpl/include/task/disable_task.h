@@ -23,13 +23,14 @@ namespace DistributedHardware {
 class DisableTask : public Task {
 public:
     DisableTask() = delete;
-    DisableTask(const std::string &networkId, const std::string &devId, const std::string &dhId);
+    DisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId);
     virtual ~DisableTask();
     virtual void DoTask();
 
 private:
     /* synchronous function for unregister distributed hardware, return on asynchronous unregister finish */
     int32_t UnRegisterHardware();
+    void DoTaskInner();
 };
 }
 }

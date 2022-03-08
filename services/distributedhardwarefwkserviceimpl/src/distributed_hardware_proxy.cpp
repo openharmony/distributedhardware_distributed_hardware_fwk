@@ -39,6 +39,10 @@ int32_t DistributedHardwareProxy::QuerySinkVersion(std::unordered_map<DHType, st
     MessageParcel reply;
     MessageOption option;
 
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL;
+    }
     int32_t error = Remote()->SendRequest(QUERY_SINK_VERSION, data, reply, option);
     if (error != NO_ERROR) {
         DHLOGE("SendRequest failed, errCode =  %d", error);

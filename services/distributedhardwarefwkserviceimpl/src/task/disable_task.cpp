@@ -27,22 +27,27 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DisableTask"
 
-DisableTask::DisableTask(const std::string &networkId, const std::string &devId, const std::string &dhId)
-    : Task(networkId, devId, dhId)
+DisableTask::DisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
+    : Task(networkId, uuid, dhId)
 {
     SetTaskType(TaskType::DISABLE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::DO_DISABLE });
-    DHLOGD("id = %s, devId = %s", GetId().c_str(), GetAnonyString(devId).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(uuid).c_str());
 }
 
 DisableTask::~DisableTask()
 {
-    DHLOGD("id = %s, devId = %s", GetId().c_str(), GetAnonyString(GetDevId()).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
 }
 
 void DisableTask::DoTask()
 {
-    DHLOGD("id = %s, devId = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetDevId()).c_str(), GetDhId().c_str());
+    std::thread(&DisableTask::DoTaskInner, this).detach();
+}
+
+void DisableTask::DoTaskInner()
+{
+    DHLOGD("id = %s, uuid = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetDhId().c_str());
     SetTaskState(TaskState::RUNNING);
 
     /* trigger Unregister Distributed Hardware Task, sync function */
@@ -63,9 +68,9 @@ void DisableTask::DoTask()
 
 int32_t DisableTask::UnRegisterHardware()
 {
-    auto result = ComponentManager::GetInstance().Disable(GetNetworkId(), GetDevId(), GetDhId());
-    DHLOGI("disable task %s, id = %s, devId = %s, dhId = %s", (result == DH_FWK_SUCCESS) ? "success" : "failed",
-        GetId().c_str(), GetAnonyString(GetDevId()).c_str(), GetDhId().c_str());
+    auto result = ComponentManager::GetInstance().Disable(GetNetworkId(), GetUUID(), GetDhId());
+    DHLOGI("disable task %s, id = %s, uuid = %s, dhId = %s", (result == DH_FWK_SUCCESS) ? "success" : "failed",
+        GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetDhId().c_str());
     return result;
 }
 }

@@ -26,7 +26,7 @@ namespace DistributedHardware {
 class MockTaskFactory {
 DECLARE_SINGLE_INSTANCE(MockTaskFactory);
 public:
-    std::shared_ptr<Task> CreateTask(TaskType taskType, const std::string &networkId, const std::string &devId,
+    std::shared_ptr<Task> CreateTask(TaskType taskType, const std::string &networkId, const std::string &uuid,
         const std::string &dhId, std::shared_ptr<Task> fatherTask);
 };
 }

@@ -74,7 +74,7 @@ bool DistributedHardwareManagerFactory::IsInit()
     return true;
 }
 
-int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &networkId, const std::string &deviceId,
+int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &networkId, const std::string &uuid,
     uint16_t deviceType)
 {
     if (networkId.empty()) {
@@ -82,8 +82,8 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
         return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
     }
 
-    if (deviceId.empty()) {
-        DHLOGE("deviceId is empty");
+    if (uuid.empty()) {
+        DHLOGE("uuid is empty");
         return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
     }
 
@@ -93,7 +93,7 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
         return ERR_DH_FWK_HARDWARE_MANAGER_LOAD_IMPL_FAILED;
     }
 
-    auto onlineResult = distributedHardwareMgrPtr_->SendOnLineEvent(networkId, deviceId, deviceType);
+    auto onlineResult = distributedHardwareMgrPtr_->SendOnLineEvent(networkId, uuid, deviceType);
     if (onlineResult != DH_FWK_SUCCESS) {
         DHLOGE("online failed, errCode = %d", onlineResult);
         return onlineResult;
@@ -101,7 +101,7 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &networkId, const std::string &deviceId,
+int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &networkId, const std::string &uuid,
     uint16_t deviceType)
 {
     if (networkId.empty()) {
@@ -109,8 +109,8 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
         return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
     }
 
-    if (deviceId.empty()) {
-        DHLOGE("deviceId is empty");
+    if (uuid.empty()) {
+        DHLOGE("uuid is empty");
         return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
     }
 
@@ -120,7 +120,7 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
         return ERR_DH_FWK_HARDWARE_MANAGER_LOAD_IMPL_FAILED;
     }
 
-    auto offlineResult = distributedHardwareMgrPtr_->SendOffLineEvent(networkId, deviceId, deviceType);
+    auto offlineResult = distributedHardwareMgrPtr_->SendOffLineEvent(networkId, uuid, deviceType);
     if (offlineResult != DH_FWK_SUCCESS) {
         DHLOGE("offline failed, errCode = %d", offlineResult);
         return offlineResult;

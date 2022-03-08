@@ -28,12 +28,12 @@ public:
     virtual ~MockIDistributedHardwareSource() {}
     MOCK_METHOD1(InitSource, int32_t(const std::string &params));
     MOCK_METHOD0(ReleaseSource, int32_t());
-    MOCK_METHOD4(RegisterDistributedHardware, int32_t(const std::string &devId, const std::string &dhId,
+    MOCK_METHOD4(RegisterDistributedHardware, int32_t(const std::string &uuid, const std::string &dhId,
         const EnableParam &parameters, std::shared_ptr<RegisterCallback> callback));
     MOCK_METHOD3(UnregisterDistributedHardware,
-        int32_t(const std::string &devId, const std::string &dhId, std::shared_ptr<UnregisterCallback> callback));
+        int32_t(const std::string &uuid, const std::string &dhId, std::shared_ptr<UnregisterCallback> callback));
 
-    int32_t ConfigDistributedHardware(const std::string &devId, const std::string &dhId, const std::string &key,
+    int32_t ConfigDistributedHardware(const std::string &uuid, const std::string &dhId, const std::string &key,
         const std::string &value)
     {
         return 0;

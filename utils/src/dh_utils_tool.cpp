@@ -20,6 +20,7 @@
 #include <sstream>
 #include <sys/time.h>
 
+#include "openssl/sha.h"
 #include "softbus_bus_center.h"
 
 #include "constants.h"
@@ -77,16 +78,39 @@ std::string GetUUIDByNetworkId(const std::string &networkId)
     return (ret == DH_FWK_SUCCESS) ? std::string(uuid) : "";
 }
 
+std::string GetDeviceIdByUUID(const std::string &uuid)
+{
+    unsigned char hash[SHA256_DIGEST_LENGTH * 2 + 1] = {0};
+    SHA256_CTX ctx;
+    SHA256_Init(&ctx);
+    SHA256_Update(&ctx, uuid.data(), uuid.size());
+    SHA256_Final(&hash[SHA256_DIGEST_LENGTH], &ctx);
+    // here we translate sha256 hash to hexadecimal. each 8-bit char will be presented by two characters([0-9a-f])
+    constexpr int32_t WIDTH = 4;
+    constexpr unsigned char MASK = 0x0F;
+    const char* hexCode = "0123456789abcdef";
+    constexpr int32_t DOUBLE_TIMES = 2;
+    for (int32_t i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
+        unsigned char value = hash[SHA256_DIGEST_LENGTH + i];
+        // uint8_t is 2 digits in hexadecimal.
+        hash[i * DOUBLE_TIMES] = hexCode[(value >> WIDTH) & MASK];
+        hash[i * DOUBLE_TIMES + 1] = hexCode[value & MASK];
+    }
+    hash[SHA256_DIGEST_LENGTH * DOUBLE_TIMES] = 0;
+    return reinterpret_cast<char*>(hash);
+}
+
 DeviceInfo GetLocalDeviceInfo()
 {
-    DeviceInfo devInfo { "", "", 0 };
+    DeviceInfo devInfo { "", "", "", 0 };
     auto info = std::make_unique<NodeBasicInfo>();
     auto ret = GetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("GetLocalNodeDeviceInfo failed, errCode = %d", ret);
         return devInfo;
     }
-    devInfo.deviceId = GetUUIDByNetworkId(info->networkId);
+    devInfo.uuid = GetUUIDByNetworkId(info->networkId);
+    devInfo.deviceId = GetDeviceIdByUUID(devInfo.uuid);
     devInfo.deviceName = info->deviceName;
     devInfo.deviceType = info->deviceTypeId;
     return devInfo;

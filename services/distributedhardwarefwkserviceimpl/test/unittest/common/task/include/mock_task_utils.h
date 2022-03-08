@@ -22,7 +22,7 @@ namespace OHOS {
 namespace DistributedHardware {
 struct MockDevInfo {
     std::string networkId;
-    std::string devId;
+    std::string uuid;
     std::string dhId;
 };
 }

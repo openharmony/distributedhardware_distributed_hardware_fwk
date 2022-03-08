@@ -36,10 +36,10 @@ public:
     ~VersionManager() {}
     int32_t Init();
     void UnInit();
-    int32_t AddDHVersion(const std::string &devId, const DHVersion &dhVersion);
-    int32_t RemoveDHVersion(const std::string &devId);
-    int32_t GetDHVersion(const std::string &devId, DHVersion &dhVersion);
-    int32_t GetCompVersion(const std::string &devId, const DHType dhType, CompVersion &compVersion);
+    int32_t AddDHVersion(const std::string &uuid, const DHVersion &dhVersion);
+    int32_t RemoveDHVersion(const std::string &uuid);
+    int32_t GetDHVersion(const std::string &uuid, DHVersion &dhVersion);
+    int32_t GetCompVersion(const std::string &uuid, const DHType dhType, CompVersion &compVersion);
     std::string GetLocalDeviceVersion();
     void ShowLocalVersion(const DHVersion &dhVersion) const;
 

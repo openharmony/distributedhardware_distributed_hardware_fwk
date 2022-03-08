@@ -30,7 +30,7 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace DistributedHardware {
-/* save networkId and deviceId */
+/* save networkId and uuid */
 const std::vector<std::pair<std::string, std::string>> TEST_DEVICES = {
     { "11111111111111111111111111111111", "22222222222222222222222222222222" },
     { "33333333333333333333333333333333", "44444444444444444444444444444444" },
@@ -88,7 +88,7 @@ HWTEST_F(DistributedHardwareManagerTest, sendOnLineEvent_test_002, TestSize.Leve
 
 /**
  * @tc.name: sendOnLineEvent_test_003
- * @tc.desc: Verify the SendOnLineEvent failed for deviceId is empty
+ * @tc.desc: Verify the SendOnLineEvent failed for uuid is empty
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
@@ -151,7 +151,7 @@ HWTEST_F(DistributedHardwareManagerTest, sendOffLineEvent_test_002, TestSize.Lev
 
 /**
  * @tc.name: sendOffLineEvent_test_003
- * @tc.desc: Verify the SendOffLineEvent failed for deviceId is empty
+ * @tc.desc: Verify the SendOffLineEvent failed for uuid is empty
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */

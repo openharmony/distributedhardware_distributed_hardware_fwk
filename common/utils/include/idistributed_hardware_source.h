@@ -24,13 +24,13 @@ namespace DistributedHardware {
 const std::string COMPONENT_LOADER_GET_SOURCE_HANDLER = "GetSourceHardwareHandler";
 class RegisterCallback {
 public:
-    virtual int32_t OnRegisterResult(const std::string &devId, const std::string &dhId, int32_t status,
+    virtual int32_t OnRegisterResult(const std::string &uuid, const std::string &dhId, int32_t status,
         const std::string &data) = 0;
 };
 
 class UnregisterCallback {
 public:
-    virtual int32_t OnUnregisterResult(const std::string &devId, const std::string &dhId, int32_t status,
+    virtual int32_t OnUnregisterResult(const std::string &uuid, const std::string &dhId, int32_t status,
         const std::string &data) = 0;
 };
 
@@ -43,11 +43,11 @@ class IDistributedHardwareSource {
 public:
     virtual int32_t InitSource(const std::string &params) = 0;
     virtual int32_t ReleaseSource() = 0;
-    virtual int32_t RegisterDistributedHardware(const std::string &devId, const std::string &dhId,
+    virtual int32_t RegisterDistributedHardware(const std::string &uuid, const std::string &dhId,
         const EnableParam &param, std::shared_ptr<RegisterCallback> callback) = 0;
-    virtual int32_t UnregisterDistributedHardware(const std::string &devId, const std::string &dhId,
+    virtual int32_t UnregisterDistributedHardware(const std::string &uuid, const std::string &dhId,
         std::shared_ptr<UnregisterCallback> callback) = 0;
-    virtual int32_t ConfigDistributedHardware(const std::string &devId, const std::string &dhId, const std::string &key,
+    virtual int32_t ConfigDistributedHardware(const std::string &uuid, const std::string &dhId, const std::string &key,
         const std::string &value) = 0;
 };
 extern "C" __attribute__((visibility("default"))) IDistributedHardwareSource* GetSourceHardwareHandler();

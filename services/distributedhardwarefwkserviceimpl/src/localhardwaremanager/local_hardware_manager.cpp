@@ -85,6 +85,7 @@ void LocalHardwareManager::QueryLocalHardware(const DHType dhType, IHardwareHand
 
 void LocalHardwareManager::AddLocalCapabilityInfo(const std::vector<DHItem> &dhItems, const DHType dhType)
 {
+    DHLOGI("start!");
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
     std::string devName = DHContext::GetInstance().GetDeviceInfo().deviceName;

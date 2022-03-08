@@ -36,7 +36,7 @@ enum class Status : uint32_t {
 constexpr int32_t INTERVAL_TIME_MS = 1;
 constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
 
-/* save networkId and deviceId */
+/* save networkId and uuid */
 const std::vector<std::pair<std::string, std::string>> TEST_DEVICES = {
     { "11111111111111111111111111111111", "22222222222222222222222222222222" },
     { "33333333333333333333333333333333", "44444444444444444444444444444444" },
@@ -202,18 +202,18 @@ HWTEST_F(AccessManagerTest, SendOffLineEvent_002, TestSize.Level1)
  */
 HWTEST_F(AccessManagerTest, SendOffLineEvent_003, TestSize.Level0)
 {
-    auto handler = [this](Status status, std::string networkId, std::string devId, int32_t expect) {
+    auto handler = [this](Status status, std::string networkId, std::string uuid, int32_t expect) {
         if (status == Status::DEVICE_ONLINE) {
             std::lock_guard<std::mutex> lock(testAccessMutex_);
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
             auto onlineResult =
-                DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, devId, TEST_DEV_TYPE_PAD);
+                DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, TEST_DEV_TYPE_PAD);
             EXPECT_EQ(expect, onlineResult);
         } else {
             std::lock_guard<std::mutex> lock(testAccessMutex_);
             std::this_thread::sleep_for(std::chrono::milliseconds(90));
             auto offlineResult =
-                DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId, devId, TEST_DEV_TYPE_PAD);
+                DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId, uuid, TEST_DEV_TYPE_PAD);
             EXPECT_EQ(expect, offlineResult);
         }
     };

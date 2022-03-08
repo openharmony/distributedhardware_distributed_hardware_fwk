@@ -28,9 +28,9 @@ public:
     virtual ~IDistributedHardwareManager() {};
     virtual int32_t Initialize() = 0;
     virtual int32_t Release() = 0;
-    virtual int32_t SendOnLineEvent(const std::string &networkId, const std::string &deviceId,
+    virtual int32_t SendOnLineEvent(const std::string &networkId, const std::string &uuid,
         uint16_t deviceType) = 0;
-    virtual int32_t SendOffLineEvent(const std::string &networkId, const std::string &deviceId,
+    virtual int32_t SendOffLineEvent(const std::string &networkId, const std::string &uuid,
         uint16_t deviceType) = 0;
     virtual size_t GetOnLineCount() = 0;
     virtual int32_t GetComponentVersion(std::unordered_map<DHType, std::string> &versionMap) = 0;

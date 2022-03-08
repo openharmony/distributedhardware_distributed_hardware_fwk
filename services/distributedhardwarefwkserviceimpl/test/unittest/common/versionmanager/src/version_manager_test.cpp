@@ -96,15 +96,15 @@ HWTEST_F(VersionManagerTest, version_manager_test_002, TestSize.Level0)
     CompVersion cVs3;
     CompVersionGetValue(cVs3, TEST_COMPONENT_NAME_3, DHType::MIC, TEST_HANDLER_VERSION_3, TEST_SOURCE_VERSION_3,
         TEST_SINK_VERSION_3);
-    dhVersion.devId = TEST_DEVICE_ID_1;
+    dhVersion.uuid = TEST_DEVICE_ID_1;
     dhVersion.dhVersion = TEST_DH_VERSION;
     dhVersion.compVersions.insert(std::make_pair(cVs1.dhType, cVs1));
     dhVersion.compVersions.insert(std::make_pair(cVs2.dhType, cVs2));
     dhVersion.compVersions.insert(std::make_pair(cVs3.dhType, cVs3));
-    int32_t ret = VersionManager::GetInstance().AddDHVersion(dhVersion.devId, dhVersion);
+    int32_t ret = VersionManager::GetInstance().AddDHVersion(dhVersion.uuid, dhVersion);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
-    dhVersion.devId = TEST_DEVICE_ID_2;
-    ret = VersionManager::GetInstance().AddDHVersion(dhVersion.devId, dhVersion);
+    dhVersion.uuid = TEST_DEVICE_ID_2;
+    ret = VersionManager::GetInstance().AddDHVersion(dhVersion.uuid, dhVersion);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 

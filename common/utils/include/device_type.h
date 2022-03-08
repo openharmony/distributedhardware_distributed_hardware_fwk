@@ -36,12 +36,13 @@ enum class DHType : uint32_t {
 };
 
 struct DeviceInfo {
+    std::string uuid;
     std::string deviceId;
     std::string deviceName;
     uint16_t deviceType;
 
-    explicit DeviceInfo(std::string deviceId, std::string deviceName, uint16_t deviceType)
-        : deviceId(deviceId), deviceName(deviceName), deviceType(deviceType) {}
+    explicit DeviceInfo(std::string uuid, std::string deviceId, std::string deviceName, uint16_t deviceType)
+        : uuid(uuid), deviceId(deviceId), deviceName(deviceName), deviceType(deviceType) {}
 };
 }
 }

@@ -37,8 +37,8 @@ int32_t VersionManager::Init()
     }
     dhVersion.dhVersion = DH_LOCAL_VERSION;
     ShowLocalVersion(dhVersion);
-    std::string strDevID = DHContext::GetInstance().GetDeviceInfo().deviceId;
-    AddDHVersion(strDevID, dhVersion);
+    std::string strUUID = DHContext::GetInstance().GetDeviceInfo().uuid;
+    AddDHVersion(strUUID, dhVersion);
     return DH_FWK_SUCCESS;
 }
 
@@ -57,47 +57,47 @@ void VersionManager::ShowLocalVersion(const DHVersion &dhVersion) const
     }
 }
 
-int32_t VersionManager::AddDHVersion(const std::string &devId, const DHVersion &dhVersion)
+int32_t VersionManager::AddDHVersion(const std::string &uuid, const DHVersion &dhVersion)
 {
-    DHLOGI("devId: %s", GetAnonyString(devId).c_str());
+    DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
-    dhVersions_.insert(std::pair<std::string, DHVersion>(devId, dhVersion));
+    dhVersions_.insert(std::pair<std::string, DHVersion>(uuid, dhVersion));
     return DH_FWK_SUCCESS;
 }
 
-int32_t VersionManager::RemoveDHVersion(const std::string &devId)
+int32_t VersionManager::RemoveDHVersion(const std::string &uuid)
 {
-    DHLOGI("devId: %s", GetAnonyString(devId).c_str());
+    DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
-    std::unordered_map<std::string, DHVersion>::iterator iter = dhVersions_.find(devId);
+    std::unordered_map<std::string, DHVersion>::iterator iter = dhVersions_.find(uuid);
     if (iter == dhVersions_.end()) {
-        DHLOGE("there is no devId: %s, remove fail", GetAnonyString(devId).c_str());
+        DHLOGE("there is no uuid: %s, remove fail", GetAnonyString(uuid).c_str());
         return ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST;
     }
     dhVersions_.erase(iter);
     return DH_FWK_SUCCESS;
 }
 
-int32_t VersionManager::GetDHVersion(const std::string &devId, DHVersion &dhVersion)
+int32_t VersionManager::GetDHVersion(const std::string &uuid, DHVersion &dhVersion)
 {
-    DHLOGI("devId: %s", GetAnonyString(devId).c_str());
+    DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
-    std::unordered_map<std::string, DHVersion>::iterator iter = dhVersions_.find(devId);
+    std::unordered_map<std::string, DHVersion>::iterator iter = dhVersions_.find(uuid);
     if (iter == dhVersions_.end()) {
-        DHLOGE("there is no devId: %s, get version fail", GetAnonyString(devId).c_str());
+        DHLOGE("there is no uuid: %s, get version fail", GetAnonyString(uuid).c_str());
         return ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST;
     } else {
-        dhVersion = dhVersions_[devId];
+        dhVersion = dhVersions_[uuid];
         return DH_FWK_SUCCESS;
     }
 }
 
-int32_t VersionManager::GetCompVersion(const std::string &devId, const DHType dhType, CompVersion &compVersion)
+int32_t VersionManager::GetCompVersion(const std::string &uuid, const DHType dhType, CompVersion &compVersion)
 {
     DHVersion dhVersion;
-    int32_t ret = GetDHVersion(devId, dhVersion);
+    int32_t ret = GetDHVersion(uuid, dhVersion);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetDHVersion fail, devId: %s", GetAnonyString(devId).c_str());
+        DHLOGE("GetDHVersion fail, uuid: %s", GetAnonyString(uuid).c_str());
         return ret;
     }
     if (dhVersion.compVersions.find(dhType) == dhVersion.compVersions.end()) {

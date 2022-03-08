@@ -56,7 +56,7 @@ struct CompVersion {
 };
 
 struct DHVersion {
-    std::string devId;
+    std::string uuid;
     std::string dhVersion;
     std::unordered_map<DHType, CompVersion> compVersions;
 };

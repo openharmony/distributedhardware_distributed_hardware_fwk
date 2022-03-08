@@ -36,6 +36,9 @@ std::string GetRandomID();
 std::string GetUUIDByNetworkId(const std::string &networkId);
 
 DeviceInfo GetLocalDeviceInfo();
+
+/* Convert uuid to deviceId by sha256 encode */
+std::string GetDeviceIdByUUID(const std::string &uuid);
 }
 }
 #endif

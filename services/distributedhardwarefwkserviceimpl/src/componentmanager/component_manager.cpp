@@ -25,6 +25,7 @@
 #include "component_loader.h"
 #include "constants.h"
 #include "dh_context.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "ipc_object_stub.h"
@@ -38,6 +39,11 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "ComponentManager"
 
 IMPLEMENT_SINGLE_INSTANCE(ComponentManager);
+
+namespace {
+    constexpr int32_t ENABLE_RETRY_MAX_TIMES = 30;
+    constexpr int32_t DISABLE_RETRY_MAX_TIMES = 30;
+}
 
 ComponentManager::~ComponentManager()
 {
@@ -99,10 +105,10 @@ ComponentManager::ActionResult ComponentManager::StartSource()
 {
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
-    std::string devId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+    std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     for (const auto &item : compSource_) {
         CompVersion compversion;
-        VersionManager::GetInstance().GetCompVersion(devId, item.first, compversion);
+        VersionManager::GetInstance().GetCompVersion(uuid, item.first, compversion);
         auto params = compversion.sourceVersion;
         auto future = std::async(std::launch::async, [item, params]() { return item.second->InitSource(params); });
         futures.emplace(item.first, future.share());
@@ -114,10 +120,10 @@ ComponentManager::ActionResult ComponentManager::StartSink()
 {
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
-    std::string devId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+    std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     for (const auto &item : compSink_) {
         CompVersion compversion;
-        VersionManager::GetInstance().GetCompVersion(devId, item.first, compversion);
+        VersionManager::GetInstance().GetCompVersion(uuid, item.first, compversion);
         auto params = compversion.sinkVersion;
         auto future = std::async(std::launch::async, [item, params]() { return item.second->InitSink(params); });
         futures.emplace(item.first, future.share());
@@ -201,31 +207,45 @@ bool ComponentManager::InitCompSink()
     return !compSink_.empty();
 }
 
-int32_t ComponentManager::Enable(const std::string &networkId, const std::string &devId, const std::string &dhId)
+int32_t ComponentManager::Enable(const std::string &networkId, const std::string &uuid, const std::string &dhId)
 {
     DHLOGI("start.");
-    auto dhType = GetDHType(devId, dhId);
+    auto dhType = GetDHType(uuid, dhId);
     auto find = compSource_.find(dhType);
     if (find == compSource_.end()) {
         DHLOGE("can not find handler for dhId = %s.", dhId.c_str());
         return ERR_DH_FWK_PARA_INVALID;
     }
     EnableParam param;
-    auto ret = GetEnableParam(networkId, devId, dhId, dhType, param);
+    auto ret = GetEnableParam(networkId, uuid, dhId, dhType, param);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetEnableParam failed, devId = %s, dhId = %s, errCode = %d", GetAnonyString(devId).c_str(),
+        DHLOGE("GetEnableParam failed, uuid = %s, dhId = %s, errCode = %d", GetAnonyString(uuid).c_str(),
             dhId.c_str(), ret);
         return ret;
     }
     auto compEnable = std::make_shared<ComponentEnable>();
     auto result = compEnable->Enable(networkId, dhId, param, find->second);
-    DHLOGI("enable result is %d, devId = %s, dhId = %s", result, GetAnonyString(devId).c_str(), dhId.c_str());
+    if (result != DH_FWK_SUCCESS) {
+        for (int retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
+            if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
+                DHLOGW("device is already offline, no need try enable, uuid = %s", GetAnonyString(uuid).c_str());
+                return result;
+            }
+            if (compEnable->Enable(networkId, dhId, param, find->second) == DH_FWK_SUCCESS) {
+                DHLOGI("enable success, retryCount = %d", retryCount);
+                return DH_FWK_SUCCESS;
+            }
+            DHLOGE("enable failed, retryCount = %d", retryCount);
+        }
+        return result;
+    }
+    DHLOGI("enable result is %d, uuid = %s, dhId = %s", result, GetAnonyString(uuid).c_str(), dhId.c_str());
     return result;
 }
 
-int32_t ComponentManager::Disable(const std::string &networkId, const std::string &devId, const std::string &dhId)
+int32_t ComponentManager::Disable(const std::string &networkId, const std::string &uuid, const std::string &dhId)
 {
-    auto dhType = GetDHType(devId, dhId);
+    auto dhType = GetDHType(uuid, dhId);
     auto find = compSource_.find(dhType);
     if (find == compSource_.end()) {
         DHLOGE("can not find handler for dhId = %s.", dhId.c_str());
@@ -233,84 +253,102 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
     }
     auto compDisable = std::make_shared<ComponentDisable>();
     auto result = compDisable->Disable(networkId, dhId, find->second);
-    DHLOGI("disable result is %d, devId = %s, dhId = %s", result, GetAnonyString(devId).c_str(), dhId.c_str());
+    if (result != DH_FWK_SUCCESS) {
+        for (int retryCount = 0; retryCount < DISABLE_RETRY_MAX_TIMES; retryCount++) {
+            if (DHContext::GetInstance().IsDeviceOnline(uuid)) {
+                DHLOGW("device is already online, no need try disable, uuid = %s", GetAnonyString(uuid).c_str());
+                return result;
+            }
+            if (compDisable->Disable(networkId, dhId, find->second) == DH_FWK_SUCCESS) {
+                DHLOGI("disable success, retryCount = %d", retryCount);
+                return DH_FWK_SUCCESS;
+            }
+            DHLOGE("disable failed, retryCount = %d", retryCount);
+        }
+        return result;
+    }
+    DHLOGI("disable result is %d, uuid = %s, dhId = %s", result, GetAnonyString(uuid).c_str(), dhId.c_str());
     return result;
 }
 
-DHType ComponentManager::GetDHType(const std::string &devId, const std::string &dhId) const
+DHType ComponentManager::GetDHType(const std::string &uuid, const std::string &dhId) const
 {
     std::shared_ptr<CapabilityInfo> capability = nullptr;
-    auto ret = CapabilityInfoManager::GetInstance()->GetCapability(devId, dhId, capability);
+    auto ret = CapabilityInfoManager::GetInstance()->GetCapability(GetDeviceIdByUUID(uuid), dhId, capability);
     if ((ret == DH_FWK_SUCCESS) && (capability != nullptr)) {
         return capability->GetDHType();
     }
-    DHLOGE("get dhType failed, devId = %s, dhId = %s", GetAnonyString(devId).c_str(), dhId.c_str());
+    DHLOGE("get dhType failed, uuid = %s, dhId = %s", GetAnonyString(uuid).c_str(), dhId.c_str());
     return DHType::UNKNOWN;
 }
 
-int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std::string &devId,
+int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std::string &uuid,
     const std::string &dhId, DHType dhType, EnableParam &param)
 {
     std::shared_ptr<CapabilityInfo> capability = nullptr;
-    auto ret = CapabilityInfoManager::GetInstance()->GetCapability(devId, dhId, capability);
+    auto ret = CapabilityInfoManager::GetInstance()->GetCapability(GetDeviceIdByUUID(uuid), dhId, capability);
     if ((ret != DH_FWK_SUCCESS) || (capability == nullptr)) {
-        DHLOGE("GetCapability failed, devId =%s, dhId = %s, errCode = %d", GetAnonyString(devId).c_str(), dhId.c_str(),
+        DHLOGE("GetCapability failed, uuid =%s, dhId = %s, errCode = %d", GetAnonyString(uuid).c_str(), dhId.c_str(),
             ret);
         return ret;
     }
 
     param.attrs = capability->GetDHAttrs();
-    param.version = GetSinkVersion(networkId, devId, dhType);
+    param.version = GetSinkVersion(networkId, uuid, dhType);
+    if (param.version.empty()) {
+        DHLOGI("Get Sink Version failed, uuid = %s, dhId = %s", GetAnonyString(uuid).c_str(), dhId.c_str());
+        return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
+    }
 
-    DHLOGI("success. devId =%s, dhId = %s, version = %s", GetAnonyString(devId).c_str(), dhId.c_str(),
+    DHLOGI("success. uuid =%s, dhId = %s, version = %s", GetAnonyString(uuid).c_str(), dhId.c_str(),
         param.version.c_str());
 
     return DH_FWK_SUCCESS;
 }
 
-std::string ComponentManager::GetSinkVersion(const std::string &networkId, const std::string &devId, DHType dhType)
+std::string ComponentManager::GetSinkVersion(const std::string &networkId, const std::string &uuid, DHType dhType)
 {
-    DHLOGI("networkId = %s ", networkId.c_str());
-    auto sinkVersion = GetVersionFromCache(devId, dhType);
+    DHLOGI("networkId = %s ", GetAnonyString(networkId).c_str());
+    auto sinkVersion = GetVersionFromCache(uuid, dhType);
     if (!sinkVersion.empty()) {
-        DHLOGI("GetVersionFromCache success, sinkVersion = %s, devId = %s, dhType = %#X", sinkVersion.c_str(),
-            GetAnonyString(devId).c_str(), dhType);
+        DHLOGI("GetVersionFromCache success, sinkVersion = %s, uuid = %s, dhType = %#X", sinkVersion.c_str(),
+            GetAnonyString(uuid).c_str(), dhType);
         return sinkVersion;
     }
 
-    auto updateResult = UpdateVersionCache(networkId, devId);
+    auto updateResult = UpdateVersionCache(networkId, uuid);
     if (updateResult != DH_FWK_SUCCESS) {
-        DHLOGE("UpdateVersionCache failed, devId = %s, errCode = %d", GetAnonyString(devId).c_str(), updateResult);
+        DHLOGE("UpdateVersionCache failed, uuid = %s, errCode = %d", GetAnonyString(uuid).c_str(), updateResult);
         return "";
     }
 
-    sinkVersion = GetVersionFromCache(devId, dhType);
+    sinkVersion = GetVersionFromCache(uuid, dhType);
     return sinkVersion;
 }
 
-std::string ComponentManager::GetVersionFromCache(const std::string &devId, DHType dhType)
+std::string ComponentManager::GetVersionFromCache(const std::string &uuid, DHType dhType)
 {
     std::lock_guard<std::mutex> lock(sinkVersionMutex_);
-    auto iter = sinkVersions_.find(devId);
+    auto iter = sinkVersions_.find(uuid);
     if (iter == sinkVersions_.end()) {
-        DHLOGE("can not find component version for devId = %s", GetAnonyString(devId).c_str());
+        DHLOGE("can not find component version for uuid = %s", GetAnonyString(uuid).c_str());
         return "";
     }
 
     auto find = iter->second.find(dhType);
     if (find == iter->second.end()) {
-        DHLOGE("can not find component version for devId = %s, dhType = %#X", devId.c_str(), dhType);
+        DHLOGE("can not find component version for uuid = %s, dhType = %#X", uuid.c_str(), dhType);
         return "";
     }
     return find->second;
 }
 
-int32_t ComponentManager::UpdateVersionCache(const std::string &networkId, const std::string &devId)
+int32_t ComponentManager::UpdateVersionCache(const std::string &networkId, const std::string &uuid)
 {
     sptr<IDistributedHardware> dhms = GetRemoteDHMS(networkId);
     if (dhms == nullptr) {
         DHLOGI("GetRemoteDHMS failed, networkId = %s", GetAnonyString(networkId).c_str());
-        return DH_FWK_COMPONENT_GET_REMOTE_SA_FAILED;
+        return ERR_DH_FWK_COMPONENT_GET_REMOTE_SA_FAILED;
     }
 
     std::unordered_map<DHType, std::string> versions;
@@ -321,7 +359,7 @@ int32_t ComponentManager::UpdateVersionCache(const std::string &networkId, const
     }
     {
         std::lock_guard<std::mutex> lock(sinkVersionMutex_);
-        sinkVersions_.emplace(devId, versions);
+        sinkVersions_.emplace(uuid, versions);
     }
     DHLOGI("QuerySinkVersion success");
     return DH_FWK_SUCCESS;
