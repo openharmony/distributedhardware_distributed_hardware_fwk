@@ -17,6 +17,7 @@
 
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "task_board.h"
@@ -28,22 +29,22 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "OnLineTask"
 
-OnLineTask::OnLineTask(const std::string &networkId, const std::string &devId, const std::string &dhId)
-    : Task(networkId, devId, dhId)
+OnLineTask::OnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
+    : Task(networkId, uuid, dhId)
 {
     SetTaskType(TaskType::ON_LINE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::SYNC_ONLINE_INFO, TaskStep::REGISTER_ONLINE_DISTRIBUTED_HARDWARE });
-    DHLOGD("id = %s, devId = %s", GetId().c_str(), GetAnonyString(devId).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(uuid).c_str());
 }
 
 OnLineTask::~OnLineTask()
 {
-    DHLOGD("id = %s, devId = %s", GetId().c_str(), GetAnonyString(GetDevId()).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
 }
 
 void OnLineTask::DoTask()
 {
-    DHLOGD("start online task, id = %s, devId = %s", GetId().c_str(), GetAnonyString(GetDevId()).c_str());
+    DHLOGD("start online task, id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
     this->SetTaskState(TaskState::RUNNING);
     for (auto& step : this->GetTaskSteps()) {
         switch (step) {
@@ -67,25 +68,25 @@ void OnLineTask::DoTask()
 
 void OnLineTask::DoSyncInfo()
 {
-    DHLOGI("start sync resource when device online, devId = %s", GetAnonyString(GetDevId()).c_str());
+    DHLOGI("start sync resource when device online, uuid = %s", GetAnonyString(GetUUID()).c_str());
     auto ret = CapabilityInfoManager::GetInstance()->ManualSync(GetNetworkId());
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGW("ManualSync failed, devId = %s, errCode = %d", GetAnonyString(GetDevId()).c_str(), ret);
+        DHLOGW("ManualSync failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
-    ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(GetDevId());
+    ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(GetDeviceIdByUUID(GetUUID()));
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("SyncDeviceInfoFromDB failed, devId = %s, errCode = %d", GetAnonyString(GetDevId()).c_str(), ret);
+        DHLOGE("SyncDeviceInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
         return;
     }
 }
 
 void OnLineTask::CreateEnableTask()
 {
-    DHLOGI("networkId = %s, devId = %s", GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetDevId()).c_str());
+    DHLOGI("networkId = %s, uuid = %s", GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str());
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
-    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(GetDevId(), capabilityInfos);
+    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(GetDeviceIdByUUID(GetUUID()), capabilityInfos);
     if (capabilityInfos.empty()) {
-        DHLOGE("capabilityInfos is empty, can not create enableTask, devId = %s", GetAnonyString(GetDevId()).c_str());
+        DHLOGE("capabilityInfos is empty, can not create enableTask, uuid = %s", GetAnonyString(GetUUID()).c_str());
         return;
     }
     for (const auto &iter : capabilityInfos) {
@@ -93,7 +94,7 @@ void OnLineTask::CreateEnableTask()
             DHLOGE("capabilityInfo is null");
             continue;
         }
-        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, GetNetworkId(), GetDevId(),
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, GetNetworkId(), GetUUID(),
             iter->GetDHId(), shared_from_this());
         TaskExecutor::GetInstance().PushTask(task);
     }

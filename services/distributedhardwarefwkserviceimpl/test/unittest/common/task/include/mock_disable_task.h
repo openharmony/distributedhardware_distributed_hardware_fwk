@@ -23,7 +23,7 @@ namespace DistributedHardware {
 class MockDisableTask : public DisableTask {
 public:
     MockDisableTask() = delete;
-    MockDisableTask(const std::string &networkId, const std::string &devId, const std::string &dhId);
+    MockDisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId);
 
 private:
     /* synchronous function for unregister distributed hardware, return on asynchronous unregister finish */

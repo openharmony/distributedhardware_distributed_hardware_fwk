@@ -78,7 +78,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_004, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_003, TestSize.Level0)
 {
     for (const auto &iter : g_compHandlerMap) {
         IDistributedHardwareSource *sourcePtr = nullptr;
@@ -94,7 +94,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_004, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_005, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_004, TestSize.Level0)
 {
     for (const auto &iter : g_compHandlerMap) {
         IDistributedHardwareSink *sinkPtr = nullptr;
@@ -110,7 +110,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_005, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_006, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_005, TestSize.Level0)
 {
     for (const auto &iter : g_compHandlerMap) {
         auto ret = ComponentLoader::GetInstance().ReleaseHardwareHandler(iter.first);
@@ -125,7 +125,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_006, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_007, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_006, TestSize.Level0)
 {
     for (const auto &iter : g_compHandlerMap) {
         auto ret = ComponentLoader::GetInstance().ReleaseSource(iter.first);
@@ -140,7 +140,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_007, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_008, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_007, TestSize.Level0)
 {
     for (const auto &iter : g_compHandlerMap) {
         auto ret = ComponentLoader::GetInstance().ReleaseSink(iter.first);

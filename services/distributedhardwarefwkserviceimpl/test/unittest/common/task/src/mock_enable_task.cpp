@@ -22,8 +22,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-MockEnableTask::MockEnableTask(const std::string &networkId, const std::string &devId, const std::string &dhId)
-    : EnableTask(networkId, devId, dhId)
+MockEnableTask::MockEnableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
+    : EnableTask(networkId, uuid, dhId)
 {}
 
 int32_t MockEnableTask::RegisterHardware()

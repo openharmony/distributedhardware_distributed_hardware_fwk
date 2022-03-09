@@ -28,6 +28,10 @@ namespace DistributedHardware {
 int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
     MessageOption &option)
 {
+    if (data.ReadInterfaceToken() != GetDescriptor()) {
+        DHLOGE("ReadInterfaceToken fail!");
+        return ERR_INVALID_DATA;
+    }
     switch (code) {
         case QUERY_SINK_VERSION: {
             std::unordered_map<DHType, std::string> versionMap;

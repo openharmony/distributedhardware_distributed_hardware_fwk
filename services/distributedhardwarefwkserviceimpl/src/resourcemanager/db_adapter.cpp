@@ -18,6 +18,8 @@
 #include <memory>
 #include <unistd.h>
 
+#include "kvstore_observer.h"
+
 #include "anonymous_string.h"
 #include "capability_info.h"
 #include "capability_info_manager.h"
@@ -27,16 +29,6 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "event_bus.h"
-
-using OHOS::DistributedKv::Entry;
-using OHOS::DistributedKv::Key;
-using OHOS::DistributedKv::KvStoreDeathRecipient;
-using OHOS::DistributedKv::KvStoreType;
-using OHOS::DistributedKv::Options;
-using OHOS::DistributedKv::SingleKvStore;
-using OHOS::DistributedKv::Status;
-using OHOS::DistributedKv::SubscribeType;
-using OHOS::DistributedKv::Value;
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -57,14 +49,14 @@ DBAdapter::~DBAdapter()
     DHLOGI("DBAdapter Destruction");
 }
 
-Status DBAdapter::GetKvStorePtr()
+DistributedKv::Status DBAdapter::GetKvStorePtr()
 {
-    Options options = {
+    DistributedKv::Options options = {
         .createIfMissing = true,
         .encrypt = false,
         .autoSync = true,
-        .securityLevel = DistributedKv::SecurityLevel::S2,
-        .kvStoreType = KvStoreType::SINGLE_VERSION
+        .securityLevel = DistributedKv::SecurityLevel::S1,
+        .kvStoreType = DistributedKv::KvStoreType::SINGLE_VERSION
     };
     return kvDataMgr_.GetSingleKvStore(options, appId_, storeId_, kvStoragePtr_);
 }
@@ -75,8 +67,8 @@ int32_t DBAdapter::Init()
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     int32_t tryTimes = MAX_INIT_RETRY_TIMES;
     while (tryTimes > 0) {
-        Status status = GetKvStorePtr();
-        if (status == Status::SUCCESS && kvStoragePtr_) {
+        DistributedKv::Status status = GetKvStorePtr();
+        if (status == DistributedKv::Status::SUCCESS && kvStoragePtr_) {
             DHLOGI("Init KvStorePtr Success");
             RegisterManualSyncListener();
             RegisterChangeListener();
@@ -118,8 +110,8 @@ int32_t DBAdapter::ReInit()
     }
     UnRegisterManualSyncListener();
     kvStoragePtr_.reset();
-    Status status = GetKvStorePtr();
-    if (status != Status::SUCCESS || !kvStoragePtr_) {
+    DistributedKv::Status status = GetKvStorePtr();
+    if (status != DistributedKv::Status::SUCCESS || !kvStoragePtr_) {
         DHLOGW("Get kvStoragePtr_ failed, status: %d", status);
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
@@ -141,7 +133,6 @@ void DBAdapter::SyncCompleted(const std::map<std::string, DistributedKv::Status>
         }
         DHLOGI("ManualSyncCallback::SyncCompleted, retryCount: %d", manualSyncCountMap_[deviceId]);
         if (result.second == DistributedKv::Status::SUCCESS) {
-            CapabilityInfoManager::GetInstance()->NotifySyncCompleted();
             manualSyncCountMap_[deviceId] = 0;
         } else {
             manualSyncCountMap_[deviceId]++;
@@ -166,10 +157,10 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    Key kvKey(key);
-    Value kvValue;
-    Status status = kvStoragePtr_->Get(kvKey, kvValue);
-    if (status != Status::SUCCESS) {
+    DistributedKv::Key kvKey(key);
+    DistributedKv::Value kvValue;
+    DistributedKv::Status status = kvStoragePtr_->Get(kvKey, kvValue);
+    if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("Query from db failed, key: %s", GetAnonyString(key).c_str());
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
@@ -187,10 +178,10 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
     }
 
     // if prefix is empty, get all entries.
-    Key allEntryKeyPrefix(keyPrefix);
-    std::vector<Entry> allEntries;
-    Status status = kvStoragePtr_->GetEntries(allEntryKeyPrefix, allEntries);
-    if (status != Status::SUCCESS) {
+    DistributedKv::Key allEntryKeyPrefix(keyPrefix);
+    std::vector<DistributedKv::Entry> allEntries;
+    DistributedKv::Status status = kvStoragePtr_->GetEntries(allEntryKeyPrefix, allEntries);
+    if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("Query data by keyPrefix failed, prefix: %s",
             GetAnonyString(keyPrefix).c_str());
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
@@ -208,10 +199,10 @@ int32_t DBAdapter::PutData(const std::string &key, std::string &value)
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    Key kvKey(key);
-    Value kvValue(value);
-    Status status = kvStoragePtr_->Put(kvKey, kvValue);
-    if (status == Status::IPC_ERROR) {
+    DistributedKv::Key kvKey(key);
+    DistributedKv::Value kvValue(value);
+    DistributedKv::Status status = kvStoragePtr_->Put(kvKey, kvValue);
+    if (status == DistributedKv::Status::IPC_ERROR) {
         DHLOGE("Put kv to db failed, ret: %d", status);
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
@@ -229,15 +220,15 @@ int32_t DBAdapter::PutDataBatch(const std::vector<std::string> &keys, const std:
         DHLOGE("Param invalid");
         return ERR_DH_FWK_PARA_INVALID;
     }
-    std::vector<Entry> entries;
+    std::vector<DistributedKv::Entry> entries;
     for (unsigned long i = 0; i < keys.size(); i++) {
-        Entry entry;
+        DistributedKv::Entry entry;
         entry.key = keys[i];
         entry.value = values[i];
         entries.push_back(entry);
     }
-    Status status = kvStoragePtr_->PutBatch(entries);
-    if (status != Status::SUCCESS) {
+    DistributedKv::Status status = kvStoragePtr_->PutBatch(entries);
+    if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("Put kv batch to db failed, ret: %d", status);
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
@@ -266,8 +257,8 @@ int32_t DBAdapter::ManualSync(const std::string &networkId)
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
     std::vector<std::string> devList = { networkId };
-    Status status = kvStoragePtr_->Sync(devList, DistributedKv::SyncMode::PULL);
-    if (status != Status::SUCCESS) {
+    DistributedKv::Status status = kvStoragePtr_->Sync(devList, DistributedKv::SyncMode::PULL);
+    if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("ManualSync Data failed, networkId: %s", GetAnonyString(networkId).c_str());
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
@@ -288,8 +279,9 @@ int32_t DBAdapter::RegisterChangeListener()
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    Status status = kvStoragePtr_->SubscribeKvStore(SubscribeType::SUBSCRIBE_TYPE_REMOTE, dataChangeListener_);
-    if (status == Status::IPC_ERROR) {
+    DistributedKv::Status status = kvStoragePtr_->SubscribeKvStore(DistributedKv::SubscribeType::SUBSCRIBE_TYPE_REMOTE,
+        dataChangeListener_);
+    if (status == DistributedKv::Status::IPC_ERROR) {
         DHLOGE("Register db data change listener failed, ret: %d", status);
         return ERR_DH_FWK_RESOURCE_REGISTER_DB_FAILED;
     }
@@ -303,8 +295,9 @@ int32_t DBAdapter::UnRegisterChangeListener()
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    Status status = kvStoragePtr_->UnSubscribeKvStore(SubscribeType::SUBSCRIBE_TYPE_REMOTE, dataChangeListener_);
-    if (status == Status::IPC_ERROR) {
+    DistributedKv::Status status = kvStoragePtr_->UnSubscribeKvStore(
+        DistributedKv::SubscribeType::SUBSCRIBE_TYPE_REMOTE, dataChangeListener_);
+    if (status == DistributedKv::Status::IPC_ERROR) {
         DHLOGE("UnRegister db data change listener failed, ret: %d", status);
         return ERR_DH_FWK_RESOURCE_UNREGISTER_DB_FAILED;
     }
@@ -350,7 +343,7 @@ void DBAdapter::OnRemoteDied()
         int32_t times = 0;
         while (times < DIED_CHECK_MAX_TIMES) {
             // init kvStore.
-            if (this->ReInit() != DH_FWK_SUCCESS) {
+            if (this->ReInit() == DH_FWK_SUCCESS) {
                 // register data change listener again.
                 this->RegisterChangeListener();
                 this->SyncDBForRecover();
@@ -368,8 +361,8 @@ void DBAdapter::OnRemoteDied()
 void DBAdapter::DeleteKvStore()
 {
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
-    Status status = kvDataMgr_.DeleteKvStore(appId_, storeId_);
-    if (status != Status::SUCCESS) {
+    DistributedKv::Status status = kvDataMgr_.DeleteKvStore(appId_, storeId_);
+    if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("DeleteKvStore error, appId: %s, storeId: %s, status: %d",
             appId_.appId.c_str(), storeId_.storeId.c_str(), status);
         return;
@@ -384,8 +377,8 @@ int32_t DBAdapter::RemoveDeviceData(const std::string &deviceId)
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    Status status = kvStoragePtr_->RemoveDeviceData(deviceId);
-    if (status != Status::SUCCESS) {
+    DistributedKv::Status status = kvStoragePtr_->RemoveDeviceData(deviceId);
+    if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("Remove device data failed, deviceId: %s", GetAnonyString(deviceId).c_str());
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
@@ -400,9 +393,9 @@ int32_t DBAdapter::RemoveDataByKey(const std::string &key)
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    Key kvKey(key);
-    Status status = kvStoragePtr_->Delete(kvKey);
-    if (status != Status::SUCCESS) {
+    DistributedKv::Key kvKey(key);
+    DistributedKv::Status status = kvStoragePtr_->Delete(kvKey);
+    if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("Remove data by key failed");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }

@@ -19,6 +19,7 @@
 
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "task_board.h"
@@ -30,18 +31,18 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "OffLineTask"
 
-OffLineTask::OffLineTask(const std::string &networkId, const std::string &devId, const std::string &dhId)
-    : Task(networkId, devId, dhId)
+OffLineTask::OffLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
+    : Task(networkId, uuid, dhId)
 {
     this->SetTaskType(TaskType::OFF_LINE);
     this->SetTaskSteps({TaskStep::UNREGISTER_OFFLINE_DISTRIBUTED_HARDWARE, TaskStep::WAIT_UNREGISTGER_COMPLETE,
         TaskStep::CLEAR_OFFLINE_INFO});
-    DHLOGD("id = %s, devId = %s", GetId().c_str(), GetAnonyString(devId).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(uuid).c_str());
 }
 
 OffLineTask::~OffLineTask()
 {
-    DHLOGD("id = %s, devId = %s", GetId().c_str(), GetAnonyString(GetDevId()).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
 }
 
 void OffLineTask::DoTask()
@@ -51,7 +52,7 @@ void OffLineTask::DoTask()
 
 void OffLineTask::DoTaskInner()
 {
-    DHLOGD("start offline task, id = %s, devId = %s", GetId().c_str(), GetAnonyString(GetDevId()).c_str());
+    DHLOGD("start offline task, id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
     this->SetTaskState(TaskState::RUNNING);
     for (auto& step : this->GetTaskSteps()) {
         switch (step) {
@@ -80,11 +81,11 @@ void OffLineTask::DoTaskInner()
 
 void OffLineTask::CreateDisableTask()
 {
-    DHLOGI("networkId = %s, devId = %s", GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetDevId()).c_str());
+    DHLOGI("networkId = %s, uuid = %s", GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str());
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
-    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(GetDevId(), capabilityInfos);
+    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(GetDeviceIdByUUID(GetUUID()), capabilityInfos);
     if (capabilityInfos.empty()) {
-        DHLOGE("capabilityInfos is empty, can not create disableTask, devId = %s", GetAnonyString(GetDevId()).c_str());
+        DHLOGE("capabilityInfos is empty, can not create disableTask, uuid = %s", GetAnonyString(GetUUID()).c_str());
         return;
     }
     for (const auto &iter : capabilityInfos) {
@@ -92,7 +93,7 @@ void OffLineTask::CreateDisableTask()
             DHLOGE("capabilityInfo is null");
             continue;
         }
-        auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, GetNetworkId(), GetDevId(),
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, GetNetworkId(), GetUUID(),
             iter->GetDHId(), shared_from_this());
         TaskExecutor::GetInstance().PushTask(task);
     }
@@ -108,10 +109,10 @@ void OffLineTask::WaitDisableTaskFinish()
 
 void OffLineTask::ClearOffLineInfo()
 {
-    DHLOGI("start clear resource when device offline, devId = %s", GetAnonyString(GetDevId()).c_str());
-    auto ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInMem(GetDevId());
+    DHLOGI("start clear resource when device offline, uuid = %s", GetAnonyString(GetUUID()).c_str());
+    auto ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInMem(GetDeviceIdByUUID(GetUUID()));
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("RemoveCapabilityInfoInMem failed, devId = %s, errCode = %d", GetAnonyString(GetDevId()).c_str(), ret);
+        DHLOGE("RemoveCapabilityInfoInMem failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
 }
 

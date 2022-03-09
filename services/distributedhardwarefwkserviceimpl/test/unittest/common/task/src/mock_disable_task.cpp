@@ -23,8 +23,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-MockDisableTask::MockDisableTask(const std::string &networkId, const std::string &devId, const std::string &dhId)
-    : DisableTask(networkId, devId, dhId)
+MockDisableTask::MockDisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
+    : DisableTask(networkId, uuid, dhId)
 {}
 
 int32_t MockDisableTask::UnRegisterHardware()

@@ -334,7 +334,26 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_012, TestSize.Level0)
 HWTEST_F(ResourceManagerTest, resource_manager_test_013, TestSize.Level0)
 {
     CapabilityInfoMap capMap;
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(EMPTY_PREFIX, capMap), DH_FWK_SUCCESS);
+    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(CAP_INFO_0->GetDeviceId(), capMap),
+        DH_FWK_SUCCESS);
+    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(CAP_INFO_1->GetDeviceId(), capMap),
+        DH_FWK_SUCCESS);
+    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(CAP_INFO_2->GetDeviceId(), capMap),
+        DH_FWK_SUCCESS);
+    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(CAP_INFO_3->GetDeviceId(), capMap),
+        DH_FWK_SUCCESS);
+    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(CAP_INFO_4->GetDeviceId(), capMap),
+        DH_FWK_SUCCESS);
+    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(CAP_INFO_5->GetDeviceId(), capMap),
+        DH_FWK_SUCCESS);
+    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(CAP_INFO_6->GetDeviceId(), capMap),
+        DH_FWK_SUCCESS);
+    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(CAP_INFO_7->GetDeviceId(), capMap),
+        DH_FWK_SUCCESS);
+    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(CAP_INFO_8->GetDeviceId(), capMap),
+        DH_FWK_SUCCESS);
+    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(CAP_INFO_9->GetDeviceId(), capMap),
+        DH_FWK_SUCCESS);
     EXPECT_EQ(capMap.size(), TEST_SIZE_10);
 }
 }

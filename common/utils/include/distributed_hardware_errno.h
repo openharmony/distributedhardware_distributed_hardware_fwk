@@ -42,7 +42,8 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT = -10305;
     constexpr int32_t ERR_DH_FWK_COMPONENT_REGISTER_FAILED = -10306;
     constexpr int32_t ERR_DH_FWK_COMPONENT_UNREGISTER_FAILED = -10007;
-    constexpr int32_t DH_FWK_COMPONENT_GET_REMOTE_SA_FAILED = -10008;
+    constexpr int32_t ERR_DH_FWK_COMPONENT_GET_REMOTE_SA_FAILED = -10008;
+    constexpr int32_t ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED = -10009;
 
     /* ResourceManager errno, range: [-10400, -10499] */
     constexpr int32_t ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL = -10400;
@@ -80,6 +81,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_SERVICE_IPC_READ_PARA_FAIL = -10802;
     constexpr int32_t ERR_DH_FWK_SERVICE_STRING_IS_EMPTY = -10803;
     constexpr int32_t ERR_DH_FWK_SERVICE_LOCAL_VERSION_NOT_EXIST = -10804;
+    constexpr int32_t ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL = -10805;
 
     /* AccessManager errno, range: [-10900, -10999] */
     constexpr int32_t ERR_DH_FWK_ACCESS_INIT_DM_FAILED = -10900;

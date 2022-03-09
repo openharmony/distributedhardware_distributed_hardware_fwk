@@ -26,7 +26,7 @@ namespace DistributedHardware {
 class OffLineTask : public Task {
 public:
     OffLineTask() = delete;
-    OffLineTask(const std::string &networkId, const std::string &devId, const std::string &dhId);
+    OffLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId);
     virtual ~OffLineTask();
     virtual void DoTask();
 

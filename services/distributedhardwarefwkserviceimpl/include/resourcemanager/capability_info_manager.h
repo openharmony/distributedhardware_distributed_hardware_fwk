@@ -32,8 +32,6 @@
 #include "event_sender.h"
 #include "single_instance.h"
 
-using OHOS::DistributedKv::Entry;
-
 class DBAdapter;
 namespace OHOS {
 namespace DistributedHardware {
@@ -88,8 +86,6 @@ public:
     void RemoveManualSyncCount(const std::string &deviceId);
     /* Actively synchronizes data */
     int32_t ManualSync(const std::string &networkId);
-    /* Manual sync notify */
-    void NotifySyncCompleted();
     /* Database data changes callback */
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification,
@@ -99,14 +95,12 @@ public:
 
 private:
     CapabilityInfoManager();
-    void HandleCapabilityAddChange(const std::vector<Entry> &insertRecords);
-    void HandleCapabilityUpdateChange(const std::vector<Entry> &updateRecords);
-    void HandleCapabilityDeleteChange(const std::vector<Entry> &deleteRecords);
+    void HandleCapabilityAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
+    void HandleCapabilityUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
+    void HandleCapabilityDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords);
 
 private:
     mutable std::mutex capInfoMgrMutex_;
-    int32_t manualSyncResult_;
-    std::condition_variable manualSyncCondVar_;
     std::shared_ptr<DBAdapter> dbAdapterPtr_;
     CapabilityInfoMap globalCapInfoMap_;
 };

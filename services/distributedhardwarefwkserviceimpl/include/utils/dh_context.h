@@ -36,19 +36,25 @@ public:
     const DeviceInfo& GetDeviceInfo();
 
     /* Save online device UUID and networkId when devices online */
-    void AddOnlineDevice(const std::string &devId, const std::string &networkId);
-    void RemoveOnlineDevice(const std::string &devId);
-    bool IsDeviceOnline(const std::string &devId);
+    void AddOnlineDevice(const std::string &uuid, const std::string &networkId);
+    void RemoveOnlineDevice(const std::string &uuid);
+    bool IsDeviceOnline(const std::string &uuid);
     size_t GetOnlineCount();
-    std::string GetNetworkIdByUUID(const std::string &devId);
+    std::string GetNetworkIdByUUID(const std::string &uuid);
+
+    /* DeviceId is which is hashed by sha256 */
+    std::string GetUUIDByDeviceId(const std::string &deviceId);
 
 private:
     std::shared_ptr<EventBus> eventBus_;
-    DeviceInfo devInfo_ { "", "", 0 };
+    DeviceInfo devInfo_ { "", "", "", 0 };
     std::mutex devMutex_;
 
-    /* Save online device UUID and networkId */
+    /* Save online device uuid and networkId */
     std::unordered_map<std::string, std::string> onlineDeviceMap_;
+
+    /* Save online device hashed uuid and uuid */
+    std::unordered_map<std::string, std::string> deviceIdUUIDMap_;
     std::shared_mutex onlineDevMutex_;
 };
 }
