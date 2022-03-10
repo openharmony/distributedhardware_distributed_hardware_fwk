@@ -15,11 +15,6 @@
 
 #include "capability_info_manager.h"
 
-#include <algorithm>
-#include <cctype>
-#include <iterator>
-#include <memory>
-
 #include "anonymous_string.h"
 #include "capability_info_event.h"
 #include "capability_utils.h"
@@ -352,6 +347,10 @@ void CapabilityInfoManager::HandleCapabilityAddChange(const std::vector<Distribu
         DHLOGI("Add capability key: %s", capPtr->GetAnonymousKey().c_str());
         globalCapInfoMap_[keyString] = capPtr;
         std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(capPtr->GetDeviceId());
+        if (uuid.empty()) {
+            DHLOGI("Find uuid failed and never enable");
+            continue;
+        }
         std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
         if (networkId.empty()) {
             DHLOGI("Find network failed and never enable, deviceId: %s", GetAnonyString(uuid).c_str());

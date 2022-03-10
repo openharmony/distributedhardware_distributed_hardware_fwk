@@ -15,8 +15,6 @@
 
 #include "distributed_hardware_stub.h"
 
-#include <unordered_set>
-
 #include "anonymous_string.h"
 #include "constants.h"
 #include "distributed_hardware_errno.h"

@@ -15,9 +15,6 @@
 
 #include "anonymous_string.h"
 
-#include <codecvt>
-#include <fstream>
-
 #include "securec.h"
 
 namespace OHOS {
@@ -56,8 +53,8 @@ std::string GetAnonyInt32(const int32_t value)
         std::string nullString("");
         return nullString;
     }
-    int32_t length = strlen(tempBuffer);
-    for (int32_t i = 1; i <= length - 1; i++) {
+    size_t length = strlen(tempBuffer);
+    for (size_t i = 1; i <= length - 1; i++) {
         tempBuffer[i] = '*';
     }
     if (length == 0x01) {

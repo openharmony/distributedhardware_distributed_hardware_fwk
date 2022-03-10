@@ -19,6 +19,14 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    FakeObject *g_obj = nullptr;
+    FakeSender *g_sender = nullptr;
+    FakeListener *g_listener = nullptr;
+    std::shared_ptr<OHOS::DistributedHardware::EventRegistration> g_regHandler = nullptr;
+    EventBus* g_eventBus = nullptr;
+}
+
 void EventbusTest::SetUpTestCase(void)
 {
 }

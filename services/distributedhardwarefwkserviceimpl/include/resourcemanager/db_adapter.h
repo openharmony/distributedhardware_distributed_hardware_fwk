@@ -24,9 +24,9 @@
 #include <vector>
 
 #include "distributed_kv_data_manager.h"
+#include "kvstore_observer.h"
 
 #include "capability_info.h"
-#include "capability_info_manager.h"
 #include "event_sender.h"
 
 namespace OHOS {

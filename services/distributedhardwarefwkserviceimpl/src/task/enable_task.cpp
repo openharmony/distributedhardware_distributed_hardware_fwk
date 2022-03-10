@@ -15,9 +15,6 @@
 
 #include "enable_task.h"
 
-#include <chrono>
-#include <thread>
-
 #include "anonymous_string.h"
 #include "component_manager.h"
 #include "distributed_hardware_errno.h"

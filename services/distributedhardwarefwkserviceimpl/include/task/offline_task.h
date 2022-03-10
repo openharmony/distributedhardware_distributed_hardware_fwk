@@ -17,7 +17,6 @@
 #define OHOS_DISTRIBUTED_HARDWARE_OFFLINE_TASK_H
 
 #include <condition_variable>
-#include <mutex>
 
 #include "task.h"
 

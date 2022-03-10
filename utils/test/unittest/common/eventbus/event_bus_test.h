@@ -98,12 +98,6 @@ public:
     void SetUp();
     void TearDown();
 };
-
-static FakeObject *g_obj = nullptr;
-static FakeSender *g_sender = nullptr;
-static FakeListener *g_listener = nullptr;
-static std::shared_ptr<OHOS::DistributedHardware::EventRegistration> g_regHandler = nullptr;
-static EventBus* g_eventBus = nullptr;
 }
 }
 #endif

@@ -15,8 +15,6 @@
 
 #include "component_disable.h"
 
-#include <limits>
-
 #include "anonymous_string.h"
 #include "constants.h"
 #include "distributed_hardware_errno.h"

@@ -15,11 +15,6 @@
 
 #include "db_adapter.h"
 
-#include <memory>
-#include <unistd.h>
-
-#include "kvstore_observer.h"
-
 #include "anonymous_string.h"
 #include "capability_info.h"
 #include "capability_info_manager.h"
