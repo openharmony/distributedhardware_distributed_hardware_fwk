@@ -72,44 +72,6 @@ void AccessManagerTest::SetUpTestCase() {}
 void AccessManagerTest::TearDownTestCase() {}
 
 /**
- * @tc.name: Init_001
- * @tc.desc: Verify the sub function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSJK
- */
-HWTEST_F(AccessManagerTest, Init_001, TestSize.Level1)
-{
-    auto ret = AccessManager::GetInstance()->Init();
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-}
-
-/**
- * @tc.name: Uninit_001
- * @tc.desc: Verify the sub function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSJK
- */
-HWTEST_F(AccessManagerTest, UnInit_001, TestSize.Level1)
-{
-    auto ret = AccessManager::GetInstance()->UnInit();
-    EXPECT_EQ(ERR_DH_FWK_ACCESS_UNINIT_DM_FAILED, ret);
-}
-
-/**
- * @tc.name: Uninit_001
- * @tc.desc: Verify the sub function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSJK
- */
-HWTEST_F(AccessManagerTest, UnInit_002, TestSize.Level1)
-{
-    auto ret = AccessManager::GetInstance()->Init();
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-    ret = AccessManager::GetInstance()->UnInit();
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-}
-
-/**
  * @tc.name: SendOnLineEvent_001
  * @tc.desc: Verify the online success
  * @tc.type: FUNC
