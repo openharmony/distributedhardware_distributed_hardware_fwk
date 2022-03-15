@@ -79,6 +79,7 @@ void DistributedHardwareService::OnStop()
 
 int32_t DistributedHardwareService::QuerySinkVersion(std::unordered_map<DHType, std::string> &versionMap)
 {
+    (void)versionMap;
     return 0;
 }
 }

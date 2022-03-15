@@ -127,7 +127,7 @@ int32_t ComponentLoader::GetLocalDHVersion(DHVersion &dhVersion)
 void *ComponentLoader::GetHandler(const std::string &soName)
 {
     if (soName.length() <= 0) {
-        DHLOGE("%s soName length is 0");
+        DHLOGE("%s soName length is 0", soName.c_str());
         return nullptr;
     }
     char path[PATH_MAX + 1] = {0x00};
