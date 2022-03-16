@@ -37,7 +37,7 @@ namespace DistributedHardware {
     const std::string DH_ATTRS = "dh_attrs";
     const std::string DH_LOG_TITLE_TAG = "DHFWK";
     const std::string DH_TASK_NAME_PREFIX = "Task_";
-    const std::string DH_FWK_PKG_NAME = "DBinderBus_" + std::to_string(getpid());
+    const std::string DH_FWK_PKG_NAME = "ohos.dhardware";
     const std::string DH_COMPONENT_VERSIONS = "componentVersions";
     const std::string DH_COMPONENT_TYPE = "dhType";
     const std::string DH_COMPONENT_SINK_VER = "version";
