@@ -119,23 +119,29 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
         DHLOGE("networkId is empty");
         return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
     }
-    if (uuid.empty()) {
+
+    // when other device restart, the device receives online and offline messages in sequence
+    // So, make the cache device handle offline event when other device restart
+    std::string cacheUUID = DHContext::GetInstance().GetUUIDByNetworkId(networkId);
+    if (uuid.empty() && cacheUUID.empty()) {
         DHLOGE("uuid is empty, networkId = %s", GetAnonyString(networkId).c_str());
         return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
     }
 
-    DHLOGI("networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
+    std::string realUUID = uuid.empty() ? cacheUUID : uuid;
 
-    if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
-        DHLOGW("device is already offline, uuid = %s", GetAnonyString(uuid).c_str());
+    DHLOGI("networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(), GetAnonyString(realUUID).c_str());
+
+    if (!DHContext::GetInstance().IsDeviceOnline(realUUID)) {
+        DHLOGW("device is already offline, uuid = %s", GetAnonyString(realUUID).c_str());
         return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_OFFLINE;
     }
 
-    auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, networkId, uuid, "", nullptr);
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, networkId, realUUID, "", nullptr);
     TaskExecutor::GetInstance().PushTask(task);
 
-    DHContext::GetInstance().RemoveOnlineDevice(uuid);
-    CapabilityInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(uuid));
+    DHContext::GetInstance().RemoveOnlineDevice(realUUID);
+    CapabilityInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(realUUID));
 
     return DH_FWK_SUCCESS;
 }

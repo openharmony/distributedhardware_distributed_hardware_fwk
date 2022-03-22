@@ -67,7 +67,7 @@ std::string GetRandomID()
     return ss.str();
 }
 
-std::string GetUUIDByNetworkId(const std::string &networkId)
+std::string GetUUIDBySoftBus(const std::string &networkId)
 {
     if (networkId.empty()) {
         return "";
@@ -109,7 +109,7 @@ DeviceInfo GetLocalDeviceInfo()
         DHLOGE("GetLocalNodeDeviceInfo failed, errCode = %d", ret);
         return devInfo;
     }
-    devInfo.uuid = GetUUIDByNetworkId(info->networkId);
+    devInfo.uuid = GetUUIDBySoftBus(info->networkId);
     devInfo.deviceId = GetDeviceIdByUUID(devInfo.uuid);
     devInfo.deviceName = info->deviceName;
     devInfo.deviceType = info->deviceTypeId;

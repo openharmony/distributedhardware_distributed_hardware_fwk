@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+#include <algorithm>
+
 #include "dh_context.h"
 
 #include "dh_utils_tool.h"
@@ -86,6 +88,17 @@ std::string DHContext::GetNetworkIdByUUID(const std::string &uuid)
         return "";
     }
     return onlineDeviceMap_[uuid];
+}
+
+std::string DHContext::GetUUIDByNetworkId(const std::string &networkId) {
+    std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
+    auto iter = std::find_if(onlineDeviceMap_.begin(), onlineDeviceMap_.end(),
+        [networkId](const auto &item) {return networkId.compare(item.second) == 0; });
+    if (iter == onlineDeviceMap_.end()) {
+        DHLOGE("Can not find uuid, networkId: %s", GetAnonyString(networkId).c_str());
+        return "";
+    }
+    return iter->first;
 }
 
 std::string DHContext::GetUUIDByDeviceId(const std::string &deviceId)
