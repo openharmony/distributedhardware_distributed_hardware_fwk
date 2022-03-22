@@ -117,7 +117,7 @@ void AccessManager::OnDeviceOnline(const DmDeviceInfo &deviceInfo)
         deviceInfo.deviceName, deviceInfo.deviceTypeId);
 
     auto networkId = std::string(deviceInfo.deviceId); // deviceId of DM actually is networkId
-    auto uuid = GetUUIDByNetworkId(networkId);
+    auto uuid = GetUUIDBySoftBus(networkId);
     auto ret =
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
     DHLOGI("online result = %d, networkId = %s, uuid = %s", ret, GetAnonyString(networkId).c_str(),
@@ -131,7 +131,7 @@ void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
         deviceInfo.deviceName, deviceInfo.deviceTypeId);
 
     auto networkId = std::string(deviceInfo.deviceId); // deviceId of DM actually is networkId
-    auto uuid = GetUUIDByNetworkId(networkId);
+    auto uuid = GetUUIDBySoftBus(networkId);
     auto ret =
         DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
     DHLOGI("offline result = %d, networkId = %s, uuid = %s", ret, GetAnonyString(networkId).c_str(),
@@ -156,7 +156,7 @@ void AccessManager::SendTrustedDeviceOnline()
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
     for (const auto &deviceInfo : deviceList) {
         const auto networkId = std::string(deviceInfo.deviceId);
-        const auto uuid = GetUUIDByNetworkId(networkId);
+        const auto uuid = GetUUIDBySoftBus(networkId);
         DHLOGI("Send trusted device online, networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(),
             GetAnonyString(uuid).c_str());
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, deviceInfo.deviceTypeId);

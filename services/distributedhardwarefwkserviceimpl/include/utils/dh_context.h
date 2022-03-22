@@ -41,6 +41,7 @@ public:
     bool IsDeviceOnline(const std::string &uuid);
     size_t GetOnlineCount();
     std::string GetNetworkIdByUUID(const std::string &uuid);
+    std::string GetUUIDByNetworkId(const std::string &networkId);
 
     /* DeviceId is which is hashed by sha256 */
     std::string GetUUIDByDeviceId(const std::string &deviceId);
