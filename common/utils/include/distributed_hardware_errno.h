@@ -82,6 +82,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_SERVICE_STRING_IS_EMPTY = -10803;
     constexpr int32_t ERR_DH_FWK_SERVICE_LOCAL_VERSION_NOT_EXIST = -10804;
     constexpr int32_t ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL = -10805;
+    constexpr int32_t ERR_DH_FWK_SERVICE_REMOTE_IS_NULL = -10806;
 
     /* AccessManager errno, range: [-10900, -10999] */
     constexpr int32_t ERR_DH_FWK_ACCESS_INIT_DM_FAILED = -10900;
