@@ -13,12 +13,9 @@
  * limitations under the License.
  */
 
-#include <cstdint>
-#include <unistd.h>
-#include <climits>
-#include <cstdio>
-#include <cstdlib>
-#include <fcntl.h>
+#ifndef TEST_RESOURCEMANAGER_FUZZER_H
+#define TEST_RESOURCEMANAGER_FUZZER_H
 
 #define FUZZ_PROJECT_NAME "test_ResourceManager_fuzzer"
 
+#endif

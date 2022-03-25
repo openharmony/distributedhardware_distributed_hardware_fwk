@@ -15,8 +15,8 @@
 
 #include "test_ComponentManager_fuzzer.h"
 
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 
 #include "component_disable.h"
 #include "component_enable.h"

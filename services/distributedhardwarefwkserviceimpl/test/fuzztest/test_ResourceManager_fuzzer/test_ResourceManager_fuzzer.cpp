@@ -15,8 +15,8 @@
 
 #include "test_ResourceManager_fuzzer.h"
 
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 #include <string>
 #include <vector>
 

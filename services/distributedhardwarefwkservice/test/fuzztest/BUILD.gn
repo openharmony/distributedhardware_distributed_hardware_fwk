@@ -14,5 +14,5 @@
 group("fuzztest") {
   testonly = true
 
-  deps = [ "test_AccessManager_fuzzer:fuzztest", ]
+  deps = [ "test_AccessManager_fuzzer:fuzztest" ]
 }

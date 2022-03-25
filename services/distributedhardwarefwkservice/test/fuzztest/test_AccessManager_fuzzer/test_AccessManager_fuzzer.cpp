@@ -17,10 +17,9 @@
 
 #include <algorithm>
 #include <chrono>
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 #include <string>
-#include <thread>
 
 #include "access_manager.h"
 #include "distributed_hardware_errno.h"

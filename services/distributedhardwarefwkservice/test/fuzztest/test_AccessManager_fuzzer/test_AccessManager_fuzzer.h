@@ -13,12 +13,10 @@
  * limitations under the License.
  */
 
-#include <cstdint>
-#include <unistd.h>
-#include <climits>
-#include <cstdio>
-#include <cstdlib>
-#include <fcntl.h>
+#ifndef TEST_ACCESSMANAGER_FUZZER_H
+#define TEST_ACCESSMANAGER_FUZZER_H
 
 #define FUZZ_PROJECT_NAME "test_AccessManager_fuzzer"
+
+#endif
 
