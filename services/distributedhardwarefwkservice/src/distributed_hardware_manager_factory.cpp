@@ -136,7 +136,7 @@ int32_t DistributedHardwareManagerFactory::LoadLibrary()
         return DH_FWK_SUCCESS;
     }
 
-    handler_ = dlopen(LIB_NAME, RTLD_NOW);
+    handler_ = dlopen(LIB_NAME, RTLD_NOW | RTLD_NODELETE);
     if (handler_ == nullptr) {
         DHLOGE("open %s failed.", LIB_NAME);
         return ERR_DH_FWK_HARDWARE_MANAGER_LIB_IMPL_OPEN_FAILED;
