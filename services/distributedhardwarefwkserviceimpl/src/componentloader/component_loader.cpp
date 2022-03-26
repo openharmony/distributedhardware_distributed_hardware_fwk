@@ -135,7 +135,7 @@ void *ComponentLoader::GetHandler(const std::string &soName)
         DHLOGE("File canonicalization failed");
         return nullptr;
     }
-    void *pHandler = dlopen(path, RTLD_LAZY);
+    void *pHandler = dlopen(path, RTLD_LAZY | RTLD_NODELETE);
     if (pHandler == nullptr) {
         DHLOGE("%s handler load failed.", path);
         return nullptr;
