@@ -82,6 +82,11 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
         return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
     }
 
+    if (uuid.empty()) {
+        DHLOGE("uuid is empty");
+        return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
+    }
+
     std::lock_guard<std::mutex> lock(mutex_);
     if (distributedHardwareMgrPtr_ == nullptr && !Init()) {
         DHLOGE("distributedHardwareMgr is null");
@@ -102,11 +107,6 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
     if (networkId.empty()) {
         DHLOGE("networkId is empty");
         return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
-    }
-
-    if (uuid.empty()) {
-        DHLOGE("uuid is empty");
-        return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
     }
 
     std::lock_guard<std::mutex> lock(mutex_);
