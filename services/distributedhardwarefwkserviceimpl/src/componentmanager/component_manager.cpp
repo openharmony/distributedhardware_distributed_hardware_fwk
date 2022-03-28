@@ -224,12 +224,12 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
             dhId.c_str(), ret);
         for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
             if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
-                DHLOGW("device is already offline, no need try GetEnableParam, uuid = %s",
+                DHLOGE("device is already offline, no need try GetEnableParam, uuid = %s",
                     GetAnonyString(uuid).c_str());
                 return ret;
             }
             if (GetEnableParam(networkId, uuid, dhId, dhType, param) == DH_FWK_SUCCESS) {
-                DHLOGI("GetEnableParam success, retryCount = %d", retryCount);
+                DHLOGE("GetEnableParam success, retryCount = %d", retryCount);
                 break;
             }
             DHLOGE("GetEnableParam failed, retryCount = %d", retryCount);
