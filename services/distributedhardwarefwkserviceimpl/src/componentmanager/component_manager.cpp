@@ -269,11 +269,11 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < DISABLE_RETRY_MAX_TIMES; retryCount++) {
             if (DHContext::GetInstance().IsDeviceOnline(uuid)) {
-                DHLOGW("device is already online, no need try disable, uuid = %s", GetAnonyString(uuid).c_str());
+                DHLOGE("device is already online, no need try disable, uuid = %s", GetAnonyString(uuid).c_str());
                 return result;
             }
             if (compDisable->Disable(networkId, dhId, find->second) == DH_FWK_SUCCESS) {
-                DHLOGI("disable success, retryCount = %d", retryCount);
+                DHLOGE("disable success, retryCount = %d", retryCount);
                 return DH_FWK_SUCCESS;
             }
             DHLOGE("disable failed, retryCount = %d", retryCount);
