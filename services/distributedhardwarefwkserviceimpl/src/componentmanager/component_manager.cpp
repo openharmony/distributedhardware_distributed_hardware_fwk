@@ -43,6 +43,7 @@ IMPLEMENT_SINGLE_INSTANCE(ComponentManager);
 namespace {
     constexpr int32_t ENABLE_RETRY_MAX_TIMES = 30;
     constexpr int32_t DISABLE_RETRY_MAX_TIMES = 30;
+    constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
 }
 
 ComponentManager::~ComponentManager()
@@ -221,12 +222,24 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("GetEnableParam failed, uuid = %s, dhId = %s, errCode = %d", GetAnonyString(uuid).c_str(),
             dhId.c_str(), ret);
-        return ret;
+        for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
+            if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
+                DHLOGW("device is already offline, no need try GetEnableParam, uuid = %s",
+                    GetAnonyString(uuid).c_str());
+                return ret;
+            }
+            if (GetEnableParam(networkId, uuid, dhId, dhType, param) == DH_FWK_SUCCESS) {
+                DHLOGI("GetEnableParam success, retryCount = %d", retryCount);
+                break;
+            }
+            DHLOGE("GetEnableParam failed, retryCount = %d", retryCount);
+            usleep(ENABLE_PARAM_RETRY_TIME);
+        }
     }
     auto compEnable = std::make_shared<ComponentEnable>();
     auto result = compEnable->Enable(networkId, dhId, param, find->second);
     if (result != DH_FWK_SUCCESS) {
-        for (int retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
+        for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
             if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
                 DHLOGW("device is already offline, no need try enable, uuid = %s", GetAnonyString(uuid).c_str());
                 return result;
@@ -254,7 +267,7 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
     auto compDisable = std::make_shared<ComponentDisable>();
     auto result = compDisable->Disable(networkId, dhId, find->second);
     if (result != DH_FWK_SUCCESS) {
-        for (int retryCount = 0; retryCount < DISABLE_RETRY_MAX_TIMES; retryCount++) {
+        for (int32_t retryCount = 0; retryCount < DISABLE_RETRY_MAX_TIMES; retryCount++) {
             if (DHContext::GetInstance().IsDeviceOnline(uuid)) {
                 DHLOGW("device is already online, no need try disable, uuid = %s", GetAnonyString(uuid).c_str());
                 return result;
