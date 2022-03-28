@@ -40,7 +40,19 @@ void GetAnonyInt32Test(const uint8_t* data, size_t size)
     }
 
     int32_t i = *(reinterpret_cast<const int32_t*>(data));
-    std::string anonyStri = GetAnonyInt32(i);
+    std::string anonyStr = GetAnonyInt32(i);
+}
+
+void UtilsToolTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size <= 0)) {
+        return;
+    }
+
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::string uuid(reinterpret_cast<const char*>(data), size);
+    std::string uuidStr = GetUUIDBySoftBus(networkId);
+    std::string deviceIdStr = GetDeviceIdByUUID(uuid);
 }
 }
 }
@@ -51,6 +63,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     /* Run your code on data */
     OHOS::DistributedHardware::GetAnonyStringTest(data, size);
     OHOS::DistributedHardware::GetAnonyInt32Test(data, size);
+    OHOS::DistributedHardware::UtilsToolTest(data, size);
     return 0;
 }
 
