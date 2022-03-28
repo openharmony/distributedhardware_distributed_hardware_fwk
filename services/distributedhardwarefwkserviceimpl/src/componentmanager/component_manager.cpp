@@ -241,11 +241,11 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
             if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
-                DHLOGW("device is already offline, no need try enable, uuid = %s", GetAnonyString(uuid).c_str());
+                DHLOGE("device is already offline, no need try enable, uuid = %s", GetAnonyString(uuid).c_str());
                 return result;
             }
             if (compEnable->Enable(networkId, dhId, param, find->second) == DH_FWK_SUCCESS) {
-                DHLOGI("enable success, retryCount = %d", retryCount);
+                DHLOGE("enable success, retryCount = %d", retryCount);
                 return DH_FWK_SUCCESS;
             }
             DHLOGE("enable failed, retryCount = %d", retryCount);
