@@ -110,7 +110,7 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
     }
 
     std::lock_guard<std::mutex> lock(mutex_);
-    if (distributedHardwareMgrPtr_ == nullptr) {
+    if (distributedHardwareMgrPtr_ == nullptr && !Init()) {
         DHLOGE("distributedHardwareMgr is null");
         return ERR_DH_FWK_HARDWARE_MANAGER_LOAD_IMPL_FAILED;
     }
