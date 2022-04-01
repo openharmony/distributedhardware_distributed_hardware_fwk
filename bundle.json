@@ -47,10 +47,7 @@
       "test": [
         "//foundation/distributedhardware/distributedhardwarefwk/utils/test/unittest:utils_test",
         "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl/test/unittest:svrimpl_test",
-        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl/test/fuzztest:fuzztest",
-        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice/test/unittest:test",
-        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice/test/fuzztest:fuzztest",
-        "//foundation/distributedhardware/distributedhardwarefwk/utils/test/fuzztest:fuzztest"
+        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice/test/unittest:test"
       ]
     }
   }
