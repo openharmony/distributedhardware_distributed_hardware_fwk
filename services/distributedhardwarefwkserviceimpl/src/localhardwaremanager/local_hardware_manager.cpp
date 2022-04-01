@@ -22,6 +22,7 @@
 #include "device_type.h"
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
+#include "plugin_listener_impl.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -54,6 +55,9 @@ void LocalHardwareManager::Init()
             hardwareHandler = nullptr;
         } else {
             compToolFuncsMap_[dhType] = hardwareHandler;
+            std::shared_ptr<PluginListener> listener = std::make_shared<PluginListenerImpl>(dhType);
+            pluginListenerMap_[dhType] = listener;
+            hardwareHandler->RegisterPluginListener(listener);
         }
     }
 }
@@ -62,6 +66,7 @@ void LocalHardwareManager::UnInit()
 {
     DHLOGI("start");
     compToolFuncsMap_.clear();
+    pluginListenerMap_.clear();
 }
 
 void LocalHardwareManager::QueryLocalHardware(const DHType dhType, IHardwareHandler *hardwareHandler)

@@ -42,6 +42,7 @@ public:
     virtual std::map<std::string, std::string> QueryExtraInfo() = 0;
     virtual bool IsSupportPlugin() = 0;
     virtual void RegisterPluginListener(std::shared_ptr<PluginListener> listener) = 0;
+    virtual void UnRegisterPluginListener() = 0;
 };
 extern "C" __attribute__((visibility("default"))) IHardwareHandler* GetHardwareHandler();
 } // namespace DistributedHardware

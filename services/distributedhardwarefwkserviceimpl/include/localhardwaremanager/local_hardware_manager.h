@@ -46,6 +46,7 @@ private:
 
 private:
     std::map<DHType, IHardwareHandler*> compToolFuncsMap_;
+    std::map<DHType, std::shared_ptr<PluginListener>> pluginListenerMap_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

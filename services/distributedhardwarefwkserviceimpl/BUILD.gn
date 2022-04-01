@@ -53,6 +53,7 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
     "src/componentmanager/component_enable.cpp",
     "src/componentmanager/component_disable.cpp",
     "src/localhardwaremanager/local_hardware_manager.cpp",
+    "src/localhardwaremanager/plugin_listener_impl.cpp",
     "src/resourcemanager/capability_info.cpp",
     "src/resourcemanager/capability_info_manager.cpp",
     "src/resourcemanager/db_adapter.cpp",
