@@ -17,13 +17,14 @@
 
 #include "capability_info_manager.h"
 #include "dh_context.h"
+#include "distributed_hardware_errno.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "PluginListenerImpl"
 
-void PluginListenerImpl::PluginHardware(std::string dhId, std::string attrs)
+void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::string &attrs)
 {
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
@@ -36,10 +37,16 @@ void PluginListenerImpl::PluginHardware(std::string dhId, std::string attrs)
     CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);
 }
 
-void PluginListenerImpl::UnPluginHardware(std::string dhId)
+void PluginListenerImpl::UnPluginHardware(const std::string &dhId)
 {
     std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
-    CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInMem(deviceId);
+    std::shared_ptr<CapabilityInfo> capability = nullptr;
+    auto ret = CapabilityInfoManager::GetInstance()->GetCapability(deviceId, dhId, capability);
+    if ((ret != DH_FWK_SUCCESS) || (capability == nullptr)) {
+        DHLOGE("GetCapability failed, deviceId =%s, dhId = %s, errCode = %d", deviceId.c_str(), dhId.c_str(), ret);
+        return;
+    }
+    CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(capability->GetKey());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
