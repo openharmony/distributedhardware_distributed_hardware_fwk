@@ -27,6 +27,13 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    const uint32_t DH_TYPE_SIZE = 10;
+    const DHType dhTypeFuzz[DH_TYPE_SIZE] = {
+        DHType::CAMERA, DHType::MIC, DHType::SPEAKER, DHType::DISPLAY, DHType::VIRMODEM_MIC,
+        DHType::BUTTON, DHType::A2D, DHType::GPS, DHType::HFP, DHType::VIRMODEM_SPEAKER
+    };
+}
 void ComponentManagerFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size <= 0)) {
@@ -36,10 +43,11 @@ void ComponentManagerFuzzTest(const uint8_t* data, size_t size)
     std::string networkId(reinterpret_cast<const char*>(data), size);
     std::string uuid(reinterpret_cast<const char*>(data), size);
     std::string dhId(reinterpret_cast<const char*>(data), size);
+    DHType dhType = dhTypeFuzz[data[0] % DH_TYPE_SIZE];
 
     ComponentManager::GetInstance().Init();
-    ComponentManager::GetInstance().Enable(networkId, uuid, dhId);
-    ComponentManager::GetInstance().Disable(networkId, uuid, dhId);
+    ComponentManager::GetInstance().Enable(networkId, uuid, dhId, dhType);
+    ComponentManager::GetInstance().Disable(networkId, uuid, dhId, dhType);
     ComponentManager::GetInstance().UnInit();
 }
 }

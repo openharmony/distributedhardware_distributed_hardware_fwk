@@ -24,8 +24,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-MockOnLineTask::MockOnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
-    : OnLineTask(networkId, uuid, dhId)
+MockOnLineTask::MockOnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
+    const DHType dhType) : OnLineTask(networkId, uuid, dhId, dhType)
 {
     DHLOGI("Ctor MockOnLineTask: %s, type: %d", this->GetId().c_str(), this->GetTaskType());
 }
@@ -40,8 +40,14 @@ void MockOnLineTask::DoSyncInfo()
 void MockOnLineTask::CreateEnableTask()
 {
     for (const auto& devInfo : onLineDevInfos) {
+        TaskParam taskParam = {
+            .networkId = devInfo.networkId,
+            .uuid = devInfo.uuid,
+            .dhId = devInfo.dhId,
+            .dhType = devInfo.dhType
+        };
         std::shared_ptr<Task> enableTask = MockTaskFactory::GetInstance().CreateTask(TaskType::ENABLE,
-            devInfo.networkId, devInfo.uuid, devInfo.dhId, shared_from_this());
+            taskParam, shared_from_this());
         TaskExecutor::GetInstance().PushTask(enableTask);
     }
 }

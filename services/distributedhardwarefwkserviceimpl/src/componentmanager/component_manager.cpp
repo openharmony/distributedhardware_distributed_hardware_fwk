@@ -219,10 +219,10 @@ bool ComponentManager::InitCompSink()
     return !compSink_.empty();
 }
 
-int32_t ComponentManager::Enable(const std::string &networkId, const std::string &uuid, const std::string &dhId)
+int32_t ComponentManager::Enable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
+    const DHType dhType)
 {
     DHLOGI("start.");
-    auto dhType = GetDHType(uuid, dhId);
     auto find = compSource_.find(dhType);
     if (find == compSource_.end()) {
         DHLOGE("can not find handler for dhId = %s.", dhId.c_str());
@@ -267,9 +267,9 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
     return result;
 }
 
-int32_t ComponentManager::Disable(const std::string &networkId, const std::string &uuid, const std::string &dhId)
+int32_t ComponentManager::Disable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
+    const DHType dhType)
 {
-    auto dhType = GetDHType(uuid, dhId);
     auto find = compSource_.find(dhType);
     if (find == compSource_.end()) {
         DHLOGE("can not find handler for dhId = %s.", dhId.c_str());

@@ -23,7 +23,7 @@ namespace DistributedHardware {
 class OnLineTask : public Task {
 public:
     OnLineTask() = delete;
-    OnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId);
+    OnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId, const DHType dhType);
     virtual ~OnLineTask();
     virtual void DoTask();
 

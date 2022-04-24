@@ -24,15 +24,21 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-MockOffLineTask::MockOffLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
-    : OffLineTask(networkId, uuid, dhId)
+MockOffLineTask::MockOffLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
+    const DHType dhType) : OffLineTask(networkId, uuid, dhId, dhType)
 {}
 
 void MockOffLineTask::CreateDisableTask()
 {
     for (auto &devInfo : offLineDevInfos) {
+        TaskParam taskParam = {
+            .networkId = devInfo.networkId,
+            .uuid = devInfo.uuid,
+            .dhId = devInfo.dhId,
+            .dhType = devInfo.dhType
+        };
         std::shared_ptr<Task> disableTask = MockTaskFactory::GetInstance().CreateTask(TaskType::DISABLE,
-            devInfo.networkId, devInfo.uuid, devInfo.dhId, shared_from_this());
+            taskParam, shared_from_this());
         TaskExecutor::GetInstance().PushTask(disableTask);
     }
 }

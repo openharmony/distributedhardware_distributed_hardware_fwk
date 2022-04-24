@@ -357,11 +357,16 @@ void CapabilityInfoManager::HandleCapabilityAddChange(const std::vector<Distribu
         }
         std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
         if (networkId.empty()) {
-            DHLOGI("Find network failed and never enable, deviceId: %s", GetAnonyString(uuid).c_str());
+            DHLOGI("Find network failed and never enable, uuid: %s", GetAnonyString(uuid).c_str());
             continue;
         }
-        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, networkId, uuid,
-            capPtr->GetDHId(), nullptr);
+        TaskParam taskParam = {
+            .networkId = networkId,
+            .uuid = uuid,
+            .dhId = capPtr->GetDHId(),
+            .dhType = capPtr->GetDHType()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
         TaskExecutor::GetInstance().PushTask(task);
     }
 }
@@ -393,6 +398,24 @@ void CapabilityInfoManager::HandleCapabilityDeleteChange(const std::vector<Distr
             continue;
         }
         const auto keyString = capPtr->GetKey();
+        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(capPtr->GetDeviceId());
+        if (uuid.empty()) {
+            DHLOGI("Find uuid failed and never disable");
+            continue;
+        }
+        std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
+        if (networkId.empty()) {
+            DHLOGI("Find network failed and never disable, uuid: %s", GetAnonyString(uuid).c_str());
+            continue;
+        }
+        TaskParam taskParam = {
+            .networkId = networkId,
+            .uuid = uuid,
+            .dhId = capPtr->GetDHId(),
+            .dhType = capPtr->GetDHType()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, nullptr);
+        TaskExecutor::GetInstance().PushTask(task);
         DHLOGI("Delete capability key: %s", capPtr->GetAnonymousKey().c_str());
         globalCapInfoMap_.erase(keyString);
     }

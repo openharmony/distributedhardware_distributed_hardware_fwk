@@ -31,8 +31,8 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "OffLineTask"
 
-OffLineTask::OffLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
-    : Task(networkId, uuid, dhId)
+OffLineTask::OffLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
+    const DHType dhType) : Task(networkId, uuid, dhId, dhType)
 {
     this->SetTaskType(TaskType::OFF_LINE);
     this->SetTaskSteps({TaskStep::UNREGISTER_OFFLINE_DISTRIBUTED_HARDWARE, TaskStep::WAIT_UNREGISTGER_COMPLETE,
@@ -75,8 +75,8 @@ void OffLineTask::DoTaskInner()
     }
 
     this->SetTaskState(TaskState::SUCCESS);
-    TaskBoard::GetInstance().RemoveTask(this->GetId());
     DHLOGD("Finish OffLine task, remove it, id: %s", GetId().c_str());
+    TaskBoard::GetInstance().RemoveTask(this->GetId());
 }
 
 void OffLineTask::CreateDisableTask()
@@ -93,8 +93,13 @@ void OffLineTask::CreateDisableTask()
             DHLOGE("capabilityInfo is null");
             continue;
         }
-        auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, GetNetworkId(), GetUUID(),
-            iter->GetDHId(), shared_from_this());
+        TaskParam taskParam = {
+            .networkId = GetNetworkId(),
+            .uuid = GetUUID(),
+            .dhId = iter->GetDHId(),
+            .dhType = iter->GetDHType()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, shared_from_this());
         TaskExecutor::GetInstance().PushTask(task);
     }
 }

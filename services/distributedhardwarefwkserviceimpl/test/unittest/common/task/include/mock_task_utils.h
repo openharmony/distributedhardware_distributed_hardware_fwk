@@ -18,12 +18,15 @@
 
 #include <string>
 
+#include "device_type.h"
+
 namespace OHOS {
 namespace DistributedHardware {
 struct MockDevInfo {
     std::string networkId;
     std::string uuid;
     std::string dhId;
+    DHType dhType;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

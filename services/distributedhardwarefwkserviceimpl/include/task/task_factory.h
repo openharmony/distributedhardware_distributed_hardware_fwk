@@ -26,8 +26,7 @@ namespace DistributedHardware {
 class TaskFactory {
 DECLARE_SINGLE_INSTANCE(TaskFactory);
 public:
-    std::shared_ptr<Task> CreateTask(TaskType taskType, const std::string &networkId, const std::string &uuid,
-        const std::string &dhId, std::shared_ptr<Task> fatherTask);
+    std::shared_ptr<Task> CreateTask(TaskType taskType, TaskParam taskParam, std::shared_ptr<Task> fatherTask);
 };
 } // namespace DistributedHardware
 } // namespace OHOS

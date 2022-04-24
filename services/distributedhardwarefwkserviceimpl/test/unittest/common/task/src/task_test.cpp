@@ -37,19 +37,33 @@ namespace DistributedHardware {
 namespace {
 const std::string DEV_ID_1 = "bb536a637105409e904d4da83790a4a8";
 const std::string DEV_NETWORK_ID_1 = "nt36a637105409e904d4da83790a4a8";
-const MockDevInfo DEV_INFO_11 = { DEV_NETWORK_ID_1, DEV_ID_1, "Camera_1" };
-const MockDevInfo DEV_INFO_12 = { DEV_NETWORK_ID_1, DEV_ID_1, "Speaker_1" };
-const MockDevInfo DEV_INFO_13 = { DEV_NETWORK_ID_1, DEV_ID_1, "Mic_1" };
-const MockDevInfo DEV_INFO_14 = { DEV_NETWORK_ID_1, DEV_ID_1, "Display_1" };
-const MockDevInfo DEV_INFO_15 = { DEV_NETWORK_ID_1, DEV_ID_1, "Input_1" };
+const MockDevInfo DEV_INFO_11 = { DEV_NETWORK_ID_1, DEV_ID_1, "Camera_1", DHType::CAMERA };
+const MockDevInfo DEV_INFO_12 = { DEV_NETWORK_ID_1, DEV_ID_1, "Speaker_1", DHType::SPEAKER };
+const MockDevInfo DEV_INFO_13 = { DEV_NETWORK_ID_1, DEV_ID_1, "Mic_1", DHType::MIC };
+const MockDevInfo DEV_INFO_14 = { DEV_NETWORK_ID_1, DEV_ID_1, "Display_1", DHType::DISPLAY };
+const MockDevInfo DEV_INFO_15 = { DEV_NETWORK_ID_1, DEV_ID_1, "Input_1", DHType::BUTTON };
 
 const std::string DEV_ID_2 = "06d177ffa09543389f3b445b4722f9be";
 const std::string DEV_NETWORK_ID_2 = "ntd177ffa09543389f3b445b4722f9be";
-const MockDevInfo DEV_INFO_21 = { DEV_NETWORK_ID_2, DEV_ID_2, "Camera_1" };
-const MockDevInfo DEV_INFO_22 = { DEV_NETWORK_ID_2, DEV_ID_2, "Speaker_1" };
-const MockDevInfo DEV_INFO_23 = { DEV_NETWORK_ID_2, DEV_ID_2, "Mic_1" };
-const MockDevInfo DEV_INFO_24 = { DEV_NETWORK_ID_2, DEV_ID_2, "Display_1" };
-const MockDevInfo DEV_INFO_25 = { DEV_NETWORK_ID_2, DEV_ID_2, "Input_1" };
+const MockDevInfo DEV_INFO_21 = { DEV_NETWORK_ID_2, DEV_ID_2, "Camera_1", DHType::CAMERA };
+const MockDevInfo DEV_INFO_22 = { DEV_NETWORK_ID_2, DEV_ID_2, "Speaker_1", DHType::SPEAKER };
+const MockDevInfo DEV_INFO_23 = { DEV_NETWORK_ID_2, DEV_ID_2, "Mic_1", DHType::MIC };
+const MockDevInfo DEV_INFO_24 = { DEV_NETWORK_ID_2, DEV_ID_2, "Display_1", DHType::DISPLAY };
+const MockDevInfo DEV_INFO_25 = { DEV_NETWORK_ID_2, DEV_ID_2, "Input_1", DHType::BUTTON };
+
+const TaskParam TASK_PARAM_1 = {
+    .networkId = DEV_NETWORK_ID_1,
+    .uuid = DEV_ID_1,
+    .dhId = "",
+    .dhType = DHType::UNKNOWN
+};
+
+const TaskParam TASK_PARAM_2 = {
+    .networkId = DEV_NETWORK_ID_2,
+    .uuid = DEV_ID_2,
+    .dhId = "",
+    .dhType = DHType::UNKNOWN
+};
 }
 
 void TaskTest::SetUpTestCase(void)
@@ -78,7 +92,7 @@ HWTEST_F(TaskTest, task_test_001, TestSize.Level0)
 {
     std::shared_ptr<MockOnLineTask> onlineTask =
         std::static_pointer_cast<MockOnLineTask>(
-        MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, DEV_NETWORK_ID_1, DEV_ID_1, "", nullptr));
+        MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, TASK_PARAM_1, nullptr));
     onlineTask->SetOnLineDevInfos({ DEV_INFO_11, DEV_INFO_12, DEV_INFO_13, DEV_INFO_14, DEV_INFO_15 });
     TaskExecutor::GetInstance().PushTask(onlineTask);
 
@@ -95,11 +109,11 @@ HWTEST_F(TaskTest, task_test_001, TestSize.Level0)
 HWTEST_F(TaskTest, task_test_002, TestSize.Level0)
 {
     std::shared_ptr<MockOnLineTask> onlineTask1 = std::static_pointer_cast<MockOnLineTask>(
-        MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, DEV_NETWORK_ID_1, DEV_ID_1, "", nullptr));
+        MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, TASK_PARAM_1, nullptr));
     onlineTask1->SetOnLineDevInfos({ DEV_INFO_11, DEV_INFO_12, DEV_INFO_13, DEV_INFO_14, DEV_INFO_15 });
 
     std::shared_ptr<MockOnLineTask> onlineTask2 = std::static_pointer_cast<MockOnLineTask>(
-        MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, DEV_NETWORK_ID_2, DEV_ID_2, "", nullptr));
+        MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, TASK_PARAM_2, nullptr));
     onlineTask2->SetOnLineDevInfos({ DEV_INFO_21, DEV_INFO_22, DEV_INFO_23, DEV_INFO_24, DEV_INFO_25 });
 
     TaskExecutor::GetInstance().PushTask(onlineTask1);
@@ -119,7 +133,7 @@ HWTEST_F(TaskTest, task_test_003, TestSize.Level0)
 {
     std::shared_ptr<MockOffLineTask> offlineTask =
         std::static_pointer_cast<MockOffLineTask>(
-        MockTaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, DEV_NETWORK_ID_1, DEV_ID_1, "", nullptr));
+        MockTaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, TASK_PARAM_1, nullptr));
     offlineTask->SetOffLineDevInfos({ DEV_INFO_11, DEV_INFO_12, DEV_INFO_13, DEV_INFO_14, DEV_INFO_15 });
     TaskExecutor::GetInstance().PushTask(offlineTask);
 
@@ -137,12 +151,12 @@ HWTEST_F(TaskTest, task_test_004, TestSize.Level0)
 {
     std::shared_ptr<MockOnLineTask> onlineTask =
         std::static_pointer_cast<MockOnLineTask>(
-        MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, DEV_NETWORK_ID_1, DEV_ID_1, "", nullptr));
+        MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, TASK_PARAM_1, nullptr));
     onlineTask->SetOnLineDevInfos({ DEV_INFO_11, DEV_INFO_12, DEV_INFO_13, DEV_INFO_14, DEV_INFO_15 });
 
     std::shared_ptr<MockOffLineTask> offlineTask =
         std::static_pointer_cast<MockOffLineTask>(
-        MockTaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, DEV_NETWORK_ID_1, DEV_ID_1, "", nullptr));
+        MockTaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, TASK_PARAM_1, nullptr));
     offlineTask->SetOffLineDevInfos({ DEV_INFO_11, DEV_INFO_12, DEV_INFO_13, DEV_INFO_14, DEV_INFO_15 });
 
     TaskExecutor::GetInstance().PushTask(onlineTask);

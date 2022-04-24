@@ -26,8 +26,8 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "EnableTask"
 
-EnableTask::EnableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
-    : Task(networkId, uuid, dhId)
+EnableTask::EnableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
+    const DHType dhType) : Task(networkId, uuid, dhId, dhType)
 {
     SetTaskType(TaskType::ENABLE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::DO_ENABLE });
@@ -51,13 +51,13 @@ void EnableTask::DoTaskInner()
     auto result = RegisterHardware();
     auto state = (result == DH_FWK_SUCCESS) ? TaskState::SUCCESS : TaskState::FAIL;
     SetTaskState(state);
-    TaskBoard::GetInstance().RemoveTask(GetId());
     DHLOGD("finish enable task, remove it, id = %s", GetId().c_str());
+    TaskBoard::GetInstance().RemoveTask(GetId());
 }
 
 int32_t EnableTask::RegisterHardware()
 {
-    auto result = ComponentManager::GetInstance().Enable(GetNetworkId(), GetUUID(), GetDhId());
+    auto result = ComponentManager::GetInstance().Enable(GetNetworkId(), GetUUID(), GetDhId(), GetDhType());
     DHLOGI("enable task %s, id = %s, uuid = %s, dhId = %s", (result == DH_FWK_SUCCESS) ? "success" : "failed",
         GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetDhId().c_str());
     return result;

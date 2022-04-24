@@ -29,8 +29,8 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "OnLineTask"
 
-OnLineTask::OnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
-    : Task(networkId, uuid, dhId)
+OnLineTask::OnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
+    const DHType dhType) : Task(networkId, uuid, dhId, dhType)
 {
     SetTaskType(TaskType::ON_LINE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::SYNC_ONLINE_INFO, TaskStep::REGISTER_ONLINE_DISTRIBUTED_HARDWARE });
@@ -62,8 +62,8 @@ void OnLineTask::DoTask()
         }
     }
     SetTaskState(TaskState::SUCCESS);
-    TaskBoard::GetInstance().RemoveTask(this->GetId());
     DHLOGD("finish online task, remove it, id = %s.", GetId().c_str());
+    TaskBoard::GetInstance().RemoveTask(this->GetId());
 }
 
 void OnLineTask::DoSyncInfo()
@@ -94,8 +94,13 @@ void OnLineTask::CreateEnableTask()
             DHLOGE("capabilityInfo is null");
             continue;
         }
-        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, GetNetworkId(), GetUUID(),
-            iter->GetDHId(), shared_from_this());
+        TaskParam taskParam = {
+            .networkId = GetNetworkId(),
+            .uuid = GetUUID(),
+            .dhId = iter->GetDHId(),
+            .dhType = iter->GetDHType()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, shared_from_this());
         TaskExecutor::GetInstance().PushTask(task);
     }
 }

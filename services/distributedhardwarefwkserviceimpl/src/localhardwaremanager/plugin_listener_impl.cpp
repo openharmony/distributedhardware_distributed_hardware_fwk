@@ -26,6 +26,7 @@ namespace DistributedHardware {
 
 void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::string &attrs)
 {
+    DHLOGI("plugin start, dhId: %s", GetAnonyString(dhId).c_str());
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
     std::string devName = DHContext::GetInstance().GetDeviceInfo().deviceName;
@@ -35,10 +36,12 @@ void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::stri
     capabilityInfos.push_back(dhCapabilityInfo);
 
     CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);
+    DHLOGI("plugin end, dhId: %s", GetAnonyString(dhId).c_str());
 }
 
 void PluginListenerImpl::UnPluginHardware(const std::string &dhId)
 {
+    DHLOGI("unplugin start, dhId: %s", GetAnonyString(dhId).c_str());
     std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
     std::shared_ptr<CapabilityInfo> capability = nullptr;
     auto ret = CapabilityInfoManager::GetInstance()->GetCapability(deviceId, dhId, capability);
@@ -48,6 +51,7 @@ void PluginListenerImpl::UnPluginHardware(const std::string &dhId)
         return;
     }
     CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(capability->GetKey());
+    DHLOGI("unplugin end, dhId: %s", GetAnonyString(dhId).c_str());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

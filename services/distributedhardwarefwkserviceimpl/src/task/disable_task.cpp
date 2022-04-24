@@ -27,8 +27,8 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DisableTask"
 
-DisableTask::DisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId)
-    : Task(networkId, uuid, dhId)
+DisableTask::DisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
+    const DHType dhType) : Task(networkId, uuid, dhId, dhType)
 {
     SetTaskType(TaskType::DISABLE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::DO_DISABLE });
@@ -61,14 +61,13 @@ void DisableTask::DoTaskInner()
         auto offLineTask = std::static_pointer_cast<OffLineTask>(father);
         offLineTask->NotifyFatherFinish(GetId());
     }
-
-    TaskBoard::GetInstance().RemoveTask(GetId());
     DHLOGD("finish disable task, remove it, id = %s", GetId().c_str());
+    TaskBoard::GetInstance().RemoveTask(GetId());
 }
 
 int32_t DisableTask::UnRegisterHardware()
 {
-    auto result = ComponentManager::GetInstance().Disable(GetNetworkId(), GetUUID(), GetDhId());
+    auto result = ComponentManager::GetInstance().Disable(GetNetworkId(), GetUUID(), GetDhId(), GetDhType());
     DHLOGI("disable task %s, id = %s, uuid = %s, dhId = %s", (result == DH_FWK_SUCCESS) ? "success" : "failed",
         GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetDhId().c_str());
     return result;

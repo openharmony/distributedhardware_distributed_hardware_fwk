@@ -29,27 +29,26 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "TaskFactory"
 
 IMPLEMENT_SINGLE_INSTANCE(TaskFactory);
-std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, const std::string &networkId, const std::string &uuid,
-    const std::string &dhId, std::shared_ptr<Task> fatherTask)
+std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskParam, std::shared_ptr<Task> fatherTask)
 {
     DHLOGI("taskType = %d, networkId = %s, uuid = %s, dhId = %s", static_cast<int32_t>(taskType),
-        GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), dhId.c_str());
+        GetAnonyString(taskParam.networkId).c_str(), GetAnonyString(taskParam.uuid).c_str(), taskParam.dhId.c_str());
     std::shared_ptr<Task> task = nullptr;
     switch (taskType) {
         case TaskType::ENABLE: {
-            task = std::make_shared<EnableTask>(networkId, uuid, dhId);
+            task = std::make_shared<EnableTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId, taskParam.dhType);
             break;
         }
         case TaskType::DISABLE: {
-            task = std::make_shared<DisableTask>(networkId, uuid, dhId);
+            task = std::make_shared<DisableTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId, taskParam.dhType);
             break;
         }
         case TaskType::ON_LINE: {
-            task = std::make_shared<OnLineTask>(networkId, uuid, dhId);
+            task = std::make_shared<OnLineTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId, taskParam.dhType);
             break;
         }
         case TaskType::OFF_LINE: {
-            task = std::make_shared<OffLineTask>(networkId, uuid, dhId);
+            task = std::make_shared<OffLineTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId, taskParam.dhType);
             break;
         }
         default: {

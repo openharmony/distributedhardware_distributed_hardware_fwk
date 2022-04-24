@@ -25,25 +25,29 @@
 namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(MockTaskFactory);
-std::shared_ptr<Task> MockTaskFactory::CreateTask(TaskType taskType, const std::string &networkId,
-    const std::string &uuid, const std::string &dhId, std::shared_ptr<Task> fatherTask)
+std::shared_ptr<Task> MockTaskFactory::CreateTask(TaskType taskType, TaskParam taskParam,
+    std::shared_ptr<Task> fatherTask)
 {
     std::shared_ptr<Task> task = nullptr;
     switch (taskType) {
         case TaskType::ENABLE: {
-            task = std::make_shared<MockEnableTask>(networkId, uuid, dhId);
+            task = std::make_shared<MockEnableTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId,
+                taskParam.dhType);
             break;
         }
         case TaskType::DISABLE: {
-            task = std::make_shared<MockDisableTask>(networkId, uuid, dhId);
+            task = std::make_shared<MockDisableTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId,
+                taskParam.dhType);
             break;
         }
         case TaskType::ON_LINE: {
-            task = std::make_shared<MockOnLineTask>(networkId, uuid, dhId);
+            task = std::make_shared<MockOnLineTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId,
+                taskParam.dhType);
             break;
         }
         case TaskType::OFF_LINE: {
-            task = std::make_shared<MockOffLineTask>(networkId, uuid, dhId);
+            task = std::make_shared<MockOffLineTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId,
+                taskParam.dhType);
             break;
         }
         default: {

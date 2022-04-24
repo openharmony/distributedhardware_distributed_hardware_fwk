@@ -101,8 +101,13 @@ int32_t DistributedHardwareManager::SendOnLineEvent(const std::string &networkId
         DHLOGW("device is already online, uuid = %s", GetAnonyString(uuid).c_str());
         return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE;
     }
-
-    auto task = TaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, networkId, uuid, "", nullptr);
+    TaskParam taskParam = {
+        .networkId = networkId,
+        .uuid = uuid,
+        .dhId = "",
+        .dhType = DHType::UNKNOWN
+    };
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, taskParam, nullptr);
     TaskExecutor::GetInstance().PushTask(task);
     DHContext::GetInstance().AddOnlineDevice(uuid, networkId);
     CapabilityInfoManager::GetInstance()->CreateManualSyncCount(GetDeviceIdByUUID(uuid));
@@ -136,8 +141,13 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
         DHLOGW("device is already offline, uuid = %s", GetAnonyString(realUUID).c_str());
         return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_OFFLINE;
     }
-
-    auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, networkId, realUUID, "", nullptr);
+    TaskParam taskParam = {
+        .networkId = networkId,
+        .uuid = realUUID,
+        .dhId = "",
+        .dhType = DHType::UNKNOWN
+    };
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);
     TaskExecutor::GetInstance().PushTask(task);
 
     DHContext::GetInstance().RemoveOnlineDevice(realUUID);
