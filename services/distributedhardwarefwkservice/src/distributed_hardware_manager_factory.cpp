@@ -65,7 +65,7 @@ void DistributedHardwareManagerFactory::UnInit()
     CheckAllDevicesOffline();
 }
 
-void DistributedHardwareManagerFactory::CheckAallDevicesOffline()
+void DistributedHardwareManagerFactory::CheckAllDevicesOffline()
 {
     std::vector<DmDeviceInfo> deviceList;
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);

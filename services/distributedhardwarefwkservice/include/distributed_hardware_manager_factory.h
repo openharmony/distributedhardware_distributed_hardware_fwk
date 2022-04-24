@@ -37,7 +37,7 @@ private:
     void UnInit();
     int32_t LoadLibrary();
     void CloseLibrary();
-    void CheckAallDevicesOffline();
+    void CheckAllDevicesOffline();
 
 private:
     void *handler_ { nullptr };
