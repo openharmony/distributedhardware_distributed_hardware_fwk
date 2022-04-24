@@ -18,6 +18,7 @@
 #include <dlfcn.h>
 #include <memory>
 
+#include "device_manager.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
@@ -61,7 +62,27 @@ void DistributedHardwareManagerFactory::UnInit()
     distributedHardwareMgrPtr_->Release();
 
     CloseLibrary();
-    DHLOGD("success");
+    CheckAllDevicesOffline();
+}
+
+void DistributedHardwareManagerFactory::CheckAallDevicesOffline()
+{
+    std::vector<DmDeviceInfo> deviceList;
+    DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
+    if (deviceList.size() == 0) {
+        DHLOGI("exit sa process");
+        exit(0);
+    }
+
+    DHLOGI("reinitialize");
+    Init();
+    for (const auto &deviceInfo : deviceList) {
+        const auto networkId = std::string(deviceInfo.deviceId);
+        const auto uuid = GetUUIDBySoftBus(networkId);
+        DHLOGI("Send trusted device online, networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(),
+            GetAnonyString(uuid).c_str());
+        SendOnLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
+    }
 }
 
 bool DistributedHardwareManagerFactory::IsInit()
