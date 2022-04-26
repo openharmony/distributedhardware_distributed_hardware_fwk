@@ -43,7 +43,6 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
     "//utils/native/base:utils",
     "//foundation/distributedhardware/devicemanager/interfaces/inner_kits/native_cpp:devicemanagersdk",
-    ":distributedhardware_fwk.cfg",
     "${services_path}/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl"
   ]
 
