@@ -43,7 +43,7 @@
         "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
         "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
         "//foundation/distributedhardware/distributedhardwarefwk/sa_profile:dhfwk_sa_profile",
-        "//foundation/distributedhardware/distributedhardwarefwk/sa_profile:distributedhardware_fwk.cfg"
+        "//foundation/distributedhardware/distributedhardwarefwk/sa_profile:dhardware.cfg"
       ],
       "test": [
         "//foundation/distributedhardware/distributedhardwarefwk/utils/test/unittest:utils_test",

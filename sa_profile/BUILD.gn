@@ -19,9 +19,9 @@ ohos_sa_profile("dhfwk_sa_profile") {
   part_name = "distributed_hardware_fwk"
 }
 
-ohos_prebuilt_etc("distributedhardware_fwk.cfg") {
+ohos_prebuilt_etc("dhardware.cfg") {
   relative_install_dir = "init"
-  source = "distributedhardware_fwk.cfg"
+  source = "dhardware.cfg"
   part_name = "distributed_hardware_fwk"
   subsystem_name = "distributedhardware"
 }
