@@ -37,6 +37,7 @@ private:
     void UnInit();
     int32_t LoadLibrary();
     void CloseLibrary();
+    void CheckExitSAOrNot();
 
 private:
     void *handler_ { nullptr };

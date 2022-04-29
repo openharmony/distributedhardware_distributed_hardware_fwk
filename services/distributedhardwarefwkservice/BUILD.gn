@@ -13,7 +13,8 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
-import("//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+import(
+    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
 
 ohos_shared_library("distributedhardwarefwksvr") {
   include_dirs = [
@@ -31,26 +32,25 @@ ohos_shared_library("distributedhardwarefwksvr") {
   ]
 
   sources = [
+    "src/accessmanager/access_manager.cpp",
+    "src/distributed_hardware_manager_factory.cpp",
     "src/distributed_hardware_service.cpp",
     "src/distributed_hardware_stub.cpp",
-    "src/distributed_hardware_manager_factory.cpp",
-    "src/accessmanager/access_manager.cpp",
   ]
 
   deps = [
+    "${services_path}/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
     "${utils_path}:distributedhardwareutils",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms",
-    "//utils/native/base:utils",
     "//foundation/distributedhardware/devicemanager/interfaces/inner_kits/native_cpp:devicemanagersdk",
-    ":distributedhardware_fwk.cfg",
-    "${services_path}/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl"
+    "//utils/native/base:utils",
   ]
 
   defines = [
-      "HI_LOG_ENABLE",
-      "DH_LOG_TAG=\"dhfwksvr\"",
-      "LOG_DOMAIN=0xD004100",
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"dhfwksvr\"",
+    "LOG_DOMAIN=0xD004100",
   ]
 
   external_deps = [

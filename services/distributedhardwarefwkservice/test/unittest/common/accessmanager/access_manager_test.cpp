@@ -54,7 +54,13 @@ public:
     std::mutex testAccessMutex_;
 };
 
-void AccessManagerTest::SetUp() {}
+void AccessManagerTest::SetUp()
+{
+    // at last one device online, ensure sa not exit
+    std::string networkId = "00000000000000000000000000000000";
+    std::string uuid = "99999999999999999999999999999999";
+    DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, TEST_DEV_TYPE_PAD);
+}
 
 void AccessManagerTest::TearDown()
 {
@@ -76,7 +82,7 @@ void AccessManagerTest::TearDownTestCase() {}
  */
 HWTEST_F(AccessManagerTest, SendOnLineEvent_001, TestSize.Level1)
 {
-    ASSERT_FALSE(DistributedHardwareManagerFactory::GetInstance().IsInit());
+    ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
 
     for (const auto &dev : TEST_DEVICES) {
         auto ret =
@@ -94,17 +100,17 @@ HWTEST_F(AccessManagerTest, SendOnLineEvent_001, TestSize.Level1)
  */
 HWTEST_F(AccessManagerTest, SendOnLineEvent_002, TestSize.Level1)
 {
-    ASSERT_FALSE(DistributedHardwareManagerFactory::GetInstance().IsInit());
+    ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
 
     auto ret =
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent("", TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
     ASSERT_EQ(ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY, ret);
-    ASSERT_FALSE(DistributedHardwareManagerFactory::GetInstance().IsInit());
+    ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
 
     ret =
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(TEST_DEVICES[0].first, "", TEST_DEV_TYPE_PAD);
     ASSERT_EQ(ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY, ret);
-    ASSERT_FALSE(DistributedHardwareManagerFactory::GetInstance().IsInit());
+    ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
 }
 
 /**
@@ -129,7 +135,7 @@ HWTEST_F(AccessManagerTest, SendOffLineEvent_001, TestSize.Level1)
             DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(dev.first, dev.second, TEST_DEV_TYPE_PAD);
         ASSERT_EQ(DH_FWK_SUCCESS, ret);
     }
-    ASSERT_FALSE(DistributedHardwareManagerFactory::GetInstance().IsInit());
+    ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
 }
 
 /**
