@@ -46,7 +46,8 @@ void EnableTask::DoTask()
 
 void EnableTask::DoTaskInner()
 {
-    DHLOGD("id = %s, uuid = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetDhId().c_str());
+    DHLOGD("id = %s, uuid = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
+        GetAnonyString(GetDhId()).c_str());
     SetTaskState(TaskState::RUNNING);
     auto result = RegisterHardware();
     auto state = (result == DH_FWK_SUCCESS) ? TaskState::SUCCESS : TaskState::FAIL;
@@ -59,7 +60,7 @@ int32_t EnableTask::RegisterHardware()
 {
     auto result = ComponentManager::GetInstance().Enable(GetNetworkId(), GetUUID(), GetDhId(), GetDhType());
     DHLOGI("enable task %s, id = %s, uuid = %s, dhId = %s", (result == DH_FWK_SUCCESS) ? "success" : "failed",
-        GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetDhId().c_str());
+        GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetDhId()).c_str());
     return result;
 }
 } // namespace DistributedHardware

@@ -32,16 +32,17 @@ ComponentEnable::~ComponentEnable() {}
 int32_t ComponentEnable::Enable(const std::string &networkId, const std::string &dhId, const EnableParam &param,
     IDistributedHardwareSource *handler)
 {
-    DHLOGD("networkId = %s dhId = %s.", GetAnonyString(networkId).c_str(), dhId.c_str());
+    DHLOGD("networkId = %s dhId = %s.", GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str());
     if (handler == nullptr) {
-        DHLOGE("handler is null, networkId = %s dhId = %s.", GetAnonyString(networkId).c_str(), dhId.c_str());
+        DHLOGE("handler is null, networkId = %s dhId = %s.", GetAnonyString(networkId).c_str(),
+            GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_PARA_INVALID;
     }
 
     auto ret = handler->RegisterDistributedHardware(networkId, dhId, param, shared_from_this());
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("RegisterDistributedHardware failed, networkId = %s dhId = %s.", GetAnonyString(networkId).c_str(),
-            dhId.c_str());
+            GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_COMPONENT_REGISTER_FAILED;
     }
 
@@ -50,7 +51,8 @@ int32_t ComponentEnable::Enable(const std::string &networkId, const std::string 
     auto waitStatus = conVar_.wait_for(lock, std::chrono::milliseconds(ENABLE_TIMEOUT_MS),
         [this]() { return status_ != std::numeric_limits<int32_t>::max(); });
     if (!waitStatus) {
-        DHLOGE("enable timeout, networkId = %s dhId = %s", GetAnonyString(networkId).c_str(), dhId.c_str());
+        DHLOGE("enable timeout, networkId = %s dhId = %s", GetAnonyString(networkId).c_str(),
+            GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT;
     }
     return (status_ == DH_FWK_SUCCESS) ? DH_FWK_SUCCESS : ERR_DH_FWK_COMPONENT_ENABLE_FAILED;
@@ -61,10 +63,10 @@ int32_t ComponentEnable::OnRegisterResult(const std::string &networkId, const st
 {
     if (status == DH_FWK_SUCCESS) {
         DHLOGI("enable success, networkId = %s, dhId = %s, data = %s.", GetAnonyString(networkId).c_str(),
-            dhId.c_str(), data.c_str());
+            GetAnonyString(dhId).c_str(), data.c_str());
     } else {
         DHLOGE("enable failed, networkId = %s, dhId = %s, status = %d, data = %s.", GetAnonyString(networkId).c_str(),
-            dhId.c_str(), status, data.c_str());
+            GetAnonyString(dhId).c_str(), status, data.c_str());
     }
 
     std::unique_lock<std::mutex> lock(mutex_);
