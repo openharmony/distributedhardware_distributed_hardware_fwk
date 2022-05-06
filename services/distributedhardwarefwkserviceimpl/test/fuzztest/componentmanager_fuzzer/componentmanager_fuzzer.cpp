@@ -13,23 +13,28 @@
  * limitations under the License.
  */
 
-#include "test_accessmanager_fuzzer.h"
+#include "componentmanager_fuzzer.h"
 
-#include <algorithm>
-#include <chrono>
 #include <cstddef>
 #include <cstdint>
-#include <string>
 
-#include "access_manager.h"
+#include "component_disable.h"
+#include "component_enable.h"
+#include "component_manager.h"
+#include "constants.h"
 #include "distributed_hardware_errno.h"
-#include "distributed_hardware_manager_factory.h"
+#include "distributed_hardware_log.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
-
-void AccessManagerFuzzTest(const uint8_t* data, size_t size)
+namespace {
+    const uint32_t DH_TYPE_SIZE = 10;
+    const DHType dhTypeFuzz[DH_TYPE_SIZE] = {
+        DHType::CAMERA, DHType::MIC, DHType::SPEAKER, DHType::DISPLAY, DHType::VIRMODEM_MIC,
+        DHType::BUTTON, DHType::A2D, DHType::GPS, DHType::HFP, DHType::VIRMODEM_SPEAKER
+    };
+}
+void ComponentManagerFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size <= 0)) {
         return;
@@ -37,9 +42,13 @@ void AccessManagerFuzzTest(const uint8_t* data, size_t size)
 
     std::string networkId(reinterpret_cast<const char*>(data), size);
     std::string uuid(reinterpret_cast<const char*>(data), size);
+    std::string dhId(reinterpret_cast<const char*>(data), size);
+    DHType dhType = dhTypeFuzz[data[0] % DH_TYPE_SIZE];
 
-    DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(
-        networkId, uuid, TEST_DEV_TYPE_PAD);
+    ComponentManager::GetInstance().Init();
+    ComponentManager::GetInstance().Enable(networkId, uuid, dhId, dhType);
+    ComponentManager::GetInstance().Disable(networkId, uuid, dhId, dhType);
+    ComponentManager::GetInstance().UnInit();
 }
 }
 }
@@ -48,7 +57,7 @@ void AccessManagerFuzzTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DistributedHardware::AccessManagerFuzzTest(data, size);
+    OHOS::DistributedHardware::ComponentManagerFuzzTest(data, size);
     return 0;
 }
 

@@ -18,8 +18,9 @@ import(
     "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("test_utils_fuzzer") {
-  module_out_path = "distributed_hardware_fwk/test_utils_fuzzer"
+ohos_fuzztest("UtilsFuzzTest") {
+  module_out_path = "distributed_hardware_fwk/utils"
+  fuzz_config_file = "//foundation/distributedhardware/distributedhardwarefwk/utils/test/fuzztest/utils_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
@@ -33,7 +34,7 @@ ohos_fuzztest("test_utils_fuzzer") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "test_utils_fuzzer.cpp" ]
+  sources = [ "utils_fuzzer.cpp" ]
 
   deps = [ "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils" ]
 }
@@ -41,6 +42,6 @@ ohos_fuzztest("test_utils_fuzzer") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":test_utils_fuzzer" ]
+  deps = [ ":UtilsFuzzTest" ]
 }
 ###############################################################################

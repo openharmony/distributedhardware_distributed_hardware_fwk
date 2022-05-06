@@ -14,9 +14,13 @@
   "component": {
     "name": "distributed_hardware_fwk",
     "subsystem": "distributedhardware",
-    "syscap": [ "SystemCapability.distributedhardware.distributed_hardware_fwk" ],
+    "syscap": [
+      "SystemCapability.distributedhardware.distributed_hardware_fwk"
+    ],
     "features": [],
-    "adapted_system_type": [ "standard" ],
+    "adapted_system_type": [
+      "standard"
+    ],
     "rom": "128K",
     "ram": "6M",
     "deps": {
@@ -48,7 +52,10 @@
       "test": [
         "//foundation/distributedhardware/distributedhardwarefwk/utils/test/unittest:utils_test",
         "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl/test/unittest:svrimpl_test",
-        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice/test/unittest:test"
+        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice/test/unittest:test",
+        "//foundation/distributedhardware/distributedhardwarefwk/utils/test/fuzztest:fuzztest",
+        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl/test/fuzztest:fuzztest",
+        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice/test/fuzztest:fuzztest"
       ]
     }
   }

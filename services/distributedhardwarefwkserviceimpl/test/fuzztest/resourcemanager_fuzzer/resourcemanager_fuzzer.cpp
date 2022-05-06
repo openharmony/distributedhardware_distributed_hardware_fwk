@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "test_resourcemanager_fuzzer.h"
+#include "resourcemanager_fuzzer.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -28,10 +28,13 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-constexpr uint16_t DHTYPE_SIZE = 5;
-const DHType dhTypeFuzz[DHTYPE_SIZE] = {
-    DHType::CAMERA, DHType::MIC, DHType::SPEAKER, DHType::DISPLAY, DHType::BUTTON
-};
+namespace {
+    const uint32_t DH_TYPE_SIZE = 10;
+    const DHType dhTypeFuzz[DH_TYPE_SIZE] = {
+        DHType::CAMERA, DHType::MIC, DHType::SPEAKER, DHType::DISPLAY, DHType::VIRMODEM_MIC,
+        DHType::BUTTON, DHType::A2D, DHType::GPS, DHType::HFP, DHType::VIRMODEM_SPEAKER
+    };
+}
 
 void ResourceManagerFuzzTest(const uint8_t* data, size_t size)
 {
@@ -43,7 +46,7 @@ void ResourceManagerFuzzTest(const uint8_t* data, size_t size)
     std::string devId(reinterpret_cast<const char*>(data), size);
     std::string devName(reinterpret_cast<const char*>(data), size);
     uint16_t devType = *(reinterpret_cast<const uint16_t*>(data));
-    DHType dhType = dhTypeFuzz[data[0] % DHTYPE_SIZE];
+    DHType dhType = dhTypeFuzz[data[0] % DH_TYPE_SIZE];
     std::string dhAttrs(reinterpret_cast<const char*>(data), size);
 
     std::shared_ptr<CapabilityInfo> capInfo =

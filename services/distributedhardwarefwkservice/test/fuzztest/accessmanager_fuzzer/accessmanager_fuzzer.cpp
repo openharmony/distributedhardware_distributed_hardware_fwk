@@ -13,37 +13,23 @@
  * limitations under the License.
  */
 
-#include "test_utils_fuzzer.h"
+#include "accessmanager_fuzzer.h"
 
+#include <algorithm>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <string>
 
-#include "anonymous_string.h"
-#include "dh_utils_tool.h"
+#include "access_manager.h"
+#include "distributed_hardware_errno.h"
+#include "distributed_hardware_manager_factory.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-void GetAnonyStringTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size <= 0)) {
-        return;
-    }
+constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
 
-    std::string str(reinterpret_cast<const char*>(data), size);
-    std::string anonyStr = GetAnonyString(str);
-}
-
-void GetAnonyInt32Test(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size < sizeof(int32_t))) {
-        return;
-    }
-
-    int32_t i = *(reinterpret_cast<const int32_t*>(data));
-    std::string anonyStr = GetAnonyInt32(i);
-}
-
-void UtilsToolTest(const uint8_t* data, size_t size)
+void AccessManagerFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size <= 0)) {
         return;
@@ -51,8 +37,9 @@ void UtilsToolTest(const uint8_t* data, size_t size)
 
     std::string networkId(reinterpret_cast<const char*>(data), size);
     std::string uuid(reinterpret_cast<const char*>(data), size);
-    std::string uuidStr = GetUUIDBySoftBus(networkId);
-    std::string deviceIdStr = GetDeviceIdByUUID(uuid);
+
+    DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(
+        networkId, uuid, TEST_DEV_TYPE_PAD);
 }
 }
 }
@@ -61,9 +48,7 @@ void UtilsToolTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DistributedHardware::GetAnonyStringTest(data, size);
-    OHOS::DistributedHardware::GetAnonyInt32Test(data, size);
-    OHOS::DistributedHardware::UtilsToolTest(data, size);
+    OHOS::DistributedHardware::AccessManagerFuzzTest(data, size);
     return 0;
 }
 

@@ -14,5 +14,5 @@
 group("fuzztest") {
   testonly = true
 
-  deps = [ "test_utils_fuzzer:fuzztest" ]
+  deps = [ "utils_fuzzer:fuzztest" ]
 }

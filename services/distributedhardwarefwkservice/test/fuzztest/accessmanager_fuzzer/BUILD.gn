@@ -18,18 +18,21 @@ import(
     "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("test_componentmanager_fuzzer") {
-  module_out_path = "distributed_hardware_fwk/test_componentmanager_fuzzer"
+ohos_fuzztest("AccessmanagerFuzzTest") {
+  module_out_path = "distributed_hardware_fwk/accessmanager"
+  fuzz_config_file = "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer"
 
   include_dirs = [
+    "//utils/native/base/include",
+    "//utils/system/safwk/native/include",
+    "//foundation/distributedhardware/devicemanager/interfaces/inner_kits/native_cpp/include",
+    "//foundation/distributedhardware/devicemanager/common/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
-    "${services_path}/distributedhardwarefwkserviceimpl/include",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/componentmanager",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//utils/native/base/include",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/accessmanager",
   ]
   cflags = [
     "-g",
@@ -37,25 +40,35 @@ ohos_fuzztest("test_componentmanager_fuzzer") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "test_componentmanager_fuzzer.cpp" ]
+  sources = [ "accessmanager_fuzzer.cpp" ]
 
   deps = [
-    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
-    "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils",
+    "${utils_path}:distributedhardwareutils",
+    "//foundation/distributedhardware/devicemanager/interfaces/inner_kits/native_cpp:devicemanagersdk",
+    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
   ]
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"test_componentmanager_fuzzer\"",
+    "DH_LOG_TAG=\"AccessmanagerFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [ "ipc:ipc_core" ]
+  external_deps = [
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+    "startup_l2:syspara",
+  ]
 }
 
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":test_componentmanager_fuzzer" ]
+
+  deps = [ ":AccessmanagerFuzzTest" ]
 }
 ###############################################################################
