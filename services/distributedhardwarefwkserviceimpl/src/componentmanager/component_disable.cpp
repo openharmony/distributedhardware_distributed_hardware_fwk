@@ -34,7 +34,7 @@ int32_t ComponentDisable::Disable(const std::string &networkId, const std::strin
 {
     DHLOGD("networkId = %s dhId = %s.", GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str());
     if (handler == nullptr) {
-        DHLOGE("handler is null, networkId = %s dhId = %s.",GetAnonyString(networkId).c_str(),
+        DHLOGE("handler is null, networkId = %s dhId = %s.", GetAnonyString(networkId).c_str(),
             GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_PARA_INVALID;
     }
