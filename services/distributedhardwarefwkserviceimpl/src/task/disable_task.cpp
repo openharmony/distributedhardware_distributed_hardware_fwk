@@ -47,7 +47,8 @@ void DisableTask::DoTask()
 
 void DisableTask::DoTaskInner()
 {
-    DHLOGD("id = %s, uuid = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetDhId().c_str());
+    DHLOGD("id = %s, uuid = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
+        GetAnonyString(GetDhId()).c_str());
     SetTaskState(TaskState::RUNNING);
 
     /* trigger Unregister Distributed Hardware Task, sync function */
@@ -69,7 +70,7 @@ int32_t DisableTask::UnRegisterHardware()
 {
     auto result = ComponentManager::GetInstance().Disable(GetNetworkId(), GetUUID(), GetDhId(), GetDhType());
     DHLOGI("disable task %s, id = %s, uuid = %s, dhId = %s", (result == DH_FWK_SUCCESS) ? "success" : "failed",
-        GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetDhId().c_str());
+        GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetDhId()).c_str());
     return result;
 }
 } // namespace DistributedHardware

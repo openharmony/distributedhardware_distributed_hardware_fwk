@@ -118,7 +118,7 @@ void AccessManager::OnDeviceOnline(const DmDeviceInfo &deviceInfo)
 {
     std::lock_guard<std::mutex> lock(accessMutex_);
     DHLOGI("start, networkId = %s, deviceName = %s, deviceTypeId = %d", GetAnonyString(deviceInfo.deviceId).c_str(),
-        deviceInfo.deviceName, deviceInfo.deviceTypeId);
+        GetAnonyString(deviceInfo.deviceName).c_str(), deviceInfo.deviceTypeId);
 
     auto networkId = std::string(deviceInfo.deviceId); // deviceId of DM actually is networkId
     auto uuid = GetUUIDBySoftBus(networkId);
@@ -132,7 +132,7 @@ void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
 {
     std::lock_guard<std::mutex> lock(accessMutex_);
     DHLOGI("start, networkId = %s, deviceName = %s, deviceTypeId = %d", GetAnonyString(deviceInfo.deviceId).c_str(),
-        deviceInfo.deviceName, deviceInfo.deviceTypeId);
+        GetAnonyString(deviceInfo.deviceName).c_str(), deviceInfo.deviceTypeId);
 
     auto networkId = std::string(deviceInfo.deviceId); // deviceId of DM actually is networkId
     auto uuid = GetUUIDBySoftBus(networkId);
