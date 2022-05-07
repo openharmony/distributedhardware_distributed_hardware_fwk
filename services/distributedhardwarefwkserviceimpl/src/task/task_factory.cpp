@@ -33,7 +33,7 @@ std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskP
 {
     DHLOGI("taskType = %d, networkId = %s, uuid = %s, dhId = %s",
         static_cast<int32_t>(taskType), GetAnonyString(taskParam.networkId).c_str(),
-            GetAnonyString(taskParam.uuid).c_str(), GetAnonyString(taskParam.dhId).c_str());
+        GetAnonyString(taskParam.uuid).c_str(), GetAnonyString(taskParam.dhId).c_str());
     std::shared_ptr<Task> task = nullptr;
     switch (taskType) {
         case TaskType::ENABLE: {
