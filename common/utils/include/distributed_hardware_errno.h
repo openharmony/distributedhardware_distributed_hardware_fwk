@@ -89,6 +89,11 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_ACCESS_UNINIT_DM_FAILED = -10901;
     constexpr int32_t ERR_DH_FWK_ACCESS_REGISTER_DM_FAILED = -10902;
     constexpr int32_t ERR_DH_FWK_ACCESS_UNREGISTER_DM_FAILED = -10903;
+
+    /* Hidump errno, range: [-11000, -11000] */
+    constexpr int32_t ERR_DH_FWK_HIDUMP_ERROR = -11000;
+    constexpr int32_t ERR_DH_FWK_HIDUMP_INVALID_ARGS = -11001;
+    constexpr int32_t ERR_DH_FWK_HIDUMP_UNKONW = 11002;
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

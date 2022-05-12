@@ -21,6 +21,7 @@
 
 #include "distributed_hardware_stub.h"
 #include "single_instance.h"
+#include "dhfwksa_hidump_helper.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -35,6 +36,7 @@ public:
     DistributedHardwareService(int32_t saId, bool runOnCreate);
     ~DistributedHardwareService() = default;
     int32_t QuerySinkVersion(std::unordered_map<DHType, std::string> &versionMap) override;
+    int Dump(int32_t fd, const std::vector<std::u16string>& args) override;
 
 protected:
     void OnStart() override;

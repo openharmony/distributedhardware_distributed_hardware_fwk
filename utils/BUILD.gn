@@ -31,6 +31,7 @@ ohos_shared_library("distributedhardwareutils") {
     "src/anonymous_string.cpp",
     "src/dh_utils_tool.cpp",
     "src/log/dh_log.cpp",
+    "dh_hidump_helper.cpp",
   ]
 
   deps = [

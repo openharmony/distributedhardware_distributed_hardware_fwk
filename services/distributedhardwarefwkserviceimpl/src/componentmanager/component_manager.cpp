@@ -25,6 +25,7 @@
 #include "component_loader.h"
 #include "constants.h"
 #include "dh_context.h"
+#include "dh_hidump_helper.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -263,6 +264,8 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
         }
         return result;
     }
+    DHHidumpHelper::GetInstance().DumpEnabledComps(const DHType dhType, const std::string &dhId,
+        const int32_t enableResult);
     DHLOGI("enable result is %d, uuid = %s, dhId = %s", result, GetAnonyString(uuid).c_str(),
         GetAnonyString(dhId).c_str());
     return result;

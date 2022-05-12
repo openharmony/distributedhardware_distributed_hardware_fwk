@@ -23,6 +23,7 @@
 #include "system_ability_definition.h"
 
 #include "access_manager.h"
+#include "dh_hidump_helper.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
@@ -81,6 +82,29 @@ int32_t DistributedHardwareService::QuerySinkVersion(std::unordered_map<DHType, 
 {
     (void)versionMap;
     return 0;
+}
+
+int DistributedHardwareService::Dump(int32_t fd, const std::vector<std::u16string>& args)
+{
+    DHLOGI("DistributedHardwareService  Dump.");
+    std::string result;
+    std::vector<std::string> argsStr;
+    for (auto item : args) {
+        argsStr.emplace_back(Str16ToStr8(item));
+    }
+
+    if (!distributed_hardware_hidump_helper.h::GetInstance().Dump(argsStr, result)) {
+        DHLOGE("Hidump error");
+        return ERR_DH_SCREEN_HIDUMP_ERROR;
+    }
+
+    int ret = dprintf(fd, "%s\n", result.c_str());
+    if (ret < 0) {
+        DHLOGE("dprintf error");
+        return ERR_DH_SCREEN_HIDUMP_ERROR;
+    }
+
+    return ERR_OK;
 }
 } // namespace DistributedHardware
 } // namespace OHOS
