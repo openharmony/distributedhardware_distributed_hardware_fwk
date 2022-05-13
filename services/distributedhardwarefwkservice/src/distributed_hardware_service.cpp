@@ -93,18 +93,20 @@ int DistributedHardwareService::Dump(int32_t fd, const std::vector<std::u16strin
         argsStr.emplace_back(Str16ToStr8(item));
     }
 
-    if (!distributed_hardware_hidump_helper.h::GetInstance().Dump(argsStr, result)) {
-        DHLOGE("Hidump error");
-        return ERR_DH_SCREEN_HIDUMP_ERROR;
-    }
 
-    int ret = dprintf(fd, "%s\n", result.c_str());
-    if (ret < 0) {
-        DHLOGE("dprintf error");
-        return ERR_DH_SCREEN_HIDUMP_ERROR;
-    }
+        if (!AccessManager::GetInstance()->Dump(argsStr, result)) {
+            DHLOGE("Hidump error");
+            return ERR_DH_SCREEN_HIDUMP_ERROR;
+        }
 
-    return ERR_OK;
+        int ret = dprintf(fd, "%s\n", result.c_str());
+        if (ret < 0) {
+            DHLOGE("dprintf error");
+        }
+
+
+
+    return DH_FWK_SUCCESS;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

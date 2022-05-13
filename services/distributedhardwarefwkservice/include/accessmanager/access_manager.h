@@ -48,6 +48,8 @@ public:
     virtual void OnDeviceReady(const DmDeviceInfo &deviceInfo) override;
     virtual void OnDeviceChanged(const DmDeviceInfo &deviceInfo) override;
 
+    int32_t Dump(const std::vector<std::string> argsStr, std::string result);
+
 private:
     AccessManager() = default;
     int32_t RegisterDevStateCallback();

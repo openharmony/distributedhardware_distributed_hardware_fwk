@@ -17,6 +17,7 @@
 
 #include <unordered_map>
 
+#include "capability_info_manager.h"
 #include "distributed_hardware_log.h"
 
 namespace OHOS {
@@ -34,7 +35,7 @@ const std::unordered_map<std::string, HidumpFlag> ARGS_MAP = {
     { LOADED_COMP_LIST, HidumpFlag::GET_LOADED_COMP_LIST },
 };
 
-const std::map<DHType, std::string> mapDhTypeName = {
+const std::unordered_map<DHType, std::string> mapDhTypeName = {
     { DHType::UNKNOWN, "UNKNOWN" },
     { DHType::CAMERA, "CAMERA" },
     { DHType::MIC, "MIC" },
@@ -96,23 +97,6 @@ bool DHHidumpHelper::Dump(const std::vector<std::string>& args, std::string &res
     return ret;
 }
 
-// int32_t DHHidumpHelper::ProcessOneParam(const std::string& args, std::string &result)
-// {
-//     DHLOGI("ProcessOneParam  Dump.");
-//     HidumpParam hidumpParam;
-//     auto operatorIter = ARGS_MAP.find(args);
-//     if (operatorIter != ARGS_MAP.end()) {
-//         hidumpParam.hidumpFlag = operatorIter->second;
-//     }
-
-//     if (hidumpParam.hidumpFlag == HidumpFlag::GET_HELP) {
-//         ShowHelp(result);
-//         return DH_SUCCESS;
-//     }
-
-//     return ProcessDump(hidumpParam, result);
-// }
-
 int32_t DHHidumpHelper::ProcessDump(const HidumpFlag& flag, std::string &result)
 {
     DHLOGI("ProcessDump  Dump.");
@@ -124,7 +108,7 @@ int32_t DHHidumpHelper::ProcessDump(const HidumpFlag& flag, std::string &result)
             break;
         }
         case HidumpFlag::GET_LOADED_COMP_LIST: {
-            errCode = GetAllLoadCompTypes(result);
+            errCode = ShowAllLoadCompTypes(result);
             break;
         }
         default: {
@@ -136,14 +120,64 @@ int32_t DHHidumpHelper::ProcessDump(const HidumpFlag& flag, std::string &result)
     return errCode;
 }
 
-int32_t DHHidumpHelper::GetAllLoadCompTypes(std::string &result)
+void DumpLoadedComps(const DHType dhType)
+{
+    loadedCompsSet_.emplace(dhType);
+}
+
+void DumpUnloadedComps(const DHType dhType)
+{
+    auto it = loadedCompsSet_.find(dhType);
+    if (it != loadedCompsSet_.end()) {
+        loadedCompsSet_.earse(it);
+    }
+}
+
+int32_t DHHidumpHelper::ShowAllLoadCompTypes(std::string &result)
 {
     DHLOGI("GetAllLoadCompTypes  Dump.");
-    std::vector<DHType> compTypes = ComponentLoader::GetInstance().GetAllCompTypes();
     result.append("loaded components:\n");
-    for (auto comp : compTypes) {
+    result.append("    ");
+    for (auto comp : loadedCompsSet_) {
         result.append(mapDhTypeName[comp]);
-        result.append(" ");
+        result.append(" | ");
+    }
+    result.append("\n");
+    return DH_SUCCESS;
+}
+
+void DHHidumpHelper::DumpEnabledComps(const DHType dhType, const std::string &dhId)
+{
+    HidumpDeviceInfo info = {
+        .dhId_ = dhId,
+        .dhType_ = dhType,
+    }
+    deviceInfoSet_.emplace(info);
+}
+
+void DHHidumpHelper::DumpDisabledComps(const DHType dhType, const std::string &dhId)
+{
+    HidumpDeviceInfo info = {
+        .dhId_ = dhId,
+        .dhType_ = dhType,
+    }
+    auto it = enabledDeviceInfoSet_.find(info);
+    if (it != enabledDeviceInfoSet_.end()) {
+        deviceInfoSet_.earse(it);
+    }
+}
+
+int32_t DHHidumpHelper::ShowAllEnabledComps(std::string &result)
+{
+    DHLOGI("GetAllLoadCompTypes  Dump.");
+    result.append("loaded components:\n");
+    result.append("    ");
+    for (auto info : enabledDeviceInfoSet_) {
+        result.append(" DHType : ");
+        result.append(mapDhTypeName[info.dhType_]);
+        result.append(" DHId : ");
+        result.append(info.dhId_);
+        result.append(" | ");
     }
     result.append("\n");
     return DH_SUCCESS;

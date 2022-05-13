@@ -34,33 +34,45 @@ struct HidumpParam {
     std::string args;
 };
 
-struct EnabledDeviceInfo {
-    std::string dhId;
-    DHType dhType;
+struct HidumpDeviceInfo {
+    std::string dhId_;
+    DHType dhType_;
+
     bool operator <(const DHInfo& other) const {
         return ((this->dhId < other.dhId) || (this->dhType < other.dhType));
     }
+};
+
+enum class HidumpTaskType : int32_t {
+    UNKNOWN = 0,
+    ENABLE = 1,
+    DISABLE = 2,
+    ON_LINE = 3,
+    OFF_LINE = 4
 };
 
 class DHHidumpHelper {
 DECLARE_SINGLE_INSTANCE_BASE(DHHidumpHelper);
 public:
     bool Dump(const std::vector<std::string>& args, std::string &result);
+
+    void DumpLoadedComps(const DHType dhType);
+    void DumpUnloadedComps(const DHType dhType);
+    void DumpEnabledComps(const DHType dhType, const std::string &dhId);
+    void DumpDisabledComps(const DHType dhType, const std::string &dhId);
+
 private:
     explicit HidumpHelper() = default;
     ~HidumpHelper() = default;
     int32_t ProcessOneParam(const std::string& args, std::string &result);
-    // int32_t ProcessTwoParam(const std::string& firstParam, const std::string& secondParam, std::string &result);
     void ShowHelp(std::string &result);
     void ShowIllealInfomation(std::string &result);
     int32_t ProcessDump(const HidumpParam& hidumpParam, std::string &result);
 
-    // int32_t GetEnableInfo(std::string &result);
-
-    void DumpEnabledComps();
 
 private:
-    std::set<EnabledDeviceInfo> setEnabledDeviceInfo_;
+    std::set<DHType> loadedCompsSet_;
+    std::set<HidumpDeviceInfo> deviceInfoSet_;
 };
 
 } // namespace DistributedHardware

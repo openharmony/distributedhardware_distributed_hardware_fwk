@@ -64,6 +64,7 @@ void TaskBoard::AddTask(std::shared_ptr<Task> task)
         return;
     }
     this->tasks_.emplace(task->GetId(), task);
+    DumpAllTask();
 }
 
 void TaskBoard::RemoveTask(std::string taskId)
@@ -71,6 +72,7 @@ void TaskBoard::RemoveTask(std::string taskId)
     std::lock_guard<std::mutex> lock(tasksMtx_);
     DHLOGI("Remove task, id: %s", taskId.c_str());
     RemoveTaskInner(taskId);
+    DumpAllTask();
     if (tasks_.empty()) {
         conVar_.notify_one();
     }
@@ -84,6 +86,18 @@ void TaskBoard::RemoveTaskInner(std::string taskId)
     }
 
     tasks_.erase(taskId);
+}
+
+void TaskBoard::DumpAllTask()
+{
+    for (auto task : tasks_) {
+        task. 
+        GetId
+        GetDhId
+        GetDhType
+        GetTaskType
+    }
+    
 }
 } // namespace DistributedHardware
 } // namespace OHOS

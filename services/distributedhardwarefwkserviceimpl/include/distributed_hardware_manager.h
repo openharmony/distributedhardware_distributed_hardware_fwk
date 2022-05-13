@@ -31,6 +31,8 @@ public:
     int32_t SendOffLineEvent(const std::string &networkId, const std::string &uuid, uint16_t deviceType) override;
     size_t GetOnLineCount() override;
     int32_t GetComponentVersion(std::unordered_map<DHType, std::string> &versionMap) override;
+
+    int32_t Dump(const std::vector<std::string> argsStr, std::string result);
 };
 } // namespace DistributedHardware
 } // namespace OHOS

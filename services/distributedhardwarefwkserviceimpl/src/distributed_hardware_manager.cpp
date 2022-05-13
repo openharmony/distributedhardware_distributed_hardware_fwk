@@ -176,5 +176,10 @@ int32_t DistributedHardwareManager::GetComponentVersion(std::unordered_map<DHTyp
     }
     return DH_FWK_SUCCESS;
 }
+
+int32_t DistributedHardwareManager::Dump(const std::vector<std::string> argsStr, std::string result)
+{
+    
+}
 } // namespace DistributedHardware
 } // namespace OHOS
