@@ -51,7 +51,6 @@ private:
     int32_t ShowHelp(std::string &result);
     int32_t ShowIllealInfomation(std::string &result);
 };
-
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

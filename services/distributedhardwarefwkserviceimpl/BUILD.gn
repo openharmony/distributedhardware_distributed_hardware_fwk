@@ -44,6 +44,8 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
     "src/componentmanager/component_manager.cpp",
     "src/distributed_hardware_manager.cpp",
     "src/distributed_hardware_proxy.cpp",
+    "src/hidumphelper/enabled_comps_dump.cpp",
+    "src/hidumphelper/hidump_helper.cpp",
     "src/localhardwaremanager/local_hardware_manager.cpp",
     "src/localhardwaremanager/plugin_listener_impl.cpp",
     "src/resourcemanager/capability_info.cpp",
@@ -60,9 +62,6 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
     "src/task/task_factory.cpp",
     "src/utils/dh_context.cpp",
     "src/versionmanager/version_manager.cpp",
-    "src/hidumphelper/enabled_comps_dump.cpp",
-    "src/hidumphelper/hidump_helper.cpp",
-
   ]
 
   deps = [
