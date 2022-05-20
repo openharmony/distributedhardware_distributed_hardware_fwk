@@ -166,5 +166,10 @@ void AccessManager::SendTrustedDeviceOnline()
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
     }
 }
+
+int32_t AccessManager::Dump(const std::vector<std::string> &argsStr, std::string &result)
+{
+    return DistributedHardwareManagerFactory::GetInstance().Dump(argsStr, result);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

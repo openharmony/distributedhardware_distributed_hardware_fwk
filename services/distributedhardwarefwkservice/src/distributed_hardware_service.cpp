@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -81,6 +81,29 @@ int32_t DistributedHardwareService::QuerySinkVersion(std::unordered_map<DHType, 
 {
     (void)versionMap;
     return 0;
+}
+
+int DistributedHardwareService::Dump(int32_t fd, const std::vector<std::u16string>& args)
+{
+    DHLOGI("DistributedHardwareService  Dump.");
+    
+    std::vector<std::string> argsStr {};
+    for (auto item : args) {
+        argsStr.emplace_back(Str16ToStr8(item));
+    }
+
+    std::string result("");
+    int ret = AccessManager::GetInstance()->Dump(argsStr, result);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Dump error, ret = %d", ret);
+    }
+
+    if (dprintf(fd, "%s\n", result.c_str()) < 0) {
+        DHLOGE("Hidump dprintf error");
+        ret = ERR_DH_FWK_HIDUMP_DPRINTF_ERROR;
+    }
+
+    return ret;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

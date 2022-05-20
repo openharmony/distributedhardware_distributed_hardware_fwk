@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,7 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "hidump_helper.h"
 #include "local_hardware_manager.h"
 #include "task_board.h"
 #include "task_executor.h"
@@ -175,6 +176,11 @@ int32_t DistributedHardwareManager::GetComponentVersion(std::unordered_map<DHTyp
         versionMap.emplace(iter->first, iter->second.sinkVersion);
     }
     return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareManager::Dump(const std::vector<std::string> &argsStr, std::string &result)
+{
+    return HidumpHelper::GetInstance().Dump(argsStr, result);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

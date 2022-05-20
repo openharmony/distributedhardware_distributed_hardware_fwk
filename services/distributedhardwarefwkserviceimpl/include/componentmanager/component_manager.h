@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@
 #define OHOS_DISTRIBUTED_HARDWARE_COMPONENT_MANAGER_H
 
 #include <map>
+#include <set>
 #include <unordered_map>
 #include <mutex>
 #include <future>
@@ -43,6 +44,8 @@ public:
         const DHType dhType);
     int32_t Disable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
         const DHType dhType);
+
+    void DumpLoadedComps(std::set<DHType> &compSourceType, std::set<DHType> &compSinkType);
 
 private:
     enum class Action : int32_t {
