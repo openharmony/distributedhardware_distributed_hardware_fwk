@@ -83,6 +83,7 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
     "bundle_framework:appexecfwk_core",
     "distributeddatamgr:distributeddata_inner",
     "eventhandler:libeventhandler",
+    "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
