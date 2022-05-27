@@ -55,7 +55,6 @@ int32_t ComponentDisable::Disable(const std::string &networkId, const std::strin
             GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
     }
-
     return (status_ == DH_FWK_SUCCESS) ? DH_FWK_SUCCESS : ERR_DH_FWK_COMPONENT_DISABLE_FAILED;
 }
 

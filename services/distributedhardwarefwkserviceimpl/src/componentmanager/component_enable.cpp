@@ -19,7 +19,6 @@
 #include "constants.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#include "dh_hitrace.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -56,7 +55,6 @@ int32_t ComponentEnable::Enable(const std::string &networkId, const std::string 
             GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT;
     }
-
     return (status_ == DH_FWK_SUCCESS) ? DH_FWK_SUCCESS : ERR_DH_FWK_COMPONENT_ENABLE_FAILED;
 }
 
