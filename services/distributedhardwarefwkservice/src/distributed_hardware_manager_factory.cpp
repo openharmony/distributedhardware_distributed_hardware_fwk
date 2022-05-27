@@ -17,6 +17,7 @@
 
 #include <dlfcn.h>
 #include <memory>
+#include <thread>
 
 #include "anonymous_string.h"
 #include "constants.h"
@@ -84,7 +85,8 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
         const auto uuid = GetUUIDBySoftBus(networkId);
         DHLOGI("Send trusted device online, networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(),
             GetAnonyString(uuid).c_str());
-        SendOnLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
+        std::thread(&DistributedHardwareManagerFactory::SendOnLineEvent, this, networkId, uuid,
+            deviceInfo.deviceTypeId).detach();
     }
 }
 
