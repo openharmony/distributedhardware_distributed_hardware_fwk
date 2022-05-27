@@ -40,7 +40,6 @@ int32_t ComponentEnable::Enable(const std::string &networkId, const std::string 
         return ERR_DH_FWK_PARA_INVALID;
     }
 
-    StartTrace(DHFWK_HITRACE_LABEL, DH_FWK_COMPONENT_ENABLE_START);
     auto ret = handler->RegisterDistributedHardware(networkId, dhId, param, shared_from_this());
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("RegisterDistributedHardware failed, networkId = %s dhId = %s.", GetAnonyString(networkId).c_str(),
@@ -57,7 +56,7 @@ int32_t ComponentEnable::Enable(const std::string &networkId, const std::string 
             GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT;
     }
-    FinishTrace(DHFWK_HITRACE_LABEL);
+
     return (status_ == DH_FWK_SUCCESS) ? DH_FWK_SUCCESS : ERR_DH_FWK_COMPONENT_ENABLE_FAILED;
 }
 

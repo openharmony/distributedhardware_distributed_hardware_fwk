@@ -66,9 +66,7 @@ std::map<std::string, DHType> g_mapDhTypeName = {
 
 int32_t ComponentLoader::Init()
 {
-    StartTrace(DHFWK_HITRACE_LABEL, DH_FWK_COMPONENT_LOAD_START);
     return ParseConfig();
-    FinishTrace(DHFWK_HITRACE_LABEL);
 }
 
 std::vector<DHType> ComponentLoader::GetAllCompTypes()
@@ -245,6 +243,8 @@ int32_t ComponentLoader::ParseConfig()
     std::map<DHType, CompConfig> dhtypeMap;
     int32_t ret;
     DHLOGI("ParseConfig start");
+    StartTrace(DHFWK_HITRACE_LABEL, DH_FWK_COMPONENT_LOAD_START);
+
     std::string jsonStr = Readfile(COMPONENTSLOAD_PROFILE_PATH);
     if (jsonStr.length() == 0) {
         DHLOGE("profile is empty return");
@@ -252,6 +252,8 @@ int32_t ComponentLoader::ParseConfig()
     }
     ret = GetCompPathAndVersion(jsonStr, dhtypeMap);
     GetAllHandler(dhtypeMap);
+
+    FinishTrace(DHFWK_HITRACE_LABEL);
     return ret;
 }
 

@@ -19,7 +19,6 @@
 #include "constants.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#include "dh_hitrace.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -40,7 +39,6 @@ int32_t ComponentDisable::Disable(const std::string &networkId, const std::strin
         return ERR_DH_FWK_PARA_INVALID;
     }
 
-    StartTrace(DHFWK_HITRACE_LABEL, DH_FWK_COMPONENT_DISABLE_START);
     auto ret = handler->UnregisterDistributedHardware(networkId, dhId, shared_from_this());
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("UnregisterDistributedHardware failed, networkId = %s dhId = %s.", GetAnonyString(networkId).c_str(),
@@ -57,7 +55,7 @@ int32_t ComponentDisable::Disable(const std::string &networkId, const std::strin
             GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
     }
-    FinishTrace(DHFWK_HITRACE_LABEL);
+
     return (status_ == DH_FWK_SUCCESS) ? DH_FWK_SUCCESS : ERR_DH_FWK_COMPONENT_DISABLE_FAILED;
 }
 

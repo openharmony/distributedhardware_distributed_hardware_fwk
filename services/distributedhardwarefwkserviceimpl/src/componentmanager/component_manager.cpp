@@ -25,6 +25,7 @@
 #include "component_loader.h"
 #include "constants.h"
 #include "dh_context.h"
+#include "dh_hitrace.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -249,7 +250,11 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
         }
     }
     auto compEnable = std::make_shared<ComponentEnable>();
+
+    StartTrace(DHFWK_HITRACE_LABEL, DH_FWK_COMPONENT_ENABLE_START);
     auto result = compEnable->Enable(networkId, dhId, param, find->second);
+    FinishTrace(DHFWK_HITRACE_LABEL);
+
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
             if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
@@ -280,7 +285,11 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
         return ERR_DH_FWK_PARA_INVALID;
     }
     auto compDisable = std::make_shared<ComponentDisable>();
+
+    StartTrace(DHFWK_HITRACE_LABEL, DH_FWK_COMPONENT_DISABLE_START);
     auto result = compDisable->Disable(networkId, dhId, find->second);
+    FinishTrace(DHFWK_HITRACE_LABEL);
+
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < DISABLE_RETRY_MAX_TIMES; retryCount++) {
             if (DHContext::GetInstance().IsDeviceOnline(uuid)) {
