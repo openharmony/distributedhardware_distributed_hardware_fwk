@@ -12,7 +12,9 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+import(
+    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+
 module_out_path = "distributed_hardware_fwk/resource_manager_test"
 
 config("module_private_config") {
@@ -30,7 +32,7 @@ config("module_private_config") {
     "//utils/native/base/include",
     "//third_party/json/include",
     "//utils/native/base/include",
-    "//utils/system/safwk/native/include"
+    "//utils/system/safwk/native/include",
   ]
 }
 
@@ -38,25 +40,23 @@ config("module_private_config") {
 ohos_unittest("ResourceManagerTest") {
   module_out_path = module_out_path
 
-  sources = [
-    "src/resource_manager_test.cpp"
-  ]
+  sources = [ "src/resource_manager_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
+    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
+    "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
-    "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils",
-    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl"
   ]
 
   external_deps = [
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "distributeddatamgr:distributeddata_inner",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "distributeddatamgr:distributeddata_inner"
   ]
 }
 

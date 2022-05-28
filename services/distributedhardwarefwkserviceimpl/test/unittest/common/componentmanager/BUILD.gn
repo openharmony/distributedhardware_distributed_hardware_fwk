@@ -12,7 +12,9 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+import(
+    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+
 module_out_path = "distributed_hardware_fwk/component_manager_test"
 
 config("module_private_config") {
@@ -33,17 +35,15 @@ config("module_private_config") {
 ohos_unittest("ComponentManagerTest") {
   module_out_path = module_out_path
 
-  sources = [
-    "src/component_manager_test.cpp"
-  ]
+  sources = [ "src/component_manager_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//third_party/googletest:gtest_main",
-    "//third_party/googletest:gmock_main",
+    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
     "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils",
-    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl"
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
   ]
 
   defines = [
@@ -52,9 +52,7 @@ ohos_unittest("ComponentManagerTest") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [
-    "ipc:ipc_core",
-  ]
+  external_deps = [ "ipc:ipc_core" ]
 }
 
 group("component_manager_test") {
