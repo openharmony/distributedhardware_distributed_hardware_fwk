@@ -253,7 +253,6 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
 
     StartTrace(DHFWK_HITRACE_LABEL, DH_FWK_COMPONENT_ENABLE_START);
     auto result = compEnable->Enable(networkId, dhId, param, find->second);
-    FinishTrace(DHFWK_HITRACE_LABEL);
 
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
@@ -264,6 +263,7 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
             if (compEnable->Enable(networkId, dhId, param, find->second) == DH_FWK_SUCCESS) {
                 DHLOGE("enable success, retryCount = %d", retryCount);
                 EnabledCompsDump::GetInstance().DumpEnabledComp(uuid, dhType, dhId);
+                FinishTrace(DHFWK_HITRACE_LABEL);
                 return DH_FWK_SUCCESS;
             }
             DHLOGE("enable failed, retryCount = %d", retryCount);
@@ -272,6 +272,8 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
     }
     DHLOGI("enable result is %d, uuid = %s, dhId = %s", result, GetAnonyString(uuid).c_str(),
         GetAnonyString(dhId).c_str());
+
+    FinishTrace(DHFWK_HITRACE_LABEL);
     EnabledCompsDump::GetInstance().DumpEnabledComp(uuid, dhType, dhId);
     return result;
 }
@@ -288,7 +290,6 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
 
     StartTrace(DHFWK_HITRACE_LABEL, DH_FWK_COMPONENT_DISABLE_START);
     auto result = compDisable->Disable(networkId, dhId, find->second);
-    FinishTrace(DHFWK_HITRACE_LABEL);
 
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < DISABLE_RETRY_MAX_TIMES; retryCount++) {
@@ -299,6 +300,7 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
             if (compDisable->Disable(networkId, dhId, find->second) == DH_FWK_SUCCESS) {
                 DHLOGE("disable success, retryCount = %d", retryCount);
                 EnabledCompsDump::GetInstance().DumpDisabledComp(uuid, dhType, dhId);
+                FinishTrace(DHFWK_HITRACE_LABEL);
                 return DH_FWK_SUCCESS;
             }
             DHLOGE("disable failed, retryCount = %d", retryCount);
@@ -307,7 +309,9 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
     }
     DHLOGI("disable result is %d, uuid = %s, dhId = %s", result, GetAnonyString(uuid).c_str(),
         GetAnonyString(dhId).c_str());
+
     EnabledCompsDump::GetInstance().DumpDisabledComp(uuid, dhType, dhId);
+    FinishTrace(DHFWK_HITRACE_LABEL);
     return result;
 }
 
