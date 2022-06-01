@@ -19,7 +19,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-
 void CompEnableTraceStart(const DHType dhType)
 {
     std::string dhTypeStr = "UNKNOWN";
@@ -27,7 +26,7 @@ void CompEnableTraceStart(const DHType dhType)
     if (it != DHTypeStrMap.end()) {
         dhTypeStr = it->second;
     }
-    StartTrace(DHFWK_HITRACE_LABEL, + dhTypeStr + "_ENABLE_START");
+    StartTrace(DHFWK_HITRACE_LABEL, dhTypeStr + "_ENABLE_START");
 }
 
 void CompDisableTraceStart(const DHType dhType)

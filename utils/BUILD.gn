@@ -29,6 +29,7 @@ ohos_shared_library("distributedhardwareutils") {
 
   sources = [
     "src/anonymous_string.cpp",
+    "src/dh_utils_hitrace.cpp",
     "src/dh_utils_tool.cpp",
     "src/log/dh_log.cpp",
   ]
