@@ -66,8 +66,8 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
 
   deps = [
     "${utils_path}:distributedhardwareutils",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
+    "//foundation/ability/ability_runtime/interfaces/innerkits/ability_manager:ability_manager",
+    "//foundation/ability/ability_runtime/services/abilitymgr:abilityms",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//utils/native/base:utils",
   ]

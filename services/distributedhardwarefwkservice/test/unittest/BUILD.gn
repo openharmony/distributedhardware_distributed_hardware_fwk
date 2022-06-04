@@ -14,5 +14,5 @@
 group("test") {
   testonly = true
 
-  deps = [ "common/accessmanager:AccessManagerTest", ]
+  deps = [ "common/accessmanager:AccessManagerTest" ]
 }
