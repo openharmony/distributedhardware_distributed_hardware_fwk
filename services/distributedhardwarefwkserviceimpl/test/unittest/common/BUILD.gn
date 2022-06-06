@@ -56,7 +56,7 @@ ohos_unittest("DistributedHardwareManagerTest") {
   external_deps = [
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
-    "dsoftbus_standard:softbus_client",
+    "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
   ]
