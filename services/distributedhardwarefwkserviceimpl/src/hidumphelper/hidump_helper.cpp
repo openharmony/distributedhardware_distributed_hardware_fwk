@@ -41,20 +41,6 @@ const std::unordered_map<std::string, HidumpFlag> MAP_ARGS = {
     { CAPABILITY_LIST, HidumpFlag::GET_CAPABILITY_LIST },
 };
 
-std::unordered_map<DHType, std::string> g_mapDhTypeName = {
-    { DHType::UNKNOWN, "UNKNOWN" },
-    { DHType::CAMERA, "CAMERA" },
-    { DHType::MIC, "MIC" },
-    { DHType::SPEAKER, "SPEAKER" },
-    { DHType::DISPLAY, "DISPLAY" },
-    { DHType::GPS, "GPS" },
-    { DHType::BUTTON, "BUTTON" },
-    { DHType::HFP, "HFP" },
-    { DHType::A2D, "A2D" },
-    { DHType::VIRMODEM_MIC, "VIRMODEM_MIC" },
-    { DHType::VIRMODEM_SPEAKER, "VIRMODEM_SPEAKER" },
-};
-
 std::unordered_map<TaskType, std::string> g_mapTaskType = {
     { TaskType::UNKNOWN, "UNKNOWN" },
     { TaskType::ENABLE, "ENABLE" },
@@ -146,8 +132,13 @@ int32_t HidumpHelper::ShowAllLoadedComps(std::string &result)
     result.append("\n    Source     : [");
     if (!loadedCompSource.empty()) {
         for (auto compSource : loadedCompSource) {
+            std::string dhTypeStr = "UNKNOWN";
+            auto it = DHTypeStrMap.find(compSource);
+            if (it != DHTypeStrMap.end()) {
+                dhTypeStr = it->second;
+            }
             result.append(" ");
-            result.append(g_mapDhTypeName[compSource]);
+            result.append(dhTypeStr);
             result.append(",");
         }
         result.replace(result.size() - 1, 1, " ");
@@ -157,8 +148,13 @@ int32_t HidumpHelper::ShowAllLoadedComps(std::string &result)
     result.append("\n    Sink       : [");
     if (!loadedCompSink.empty()) {
         for (auto compSink : loadedCompSink) {
+            std::string dhTypeStr = "UNKNOWN";
+            auto it = DHTypeStrMap.find(compSink);
+            if (it != DHTypeStrMap.end()) {
+                dhTypeStr = it->second;
+            }
             result.append(" ");
-            result.append(g_mapDhTypeName[compSink]);
+            result.append(dhTypeStr);
             result.append(",");
         }
         result.replace(result.size() - 1, 1, " ");
@@ -180,12 +176,17 @@ int32_t HidumpHelper::ShowAllEnabledComps(std::string &result)
     }
 
     for (auto info : compInfoSet) {
+        std::string dhTypeStr = "UNKNOWN";
+        auto it = DHTypeStrMap.find(info.dhType_);
+        if (it != DHTypeStrMap.end()) {
+            dhTypeStr = it->second;
+        }
         result.append("\n{");
-        result.append("\n    DeviceId : ");
-        result.append(GetAnonyString(info.deviceId_));
-        result.append("\n    DHType   : ");
-        result.append(g_mapDhTypeName[info.dhType_]);
-        result.append("\n    DHId     : ");
+        result.append("\n    NetworkId      : ");
+        result.append(GetAnonyString(info.networkId_));
+        result.append("\n    DHType         : ");
+        result.append(dhTypeStr);
+        result.append("\n    DHId           : ");
         result.append(GetAnonyString(info.dhId_));
         result.append("\n},");
     }
@@ -205,13 +206,18 @@ int32_t HidumpHelper::ShowAllTaskInfos(std::string &result)
     }
 
     for (auto taskInfo : taskInfos) {
+        std::string dhTypeStr = "UNKNOWN";
+        auto it = DHTypeStrMap.find(taskInfo.taskParm.dhType);
+        if (it != DHTypeStrMap.end()) {
+            dhTypeStr = it->second;
+        }
         result.append("\n{");
         result.append("\n    TaskId     : ");
         result.append(taskInfo.id);
         result.append("\n    TaskType   : ");
         result.append(g_mapTaskType[taskInfo.taskType]);
         result.append("\n    DHType     : ");
-        result.append(g_mapDhTypeName[taskInfo.taskParm.dhType]);
+        result.append(dhTypeStr);
         result.append("\n    DHId       : ");
         result.append(GetAnonyString(taskInfo.taskParm.dhId));
         result.append("\n    TaskState  : ");
@@ -241,6 +247,11 @@ int32_t HidumpHelper::ShowAllCapabilityInfos(std::string &result)
     }
 
     for (auto info : capInfos) {
+        std::string dhTypeStr = "UNKNOWN";
+        auto it = DHTypeStrMap.find(info.GetDHType());
+        if (it != DHTypeStrMap.end()) {
+            dhTypeStr = it->second;
+        }
         result.append("\n{");
         result.append("\n    DeviceName     : ");
         result.append(GetAnonyString(info.GetDeviceName()));
@@ -249,7 +260,7 @@ int32_t HidumpHelper::ShowAllCapabilityInfos(std::string &result)
         result.append("\n    DeviceType     : ");
         result.append(std::to_string(info.GetDeviceType()));
         result.append("\n    DHType         : ");
-        result.append(g_mapDhTypeName[info.GetDHType()]);
+        result.append(dhTypeStr);
         result.append("\n    DHId           : ");
         result.append(GetAnonyString(info.GetDHId()));
         result.append("\n    DHAttrs        :\n");

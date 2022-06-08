@@ -17,6 +17,7 @@
 #define OHOS_DISTRIBUTED_HARDWARE_DEVICE_TYPE_H
 
 #include <string>
+#include <unordered_map>
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -33,6 +34,19 @@ enum class DHType : uint32_t {
     VIRMODEM_MIC = 0x100,     // Cellular call MIC
     VIRMODEM_SPEAKER = 0x200, // Cellular call Speaker
     MAX_DH = 0x80000000
+};
+
+const std::unordered_map<DHType, std::string> DHTypeStrMap = {
+    { DHType::CAMERA, "CAMERA" },
+    { DHType::MIC, "MIC" },
+    { DHType::SPEAKER, "SPEAKER" },
+    { DHType::DISPLAY, "DISPLAY" },
+    { DHType::GPS, "GPS" },
+    { DHType::BUTTON, "BUTTON" },
+    { DHType::HFP, "HFP" },
+    { DHType::A2D, "A2D" },
+    { DHType::VIRMODEM_MIC, "VIRMODEM_MIC" },
+    { DHType::VIRMODEM_SPEAKER, "VIRMODEM_SPEAKER" },
 };
 
 struct DeviceInfo {

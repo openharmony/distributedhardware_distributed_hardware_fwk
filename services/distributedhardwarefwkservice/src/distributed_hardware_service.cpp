@@ -23,6 +23,7 @@
 #include "system_ability_definition.h"
 
 #include "access_manager.h"
+#include "dh_utils_hisysevent.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
@@ -38,6 +39,9 @@ DistributedHardwareService::DistributedHardwareService(int32_t saId, bool runOnC
 void DistributedHardwareService::OnStart()
 {
     DHLOGI("DistributedHardwareService::OnStart start");
+    HiSysEventWriteMsg(DHFWK_INIT_BEGIN, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+        "dhfwk sa start on demand.");
+
     if (state_ == ServiceRunningState::STATE_RUNNING) {
         DHLOGI("DistributedHardwareService has already started.");
         return;
@@ -57,6 +61,8 @@ bool DistributedHardwareService::Init()
         bool ret = Publish(this);
         if (!ret) {
             DHLOGE("DistributedHardwareService::Init Publish failed!");
+            HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+                "dhfwk sa init publish failed.");
             return false;
         }
         registerToService_ = true;
@@ -64,9 +70,13 @@ bool DistributedHardwareService::Init()
     auto ret = AccessManager::GetInstance()->Init();
     if (ret != DH_FWK_SUCCESS) {
         DHLOGI("DistributedHardwareService::Init failed.");
+        HiSysEventWriteErrCodeMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            ret, "dhfwk sa AccessManager init fail.");
         return false;
     }
     DHLOGI("DistributedHardwareService::Init init success.");
+    HiSysEventWriteMsg(DHFWK_INIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+        "dhfwk sa init success.");
     return true;
 }
 

@@ -29,6 +29,7 @@ ohos_shared_library("distributedhardwareutils") {
 
   sources = [
     "src/anonymous_string.cpp",
+    "src/dh_utils_hisysevent.cpp",
     "src/dh_utils_tool.cpp",
     "src/log/dh_log.cpp",
   ]
@@ -49,6 +50,7 @@ ohos_shared_library("distributedhardwareutils") {
     "bundle_framework:appexecfwk_core",
     "dsoftbus_standard:softbus_client",
     "eventhandler:libeventhandler",
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
   ]
 

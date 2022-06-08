@@ -1,0 +1,84 @@
+#  Copyright (c) 2022 Huawei Device Co., Ltd.
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+#####################################################
+#     below is the format of defining event         #
+#####################################################
+#domain: domain name.  [Only one domain name can be defined at the top]
+#
+#author: the author name who defined this event.
+#date: the date when this event was defined, format is YYYY-MM-DD.
+#logged: source file which refer to this event.
+#usage: the usage of this event.
+#//Define event name and event properties.
+#@EVENT_NAME: the event definition part begin.
+#  // __BASE is used for defining the basic info of the event.
+#  // "type" optional values are: FAULT, STATISTICS, SECURITY, BEHAVIOR.
+#  // "level" optional values are: CRITICAL, MINOR.
+#  // "tag" set tags with may used by subscriber of this event, multiple tags devided by space.
+#  // "desc" full description of this event.
+#  @PARAMETER: {type: parameter type, arrsize: array length(optional), desc: parameter description}.
+#  // follow the __BASE block, each line defines a parameter of this event.
+#  // "type" optional values are: INT8, UINT8, INT16, UINT16, INT32, UINT32, INT64, UINT64, FLOAT, DOUBLE, STRING.
+#  // "arrsize" of the parameter is an array, set a non-zero value.
+#  // "desc" full description of this parameter.
+
+#####################################################
+#   Example of some hiviewdfx events definition     #
+#####################################################
+
+domain: DHFWK
+
+DHFWK_INIT_BEGIN:
+  __BASE: {type: BEHAVIOR, level: CRITICAL, desc: dhfwk sa start on demand and init}
+  MSG: {type: STRING, desc: dhfwk sa start init}
+
+DHFWK_INIT_END:
+  __BASE: {type: BEHAVIOR, level: CRITICAL, desc: dhfwk sa init end}
+  MSG: {type: STRING, desc: dhfwk sa init end}
+
+DHFWK_INIT_FAIL:
+  __BASE: {type: FAULT, level: CRITICAL, desc: dhfwk sa init failed}
+  ERR_CODE: {type: INT32, desc: dhfwk sa init failed result}
+  ERR_MSG: {type: STRING, desc: dhfwk sa init failed}
+
+DHFWK_EXIT_BEGIN:
+  __BASE: {type: BEHAVIOR, level: CRITICAL, desc: dhfwk sa start exit on demand}
+  MSG: {type: STRING, desc: dhfwk sa stop}
+
+DHFWK_EXIT_END:
+  __BASE: {type: BEHAVIOR, level: CRITICAL, desc: dhfwk sa finish exit on demand}
+  MSG: {type: STRING, desc: dhfwk sa stop}
+
+DHFWK_RELEASE_FAIL:
+  __BASE: {type: FAULT, level: CRITICAL, desc: dhfwk component dlclose failed}
+  DHTYPE: {type: STRING, desc: dhtype}
+  ERR_CODE: {type: INT32, desc: dlclose failed result}
+  ERR_MSG: {type: STRING, desc: dhfwk component dlclose failed}
+
+DHFWK_DEV_OFFLINE:
+  __BASE: {type: BEHAVIOR, level: CRITICAL, desc: dhfwk create disable task}
+  NETWORKID: {type: STRING, desc: network id}
+  MSG: {type: STRING, desc: dhfwk create disable task}
+
+DHFWK_DH_REGISTER_FAIL:
+  __BASE: {type: FAULT, level: CRITICAL, desc: dhfwk distributed hardware enable failed}
+  DHID: {type: STRING, desc: component id}
+  ERR_CODE: {type: INT32, desc: dhfwk distributed hardware enable failed result}
+  ERR_MSG: {type: STRING, desc: dhfwk distributed hardware enable failed}
+
+DHFWK_DH_UNREGISTER_FAIL:
+  __BASE: {type: FAULT, level: CRITICAL, desc: dhfwk distributed hardware disable failed}
+  DHID: {type: STRING, desc: component id}
+  ERR_CODE: {type: INT32, desc: dhfwk distributed hardware disable result}
+  ERR_MSG: {type: STRING, desc: dhfwk distributed hardware disable failed}

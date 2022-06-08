@@ -26,25 +26,25 @@
 namespace OHOS {
 namespace DistributedHardware {
 struct HidumpCompInfo {
-    std::string deviceId_;
+    std::string networkId_;
     std::string dhId_;
     DHType dhType_;
 
-    HidumpCompInfo(std::string deviceId, DHType dhType, std::string dhId)
-        : deviceId_(deviceId), dhId_(dhId), dhType_(dhType) {}
+    HidumpCompInfo(std::string networkId, DHType dhType, std::string dhId)
+        : networkId_(networkId), dhId_(dhId), dhType_(dhType) {}
 
     bool operator < (const HidumpCompInfo &other) const
     {
-        return (((this->deviceId_ == other.deviceId_) && (this->dhId_ < other.dhId_)) ||
-            (this->deviceId_ < other.deviceId_));
+        return (((this->networkId_ == other.networkId_) && (this->dhId_ < other.dhId_)) ||
+            (this->networkId_ < other.networkId_));
     }
 };
 
 class EnabledCompsDump {
 DECLARE_SINGLE_INSTANCE_BASE(EnabledCompsDump);
 public:
-    void DumpEnabledComp(const std::string &uuid, const DHType dhType, const std::string &dhId);
-    void DumpDisabledComp(const std::string &uuid, const DHType dhType, const std::string &dhId);
+    void DumpEnabledComp(const std::string &networkId, const DHType dhType, const std::string &dhId);
+    void DumpDisabledComp(const std::string &networkId, const DHType dhType, const std::string &dhId);
 
     void Dump(std::set<HidumpCompInfo> &compInfoSet);
 

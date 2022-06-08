@@ -22,6 +22,7 @@
 #include "anonymous_string.h"
 #include "constants.h"
 #include "device_manager.h"
+#include "dh_utils_hisysevent.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -61,6 +62,8 @@ bool DistributedHardwareManagerFactory::Init()
 void DistributedHardwareManagerFactory::UnInit()
 {
     DHLOGI("start");
+    HiSysEventWriteMsg(DHFWK_EXIT_BEGIN, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+        "dhfwk sa exit begin.");
 
     // release all the resources synchronously
     distributedHardwareMgrPtr_->Release();
@@ -75,6 +78,9 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
     if (deviceList.size() == 0) {
         DHLOGI("DM report devices offline, exit sa process");
+        HiSysEventWriteMsg(DHFWK_EXIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+            "dhfwk sa exit end.");
+
         exit(0);
     }
 
