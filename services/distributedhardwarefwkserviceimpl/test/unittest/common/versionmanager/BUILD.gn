@@ -13,7 +13,7 @@
 
 import("//build/test.gni")
 import(
-    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/version_manager_test"
 
@@ -41,7 +41,7 @@ ohos_unittest("VersionManagerTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
+    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
     "//third_party/googletest:gtest_main",
   ]
 

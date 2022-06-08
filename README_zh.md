@@ -23,7 +23,7 @@
 ## **目录**
 
 ```
-/foundation/distributedhardware/distributedhardwarefwk
+/foundation/distributedhardware/distributed_hardware_fwk
 ├── common                                  # 分布式硬件管理框架为各个部件提供的公共接口类
 ├── sa_profile                              # 分布式硬件管理框架的SA配置信息
 ├── services                                # 分布式硬件管理框架的SA具体实现

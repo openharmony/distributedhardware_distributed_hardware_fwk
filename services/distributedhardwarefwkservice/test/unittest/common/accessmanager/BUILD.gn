@@ -13,7 +13,7 @@
 
 import("//build/test.gni")
 import(
-    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/access_manager_test"
 
@@ -47,7 +47,7 @@ ohos_unittest("AccessManagerTest") {
   deps = [
     "${utils_path}:distributedhardwareutils",
     "//foundation/distributedhardware/devicemanager/interfaces/inner_kits/native_cpp:devicemanagersdk",
-    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//third_party/googletest:gtest_main",
   ]

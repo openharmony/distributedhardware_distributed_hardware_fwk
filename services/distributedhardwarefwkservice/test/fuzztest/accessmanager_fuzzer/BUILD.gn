@@ -15,12 +15,12 @@
 import("//build/config/features.gni")
 import("//build/test.gni")
 import(
-    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("AccessmanagerFuzzTest") {
   module_out_path = "distributed_hardware_fwk/accessmanager"
-  fuzz_config_file = "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer"
+  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer"
 
   include_dirs = [
     "//utils/native/base/include",
@@ -45,7 +45,7 @@ ohos_fuzztest("AccessmanagerFuzzTest") {
   deps = [
     "${utils_path}:distributedhardwareutils",
     "//foundation/distributedhardware/devicemanager/interfaces/inner_kits/native_cpp:devicemanagersdk",
-    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
   ]
 
