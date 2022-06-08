@@ -57,7 +57,7 @@ ComponentManager::~ComponentManager()
 int32_t ComponentManager::Init()
 {
     DHLOGI("start.");
-    DHTraceStart("COMPONENT_INIT_START");
+    DHTraceStart(COMPONENT_INIT_START);
     if (!InitCompSource()) {
         DHLOGE("InitCompSource failed.");
         return ERR_DH_FWK_COMPONENT_INIT_SOURCE_FAILED;
@@ -255,9 +255,9 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
             usleep(ENABLE_PARAM_RETRY_TIME);
         }
     }
-    auto compEnable = std::make_shared<ComponentEnable>();
 
     DHCompMgrTraceStart(GetAnonyString(networkId), GetAnonyString(dhId), ENABLE_START);
+    auto compEnable = std::make_shared<ComponentEnable>();
     auto result = compEnable->Enable(networkId, dhId, param, find->second);
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
@@ -291,9 +291,9 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
         DHLOGE("can not find handler for dhId = %s.", dhId.c_str());
         return ERR_DH_FWK_PARA_INVALID;
     }
-    auto compDisable = std::make_shared<ComponentDisable>();
 
     DHCompMgrTraceStart(GetAnonyString(networkId), GetAnonyString(dhId), DISABLE_START);
+    auto compDisable = std::make_shared<ComponentDisable>();
     auto result = compDisable->Disable(networkId, dhId, find->second);
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < DISABLE_RETRY_MAX_TIMES; retryCount++) {
