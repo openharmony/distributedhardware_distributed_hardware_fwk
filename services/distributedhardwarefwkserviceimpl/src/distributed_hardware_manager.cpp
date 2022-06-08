@@ -20,6 +20,7 @@
 #include "component_loader.h"
 #include "component_manager.h"
 #include "dh_context.h"
+#include "dh_utils_hisysevent.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -153,6 +154,9 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
 
     DHContext::GetInstance().RemoveOnlineDevice(realUUID);
     CapabilityInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(realUUID));
+
+    HiSysEventWriteCompOfflineMsg(DHFWK_DEV_OFFLINE, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+        GetAnonyString(networkId), "dhfwk device offline event.");
 
     return DH_FWK_SUCCESS;
 }

@@ -66,8 +66,8 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
 
   deps = [
     "${utils_path}:distributedhardwareutils",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
+    "//foundation/ability/ability_runtime/interfaces/inner_api/ability_manager:ability_manager",
+    "//foundation/ability/ability_runtime/services/abilitymgr:abilityms",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//utils/native/base:utils",
   ]
@@ -84,6 +84,7 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
     "distributeddatamgr:distributeddata_inner",
     "eventhandler:libeventhandler",
     "hitrace_native:hitrace_meter",
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",

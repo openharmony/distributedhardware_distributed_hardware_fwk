@@ -20,17 +20,17 @@ namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(EnabledCompsDump);
 
-void EnabledCompsDump::DumpEnabledComp(const std::string &uuid, const DHType dhType, const std::string &dhId)
+void EnabledCompsDump::DumpEnabledComp(const std::string &networkId, const DHType dhType, const std::string &dhId)
 {
-    HidumpCompInfo info (GetDeviceIdByUUID(uuid), dhType, dhId);
+    HidumpCompInfo info(networkId, dhType, dhId);
 
     std::lock_guard<std::mutex> lock(compInfosMutex_);
     compInfoSet_.emplace(info);
 }
 
-void EnabledCompsDump::DumpDisabledComp(const std::string &uuid, const DHType dhType, const std::string &dhId)
+void EnabledCompsDump::DumpDisabledComp(const std::string &networkId, const DHType dhType, const std::string &dhId)
 {
-    HidumpCompInfo info (GetDeviceIdByUUID(uuid), dhType, dhId);
+    HidumpCompInfo info(networkId, dhType, dhId);
 
     std::lock_guard<std::mutex> lock(compInfosMutex_);
     auto it = compInfoSet_.find(info);

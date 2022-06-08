@@ -12,7 +12,9 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+import(
+    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+
 module_out_path = "distributed_hardware_fwk/dh_manager_test"
 
 config("module_private_config") {
@@ -34,17 +36,15 @@ config("module_private_config") {
 ohos_unittest("DistributedHardwareManagerTest") {
   module_out_path = module_out_path
 
-  sources = [
-    "distributed_hardware_manager_test.cpp"
-  ]
+  sources = [ "distributed_hardware_manager_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//third_party/googletest:gtest_main",
-    "//third_party/googletest:gmock_main",
+    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
     "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils",
-    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl"
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
   ]
 
   defines = [
@@ -56,9 +56,9 @@ ohos_unittest("DistributedHardwareManagerTest") {
   external_deps = [
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "dsoftbus_standard:softbus_client",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "dsoftbus_standard:softbus_client",
   ]
 }
 

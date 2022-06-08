@@ -12,7 +12,9 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+import(
+    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+
 module_out_path = "distributed_hardware_fwk/utils_tool_test"
 
 config("module_private_config") {
@@ -30,13 +32,14 @@ config("module_private_config") {
 ohos_unittest("UtilsToolTest") {
   module_out_path = module_out_path
 
-  sources = [ "${utils_path}/test/unittest/common/utilstool/utils_tool_test.cpp" ]
+  sources =
+      [ "${utils_path}/test/unittest/common/utilstool/utils_tool_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
+    "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
-    "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils"
   ]
 }
 

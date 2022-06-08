@@ -12,7 +12,9 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+import(
+    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+
 module_out_path = "distributed_hardware_fwk/dh_task_test"
 
 config("module_private_config") {
@@ -40,15 +42,15 @@ ohos_unittest("DHTaskTest") {
     "src/mock_offline_task.cpp",
     "src/mock_online_task.cpp",
     "src/mock_task_factory.cpp",
-    "src/task_test.cpp"
+    "src/task_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//third_party/googletest:gtest_main",
+    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
     "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils",
-    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl"
+    "//third_party/googletest:gtest_main",
   ]
 
   defines = [

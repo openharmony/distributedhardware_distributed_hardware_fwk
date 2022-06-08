@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@
 
 #include "anonymous_string.h"
 #include "constants.h"
+#include "dh_utils_hisysevent.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
@@ -43,6 +44,8 @@ int32_t ComponentEnable::Enable(const std::string &networkId, const std::string 
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("RegisterDistributedHardware failed, networkId = %s dhId = %s.", GetAnonyString(networkId).c_str(),
             GetAnonyString(dhId).c_str());
+        HiSysEventWriteCompMgrFailedMsg(DHFWK_DH_REGISTER_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            GetAnonyString(dhId), ret, "dhfwk register distributed hardware failed.");
         return ERR_DH_FWK_COMPONENT_REGISTER_FAILED;
     }
 
@@ -53,6 +56,9 @@ int32_t ComponentEnable::Enable(const std::string &networkId, const std::string 
     if (!waitStatus) {
         DHLOGE("enable timeout, networkId = %s dhId = %s", GetAnonyString(networkId).c_str(),
             GetAnonyString(dhId).c_str());
+        HiSysEventWriteCompMgrFailedMsg(DHFWK_DH_REGISTER_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            GetAnonyString(dhId), ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT,
+            "dhfwk distributed hardware enable timeout.");
         return ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT;
     }
     return (status_ == DH_FWK_SUCCESS) ? DH_FWK_SUCCESS : ERR_DH_FWK_COMPONENT_ENABLE_FAILED;

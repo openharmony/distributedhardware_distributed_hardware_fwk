@@ -23,6 +23,9 @@
     ],
     "rom": "128K",
     "ram": "6M",
+    "hisysevent_config": [
+      "//foundation/distributedhardware/distributedhardwarefwk/hisysevent.yaml"
+    ],
     "deps": {
       "components": [
         "appexecfwk_base",

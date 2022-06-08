@@ -182,11 +182,11 @@ int32_t HidumpHelper::ShowAllEnabledComps(std::string &result)
             dhTypeStr = it->second;
         }
         result.append("\n{");
-        result.append("\n    DeviceId : ");
-        result.append(GetAnonyString(info.deviceId_));
-        result.append("\n    DHType   : ");
+        result.append("\n    NetworkId      : ");
+        result.append(GetAnonyString(info.networkId_));
+        result.append("\n    DHType         : ");
         result.append(dhTypeStr);
-        result.append("\n    DHId     : ");
+        result.append("\n    DHId           : ");
         result.append(GetAnonyString(info.dhId_));
         result.append("\n},");
     }

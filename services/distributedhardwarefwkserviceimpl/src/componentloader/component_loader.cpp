@@ -24,6 +24,7 @@
 #include "constants.h"
 #include "dh_utils_hitrace.h"
 #include "distributed_hardware_log.h"
+#include "dh_utils_hisysevent.h"
 #include "hidump_helper.h"
 
 using nlohmann::json;
@@ -150,6 +151,8 @@ void *ComponentLoader::GetHandler(const std::string &soName)
     void *pHandler = dlopen(path, RTLD_LAZY | RTLD_NODELETE);
     if (pHandler == nullptr) {
         DHLOGE("%s handler load failed.", path);
+        HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            "dhfwk so open failed, soname : " + soName);
         return nullptr;
     }
     return pHandler;
@@ -296,6 +299,8 @@ int32_t ComponentLoader::ReleaseHardwareHandler(const DHType dhType)
     int32_t ret = ReleaseHandler(compHandlerMap_[dhType].hardwareHandler);
     if (ret) {
         DHLOGE("fail, dhType: %#X", dhType);
+        HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            dhType, ret, "dhfwk release hardware handler failed.");
     }
     return ret;
 }
@@ -308,6 +313,8 @@ int32_t ComponentLoader::ReleaseSource(const DHType dhType)
     int32_t ret = ReleaseHandler(compHandlerMap_[dhType].sourceHandler);
     if (ret) {
         DHLOGE("fail, dhType: %#X", dhType);
+        HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            dhType, ret, "dhfwk release source failed.");
     }
     return ret;
 }
@@ -320,6 +327,8 @@ int32_t ComponentLoader::ReleaseSink(const DHType dhType)
     int32_t ret = ReleaseHandler(compHandlerMap_[dhType].sinkHandler);
     if (ret) {
         DHLOGE("fail, dhType: %#X", dhType);
+        HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            dhType, ret, "dhfwk release sink failed.");
     }
     return ret;
 }
