@@ -19,24 +19,19 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-void CompEnableTraceStart(const DHType dhType)
+void DHCompMgrTraceStart(const std::string &anonyNetworkId, const std::string &anonyDHId, const std::string &msg)
 {
-    std::string dhTypeStr = "UNKNOWN";
-    auto it = DHTypeStrMap.find(dhType);
-    if (it != DHTypeStrMap.end()) {
-        dhTypeStr = it->second;
-    }
-    StartTrace(DHFWK_HITRACE_LABEL, dhTypeStr + "_ENABLE_START");
+    StartTrace(DHFWK_HITRACE_LABEL, anonyNetworkId + "_" + anonyDHId + "_" + msg);
 }
 
-void CompDisableTraceStart(const DHType dhType)
+void DHQeryTraceStart(const DHType dhType)
 {
     std::string dhTypeStr = "UNKNOWN";
     auto it = DHTypeStrMap.find(dhType);
     if (it != DHTypeStrMap.end()) {
         dhTypeStr = it->second;
     }
-    StartTrace(DHFWK_HITRACE_LABEL, dhTypeStr + "_DISABLE_START");
+    StartTrace(DHFWK_HITRACE_LABEL, dhTypeStr + "_" + QUERY_START);
 }
 
 void DHTraceStart(const std::string &msg)

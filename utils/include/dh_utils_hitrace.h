@@ -25,8 +25,15 @@ namespace OHOS {
 namespace DistributedHardware {
 constexpr uint64_t DHFWK_HITRACE_LABEL = HITRACE_TAG_DISTRIBUTED_HARDWARE_FWK;
 
-void CompEnableTraceStart(const DHType dhType);
-void CompDisableTraceStart(const DHType dhType);
+const std::string COMPONENT_LOAD_START = "COMPONENT_LOAD_START";
+const std::string COMPONENT_RELEASE_START = "COMPONENT_RELEASE_START";
+const std::string COMPONENT_INIT_START = "COMPONENT_INIT_START";
+const std::string QUERY_START = "QUERY_START";
+const std::string ENABLE_START = "ENABLE_START";
+const std::string DISABLE_START = "DISABLE_START";
+
+void DHCompMgrTraceStart(const std::string &anonyNetworkId, const std::string &anonyDHId, const std::string &msg);
+void DHQeryTraceStart(const DHType dhType);
 void DHTraceStart(const std::string &msg);
 void DHTraceEnd();
 } // namespace DistributedHardware

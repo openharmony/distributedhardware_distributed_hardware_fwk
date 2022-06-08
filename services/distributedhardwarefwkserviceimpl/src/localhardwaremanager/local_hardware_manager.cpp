@@ -48,7 +48,10 @@ void LocalHardwareManager::Init()
             DHLOGE("Initialize %#X failed", dhType);
             continue;
         }
+
+        DHQeryTraceStart(dhType);
         QueryLocalHardware(dhType, hardwareHandler);
+        DHTraceEnd();
         if (!hardwareHandler->IsSupportPlugin()) {
             DHLOGI("hardwareHandler is not support hot swap plugin, release!");
             ComponentLoader::GetInstance().ReleaseHardwareHandler(dhType);

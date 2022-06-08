@@ -66,7 +66,7 @@ std::map<std::string, DHType> g_mapDhTypeName = {
 
 int32_t ComponentLoader::Init()
 {
-    DHTraceStart("COMPONENT_LOAD_START");
+    DHTraceStart(COMPONENT_LOAD_START);
     int32_t ret = ParseConfig();
     DHTraceEnd();
 
@@ -275,7 +275,7 @@ int32_t ComponentLoader::ReleaseHandler(void *&handler)
 int32_t ComponentLoader::UnInit()
 {
     DHLOGI("release all handler");
-    DHTraceStart("COMPONENT_RELEASE_START");
+    DHTraceStart(COMPONENT_RELEASE_START);
     int32_t ret = DH_FWK_SUCCESS;
     for (std::map<DHType, CompHandler>::iterator iter = compHandlerMap_.begin();
         iter != compHandlerMap_.end(); iter++) {
