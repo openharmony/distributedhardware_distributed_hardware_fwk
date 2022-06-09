@@ -7,7 +7,7 @@
   "license": "Apache License 2.0",
   "publishAs": "code-segment",
   "segment": {
-    "destPath": "foundation/distributedhardware/distributedhardwarefwk/"
+    "destPath": "foundation/distributedhardware/distributed_hardware_fwk/"
   },
   "dirs": {},
   "scripts": {},
@@ -15,7 +15,7 @@
     "name": "distributed_hardware_fwk",
     "subsystem": "distributedhardware",
     "syscap": [
-      "SystemCapability.distributedhardware.distributed_hardware_fwk"
+      "SystemCapability.DistributedHardware.DistributedHardwareFWK"
     ],
     "features": [],
     "adapted_system_type": [
@@ -24,7 +24,7 @@
     "rom": "128K",
     "ram": "6M",
     "hisysevent_config": [
-      "//foundation/distributedhardware/distributedhardwarefwk/hisysevent.yaml"
+      "//foundation/distributedhardware/distributed_hardware_fwk/hisysevent.yaml"
     ],
     "deps": {
       "components": [
@@ -46,19 +46,19 @@
     },
     "build": {
       "sub_component": [
-        "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils",
-        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
-        "//foundation/distributedhardware/distributedhardwarefwk/sa_profile:dhfwk_sa_profile",
-        "//foundation/distributedhardware/distributedhardwarefwk/sa_profile:dhardware.cfg"
+        "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
+        "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
+        "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
+        "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhfwk_sa_profile",
+        "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhardware.cfg"
       ],
       "test": [
-        "//foundation/distributedhardware/distributedhardwarefwk/utils/test/unittest:utils_test",
-        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl/test/unittest:svrimpl_test",
-        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice/test/unittest:test",
-        "//foundation/distributedhardware/distributedhardwarefwk/utils/test/fuzztest:fuzztest",
-        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl/test/fuzztest:fuzztest",
-        "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkservice/test/fuzztest:fuzztest"
+        "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/unittest:utils_test",
+        "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl/test/unittest:svrimpl_test",
+        "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/unittest:test",
+        "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/fuzztest:fuzztest",
+        "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl/test/fuzztest:fuzztest",
+        "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest:fuzztest"
       ]
     }
   }

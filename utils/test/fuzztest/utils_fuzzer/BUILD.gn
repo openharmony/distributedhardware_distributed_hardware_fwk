@@ -15,12 +15,12 @@
 import("//build/config/features.gni")
 import("//build/test.gni")
 import(
-    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("UtilsFuzzTest") {
   module_out_path = "distributed_hardware_fwk/utils"
-  fuzz_config_file = "//foundation/distributedhardware/distributedhardwarefwk/utils/test/fuzztest/utils_fuzzer"
+  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/fuzztest/utils_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
@@ -36,7 +36,7 @@ ohos_fuzztest("UtilsFuzzTest") {
   ]
   sources = [ "utils_fuzzer.cpp" ]
 
-  deps = [ "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils" ]
+  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils" ]
 }
 
 ###############################################################################

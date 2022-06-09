@@ -14,7 +14,7 @@
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
 import(
-    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 ohos_shared_library("distributedhardwarefwksvr") {
   include_dirs = [

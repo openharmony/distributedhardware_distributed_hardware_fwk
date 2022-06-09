@@ -15,7 +15,7 @@
 import("//build/config/features.gni")
 import("//build/test.gni")
 import(
-    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("ResourcemanagerFuzzTest") {
@@ -45,8 +45,8 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
   sources = [ "resourcemanager_fuzzer.cpp" ]
 
   deps = [
-    "//foundation/distributedhardware/distributedhardwarefwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
-    "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils",
+    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
+    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
     "//utils/native/base:utils",
   ]
 

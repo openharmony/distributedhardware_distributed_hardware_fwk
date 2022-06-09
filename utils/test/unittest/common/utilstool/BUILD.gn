@@ -13,7 +13,7 @@
 
 import("//build/test.gni")
 import(
-    "//foundation/distributedhardware/distributedhardwarefwk/distributedhardwarefwk.gni")
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/utils_tool_test"
 
@@ -38,7 +38,7 @@ ohos_unittest("UtilsToolTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/distributedhardware/distributedhardwarefwk/utils:distributedhardwareutils",
+    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
   ]
 }
