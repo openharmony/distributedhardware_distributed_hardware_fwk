@@ -63,7 +63,7 @@ bool DistributedHardwareManagerFactory::Init()
 void DistributedHardwareManagerFactory::UnInit()
 {
     DHLOGI("start");
-    DHTraceStart(UNLOAD_START)
+    DHTraceStart(UNLOAD_START);
     HiSysEventWriteMsg(DHFWK_EXIT_BEGIN, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "dhfwk sa exit begin.");
 
