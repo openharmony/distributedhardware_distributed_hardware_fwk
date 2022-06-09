@@ -37,7 +37,7 @@
 #   Example of some hiviewdfx events definition     #
 #####################################################
 
-domain: DHFWK
+domain: DISTHWFWK
 
 DHFWK_INIT_BEGIN:
   __BASE: {type: BEHAVIOR, level: CRITICAL, desc: dhfwk sa start on demand and init}
