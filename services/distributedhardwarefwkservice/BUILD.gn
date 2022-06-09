@@ -26,8 +26,8 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "${common_path}/utils/include",
     "${utils_path}/include/log",
     "${utils_path}/include",
-    "//foundation/distributedhardware/devicemanager/interfaces/inner_kits/native_cpp/include",
-    "//foundation/distributedhardware/devicemanager/common/include",
+    "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp/include",
+    "//foundation/distributedhardware/device_manager/common/include",
     "${services_path}/distributedhardwarefwkserviceimpl/include",
   ]
 
@@ -43,7 +43,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "${utils_path}:distributedhardwareutils",
     "//foundation/ability/ability_runtime/interfaces/inner_api/ability_manager:ability_manager",
     "//foundation/ability/ability_runtime/services/abilitymgr:abilityms",
-    "//foundation/distributedhardware/devicemanager/interfaces/inner_kits/native_cpp:devicemanagersdk",
+    "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp:devicemanagersdk",
     "//utils/native/base:utils",
   ]
 
