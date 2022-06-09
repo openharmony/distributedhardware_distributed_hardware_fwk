@@ -26,13 +26,15 @@ namespace DistributedHardware {
 constexpr uint64_t DHFWK_HITRACE_LABEL = HITRACE_TAG_DISTRIBUTED_HARDWARE_FWK;
 
 const std::string COMPONENT_LOAD_START = "COMPONENT_LOAD_START";
-const std::string COMPONENT_RELEASE_START = "COMPONENT_RELEASE_START";
-const std::string COMPONENT_INIT_START = "COMPONENT_INIT_START";
-const std::string UNLOAD_START = "UNLOAD_START";
-const std::string QUERY_START = "QUERY_START";
-const std::string ENABLE_START = "ENABLE_START";
-const std::string DISABLE_START = "DISABLE_START";
+const std::string COMPONENT_UNLOAD_START = "COMPONENT_UNLOAD_START";
 
+const std::string COMPONENT_INIT_START = "COMPONENT_INIT_START";
+const std::string COMPONENT_RELEASE_START = "COMPONENT_RELEASE_START";
+
+const std::string DH_QUERY_START = "DH_QUERY_START";
+
+const std::string DH_ENABLE_START = "DH_ENABLE_START";
+const std::string DH_DISABLE_START = "DH_DISABLE_START";
 void DHCompMgrTraceStart(const std::string &anonyNetworkId, const std::string &anonyDHId, const std::string &msg);
 void DHQueryTraceStart(const DHType dhType);
 void DHTraceStart(const std::string &msg);

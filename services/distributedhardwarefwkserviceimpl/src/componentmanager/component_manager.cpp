@@ -256,7 +256,7 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
         }
     }
 
-    DHCompMgrTraceStart(GetAnonyString(networkId), GetAnonyString(dhId), ENABLE_START);
+    DHCompMgrTraceStart(GetAnonyString(networkId), GetAnonyString(dhId), DH_ENABLE_START);
     auto compEnable = std::make_shared<ComponentEnable>();
     auto result = compEnable->Enable(networkId, dhId, param, find->second);
     if (result != DH_FWK_SUCCESS) {
@@ -273,6 +273,7 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
             }
             DHLOGE("enable failed, retryCount = %d", retryCount);
         }
+        DHTraceEnd();
         return result;
     }
     DHLOGI("enable result is %d, uuid = %s, dhId = %s", result, GetAnonyString(uuid).c_str(),
@@ -292,7 +293,7 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
         return ERR_DH_FWK_PARA_INVALID;
     }
 
-    DHCompMgrTraceStart(GetAnonyString(networkId), GetAnonyString(dhId), DISABLE_START);
+    DHCompMgrTraceStart(GetAnonyString(networkId), GetAnonyString(dhId), DH_DISABLE_START);
     auto compDisable = std::make_shared<ComponentDisable>();
     auto result = compDisable->Disable(networkId, dhId, find->second);
     if (result != DH_FWK_SUCCESS) {
@@ -309,6 +310,7 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
             }
             DHLOGE("disable failed, retryCount = %d", retryCount);
         }
+        DHTraceEnd();
         return result;
     }
     DHLOGI("disable result is %d, uuid = %s, dhId = %s", result, GetAnonyString(uuid).c_str(),
