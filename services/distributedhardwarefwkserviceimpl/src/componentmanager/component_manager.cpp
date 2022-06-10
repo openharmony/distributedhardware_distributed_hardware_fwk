@@ -60,11 +60,13 @@ int32_t ComponentManager::Init()
     DHTraceStart(COMPONENT_INIT_START);
     if (!InitCompSource()) {
         DHLOGE("InitCompSource failed.");
+        DHTraceEnd();
         return ERR_DH_FWK_COMPONENT_INIT_SOURCE_FAILED;
     }
     if (!InitCompSink()) {
         DHLOGE("InitCompSink failed.");
         compSource_.clear();
+        DHTraceEnd();
         return ERR_DH_FWK_COMPONENT_INIT_SINK_FAILED;
     }
 
@@ -263,6 +265,7 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
         for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
             if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
                 DHLOGE("device is already offline, no need try enable, uuid = %s", GetAnonyString(uuid).c_str());
+                DHTraceEnd();
                 return result;
             }
             if (compEnable->Enable(networkId, dhId, param, find->second) == DH_FWK_SUCCESS) {
@@ -300,6 +303,7 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
         for (int32_t retryCount = 0; retryCount < DISABLE_RETRY_MAX_TIMES; retryCount++) {
             if (DHContext::GetInstance().IsDeviceOnline(uuid)) {
                 DHLOGE("device is already online, no need try disable, uuid = %s", GetAnonyString(uuid).c_str());
+                DHTraceEnd();
                 return result;
             }
             if (compDisable->Disable(networkId, dhId, find->second) == DH_FWK_SUCCESS) {
