@@ -18,6 +18,7 @@
 #include <unordered_map>
 
 #include "capability_info_manager.h"
+#include "component_loader.h"
 #include "component_manager.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -127,9 +128,11 @@ int32_t HidumpHelper::ShowAllLoadedComps(std::string &result)
     std::set<DHType> loadedCompSource {};
     std::set<DHType> loadedCompSink {};
     ComponentManager::GetInstance().DumpLoadedComps(loadedCompSource, loadedCompSink);
+    DHVersion dhVersion;
+    ComponentLoader::GetInstance().GetLocalDHVersion(dhVersion);
 
-    result.append("Local loaded components:\n{");
-    result.append("\n    Source     : [");
+    result.append("Local loaded components:");
+    result.append("\nSource:\n");
     if (!loadedCompSource.empty()) {
         for (auto compSource : loadedCompSource) {
             std::string dhTypeStr = "UNKNOWN";
@@ -137,15 +140,19 @@ int32_t HidumpHelper::ShowAllLoadedComps(std::string &result)
             if (it != DHTypeStrMap.end()) {
                 dhTypeStr = it->second;
             }
-            result.append(" ");
-            result.append(dhTypeStr);
-            result.append(",");
+            std::string sourceVersion = "";
+            auto iter = dhVersion.compVersions.find(compSource);
+            if (iter != dhVersion.compVersions.end()) {
+                sourceVersion = iter->second.sourceVersion;
+            }
+            result.append("{\n    DHType         : ").append(dhTypeStr);
+            result.append("\n    Version        : ").append(sourceVersion);
+            result.append("},");
         }
-        result.replace(result.size() - 1, 1, " ");
+        result.replace(result.size() - 1, 1, "\n");
     }
-    result.append("]");
 
-    result.append("\n    Sink       : [");
+    result.append("\nSink:");
     if (!loadedCompSink.empty()) {
         for (auto compSink : loadedCompSink) {
             std::string dhTypeStr = "UNKNOWN";
@@ -153,14 +160,17 @@ int32_t HidumpHelper::ShowAllLoadedComps(std::string &result)
             if (it != DHTypeStrMap.end()) {
                 dhTypeStr = it->second;
             }
-            result.append(" ");
-            result.append(dhTypeStr);
-            result.append(",");
+            std::string sinkVersion = "";
+            auto iter = dhVersion.compVersions.find(compSink);
+            if (iter != dhVersion.compVersions.end()) {
+                sinkVersion = iter->second.sinkVersion;
+            }
+            result.append("{\n    DHType         : ").append(dhTypeStr);
+            result.append("\n    Version        : ").append(sinkVersion);
+            result.append("},");
         }
-        result.replace(result.size() - 1, 1, " ");
+        result.replace(result.size() - 1, 1, "\n");
     }
-    result.append("]");
-    result.append("\n}\n");
     return DH_FWK_SUCCESS;
 }
 
