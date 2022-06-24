@@ -36,7 +36,7 @@
         "ipc_core",
         "system_ability_fwk",
         "samgr_proxy",
-        "syspara",
+        "init",
         "softbus_client"
       ],
       "third_party": [
