@@ -41,7 +41,7 @@ const MockDevInfo DEV_INFO_11 = { DEV_NETWORK_ID_1, DEV_ID_1, "Camera_1", DHType
 const MockDevInfo DEV_INFO_12 = { DEV_NETWORK_ID_1, DEV_ID_1, "Speaker_1", DHType::SPEAKER };
 const MockDevInfo DEV_INFO_13 = { DEV_NETWORK_ID_1, DEV_ID_1, "Mic_1", DHType::MIC };
 const MockDevInfo DEV_INFO_14 = { DEV_NETWORK_ID_1, DEV_ID_1, "Display_1", DHType::DISPLAY };
-const MockDevInfo DEV_INFO_15 = { DEV_NETWORK_ID_1, DEV_ID_1, "Input_1", DHType::BUTTON };
+const MockDevInfo DEV_INFO_15 = { DEV_NETWORK_ID_1, DEV_ID_1, "Input_1", DHType::INPUT };
 
 const std::string DEV_ID_2 = "06d177ffa09543389f3b445b4722f9be";
 const std::string DEV_NETWORK_ID_2 = "ntd177ffa09543389f3b445b4722f9be";
@@ -49,7 +49,7 @@ const MockDevInfo DEV_INFO_21 = { DEV_NETWORK_ID_2, DEV_ID_2, "Camera_1", DHType
 const MockDevInfo DEV_INFO_22 = { DEV_NETWORK_ID_2, DEV_ID_2, "Speaker_1", DHType::SPEAKER };
 const MockDevInfo DEV_INFO_23 = { DEV_NETWORK_ID_2, DEV_ID_2, "Mic_1", DHType::MIC };
 const MockDevInfo DEV_INFO_24 = { DEV_NETWORK_ID_2, DEV_ID_2, "Display_1", DHType::DISPLAY };
-const MockDevInfo DEV_INFO_25 = { DEV_NETWORK_ID_2, DEV_ID_2, "Input_1", DHType::BUTTON };
+const MockDevInfo DEV_INFO_25 = { DEV_NETWORK_ID_2, DEV_ID_2, "Input_1", DHType::INPUT };
 
 const TaskParam TASK_PARAM_1 = {
     .networkId = DEV_NETWORK_ID_1,

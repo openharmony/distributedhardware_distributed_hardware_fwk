@@ -65,7 +65,7 @@ const shared_ptr<CapabilityInfo> CAP_INFO_2 =
 const shared_ptr<CapabilityInfo> CAP_INFO_3 =
     make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::DISPLAY, DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_4 =
-    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::BUTTON, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_0);
 
 const shared_ptr<CapabilityInfo> CAP_INFO_5 =
     make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1);
@@ -76,7 +76,7 @@ const shared_ptr<CapabilityInfo> CAP_INFO_7 =
 const shared_ptr<CapabilityInfo> CAP_INFO_8 =
     make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::DISPLAY, DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_9 =
-    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::BUTTON, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_1);
 }
 
 void ResourceManagerTest::SetUpTestCase(void) {}

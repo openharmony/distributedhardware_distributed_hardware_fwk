@@ -32,7 +32,7 @@ namespace {
     const uint32_t DH_TYPE_SIZE = 10;
     const DHType dhTypeFuzz[DH_TYPE_SIZE] = {
         DHType::CAMERA, DHType::MIC, DHType::SPEAKER, DHType::DISPLAY, DHType::VIRMODEM_MIC,
-        DHType::BUTTON, DHType::A2D, DHType::GPS, DHType::HFP, DHType::VIRMODEM_SPEAKER
+        DHType::INPUT, DHType::A2D, DHType::GPS, DHType::HFP, DHType::VIRMODEM_SPEAKER
     };
 }
 

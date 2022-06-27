@@ -58,7 +58,7 @@ std::map<std::string, DHType> g_mapDhTypeName = {
     { "SPEAKER", DHType::SPEAKER },
     { "DISPLAY", DHType::DISPLAY },
     { "GPS", DHType::GPS },
-    { "BUTTON", DHType::BUTTON },
+    { "INPUT", DHType::INPUT },
     { "HFP", DHType::HFP },
     { "A2D", DHType::A2D },
     { "VIRMODEM_MIC", DHType::VIRMODEM_MIC },
