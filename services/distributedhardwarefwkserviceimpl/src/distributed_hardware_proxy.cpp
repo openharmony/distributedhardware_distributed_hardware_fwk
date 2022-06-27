@@ -30,7 +30,7 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "DistributedHardwareProxy"
 const std::unordered_set<DHType> DH_TYPE_SET {
     DHType::UNKNOWN, DHType::CAMERA, DHType::MIC, DHType::SPEAKER,      DHType::DISPLAY,          DHType::GPS,
-    DHType::BUTTON,  DHType::HFP,    DHType::A2D, DHType::VIRMODEM_MIC, DHType::VIRMODEM_SPEAKER, DHType::MAX_DH,
+    DHType::INPUT,  DHType::HFP,    DHType::A2D, DHType::VIRMODEM_MIC, DHType::VIRMODEM_SPEAKER, DHType::MAX_DH,
 };
 
 int32_t DistributedHardwareProxy::QuerySinkVersion(std::unordered_map<DHType, std::string> &versionMap)

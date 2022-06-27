@@ -28,7 +28,7 @@ enum class DHType : uint32_t {
     SPEAKER = 0x04,           // Speaker
     DISPLAY = 0x08,           // Display
     GPS = 0x10,               // GPS
-    BUTTON = 0x20,            // Key board
+    INPUT = 0x20,            // Key board
     HFP = 0x40,               // HFP External device
     A2D = 0x80,               // A2DP External device
     VIRMODEM_MIC = 0x100,     // Cellular call MIC
@@ -42,7 +42,7 @@ const std::unordered_map<DHType, std::string> DHTypeStrMap = {
     { DHType::SPEAKER, "SPEAKER" },
     { DHType::DISPLAY, "DISPLAY" },
     { DHType::GPS, "GPS" },
-    { DHType::BUTTON, "BUTTON" },
+    { DHType::INPUT, "INPUT" },
     { DHType::HFP, "HFP" },
     { DHType::A2D, "A2D" },
     { DHType::VIRMODEM_MIC, "VIRMODEM_MIC" },
