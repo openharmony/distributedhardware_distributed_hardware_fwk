@@ -28,7 +28,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 const std::string DH_LOCAL_VERSION = "1.0";
-class VersionManager {
+class VersionManager : public  DistributedKv::KvStoreObserver {
     DECLARE_SINGLE_INSTANCE_BASE(VersionManager);
 
 public:

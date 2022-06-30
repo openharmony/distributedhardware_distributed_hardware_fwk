@@ -339,7 +339,7 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
     }
 
     param.attrs = capability->GetDHAttrs();
-    param.version = GetSinkVersion(networkId, uuid, dhType);
+    param.version = GetSinkVersionFromRpc(networkId, uuid, dhType);
     if (param.version.empty()) {
         DHLOGI("Get Sink Version failed, uuid = %s, dhId = %s", GetAnonyString(uuid).c_str(),
             GetAnonyString(dhId).c_str());
@@ -352,7 +352,7 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
     return DH_FWK_SUCCESS;
 }
 
-std::string ComponentManager::GetSinkVersion(const std::string &networkId, const std::string &uuid, DHType dhType)
+std::string ComponentManager::GetSinkVersionFromRpc(const std::string &networkId, const std::string &uuid, DHType dhType)
 {
     DHLOGI("networkId = %s ", GetAnonyString(networkId).c_str());
     auto sinkVersion = GetVersionFromCache(uuid, dhType);

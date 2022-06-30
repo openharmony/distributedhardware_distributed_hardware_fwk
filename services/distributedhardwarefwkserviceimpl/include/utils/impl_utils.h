@@ -18,6 +18,8 @@
 
 #include <unordered_map>
 
+#include "nlohmann/json.hpp"
+
 #include "device_type.h"
 
 namespace OHOS {
@@ -53,13 +55,26 @@ struct CompVersion {
     std::string handlerVersion;
     std::string sourceVersion;
     std::string sinkVersion;
+
+    // virtual int32_t FromJsonString(const std::string &jsonStr);
+    // virtual std::string ToJsonString();
 };
 
 struct DHVersion {
     std::string uuid;
     std::string dhVersion;
     std::unordered_map<DHType, CompVersion> compVersions;
+
+    DHVersion(std::string uuid, std::string dhVersion, std::unordered_map<DHType, CompVersion> compVersions)
+        : uuid(uuid), dhVersion(dhVersion), compVersions(compVersions) {}
+
+    // virtual std::string GetKey() const;
+    virtual int32_t FromJsonString(const std::string &jsonStr);
+    virtual std::string ToJsonString();
 };
+
+void ToJson(nlohmann::json &jsonObject, const DHVersion &dhVersion);
+void FromJson(const nlohmann::json &jsonObject, DHVersion &dhVersion);
 
 struct TaskParam {
     std::string networkId;
