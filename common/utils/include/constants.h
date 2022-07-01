@@ -36,12 +36,21 @@ namespace DistributedHardware {
     const std::string DH_TYPE = "dh_type";
     const std::string DH_ATTRS = "dh_attrs";
     const std::string DH_LOG_TITLE_TAG = "DHFWK";
+    const std::string DH_VER = "dh_ver";
+    const std::string COMP_VER = "comp_ver";
+    const std::string NAME = "name";
+    const std::string TYPE = "type";
+    const std::string HANDLER = "handler";
+    const std::string SOURCE_VER = "source_ver";
+    const std::string SINK_VER = "sink_ver";
     const std::string DH_TASK_NAME_PREFIX = "Task_";
     const std::string DH_FWK_PKG_NAME = "ohos.dhardware";
     const std::string DH_COMPONENT_VERSIONS = "componentVersions";
     const std::string DH_COMPONENT_TYPE = "dhType";
     const std::string DH_COMPONENT_SINK_VER = "version";
     const std::string DH_COMPONENT_DEFAULT_VERSION = "1.0";
+
+
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

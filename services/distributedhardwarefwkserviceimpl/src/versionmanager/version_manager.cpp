@@ -35,9 +35,11 @@ int32_t VersionManager::Init()
         DHLOGE("GetLocalDHVersion fail");
         return ret;
     }
-    dhVersion.dhVersion = DH_LOCAL_VERSION;
-    ShowLocalVersion(dhVersion);
+    dhVersion.dhVersion = GetLocalDeviceVersion();
     std::string strUUID = DHContext::GetInstance().GetDeviceInfo().uuid;
+    dhVersion.uuid = strUUID;
+    dhVersion.deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+    ShowLocalVersion(dhVersion);
     AddDHVersion(strUUID, dhVersion);
     return DH_FWK_SUCCESS;
 }

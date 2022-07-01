@@ -44,5 +44,7 @@ class CapabilityInfoManager : public std::enable_shared_from_this<CapabilityInfo
                               public EventBusHandler<CapabilityInfoEvent> {
 public:
 
+private:
+    DHVersion dhVersion_;
 };
 }
