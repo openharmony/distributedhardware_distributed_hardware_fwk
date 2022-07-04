@@ -43,6 +43,7 @@ public:
 private:
     void QueryLocalHardware(const DHType dhType, IHardwareHandler *hardwareHandler);
     void AddLocalCapabilityInfo(const std::vector<DHItem> &dhItems, const DHType dhType);
+    void RemoveNonExistCapabilityInfo();
 
 private:
     std::map<DHType, IHardwareHandler*> compToolFuncsMap_;
