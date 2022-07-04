@@ -121,11 +121,11 @@ void LocalHardwareManager::RemoveNonExistCapabilityInfo()
     }
     for (auto capabilityInfo : allCapabilityInfoMap) {
         std::shared_ptr<CapabilityInfo> capabilityValue = capabilityInfo.second;
-        DHLOGI("The key in allCapabilityInfoMap is %s", capabilityValue->GetAnonymousKey().c_str());
         if (capabilityValue == nullptr) {
             DHLOGE("capabilityInfo value is nullptr, key: %s", capabilityValue->GetAnonymousKey().c_str());
             return;
         }
+        DHLOGI("The key in allCapabilityInfoMap is %s", capabilityValue->GetAnonymousKey().c_str());
         if (!CapabilityInfoManager::GetInstance()->HasCapability(capabilityValue->GetDeviceId(),
             capabilityValue->GetDHId())) {
             DHLOGI("AllCapabilityInfoMap is not found this key, so it is previous data. It should be removed, key: %s",
