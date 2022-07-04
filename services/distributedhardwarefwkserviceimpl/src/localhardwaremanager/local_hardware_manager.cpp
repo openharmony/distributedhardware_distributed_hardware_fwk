@@ -64,6 +64,9 @@ void LocalHardwareManager::Init()
             hardwareHandler->RegisterPluginListener(listener);
         }
     }
+
+    // Remove the non-exist data in database when device restart or other exception situation
+    RemoveNonExistCapabilityInfo();
 }
 
 void LocalHardwareManager::UnInit()
@@ -105,6 +108,32 @@ void LocalHardwareManager::AddLocalCapabilityInfo(const std::vector<DHItem> &dhI
         capabilityInfos.push_back(dhCapabilityInfo);
     }
     CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);
+}
+
+void LocalHardwareManager::RemoveNonExistCapabilityInfo()
+{
+    DHLOGI("start");
+    CapabilityInfoMap allCapabilityInfoMap;
+    CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix("", allCapabilityInfoMap);
+    if (allCapabilityInfoMap.empty()) {
+        DHLOGE("allDataMap from DB is empty");
+        return;
+    }
+    for (auto capabilityInfo : allCapabilityInfoMap) {
+        std::shared_ptr<CapabilityInfo> capabilityValue = capabilityInfo.second;
+        if (capabilityValue == nullptr) {
+            DHLOGE("capabilityInfo value is nullptr, key: %s", capabilityValue->GetAnonymousKey().c_str());
+            return;
+        }
+        DHLOGI("The key in allCapabilityInfoMap is %s", capabilityValue->GetAnonymousKey().c_str());
+        if (!CapabilityInfoManager::GetInstance()->HasCapability(capabilityValue->GetDeviceId(),
+            capabilityValue->GetDHId())) {
+            DHLOGI("AllCapabilityInfoMap is not found this key, so it is previous data. It should be removed, key: %s",
+                capabilityValue->GetAnonymousKey().c_str());
+            CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(capabilityValue->GetKey());
+        }
+    }
+    DHLOGI("end");
 }
 } // namespace DistributedHardware
 } // namespace OHOS
