@@ -29,6 +29,7 @@
 #include "task_board.h"
 #include "task_executor.h"
 #include "task_factory.h"
+#include "version_info_manager.h"
 #include "version_manager.h"
 
 namespace OHOS {
@@ -54,6 +55,8 @@ int32_t DistributedHardwareManager::Initialize()
     DHLOGI("start");
     CapabilityInfoManager::GetInstance()->Init();
 
+    VersionInfoManager::GetInstance().Init();
+
     ComponentLoader::GetInstance().Init();
 
     LocalHardwareManager::GetInstance().Init();
@@ -77,6 +80,8 @@ int32_t DistributedHardwareManager::Release()
     LocalHardwareManager::GetInstance().UnInit();
 
     ComponentLoader::GetInstance().UnInit();
+
+    VersionInfoManager::GetInstance().UnInit();
 
     CapabilityInfoManager::GetInstance()->UnInit();
 

@@ -79,7 +79,7 @@ private:
     std::string Readfile(const std::string &filePath);
 
 private:
-    DHVersion localDHVersion_ {"", "", ""};
+    DHVersion localDHVersion_;
     std::map<DHType, CompHandler> compHandlerMap_;
     std::atomic<bool> isLocalVersionInit_;
 };

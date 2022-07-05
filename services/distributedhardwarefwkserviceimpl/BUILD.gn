@@ -52,6 +52,7 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
     "src/resourcemanager/capability_info_manager.cpp",
     "src/resourcemanager/capability_utils.cpp",
     "src/resourcemanager/db_adapter.cpp",
+    "src/resourcemanager/version_info_manager.cpp",
     "src/task/disable_task.cpp",
     "src/task/enable_task.cpp",
     "src/task/offline_task.cpp",
@@ -61,6 +62,7 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
     "src/task/task_executor.cpp",
     "src/task/task_factory.cpp",
     "src/utils/dh_context.cpp",
+    "src/utils/impl_utils.cpp",
     "src/versionmanager/version_manager.cpp",
   ]
 

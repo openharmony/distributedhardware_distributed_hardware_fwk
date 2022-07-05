@@ -23,10 +23,9 @@ void DHVersion::FromJsonString(const std::string &jsonStr)
 {
     nlohmann::json jsonObj = nlohmann::json::parse(jsonStr);
     FromJson(jsonObj, *this);
-    return DH_FWK_SUCCESS;
 }
 
-std::string  DHVersion::ToJsonString()
+std::string DHVersion::ToJsonString() const
 {
     nlohmann::json jsonObj;
     ToJson(jsonObj, *this);
@@ -35,7 +34,7 @@ std::string  DHVersion::ToJsonString()
 
 void ToJson(nlohmann::json &jsonObject, const DHVersion &dhVersion)
 {
-    jsonObject[DEV_ID] = GetDeviceIdByUUID(dhVersion.uuid);
+    jsonObject[DEV_ID] = dhVersion.deviceId;
     jsonObject[DH_VER] = dhVersion.dhVersion;
 
     nlohmann::json compVers;
@@ -62,11 +61,17 @@ void FromJson(const nlohmann::json &jsonObject, DHVersion &dhVersion)
        dhVersion.dhVersion = jsonObject.at(DH_VER).get<std::string>();
     }
 
-    nlohmann::json compVers;
     if (jsonObject.find(COMP_VER) != jsonObject.end()) {
-        = jsonObject.at(COMP_VER);
+        for (auto compVerObj : jsonObject.at(COMP_VER)) {
+            CompVersion compVer;
+            compVer.name = compVerObj.at(NAME).get<std::string>();
+            compVer.dhType = compVerObj.at(TYPE).get<DHType>();
+            compVer.handlerVersion = compVerObj.at(HANDLER).get<std::string>();
+            compVer.sourceVersion = compVerObj.at(SOURCE_VER).get<std::string>();
+            compVer.sinkVersion = compVerObj.at(SINK_VER).get<std::string>();
+            dhVersion.compVersions.insert(std::pair<DHType, CompVersion>(compVer.dhType, compVer));
+        }
     }
 }
-
 } // namespace DistributedHardware
 } // namespace OHOS

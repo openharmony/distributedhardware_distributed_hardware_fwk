@@ -28,6 +28,7 @@ namespace DistributedHardware {
     const std::string COMPONENTSLOAD_PROFILE_PATH = R"(/etc/distributed_hardware_components_cfg.json)";
     const std::string APP_ID = "dtbhardware_manager_service";
     const std::string GLOBAL_CAPABILITY_ID = "global_capability_info";
+    const std::string GLOBAL_VERSION_ID = "global_version_info";
     const std::string RESOURCE_SEPARATOR = "###";
     const std::string DH_ID = "dh_id";
     const std::string DEV_ID = "dev_id";
@@ -49,8 +50,6 @@ namespace DistributedHardware {
     const std::string DH_COMPONENT_TYPE = "dhType";
     const std::string DH_COMPONENT_SINK_VER = "version";
     const std::string DH_COMPONENT_DEFAULT_VERSION = "1.0";
-
-
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

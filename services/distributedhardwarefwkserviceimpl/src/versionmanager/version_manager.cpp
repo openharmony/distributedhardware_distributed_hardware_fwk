@@ -19,6 +19,7 @@
 #include "componentloader/component_loader.h"
 #include "dh_context.h"
 #include "distributed_hardware_log.h"
+#include "version_info_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -64,6 +65,7 @@ int32_t VersionManager::AddDHVersion(const std::string &uuid, const DHVersion &d
     DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
     dhVersions_.insert(std::pair<std::string, DHVersion>(uuid, dhVersion));
+    VersionInfoManager::GetInstance().AddVersion(std::vector<DHVersion> { dhVersion });
     return DH_FWK_SUCCESS;
 }
 
