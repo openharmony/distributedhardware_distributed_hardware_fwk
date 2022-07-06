@@ -32,13 +32,31 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "VersionInfoManager"
-IMPLEMENT_SINGLE_INSTANCE(VersionInfoManager);
+
+VersionInfoManager::VersionInfoManager() : dbAdapterPtr_(nullptr)
+{}
+
+VersionInfoManager::~VersionInfoManager()
+{
+    DHLOGI("VersionInfoManager Destruction!");
+}
+
+std::shared_ptr<VersionInfoManager> VersionInfoManager::GetInstance()
+{
+    static std::shared_ptr<VersionInfoManager> instance(new(std::nothrow) VersionInfoManager);
+    if (instance == nullptr) {
+        DHLOGE("instance is nullptr, because applying memory fail!");
+        return nullptr;
+    }
+    return instance;
+}
 
 int32_t VersionInfoManager::Init()
 {
     DHLOGI("VersionInfoManager instance init!");
     std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, GLOBAL_VERSION_ID, shared_from_this());
+    DHLOGI("dbAdapterPtr_ success");
     if (dbAdapterPtr_->Init() != DH_FWK_SUCCESS) {
         DHLOGE("Init dbAdapterPtr_ failed");
         return ERR_DH_FWK_RESOURCE_INIT_DB_FAILED;
@@ -80,6 +98,7 @@ int32_t VersionInfoManager::AddVersion(const DHVersion &version)
     std::string key = version.deviceId;
     std::string value = version.ToJsonString();
     DHLOGI("AddVersion, Key: %s", GetAnonyString(version.deviceId).c_str());
+    DHLOGI("AddVersion, value: %s", value.c_str());
     if (dbAdapterPtr_->PutData(key, value) != DH_FWK_SUCCESS) {
         DHLOGE("Fail to storage to kv");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
@@ -101,6 +120,8 @@ int32_t VersionInfoManager::SyncVersionInfoFromDB(const std::string &deviceId, D
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
 
+    DHLOGI("Query data from DB by deviceId success, id: %s, data: %s",
+        GetAnonyString(deviceId).c_str(), data.c_str());
     dhVersion.FromJsonString(data);
     return DH_FWK_SUCCESS;
 }
@@ -133,7 +154,7 @@ int32_t VersionInfoManager::SyncRemoteVersionInfos()
             continue;
         }
         
-        VersionManager::GetInstance().AddDHVersionCache(dhVersion.uuid, dhVersion);
+        VersionManager::GetInstance().AddDHVersion(dhVersion.uuid, dhVersion);
     }
     return DH_FWK_SUCCESS;
 }
@@ -192,7 +213,7 @@ void VersionInfoManager::OnChange(const DistributedKv::ChangeNotification &chang
 
 }
 
-void VersionInfoManager::OnEvent(VersionInfoEvent &e)
+void VersionInfoManager::OnEvent(VersionInfoEvent &ev)
 {
     switch (ev.GetAction()) {
         case VersionInfoEvent::EventType::RECOVER:
@@ -213,7 +234,7 @@ void VersionInfoManager::HandleVersionAddChange(const std::vector<DistributedKv:
         dhVersion.FromJsonString(value);
         const std::string &deviceId = dhVersion.deviceId;
         DHLOGI("Add Version ,key: %s", GetAnonyString(deviceId).c_str());
-        VersionManager::GetInstance().AddDHVersionCache(dhVersion.uuid, dhVersion);
+        VersionManager::GetInstance().AddDHVersion(dhVersion.uuid, dhVersion);
     }
 }
 
@@ -226,7 +247,7 @@ void VersionInfoManager::HandleVersionUpdateChange(const std::vector<Distributed
         dhVersion.FromJsonString(value);
         const std::string &deviceId = dhVersion.deviceId;
         DHLOGI("Update Version key: %s", GetAnonyString(deviceId).c_str());
-        VersionManager::GetInstance().AddDHVersionCache(dhVersion.uuid, dhVersion);
+        VersionManager::GetInstance().AddDHVersion(dhVersion.uuid, dhVersion);
     }
 }
 

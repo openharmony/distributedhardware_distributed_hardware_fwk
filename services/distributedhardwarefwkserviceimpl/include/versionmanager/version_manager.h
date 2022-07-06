@@ -40,6 +40,7 @@ public:
     int32_t RemoveDHVersion(const std::string &uuid);
     int32_t GetDHVersion(const std::string &uuid, DHVersion &dhVersion);
     int32_t GetCompVersion(const std::string &uuid, const DHType dhType, CompVersion &compVersion);
+    int32_t GetDHVersionFromDB(const std::string &uuid, DHVersion &dhVersion);
     std::string GetLocalDeviceVersion();
     void ShowLocalVersion(const DHVersion &dhVersion) const;
 

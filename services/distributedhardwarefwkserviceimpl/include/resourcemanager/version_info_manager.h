@@ -38,10 +38,13 @@ class VersionInfoManager : public std::enable_shared_from_this<VersionInfoManage
                            public EventSender,
                            public DistributedKv::KvStoreObserver,
                            public EventBusHandler<VersionInfoEvent> {
-    DECLARE_SINGLE_INSTANCE_BASE(VersionInfoManager);
 public:
-    VersionInfoManager() : dbAdapterPtr_(nullptr) {}
-    ~VersionInfoManager() {}
+    VersionInfoManager(const VersionInfoManager &) = delete;
+    VersionInfoManager &operator = (const VersionInfoManager &) = delete;
+    VersionInfoManager(VersionInfoManager &&) = delete;
+    VersionInfoManager &operator = (VersionInfoManager &&) = delete;
+    static std::shared_ptr<VersionInfoManager> GetInstance();
+    virtual ~VersionInfoManager();
 
     int32_t Init();
     int32_t UnInit();
@@ -55,9 +58,10 @@ public:
     int32_t AddVersion(const DHVersion &version);
 
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
-    void OnEvent(VersionInfoEvent &e) override;
+    void OnEvent(VersionInfoEvent &ev) override;
 
 private:
+    VersionInfoManager();
     void HandleVersionAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
     void HandleVersionUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
     void HandleVersionDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords);

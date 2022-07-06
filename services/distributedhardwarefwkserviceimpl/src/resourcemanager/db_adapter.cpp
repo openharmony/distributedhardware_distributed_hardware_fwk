@@ -24,6 +24,7 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "event_bus.h"
+#include "version_info_event.h"
 
 namespace OHOS {
 namespace DistributedHardware {

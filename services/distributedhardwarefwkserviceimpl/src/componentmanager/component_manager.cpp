@@ -327,8 +327,6 @@ DHType ComponentManager::GetDHType(const std::string &uuid, const std::string &d
     return DHType::UNKNOWN;
 }
 
-
-
 int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std::string &uuid,
     const std::string &dhId, DHType dhType, EnableParam &param)
 {
@@ -341,42 +339,37 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
     }
 
     param.attrs = capability->GetDHAttrs();
-
-    // param.version = "";
-    // std::string version("");
-    param.version = GetSinkVersionFromVarMgr(uuid, dhType);
-    if (param.version.empty()) {
-        DHLOGI("Get Sink Version failed, uuid = %s, dhId = %s", GetAnonyString(uuid).c_str(),
-            GetAnonyString(dhId).c_str());
-        return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
-    }
-    GetSinkVersion(networkId, uuid, dhType);
-    if (param.version.empty()) {
-        DHLOGI("Get Sink Version failed, uuid = %s, dhId = %s", GetAnonyString(uuid).c_str(),
-            GetAnonyString(dhId).c_str());
-        return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
+    param.version = GetSinkVersionFromVerMgr(uuid, dhType);
+    if (!param.version.empty()) {
+        DHLOGI("success. uuid = %s, dhId = %s, dhType = %#X, version = %s", GetAnonyString(uuid).c_str(),
+            GetAnonyString(dhId).c_str(), dhType, param.version.c_str());
+        return DH_FWK_SUCCESS;
     }
 
-    DHLOGI("success. uuid =%s, dhId = %s, version = %s", GetAnonyString(uuid).c_str(),
-        GetAnonyString(dhId).c_str(), param.version.c_str());
+    // Get sinkversion by rpc
+    param.version = GetSinkVersion(networkId, uuid, dhType);
+    if (!param.version.empty()) {
+        DHLOGI("success. uuid = %s, dhId = %s, dhType = %#X, version = %s", GetAnonyString(uuid).c_str(),
+            GetAnonyString(dhId).c_str(), dhType, param.version.c_str());
+        return DH_FWK_SUCCESS;
+    }
 
-    return DH_FWK_SUCCESS;
+    DHLOGI("Get Sink Version failed, uuid = %s, dhId = %s, dhType = %#X,", GetAnonyString(uuid).c_str(),
+        GetAnonyString(dhId).c_str(), dhType);
+    return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
+    
 }
 
-std::string ComponentManager::GetSinkVersionFromVarMgr(const std::string &uuid, DHType dhType)
+std::string ComponentManager::GetSinkVersionFromVerMgr(const std::string &uuid, const DHType dhType)
 {
     CompVersion compversion;
     auto ret = VersionManager::GetInstance().GetCompVersion(uuid, dhType, compversion);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetCapability failed, uuid =%s, dhId = %s, errCode = %d", GetAnonyString(uuid).c_str(),
-            GetAnonyString(dhId).c_str(), ret);
+        DHLOGE("Get version from Version Manager failed, uuid =%s, dhType = %#X, errCode = %d",
+            GetAnonyString(uuid).c_str(), dhType, ret);
         return "";
     }
-
-    nlohmann::json json;
-    json[DH_COMPONENT_TYPE] = compversion.dhType;
-    json[DH_COMPONENT_SINK_VER] = compversion.sinkVersion;
-    return json.dump();
+    return compversion.sinkVersion;
 }
 
 std::string ComponentManager::GetSinkVersion(const std::string &networkId, const std::string &uuid, DHType dhType)

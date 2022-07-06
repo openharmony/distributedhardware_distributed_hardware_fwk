@@ -55,7 +55,7 @@ int32_t DistributedHardwareManager::Initialize()
     DHLOGI("start");
     CapabilityInfoManager::GetInstance()->Init();
 
-    VersionInfoManager::GetInstance().Init();
+    VersionInfoManager::GetInstance()->Init();
 
     ComponentLoader::GetInstance().Init();
 
@@ -81,7 +81,7 @@ int32_t DistributedHardwareManager::Release()
 
     ComponentLoader::GetInstance().UnInit();
 
-    VersionInfoManager::GetInstance().UnInit();
+    VersionInfoManager::GetInstance()->UnInit();
 
     CapabilityInfoManager::GetInstance()->UnInit();
 

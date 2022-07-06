@@ -23,6 +23,8 @@
 #include "task_board.h"
 #include "task_executor.h"
 #include "task_factory.h"
+#include "version_info_manager.h"
+#include "version_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -84,7 +86,8 @@ void OnLineTask::DoSyncInfo()
         DHLOGE("SyncDeviceInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
 
-    ret = VersionInfoManager::GetInstance()->SyncDeviceInfoFromDB(GetDeviceIdByUUID(GetUUID()));
+    DHVersion dhVersion;
+    ret = VersionManager::GetInstance().GetDHVersionFromDB(GetUUID(), dhVersion);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("SyncVersionInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }

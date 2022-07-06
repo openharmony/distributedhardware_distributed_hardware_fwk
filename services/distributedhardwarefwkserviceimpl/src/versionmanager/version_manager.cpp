@@ -18,6 +18,7 @@
 #include "anonymous_string.h"
 #include "componentloader/component_loader.h"
 #include "dh_context.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_log.h"
 #include "version_info_manager.h"
 
@@ -42,7 +43,7 @@ int32_t VersionManager::Init()
     dhVersion.deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
     ShowLocalVersion(dhVersion);
     AddDHVersion(strUUID, dhVersion);
-    VersionInfoManager::GetInstance().AddVersion(dhVersion);
+    VersionInfoManager::GetInstance()->AddVersion(dhVersion);
     return DH_FWK_SUCCESS;
 }
 
@@ -103,7 +104,12 @@ int32_t VersionManager::GetDHVersion(const std::string &uuid, DHVersion &dhVersi
 int32_t VersionManager::GetDHVersionFromDB(const std::string &uuid, DHVersion &dhVersion)
 {
     DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
-    return VersionInfoManager::GetInstance().SyncVersionInfoFromDB(GetDeviceIdByUUID(uuid) ,dhVersion);
+    int32_t ret = VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(GetDeviceIdByUUID(uuid), dhVersion);
+    if (ret != DH_FWK_SUCCESS) {
+        return ret;
+    }
+    dhVersions_[uuid] = dhVersion;
+    return DH_FWK_SUCCESS;
 }
 
 int32_t VersionManager::GetCompVersion(const std::string &uuid, const DHType dhType, CompVersion &compVersion)
