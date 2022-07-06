@@ -65,7 +65,7 @@ int32_t VersionManager::AddDHVersionCache(const std::string &uuid, const DHVersi
 {
     DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
-    dhVersions_.insert(std::pair<std::string, DHVersion>(uuid, dhVersion));
+    dhVersions_[uuid] = dhVersion;
     return DH_FWK_SUCCESS;
 }
 
@@ -95,7 +95,7 @@ int32_t VersionManager::GetDHVersion(const std::string &uuid, DHVersion &dhVersi
     
     int32_t ret = GetDHVersionFromDB(uuid, dhVersion);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("there is no uuid: %s in cache, get version fail", GetAnonyString(uuid).c_str());
+        DHLOGE("there is no uuid: %s in db, get version fail", GetAnonyString(uuid).c_str());
     }
     return ret;
 }
@@ -103,9 +103,8 @@ int32_t VersionManager::GetDHVersion(const std::string &uuid, DHVersion &dhVersi
 int32_t VersionManager::GetDHVersionFromDB(const std::string &uuid, DHVersion &dhVersion)
 {
     DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
-    return VersionInfoManager::GetInstance().GetDHVersionFromDB(GetDeviceIdByUUID(uuid) ,dhVersion);
+    return VersionInfoManager::GetInstance().SyncVersionInfoFromDB(GetDeviceIdByUUID(uuid) ,dhVersion);
 }
-
 
 int32_t VersionManager::GetCompVersion(const std::string &uuid, const DHType dhType, CompVersion &compVersion)
 {

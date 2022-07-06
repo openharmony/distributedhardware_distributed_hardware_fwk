@@ -70,8 +70,10 @@ int32_t VersionInfoManager::AddVersion(const DHVersion &version)
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
     } 
 
-    if (GetDHVersionFromDB(version.deviceId, version) == DH_FWK_SUCCESS) {
-        DHLOGI("dhversion already stored,  Key: %s", GetAnonyString(version.deviceId).c_str());
+    std::string data("");
+    dbAdapterPtr_->GetDataByKey(deviceId, data);
+    if (data == version.ToJsonString()) {
+        DHLOGI("dhversion already stored, Key: %s", GetAnonyString(version.deviceId).c_str());
         return DH_FWK_SUCCESS;
     }
 
@@ -85,10 +87,9 @@ int32_t VersionInfoManager::AddVersion(const DHVersion &version)
     return DH_FWK_SUCCESS;
 }
 
-
-int32_t VersionInfoManager::GetVersionInfoFromDB(const std::string &deviceId, DHVersion &dhVersion)
+int32_t VersionInfoManager::SyncVersionInfoFromDB(const std::string &deviceId, DHVersion &dhVersion)
 {
-    DHLOGI("Sync DeviceInfo from DB, deviceId: %s", GetAnonyString(deviceId).c_str());
+    DHLOGI("Sync VersionInfo from DB, deviceId: %s", GetAnonyString(deviceId).c_str());
     std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
@@ -106,8 +107,8 @@ int32_t VersionInfoManager::GetVersionInfoFromDB(const std::string &deviceId, DH
 
 int32_t VersionInfoManager::SyncRemoteVersionInfos()
 {
-    DHLOGI("Sync full remote device info from DB");
-    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
+    DHLOGI("Sync full remote version info from DB");
+    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
@@ -126,13 +127,49 @@ int32_t VersionInfoManager::SyncRemoteVersionInfos()
             DHLOGE("local device info not need sync from db");
             continue;
         }
-        // if (!DHContext::GetInstance().IsDeviceOnline(deviceId)) {
-        //     DHLOGE("offline device, no need sync to memory, deviceId : %s ",
-        //         GetAnonyString(deviceId).c_str());
-        //     continue;
-        // }
-        // globalCapInfoMap_[capabilityInfo->GetKey()] = capabilityInfo;
-        VersionManager::GetInstance().AddDHVersion(dhVersion.uuid, dhVersion);
+        if (!DHContext::GetInstance().IsDeviceOnline(deviceId)) {
+            DHLOGE("offline device, no need sync to memory, deviceId : %s ",
+                GetAnonyString(deviceId).c_str());
+            continue;
+        }
+        
+        VersionManager::GetInstance().AddDHVersionCache(dhVersion.uuid, dhVersion);
+    }
+    return DH_FWK_SUCCESS;
+}
+
+
+void VersionInfoManager::CreateManualSyncCount(const std::string &deviceId)
+{
+    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr_ is null");
+        return;
+    }
+    dbAdapterPtr_->CreateManualSyncCount(deviceId);
+}
+
+void VersionInfoManager::RemoveManualSyncCount(const std::string &deviceId)
+{
+    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr_ is null");
+        return;
+    }
+    dbAdapterPtr_->RemoveManualSyncCount(deviceId);
+}
+
+int32_t VersionInfoManager::ManualSync(const std::string &networkId)
+{
+    DHLOGI("ManualSync start, networkId: %s", GetAnonyString(networkId).c_str());
+    std::unique_lock<std::mutex> lock(verInfoMgrMutex_);
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr_ is null");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
+    }
+    if (dbAdapterPtr_->ManualSync(networkId) != DH_FWK_SUCCESS) {
+        DHLOGE("ManualSync failed");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     return DH_FWK_SUCCESS;
 }
@@ -169,85 +206,41 @@ void VersionInfoManager::OnEvent(VersionInfoEvent &e)
 
 void VersionInfoManager::HandleVersionAddChange(const std::vector<DistributedKv::Entry> &insertRecords)
 {
-    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
+    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     for (const auto &item : insertRecords) {
         const std::string value = item.value.ToString();
-        std::shared_ptr<VersionInfo> capPtr;
-        if (VersionUtils::GetVersionByValue(value, capPtr) != DH_FWK_SUCCESS) {
-            DHLOGE("Get capability by value failed");
-            continue;
-        }
-        const auto keyString = capPtr->GetKey();
-        DHLOGI("Add capability key: %s", capPtr->GetAnonymousKey().c_str());
-        globalCapInfoMap_[keyString] = capPtr;
-        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(capPtr->GetDeviceId());
-        if (uuid.empty()) {
-            DHLOGI("Find uuid failed and never enable");
-            continue;
-        }
-        std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
-        if (networkId.empty()) {
-            DHLOGI("Find network failed and never enable, uuid: %s", GetAnonyString(uuid).c_str());
-            continue;
-        }
-        TaskParam taskParam = {
-            .networkId = networkId,
-            .uuid = uuid,
-            .dhId = capPtr->GetDHId(),
-            .dhType = capPtr->GetDHType()
-        };
-        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
-        TaskExecutor::GetInstance().PushTask(task);
+        DHVersion dhVersion;
+        dhVersion.FromJsonString(value);
+        const std::string &deviceId = dhVersion.deviceId;
+        DHLOGI("Add Version ,key: %s", GetAnonyString(deviceId).c_str());
+        VersionManager::GetInstance().AddDHVersionCache(dhVersion.uuid, dhVersion);
     }
 }
 
 void VersionInfoManager::HandleVersionUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords)
 {
-    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
+    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     for (const auto &item : updateRecords) {
         const std::string value = item.value.ToString();
-        std::shared_ptr<VersionInfo> capPtr;
-        if (VersionUtils::GetVersionByValue(value, capPtr) != DH_FWK_SUCCESS) {
-            DHLOGE("Get capability by value failed");
-            continue;
-        }
-        const auto keyString = capPtr->GetKey();
-        DHLOGI("Update capability key: %s", capPtr->GetAnonymousKey().c_str());
-        globalCapInfoMap_[keyString] = capPtr;
+        DHVersion dhVersion;
+        dhVersion.FromJsonString(value);
+        const std::string &deviceId = dhVersion.deviceId;
+        DHLOGI("Update Version key: %s", GetAnonyString(deviceId).c_str());
+        VersionManager::GetInstance().AddDHVersionCache(dhVersion.uuid, dhVersion);
     }
 }
 
 void VersionInfoManager::HandleVersionDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords)
 {
-    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
+    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     for (const auto &item : deleteRecords) {
         const std::string value = item.value.ToString();
-        std::shared_ptr<VersionInfo> capPtr;
-        if (VersionUtils::GetVersionByValue(value, capPtr) != DH_FWK_SUCCESS) {
-            DHLOGE("Get capability by value failed");
-            continue;
-        }
-        const auto keyString = capPtr->GetKey();
-        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(capPtr->GetDeviceId());
-        if (uuid.empty()) {
-            DHLOGI("Find uuid failed and never disable");
-            continue;
-        }
-        std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
-        if (networkId.empty()) {
-            DHLOGI("Find network failed and never disable, uuid: %s", GetAnonyString(uuid).c_str());
-            continue;
-        }
-        TaskParam taskParam = {
-            .networkId = networkId,
-            .uuid = uuid,
-            .dhId = capPtr->GetDHId(),
-            .dhType = capPtr->GetDHType()
-        };
-        auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, nullptr);
-        TaskExecutor::GetInstance().PushTask(task);
-        DHLOGI("Delete capability key: %s", capPtr->GetAnonymousKey().c_str());
-        globalCapInfoMap_.erase(keyString);
+        DHVersion dhVersion;
+        dhVersion.FromJsonString(value);
+        const std::string &deviceId = dhVersion.deviceId;
+
+        DHLOGI("Delete Version, key: %s", GetAnonyString(deviceId).c_str());
+        VersionManager::GetInstance().RemoveDHVersion(dhVersion.uuid);
     }
 }
 

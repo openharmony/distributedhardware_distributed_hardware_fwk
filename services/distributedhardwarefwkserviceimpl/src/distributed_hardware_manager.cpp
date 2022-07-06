@@ -118,6 +118,7 @@ int32_t DistributedHardwareManager::SendOnLineEvent(const std::string &networkId
     TaskExecutor::GetInstance().PushTask(task);
     DHContext::GetInstance().AddOnlineDevice(uuid, networkId);
     CapabilityInfoManager::GetInstance()->CreateManualSyncCount(GetDeviceIdByUUID(uuid));
+    VersionInfoManager::GetInstance()->CreateManualSyncCount(GetDeviceIdByUUID(uuid));
 
     return DH_FWK_SUCCESS;
 }
@@ -159,6 +160,7 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
 
     DHContext::GetInstance().RemoveOnlineDevice(realUUID);
     CapabilityInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(realUUID));
+    VersionInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(realUUID));
 
     HiSysEventWriteCompOfflineMsg(DHFWK_DEV_OFFLINE, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         GetAnonyString(networkId), "dhfwk device offline event.");

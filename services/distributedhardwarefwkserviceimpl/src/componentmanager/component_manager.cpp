@@ -345,6 +345,15 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
 
     CompVersion compversion;
     int32_t ret = VersionManager::GetInstance().GetCompVersion(uuid, dhType, compversion);
+
+    // for (auto iter = compVersions.cbegin(); iter != compVersions.cend(); ++iter) {
+    //     versionMap.emplace(iter->first, iter->second.sinkVersion);
+    // }+
+    nlohmann::json json;
+    json[DH_COMPONENT_TYPE] = compversion.dhType;
+    json[DH_COMPONENT_SINK_VER] = compversion.sinkVersion;
+    version = json.dump();
+
     if (ret == DH_FWK_SUCCESS) {
         param.version = 
     }

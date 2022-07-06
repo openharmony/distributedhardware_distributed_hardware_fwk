@@ -73,10 +73,20 @@ void OnLineTask::DoSyncInfo()
     if (ret != DH_FWK_SUCCESS) {
         DHLOGW("ManualSync failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
+
+    ret = VersionInfoManager::GetInstance()->ManualSync(GetNetworkId());
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGW("ManualSync version failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
+    }
+
     ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(GetDeviceIdByUUID(GetUUID()));
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("SyncDeviceInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
-        return;
+    }
+
+    ret = VersionInfoManager::GetInstance()->SyncDeviceInfoFromDB(GetDeviceIdByUUID(GetUUID()));
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("SyncVersionInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
 }
 
