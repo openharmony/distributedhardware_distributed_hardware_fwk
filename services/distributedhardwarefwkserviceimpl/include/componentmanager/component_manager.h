@@ -67,6 +67,7 @@ private:
     bool WaitForResult(const Action &action, ActionResult result);
     int32_t GetEnableParam(const std::string &networkId, const std::string &uuid, const std::string &dhId,
         DHType dhType, EnableParam &param);
+    std::string GetSinkVersionFromVarMgr(const std::string &uuid, DHType dhType);
     std::string GetSinkVersion(const std::string &networkId, const std::string &uuid, DHType dhType);
     std::string GetVersionFromCache(const std::string &uuid, DHType dhType);
     int32_t UpdateVersionCache(const std::string &networkId, const std::string &uuid);

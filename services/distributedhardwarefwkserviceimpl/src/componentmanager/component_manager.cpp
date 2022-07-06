@@ -327,6 +327,8 @@ DHType ComponentManager::GetDHType(const std::string &uuid, const std::string &d
     return DHType::UNKNOWN;
 }
 
+
+
 int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std::string &uuid,
     const std::string &dhId, DHType dhType, EnableParam &param)
 {
@@ -340,22 +342,13 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
 
     param.attrs = capability->GetDHAttrs();
 
-    param.version = "";
-    std::string version("");
-
-    CompVersion compversion;
-    int32_t ret = VersionManager::GetInstance().GetCompVersion(uuid, dhType, compversion);
-
-    // for (auto iter = compVersions.cbegin(); iter != compVersions.cend(); ++iter) {
-    //     versionMap.emplace(iter->first, iter->second.sinkVersion);
-    // }+
-    nlohmann::json json;
-    json[DH_COMPONENT_TYPE] = compversion.dhType;
-    json[DH_COMPONENT_SINK_VER] = compversion.sinkVersion;
-    version = json.dump();
-
-    if (ret == DH_FWK_SUCCESS) {
-        param.version = 
+    // param.version = "";
+    // std::string version("");
+    param.version = GetSinkVersionFromVarMgr(uuid, dhType);
+    if (param.version.empty()) {
+        DHLOGI("Get Sink Version failed, uuid = %s, dhId = %s", GetAnonyString(uuid).c_str(),
+            GetAnonyString(dhId).c_str());
+        return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
     }
     GetSinkVersion(networkId, uuid, dhType);
     if (param.version.empty()) {
@@ -368,6 +361,22 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
         GetAnonyString(dhId).c_str(), param.version.c_str());
 
     return DH_FWK_SUCCESS;
+}
+
+std::string ComponentManager::GetSinkVersionFromVarMgr(const std::string &uuid, DHType dhType)
+{
+    CompVersion compversion;
+    auto ret = VersionManager::GetInstance().GetCompVersion(uuid, dhType, compversion);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("GetCapability failed, uuid =%s, dhId = %s, errCode = %d", GetAnonyString(uuid).c_str(),
+            GetAnonyString(dhId).c_str(), ret);
+        return "";
+    }
+
+    nlohmann::json json;
+    json[DH_COMPONENT_TYPE] = compversion.dhType;
+    json[DH_COMPONENT_SINK_VER] = compversion.sinkVersion;
+    return json.dump();
 }
 
 std::string ComponentManager::GetSinkVersion(const std::string &networkId, const std::string &uuid, DHType dhType)

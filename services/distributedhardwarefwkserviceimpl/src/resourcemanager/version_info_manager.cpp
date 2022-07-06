@@ -71,7 +71,7 @@ int32_t VersionInfoManager::AddVersion(const DHVersion &version)
     } 
 
     std::string data("");
-    dbAdapterPtr_->GetDataByKey(deviceId, data);
+    dbAdapterPtr_->GetDataByKey(version.deviceId, data);
     if (data == version.ToJsonString()) {
         DHLOGI("dhversion already stored, Key: %s", GetAnonyString(version.deviceId).c_str());
         return DH_FWK_SUCCESS;

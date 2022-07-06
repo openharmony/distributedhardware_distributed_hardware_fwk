@@ -49,8 +49,8 @@ public:
     int32_t SyncVersionInfoFromDB(const std::string &deviceId, DHVersion &dhVersion);
     int32_t SyncRemoteVersionInfos();
     void CreateManualSyncCount(const std::string &deviceId);
-    void VersionInfoManager::RemoveManualSyncCount(const std::string &deviceId)
-    int32_t VersionInfoManager::ManualSync(const std::string &networkId)
+    void RemoveManualSyncCount(const std::string &deviceId);
+    int32_t ManualSync(const std::string &networkId);
 
     int32_t AddVersion(const DHVersion &version);
 

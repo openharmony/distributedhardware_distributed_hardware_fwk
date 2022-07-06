@@ -41,7 +41,7 @@ int32_t VersionManager::Init()
     dhVersion.uuid = strUUID;
     dhVersion.deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
     ShowLocalVersion(dhVersion);
-    AddDHVersionCache(strUUID, dhVersion);
+    AddDHVersion(strUUID, dhVersion);
     VersionInfoManager::GetInstance().AddVersion(dhVersion);
     return DH_FWK_SUCCESS;
 }
@@ -61,7 +61,7 @@ void VersionManager::ShowLocalVersion(const DHVersion &dhVersion) const
     }
 }
 
-int32_t VersionManager::AddDHVersionCache(const std::string &uuid, const DHVersion &dhVersion)
+int32_t VersionManager::AddDHVersion(const std::string &uuid, const DHVersion &dhVersion)
 {
     DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
