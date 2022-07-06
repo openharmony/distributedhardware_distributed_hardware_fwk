@@ -41,7 +41,8 @@ int32_t VersionManager::Init()
     dhVersion.uuid = strUUID;
     dhVersion.deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
     ShowLocalVersion(dhVersion);
-    AddDHVersion(strUUID, dhVersion);
+    AddDHVersionCache(strUUID, dhVersion);
+    VersionInfoManager::GetInstance().AddVersion(dhVersion);
     return DH_FWK_SUCCESS;
 }
 
@@ -60,12 +61,11 @@ void VersionManager::ShowLocalVersion(const DHVersion &dhVersion) const
     }
 }
 
-int32_t VersionManager::AddDHVersion(const std::string &uuid, const DHVersion &dhVersion)
+int32_t VersionManager::AddDHVersionCache(const std::string &uuid, const DHVersion &dhVersion)
 {
     DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
     dhVersions_.insert(std::pair<std::string, DHVersion>(uuid, dhVersion));
-    VersionInfoManager::GetInstance().AddVersion(std::vector<DHVersion> { dhVersion });
     return DH_FWK_SUCCESS;
 }
 
@@ -87,14 +87,25 @@ int32_t VersionManager::GetDHVersion(const std::string &uuid, DHVersion &dhVersi
     DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
     std::unordered_map<std::string, DHVersion>::iterator iter = dhVersions_.find(uuid);
-    if (iter == dhVersions_.end()) {
-        DHLOGE("there is no uuid: %s, get version fail", GetAnonyString(uuid).c_str());
-        return ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST;
-    } else {
+    if (iter != dhVersions_.end()) {
         dhVersion = dhVersions_[uuid];
         return DH_FWK_SUCCESS;
     }
+    DHLOGE("there is no uuid: %s in cache, get version fail", GetAnonyString(uuid).c_str());
+    
+    int32_t ret = GetDHVersionFromDB(uuid, dhVersion);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("there is no uuid: %s in cache, get version fail", GetAnonyString(uuid).c_str());
+    }
+    return ret;
 }
+
+int32_t VersionManager::GetDHVersionFromDB(const std::string &uuid, DHVersion &dhVersion)
+{
+    DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
+    return VersionInfoManager::GetInstance().GetDHVersionFromDB(GetDeviceIdByUUID(uuid) ,dhVersion);
+}
+
 
 int32_t VersionManager::GetCompVersion(const std::string &uuid, const DHType dhType, CompVersion &compVersion)
 {
