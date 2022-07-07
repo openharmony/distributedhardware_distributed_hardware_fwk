@@ -56,9 +56,6 @@ struct CompVersion {
     std::string handlerVersion;
     std::string sourceVersion;
     std::string sinkVersion;
-
-    // virtual int32_t FromJsonString(const std::string &jsonStr);
-    // virtual std::string ToJsonString();
 };
 
 struct DHVersion {
