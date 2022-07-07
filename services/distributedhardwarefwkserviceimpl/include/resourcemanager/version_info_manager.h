@@ -49,13 +49,12 @@ public:
     int32_t Init();
     int32_t UnInit();
 
-    int32_t SyncVersionInfoFromDB(const std::string &deviceId, DHVersion &dhVersion);
+    int32_t AddVersion(const DHVersion &version);
+    int32_t GetVersionInfoFromDB(const std::string &deviceId, DHVersion &dhVersion);
     int32_t SyncRemoteVersionInfos();
     void CreateManualSyncCount(const std::string &deviceId);
     void RemoveManualSyncCount(const std::string &deviceId);
     int32_t ManualSync(const std::string &networkId);
-
-    int32_t AddVersion(const DHVersion &version);
 
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     void OnEvent(VersionInfoEvent &ev) override;
@@ -64,7 +63,6 @@ private:
     VersionInfoManager();
     void HandleVersionAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
     void HandleVersionUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
-    void HandleVersionDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords);
 
 private:
     mutable std::mutex verInfoMgrMutex_;

@@ -87,7 +87,7 @@ void OnLineTask::DoSyncInfo()
     }
 
     DHVersion dhVersion;
-    ret = VersionManager::GetInstance().GetDHVersionFromDB(GetUUID(), dhVersion);
+    ret = VersionManager::GetInstance().SyncDHVersionFromDB(GetUUID(), dhVersion);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("SyncVersionInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }

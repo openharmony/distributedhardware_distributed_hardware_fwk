@@ -341,16 +341,15 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
     param.attrs = capability->GetDHAttrs();
     param.version = GetSinkVersionFromVerMgr(uuid, dhType);
     if (!param.version.empty()) {
-        DHLOGI("success. uuid = %s, dhId = %s, dhType = %#X, version = %s", GetAnonyString(uuid).c_str(),
-            GetAnonyString(dhId).c_str(), dhType, param.version.c_str());
+        DHLOGI("Get sink version from VerMgr success. uuid = %s, dhId = %s, dhType = %#X, version = %s",
+            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), dhType, param.version.c_str());
         return DH_FWK_SUCCESS;
     }
 
-    // Get sinkversion by rpc
     param.version = GetSinkVersion(networkId, uuid, dhType);
     if (!param.version.empty()) {
-        DHLOGI("success. uuid = %s, dhId = %s, dhType = %#X, version = %s", GetAnonyString(uuid).c_str(),
-            GetAnonyString(dhId).c_str(), dhType, param.version.c_str());
+        DHLOGI("Get sink version from rpc success. uuid = %s, dhId = %s, dhType = %#X, version = %s",
+            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), dhType, param.version.c_str());
         return DH_FWK_SUCCESS;
     }
 
