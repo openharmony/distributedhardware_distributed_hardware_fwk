@@ -341,7 +341,7 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
     param.attrs = capability->GetDHAttrs();
     param.version = GetSinkVersionFromVerMgr(uuid, dhType);
     if (!param.version.empty()) {
-        DHLOGI("Get sink version from VerMgr success. uuid = %s, dhId = %s, dhType = %#X, version = %s",
+        DHLOGI("Get sink version from Version Mgr success. uuid = %s, dhId = %s, dhType = %#X, version = %s",
             GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), dhType, param.version.c_str());
         return DH_FWK_SUCCESS;
     }
@@ -353,7 +353,7 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
         return DH_FWK_SUCCESS;
     }
 
-    DHLOGI("Get Sink Version failed, uuid = %s, dhId = %s, dhType = %#X,", GetAnonyString(uuid).c_str(),
+    DHLOGE("Get Sink Version failed, uuid = %s, dhId = %s, dhType = %#X,", GetAnonyString(uuid).c_str(),
         GetAnonyString(dhId).c_str(), dhType);
     return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
     

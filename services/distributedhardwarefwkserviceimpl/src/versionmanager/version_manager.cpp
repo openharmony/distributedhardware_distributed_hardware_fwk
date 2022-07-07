@@ -128,7 +128,7 @@ int32_t VersionManager::GetCompVersion(const std::string &uuid, const DHType dhT
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
 
-    DHLOGI("GetCompVersion success, uuid: %s, dhType%#X", GetAnonyString(uuid).c_str(), dhType);
+    DHLOGI("GetCompVersion success, uuid: %s, dhType: %#X", GetAnonyString(uuid).c_str(), dhType);
     compVersion = dhVersion.compVersions[dhType];
     return DH_FWK_SUCCESS;
 }
