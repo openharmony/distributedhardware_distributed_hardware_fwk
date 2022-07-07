@@ -38,7 +38,7 @@ void ToJson(nlohmann::json &jsonObject, const DHVersion &dhVersion)
     jsonObject[DH_VER] = dhVersion.dhVersion;
 
     nlohmann::json compVers;
-    for(const auto &compVersion : dhVersion.compVersions) {
+    for (const auto &compVersion : dhVersion.compVersions) {
         nlohmann::json compVer;
         compVer[NAME] = compVersion.second.name;
         compVer[TYPE] = compVersion.second.dhType;
@@ -58,7 +58,7 @@ void FromJson(const nlohmann::json &jsonObject, DHVersion &dhVersion)
     }
 
     if (jsonObject.find(DH_VER) != jsonObject.end()) {
-       dhVersion.dhVersion = jsonObject.at(DH_VER).get<std::string>();
+        dhVersion.dhVersion = jsonObject.at(DH_VER).get<std::string>();
     }
 
     if (jsonObject.find(COMP_VER) != jsonObject.end()) {

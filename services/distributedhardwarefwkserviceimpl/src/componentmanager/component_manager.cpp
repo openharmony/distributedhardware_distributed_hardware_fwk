@@ -355,8 +355,7 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
 
     DHLOGE("Get Sink Version failed, uuid = %s, dhId = %s, dhType = %#X,", GetAnonyString(uuid).c_str(),
         GetAnonyString(dhId).c_str(), dhType);
-    return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
-    
+    return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;   
 }
 
 std::string ComponentManager::GetSinkVersionFromVerMgr(const std::string &uuid, const DHType dhType)

@@ -267,7 +267,7 @@ void DBAdapter::SyncDBForRecover()
     if (storeId_.storeId == GLOBAL_CAPABILITY_ID) {
         CapabilityInfoEvent recoverEvent(*this, CapabilityInfoEvent::EventType::RECOVER);
         DHContext::GetInstance().GetEventBus()->PostEvent<CapabilityInfoEvent>(recoverEvent);
-    }   
+    }
 
     if (storeId_.storeId == GLOBAL_VERSION_ID) {
         VersionInfoEvent recoverEvent(*this, VersionInfoEvent::EventType::RECOVER);

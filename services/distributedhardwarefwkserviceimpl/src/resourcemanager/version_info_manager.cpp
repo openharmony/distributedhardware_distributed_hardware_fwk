@@ -85,7 +85,7 @@ int32_t VersionInfoManager::AddVersion(const DHVersion &version)
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
-    } 
+    }
 
     std::string data("");
     dbAdapterPtr_->GetDataByKey(version.deviceId, data);
@@ -197,7 +197,7 @@ int32_t VersionInfoManager::ManualSync(const std::string &networkId)
 }
 
 void VersionInfoManager::OnChange(const DistributedKv::ChangeNotification &changeNotification)
-{    
+{
     DHLOGI("VersionInfoManager: DB data OnChange");
     if (!changeNotification.GetInsertEntries().empty()) {
         DHLOGI("Handle version data add change");
