@@ -263,6 +263,5 @@ void VersionManager::OnEvent(VersionInfoEvent &ev)
             break;
     }
 }
-
 } // namespace DistributedHardware
 } // namespace OHOS
