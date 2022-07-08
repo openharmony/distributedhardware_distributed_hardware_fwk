@@ -29,6 +29,7 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkserviceimpl/include",
     "${services_path}/distributedhardwarefwkserviceimpl/include/task",
     "${services_path}/distributedhardwarefwkserviceimpl/include/utils",
+    "//third_party/json/include",
     "//utils/native/base/include",
   ]
 }
