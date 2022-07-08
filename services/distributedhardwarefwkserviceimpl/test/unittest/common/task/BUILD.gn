@@ -21,6 +21,7 @@ config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
+    "//third_party/json/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${services_path}/distributedhardwarefwkserviceimpl/include",
