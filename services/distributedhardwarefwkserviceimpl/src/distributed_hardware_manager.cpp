@@ -29,7 +29,7 @@
 #include "task_board.h"
 #include "task_executor.h"
 #include "task_factory.h"
-#include "version_info_manager.h"
+#include "version_info_adapter.h"
 #include "version_manager.h"
 
 namespace OHOS {
@@ -55,13 +55,11 @@ int32_t DistributedHardwareManager::Initialize()
     DHLOGI("start");
     CapabilityInfoManager::GetInstance()->Init();
 
-    VersionInfoManager::GetInstance()->Init();
-
     ComponentLoader::GetInstance().Init();
 
     LocalHardwareManager::GetInstance().Init();
 
-    VersionManager::GetInstance().Init();
+    VersionManager::GetInstance()->Init();
 
     ComponentManager::GetInstance().Init();
 
@@ -75,13 +73,11 @@ int32_t DistributedHardwareManager::Release()
 
     ComponentManager::GetInstance().UnInit();
 
-    VersionManager::GetInstance().UnInit();
+    VersionManager::GetInstance()->UnInit();
 
     LocalHardwareManager::GetInstance().UnInit();
 
     ComponentLoader::GetInstance().UnInit();
-
-    VersionInfoManager::GetInstance()->UnInit();
 
     CapabilityInfoManager::GetInstance()->UnInit();
 
@@ -118,7 +114,7 @@ int32_t DistributedHardwareManager::SendOnLineEvent(const std::string &networkId
     TaskExecutor::GetInstance().PushTask(task);
     DHContext::GetInstance().AddOnlineDevice(uuid, networkId);
     CapabilityInfoManager::GetInstance()->CreateManualSyncCount(GetDeviceIdByUUID(uuid));
-    VersionInfoManager::GetInstance()->CreateManualSyncCount(GetDeviceIdByUUID(uuid));
+    VersionInfoAdapter::GetInstance().CreateManualSyncCount(GetDeviceIdByUUID(uuid));
 
     return DH_FWK_SUCCESS;
 }
@@ -160,7 +156,7 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
 
     DHContext::GetInstance().RemoveOnlineDevice(realUUID);
     CapabilityInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(realUUID));
-    VersionInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(realUUID));
+    VersionInfoAdapter::GetInstance().RemoveManualSyncCount(GetDeviceIdByUUID(realUUID));
 
     HiSysEventWriteCompOfflineMsg(DHFWK_DEV_OFFLINE, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         GetAnonyString(networkId), "dhfwk device offline event.");

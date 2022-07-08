@@ -119,7 +119,7 @@ ComponentManager::ActionResult ComponentManager::StartSource()
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     for (const auto &item : compSource_) {
         CompVersion compversion;
-        VersionManager::GetInstance().GetCompVersion(uuid, item.first, compversion);
+        VersionManager::GetInstance()->GetCompVersion(uuid, item.first, compversion);
         auto params = compversion.sourceVersion;
         auto future = std::async(std::launch::async, [item, params]() { return item.second->InitSource(params); });
         futures.emplace(item.first, future.share());
@@ -134,7 +134,7 @@ ComponentManager::ActionResult ComponentManager::StartSink()
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     for (const auto &item : compSink_) {
         CompVersion compversion;
-        VersionManager::GetInstance().GetCompVersion(uuid, item.first, compversion);
+        VersionManager::GetInstance()->GetCompVersion(uuid, item.first, compversion);
         auto params = compversion.sinkVersion;
         auto future = std::async(std::launch::async, [item, params]() { return item.second->InitSink(params); });
         futures.emplace(item.first, future.share());
@@ -361,7 +361,7 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
 std::string ComponentManager::GetSinkVersionFromVerMgr(const std::string &uuid, const DHType dhType)
 {
     CompVersion compversion;
-    auto ret = VersionManager::GetInstance().GetCompVersion(uuid, dhType, compversion);
+    auto ret = VersionManager::GetInstance()->GetCompVersion(uuid, dhType, compversion);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Get version from Version Manager failed, uuid =%s, dhType = %#X, errCode = %d",
             GetAnonyString(uuid).c_str(), dhType, ret);

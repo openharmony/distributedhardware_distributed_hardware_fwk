@@ -67,6 +67,7 @@ std::map<std::string, DHType> g_mapDhTypeName = {
 
 int32_t ComponentLoader::Init()
 {
+    DHLOGI("start");
     DHTraceStart(COMPONENT_LOAD_START);
     int32_t ret = ParseConfig();
     DHTraceEnd();

@@ -13,59 +13,41 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_VERSION_INFO_MANAGER_H
-#define OHOS_DISTRIBUTED_HARDWARE_VERSION_INFO_MANAGER_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_VERSION_INFO_ADAPTER_H
+#define OHOS_DISTRIBUTED_HARDWARE_VERSION_INFO_ADAPTER_H
 
 #include <condition_variable>
 #include <map>
 #include <set>
 
-#include "kvstore_observer.h"
-
 #include "db_adapter.h"
-#include "event.h"
-#include "eventbus_handler.h"
-#include "event_bus.h"
-#include "event_sender.h"
 #include "impl_utils.h"
 #include "single_instance.h"
-#include "version_info_event.h"
 
 class DBAdapter;
 namespace OHOS {
 namespace DistributedHardware {
-class VersionInfoManager : public std::enable_shared_from_this<VersionInfoManager>,
-                           public EventSender,
-                           public DistributedKv::KvStoreObserver,
-                           public EventBusHandler<VersionInfoEvent> {
-public:
-    VersionInfoManager(const VersionInfoManager &) = delete;
-    VersionInfoManager &operator = (const VersionInfoManager &) = delete;
-    VersionInfoManager(VersionInfoManager &&) = delete;
-    VersionInfoManager &operator = (VersionInfoManager &&) = delete;
-    static std::shared_ptr<VersionInfoManager> GetInstance();
-    virtual ~VersionInfoManager();
+class VersionInfoAdapter {
+DECLARE_SINGLE_INSTANCE(VersionInfoAdapter);
 
+public:
     int32_t Init();
     int32_t UnInit();
 
     int32_t AddVersion(const DHVersion &version);
     int32_t GetVersionInfoFromDB(const std::string &deviceId, DHVersion &dhVersion);
-    int32_t SyncRemoteVersionInfos();
+    int32_t SyncRemoteVersionInfos(std::unordered_map<std::string, DHVersion> &dhVersions);
+    int32_t RemoveVersionInfoInDB(const std::string &deviceId);
     void CreateManualSyncCount(const std::string &deviceId);
     void RemoveManualSyncCount(const std::string &deviceId);
     int32_t ManualSync(const std::string &networkId);
 
-    virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
-    void OnEvent(VersionInfoEvent &ev) override;
-
 private:
-    VersionInfoManager();
     void HandleVersionAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
     void HandleVersionUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
 
 private:
-    mutable std::mutex verInfoMgrMutex_;
+    mutable std::mutex verAdapterMutex_;
     std::shared_ptr<DBAdapter> dbAdapterPtr_;
 };
 } // namespace DistributedHardware

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "version_info_manager.h"
+#include "version_info_adapter.h"
 
 #include "anonymous_string.h"
 #include "constants.h"
@@ -31,45 +31,28 @@ class DBAdapter;
 namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
-#define DH_LOG_TAG "VersionInfoManager"
+#define DH_LOG_TAG "VersionInfoAdapter"
 
-VersionInfoManager::VersionInfoManager() : dbAdapterPtr_(nullptr)
-{}
+IMPLEMENT_SINGLE_INSTANCE(VersionInfoAdapter);
 
-VersionInfoManager::~VersionInfoManager()
+int32_t VersionInfoAdapter::Init()
 {
-    DHLOGI("VersionInfoManager Destruction!");
-}
-
-std::shared_ptr<VersionInfoManager> VersionInfoManager::GetInstance()
-{
-    static std::shared_ptr<VersionInfoManager> instance(new(std::nothrow) VersionInfoManager);
-    if (instance == nullptr) {
-        DHLOGE("instance is nullptr, because applying memory fail!");
-        return nullptr;
-    }
-    return instance;
-}
-
-int32_t VersionInfoManager::Init()
-{
-    DHLOGI("VersionInfoManager instance init!");
-    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
-    dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, GLOBAL_VERSION_ID, shared_from_this());
+    DHLOGI("VersionInfoAdapter instance init!");
+    std::lock_guard<std::mutex> lock(verAdapterMutex_);
+    dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, GLOBAL_VERSION_ID, VersionManager::GetInstance());
     if (dbAdapterPtr_->Init() != DH_FWK_SUCCESS) {
         DHLOGE("Init dbAdapterPtr_ failed");
         return ERR_DH_FWK_RESOURCE_INIT_DB_FAILED;
     }
-    VersionInfoEvent versionInfoEvent(*this);
-    DHContext::GetInstance().GetEventBus()->AddHandler<VersionInfoEvent>(versionInfoEvent.GetType(), *this);
-    DHLOGI("VersionInfoManager instance init success");
+
+    DHLOGI("VersionInfoAdapter instance init success");
     return DH_FWK_SUCCESS;
 }
 
-int32_t VersionInfoManager::UnInit()
+int32_t VersionInfoAdapter::UnInit()
 {
-    DHLOGI("VersionInfoManager UnInit");
-    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
+    DHLOGI("VersionInfoAdapter UnInit");
+    std::lock_guard<std::mutex> lock(verAdapterMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_UNINIT_DB_FAILED;
@@ -79,9 +62,9 @@ int32_t VersionInfoManager::UnInit()
     return DH_FWK_SUCCESS;
 }
 
-int32_t VersionInfoManager::AddVersion(const DHVersion &version)
+int32_t VersionInfoAdapter::AddVersion(const DHVersion &version)
 {
-    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
+    std::lock_guard<std::mutex> lock(verAdapterMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
@@ -104,10 +87,10 @@ int32_t VersionInfoManager::AddVersion(const DHVersion &version)
     return DH_FWK_SUCCESS;
 }
 
-int32_t VersionInfoManager::GetVersionInfoFromDB(const std::string &deviceId, DHVersion &dhVersion)
+int32_t VersionInfoAdapter::GetVersionInfoFromDB(const std::string &deviceId, DHVersion &dhVersion)
 {
     DHLOGI("Sync VersionInfo from DB, deviceId: %s", GetAnonyString(deviceId).c_str());
-    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
+    std::lock_guard<std::mutex> lock(verAdapterMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
@@ -123,18 +106,21 @@ int32_t VersionInfoManager::GetVersionInfoFromDB(const std::string &deviceId, DH
     return DH_FWK_SUCCESS;
 }
 
-int32_t VersionInfoManager::SyncRemoteVersionInfos()
+int32_t VersionInfoAdapter::SyncRemoteVersionInfos(std::unordered_map<std::string, DHVersion> &dhVersions)
 {
     DHLOGI("Sync full remote version info from DB");
-    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
-    if (dbAdapterPtr_ == nullptr) {
-        DHLOGE("dbAdapterPtr_ is null");
-        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
-    }
     std::vector<std::string> dataVector;
-    if (dbAdapterPtr_->GetDataByKeyPrefix("", dataVector) != DH_FWK_SUCCESS) {
-        DHLOGE("Query all data from DB failed");
-        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
+    {
+        std::lock_guard<std::mutex> lock(verAdapterMutex_);
+        if (dbAdapterPtr_ == nullptr) {
+            DHLOGE("dbAdapterPtr_ is null");
+            return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
+        }
+        
+        if (dbAdapterPtr_->GetDataByKeyPrefix("", dataVector) != DH_FWK_SUCCESS) {
+            DHLOGE("Query all data from DB failed");
+            return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
+        }
     }
 
     for (const auto &data : dataVector) {
@@ -156,14 +142,34 @@ int32_t VersionInfoManager::SyncRemoteVersionInfos()
             DHLOGI("Find uuid failed");
             continue;
         }
-        VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
+        dhVersions.insert(std::pair<std::string, DHVersion>(uuid, dhVersion));
     }
     return DH_FWK_SUCCESS;
 }
 
-void VersionInfoManager::CreateManualSyncCount(const std::string &deviceId)
+int32_t VersionInfoAdapter::RemoveVersionInfoInDB(const std::string &deviceId)
 {
-    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
+    DHLOGI("Remove capability device info, deviceId: %s", GetAnonyString(deviceId).c_str());
+    std::lock_guard<std::mutex> lock(verAdapterMutex_);
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr_ is null");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
+    }
+    if (deviceId.empty()) {
+        DHLOGE("RemoveCapabilityInfoInDB failed, deviceId is empty");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    if (dbAdapterPtr_->RemoveDeviceData(deviceId) != DH_FWK_SUCCESS) {
+        DHLOGE("Remove version Device Data failed, deviceId: %s", GetAnonyString(deviceId).c_str());
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+void VersionInfoAdapter::CreateManualSyncCount(const std::string &deviceId)
+{
+    std::lock_guard<std::mutex> lock(verAdapterMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return;
@@ -171,9 +177,9 @@ void VersionInfoManager::CreateManualSyncCount(const std::string &deviceId)
     dbAdapterPtr_->CreateManualSyncCount(deviceId);
 }
 
-void VersionInfoManager::RemoveManualSyncCount(const std::string &deviceId)
+void VersionInfoAdapter::RemoveManualSyncCount(const std::string &deviceId)
 {
-    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
+    std::lock_guard<std::mutex> lock(verAdapterMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return;
@@ -181,10 +187,10 @@ void VersionInfoManager::RemoveManualSyncCount(const std::string &deviceId)
     dbAdapterPtr_->RemoveManualSyncCount(deviceId);
 }
 
-int32_t VersionInfoManager::ManualSync(const std::string &networkId)
+int32_t VersionInfoAdapter::ManualSync(const std::string &networkId)
 {
     DHLOGI("ManualSync start, networkId: %s", GetAnonyString(networkId).c_str());
-    std::unique_lock<std::mutex> lock(verInfoMgrMutex_);
+    std::unique_lock<std::mutex> lock(verAdapterMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
@@ -194,67 +200,6 @@ int32_t VersionInfoManager::ManualSync(const std::string &networkId)
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     return DH_FWK_SUCCESS;
-}
-
-void VersionInfoManager::OnChange(const DistributedKv::ChangeNotification &changeNotification)
-{
-    DHLOGI("VersionInfoManager: DB data OnChange");
-    if (!changeNotification.GetInsertEntries().empty()) {
-        DHLOGI("Handle version data add change");
-        HandleVersionAddChange(changeNotification.GetInsertEntries());
-    }
-    if (!changeNotification.GetUpdateEntries().empty()) {
-        DHLOGI("Handle version data update change");
-        HandleVersionUpdateChange(changeNotification.GetUpdateEntries());
-    }
-}
-
-void VersionInfoManager::OnEvent(VersionInfoEvent &ev)
-{
-    switch (ev.GetAction()) {
-        case VersionInfoEvent::EventType::RECOVER:
-            SyncRemoteVersionInfos();
-            break;
-        default:
-            DHLOGE("Event is undefined, type is %d", ev.GetAction());
-            break;
-    }
-}
-
-void VersionInfoManager::HandleVersionAddChange(const std::vector<DistributedKv::Entry> &insertRecords)
-{
-    DHLOGI("VersionInfoManager: Version add change");
-    for (const auto &item : insertRecords) {
-        const std::string value = item.value.ToString();
-        DHVersion dhVersion;
-        dhVersion.FromJsonString(value);
-        const std::string &deviceId = dhVersion.deviceId;
-        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
-        if (uuid.empty()) {
-            DHLOGI("Find uuid failed");
-            continue;
-        }
-        DHLOGI("Add Version ,key: %s", GetAnonyString(deviceId).c_str());
-        VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
-    }
-}
-
-void VersionInfoManager::HandleVersionUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords)
-{
-    DHLOGI("VersionInfoManager: Version update change");
-    for (const auto &item : updateRecords) {
-        const std::string value = item.value.ToString();
-        DHVersion dhVersion;
-        dhVersion.FromJsonString(value);
-        const std::string &deviceId = dhVersion.deviceId;
-        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
-        if (uuid.empty()) {
-            DHLOGI("Find uuid failed");
-            continue;
-        }
-        DHLOGI("Update Version key: %s", GetAnonyString(deviceId).c_str());
-        VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
-    }
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -22,9 +22,11 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "${utils_path}/include",
+    "${utils_path}/include/eventbus",
     "${utils_path}/include/log",
     "${services_path}/distributedhardwarefwkserviceimpl/include",
     "${services_path}/distributedhardwarefwkserviceimpl/include/componentloader",
+    "${services_path}/distributedhardwarefwkserviceimpl/include/resourcemanager",
     "${services_path}/distributedhardwarefwkserviceimpl/include/versionmanager",
     "${services_path}/distributedhardwarefwkserviceimpl/include/utils",
     "${common_path}/utils/include",
@@ -44,6 +46,11 @@ ohos_unittest("VersionManagerTest") {
   deps = [
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
     "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "distributeddatamgr:distributeddata_inner",
+    "eventhandler:libeventhandler",
   ]
 
   defines = [

@@ -64,7 +64,7 @@ const std::string TEST_COMPONENT_NAME_3 = "distributed_mic";
  */
 HWTEST_F(VersionManagerTest, version_manager_test_001, TestSize.Level0)
 {
-    auto ret = VersionManager::GetInstance().Init();
+    auto ret = VersionManager::GetInstance()->Init();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
@@ -101,10 +101,10 @@ HWTEST_F(VersionManagerTest, version_manager_test_002, TestSize.Level0)
     dhVersion.compVersions.insert(std::make_pair(cVs1.dhType, cVs1));
     dhVersion.compVersions.insert(std::make_pair(cVs2.dhType, cVs2));
     dhVersion.compVersions.insert(std::make_pair(cVs3.dhType, cVs3));
-    int32_t ret = VersionManager::GetInstance().AddDHVersion(dhVersion.uuid, dhVersion);
+    int32_t ret = VersionManager::GetInstance()->AddDHVersion(dhVersion.uuid, dhVersion);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
     dhVersion.uuid = TEST_DEVICE_ID_2;
-    ret = VersionManager::GetInstance().AddDHVersion(dhVersion.uuid, dhVersion);
+    ret = VersionManager::GetInstance()->AddDHVersion(dhVersion.uuid, dhVersion);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
@@ -116,7 +116,7 @@ HWTEST_F(VersionManagerTest, version_manager_test_002, TestSize.Level0)
  */
 HWTEST_F(VersionManagerTest, version_manager_test_003, TestSize.Level0)
 {
-    std::string strVersion = VersionManager::GetInstance().GetLocalDeviceVersion();
+    std::string strVersion = VersionManager::GetInstance()->GetLocalDeviceVersion();
     EXPECT_EQ(DH_LOCAL_VERSION, strVersion);
 }
 
@@ -129,12 +129,12 @@ HWTEST_F(VersionManagerTest, version_manager_test_003, TestSize.Level0)
 HWTEST_F(VersionManagerTest, version_manager_test_004, TestSize.Level0)
 {
     DHVersion dhVersion;
-    int32_t ret = VersionManager::GetInstance().GetDHVersion(TEST_DEVICE_ID_2, dhVersion);
+    int32_t ret = VersionManager::GetInstance()->GetDHVersion(TEST_DEVICE_ID_2, dhVersion);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
     EXPECT_EQ(TEST_HANDLER_VERSION_2, dhVersion.compVersions[DHType::SPEAKER].handlerVersion);
     EXPECT_EQ(TEST_DH_VERSION, dhVersion.dhVersion);
-    ret = VersionManager::GetInstance().GetDHVersion(TEST_DEVICE_ID_3, dhVersion);
-    EXPECT_EQ(ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST, ret);
+    ret = VersionManager::GetInstance()->GetDHVersion(TEST_DEVICE_ID_3, dhVersion);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
 }
 
 /**
@@ -145,13 +145,13 @@ HWTEST_F(VersionManagerTest, version_manager_test_004, TestSize.Level0)
  */
 HWTEST_F(VersionManagerTest, version_manager_test_005, TestSize.Level0)
 {
-    int32_t ret = VersionManager::GetInstance().RemoveDHVersion(TEST_DEVICE_ID_2);
+    int32_t ret = VersionManager::GetInstance()->RemoveDHVersion(TEST_DEVICE_ID_2);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
-    ret = VersionManager::GetInstance().RemoveDHVersion(TEST_DEVICE_ID_4);
+    ret = VersionManager::GetInstance()->RemoveDHVersion(TEST_DEVICE_ID_4);
     EXPECT_EQ(ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST, ret);
-    ret = VersionManager::GetInstance().RemoveDHVersion(TEST_DEVICE_ID_2);
+    ret = VersionManager::GetInstance()->RemoveDHVersion(TEST_DEVICE_ID_2);
     EXPECT_EQ(ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST, ret);
-    ret = VersionManager::GetInstance().RemoveDHVersion(TEST_DEVICE_ID_1);
+    ret = VersionManager::GetInstance()->RemoveDHVersion(TEST_DEVICE_ID_1);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 } // namespace DistributedHardware
