@@ -235,7 +235,7 @@ int32_t VersionManager::SyncRemoteVersionInfos()
         }
         std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
         if (uuid.empty()) {
-            DHLOGI("Find uuid failed, uuid: %s", uuid.c_str());
+            DHLOGI("Find uuid failed, deviceId: %s", GetAnonyString(deviceId).c_str());
             continue;
         }
         dhVersions_[uuid] = dhVersion;
@@ -266,7 +266,6 @@ std::string VersionManager::GetLocalDeviceVersion()
 {
     return DH_LOCAL_VERSION;
 }
-
 
 void VersionManager::CreateManualSyncCount(const std::string &deviceId)
 {
@@ -330,7 +329,7 @@ void VersionManager::HandleVersionAddChange(const std::vector<DistributedKv::Ent
         const std::string &deviceId = dhVersion.deviceId;
         std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
         if (uuid.empty()) {
-            DHLOGI("Find network failed, uuid: %s", GetAnonyString(uuid).c_str());
+            DHLOGI("Find uuid failed, deviceId: %s", GetAnonyString(deviceId).c_str());
             continue;
         }
         DHLOGI("Add Version ,uuid: %s", GetAnonyString(uuid).c_str());
@@ -348,7 +347,7 @@ void VersionManager::HandleVersionUpdateChange(const std::vector<DistributedKv::
         const std::string &deviceId = dhVersion.deviceId;
         std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
         if (uuid.empty()) {
-            DHLOGI("Find network failed, uuid: %s", GetAnonyString(uuid).c_str());
+            DHLOGI("Find uuid failed, deviceId: %s", GetAnonyString(deviceId).c_str());
             continue;
         }
         DHLOGI("Update Version ,uuid: %s", GetAnonyString(uuid).c_str());
@@ -366,14 +365,10 @@ void VersionManager::HandleVersionDeleteChange(const std::vector<DistributedKv::
         const std::string &deviceId = dhVersion.deviceId;
         std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
         if (uuid.empty()) {
-            DHLOGI("Find uuid failed");
+            DHLOGI("Find uuid failed, deviceId: %s", GetAnonyString(deviceId).c_str());
             continue;
         }
-        std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
-        if (networkId.empty()) {
-            DHLOGI("Find network failed, uuid: %s", GetAnonyString(uuid).c_str());
-            continue;
-        }
+
         DHLOGI("Delete Version ,uuid: %s", GetAnonyString(uuid).c_str());
         RemoveDHVersion(uuid);
     }
