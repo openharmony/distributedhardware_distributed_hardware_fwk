@@ -42,9 +42,6 @@ public:
     void RemoveManualSyncCount(const std::string &deviceId);
     int32_t ManualSync(const std::string &networkId);
 
-private:
-    void HandleVersionAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
-    void HandleVersionUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
 
 private:
     mutable std::mutex verAdapterMutex_;

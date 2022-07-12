@@ -22,13 +22,13 @@
 
 #include "kvstore_observer.h"
 
-#include "single_instance.h"
+#include "db_adapter.h"
 #include "eventbus_handler.h"
 #include "event_bus.h"
 #include "event_sender.h"
 #include "distributed_hardware_errno.h"
 #include "device_type.h"
-#include "utils/impl_utils.h"
+#include "impl_utils.h"
 #include "version_info_event.h"
 
 namespace OHOS {
@@ -52,10 +52,15 @@ public:
     int32_t RemoveDHVersion(const std::string &uuid);
     int32_t GetDHVersion(const std::string &uuid, DHVersion &dhVersion);
     int32_t GetCompVersion(const std::string &uuid, const DHType dhType, CompVersion &compVersion);
-    int32_t SyncDHVersionFromDB(const std::string &uuid, DHVersion &dhVersion);
+    int32_t SyncDHVersionFromDB(const std::string &uuid);
     int32_t SyncRemoteVersionInfos();
     std::string GetLocalDeviceVersion();
+    int32_t AddLocalVersion();
     void ShowLocalVersion(const DHVersion &dhVersion) const;
+
+    void CreateManualSyncCount(const std::string &deviceId);
+    void RemoveManualSyncCount(const std::string &deviceId);
+    int32_t ManualSync(const std::string &networkId);
 
     void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     void OnEvent(VersionInfoEvent &ev) override;
@@ -68,6 +73,7 @@ private:
 
 private:
     std::unordered_map<std::string, DHVersion> dhVersions_;
+    std::shared_ptr<DBAdapter> dbAdapterPtr_;
     std::mutex versionMutex_;
 };
 } // namespace DistributedHardware

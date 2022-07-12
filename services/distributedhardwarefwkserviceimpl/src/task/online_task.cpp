@@ -23,7 +23,6 @@
 #include "task_board.h"
 #include "task_executor.h"
 #include "task_factory.h"
-#include "version_info_adapter.h"
 #include "version_manager.h"
 
 namespace OHOS {
@@ -76,7 +75,7 @@ void OnLineTask::DoSyncInfo()
         DHLOGW("ManualSync failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
 
-    ret = VersionInfoAdapter::GetInstance().ManualSync(GetNetworkId());
+    ret = VersionManager::GetInstance()->ManualSync(GetNetworkId());
     if (ret != DH_FWK_SUCCESS) {
         DHLOGW("ManualSync version failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
@@ -86,8 +85,7 @@ void OnLineTask::DoSyncInfo()
         DHLOGE("SyncDeviceInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
 
-    DHVersion dhVersion;
-    ret = VersionManager::GetInstance()->SyncDHVersionFromDB(GetUUID(), dhVersion);
+    ret = VersionManager::GetInstance()->SyncDHVersionFromDB(GetUUID());
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("SyncVersionInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
