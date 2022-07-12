@@ -62,10 +62,10 @@ ohos_unittest("AccessManagerTest") {
     "bundle_framework:appexecfwk_core",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
+    "init:libbegetutil",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
-    "startup_l2:syspara",
   ]
 }
 
