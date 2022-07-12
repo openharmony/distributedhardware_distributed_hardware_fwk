@@ -146,13 +146,13 @@ HWTEST_F(VersionManagerTest, version_manager_test_004, TestSize.Level0)
 HWTEST_F(VersionManagerTest, version_manager_test_005, TestSize.Level0)
 {
     int32_t ret = VersionManager::GetInstance()->RemoveDHVersion(TEST_DEVICE_ID_2);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
     ret = VersionManager::GetInstance()->RemoveDHVersion(TEST_DEVICE_ID_4);
-    EXPECT_EQ(ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST, ret);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
     ret = VersionManager::GetInstance()->RemoveDHVersion(TEST_DEVICE_ID_2);
-    EXPECT_EQ(ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST, ret);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
     ret = VersionManager::GetInstance()->RemoveDHVersion(TEST_DEVICE_ID_1);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
