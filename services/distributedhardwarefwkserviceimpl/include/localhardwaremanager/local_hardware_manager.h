@@ -20,6 +20,7 @@
 #include <memory>
 #include <vector>
 
+#include "capability_info.h"
 #include "device_type.h"
 #include "ihardware_handler.h"
 #include "single_instance.h"
@@ -43,6 +44,8 @@ public:
 private:
     void QueryLocalHardware(const DHType dhType, IHardwareHandler *hardwareHandler);
     void AddLocalCapabilityInfo(const std::vector<DHItem> &dhItems, const DHType dhType);
+    void CheckNonExistCapabilityInfo(const std::vector<DHItem> &dhItems, const DHType dhType);
+    void GetLocalCapabilityMapByPrefix(const DHType dhType, CapabilityInfoMap &capabilityInfoMap);
 
 private:
     std::map<DHType, IHardwareHandler*> compToolFuncsMap_;

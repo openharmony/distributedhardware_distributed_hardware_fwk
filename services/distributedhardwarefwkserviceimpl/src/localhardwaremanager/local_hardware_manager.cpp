@@ -19,6 +19,7 @@
 
 #include "capability_info_manager.h"
 #include "component_loader.h"
+#include "constants.h"
 #include "device_type.h"
 #include "dh_context.h"
 #include "dh_utils_hitrace.h"
@@ -85,6 +86,12 @@ void LocalHardwareManager::QueryLocalHardware(const DHType dhType, IHardwareHand
             usleep(QUERY_INTERVAL_TIME);
         } else {
             DHLOGI("Query hardwareHandler success, dhType: %#X!", dhType);
+
+            /*
+             * Failed to delete data when the device restarts or other exception situation.
+             * So check and remove the non-exist local capabilityInfo.
+             */
+            CheckNonExistCapabilityInfo(dhItems, dhType);
             AddLocalCapabilityInfo(dhItems, dhType);
             break;
         }
@@ -105,6 +112,52 @@ void LocalHardwareManager::AddLocalCapabilityInfo(const std::vector<DHItem> &dhI
         capabilityInfos.push_back(dhCapabilityInfo);
     }
     CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);
+}
+
+void LocalHardwareManager::CheckNonExistCapabilityInfo(const std::vector<DHItem> &dhItems, const DHType dhType)
+{
+    DHLOGI("start");
+    if (dhType != DHType::INPUT) {
+        DHLOGI("This dhType is not input and no need remove!");
+        return;
+    }
+    CapabilityInfoMap allLocalCapabilityInfos;
+    GetLocalCapabilityMapByPrefix(dhType, allLocalCapabilityInfos);
+    for (auto capabilityInfo : allLocalCapabilityInfos) {
+        std::shared_ptr<CapabilityInfo> capabilityValue = capabilityInfo.second;
+        if (capabilityValue == nullptr) {
+            DHLOGE("capabilityInfo value is nullptr, key: %s", capabilityValue->GetAnonymousKey().c_str());
+            return;
+        }
+        DHLOGI("The key in allLocalCapabilityInfos is %s", capabilityValue->GetAnonymousKey().c_str());
+        bool isExist = false;
+        for (auto dhItem : dhItems) {
+            DHLOGI("This data key is: %s, dhItem: %s", capabilityValue->GetAnonymousKey().c_str(),
+                GetAnonyString(dhItem.dhId).c_str());
+            if (capabilityValue->GetDHId() == dhItem.dhId) {
+                DHLOGI("This data is exist, no need removed key: %s", capabilityValue->GetAnonymousKey().c_str());
+                isExist = true;
+                break;
+            }
+        }
+        if (!isExist) {
+            DHLOGI("This data is non-exist, it should be removed, key: %s", capabilityValue->GetAnonymousKey().c_str());
+            CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(capabilityValue->GetKey());
+        }
+    }
+    DHLOGI("end");
+}
+
+void LocalHardwareManager::GetLocalCapabilityMapByPrefix(const DHType dhType, CapabilityInfoMap &capabilityInfoMap)
+{
+    std::string localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+    if (DHTypePrefixMap.find(dhType) == DHTypePrefixMap.end()) {
+        DHLOGE("DHTypePrefixMap can not find dhType: %#X", dhType);
+        return;
+    }
+    std::string prefix = DHTypePrefixMap.find(dhType)->second;
+    std::string localCapabilityPrefix = localDeviceId + RESOURCE_SEPARATOR + prefix;
+    CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(localCapabilityPrefix, capabilityInfoMap);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

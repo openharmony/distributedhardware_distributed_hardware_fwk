@@ -16,8 +16,10 @@
 #include "enable_task.h"
 
 #include "anonymous_string.h"
+#include "capability_utils.h"
 #include "component_manager.h"
 #include "dh_utils_hitrace.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "task_board.h"
@@ -55,6 +57,16 @@ void EnableTask::DoTaskInner()
     SetTaskState(state);
     DHLOGD("finish enable task, remove it, id = %s", GetId().c_str());
     TaskBoard::GetInstance().RemoveTask(GetId());
+    if (result == DH_FWK_SUCCESS) {
+        TaskParam taskParam = {
+            .networkId = GetNetworkId(),
+            .uuid = GetUUID(),
+            .dhId = GetDhId(),
+            .dhType = GetDhType()
+        };
+        std::string enabledDeviceKey = CapabilityUtils::GetCapabilityKey(GetDeviceIdByUUID(GetUUID()), GetDhId());
+        TaskBoard::GetInstance().AddEnabledDevice(enabledDeviceKey, taskParam);
+    }
 }
 
 int32_t EnableTask::RegisterHardware()
