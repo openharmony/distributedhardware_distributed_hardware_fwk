@@ -26,6 +26,9 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "VersionManager"
 
+VersionManager::VersionManager() : dbAdapterPtr_(nullptr)
+{}
+
 VersionManager::~VersionManager()
 {
     DHLOGI("VersionManager Destruction!");

@@ -66,7 +66,7 @@ public:
     void OnEvent(VersionInfoEvent &ev) override;
 
 private:
-    VersionManager() = default;
+    VersionManager();
     void HandleVersionAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
     void HandleVersionUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
     void HandleVersionDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords);
