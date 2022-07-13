@@ -15,7 +15,7 @@
 
 #include "anonymous_string.h"
 
-#include <stddef.h>
+#include <cstddef>
 #include <string>
 
 #include "securec.h"

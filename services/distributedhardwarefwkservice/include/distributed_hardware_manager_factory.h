@@ -27,8 +27,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-class IDistributedHardwareManager;
-
 class DistributedHardwareManagerFactory {
     DECLARE_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
 

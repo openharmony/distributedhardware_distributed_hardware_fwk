@@ -15,10 +15,7 @@
 
 #include "plugin_listener_impl.h"
 
-#include <cstdint>
-#include <memory>
 #include <string>
-#include <vector>
 
 #include "anonymous_string.h"
 #include "capability_info.h"

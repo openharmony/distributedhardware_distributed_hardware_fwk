@@ -21,8 +21,6 @@
 #include <memory>
 #include <random>
 #include <sstream>
-#include <streambuf>
-#include <string>
 #include <sys/time.h>
 
 #include "openssl/sha.h"
