@@ -15,11 +15,7 @@
 
 #include "event_bus_test.h"
 
-#include <functional>
 #include <gtest/gtest.h>
-#include <gtest/gtest-message.h>
-#include <gtest/gtest-test-part.h>
-#include <gtest/hwext/gtest-tag.h>
 #include <memory>
 #include <new>
 

@@ -17,12 +17,7 @@
 
 #include <chrono>
 #include <cstdint>
-#include <functional>
-#include <gtest/gtest-message.h>
-#include <gtest/gtest-test-part.h>
 #include <gtest/gtest.h>
-#include <gtest/hwext/gtest-ext.h>
-#include <gtest/hwext/gtest-tag.h>
 #include <set>
 #include <string>
 #include <thread>

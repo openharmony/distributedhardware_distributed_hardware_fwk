@@ -15,7 +15,6 @@
 #include "dh_utils_hisysevent.h"
 
 #include <unordered_map>
-#include <utility>
 
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
