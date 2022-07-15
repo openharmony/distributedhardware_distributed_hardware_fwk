@@ -34,6 +34,9 @@ public:
     void AddTask(std::shared_ptr<Task> task);
     void RemoveTask(std::string taskId);
     int32_t WaitForALLTaskFinish();
+    void SaveEnabledDevice(const std::string &enabledDeviceKey, const TaskParam &taskParam);
+    void RemoveEnabledDevice(const std::string &enabledDeviceKey);
+    const std::unordered_map<std::string, TaskParam>& GetEnabledDevice();
 
     void DumpAllTasks(std::vector<TaskDump> &taskInfos);
 
@@ -44,6 +47,10 @@ private:
     std::condition_variable conVar_;
     std::mutex tasksMtx_;
     std::unordered_map<std::string, std::shared_ptr<Task>> tasks_;
+
+    /* The key is combination of deviceId and dhId, and the value is taskParam */
+    std::unordered_map<std::string, TaskParam> enabledDevices_;
+    std::mutex enabledDevicesMutex_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -127,6 +127,10 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
         return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
     }
 
+    if (uuid.empty()) {
+        DHLOGW("uuid is empty");
+    }
+
     // when other device restart, the device receives online and offline messages in sequence
     // So, make the cache device handle offline event when other device restart
     std::string cacheUUID = DHContext::GetInstance().GetUUIDByNetworkId(networkId);

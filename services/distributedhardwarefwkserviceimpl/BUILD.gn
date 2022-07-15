@@ -54,6 +54,7 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
     "src/resourcemanager/db_adapter.cpp",
     "src/task/disable_task.cpp",
     "src/task/enable_task.cpp",
+    "src/task/monitor_task_timer.cpp",
     "src/task/offline_task.cpp",
     "src/task/online_task.cpp",
     "src/task/task.cpp",

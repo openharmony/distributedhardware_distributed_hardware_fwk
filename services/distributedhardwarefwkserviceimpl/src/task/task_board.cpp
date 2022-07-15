@@ -102,5 +102,28 @@ void TaskBoard::DumpAllTasks(std::vector<TaskDump> &taskInfos)
         taskInfos.emplace_back(taskInfo);
     }
 }
+
+void TaskBoard::SaveEnabledDevice(const std::string &enabledDeviceKey, const TaskParam &taskParam)
+{
+    std::lock_guard<std::mutex> lock(enabledDevicesMutex_);
+    DHLOGI("SaveEnabledDevice key is %s", GetAnonyString(enabledDeviceKey).c_str());
+    enabledDevices_[enabledDeviceKey] = taskParam;
+}
+
+void TaskBoard::RemoveEnabledDevice(const std::string &enabledDeviceKey)
+{
+    std::lock_guard<std::mutex> lock(enabledDevicesMutex_);
+    DHLOGI("RemoveEnabledDevice key is %s", GetAnonyString(enabledDeviceKey).c_str());
+    enabledDevices_.erase(enabledDeviceKey);
+}
+
+const std::unordered_map<std::string, TaskParam>& TaskBoard::GetEnabledDevice()
+{
+    std::lock_guard<std::mutex> lock(enabledDevicesMutex_);
+    if (enabledDevices_.empty()) {
+        DHLOGI("enabledDevices is empty!");
+    }
+    return enabledDevices_;
+}
 } // namespace DistributedHardware
 } // namespace OHOS
