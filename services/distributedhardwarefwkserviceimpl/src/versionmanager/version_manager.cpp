@@ -24,6 +24,7 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "VersionManager"
+IMPLEMENT_SINGLE_INSTANCE(VersionManager);
 
 int32_t VersionManager::Init()
 {

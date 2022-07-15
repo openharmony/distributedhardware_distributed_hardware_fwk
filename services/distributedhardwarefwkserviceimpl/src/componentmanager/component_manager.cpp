@@ -34,6 +34,7 @@
 #include "ipc_object_stub.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
+#include "version_info_manager.h"
 #include "version_manager.h"
 
 namespace OHOS {
@@ -359,7 +360,7 @@ std::string ComponentManager::GetSinkVersionFromVerMgr(const std::string &uuid, 
         return "";
     }
     DHLOGI("Get SinkVersion from version mgr success, sinkVersion = %s, uuid = %s, dhType = %#X",
-        compversion.sinkVersion, GetAnonyString(uuid).c_str(), dhType);
+        compversion.sinkVersion.c_str(), GetAnonyString(uuid).c_str(), dhType);
     return compversion.sinkVersion;
 }
 
@@ -378,7 +379,7 @@ std::string ComponentManager::GetSinkVersionFromVerInfoMgr(const std::string &uu
         return "";
     }
     DHLOGI("Get SinkVersion from version info mgr success, sinkVersion = %s, uuid = %s, dhType = %#X",
-        iter->second.sinkVersion, GetAnonyString(uuid).c_str(), dhType);
+        iter->second.sinkVersion.c_str(), GetAnonyString(uuid).c_str(), dhType);
     return iter->second.sinkVersion;
 }
 
@@ -389,7 +390,7 @@ std::string ComponentManager::GetSinkVersionFromRPC(const std::string &networkId
     sptr<IDistributedHardware> dhms = GetRemoteDHMS(networkId);
     if (dhms == nullptr) {
         DHLOGI("GetRemoteDHMS failed, networkId = %s", GetAnonyString(networkId).c_str());
-        return ERR_DH_FWK_COMPONENT_GET_REMOTE_SA_FAILED;
+        return "";
     }
 
     std::unordered_map<DHType, std::string> versions;
@@ -406,8 +407,9 @@ std::string ComponentManager::GetSinkVersionFromRPC(const std::string &networkId
         return "";
     }
     DHLOGI("QuerySinkVersion success, sinkVersion = %s, uuid = %s, dhType = %#X",
-        iter->second, GetAnonyString(uuid).c_str(), dhType);
+        iter->second.c_str(), GetAnonyString(uuid).c_str(), dhType);
     UpdateVersionCache(uuid, versions);
+
     return iter->second;
 }
 
@@ -440,7 +442,7 @@ void ComponentManager::UpdateVersionCache(const std::string &uuid, const std::un
         CompVersion compVersion;
         compVersion.dhType = versionPair.first;
         compVersion.sinkVersion = versionPair.second;
-        dhVersion.compVersions.insert(std::pair<DHType, CompVersion>(compVersion.dhType, compVersion);
+        dhVersion.compVersions.insert(std::pair<DHType, CompVersion>(compVersion.dhType, compVersion));
     }
     VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
 }

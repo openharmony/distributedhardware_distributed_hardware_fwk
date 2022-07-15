@@ -142,7 +142,7 @@ int32_t ComponentLoader::GetLocalDHVersion(DHVersion &dhVersion)
     return DH_FWK_SUCCESS;
 }
 
-void StoreLocalDHVersionToDB()
+void ComponentLoader::StoreLocalDHVersionToDB()
 {
     if (!isLocalVersionInit_.load()) {
         DHLOGE("Store local DHVersion fail");

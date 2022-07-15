@@ -124,13 +124,14 @@ int32_t VersionInfoManager::GetVersionInfoByDeviceId(const std::string &deviceId
 int32_t VersionInfoManager::SyncVersionInfoFromDB(const std::string &deviceId)
 {
     DHLOGI("Sync VersionInfo from DB, deviceId: %s", GetAnonyString(deviceId).c_str());
+    std::string data("");
     std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     {
         if (dbAdapterPtr_ == nullptr) {
             DHLOGE("dbAdapterPtr_ is null");
             return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
         }
-        std::string data("");
+
         if (dbAdapterPtr_->GetDataByKey(deviceId, data) != DH_FWK_SUCCESS) {
             DHLOGE("Query data from DB by deviceId failed, deviceId: %s", GetAnonyString(deviceId).c_str());
             return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
@@ -143,7 +144,7 @@ int32_t VersionInfoManager::SyncVersionInfoFromDB(const std::string &deviceId)
         DHLOGI("Find uuid failed");
         return ERR_DH_FWK_RESOURCE_SYNC_VERSIONINFO_FAIL;
     }
-    VersionInfo versionInfo
+    VersionInfo versionInfo;
     versionInfo.FromJsonString(data);
     DHVersion dhVersion;
     dhVersion.uuid = uuid;

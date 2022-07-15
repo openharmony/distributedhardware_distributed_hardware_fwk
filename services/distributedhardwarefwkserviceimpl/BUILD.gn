@@ -63,7 +63,6 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
     "src/task/task_executor.cpp",
     "src/task/task_factory.cpp",
     "src/utils/dh_context.cpp",
-    "src/utils/impl_utils.cpp",
     "src/versionmanager/version_manager.cpp",
   ]
 

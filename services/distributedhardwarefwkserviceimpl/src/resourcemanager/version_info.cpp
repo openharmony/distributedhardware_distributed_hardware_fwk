@@ -27,6 +27,7 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "VersionInfo"
+
 void VersionInfo::FromJsonString(const std::string &jsonStr)
 {
     nlohmann::json jsonObj = nlohmann::json::parse(jsonStr);

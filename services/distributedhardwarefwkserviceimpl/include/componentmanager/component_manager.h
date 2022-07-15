@@ -69,9 +69,9 @@ private:
         DHType dhType, EnableParam &param);
     std::string GetSinkVersionFromVerMgr(const std::string &uuid, const DHType dhType);
     std::string GetSinkVersionFromVerInfoMgr(const std::string &uuid, const DHType dhType);
-    std::string GetSinkVersionFromRPC(const std::string &networkId, const std::string &uuid, DHType dhType)
+    std::string GetSinkVersionFromRPC(const std::string &networkId, const std::string &uuid, DHType dhType);
     std::string GetSinkVersion(const std::string &networkId, const std::string &uuid, DHType dhType);
-    void UpdateVersionCache(const std::string &uuid, const std::unordered_map<DHType, std::string> &versions)
+    void UpdateVersionCache(const std::string &uuid, const std::unordered_map<DHType, std::string> &versions);
     sptr<IDistributedHardware> GetRemoteDHMS(const std::string &networkId) const;
 
 private:

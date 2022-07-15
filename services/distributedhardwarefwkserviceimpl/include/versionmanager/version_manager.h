@@ -20,26 +20,20 @@
 #include <vector>
 #include <string>
 
-#include "kvstore_observer.h"
-
-#include "db_adapter.h"
-#include "eventbus_handler.h"
-#include "event_bus.h"
-#include "event_sender.h"
+#include "single_instance.h"
 #include "distributed_hardware_errno.h"
 #include "device_type.h"
-#include "impl_utils.h"
-#include "version_info_event.h"
+#include "utils/impl_utils.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 const std::string DH_LOCAL_VERSION = "1.0";
+class VersionManager {
     DECLARE_SINGLE_INSTANCE_BASE(VersionManager);
 
 public:
     VersionManager() {}
     ~VersionManager() {}
-
     int32_t Init();
     void UnInit();
     int32_t AddDHVersion(const std::string &uuid, const DHVersion &dhVersion);
@@ -53,6 +47,7 @@ public:
 private:
     std::unordered_map<std::string, DHVersion> dhVersions_;
     std::mutex versionMutex_;
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

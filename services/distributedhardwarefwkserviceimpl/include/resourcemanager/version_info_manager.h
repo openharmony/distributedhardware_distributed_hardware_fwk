@@ -51,6 +51,7 @@ public:
     int32_t UnInit();
 
     int32_t AddVersion(const VersionInfo &versionInfo);
+    int32_t GetVersionInfoByDeviceId(const std::string &deviceId, VersionInfo &versionInfo);
     int32_t SyncVersionInfoFromDB(const std::string &deviceId);
     int32_t SyncRemoteVersionInfos();
 
@@ -62,7 +63,7 @@ public:
     void OnEvent(VersionInfoEvent &ev) override;
 
 private:
-    VersionManager();
+    VersionInfoManager();
     void HandleVersionAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
     void HandleVersionUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
     void HandleVersionDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords);

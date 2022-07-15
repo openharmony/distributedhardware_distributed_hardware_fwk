@@ -75,6 +75,7 @@ private:
     int32_t GetCompPathAndVersion(const std::string &jsonStr, std::map<DHType, CompConfig> &dhtypeMap);
     CompVersion GetCompVersionFromComConfig(const CompConfig& cCfg);
     int32_t ParseConfig();
+    void StoreLocalDHVersionToDB();
     bool IsDHTypeExist(DHType dhType);
     std::string Readfile(const std::string &filePath);
 

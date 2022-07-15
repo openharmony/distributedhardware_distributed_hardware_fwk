@@ -29,6 +29,7 @@
 #include "task_board.h"
 #include "task_executor.h"
 #include "task_factory.h"
+#include "version_info_manager.h"
 #include "version_manager.h"
 
 namespace OHOS {
@@ -159,7 +160,7 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
 
     DHContext::GetInstance().RemoveOnlineDevice(realUUID);
     CapabilityInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(realUUID));
-    VersionInofManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(realUUID));
+    VersionInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(realUUID));
 
     HiSysEventWriteCompOfflineMsg(DHFWK_DEV_OFFLINE, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         GetAnonyString(networkId), "dhfwk device offline event.");
