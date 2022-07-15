@@ -15,7 +15,7 @@
 
 #ifndef OHOS_DISTRIBUTED_ENABLED_COMPS_DUMP_H
 #define OHOS_DISTRIBUTED_ENABLED_COMPS_DUMP_H
-#include <cstdint>
+
 #include <mutex>
 #include <set>
 #include <string>

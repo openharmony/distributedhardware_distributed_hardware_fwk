@@ -16,15 +16,11 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_EVENT_BUS_TEST_H
 #define OHOS_DISTRIBUTED_HARDWARE_EVENT_BUS_TEST_H
 
-#include <memory>
+#include <cstdint>
+#include <gtest/gtest_pred_impl.h>
 #include <string>
 
-#include <gtest/gtest.h>
-
-#include "event_handler.h"
-
 #include "event.h"
-#include "event_bus.h"
 #include "event_sender.h"
 #include "eventbus_handler.h"
 

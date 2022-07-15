@@ -34,11 +34,13 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "CapabilityInfoManager"
 
 CapabilityInfoManager::CapabilityInfoManager() : dbAdapterPtr_(nullptr)
-{}
+{
+    DHLOGI("CapabilityInfoManager construction!");
+}
 
 CapabilityInfoManager::~CapabilityInfoManager()
 {
-    DHLOGI("CapabilityInfoManager Destruction!");
+    DHLOGI("CapabilityInfoManager destruction!");
 }
 
 std::shared_ptr<CapabilityInfoManager> CapabilityInfoManager::GetInstance()

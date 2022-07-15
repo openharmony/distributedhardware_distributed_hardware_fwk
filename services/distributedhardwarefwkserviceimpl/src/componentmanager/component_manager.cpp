@@ -33,6 +33,7 @@
 #include "enabled_comps_dump.h"
 #include "ipc_object_stub.h"
 #include "iservice_registry.h"
+#include "monitor_task_timer.h"
 #include "system_ability_definition.h"
 #include "version_info_manager.h"
 #include "version_manager.h"
@@ -84,7 +85,7 @@ int32_t ComponentManager::Init()
         HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             "dhfwk start sink failed.");
     }
-
+    MonitorTaskTimer::GetInstance().StartTimer();
     DHLOGI("Init component success");
     DHTraceEnd();
     return DH_FWK_SUCCESS;
@@ -106,6 +107,7 @@ int32_t ComponentManager::UnInit()
     compSource_.clear();
     compSink_.clear();
 
+    MonitorTaskTimer::GetInstance().StopTimer();
     DHLOGI("Release component success");
     return DH_FWK_SUCCESS;
 }

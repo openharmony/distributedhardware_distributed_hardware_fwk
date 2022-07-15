@@ -15,12 +15,16 @@
 
 #include "dh_utils_tool.h"
 
+#include <algorithm>
 #include <iomanip>
+#include <ios>
+#include <memory>
 #include <random>
 #include <sstream>
 #include <sys/time.h>
 
 #include "openssl/sha.h"
+#include "softbus_common.h"
 #include "softbus_bus_center.h"
 
 #include "constants.h"

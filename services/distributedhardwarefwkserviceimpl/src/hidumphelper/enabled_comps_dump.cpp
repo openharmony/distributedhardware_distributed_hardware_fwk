@@ -14,7 +14,6 @@
  */
 
 #include "enabled_comps_dump.h"
-#include "dh_utils_tool.h"
 
 namespace OHOS {
 namespace DistributedHardware {

@@ -15,8 +15,6 @@
 
 #include "capability_utils.h"
 
-#include "nlohmann/json.hpp"
-
 #include "capability_info.h"
 #include "constants.h"
 #include "distributed_hardware_log.h"

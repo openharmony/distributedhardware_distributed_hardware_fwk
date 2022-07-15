@@ -16,6 +16,7 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_DHUTIL_HISYSEVENT_H
 #define OHOS_DISTRIBUTED_HARDWARE_DHUTIL_HISYSEVENT_H
 
+#include <cstdint>
 #include <string>
 
 #include "hisysevent.h"

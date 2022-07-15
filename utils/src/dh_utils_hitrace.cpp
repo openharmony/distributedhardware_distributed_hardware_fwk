@@ -14,7 +14,6 @@
  */
 #include "dh_utils_hitrace.h"
 
-#include <unistd.h>
 #include <unordered_map>
 
 namespace OHOS {

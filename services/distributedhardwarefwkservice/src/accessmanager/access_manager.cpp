@@ -15,8 +15,11 @@
 
 #include "access_manager.h"
 
+#include <new>
 #include <unistd.h>
 #include <vector>
+
+#include "device_manager.h"
 
 #include "anonymous_string.h"
 #include "constants.h"

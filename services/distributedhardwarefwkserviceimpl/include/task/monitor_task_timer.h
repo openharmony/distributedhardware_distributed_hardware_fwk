@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,31 +13,34 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_DHUTILS_TOOL_H
-#define OHOS_DISTRIBUTED_HARDWARE_DHUTILS_TOOL_H
+#ifndef DISTRIBUTED_HARDWARE_FWK_MONITOR_TASK_TIMER_H
+#define DISTRIBUTED_HARDWARE_FWK_MONITOR_TASK_TIMER_H
 
 #include <cstdint>
+#include <memory>
+#include <mutex>
+#include <thread>
 
-#include "device_type.h"
+#include "event_handler.h"
+
+#include "single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-/**
- * return current time in millisecond.
- */
-int64_t GetCurrentTime();
+class MonitorTaskTimer {
+DECLARE_SINGLE_INSTANCE_BASE(MonitorTaskTimer);
+public:
+    ~MonitorTaskTimer();
+    void StartTimer();
+    void StopTimer();
 
-/**
- * return a random string id.
- */
-std::string GetRandomID();
+private:
+    MonitorTaskTimer();
+    void Execute(const std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler);
 
-std::string GetUUIDBySoftBus(const std::string &networkId);
-
-DeviceInfo GetLocalDeviceInfo();
-
-/* Convert uuid to deviceId by sha256 encode */
-std::string GetDeviceIdByUUID(const std::string &uuid);
+private:
+    std::thread monitorTaskTimerThread_;
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

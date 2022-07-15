@@ -58,6 +58,13 @@ struct DeviceInfo {
     explicit DeviceInfo(std::string uuid, std::string deviceId, std::string deviceName, uint16_t deviceType)
         : uuid(uuid), deviceId(deviceId), deviceName(deviceName), deviceType(deviceType) {}
 };
+
+/* The key is DHType, the value is the prefix of DHId */
+const std::unordered_map<DHType, std::string> DHTypePrefixMap = {
+    {DHType::CAMERA, "Camera"},
+    {DHType::DISPLAY, "Screen"},
+    {DHType::INPUT, "Input"},
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
