@@ -105,7 +105,6 @@ int32_t ComponentManager::UnInit()
     compSource_.clear();
     compSink_.clear();
 
-
     DHLOGI("Release component success");
     return DH_FWK_SUCCESS;
 }
