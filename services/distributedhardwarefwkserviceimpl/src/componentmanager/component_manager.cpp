@@ -347,7 +347,7 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
     DHLOGI("success. uuid =%s, dhId = %s, version = %s", GetAnonyString(uuid).c_str(),
         GetAnonyString(dhId).c_str(), param.version.c_str());
 
-    return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
+    return DH_FWK_SUCCESS;
 }
 
 std::string ComponentManager::GetSinkVersionFromVerMgr(const std::string &uuid, const DHType dhType)
