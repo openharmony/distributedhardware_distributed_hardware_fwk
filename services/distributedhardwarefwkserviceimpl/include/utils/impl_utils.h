@@ -18,8 +18,6 @@
 
 #include <unordered_map>
 
-#include "nlohmann/json.hpp"
-
 #include "device_type.h"
 #include "constants.h"
 
@@ -60,16 +58,9 @@ struct CompVersion {
 
 struct DHVersion {
     std::string uuid;
-    std::string deviceId;
     std::string dhVersion;
     std::unordered_map<DHType, CompVersion> compVersions;
-
-    void FromJsonString(const std::string &jsonStr);
-    std::string ToJsonString() const;
 };
-
-void ToJson(nlohmann::json &jsonObject, const DHVersion &dhVersion);
-void FromJson(const nlohmann::json &jsonObject, DHVersion &dhVersion);
 
 struct TaskParam {
     std::string networkId;

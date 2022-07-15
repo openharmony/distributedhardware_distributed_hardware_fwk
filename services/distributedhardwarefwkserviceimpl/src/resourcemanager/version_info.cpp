@@ -13,32 +13,40 @@
  * limitations under the License.
  */
 
-#include "impl_utils.h"
+#include "version_info.h"
 
-#include "dh_utils_tool.h"
+#include <string>
+
+#include "nlohmann/json.hpp"
+
+#include "anonymous_string.h"
+#include "constants.h"
+#include "distributed_hardware_errno.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-void DHVersion::FromJsonString(const std::string &jsonStr)
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "VersionInfo"
+void VersionInfo::FromJsonString(const std::string &jsonStr)
 {
     nlohmann::json jsonObj = nlohmann::json::parse(jsonStr);
     FromJson(jsonObj, *this);
 }
 
-std::string DHVersion::ToJsonString() const
+std::string VersionInfo::ToJsonString() const
 {
     nlohmann::json jsonObj;
     ToJson(jsonObj, *this);
     return jsonObj.dump();
 }
 
-void ToJson(nlohmann::json &jsonObject, const DHVersion &dhVersion)
+void ToJson(nlohmann::json &jsonObject, const VersionInfo &dhVersionInfo)
 {
-    jsonObject[DEV_ID] = dhVersion.deviceId;
-    jsonObject[DH_VER] = dhVersion.dhVersion;
+    jsonObject[DEV_ID] = dhVersionInfo.deviceId;
+    jsonObject[DH_VER] = dhVersionInfo.dhVersion;
 
     nlohmann::json compVers;
-    for (const auto &compVersion : dhVersion.compVersions) {
+    for (const auto &compVersion : dhVersionInfo.compVersions) {
         nlohmann::json compVer;
         compVer[NAME] = compVersion.second.name;
         compVer[TYPE] = compVersion.second.dhType;
@@ -51,14 +59,14 @@ void ToJson(nlohmann::json &jsonObject, const DHVersion &dhVersion)
     jsonObject[COMP_VER] = compVers;
 }
 
-void FromJson(const nlohmann::json &jsonObject, DHVersion &dhVersion)
+void FromJson(const nlohmann::json &jsonObject, VersionInfo &dhVersionInfo)
 {
     if (jsonObject.find(DEV_ID) != jsonObject.end()) {
-        dhVersion.deviceId = jsonObject.at(DEV_ID).get<std::string>();
+        dhVersionInfo.deviceId = jsonObject.at(DEV_ID).get<std::string>();
     }
 
     if (jsonObject.find(DH_VER) != jsonObject.end()) {
-        dhVersion.dhVersion = jsonObject.at(DH_VER).get<std::string>();
+        dhVersionInfo.dhVersion = jsonObject.at(DH_VER).get<std::string>();
     }
 
     if (jsonObject.find(COMP_VER) != jsonObject.end()) {
@@ -69,7 +77,7 @@ void FromJson(const nlohmann::json &jsonObject, DHVersion &dhVersion)
             compVer.handlerVersion = compVerObj.at(HANDLER).get<std::string>();
             compVer.sourceVersion = compVerObj.at(SOURCE_VER).get<std::string>();
             compVer.sinkVersion = compVerObj.at(SINK_VER).get<std::string>();
-            dhVersion.compVersions.insert(std::pair<DHType, CompVersion>(compVer.dhType, compVer));
+            dhVersionInfo.compVersions.insert(std::pair<DHType, CompVersion>(compVer.dhType, compVer));
         }
     }
 }

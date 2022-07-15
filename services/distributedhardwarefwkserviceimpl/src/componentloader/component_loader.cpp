@@ -22,10 +22,14 @@
 #include "nlohmann/json.hpp"
 
 #include "constants.h"
+#include "dh_context.h"
 #include "dh_utils_hitrace.h"
-#include "distributed_hardware_log.h"
 #include "dh_utils_hisysevent.h"
 #include "hidump_helper.h"
+#include "distributed_hardware_log.h"
+#include "version_info.h"
+#include "version_info_manager.h"
+#include "version_manager.h"
 
 using nlohmann::json;
 
@@ -72,6 +76,7 @@ int32_t ComponentLoader::Init()
     int32_t ret = ParseConfig();
     DHTraceEnd();
 
+    StoreLocalDHVersionToDB();
     return ret;
 }
 
@@ -135,6 +140,19 @@ int32_t ComponentLoader::GetLocalDHVersion(DHVersion &dhVersion)
     }
     dhVersion = localDHVersion_;
     return DH_FWK_SUCCESS;
+}
+
+void StoreLocalDHVersionToDB()
+{
+    if (!isLocalVersionInit_.load()) {
+        DHLOGE("Store local DHVersion fail");
+        return;
+    }
+    VersionInfo versionInfo;
+    versionInfo.dhVersion = VersionManager::GetInstance().GetLocalDeviceVersion();
+    versionInfo.deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+    versionInfo.compVersions = localDHVersion_.compVersions;
+    VersionInfoManager::GetInstance()->AddVersion(versionInfo);
 }
 
 void *ComponentLoader::GetHandler(const std::string &soName)
@@ -257,8 +275,11 @@ int32_t ComponentLoader::ParseConfig()
         return ERR_DH_FWK_LOADER_COMPONENT_PROFILE_IS_EMPTY;
     }
     ret = GetCompPathAndVersion(jsonStr, dhtypeMap);
+    if (ret != DH_FWK_SUCCESS) {
+        return ret;
+    }
     GetAllHandler(dhtypeMap);
-    return ret;
+    return DH_FWK_SUCCESS;
 }
 
 int32_t ComponentLoader::ReleaseHandler(void *&handler)

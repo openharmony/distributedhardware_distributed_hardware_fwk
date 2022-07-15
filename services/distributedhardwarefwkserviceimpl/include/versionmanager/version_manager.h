@@ -34,17 +34,11 @@
 namespace OHOS {
 namespace DistributedHardware {
 const std::string DH_LOCAL_VERSION = "1.0";
-class VersionManager : public std::enable_shared_from_this<VersionManager>,
-                       public EventSender,
-                       public DistributedKv::KvStoreObserver,
-                       public EventBusHandler<VersionInfoEvent> {
+    DECLARE_SINGLE_INSTANCE_BASE(VersionManager);
+
 public:
-    VersionManager(const VersionManager &) = delete;
-    VersionManager &operator = (const VersionManager &) = delete;
-    VersionManager(VersionManager &&) = delete;
-    VersionManager &operator = (VersionManager &&) = delete;
-    static std::shared_ptr<VersionManager> GetInstance();
-    virtual ~VersionManager();
+    VersionManager() {}
+    ~VersionManager() {}
 
     int32_t Init();
     void UnInit();
@@ -52,30 +46,13 @@ public:
     int32_t RemoveDHVersion(const std::string &uuid);
     int32_t GetDHVersion(const std::string &uuid, DHVersion &dhVersion);
     int32_t GetCompVersion(const std::string &uuid, const DHType dhType, CompVersion &compVersion);
-    int32_t SyncDHVersionFromDB(const std::string &uuid);
-    int32_t SyncRemoteVersionInfos();
+    int32_t SyncDHVersionFromDB(const std::string &uuid, DHVersion &dhVersion);
     std::string GetLocalDeviceVersion();
-    int32_t AddLocalVersion();
     void ShowLocalVersion(const DHVersion &dhVersion) const;
-
-    void CreateManualSyncCount(const std::string &deviceId);
-    void RemoveManualSyncCount(const std::string &deviceId);
-    int32_t ManualSync(const std::string &networkId);
-
-    void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
-    void OnEvent(VersionInfoEvent &ev) override;
-
-private:
-    VersionManager();
-    void HandleVersionAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
-    void HandleVersionUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
-    void HandleVersionDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords);
 
 private:
     std::unordered_map<std::string, DHVersion> dhVersions_;
-    std::shared_ptr<DBAdapter> dbAdapterPtr_;
     std::mutex versionMutex_;
-};
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

@@ -57,6 +57,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_RESOURCE_REGISTER_DB_FAILED = -10408;
     constexpr int32_t ERR_DH_FWK_RESOURCE_UNREGISTER_DB_FAILED = -10409;
     constexpr int32_t ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY = -10410;
+    constexpr int32_t ERR_DH_FWK_RESOURCE_SYNC_VERSIONINFO_FAIL = -10411;
 
     /* DistributedHardwareManager errno, range: [-10500, -10599] */
     constexpr int32_t ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE = -10500;

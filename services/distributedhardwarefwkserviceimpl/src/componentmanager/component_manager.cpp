@@ -104,10 +104,7 @@ int32_t ComponentManager::UnInit()
 
     compSource_.clear();
     compSink_.clear();
-    {
-        std::lock_guard<std::mutex> lock(sinkVersionMutex_);
-        sinkVersions_.clear();
-    }
+
     DHLOGI("Release component success");
     return DH_FWK_SUCCESS;
 }
@@ -119,7 +116,7 @@ ComponentManager::ActionResult ComponentManager::StartSource()
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     for (const auto &item : compSource_) {
         CompVersion compversion;
-        VersionManager::GetInstance()->GetCompVersion(uuid, item.first, compversion);
+        VersionManager::GetInstance().GetCompVersion(uuid, item.first, compversion);
         auto params = compversion.sourceVersion;
         auto future = std::async(std::launch::async, [item, params]() { return item.second->InitSource(params); });
         futures.emplace(item.first, future.share());
@@ -134,7 +131,7 @@ ComponentManager::ActionResult ComponentManager::StartSink()
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     for (const auto &item : compSink_) {
         CompVersion compversion;
-        VersionManager::GetInstance()->GetCompVersion(uuid, item.first, compversion);
+        VersionManager::GetInstance().GetCompVersion(uuid, item.first, compversion);
         auto params = compversion.sinkVersion;
         auto future = std::async(std::launch::async, [item, params]() { return item.second->InitSink(params); });
         futures.emplace(item.first, future.share());
@@ -339,76 +336,56 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
     }
 
     param.attrs = capability->GetDHAttrs();
-    param.version = GetSinkVersionFromVerMgr(uuid, dhType);
-    if (!param.version.empty()) {
-        DHLOGI("Get sink version from Version Mgr success. uuid = %s, dhId = %s, dhType = %#X, version = %s",
-            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), dhType, param.version.c_str());
-        return DH_FWK_SUCCESS;
-    }
-
     param.version = GetSinkVersion(networkId, uuid, dhType);
-    if (!param.version.empty()) {
-        DHLOGI("Get sink version from rpc success. uuid = %s, dhId = %s, dhType = %#X, version = %s",
-            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), dhType, param.version.c_str());
-        return DH_FWK_SUCCESS;
+    if (param.version.empty()) {
+        DHLOGE("Get Sink Version failed, uuid = %s, dhId = %s, dhType = %#X,", GetAnonyString(uuid).c_str(),
+            GetAnonyString(dhId).c_str(), dhType);
+        return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
     }
 
-    DHLOGE("Get Sink Version failed, uuid = %s, dhId = %s, dhType = %#X,", GetAnonyString(uuid).c_str(),
-        GetAnonyString(dhId).c_str(), dhType);
+    DHLOGI("success. uuid =%s, dhId = %s, version = %s", GetAnonyString(uuid).c_str(),
+        GetAnonyString(dhId).c_str(), param.version.c_str());
+
     return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
 }
 
 std::string ComponentManager::GetSinkVersionFromVerMgr(const std::string &uuid, const DHType dhType)
 {
     CompVersion compversion;
-    auto ret = VersionManager::GetInstance()->GetCompVersion(uuid, dhType, compversion);
+    int32_t ret = VersionManager::GetInstance().GetCompVersion(uuid, dhType, compversion);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Get version from Version Manager failed, uuid =%s, dhType = %#X, errCode = %d",
+        DHLOGE("Get sink version from Version Manager failed, uuid =%s, dhType = %#X, errCode = %d",
             GetAnonyString(uuid).c_str(), dhType, ret);
         return "";
     }
+    DHLOGI("Get SinkVersion from version mgr success, sinkVersion = %s, uuid = %s, dhType = %#X",
+        compversion.sinkVersion, GetAnonyString(uuid).c_str(), dhType);
     return compversion.sinkVersion;
 }
 
-std::string ComponentManager::GetSinkVersion(const std::string &networkId, const std::string &uuid, DHType dhType)
+std::string ComponentManager::GetSinkVersionFromVerInfoMgr(const std::string &uuid, const DHType dhType)
+{
+    VersionInfo versionInfo;
+    int32_t ret =  VersionInfoManager::GetInstance()->GetVersionInfoByDeviceId(GetDeviceIdByUUID(uuid), versionInfo);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Get sink version from Version info Manager failed, uuid =%s, dhType = %#X, errCode = %d",
+            GetAnonyString(uuid).c_str(), dhType, ret);
+        return "";
+    }
+    auto iter = versionInfo.compVersions.find(dhType);
+    if (iter == versionInfo.compVersions.end()) {
+        DHLOGE("can not find component version for dhType = %d", dhType);
+        return "";
+    }
+    DHLOGI("Get SinkVersion from version info mgr success, sinkVersion = %s, uuid = %s, dhType = %#X",
+        iter->second.sinkVersion, GetAnonyString(uuid).c_str(), dhType);
+    return iter->second.sinkVersion;
+}
+
+std::string ComponentManager::GetSinkVersionFromRPC(const std::string &networkId, const std::string &uuid, DHType dhType)
 {
     DHLOGI("networkId = %s ", GetAnonyString(networkId).c_str());
-    auto sinkVersion = GetVersionFromCache(uuid, dhType);
-    if (!sinkVersion.empty()) {
-        DHLOGI("GetVersionFromCache success, sinkVersion = %s, uuid = %s, dhType = %#X", sinkVersion.c_str(),
-            GetAnonyString(uuid).c_str(), dhType);
-        return sinkVersion;
-    }
 
-    auto updateResult = UpdateVersionCache(networkId, uuid);
-    if (updateResult != DH_FWK_SUCCESS) {
-        DHLOGE("UpdateVersionCache failed, uuid = %s, errCode = %d", GetAnonyString(uuid).c_str(), updateResult);
-        return "";
-    }
-
-    sinkVersion = GetVersionFromCache(uuid, dhType);
-    return sinkVersion;
-}
-
-std::string ComponentManager::GetVersionFromCache(const std::string &uuid, DHType dhType)
-{
-    std::lock_guard<std::mutex> lock(sinkVersionMutex_);
-    auto iter = sinkVersions_.find(uuid);
-    if (iter == sinkVersions_.end()) {
-        DHLOGE("can not find component version for uuid = %s", GetAnonyString(uuid).c_str());
-        return "";
-    }
-
-    auto find = iter->second.find(dhType);
-    if (find == iter->second.end()) {
-        DHLOGE("can not find component version for uuid = %s, dhType = %#X", uuid.c_str(), dhType);
-        return "";
-    }
-    return find->second;
-}
-
-int32_t ComponentManager::UpdateVersionCache(const std::string &networkId, const std::string &uuid)
-{
     sptr<IDistributedHardware> dhms = GetRemoteDHMS(networkId);
     if (dhms == nullptr) {
         DHLOGI("GetRemoteDHMS failed, networkId = %s", GetAnonyString(networkId).c_str());
@@ -419,14 +396,53 @@ int32_t ComponentManager::UpdateVersionCache(const std::string &networkId, const
     auto ret = dhms->QuerySinkVersion(versions);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("QuerySinkVersion failed, errCode = %d", ret);
-        return ret;
+        return "";
     }
-    {
-        std::lock_guard<std::mutex> lock(sinkVersionMutex_);
-        sinkVersions_.emplace(uuid, versions);
+
+    auto iter = versions.find(dhType);
+    if (iter == versions.end()) {
+        DHLOGE("can not find component version for uuid = %s, dhType = %#X",
+            GetAnonyString(uuid).c_str(), dhType);
+        return "";
     }
-    DHLOGI("QuerySinkVersion success");
-    return DH_FWK_SUCCESS;
+    DHLOGI("QuerySinkVersion success, sinkVersion = %s, uuid = %s, dhType = %#X",
+        iter->second, GetAnonyString(uuid).c_str(), dhType);
+    UpdateVersionCache(uuid, versions);
+    return iter->second;
+}
+
+std::string ComponentManager::GetSinkVersion(const std::string &networkId, const std::string &uuid, DHType dhType)
+{
+    std::string sinkVersion("");
+    sinkVersion = GetSinkVersionFromVerMgr(uuid, dhType);
+    if (!sinkVersion.empty()) {
+        return sinkVersion;
+    }
+
+    sinkVersion = GetSinkVersionFromVerInfoMgr(uuid, dhType);
+    if (!sinkVersion.empty()) {
+        return sinkVersion;
+    }
+
+    sinkVersion = GetSinkVersionFromRPC(networkId, uuid, dhType);
+    if (!sinkVersion.empty()) {
+        return sinkVersion;
+    }
+
+    return "";
+}
+
+void ComponentManager::UpdateVersionCache(const std::string &uuid, const std::unordered_map<DHType, std::string> &versions)
+{
+    DHVersion dhVersion;
+    dhVersion.uuid = uuid;
+    for (auto versionPair : versions) {
+        CompVersion compVersion;
+        compVersion.dhType = versionPair.first;
+        compVersion.sinkVersion = versionPair.second;
+        dhVersion.compVersions.insert(std::pair<DHType, CompVersion>(compVersion.dhType, compVersion);
+    }
+    VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
 }
 
 sptr<IDistributedHardware> ComponentManager::GetRemoteDHMS(const std::string &networkId) const

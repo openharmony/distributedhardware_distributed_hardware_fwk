@@ -68,16 +68,15 @@ private:
     int32_t GetEnableParam(const std::string &networkId, const std::string &uuid, const std::string &dhId,
         DHType dhType, EnableParam &param);
     std::string GetSinkVersionFromVerMgr(const std::string &uuid, const DHType dhType);
+    std::string GetSinkVersionFromVerInfoMgr(const std::string &uuid, const DHType dhType);
+    std::string GetSinkVersionFromRPC(const std::string &networkId, const std::string &uuid, DHType dhType)
     std::string GetSinkVersion(const std::string &networkId, const std::string &uuid, DHType dhType);
-    std::string GetVersionFromCache(const std::string &uuid, DHType dhType);
-    int32_t UpdateVersionCache(const std::string &networkId, const std::string &uuid);
+    void UpdateVersionCache(const std::string &uuid, const std::unordered_map<DHType, std::string> &versions)
     sptr<IDistributedHardware> GetRemoteDHMS(const std::string &networkId) const;
 
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::map<DHType, IDistributedHardwareSink*> compSink_;
-    std::unordered_map<std::string, std::unordered_map<DHType, std::string>> sinkVersions_;
-    std::mutex sinkVersionMutex_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
