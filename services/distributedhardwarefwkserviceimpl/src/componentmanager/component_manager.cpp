@@ -385,7 +385,8 @@ std::string ComponentManager::GetSinkVersionFromVerInfoMgr(const std::string &uu
     return iter->second.sinkVersion;
 }
 
-std::string ComponentManager::GetSinkVersionFromRPC(const std::string &networkId, const std::string &uuid, DHType dhType)
+std::string ComponentManager::GetSinkVersionFromRPC(const std::string &networkId,
+    const std::string &uuid, DHType dhType)
 {
     DHLOGI("networkId = %s ", GetAnonyString(networkId).c_str());
 
@@ -436,7 +437,8 @@ std::string ComponentManager::GetSinkVersion(const std::string &networkId, const
     return "";
 }
 
-void ComponentManager::UpdateVersionCache(const std::string &uuid, const std::unordered_map<DHType, std::string> &versions)
+void ComponentManager::UpdateVersionCache(const std::string &uuid,
+    const std::unordered_map<DHType, std::string> &versions)
 {
     DHVersion dhVersion;
     dhVersion.uuid = uuid;
