@@ -16,8 +16,10 @@
 #include "disable_task.h"
 
 #include "anonymous_string.h"
+#include "capability_utils.h"
 #include "component_manager.h"
 #include "dh_utils_hitrace.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "offline_task.h"
@@ -65,6 +67,10 @@ void DisableTask::DoTaskInner()
     }
     DHLOGD("finish disable task, remove it, id = %s", GetId().c_str());
     TaskBoard::GetInstance().RemoveTask(GetId());
+    if (result == DH_FWK_SUCCESS) {
+        std::string enabledDeviceKey = CapabilityUtils::GetCapabilityKey(GetDeviceIdByUUID(GetUUID()), GetDhId());
+        TaskBoard::GetInstance().RemoveEnabledDevice(enabledDeviceKey);
+    }
 }
 
 int32_t DisableTask::UnRegisterHardware()
