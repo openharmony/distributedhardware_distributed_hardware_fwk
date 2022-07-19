@@ -16,7 +16,10 @@
 #include "utils_tool_test.h"
 
 #include <chrono>
+#include <cstdint>
+#include <gtest/gtest.h>
 #include <set>
+#include <string>
 #include <thread>
 
 #include "anonymous_string.h"

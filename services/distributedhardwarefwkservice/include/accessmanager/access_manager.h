@@ -16,16 +16,14 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_ACCESS_MANAGER_H
 #define OHOS_DISTRIBUTED_HARDWARE_ACCESS_MANAGER_H
 
+#include <cstdint>
 #include <string>
+#include <memory>
 #include <mutex>
-#include <shared_mutex>
-#include <unordered_map>
-#include <unordered_set>
+#include <vector>
 
-#include "device_manager.h"
+#include "device_manager_callback.h"
 #include "dm_device_info.h"
-
-#include "device_type.h"
 
 namespace OHOS {
 namespace DistributedHardware {

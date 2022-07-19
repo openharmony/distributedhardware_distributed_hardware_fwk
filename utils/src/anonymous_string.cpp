@@ -15,6 +15,9 @@
 
 #include "anonymous_string.h"
 
+#include <cstddef>
+#include <string>
+
 #include "securec.h"
 
 namespace OHOS {

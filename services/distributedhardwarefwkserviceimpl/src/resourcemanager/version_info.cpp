@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,6 +60,25 @@ void ToJson(nlohmann::json &jsonObject, const VersionInfo &dhVersionInfo)
     jsonObject[COMP_VER] = compVers;
 }
 
+void FromJson(const nlohmann::json &jsonObject, CompVersion &compVer)
+{
+    if (jsonObject.find(DEV_ID) != jsonObject.end()) {
+        compVer.name = jsonObject.at(NAME).get<std::string>();
+    }
+    if (jsonObject.find(TYPE) != jsonObject.end()) {
+        compVer.dhType = jsonObject.at(TYPE).get<DHType>();
+    }
+    if (jsonObject.find(HANDLER) != jsonObject.end()) {
+        compVer.handlerVersion = jsonObject.at(HANDLER).get<std::string>();
+    }
+    if (jsonObject.find(SOURCE_VER) != jsonObject.end()) {
+        compVer.sourceVersion = jsonObject.at(SOURCE_VER).get<std::string>();
+    }
+    if (jsonObject.find(SINK_VER) != jsonObject.end()) {
+        compVer.sinkVersion = jsonObject.at(SINK_VER).get<std::string>();
+    }
+}
+
 void FromJson(const nlohmann::json &jsonObject, VersionInfo &dhVersionInfo)
 {
     if (jsonObject.find(DEV_ID) != jsonObject.end()) {
@@ -73,11 +92,7 @@ void FromJson(const nlohmann::json &jsonObject, VersionInfo &dhVersionInfo)
     if (jsonObject.find(COMP_VER) != jsonObject.end()) {
         for (auto compVerObj : jsonObject.at(COMP_VER)) {
             CompVersion compVer;
-            compVer.name = compVerObj.at(NAME).get<std::string>();
-            compVer.dhType = compVerObj.at(TYPE).get<DHType>();
-            compVer.handlerVersion = compVerObj.at(HANDLER).get<std::string>();
-            compVer.sourceVersion = compVerObj.at(SOURCE_VER).get<std::string>();
-            compVer.sinkVersion = compVerObj.at(SINK_VER).get<std::string>();
+            FromJson(compVerObj, compVer);
             dhVersionInfo.compVersions.insert(std::pair<DHType, CompVersion>(compVer.dhType, compVer));
         }
     }

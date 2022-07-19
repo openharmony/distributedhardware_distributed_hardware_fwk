@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -120,54 +120,54 @@ int32_t VersionInfoManager::GetVersionInfoByDeviceId(const std::string &deviceId
     return DH_FWK_SUCCESS;
 }
 
-
-int32_t VersionInfoManager::SyncVersionInfoFromDB(const std::string &deviceId)
+void VersionInfoManager::UpdateVersionCache(const VersionInfo &versionInfo)
 {
-    DHLOGI("Sync VersionInfo from DB, deviceId: %s", GetAnonyString(deviceId).c_str());
-    std::string data("");
-    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
-    {
-        if (dbAdapterPtr_ == nullptr) {
-            DHLOGE("dbAdapterPtr_ is null");
-            return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
-        }
-
-        if (dbAdapterPtr_->GetDataByKey(deviceId, data) != DH_FWK_SUCCESS) {
-            DHLOGE("Query data from DB by deviceId failed, deviceId: %s", GetAnonyString(deviceId).c_str());
-            return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
-        }
-    }
-    DHLOGI("Query data from DB by deviceId success, deviceId: %s", GetAnonyString(deviceId).c_str());
-
-    std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
+    std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(versionInfo.deviceId);
     if (uuid.empty()) {
-        DHLOGI("Find uuid failed");
-        return ERR_DH_FWK_RESOURCE_SYNC_VERSIONINFO_FAIL;
+        DHLOGI("Find uuid failed, deviceId: %s", GetAnonyString(versionInfo.deviceId).c_str());
+        return;
     }
-    VersionInfo versionInfo;
-    versionInfo.FromJsonString(data);
     DHVersion dhVersion;
     dhVersion.uuid = uuid;
     dhVersion.dhVersion = versionInfo.dhVersion;
     dhVersion.compVersions = versionInfo.compVersions;
     VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
+}
+
+int32_t VersionInfoManager::SyncVersionInfoFromDB(const std::string &deviceId)
+{
+    DHLOGI("Sync VersionInfo from DB, deviceId: %s", GetAnonyString(deviceId).c_str());
+    
+    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr_ is null");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
+    }
+    std::string data("");
+    if (dbAdapterPtr_->GetDataByKey(deviceId, data) != DH_FWK_SUCCESS) {
+        DHLOGE("Query data from DB by deviceId failed, deviceId: %s", GetAnonyString(deviceId).c_str());
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
+    }
+
+    DHLOGI("Query data from DB by deviceId success, deviceId: %s", GetAnonyString(deviceId).c_str());
+    VersionInfo versionInfo;
+    versionInfo.FromJsonString(data);
+    UpdateVersionCache(versionInfo);
     return DH_FWK_SUCCESS;
 }
 
 int32_t VersionInfoManager::SyncRemoteVersionInfos()
 {
     DHLOGI("Sync full remote version info from DB");
-    std::vector<std::string> dataVector;
     std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
-    {
-        if (dbAdapterPtr_ == nullptr) {
-            DHLOGE("dbAdapterPtr_ is null");
-            return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
-        }
-        if (dbAdapterPtr_->GetDataByKeyPrefix("", dataVector) != DH_FWK_SUCCESS) {
-            DHLOGE("Query all data from DB failed");
-            return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
-        }
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr_ is null");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
+    }
+    std::vector<std::string> dataVector;
+    if (dbAdapterPtr_->GetDataByKeyPrefix("", dataVector) != DH_FWK_SUCCESS) {
+        DHLOGE("Query all data from DB failed");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
 
     for (const auto &data : dataVector) {
@@ -184,16 +184,7 @@ int32_t VersionInfoManager::SyncRemoteVersionInfos()
                 GetAnonyString(deviceId).c_str());
             continue;
         }
-        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
-        if (uuid.empty()) {
-            DHLOGI("Find uuid failed");
-            continue;
-        }
-        DHVersion dhVersion;
-        dhVersion.uuid = uuid;
-        dhVersion.dhVersion = versionInfo.dhVersion;
-        dhVersion.compVersions = versionInfo.compVersions;
-        VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
+        UpdateVersionCache(versionInfo);
     }
     return DH_FWK_SUCCESS;
 }
@@ -257,18 +248,7 @@ void VersionInfoManager::HandleVersionAddChange(const std::vector<DistributedKv:
         const std::string value = item.value.ToString();
         VersionInfo versionInfo;
         versionInfo.FromJsonString(value);
-        const std::string &deviceId = versionInfo.deviceId;
-        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
-        if (uuid.empty()) {
-            DHLOGI("Find uuid failed, deviceId: %s", GetAnonyString(deviceId).c_str());
-            continue;
-        }
-        DHLOGI("Add Version, uuid: %s", GetAnonyString(uuid).c_str());
-        DHVersion dhVersion;
-        dhVersion.uuid = uuid;
-        dhVersion.dhVersion = versionInfo.dhVersion;
-        dhVersion.compVersions = versionInfo.compVersions;
-        VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
+        UpdateVersionCache(versionInfo);
     }
 }
 
@@ -279,18 +259,7 @@ void VersionInfoManager::HandleVersionUpdateChange(const std::vector<Distributed
         const std::string value = item.value.ToString();
         VersionInfo versionInfo;
         versionInfo.FromJsonString(value);
-        const std::string &deviceId = versionInfo.deviceId;
-        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
-        if (uuid.empty()) {
-            DHLOGI("Find uuid failed, deviceId: %s", GetAnonyString(deviceId).c_str());
-            continue;
-        }
-        DHLOGI("Update Version ,uuid: %s", GetAnonyString(uuid).c_str());
-        DHVersion dhVersion;
-        dhVersion.uuid = uuid;
-        dhVersion.dhVersion = versionInfo.dhVersion;
-        dhVersion.compVersions = versionInfo.compVersions;
-        VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
+        UpdateVersionCache(versionInfo);
     }
 }
 

@@ -16,13 +16,15 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_CAPABILITY_UTILS_H
 #define OHOS_DISTRIBUTED_HARDWARE_CAPABILITY_UTILS_H
 
+#include <cstdint>
+#include <memory>
 #include <string>
-#include <vector>
 
 #include "capability_info.h"
 
 namespace OHOS {
 namespace DistributedHardware {
+class CapabilityInfo;
 enum class CapabilityInfoFilter : uint32_t {
     FILTER_DH_ID = 0,
     FILTER_DEVICE_ID = 1,

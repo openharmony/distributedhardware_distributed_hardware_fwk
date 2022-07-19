@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <string>
 
 #include "anonymous_string.h"
 #include "dh_utils_tool.h"

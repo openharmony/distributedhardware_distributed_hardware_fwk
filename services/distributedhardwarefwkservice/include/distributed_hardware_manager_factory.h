@@ -16,8 +16,11 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_MANAGER_FACTORY_H
 #define OHOS_DISTRIBUTED_HARDWARE_MANAGER_FACTORY_H
 
+#include <cstdint>
 #include <mutex>
+#include <unordered_map>
 
+#include "device_type.h"
 #include "idistributed_hardware_manager.h"
 #include "single_instance.h"
 

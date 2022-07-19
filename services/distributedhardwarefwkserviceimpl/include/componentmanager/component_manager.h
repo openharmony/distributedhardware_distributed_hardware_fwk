@@ -27,6 +27,7 @@
 #include "idistributed_hardware.h"
 #include "idistributed_hardware_sink.h"
 #include "idistributed_hardware_source.h"
+#include "version_info.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -67,10 +68,15 @@ private:
     bool WaitForResult(const Action &action, ActionResult result);
     int32_t GetEnableParam(const std::string &networkId, const std::string &uuid, const std::string &dhId,
         DHType dhType, EnableParam &param);
-    std::string GetSinkVersionFromVerMgr(const std::string &uuid, const DHType dhType);
-    std::string GetSinkVersionFromVerInfoMgr(const std::string &uuid, const DHType dhType);
-    std::string GetSinkVersionFromRPC(const std::string &networkId, const std::string &uuid, DHType dhType);
-    std::string GetSinkVersion(const std::string &networkId, const std::string &uuid, DHType dhType);
+    int32_t GetSinkVersionFromVerMgr(const std::string &uuid, const DHType dhType,
+        std::string &sinkVersion);
+    int32_t GetSinkVersionFromVerInfoMgr(const std::string &uuid, const DHType dhType,
+        std::string &sinkVersion);
+    int32_t GetSinkVersionFromRPC(const std::string &networkId, const std::string &uuid,
+        DHType dhType, std::string &sinkVersion);
+    int32_t GetSinkVersion(const std::string &networkId, const std::string &uuid,
+        DHType dhType, std::string &sinkVersion);
+    void UpdateVersionCache(const std::string &uuid, const VersionInfo &versionInfo);
     void UpdateVersionCache(const std::string &uuid, const std::unordered_map<DHType, std::string> &versions);
     sptr<IDistributedHardware> GetRemoteDHMS(const std::string &networkId) const;
 

@@ -14,10 +14,8 @@
  */
 #include "dh_utils_hisysevent.h"
 
-#include <unistd.h>
 #include <unordered_map>
 
-#include "anonymous_string.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 

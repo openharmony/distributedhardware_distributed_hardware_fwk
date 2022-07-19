@@ -28,16 +28,21 @@
     ],
     "deps": {
       "components": [
-        "appexecfwk_base",
-        "appexecfwk_core",
-        "libeventhandler",
-        "libhilog",
-        "distributeddata_inner",
-        "ipc_core",
-        "system_ability_fwk",
-        "samgr_proxy",
-        "syspara",
-        "softbus_client"
+        "dsoftbus",
+        "distributeddatamgr",
+        "eventhandler",
+        "hitrace_native",
+        "utils_base",
+        "hiviewdfx_hilog_native",
+        "startup_l2",
+        "bundle_framework",
+        "samgr_standard",
+        "ipc",
+        "safwk",
+        "common",
+        "hisysevent_native",
+        "ability_runtime",
+        "device_manager"
       ],
       "third_party": [
         "json",

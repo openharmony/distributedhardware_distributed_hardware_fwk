@@ -62,14 +62,12 @@ int32_t VersionManager::AddDHVersion(const std::string &uuid, const DHVersion &d
     DHLOGI("addDHVersion uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
     dhVersions_[uuid] = dhVersion;
-
     return DH_FWK_SUCCESS;
 }
 
 int32_t VersionManager::RemoveDHVersion(const std::string &uuid)
 {
     DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
-
     std::lock_guard<std::mutex> lock(versionMutex_);
     std::unordered_map<std::string, DHVersion>::iterator iter = dhVersions_.find(uuid);
     if (iter == dhVersions_.end()) {
@@ -77,7 +75,6 @@ int32_t VersionManager::RemoveDHVersion(const std::string &uuid)
         return ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST;
     }
     dhVersions_.erase(iter);
-
     return DH_FWK_SUCCESS;
 }
 

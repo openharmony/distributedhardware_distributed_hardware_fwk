@@ -13,9 +13,15 @@
  * limitations under the License.
  */
 
-#include "distributed_hardware_log.h"
-
 #include "event_bus_test.h"
+
+#include <gtest/gtest.h>
+#include <memory>
+#include <new>
+
+#include "distributed_hardware_log.h"
+#include "event_bus.h"
+#include "event_registration.h"
 
 using namespace testing::ext;
 

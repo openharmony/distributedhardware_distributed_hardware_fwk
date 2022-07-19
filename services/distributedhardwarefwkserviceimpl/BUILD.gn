@@ -56,6 +56,7 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
     "src/resourcemanager/version_info_manager.cpp",
     "src/task/disable_task.cpp",
     "src/task/enable_task.cpp",
+    "src/task/monitor_task_timer.cpp",
     "src/task/offline_task.cpp",
     "src/task/online_task.cpp",
     "src/task/task.cpp",
@@ -88,10 +89,10 @@ ohos_shared_library("distributedhardwarefwksvr_impl") {
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
+    "init:libbegetutil",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
-    "startup_l2:syspara",
   ]
 
   subsystem_name = "distributedhardware"

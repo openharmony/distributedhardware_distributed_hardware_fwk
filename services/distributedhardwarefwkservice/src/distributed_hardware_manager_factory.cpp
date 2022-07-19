@@ -15,9 +15,14 @@
 
 #include "distributed_hardware_manager_factory.h"
 
+#include <cstdlib>
 #include <dlfcn.h>
-#include <memory>
+#include <string>
 #include <thread>
+#include <vector>
+
+#include "dm_device_info.h"
+#include "hisysevent.h"
 
 #include "anonymous_string.h"
 #include "constants.h"
@@ -27,6 +32,7 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "idistributed_hardware_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
