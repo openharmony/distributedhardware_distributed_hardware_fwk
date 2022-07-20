@@ -457,7 +457,7 @@ void ComponentManager::UpdateVersionCache(const std::string &uuid,
 {
     DHVersion dhVersion;
     dhVersion.uuid = uuid;
-    for (auto versionPair : versions) {
+    for (const auto &versionPair : versions) {
         CompVersion compVersion;
         compVersion.dhType = versionPair.first;
         compVersion.sinkVersion = versionPair.second;

@@ -58,7 +58,7 @@ void MonitorTaskTimer::StartTimer()
 
 void MonitorTaskTimer::StopTimer()
 {
-    DHLOGI("stop");
+    DHLOGI("start");
     if (monitorTaskTimerThread_.joinable()) {
         monitorTaskTimerThread_.join();
     }

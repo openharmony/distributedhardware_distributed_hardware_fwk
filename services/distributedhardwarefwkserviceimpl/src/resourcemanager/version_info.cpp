@@ -90,7 +90,7 @@ void FromJson(const nlohmann::json &jsonObject, VersionInfo &dhVersionInfo)
     }
 
     if (jsonObject.find(COMP_VER) != jsonObject.end()) {
-        for (auto compVerObj : jsonObject.at(COMP_VER)) {
+        for (const auto &compVerObj : jsonObject.at(COMP_VER)) {
             CompVersion compVer;
             FromJson(compVerObj, compVer);
             dhVersionInfo.compVersions.insert(std::pair<DHType, CompVersion>(compVer.dhType, compVer));

@@ -74,9 +74,9 @@ int32_t ComponentLoader::Init()
     DHLOGI("start");
     DHTraceStart(COMPONENT_LOAD_START);
     int32_t ret = ParseConfig();
+    StoreLocalDHVersionInDB();
     DHTraceEnd();
 
-    StoreLocalDHVersionToDB();
     return ret;
 }
 
@@ -142,7 +142,7 @@ int32_t ComponentLoader::GetLocalDHVersion(DHVersion &dhVersion)
     return DH_FWK_SUCCESS;
 }
 
-void ComponentLoader::StoreLocalDHVersionToDB()
+void ComponentLoader::StoreLocalDHVersionInDB()
 {
     if (!isLocalVersionInit_.load()) {
         DHLOGE("Store local DHVersion fail");
