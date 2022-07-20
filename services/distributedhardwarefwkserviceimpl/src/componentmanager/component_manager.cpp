@@ -342,7 +342,7 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
     std::string sinkVersion("");
     ret = GetSinkVersion(networkId, uuid, dhType, sinkVersion);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Get Sink Version failed, uuid = %s, dhId = %s, dhType = %#X,", GetAnonyString(uuid).c_str(),
+        DHLOGE("Get sink version failed, uuid = %s, dhId = %s, dhType = %#X,", GetAnonyString(uuid).c_str(),
             GetAnonyString(dhId).c_str(), dhType);
         return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
     }
@@ -359,11 +359,11 @@ int32_t ComponentManager::GetSinkVersionFromVerMgr(const std::string &uuid, cons
     CompVersion compversion;
     int32_t ret = VersionManager::GetInstance().GetCompVersion(uuid, dhType, compversion);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Get sink version from Version Manager failed, uuid =%s, dhType = %#X, errCode = %d",
+        DHLOGE("Get sink version from version Manager failed, uuid =%s, dhType = %#X, errCode = %d",
             GetAnonyString(uuid).c_str(), dhType, ret);
         return ret;
     }
-    DHLOGI("Get SinkVersion from version mgr success, sinkVersion = %s, uuid = %s, dhType = %#X",
+    DHLOGI("Get sink version from version mgr success, sinkVersion = %s, uuid = %s, dhType = %#X",
         compversion.sinkVersion.c_str(), GetAnonyString(uuid).c_str(), dhType);
     sinkVersion = compversion.sinkVersion;
     return DH_FWK_SUCCESS;
@@ -398,7 +398,7 @@ int32_t ComponentManager::GetSinkVersionFromRPC(const std::string &networkId, co
     sptr<IDistributedHardware> dhms = GetRemoteDHMS(networkId);
     if (dhms == nullptr) {
         DHLOGI("GetRemoteDHMS failed, networkId = %s", GetAnonyString(networkId).c_str());
-        return ERR_DH_FWK_COMPONENT_GET_REMOTE_DHMS_FAILED;
+        return ERR_DH_FWK_COMPONENT_GET_REMOTE_SA_FAILED;
     }
 
     std::unordered_map<DHType, std::string> versions;

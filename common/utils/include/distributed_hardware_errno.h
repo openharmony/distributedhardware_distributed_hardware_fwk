@@ -45,7 +45,6 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_COMPONENT_GET_REMOTE_SA_FAILED = -10008;
     constexpr int32_t ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED = -10009;
     constexpr int32_t ERR_DH_FWK_COMPONENT_DHTYPE_NOT_FOUND = -10010;
-    constexpr int32_t ERR_DH_FWK_COMPONENT_GET_REMOTE_DHMS_FAILED = -10011;
 
     /* ResourceManager errno, range: [-10400, -10499] */
     constexpr int32_t ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL = -10400;

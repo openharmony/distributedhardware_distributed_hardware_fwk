@@ -136,7 +136,7 @@ void VersionInfoManager::UpdateVersionCache(const VersionInfo &versionInfo)
 
 int32_t VersionInfoManager::SyncVersionInfoFromDB(const std::string &deviceId)
 {
-    DHLOGI("Sync VersionInfo from DB, deviceId: %s", GetAnonyString(deviceId).c_str());
+    DHLOGI("Sync versionInfo from DB, deviceId: %s", GetAnonyString(deviceId).c_str());
     
     std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
@@ -176,11 +176,11 @@ int32_t VersionInfoManager::SyncRemoteVersionInfos()
         const std::string &deviceId = versionInfo.deviceId;
         const std::string &localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
         if (deviceId.compare(localDeviceId) == 0) {
-            DHLOGE("local device info not need sync from db");
+            DHLOGE("Local device info not need sync from db");
             continue;
         }
         if (!DHContext::GetInstance().IsDeviceOnline(deviceId)) {
-            DHLOGE("offline device, no need sync to memory, deviceId : %s ",
+            DHLOGE("Offline device, no need sync to memory, deviceId : %s ",
                 GetAnonyString(deviceId).c_str());
             continue;
         }
@@ -226,7 +226,7 @@ int32_t VersionInfoManager::ManualSync(const std::string &networkId)
 
 void VersionInfoManager::OnChange(const DistributedKv::ChangeNotification &changeNotification)
 {
-    DHLOGI("VersionInfoManager: DB data OnChange");
+    DHLOGI("DB data OnChange");
     if (!changeNotification.GetInsertEntries().empty()) {
         DHLOGI("Handle version data add change");
         HandleVersionAddChange(changeNotification.GetInsertEntries());
@@ -243,7 +243,7 @@ void VersionInfoManager::OnChange(const DistributedKv::ChangeNotification &chang
 
 void VersionInfoManager::HandleVersionAddChange(const std::vector<DistributedKv::Entry> &insertRecords)
 {
-    DHLOGI("VersionInfoManager: Version add change");
+    DHLOGI("Version add change");
     for (const auto &item : insertRecords) {
         const std::string value = item.value.ToString();
         VersionInfo versionInfo;
@@ -254,7 +254,7 @@ void VersionInfoManager::HandleVersionAddChange(const std::vector<DistributedKv:
 
 void VersionInfoManager::HandleVersionUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords)
 {
-    DHLOGI("VersionInfoManager: Version update change");
+    DHLOGI("Version update change");
     for (const auto &item : updateRecords) {
         const std::string value = item.value.ToString();
         VersionInfo versionInfo;
@@ -265,7 +265,7 @@ void VersionInfoManager::HandleVersionUpdateChange(const std::vector<Distributed
 
 void VersionInfoManager::HandleVersionDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords)
 {
-    DHLOGI("VersionInfoManager: Version delete change");
+    DHLOGI("Version delete change");
     for (const auto &item : deleteRecords) {
         const std::string value = item.value.ToString();
         VersionInfo dhVersion;
@@ -276,7 +276,7 @@ void VersionInfoManager::HandleVersionDeleteChange(const std::vector<Distributed
             DHLOGI("Find uuid failed, deviceId: %s", GetAnonyString(deviceId).c_str());
             continue;
         }
-        DHLOGI("Delete Version ,uuid: %s", GetAnonyString(uuid).c_str());
+        DHLOGI("Delete version ,uuid: %s", GetAnonyString(uuid).c_str());
         VersionManager::GetInstance().RemoveDHVersion(uuid);
     }
 }

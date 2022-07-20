@@ -22,6 +22,7 @@
 #include "anonymous_string.h"
 #include "constants.h"
 #include "distributed_hardware_errno.h"
+#include "distributed_hardware_log.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -41,13 +42,13 @@ std::string VersionInfo::ToJsonString() const
     return jsonObj.dump();
 }
 
-void ToJson(nlohmann::json &jsonObject, const VersionInfo &dhVersionInfo)
+void ToJson(nlohmann::json &jsonObject, const VersionInfo &versionInfo)
 {
-    jsonObject[DEV_ID] = dhVersionInfo.deviceId;
-    jsonObject[DH_VER] = dhVersionInfo.dhVersion;
+    jsonObject[DEV_ID] = versionInfo.deviceId;
+    jsonObject[DH_VER] = versionInfo.dhVersion;
 
     nlohmann::json compVers;
-    for (const auto &compVersion : dhVersionInfo.compVersions) {
+    for (const auto &compVersion : versionInfo.compVersions) {
         nlohmann::json compVer;
         compVer[NAME] = compVersion.second.name;
         compVer[TYPE] = compVersion.second.dhType;
@@ -62,7 +63,7 @@ void ToJson(nlohmann::json &jsonObject, const VersionInfo &dhVersionInfo)
 
 void FromJson(const nlohmann::json &jsonObject, CompVersion &compVer)
 {
-    if (jsonObject.find(DEV_ID) != jsonObject.end()) {
+    if (jsonObject.find(NAME) != jsonObject.end()) {
         compVer.name = jsonObject.at(NAME).get<std::string>();
     }
     if (jsonObject.find(TYPE) != jsonObject.end()) {
@@ -79,21 +80,21 @@ void FromJson(const nlohmann::json &jsonObject, CompVersion &compVer)
     }
 }
 
-void FromJson(const nlohmann::json &jsonObject, VersionInfo &dhVersionInfo)
+void FromJson(const nlohmann::json &jsonObject, VersionInfo &versionInfo)
 {
     if (jsonObject.find(DEV_ID) != jsonObject.end()) {
-        dhVersionInfo.deviceId = jsonObject.at(DEV_ID).get<std::string>();
+        versionInfo.deviceId = jsonObject.at(DEV_ID).get<std::string>();
     }
 
     if (jsonObject.find(DH_VER) != jsonObject.end()) {
-        dhVersionInfo.dhVersion = jsonObject.at(DH_VER).get<std::string>();
+        versionInfo.dhVersion = jsonObject.at(DH_VER).get<std::string>();
     }
 
     if (jsonObject.find(COMP_VER) != jsonObject.end()) {
         for (const auto &compVerObj : jsonObject.at(COMP_VER)) {
             CompVersion compVer;
             FromJson(compVerObj, compVer);
-            dhVersionInfo.compVersions.insert(std::pair<DHType, CompVersion>(compVer.dhType, compVer));
+            versionInfo.compVersions.insert(std::pair<DHType, CompVersion>(compVer.dhType, compVer));
         }
     }
 }

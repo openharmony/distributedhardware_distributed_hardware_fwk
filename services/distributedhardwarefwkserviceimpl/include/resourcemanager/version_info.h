@@ -31,9 +31,9 @@ struct VersionInfo {
     std::string ToJsonString() const;
 };
 
-void ToJson(nlohmann::json &jsonObject, const VersionInfo &dhVersion);
+void ToJson(nlohmann::json &jsonObject, const VersionInfo &versionInfo);
 void FromJson(const nlohmann::json &jsonObject, CompVersion &compVer);
-void FromJson(const nlohmann::json &jsonObject, VersionInfo &dhVersion);
+void FromJson(const nlohmann::json &jsonObject, VersionInfo &versionInfo);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
