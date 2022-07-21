@@ -81,11 +81,11 @@ void MonitorTaskTimer::StopTimer()
     if (eventHandler_ != nullptr) {
         eventHandler_->RemoveTask(MONITOR_TASK_TIMER_ID);
         eventHandler_->GetEventRunner()->Stop();
-        eventHandler_ = nullptr;
     }
     if (eventHandlerThread_.joinable()) {
         eventHandlerThread_.join();
     }
+    eventHandler_ = nullptr;
     DHLOGI("end");
 }
 
