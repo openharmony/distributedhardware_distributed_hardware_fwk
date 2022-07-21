@@ -16,6 +16,7 @@
 #ifndef DISTRIBUTED_HARDWARE_FWK_MONITOR_TASK_TIMER_H
 #define DISTRIBUTED_HARDWARE_FWK_MONITOR_TASK_TIMER_H
 
+#include <condition_variable>
 #include <cstdint>
 #include <memory>
 #include <mutex>
@@ -33,13 +34,17 @@ public:
     ~MonitorTaskTimer();
     void StartTimer();
     void StopTimer();
+    void StartEventRunner();
 
 private:
     MonitorTaskTimer();
     void Execute(const std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler);
 
 private:
-    std::thread monitorTaskTimerThread_;
+    std::thread eventHandlerThread_;
+    std::mutex monitorTaskTimerMutex_;
+    std::condition_variable monitorTaskTimerCond_;
+    std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
