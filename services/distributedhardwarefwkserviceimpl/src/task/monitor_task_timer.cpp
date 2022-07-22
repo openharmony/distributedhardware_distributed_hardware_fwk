@@ -27,7 +27,6 @@ namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(MonitorTaskTimer);
 namespace {
-    const std::string MONITOR_TASK_TIMER_HANDLER = "monitor_task_timer_handler";
     const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
     constexpr int32_t DELAY_TIME_MS = 5000;
 }
@@ -37,31 +36,56 @@ namespace {
 MonitorTaskTimer::MonitorTaskTimer()
 {
     DHLOGI("MonitorTaskTimer construction");
+    if (!eventHandler_) {
+        eventHandlerThread_ = std::thread(&MonitorTaskTimer::StartEventRunner, this);
+        std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
+        monitorTaskTimerCond_.wait(lock, [this] {
+            return eventHandler_ != nullptr;
+        });
+    }
 }
 
 MonitorTaskTimer::~MonitorTaskTimer()
 {
     DHLOGI("MonitorTaskTimer destruction");
+    StopTimer();
+}
+
+void MonitorTaskTimer::StartEventRunner()
+{
+    auto busRunner = AppExecFwk::EventRunner::Create(false);
+    {
+        std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
+        eventHandler_ = std::make_shared<AppExecFwk::EventHandler>(busRunner);
+    }
+    monitorTaskTimerCond_.notify_all();
+    busRunner->Run();
 }
 
 void MonitorTaskTimer::StartTimer()
 {
     DHLOGI("start");
-    auto busRunner = OHOS::AppExecFwk::EventRunner::Create(MONITOR_TASK_TIMER_HANDLER);
-    auto eventHandler = std::make_shared<OHOS::AppExecFwk::EventHandler>(busRunner);
-    if (eventHandler == nullptr) {
-        DHLOGI("eventHandler construction, this point is empty");
+    std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
+    if (eventHandler_ == nullptr) {
+        DHLOGE("eventHandler is nullptr!");
         return;
     }
-    monitorTaskTimerThread_ = std::thread(&MonitorTaskTimer::Execute, this, eventHandler);
+    auto monitorTaskTimer = [this] {Execute(eventHandler_);};
+    eventHandler_->PostTask(monitorTaskTimer, MONITOR_TASK_TIMER_ID, DELAY_TIME_MS);
 }
 
 void MonitorTaskTimer::StopTimer()
 {
     DHLOGI("start");
-    if (monitorTaskTimerThread_.joinable()) {
-        monitorTaskTimerThread_.join();
+    std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
+    if (eventHandler_ != nullptr) {
+        eventHandler_->RemoveTask(MONITOR_TASK_TIMER_ID);
+        eventHandler_->GetEventRunner()->Stop();
     }
+    if (eventHandlerThread_.joinable()) {
+        eventHandlerThread_.join();
+    }
+    eventHandler_ = nullptr;
     DHLOGI("end");
 }
 
