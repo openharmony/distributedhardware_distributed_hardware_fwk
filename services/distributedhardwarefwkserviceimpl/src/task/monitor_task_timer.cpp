@@ -36,7 +36,6 @@ namespace {
 MonitorTaskTimer::MonitorTaskTimer()
 {
     DHLOGI("MonitorTaskTimer construction");
-    InitTimer();
 }
 
 MonitorTaskTimer::~MonitorTaskTimer()
@@ -48,7 +47,7 @@ MonitorTaskTimer::~MonitorTaskTimer()
 void MonitorTaskTimer::InitTimer()
 {
     DHLOGI("start");
-    if (!eventHandler_) {
+    if (eventHandler_ == nullptr) {
         eventHandlerThread_ = std::thread(&MonitorTaskTimer::StartEventRunner, this);
         std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
         monitorTaskTimerCond_.wait(lock, [this] {
@@ -58,7 +57,15 @@ void MonitorTaskTimer::InitTimer()
     DHLOGI("end");
 }
 
-void MonitorTaskTimer::ReleaseTimer() {
+void MonitorTaskTimer::ReleaseTimer()
+{
+    DHLOGI("start");
+    StopTimer();
+    DHLOGI("end");
+}
+
+void MonitorTaskTimer::StopTimer()
+{
     DHLOGI("start");
     std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
     if (eventHandler_ != nullptr) {
@@ -74,6 +81,7 @@ void MonitorTaskTimer::ReleaseTimer() {
 
 void MonitorTaskTimer::StartEventRunner()
 {
+    DHLOGI("start");
     auto busRunner = AppExecFwk::EventRunner::Create(false);
     {
         std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
@@ -81,28 +89,20 @@ void MonitorTaskTimer::StartEventRunner()
     }
     monitorTaskTimerCond_.notify_all();
     busRunner->Run();
+    DHLOGI("end");
 }
 
 void MonitorTaskTimer::StartTimer()
 {
     DHLOGI("start");
-    std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
+    InitTimer();
+    std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
     if (eventHandler_ == nullptr) {
         DHLOGE("eventHandler is nullptr!");
         return;
     }
     auto monitorTaskTimer = [this] {Execute(eventHandler_);};
     eventHandler_->PostTask(monitorTaskTimer, MONITOR_TASK_TIMER_ID, DELAY_TIME_MS);
-}
-
-void MonitorTaskTimer::StopTimer()
-{
-    DHLOGI("start");
-    std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
-    if (eventHandler_ != nullptr) {
-        eventHandler_->RemoveTask(MONITOR_TASK_TIMER_ID);
-        eventHandler_->GetEventRunner()->Stop();
-    }
 }
 
 void MonitorTaskTimer::Execute(const std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler)

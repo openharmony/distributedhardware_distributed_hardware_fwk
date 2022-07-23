@@ -32,8 +32,6 @@ class MonitorTaskTimer {
 DECLARE_SINGLE_INSTANCE_BASE(MonitorTaskTimer);
 public:
     ~MonitorTaskTimer();
-    void InitTimer();
-    void ReleaseTimer();
     void StartTimer();
     void StopTimer();
     void StartEventRunner();
@@ -41,6 +39,8 @@ public:
 private:
     MonitorTaskTimer();
     void Execute(const std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler);
+    void InitTimer();
+    void ReleaseTimer();
 
 private:
     std::thread eventHandlerThread_;
