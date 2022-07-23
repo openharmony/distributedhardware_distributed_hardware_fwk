@@ -81,7 +81,7 @@ void MonitorTaskTimer::StartTimer()
 {
     DHLOGI("start");
     InitTimer();
-    std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
+    std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
     if (eventHandler_ == nullptr) {
         DHLOGE("eventHandler is nullptr!");
         return;
