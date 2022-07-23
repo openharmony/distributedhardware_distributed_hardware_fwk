@@ -36,13 +36,6 @@ namespace {
 MonitorTaskTimer::MonitorTaskTimer()
 {
     DHLOGI("MonitorTaskTimer construction");
-    if (!eventHandler_) {
-        eventHandlerThread_ = std::thread(&MonitorTaskTimer::StartEventRunner, this);
-        std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
-        monitorTaskTimerCond_.wait(lock, [this] {
-            return eventHandler_ != nullptr;
-        });
-    }
 }
 
 MonitorTaskTimer::~MonitorTaskTimer()
@@ -66,6 +59,13 @@ void MonitorTaskTimer::StartTimer()
 {
     DHLOGI("start");
     std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
+    if (!eventHandler_) {
+        eventHandlerThread_ = std::thread(&MonitorTaskTimer::StartEventRunner, this);
+        std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
+        monitorTaskTimerCond_.wait(lock, [this] {
+            return eventHandler_ != nullptr;
+        });
+    }
     if (eventHandler_ == nullptr) {
         DHLOGE("eventHandler is nullptr!");
         return;
