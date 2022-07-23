@@ -32,6 +32,8 @@ class MonitorTaskTimer {
 DECLARE_SINGLE_INSTANCE_BASE(MonitorTaskTimer);
 public:
     ~MonitorTaskTimer();
+    void InitTimer();
+    void ReleaseTimer();
     void StartTimer();
     void StopTimer();
     void StartEventRunner();

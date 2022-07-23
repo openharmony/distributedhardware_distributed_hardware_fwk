@@ -36,6 +36,18 @@ namespace {
 MonitorTaskTimer::MonitorTaskTimer()
 {
     DHLOGI("MonitorTaskTimer construction");
+    InitTimer();
+}
+
+MonitorTaskTimer::~MonitorTaskTimer()
+{
+    DHLOGI("MonitorTaskTimer destruction");
+    ReleaseTimer();
+}
+
+void MonitorTaskTimer::InitTimer()
+{
+    DHLOGI("start");
     if (!eventHandler_) {
         eventHandlerThread_ = std::thread(&MonitorTaskTimer::StartEventRunner, this);
         std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
@@ -43,12 +55,21 @@ MonitorTaskTimer::MonitorTaskTimer()
             return eventHandler_ != nullptr;
         });
     }
+    DHLOGI("end");
 }
 
-MonitorTaskTimer::~MonitorTaskTimer()
-{
-    DHLOGI("MonitorTaskTimer destruction");
-    StopTimer();
+void MonitorTaskTimer::ReleaseTimer() {
+    DHLOGI("start");
+    std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
+    if (eventHandler_ != nullptr) {
+        eventHandler_->RemoveTask(MONITOR_TASK_TIMER_ID);
+        eventHandler_->GetEventRunner()->Stop();
+    }
+    if (eventHandlerThread_.joinable()) {
+        eventHandlerThread_.join();
+    }
+    eventHandler_ = nullptr;
+    DHLOGI("end");
 }
 
 void MonitorTaskTimer::StartEventRunner()
@@ -82,11 +103,6 @@ void MonitorTaskTimer::StopTimer()
         eventHandler_->RemoveTask(MONITOR_TASK_TIMER_ID);
         eventHandler_->GetEventRunner()->Stop();
     }
-    if (eventHandlerThread_.joinable()) {
-        eventHandlerThread_.join();
-    }
-    eventHandler_ = nullptr;
-    DHLOGI("end");
 }
 
 void MonitorTaskTimer::Execute(const std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler)
