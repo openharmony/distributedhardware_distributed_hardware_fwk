@@ -64,21 +64,6 @@ void MonitorTaskTimer::ReleaseTimer()
     DHLOGI("end");
 }
 
-void MonitorTaskTimer::StopTimer()
-{
-    DHLOGI("start");
-    std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
-    if (eventHandler_ != nullptr) {
-        eventHandler_->RemoveTask(MONITOR_TASK_TIMER_ID);
-        eventHandler_->GetEventRunner()->Stop();
-    }
-    if (eventHandlerThread_.joinable()) {
-        eventHandlerThread_.join();
-    }
-    eventHandler_ = nullptr;
-    DHLOGI("end");
-}
-
 void MonitorTaskTimer::StartEventRunner()
 {
     DHLOGI("start");
@@ -103,6 +88,21 @@ void MonitorTaskTimer::StartTimer()
     }
     auto monitorTaskTimer = [this] {Execute(eventHandler_);};
     eventHandler_->PostTask(monitorTaskTimer, MONITOR_TASK_TIMER_ID, DELAY_TIME_MS);
+}
+
+void MonitorTaskTimer::StopTimer()
+{
+    DHLOGI("start");
+    std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
+    if (eventHandler_ != nullptr) {
+        eventHandler_->RemoveTask(MONITOR_TASK_TIMER_ID);
+        eventHandler_->GetEventRunner()->Stop();
+    }
+    if (eventHandlerThread_.joinable()) {
+        eventHandlerThread_.join();
+    }
+    eventHandler_ = nullptr;
+    DHLOGI("end");
 }
 
 void MonitorTaskTimer::Execute(const std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler)
