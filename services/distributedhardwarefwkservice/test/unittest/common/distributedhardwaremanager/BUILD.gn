@@ -15,53 +15,55 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/dh_task_test"
+module_out_path = "distributed_hardware_fwk/dh_manager_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
-    "//third_party/json/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
-    "${services_path}/distributedhardwarefwkserviceimpl/include",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/task",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/utils",
-    "${common_path}/utils/include",
+    "${utils_path}/include/eventbus",
     "${common_path}/log/include",
+    "${common_path}/utils/include",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/task",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
+    "//third_party/json/include",
     "//utils/native/base/include",
   ]
 }
 
-## UnitTest dh_task_test
-ohos_unittest("DHTaskTest") {
+ohos_unittest("DistributedHardwareManagerTest") {
   module_out_path = module_out_path
 
-  sources = [
-    "src/mock_disable_task.cpp",
-    "src/mock_enable_task.cpp",
-    "src/mock_offline_task.cpp",
-    "src/mock_online_task.cpp",
-    "src/mock_task_factory.cpp",
-    "src/task_test.cpp",
-  ]
+  sources = [ "src/distributed_hardware_manager_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
+    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
+    "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"TaskTest\"",
+    "DH_LOG_TAG=\"DistributedHardwareManagerTest\"",
     "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "dsoftbus:softbus_client",
+    "eventhandler:libeventhandler",
+    "hiviewdfx_hilog_native:libhilog",
   ]
 }
 
-group("dh_task_test") {
+group("distributed_hardware_manager_test") {
   testonly = true
-  deps = [ ":DHTaskTest" ]
+  deps = [ ":DistributedHardwareManagerTest" ]
 }

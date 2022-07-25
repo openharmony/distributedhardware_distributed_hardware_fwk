@@ -15,53 +15,53 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/resource_manager_test"
+module_out_path = "distributed_hardware_fwk/dh_task_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
+    "//third_party/json/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
-    "${utils_path}/include/eventbus",
-    "${services_path}/distributedhardwarefwkserviceimpl/include",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/resourcemanager",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/utils",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/task",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "//utils/native/base/include",
-    "//third_party/json/include",
-    "//utils/native/base/include",
-    "//utils/system/safwk/native/include",
   ]
 }
 
-## UnitTest resource_manager_test
-ohos_unittest("ResourceManagerTest") {
+## UnitTest dh_task_test
+ohos_unittest("DHTaskTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/resource_manager_test.cpp" ]
+  sources = [
+    "src/mock_disable_task.cpp",
+    "src/mock_enable_task.cpp",
+    "src/mock_offline_task.cpp",
+    "src/mock_online_task.cpp",
+    "src/mock_task_factory.cpp",
+    "src/task_test.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
+    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
   ]
 
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
-    "distributeddatamgr:distributeddata_inner",
-    "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
-    "hiviewdfx_hilog_native:libhilog",
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"TaskTest\"",
+    "LOG_DOMAIN=0xD004100",
   ]
 }
 
-group("resource_manager_test") {
+group("dh_task_test") {
   testonly = true
-  deps = [ ":ResourceManagerTest" ]
+  deps = [ ":DHTaskTest" ]
 }

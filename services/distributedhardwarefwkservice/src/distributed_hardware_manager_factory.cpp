@@ -32,37 +32,24 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#include "idistributed_hardware_manager.h"
+#include "distributed_hardware_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-const char* LIB_NAME = "libdistributedhardwarefwksvr_impl.z.so";
-const std::string FUNC_GET_INSTANCE = "GetDistributedHardwareManagerInstance";
-
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DistributedHardwareManagerFactory"
 
-using GetMgrFunc = IDistributedHardwareManager *(*)();
-
 IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
-
 bool DistributedHardwareManagerFactory::Init()
 {
     DHLOGI("start");
-
-    auto loadResult = LoadLibrary();
-    if (loadResult != DH_FWK_SUCCESS) {
-        DHLOGE("LoadLibrary failed, errCode = %d", loadResult);
-        return false;
-    }
-
-    auto initResult = distributedHardwareMgrPtr_->Initialize();
+    auto initResult = DistributedHardwareManager::GetInstance().Initialize();
     if (initResult != DH_FWK_SUCCESS) {
         DHLOGE("Initialize failed, errCode = %d", initResult);
         return false;
     }
+    isInit = true;
     DHLOGD("success");
-
     return true;
 }
 
@@ -74,11 +61,9 @@ void DistributedHardwareManagerFactory::UnInit()
         "dhfwk sa exit begin.");
 
     // release all the resources synchronously
-    distributedHardwareMgrPtr_->Release();
-
-    CloseLibrary();
+    DistributedHardwareManager::GetInstance().Release();
+    isInit = false;
     DHTraceEnd();
-
     CheckExitSAOrNot();
 }
 
@@ -108,12 +93,7 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
 
 bool DistributedHardwareManagerFactory::IsInit()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (distributedHardwareMgrPtr_ == nullptr) {
-        DHLOGE("distributedHardwareMgr is not Initialize");
-        return false;
-    }
-    return true;
+    return isInit.load();
 }
 
 int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &networkId, const std::string &uuid,
@@ -129,13 +109,12 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
         return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
     }
 
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (distributedHardwareMgrPtr_ == nullptr && !Init()) {
+    if (!isInit && !Init()) {
         DHLOGE("distributedHardwareMgr is null");
-        return ERR_DH_FWK_HARDWARE_MANAGER_LOAD_IMPL_FAILED;
+        return ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED;
     }
 
-    auto onlineResult = distributedHardwareMgrPtr_->SendOnLineEvent(networkId, uuid, deviceType);
+    auto onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId, uuid, deviceType);
     if (onlineResult != DH_FWK_SUCCESS) {
         DHLOGE("online failed, errCode = %d", onlineResult);
         return onlineResult;
@@ -151,86 +130,33 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
         return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
     }
 
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (distributedHardwareMgrPtr_ == nullptr && !Init()) {
+    if (!isInit && !Init()) {
         DHLOGE("distributedHardwareMgr is null");
-        return ERR_DH_FWK_HARDWARE_MANAGER_LOAD_IMPL_FAILED;
+        return ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED;
     }
 
-    auto offlineResult = distributedHardwareMgrPtr_->SendOffLineEvent(networkId, uuid, deviceType);
+    auto offlineResult = DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId, uuid, deviceType);
     if (offlineResult != DH_FWK_SUCCESS) {
         DHLOGE("offline failed, errCode = %d", offlineResult);
         return offlineResult;
     }
 
-    if (distributedHardwareMgrPtr_->GetOnLineCount() == 0) {
+    if (DistributedHardwareManager::GetInstance().GetOnLineCount() == 0) {
         DHLOGI("all devices are offline, start to free the resource");
         UnInit();
     }
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareManagerFactory::LoadLibrary()
-{
-    DHLOGI("start.");
-    if (handler_ != nullptr && distributedHardwareMgrPtr_ != nullptr) {
-        DHLOGE("DistributedHardwareManager handler has loaded.");
-        return DH_FWK_SUCCESS;
-    }
-
-    handler_ = dlopen(LIB_NAME, RTLD_NOW | RTLD_NODELETE);
-    if (handler_ == nullptr) {
-        DHLOGE("open %s failed, fail reason : %s", LIB_NAME, dlerror());
-        return ERR_DH_FWK_HARDWARE_MANAGER_LIB_IMPL_OPEN_FAILED;
-    }
-
-    auto getManager = reinterpret_cast<GetMgrFunc>(dlsym(handler_, FUNC_GET_INSTANCE.c_str()));
-    if (getManager == nullptr) {
-        DHLOGE("can not find %s, failed reason : %s", FUNC_GET_INSTANCE.c_str(), dlerror());
-        CloseLibrary();
-        return ERR_DH_FWK_HARDWARE_MANAGER_LIB_IMPL_GET_INSTANCE_FAILED;
-    }
-
-    distributedHardwareMgrPtr_ = getManager();
-    if (distributedHardwareMgrPtr_ == nullptr) {
-        DHLOGE("distributedHardwareMgrPtr is null.");
-        CloseLibrary();
-        return ERR_DH_FWK_HARDWARE_MANAGER_LIB_IMPL_IS_NULL;
-    }
-    DHLOGI("load %s success.", LIB_NAME);
-    return DH_FWK_SUCCESS;
-}
-
-void DistributedHardwareManagerFactory::CloseLibrary()
-{
-    if (handler_ == nullptr) {
-        DHLOGI("%s is already closed.", LIB_NAME);
-        return;
-    }
-    distributedHardwareMgrPtr_ = nullptr;
-    dlclose(handler_);
-    handler_ = nullptr;
-    DHLOGI("%s is closed.", LIB_NAME);
-}
-
 int32_t DistributedHardwareManagerFactory::GetComponentVersion(std::unordered_map<DHType, std::string> &versionMap)
 {
     DHLOGI("start");
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (distributedHardwareMgrPtr_ == nullptr) {
-        DHLOGE("distributedHardwareMgr is null");
-        return ERR_DH_FWK_HARDWARE_MANAGER_LIB_IMPL_IS_NULL;
-    }
-    return distributedHardwareMgrPtr_->GetComponentVersion(versionMap);
+    return DistributedHardwareManager::GetInstance().GetComponentVersion(versionMap);
 }
 
 int32_t DistributedHardwareManagerFactory::Dump(const std::vector<std::string> &argsStr, std::string &result)
 {
-    if (distributedHardwareMgrPtr_ == nullptr) {
-        DHLOGE("distributedHardwareMgr is null");
-        return ERR_DH_FWK_HIDUMP_ERROR;
-    }
-    return distributedHardwareMgrPtr_->Dump(argsStr, result);
+    return DistributedHardwareManager::GetInstance().Dump(argsStr, result);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

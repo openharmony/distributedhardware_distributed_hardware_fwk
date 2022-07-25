@@ -15,20 +15,18 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/version_manager_test"
+module_out_path = "distributed_hardware_fwk/component_manager_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
     "${utils_path}/include",
-    "${utils_path}/include/eventbus",
     "${utils_path}/include/log",
-    "${services_path}/distributedhardwarefwkserviceimpl/include",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/componentloader",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/resourcemanager",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/versionmanager",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/utils",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/componentmanager",
+    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "//third_party/json/include",
@@ -36,31 +34,33 @@ config("module_private_config") {
   ]
 }
 
-ohos_unittest("VersionManagerTest") {
+ohos_unittest("ComponentManagerTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/version_manager_test.cpp" ]
+  sources = [ "src/component_manager_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
+    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
+    "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-  ]
-
-  external_deps = [
-    "distributeddatamgr:distributeddata_inner",
-    "eventhandler:libeventhandler",
   ]
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"VersionManagerTest\"",
+    "DH_LOG_TAG=\"ComponentManagerTest\"",
     "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "hisysevent_native:libhisysevent",
+    "ipc:ipc_core",
   ]
 }
 
-group("version_manager_test") {
+group("component_manager_test") {
   testonly = true
-  deps = [ ":VersionManagerTest" ]
+  deps = [ ":ComponentManagerTest" ]
 }

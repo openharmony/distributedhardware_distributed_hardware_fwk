@@ -28,8 +28,7 @@
 ├── sa_profile                              # 分布式硬件管理框架的SA配置信息
 ├── services                                # 分布式硬件管理框架的SA具体实现
 │   └── distributedhardwarefwkservice       # 分布式硬件管理框架的服务层
-│       └── accessmanager                   # 硬件接入管理
-│   └── distributedhardwarefwkserviceimpl   # 分布式硬件管理框架的服务实现层
+│       ├── accessmanager                   # 硬件接入管理
 │       ├── resourcemanager                 # 硬件资源管理
 │       ├── componentmanager                # 分布式硬件部件管理
 │       ├── localhardwaremanager            # 本地硬件信息管理

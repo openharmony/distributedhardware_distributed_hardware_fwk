@@ -14,5 +14,9 @@
 group("fuzztest") {
   testonly = true
 
-  deps = [ "accessmanager_fuzzer:fuzztest" ]
+  deps = [
+    "accessmanager_fuzzer:fuzztest",
+    "componentmanager_fuzzer:fuzztest",
+    "resourcemanager_fuzzer:fuzztest",
+  ]
 }

@@ -24,11 +24,11 @@ config("module_private_config") {
     "${utils_path}/include",
     "${utils_path}/include/eventbus",
     "${utils_path}/include/log",
-    "${services_path}/distributedhardwarefwkserviceimpl/include",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/versionmanager",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/resourcemanager",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/componentloader",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/utils",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/versionmanager",
+    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "${services_path}/distributedhardwarefwkservice/include/componentloader",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "//third_party/json/include",
@@ -43,7 +43,7 @@ ohos_unittest("ComponentLoaderTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
+    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//third_party/googletest:gtest_main",
   ]
 
