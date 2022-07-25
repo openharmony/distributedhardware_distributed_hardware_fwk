@@ -39,6 +39,8 @@ public:
 private:
     MonitorTaskTimer();
     void Execute(const std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler);
+    void InitTimer();
+    void ReleaseTimer();
 
 private:
     std::thread eventHandlerThread_;
