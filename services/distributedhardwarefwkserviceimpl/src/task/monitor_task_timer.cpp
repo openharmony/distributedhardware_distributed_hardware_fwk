@@ -47,9 +47,9 @@ MonitorTaskTimer::~MonitorTaskTimer()
 void MonitorTaskTimer::InitTimer()
 {
     DHLOGI("start");
+    std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
     if (eventHandler_ == nullptr) {
         eventHandlerThread_ = std::thread(&MonitorTaskTimer::StartEventRunner, this);
-        std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
         monitorTaskTimerCond_.wait(lock, [this] {
             return eventHandler_ != nullptr;
         });
