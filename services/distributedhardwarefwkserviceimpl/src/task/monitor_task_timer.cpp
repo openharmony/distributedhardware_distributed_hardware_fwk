@@ -36,23 +36,37 @@ namespace {
 MonitorTaskTimer::MonitorTaskTimer()
 {
     DHLOGI("MonitorTaskTimer construction");
-    if (!eventHandler_) {
-        eventHandlerThread_ = std::thread(&MonitorTaskTimer::StartEventRunner, this);
-        std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
-        monitorTaskTimerCond_.wait(lock, [this] {
-            return eventHandler_ != nullptr;
-        });
-    }
 }
 
 MonitorTaskTimer::~MonitorTaskTimer()
 {
     DHLOGI("MonitorTaskTimer destruction");
+    ReleaseTimer();
+}
+
+void MonitorTaskTimer::InitTimer()
+{
+    DHLOGI("start");
+    std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
+    if (eventHandler_ == nullptr) {
+        eventHandlerThread_ = std::thread(&MonitorTaskTimer::StartEventRunner, this);
+        monitorTaskTimerCond_.wait(lock, [this] {
+            return eventHandler_ != nullptr;
+        });
+    }
+    DHLOGI("end");
+}
+
+void MonitorTaskTimer::ReleaseTimer()
+{
+    DHLOGI("start");
     StopTimer();
+    DHLOGI("end");
 }
 
 void MonitorTaskTimer::StartEventRunner()
 {
+    DHLOGI("start");
     auto busRunner = AppExecFwk::EventRunner::Create(false);
     {
         std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
@@ -60,11 +74,13 @@ void MonitorTaskTimer::StartEventRunner()
     }
     monitorTaskTimerCond_.notify_all();
     busRunner->Run();
+    DHLOGI("end");
 }
 
 void MonitorTaskTimer::StartTimer()
 {
     DHLOGI("start");
+    InitTimer();
     std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
     if (eventHandler_ == nullptr) {
         DHLOGE("eventHandler is nullptr!");
