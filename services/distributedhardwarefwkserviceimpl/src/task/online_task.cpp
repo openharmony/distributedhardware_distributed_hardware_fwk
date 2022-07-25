@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,7 @@
 #include "task_board.h"
 #include "task_executor.h"
 #include "task_factory.h"
+#include "version_info_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -73,10 +74,20 @@ void OnLineTask::DoSyncInfo()
     if (ret != DH_FWK_SUCCESS) {
         DHLOGW("ManualSync failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
+
+    ret = VersionInfoManager::GetInstance()->ManualSync(GetNetworkId());
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGW("ManualSync version failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
+    }
+
     ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(GetDeviceIdByUUID(GetUUID()));
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("SyncDeviceInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
-        return;
+    }
+
+    ret = VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(GetDeviceIdByUUID(GetUUID()));
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("SyncVersionInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
 }
 

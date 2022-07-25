@@ -22,13 +22,16 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "${utils_path}/include",
+    "${utils_path}/include/eventbus",
     "${utils_path}/include/log",
     "${services_path}/distributedhardwarefwkserviceimpl/include",
     "${services_path}/distributedhardwarefwkserviceimpl/include/versionmanager",
+    "${services_path}/distributedhardwarefwkserviceimpl/include/resourcemanager",
     "${services_path}/distributedhardwarefwkserviceimpl/include/componentloader",
     "${services_path}/distributedhardwarefwkserviceimpl/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
+    "//third_party/json/include",
   ]
 }
 
@@ -44,7 +47,11 @@ ohos_unittest("ComponentLoaderTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [ "hisysevent_native:libhisysevent" ]
+  external_deps = [
+    "distributeddatamgr:distributeddata_inner",
+    "eventhandler:libeventhandler",
+    "hisysevent_native:libhisysevent",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",

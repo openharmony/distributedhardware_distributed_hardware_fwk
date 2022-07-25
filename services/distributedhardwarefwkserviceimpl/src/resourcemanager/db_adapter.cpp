@@ -24,6 +24,7 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "event_bus.h"
+#include "version_info_event.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -263,8 +264,15 @@ int32_t DBAdapter::ManualSync(const std::string &networkId)
 void DBAdapter::SyncDBForRecover()
 {
     DHLOGI("Sync store id: %s after db recover", storeId_.storeId.c_str());
-    CapabilityInfoEvent recoverEvent(*this, CapabilityInfoEvent::EventType::RECOVER);
-    DHContext::GetInstance().GetEventBus()->PostEvent<CapabilityInfoEvent>(recoverEvent);
+    if (storeId_.storeId == GLOBAL_CAPABILITY_ID) {
+        CapabilityInfoEvent recoverEvent(*this, CapabilityInfoEvent::EventType::RECOVER);
+        DHContext::GetInstance().GetEventBus()->PostEvent<CapabilityInfoEvent>(recoverEvent);
+    }
+
+    if (storeId_.storeId == GLOBAL_VERSION_ID) {
+        VersionInfoEvent recoverEvent(*this, VersionInfoEvent::EventType::RECOVER);
+        DHContext::GetInstance().GetEventBus()->PostEvent<VersionInfoEvent>(recoverEvent);
+    }
 }
 
 int32_t DBAdapter::RegisterChangeListener()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +40,7 @@ public:
     int32_t RemoveDHVersion(const std::string &uuid);
     int32_t GetDHVersion(const std::string &uuid, DHVersion &dhVersion);
     int32_t GetCompVersion(const std::string &uuid, const DHType dhType, CompVersion &compVersion);
+    int32_t SyncDHVersionFromDB(const std::string &uuid, DHVersion &dhVersion);
     std::string GetLocalDeviceVersion();
     void ShowLocalVersion(const DHVersion &dhVersion) const;
 

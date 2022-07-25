@@ -19,6 +19,7 @@
 #include <unordered_map>
 
 #include "device_type.h"
+#include "constants.h"
 
 namespace OHOS {
 namespace DistributedHardware {

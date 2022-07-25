@@ -28,6 +28,7 @@ namespace DistributedHardware {
     const std::string COMPONENTSLOAD_PROFILE_PATH = R"(/etc/distributed_hardware_components_cfg.json)";
     const std::string APP_ID = "dtbhardware_manager_service";
     const std::string GLOBAL_CAPABILITY_ID = "global_capability_info";
+    const std::string GLOBAL_VERSION_ID = "global_version_info";
     const std::string RESOURCE_SEPARATOR = "###";
     const std::string DH_ID = "dh_id";
     const std::string DEV_ID = "dev_id";
@@ -36,6 +37,13 @@ namespace DistributedHardware {
     const std::string DH_TYPE = "dh_type";
     const std::string DH_ATTRS = "dh_attrs";
     const std::string DH_LOG_TITLE_TAG = "DHFWK";
+    const std::string DH_VER = "dh_ver";
+    const std::string COMP_VER = "comp_ver";
+    const std::string NAME = "name";
+    const std::string TYPE = "type";
+    const std::string HANDLER = "handler";
+    const std::string SOURCE_VER = "source_ver";
+    const std::string SINK_VER = "sink_ver";
     const std::string DH_TASK_NAME_PREFIX = "Task_";
     const std::string DH_FWK_PKG_NAME = "ohos.dhardware";
     const std::string DH_COMPONENT_VERSIONS = "componentVersions";

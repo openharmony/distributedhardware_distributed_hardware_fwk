@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-#include "versionmanager/version_manager.h"
+#include "version_manager.h"
 
 #include "anonymous_string.h"
-#include "componentloader/component_loader.h"
+#include "component_loader.h"
 #include "dh_context.h"
 #include "distributed_hardware_log.h"
 
@@ -35,7 +35,7 @@ int32_t VersionManager::Init()
         DHLOGE("GetLocalDHVersion fail");
         return ret;
     }
-    dhVersion.dhVersion = DH_LOCAL_VERSION;
+    dhVersion.dhVersion = GetLocalDeviceVersion();
     ShowLocalVersion(dhVersion);
     std::string strUUID = DHContext::GetInstance().GetDeviceInfo().uuid;
     AddDHVersion(strUUID, dhVersion);
@@ -59,9 +59,9 @@ void VersionManager::ShowLocalVersion(const DHVersion &dhVersion) const
 
 int32_t VersionManager::AddDHVersion(const std::string &uuid, const DHVersion &dhVersion)
 {
-    DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
+    DHLOGI("addDHVersion uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
-    dhVersions_.insert(std::pair<std::string, DHVersion>(uuid, dhVersion));
+    dhVersions_[uuid] = dhVersion;
     return DH_FWK_SUCCESS;
 }
 
@@ -104,6 +104,8 @@ int32_t VersionManager::GetCompVersion(const std::string &uuid, const DHType dhT
         DHLOGE("not find dhType: %#X", dhType);
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
+
+    DHLOGI("GetCompVersion success, uuid: %s, dhType: %#X", GetAnonyString(uuid).c_str(), dhType);
     compVersion = dhVersion.compVersions[dhType];
     return DH_FWK_SUCCESS;
 }

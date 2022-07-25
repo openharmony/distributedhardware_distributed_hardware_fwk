@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,7 @@ enum class DHType : uint32_t {
     SPEAKER = 0x04,           // Speaker
     DISPLAY = 0x08,           // Display
     GPS = 0x10,               // GPS
-    INPUT = 0x20,            // Key board
+    INPUT = 0x20,             // Key board
     HFP = 0x40,               // HFP External device
     A2D = 0x80,               // A2DP External device
     VIRMODEM_MIC = 0x100,     // Cellular call MIC

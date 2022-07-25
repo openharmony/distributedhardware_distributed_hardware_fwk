@@ -38,6 +38,7 @@ LocalHardwareManager::~LocalHardwareManager() {}
 
 void LocalHardwareManager::Init()
 {
+    DHLOGI("start");
     std::vector<DHType> allCompTypes = ComponentLoader::GetInstance().GetAllCompTypes();
     for (auto dhType : allCompTypes) {
         IHardwareHandler *hardwareHandler = nullptr;
