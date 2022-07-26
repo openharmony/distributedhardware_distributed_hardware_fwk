@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,6 +31,10 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DBAdapter"
 
+namespace {
+const std::string DATABASE_DIR = "/data/service/el1/public/database/";
+}
+
 DBAdapter::DBAdapter(const std::string &appId, const std::string &storeId,
                      const std::shared_ptr<DistributedKv::KvStoreObserver> &changeListener)
 {
@@ -52,7 +56,9 @@ DistributedKv::Status DBAdapter::GetKvStorePtr()
         .encrypt = false,
         .autoSync = true,
         .securityLevel = DistributedKv::SecurityLevel::S1,
-        .kvStoreType = DistributedKv::KvStoreType::SINGLE_VERSION
+        .kvStoreType = DistributedKv::KvStoreType::SINGLE_VERSION,
+        .area = DistributedKv::EL1,
+        .baseDir = DATABASE_DIR + appId_.appId
     };
     return kvDataMgr_.GetSingleKvStore(options, appId_, storeId_, kvStoragePtr_);
 }
