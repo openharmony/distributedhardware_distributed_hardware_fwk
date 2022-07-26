@@ -42,15 +42,15 @@ ohos_shared_library("distributedhardwarefwksvr") {
 
   sources = [
     "src/accessmanager/access_manager.cpp",
-    "src/distributed_hardware_manager_factory.cpp",
-    "src/distributed_hardware_service.cpp",
-    "src/distributed_hardware_stub.cpp",
     "src/componentloader/component_loader.cpp",
     "src/componentmanager/component_disable.cpp",
     "src/componentmanager/component_enable.cpp",
     "src/componentmanager/component_manager.cpp",
     "src/distributed_hardware_manager.cpp",
+    "src/distributed_hardware_manager_factory.cpp",
     "src/distributed_hardware_proxy.cpp",
+    "src/distributed_hardware_service.cpp",
+    "src/distributed_hardware_stub.cpp",
     "src/hidumphelper/enabled_comps_dump.cpp",
     "src/hidumphelper/hidump_helper.cpp",
     "src/localhardwaremanager/local_hardware_manager.cpp",
@@ -59,6 +59,8 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/resourcemanager/capability_info_manager.cpp",
     "src/resourcemanager/capability_utils.cpp",
     "src/resourcemanager/db_adapter.cpp",
+    "src/resourcemanager/version_info.cpp",
+    "src/resourcemanager/version_info_manager.cpp",
     "src/task/disable_task.cpp",
     "src/task/enable_task.cpp",
     "src/task/monitor_task_timer.cpp",
@@ -77,8 +79,8 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "//foundation/ability/ability_runtime/interfaces/inner_api/ability_manager:ability_manager",
     "//foundation/ability/ability_runtime/services/abilitymgr:abilityms",
     "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp:devicemanagersdk",
-    "//utils/native/base:utils",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    "//utils/native/base:utils",
   ]
 
   defines = [
@@ -90,6 +92,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
   external_deps = [
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "distributeddatamgr:distributeddata_inner",
     "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
@@ -98,7 +101,6 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
-    "distributeddatamgr:distributeddata_inner",
   ]
 
   subsystem_name = "distributedhardware"
