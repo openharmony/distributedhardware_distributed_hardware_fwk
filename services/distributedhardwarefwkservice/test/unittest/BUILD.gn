@@ -14,5 +14,13 @@
 group("test") {
   testonly = true
 
-  deps = [ "common/accessmanager:AccessManagerTest" ]
+  deps = [
+    "common/accessmanager:AccessManagerTest",
+    "common/componentloader:component_loader_test",
+    "common/componentmanager:component_manager_test",
+    "common/distributedhardwaremanager:distributed_hardware_manager_test",
+    "common/resourcemanager:resource_manager_test",
+    "common/task:dh_task_test",
+    "common/versionmanager:version_manager_test",
+  ]
 }

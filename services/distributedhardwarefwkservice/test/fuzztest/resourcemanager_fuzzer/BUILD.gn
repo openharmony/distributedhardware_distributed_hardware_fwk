@@ -18,21 +18,23 @@ import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("ComponentmanagerFuzzTest") {
-  module_out_path = "distributed_hardware_fwk/componentmanager"
-  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl/test/fuzztest/componentmanager_fuzzer"
+ohos_fuzztest("ResourcemanagerFuzzTest") {
+  module_out_path = "distributed_hardware_fwk/resourcemanager"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/resourcemanager_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
     "${utils_path}/include/log",
-    "${services_path}/distributedhardwarefwkserviceimpl/include",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/componentmanager",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/resourcemanager",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/utils",
+    "${utils_path}/include/eventbus",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
+    "//utils/native/base/include",
     "//third_party/json/include",
     "//utils/native/base/include",
+    "//utils/system/safwk/native/include",
   ]
   cflags = [
     "-g",
@@ -40,28 +42,33 @@ ohos_fuzztest("ComponentmanagerFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "componentmanager_fuzzer.cpp" ]
+  sources = [ "resourcemanager_fuzzer.cpp" ]
 
   deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
+    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
+    "//utils/native/base:utils",
   ]
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"ComponentmanagerFuzzTest\"",
+    "DH_LOG_TAG=\"ResourcemanagerFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "distributeddatamgr:distributeddata_inner",
+    "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",
-    "ipc:ipc_core",
+    "hiviewdfx_hilog_native:libhilog",
   ]
 }
 
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":ComponentmanagerFuzzTest" ]
+  deps = [ ":ResourcemanagerFuzzTest" ]
 }
 ###############################################################################

@@ -15,7 +15,7 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/component_manager_test"
+module_out_path = "distributed_hardware_fwk/resource_manager_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -23,44 +23,45 @@ config("module_private_config") {
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
-    "${services_path}/distributedhardwarefwkserviceimpl/include",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/componentmanager",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/resourcemanager",
-    "${services_path}/distributedhardwarefwkserviceimpl/include/utils",
+    "${utils_path}/include/eventbus",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
+    "//utils/native/base/include",
     "//third_party/json/include",
     "//utils/native/base/include",
+    "//utils/system/safwk/native/include",
   ]
 }
 
-ohos_unittest("ComponentManagerTest") {
+## UnitTest resource_manager_test
+ohos_unittest("ResourceManagerTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/component_manager_test.cpp" ]
+  sources = [ "src/resource_manager_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkserviceimpl:distributedhardwarefwksvr_impl",
+    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
-    "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-  ]
-
-  defines = [
-    "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"ComponentManagerTest\"",
-    "LOG_DOMAIN=0xD004100",
+    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "distributeddatamgr:distributeddata_inner",
+    "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",
-    "ipc:ipc_core",
+    "hiviewdfx_hilog_native:libhilog",
   ]
 }
 
-group("component_manager_test") {
+group("resource_manager_test") {
   testonly = true
-  deps = [ ":ComponentManagerTest" ]
+  deps = [ ":ResourceManagerTest" ]
 }
