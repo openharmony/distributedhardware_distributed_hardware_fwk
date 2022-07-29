@@ -23,7 +23,7 @@ ohos_fuzztest("AccessmanagerFuzzTest") {
   fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer"
 
   include_dirs = [
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
     "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp/include",
     "//foundation/distributedhardware/device_manager/common/include",

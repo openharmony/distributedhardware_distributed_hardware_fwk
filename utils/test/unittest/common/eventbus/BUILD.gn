@@ -25,7 +25,7 @@ config("module_private_config") {
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${utils_path}/include/eventbus",
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
   ]
 }
 

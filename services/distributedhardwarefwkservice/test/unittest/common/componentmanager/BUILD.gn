@@ -30,7 +30,7 @@ config("module_private_config") {
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "//third_party/json/include",
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
   ]
 }
 
