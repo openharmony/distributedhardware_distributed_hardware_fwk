@@ -35,6 +35,12 @@ const std::unordered_set<DHType> DH_TYPE_SET {
 
 int32_t DistributedHardwareProxy::QuerySinkVersion(std::unordered_map<DHType, std::string> &versionMap)
 {
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null");
+        return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
+    }
+
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -43,12 +49,9 @@ int32_t DistributedHardwareProxy::QuerySinkVersion(std::unordered_map<DHType, st
         DHLOGE("WriteInterfaceToken fail!");
         return ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL;
     }
-    sptr<IRemoteObject> remote = Remote();
-    if (remote == nullptr) {
-        DHLOGE("remote service is null");
-        return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
-    }
-    int32_t error = remote->SendRequest(QUERY_SINK_VERSION, data, reply, option);
+
+    int32_t error = remote->SendRequest((uint32_t)IDistributedHardware::Message::QUERY_SINK_VERSION,
+        data, reply, option);
     if (error != NO_ERROR) {
         DHLOGE("SendRequest failed, errCode =  %d", error);
         return ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL;
@@ -60,6 +63,108 @@ int32_t DistributedHardwareProxy::QuerySinkVersion(std::unordered_map<DHType, st
     }
     versionMap = FromJson(sinkVersion);
     DHLOGI("success, sinkVersion = %s", sinkVersion.c_str());
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null");
+        return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (!data.WriteUint32((uint32_t)topic)) {
+        DHLOGE("DistributedHardwareProxy write topic failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteRemoteObject(listener->AsObject())) {
+        DHLOGE("DistributedHardwareProxy write listener failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest((uint32_t)IDistributedHardware::Message::REG_PUBLISHER_LISTNER,
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %d", ret);
+        return ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxy::UnregisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null");
+        return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (!data.WriteUint32((uint32_t)topic)) {
+        DHLOGE("DistributedHardwareProxy write topic failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteRemoteObject(listener->AsObject())) {
+        DHLOGE("DistributedHardwareProxy write listener failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest((uint32_t)IDistributedHardware::Message::UNREG_PUBLISHER_LISTENER,
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %d", ret);
+        return ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std::string &msg)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null");
+        return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (!data.WriteUint32((uint32_t)topic)) {
+        DHLOGE("DistributedHardwareProxy write topic failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteString(msg)) {
+        DHLOGE("DistributedHardwareProxy write listener failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest((uint32_t)IDistributedHardware::Message::PUBLISH_MESSAGE,
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %d", ret);
+        return ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
     return DH_FWK_SUCCESS;
 }
 

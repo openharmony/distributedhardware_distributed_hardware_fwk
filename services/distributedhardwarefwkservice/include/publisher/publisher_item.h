@@ -13,23 +13,33 @@
  * limitations under the License.
  */
 
-#include "iremote_stub.h"
+#ifndef PUBLISHER_ITEM_H
+#define PUBLISHER_ITEM_H
+#include <mutex>
+#include <string>
+#include <set>
 
-#include "idistributed_hardware.h"
+#include "refbase.h"
+
+#include "i_publisher_listener.h"
+#include "single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class DistributedHardwareStub : public IRemoteStub<IDistributedHardware> {
+class PublisherItem {
+REMOVE_NO_USE_CONSTRUCTOR(PublisherItem);
 public:
-    int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
-
+    PublisherItem();
+    explicit PublisherItem(DHTopic topic);
+    virtual ~PublisherItem();
+    void AddListener(const sptr<IPublisherListener> &listener);
+    void RemoveListener(const sptr<IPublisherListener> &listener);
+    void PublishMessage(const std::string &message);
 private:
-    int32_t QuerySinkVersionInner(MessageParcel &reply);
-    int32_t RegisterPublisherListenerInner(MessageParcel &data);
-    int32_t UnregisterPublisherListenerInner(MessageParcel &data);
-    int32_t PublishMessageInner(MessageParcel &data);
-    bool ValidTopic(uint32_t topic);
-    std::string ToJson(const std::unordered_map<DHType, std::string> &versionMap) const;
+    DHTopic topic_;
+    std::mutex mutex_;
+    std::set<sptr<IPublisherListener>> listeners_;
 };
-} // namespace DistributedHardware
-} // namespace OHOS
+}
+}
+#endif

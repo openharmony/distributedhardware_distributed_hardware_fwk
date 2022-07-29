@@ -33,10 +33,12 @@ public:
 
     virtual ~DistributedHardwareProxy() {}
     int32_t QuerySinkVersion(std::unordered_map<DHType, std::string> &versionMap) override;
+    int32_t RegisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener) override;
+    int32_t UnregisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener) override;
+    int32_t PublishMessage(const DHTopic topic, const std::string &msg) override;
 
 private:
     std::unordered_map<DHType, std::string> FromJson(const std::string &json) const;
-
     static inline BrokerDelegator<DistributedHardwareProxy> delegator_;
 };
 } // namespace DistributedHardware

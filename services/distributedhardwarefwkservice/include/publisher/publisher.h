@@ -13,23 +13,28 @@
  * limitations under the License.
  */
 
-#include "iremote_stub.h"
+#ifndef PUBLISHER_H
+#define PUBLISHER_H
 
-#include "idistributed_hardware.h"
+#include <unordered_map>
+#include <memory>
+
+#include "i_publisher_listener.h"
+#include "publisher_item.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class DistributedHardwareStub : public IRemoteStub<IDistributedHardware> {
+class Publisher {
+DECLARE_SINGLE_INSTANCE_BASE(Publisher);
 public:
-    int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
-
+    virtual ~Publisher();
+    void RegisterListener(const DHTopic topic, const sptr<IPublisherListener> &listener);
+    void UnregisterListener(const DHTopic topic, const sptr<IPublisherListener> &listener);
+    void PublishMessage(const DHTopic topic, const std::string &message);
 private:
-    int32_t QuerySinkVersionInner(MessageParcel &reply);
-    int32_t RegisterPublisherListenerInner(MessageParcel &data);
-    int32_t UnregisterPublisherListenerInner(MessageParcel &data);
-    int32_t PublishMessageInner(MessageParcel &data);
-    bool ValidTopic(uint32_t topic);
-    std::string ToJson(const std::unordered_map<DHType, std::string> &versionMap) const;
+    Publisher();
+    std::unordered_map<DHTopic, std::shared_ptr<PublisherItem>> publisherItems_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
+#endif

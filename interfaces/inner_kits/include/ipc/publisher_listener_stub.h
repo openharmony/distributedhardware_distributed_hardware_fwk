@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,23 +13,24 @@
  * limitations under the License.
  */
 
-#include "iremote_stub.h"
+#ifndef PUBLISHER_LISTENER_STUB_H
+#define PUBLISHER_LISTENER_STUB_H
 
-#include "idistributed_hardware.h"
+#include "i_publisher_listener.h"
+
+#include "iremote_stub.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class DistributedHardwareStub : public IRemoteStub<IDistributedHardware> {
+class PublisherListenerStub : public IRemoteStub<IPublisherListener> {
 public:
+    PublisherListenerStub();
+    virtual ~PublisherListenerStub() override;
     int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 
 private:
-    int32_t QuerySinkVersionInner(MessageParcel &reply);
-    int32_t RegisterPublisherListenerInner(MessageParcel &data);
-    int32_t UnregisterPublisherListenerInner(MessageParcel &data);
-    int32_t PublishMessageInner(MessageParcel &data);
-    bool ValidTopic(uint32_t topic);
-    std::string ToJson(const std::unordered_map<DHType, std::string> &versionMap) const;
+    DISALLOW_COPY_AND_MOVE(PublisherListenerStub);
 };
 } // namespace DistributedHardware
 } // namespace OHOS
+#endif

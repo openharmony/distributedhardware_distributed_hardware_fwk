@@ -54,7 +54,8 @@
         "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
         "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
         "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhfwk_sa_profile",
-        "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhardware.cfg"
+        "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhardware.cfg",
+        "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits:libdhfwk_sdk"
       ],
       "test": [
         "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/unittest:utils_test",
