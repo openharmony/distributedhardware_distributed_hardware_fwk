@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#ifndef OHOS_DISTRIBUTED_HARDWARE_STUB_H
+#define OHOS_DISTRIBUTED_HARDWARE_STUB_H
+
 #include "iremote_stub.h"
 
 #include "idistributed_hardware.h"
@@ -32,3 +35,4 @@ private:
 };
 } // namespace DistributedHardware
 } // namespace OHOS
+#endif // OHOS_DISTRIBUTED_HARDWARE_STUB_H

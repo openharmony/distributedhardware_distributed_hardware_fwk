@@ -38,4 +38,4 @@ public:
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
+#endif // OHOS_DISTRIBUTED_HARDWARE_IDISTRIBUTED_HARDWARE_MANAGER_H

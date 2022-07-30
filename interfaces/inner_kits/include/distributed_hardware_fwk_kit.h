@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef DISTRIBUTED_HARDWARE_FWK_KIT_H
-#define DISTRIBUTED_HARDWARE_FWK_KIT_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_FWK_KIT_H
+#define OHOS_DISTRIBUTED_HARDWARE_FWK_KIT_H
 
 #include <atomic>
 #include <cstdint>
@@ -23,7 +23,7 @@
 #include <set>
 #include "refbase.h"
 
-#include "i_publisher_listener.h"
+#include "ipublisher_listener.h"
 #include "idistributed_hardware.h"
 
 #ifndef API_EXPORT
@@ -32,7 +32,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-
 class DistributedHardwareFwkKit final {
 public:
     API_EXPORT DistributedHardwareFwkKit();
@@ -50,6 +49,6 @@ private:
     std::unordered_map<DHTopic, std::set<sptr<IPublisherListener>>> listenerMap_;
     std::atomic<bool> isDHFWKOnLine_;
 };
-}
-}
-#endif
+} // namespace DistributedHardware
+} // namespace OHOS
+#endif // OHOS_DISTRIBUTED_HARDWARE_FWK_KIT_H

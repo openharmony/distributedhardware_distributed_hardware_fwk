@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-#ifndef PUBLISHER_LISTENER_STUB_H
-#define PUBLISHER_LISTENER_STUB_H
+#ifndef OHOS_PUBLISHER_LISTENER_STUB_H
+#define OHOS_PUBLISHER_LISTENER_STUB_H
 
-#include "i_publisher_listener.h"
+#include "ipublisher_listener.h"
 
 #include "iremote_stub.h"
 
@@ -33,4 +33,4 @@ private:
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
+#endif // OHOS_PUBLISHER_LISTENER_STUB_H

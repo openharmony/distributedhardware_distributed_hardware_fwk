@@ -48,4 +48,4 @@ className & className::GetInstance()                    \
 }
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
+#endif // OHOS_DISTRIBUTED_HARDWARE_SINGLE_INSTANCE_H

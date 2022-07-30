@@ -42,4 +42,4 @@ private:
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
+#endif // OHOS_DISTRIBUTED_HARDWARE_PROXY_H

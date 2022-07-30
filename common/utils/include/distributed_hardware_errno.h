@@ -100,4 +100,4 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_PUBLISH_MSG_FAILED = -11100;
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
+#endif // OHOS_DISTRIBUTED_HARDWARE_ERRNO

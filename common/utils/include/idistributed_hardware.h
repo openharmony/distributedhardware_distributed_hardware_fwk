@@ -23,7 +23,7 @@
 #include "iremote_broker.h"
 #include "device_type.h"
 
-#include "i_publisher_listener.h"
+#include "ipublisher_listener.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -44,4 +44,4 @@ public:
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
+#endif // OHOS_IDISTRIBUTED_HARDWARE_H

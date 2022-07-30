@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-#ifndef PUBLISHER_LISTENER_PROXY_H
-#define PUBLISHER_LISTENER_PROXY_H
+#ifndef OHOS_PUBLISHER_LISTENER_PROXY_H
+#define OHOS_PUBLISHER_LISTENER_PROXY_H
 
-#include "i_publisher_listener.h"
+#include "ipublisher_listener.h"
 
 #include "iremote_proxy.h"
 
@@ -35,4 +35,4 @@ private:
 };
 } // DistributedHardware
 } // OHOS
-#endif // PUBLISHER_LISTENER_PROXY_H
+#endif // OHOS_PUBLISHER_LISTENER_PROXY_H

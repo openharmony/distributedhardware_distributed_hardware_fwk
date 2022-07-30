@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef DHFWK_SA_MANAGER_H
-#define DHFWK_SA_MANAGER_H
+#ifndef OHOS_DHFWK_SA_MANAGER_H
+#define OHOS_DHFWK_SA_MANAGER_H
 
 #include <atomic>
 #include <functional>
@@ -57,4 +57,4 @@ private:
 };
 } // DistributedHardware
 } // OHOS
-#endif // DHFWK_SA_MANAGER_H
+#endif // OHOS_DHFWK_SA_MANAGER_H

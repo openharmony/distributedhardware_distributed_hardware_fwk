@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef I_PUBLISHER_LISTENER_H
-#define I_PUBLISHER_LISTENER_H
+#ifndef OHOS_IPUBLISHER_LISTENER_H
+#define OHOS_IPUBLISHER_LISTENER_H
 
 #include <cstdint>
 #include <string>
@@ -50,4 +50,4 @@ public:
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif // I_PUBLISHER_LISTENER_H
+#endif // OHOS_IPUBLISHER_LISTENER_H
