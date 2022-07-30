@@ -45,8 +45,9 @@ int32_t DistributedHardwareFwkKit::RegisterPublisherListener(const DHTopic topic
         return ERR_DH_FWK_PARA_INVALID;
     }
 
+    int32_t ret = DH_FWK_SUCCESS;
     if (isDHFWKOnLine_ && DHFWKSAManager::GetInstance().GetDHFWKProxy() != nullptr) {
-        int32_t ret = DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterPublisherListener(topic, listener);
+        ret = DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterPublisherListener(topic, listener);
         DHLOGI("Register publisher listener to DHFWK, ret: %" PRId32, ret);
     } else {
         DHLOGI("DHFWK not online, or get proxy failed, save listener temporary");
@@ -54,7 +55,7 @@ int32_t DistributedHardwareFwkKit::RegisterPublisherListener(const DHTopic topic
         listenerMap_[topic].insert(listener);
     }
 
-    return DH_FWK_SUCCESS;
+    return ret;
 }
 
 int32_t DistributedHardwareFwkKit::UnregisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener)
@@ -65,14 +66,15 @@ int32_t DistributedHardwareFwkKit::UnregisterPublisherListener(const DHTopic top
         return ERR_DH_FWK_PARA_INVALID;
     }
 
+    int32_t ret = DH_FWK_SUCCESS;
     if (isDHFWKOnLine_ && DHFWKSAManager::GetInstance().GetDHFWKProxy() != nullptr) {
-        DHLOGI("Unregister publisher listener to DHFWK");
-        DHFWKSAManager::GetInstance().GetDHFWKProxy()->UnregisterPublisherListener(topic, listener);
+        ret = DHFWKSAManager::GetInstance().GetDHFWKProxy()->UnregisterPublisherListener(topic, listener);
+        DHLOGI("Unregister publisher listener to DHFWK, ret: %" PRId32, ret);
     }
     std::lock_guard<std::mutex> lock(listenerMutex_);
     listenerMap_[topic].erase(listener);
 
-    return DH_FWK_SUCCESS;
+    return ret;
 }
 
 int32_t DistributedHardwareFwkKit::PublishMessage(const DHTopic topic, const std::string &message)
@@ -88,10 +90,10 @@ int32_t DistributedHardwareFwkKit::PublishMessage(const DHTopic topic, const std
         return ERR_DH_FWK_PUBLISH_MSG_FAILED;
     }
 
-    DHLOGI("Publish message to DHFWK");
-    DHFWKSAManager::GetInstance().GetDHFWKProxy()->PublishMessage(topic, message);
+    int32_t ret = DHFWKSAManager::GetInstance().GetDHFWKProxy()->PublishMessage(topic, message);
+    DHLOGI("Publish message to DHFWK, ret: " PRId32, ret);
 
-    return DH_FWK_SUCCESS;
+    return ret;
 }
 
 bool DistributedHardwareFwkKit::IsDHTopicValid(DHTopic topic)

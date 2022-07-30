@@ -72,8 +72,6 @@ private:
         std::string &sinkVersion);
     int32_t GetSinkVersionFromVerInfoMgr(const std::string &uuid, const DHType dhType,
         std::string &sinkVersion);
-    int32_t GetSinkVersionFromRPC(const std::string &networkId, const std::string &uuid,
-        DHType dhType, std::string &sinkVersion);
     int32_t GetSinkVersion(const std::string &networkId, const std::string &uuid,
         DHType dhType, std::string &sinkVersion);
     void UpdateVersionCache(const std::string &uuid, const VersionInfo &versionInfo);

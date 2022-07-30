@@ -31,7 +31,7 @@ PublisherItem::PublisherItem(DHTopic topic) : topic_(topic)
 PublisherItem::~PublisherItem()
 {
     DHLOGE("Dtor PublisherItem, topic: %d", topic_);
-    std::lock_guard lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     listeners_.clear();
 }
 
@@ -42,7 +42,7 @@ void PublisherItem::AddListener(const sptr<IPublisherListener> &listener)
         return;
     }
 
-    std::lock_guard lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     listeners_.insert(listener);
 }
 
@@ -53,13 +53,18 @@ void PublisherItem::RemoveListener(const sptr<IPublisherListener> &listener)
         return;
     }
 
-    std::lock_guard lock(mutex_);
-    listeners_.erase(listener);
+    std::lock_guard<std::mutex> lock(mutex_);
+    for (const auto &lis : listeners_) {
+        if (lis->AsObject().GetRefPtr() == listener->AsObject().GetRefPtr()) {
+            listeners_.erase(lis);
+            break;
+        }
+    }
 }
 
 void PublisherItem::PublishMessage(const std::string &message)
 {
-    std::lock_guard lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     for (const auto &listener : listeners_) {
         listener->OnMessage(topic_, message);
     }

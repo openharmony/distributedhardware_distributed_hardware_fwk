@@ -21,7 +21,8 @@ IMPLEMENT_SINGLE_INSTANCE(Publisher);
 Publisher::Publisher() : publisherItems_({
         { DHTopic::TOPIC_START_DSCREEN, std::make_shared<PublisherItem>(DHTopic::TOPIC_START_DSCREEN) },
         { DHTopic::TOPIC_SINK_PROJECT_WINDOW_INFO, std::make_shared<PublisherItem>(DHTopic::TOPIC_SINK_PROJECT_WINDOW_INFO) },
-        { DHTopic::TOPIC_STOP_DSCREEN, std::make_shared<PublisherItem>(DHTopic::TOPIC_STOP_DSCREEN) }
+        { DHTopic::TOPIC_STOP_DSCREEN, std::make_shared<PublisherItem>(DHTopic::TOPIC_STOP_DSCREEN) },
+        { DHTopic::TOPIC_DEV_OFFLINE, std::make_shared<PublisherItem>(DHTopic::TOPIC_DEV_OFFLINE) }
     })
 {
 }

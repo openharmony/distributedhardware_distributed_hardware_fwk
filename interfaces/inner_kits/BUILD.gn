@@ -22,12 +22,16 @@ ohos_shared_library("libdhfwk_sdk") {
     "${innerkits_path}/include/ipc",
     "${common_path}/log/include",
     "${common_path}/utils/include",
+    "${utils_path}/include",
     "${utils_path}/include/log",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "//third_party/json/include",
   ]
+
   sources = [
     "${innerkits_path}/src/distributed_hardware_fwk_kit.cpp",
     "${innerkits_path}/src/ipc/dhfwk_sa_manager.cpp",
-    "${innerkits_path}/src/ipc/publisher_listener_proxy.cpp",
+    "${innerkits_path}/src/ipc/distributed_hardware_proxy.cpp",
     "${innerkits_path}/src/ipc/publisher_listener_stub.cpp",
   ]
 
@@ -35,6 +39,7 @@ ohos_shared_library("libdhfwk_sdk") {
     "//utils/native/base:utils",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${utils_path}:distributedhardwareutils",
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
   ]
 
   defines = [

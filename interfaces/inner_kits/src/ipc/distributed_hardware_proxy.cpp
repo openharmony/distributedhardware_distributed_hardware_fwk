@@ -33,40 +33,8 @@ const std::unordered_set<DHType> DH_TYPE_SET {
     DHType::INPUT,  DHType::HFP,    DHType::A2D, DHType::VIRMODEM_MIC, DHType::VIRMODEM_SPEAKER, DHType::MAX_DH,
 };
 
-int32_t DistributedHardwareProxy::QuerySinkVersion(std::unordered_map<DHType, std::string> &versionMap)
-{
-    sptr<IRemoteObject> remote = Remote();
-    if (remote == nullptr) {
-        DHLOGE("remote service is null");
-        return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
-    }
-
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-
-    if (!data.WriteInterfaceToken(GetDescriptor())) {
-        DHLOGE("WriteInterfaceToken fail!");
-        return ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL;
-    }
-
-    int32_t error = remote->SendRequest((uint32_t)IDistributedHardware::Message::QUERY_SINK_VERSION,
-        data, reply, option);
-    if (error != NO_ERROR) {
-        DHLOGE("SendRequest failed, errCode =  %d", error);
-        return ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL;
-    }
-    auto sinkVersion = reply.ReadString();
-    if (sinkVersion.empty()) {
-        DHLOGE("sinkVersion is empty");
-        return ERR_DH_FWK_SERVICE_STRING_IS_EMPTY;
-    }
-    versionMap = FromJson(sinkVersion);
-    DHLOGI("success, sinkVersion = %s", sinkVersion.c_str());
-    return DH_FWK_SUCCESS;
-}
-
-int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener)
+int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic,
+    const sptr<IPublisherListener> &listener)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
@@ -97,10 +65,16 @@ int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic,
         return ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
-    return DH_FWK_SUCCESS;
+    ret = reply.ReadInt32();
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Register Publisher Listener failed, ret: %d", ret);
+    }
+
+    return ret;
 }
 
-int32_t DistributedHardwareProxy::UnregisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener)
+int32_t DistributedHardwareProxy::UnregisterPublisherListener(const DHTopic topic,
+    const sptr<IPublisherListener> &listener)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
@@ -131,7 +105,12 @@ int32_t DistributedHardwareProxy::UnregisterPublisherListener(const DHTopic topi
         return ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
-    return DH_FWK_SUCCESS;
+    ret = reply.ReadInt32();
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Unregister Publisher Listener failed, ret: %d", ret);
+    }
+
+    return ret;
 }
 
 int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std::string &msg)
@@ -165,7 +144,12 @@ int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std:
         return ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
-    return DH_FWK_SUCCESS;
+    ret = reply.ReadInt32();
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("PublishMessage failed, ret: %d", ret);
+    }
+
+    return ret;
 }
 
 void from_json(const nlohmann::json &jsonObj, std::unordered_map<DHType, std::string> &versionMap)

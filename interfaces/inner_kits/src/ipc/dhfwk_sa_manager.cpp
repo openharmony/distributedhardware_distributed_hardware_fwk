@@ -21,6 +21,7 @@
 #include "system_ability_definition.h"
 
 #include "distributed_hardware_log.h"
+#include "distributed_hardware_proxy.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -79,13 +80,17 @@ sptr<IDistributedHardware> DHFWKSAManager::GetDHFWKProxy()
             return nullptr;
         }
         DHLOGI("Try get DHFWK sa");
-        sptr<IRemoteObject> remoteObject = saMgr->GetSystemAbility(DISTRIBUTED_HARDWARE_SA_ID);
+        sptr<IRemoteObject> remoteObject = saMgr->CheckSystemAbility(DISTRIBUTED_HARDWARE_SA_ID);
         if (remoteObject == nullptr) {
             DHLOGE("Get DHFWK proxy return null");
             return nullptr;
         }
 
         dhfwkProxy_ = iface_cast<IDistributedHardware>(remoteObject);
+        if (!dhfwkProxy_ || !dhfwkProxy_->AsObject()) {
+            DHLOGE("Failed to Get DHFWK Proxy");
+            return nullptr;
+        }
     }
 
     return dhfwkProxy_;

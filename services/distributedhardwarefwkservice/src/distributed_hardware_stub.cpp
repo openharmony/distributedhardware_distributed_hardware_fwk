@@ -21,6 +21,7 @@
 
 #include "anonymous_string.h"
 #include "constants.h"
+#include "publisher_listener_proxy.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
@@ -34,17 +35,14 @@ int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &d
         return ERR_INVALID_DATA;
     }
     switch (code) {
-        case (uint32_t)IDistributedHardware::Message::QUERY_SINK_VERSION: {
-            return QuerySinkVersionInner(reply);
-        }
         case (uint32_t)IDistributedHardware::Message::REG_PUBLISHER_LISTNER: {
-            return RegisterPublisherListenerInner(data);
+            return RegisterPublisherListenerInner(data, reply);
         }
         case (uint32_t)IDistributedHardware::Message::UNREG_PUBLISHER_LISTENER: {
-            return UnregisterPublisherListenerInner(data);
+            return UnregisterPublisherListenerInner(data, reply);
         }
         case (uint32_t)IDistributedHardware::Message::PUBLISH_MESSAGE: {
-            return PublishMessageInner(data);
+            return PublishMessageInner(data, reply);
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
@@ -52,53 +50,56 @@ int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &d
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareStub::QuerySinkVersionInner(MessageParcel &reply)
-{
-    std::unordered_map<DHType, std::string> versionMap;
-    QuerySinkVersion(versionMap);
-    auto version = ToJson(versionMap);
-    if (!reply.WriteString(version)) {
-        DHLOGE("write version failed");
-        return ERR_DH_FWK_SERVICE_IPC_WRITE_PARA_FAIL;
-    }
-    return DH_FWK_SUCCESS;
-}
-
-int32_t DistributedHardwareStub::RegisterPublisherListenerInner(MessageParcel &data)
+int32_t DistributedHardwareStub::RegisterPublisherListenerInner(MessageParcel &data, MessageParcel &reply)
 {
     uint32_t topicInt = data.ReadUint32();
     if (!ValidTopic(topicInt)) {
         DHLOGE("Topic invalid: %" PRIu32, topicInt);
+        reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
         return ERR_DH_FWK_PARA_INVALID;
     }
 
     DHTopic topic = (DHTopic)topicInt;
     sptr<IPublisherListener> listener = iface_cast<IPublisherListener>(data.ReadRemoteObject());
+    if (listener == nullptr) {
+        DHLOGE("Register publisher listener is null");
+        reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("Register listener, topic: %" PRIu32 , (uint32_t)topic);
     RegisterPublisherListener(topic, listener);
+    reply.WriteInt32(DH_FWK_SUCCESS);
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareStub::UnregisterPublisherListenerInner(MessageParcel &data)
+int32_t DistributedHardwareStub::UnregisterPublisherListenerInner(MessageParcel &data, MessageParcel &reply)
 {
     uint32_t topicInt = data.ReadUint32();
     if (!ValidTopic(topicInt)) {
         DHLOGE("Topic invalid: %" PRIu32, topicInt);
+        reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
         return ERR_DH_FWK_PARA_INVALID;
     }
 
     DHTopic topic = (DHTopic)topicInt;
     sptr<IPublisherListener> listener = iface_cast<IPublisherListener>(data.ReadRemoteObject());
+    if (listener == nullptr) {
+        DHLOGE("Unregister publisher listener is null");
+        reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("Unregister listener, topic: %" PRIu32 , (uint32_t)topic);
     UnregisterPublisherListener(topic, listener);
+    reply.WriteInt32(DH_FWK_SUCCESS);
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareStub::PublishMessageInner(MessageParcel &data)
+int32_t DistributedHardwareStub::PublishMessageInner(MessageParcel &data, MessageParcel &reply)
 {
     uint32_t topicInt = data.ReadUint32();
     if (!ValidTopic(topicInt)) {
         DHLOGE("Topic invalid: %" PRIu32, topicInt);
+        reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
         return ERR_DH_FWK_PARA_INVALID;
     }
 
@@ -106,6 +107,7 @@ int32_t DistributedHardwareStub::PublishMessageInner(MessageParcel &data)
     std::string message = data.ReadString();
     DHLOGI("Publish Message, topic: %" PRIu32 ", message: %s", (uint32_t)topic, message.c_str());
     PublishMessage(topic, message);
+    reply.WriteInt32(DH_FWK_SUCCESS);
     return DH_FWK_SUCCESS;
 }
 

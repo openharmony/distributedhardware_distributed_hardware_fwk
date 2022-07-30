@@ -24,10 +24,9 @@ public:
     int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 
 private:
-    int32_t QuerySinkVersionInner(MessageParcel &reply);
-    int32_t RegisterPublisherListenerInner(MessageParcel &data);
-    int32_t UnregisterPublisherListenerInner(MessageParcel &data);
-    int32_t PublishMessageInner(MessageParcel &data);
+    int32_t RegisterPublisherListenerInner(MessageParcel &data, MessageParcel &reply);
+    int32_t UnregisterPublisherListenerInner(MessageParcel &data, MessageParcel &reply);
+    int32_t PublishMessageInner(MessageParcel &data, MessageParcel &reply);
     bool ValidTopic(uint32_t topic);
     std::string ToJson(const std::unordered_map<DHType, std::string> &versionMap) const;
 };

@@ -89,27 +89,13 @@ void DistributedHardwareService::OnStop()
     registerToService_ = false;
 }
 
-int32_t DistributedHardwareService::QuerySinkVersion(std::unordered_map<DHType, std::string> &versionMap)
-{
-    auto ret = DistributedHardwareManagerFactory::GetInstance().GetComponentVersion(versionMap);
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetComponentVersion failed, errCode = %d", ret);
-        return ret;
-    }
-    if (versionMap.empty()) {
-        DHLOGE("versionMap is empty");
-        return ERR_DH_FWK_SERVICE_LOCAL_VERSION_NOT_EXIST;
-    }
-    return DH_FWK_SUCCESS;
-}
-
-int32_t DistributedHardwareService::RegisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener)
+int32_t DistributedHardwareService::RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener)
 {
     Publisher::GetInstance().RegisterListener(topic, listener);
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareService::UnregisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener)
+int32_t DistributedHardwareService::UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener)
 {
     Publisher::GetInstance().UnregisterListener(topic, listener);
     return DH_FWK_SUCCESS;

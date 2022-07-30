@@ -32,9 +32,8 @@ public:
     }
 
     virtual ~DistributedHardwareProxy() {}
-    int32_t QuerySinkVersion(std::unordered_map<DHType, std::string> &versionMap) override;
-    int32_t RegisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener) override;
-    int32_t UnregisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener) override;
+    int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
+    int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
     int32_t PublishMessage(const DHTopic topic, const std::string &msg) override;
 
 private:
