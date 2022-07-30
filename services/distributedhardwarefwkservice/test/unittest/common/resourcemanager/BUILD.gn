@@ -29,9 +29,9 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
     "//third_party/json/include",
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
   ]
 }
@@ -48,12 +48,12 @@ ohos_unittest("ResourceManagerTest") {
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
     "distributeddatamgr:distributeddata_inner",
     "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",

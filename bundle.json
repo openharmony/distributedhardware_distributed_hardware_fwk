@@ -32,7 +32,7 @@
         "distributeddatamgr",
         "eventhandler",
         "hitrace_native",
-        "utils_base",
+        "c_utils",
         "hiviewdfx_hilog_native",
         "startup_l2",
         "bundle_framework",
