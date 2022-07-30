@@ -141,6 +141,5 @@ void DHFWKSAManager::SystemAbilityListener::OnRemoveSystemAbility(int32_t system
     }
     DHLOGI("sa %" PRId32 " stopped", systemAbilityId);
 }
-
 } // DistributedHardware
 } // OHOS

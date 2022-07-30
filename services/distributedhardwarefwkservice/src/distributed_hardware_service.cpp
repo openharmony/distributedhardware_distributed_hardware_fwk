@@ -89,13 +89,15 @@ void DistributedHardwareService::OnStop()
     registerToService_ = false;
 }
 
-int32_t DistributedHardwareService::RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener)
+int32_t DistributedHardwareService::RegisterPublisherListener(const DHTopic topic,
+    const sptr<IPublisherListener> &listener)
 {
     Publisher::GetInstance().RegisterListener(topic, listener);
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareService::UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener)
+int32_t DistributedHardwareService::UnregisterPublisherListener(const DHTopic topic,
+    const sptr<IPublisherListener> &listener)
 {
     Publisher::GetInstance().UnregisterListener(topic, listener);
     return DH_FWK_SUCCESS;
