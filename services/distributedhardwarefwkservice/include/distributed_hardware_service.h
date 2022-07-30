@@ -34,7 +34,9 @@ DECLARE_SYSTEM_ABILITY(DistributedHardwareService);
 public:
     DistributedHardwareService(int32_t saId, bool runOnCreate);
     ~DistributedHardwareService() = default;
-    int32_t QuerySinkVersion(std::unordered_map<DHType, std::string> &versionMap) override;
+    int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
+    int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
+    int32_t PublishMessage(const DHTopic topic, const std::string &msg) override;
     int Dump(int32_t fd, const std::vector<std::u16string>& args) override;
 
 protected:

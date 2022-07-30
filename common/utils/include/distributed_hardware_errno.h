@@ -83,6 +83,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_SERVICE_LOCAL_VERSION_NOT_EXIST = -10804;
     constexpr int32_t ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL = -10805;
     constexpr int32_t ERR_DH_FWK_SERVICE_REMOTE_IS_NULL = -10806;
+    constexpr int32_t ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL = -10807;
 
     /* AccessManager errno, range: [-10900, -10999] */
     constexpr int32_t ERR_DH_FWK_ACCESS_INIT_DM_FAILED = -10900;
@@ -90,10 +91,13 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_ACCESS_REGISTER_DM_FAILED = -10902;
     constexpr int32_t ERR_DH_FWK_ACCESS_UNREGISTER_DM_FAILED = -10903;
 
-    /* Hidump errno, range: [-11000, -11000] */
+    /* Hidump errno, range: [-11000, -11099] */
     constexpr int32_t ERR_DH_FWK_HIDUMP_ERROR = -11000;
     constexpr int32_t ERR_DH_FWK_HIDUMP_INVALID_ARGS = -11001;
     constexpr int32_t ERR_DH_FWK_HIDUMP_DPRINTF_ERROR = -11002;
+
+    /* DHFWK Publisher errno, range: [-11100, -11199] */
+    constexpr int32_t ERR_DH_FWK_PUBLISH_MSG_FAILED = -11100;
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
+#endif // OHOS_DISTRIBUTED_HARDWARE_ERRNO

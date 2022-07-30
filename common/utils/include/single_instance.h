@@ -18,6 +18,13 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+#define REMOVE_NO_USE_CONSTRUCTOR(className)            \
+private:                                                \
+    className(const className&) = delete;               \
+    className& operator= (const className&) = delete;   \
+    className(className&&) = delete;                    \
+    className& operator= (className&&) = delete;        \
+
 #define DECLARE_SINGLE_INSTANCE_BASE(className)         \
 public:                                                 \
     static className & GetInstance();                   \
@@ -41,4 +48,4 @@ className & className::GetInstance()                    \
 }
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
+#endif // OHOS_DISTRIBUTED_HARDWARE_SINGLE_INSTANCE_H

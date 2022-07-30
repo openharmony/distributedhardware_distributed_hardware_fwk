@@ -391,37 +391,6 @@ int32_t ComponentManager::GetSinkVersionFromVerInfoMgr(const std::string &uuid, 
     return DH_FWK_SUCCESS;
 }
 
-int32_t ComponentManager::GetSinkVersionFromRPC(const std::string &networkId, const std::string &uuid,
-    DHType dhType, std::string &sinkVersion)
-{
-    DHLOGI("networkId = %s ", GetAnonyString(networkId).c_str());
-    sptr<IDistributedHardware> dhms = GetRemoteDHMS(networkId);
-    if (dhms == nullptr) {
-        DHLOGI("GetRemoteDHMS failed, networkId = %s", GetAnonyString(networkId).c_str());
-        return ERR_DH_FWK_COMPONENT_GET_REMOTE_SA_FAILED;
-    }
-
-    std::unordered_map<DHType, std::string> versions;
-    auto ret = dhms->QuerySinkVersion(versions);
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("QuerySinkVersion failed, errCode = %d", ret);
-        return ret;
-    }
-
-    auto iter = versions.find(dhType);
-    if (iter == versions.end()) {
-        DHLOGE("can not find component version for uuid = %s, dhType = %#X",
-            GetAnonyString(uuid).c_str(), dhType);
-        return ERR_DH_FWK_COMPONENT_DHTYPE_NOT_FOUND;
-    }
-    DHLOGI("QuerySinkVersion success, sinkVersion = %s, uuid = %s, dhType = %#X",
-        iter->second.c_str(), GetAnonyString(uuid).c_str(), dhType);
-    UpdateVersionCache(uuid, versions);
-    sinkVersion = iter->second;
-
-    return DH_FWK_SUCCESS;
-}
-
 int32_t ComponentManager::GetSinkVersion(const std::string &networkId, const std::string &uuid,
     DHType dhType, std::string &sinkVersion)
 {
@@ -431,11 +400,6 @@ int32_t ComponentManager::GetSinkVersion(const std::string &networkId, const std
     }
 
     ret = GetSinkVersionFromVerInfoMgr(uuid, dhType, sinkVersion);
-    if ((ret == DH_FWK_SUCCESS) && (!sinkVersion.empty())) {
-        return DH_FWK_SUCCESS;
-    }
-
-    ret = GetSinkVersionFromRPC(networkId, uuid, dhType, sinkVersion);
     if ((ret == DH_FWK_SUCCESS) && (!sinkVersion.empty())) {
         return DH_FWK_SUCCESS;
     }

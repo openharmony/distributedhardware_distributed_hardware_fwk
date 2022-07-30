@@ -26,6 +26,8 @@
 #include "dh_utils_hisysevent.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "distributed_hardware_manager_factory.h"
+#include "publisher.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -87,10 +89,24 @@ void DistributedHardwareService::OnStop()
     registerToService_ = false;
 }
 
-int32_t DistributedHardwareService::QuerySinkVersion(std::unordered_map<DHType, std::string> &versionMap)
+int32_t DistributedHardwareService::RegisterPublisherListener(const DHTopic topic,
+    const sptr<IPublisherListener> &listener)
 {
-    (void)versionMap;
-    return 0;
+    Publisher::GetInstance().RegisterListener(topic, listener);
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::UnregisterPublisherListener(const DHTopic topic,
+    const sptr<IPublisherListener> &listener)
+{
+    Publisher::GetInstance().UnregisterListener(topic, listener);
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::PublishMessage(const DHTopic topic, const std::string &msg)
+{
+    Publisher::GetInstance().PublishMessage(topic, msg);
+    return DH_FWK_SUCCESS;
 }
 
 int DistributedHardwareService::Dump(int32_t fd, const std::vector<std::u16string>& args)
