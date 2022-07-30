@@ -117,7 +117,7 @@ void DistributedHardwareFwkKit::OnDHFWKOnLine(bool isOnLine)
         for (const auto &listener : entry.second) {
             int32_t ret =
                 DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterPublisherListener(entry.first, listener);
-            if (ret == 0) {
+            if (ret == DH_FWK_SUCCESS) {
                 regSuccListeners[entry.first].insert(listener);
             }
         }
