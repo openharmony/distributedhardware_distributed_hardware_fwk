@@ -104,10 +104,6 @@ int32_t DistributedHardwareManager::SendOnLineEvent(const std::string &networkId
 
     DHLOGI("networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
 
-    if (DHContext::GetInstance().IsDeviceOnline(uuid)) {
-        DHLOGW("device is already online, uuid = %s", GetAnonyString(uuid).c_str());
-        return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE;
-    }
     TaskParam taskParam = {
         .networkId = networkId,
         .uuid = uuid,
@@ -116,7 +112,7 @@ int32_t DistributedHardwareManager::SendOnLineEvent(const std::string &networkId
     };
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, taskParam, nullptr);
     TaskExecutor::GetInstance().PushTask(task);
-    DHContext::GetInstance().AddOnlineDevice(uuid, networkId);
+
     CapabilityInfoManager::GetInstance()->CreateManualSyncCount(GetDeviceIdByUUID(uuid));
     VersionInfoManager::GetInstance()->CreateManualSyncCount(GetDeviceIdByUUID(uuid));
 

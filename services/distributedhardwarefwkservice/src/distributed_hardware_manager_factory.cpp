@@ -27,6 +27,7 @@
 #include "anonymous_string.h"
 #include "constants.h"
 #include "device_manager.h"
+#include "dh_context.h"
 #include "dh_utils_hisysevent.h"
 #include "dh_utils_hitrace.h"
 #include "dh_utils_tool.h"
@@ -43,12 +44,12 @@ IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
 bool DistributedHardwareManagerFactory::Init()
 {
     DHLOGI("start");
+    isInit = true;
     auto initResult = DistributedHardwareManager::GetInstance().Initialize();
     if (initResult != DH_FWK_SUCCESS) {
         DHLOGE("Initialize failed, errCode = %d", initResult);
         return false;
     }
-    isInit = true;
     DHLOGD("success");
     return true;
 }
@@ -108,6 +109,13 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
         DHLOGE("uuid is empty");
         return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
     }
+
+    if (DHContext::GetInstance().IsDeviceOnline(uuid)) {
+        DHLOGW("device is already online, uuid = %s", GetAnonyString(uuid).c_str());
+        return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE;
+    }
+
+    DHContext::GetInstance().AddOnlineDevice(uuid, networkId);
 
     if (!isInit && !Init()) {
         DHLOGE("distributedHardwareMgr is null");
