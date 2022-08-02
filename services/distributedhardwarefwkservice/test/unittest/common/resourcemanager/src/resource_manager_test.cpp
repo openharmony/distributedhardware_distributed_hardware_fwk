@@ -15,7 +15,7 @@
 
 #include "resource_manager_test.h"
 
-#include <errno.h>
+#include <cerrno>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <vector>
