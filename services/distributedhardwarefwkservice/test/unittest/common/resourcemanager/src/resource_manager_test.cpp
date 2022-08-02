@@ -15,6 +15,7 @@
 
 #include "resource_manager_test.h"
 
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <vector>
@@ -84,12 +85,18 @@ const shared_ptr<CapabilityInfo> CAP_INFO_9 =
 
 void ResourceManagerTest::SetUpTestCase(void)
 {
-    mkdir(DATABASE_DIR.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    auto ret = mkdir(DATABASE_DIR.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (ret < 0) {
+        DHLOGE("mkdir failed, path: %s, errno : %d", DATABASE_DIR.c_str(), errno);
+    }
 }
 
 void ResourceManagerTest::TearDownTestCase(void)
 {
-    (void)remove(DATABASE_DIR.c_str());
+    auto ret = remove(DATABASE_DIR.c_str());
+    if (ret < 0) {
+        DHLOGE("remove dir failed, path: %s, errno : %d", DATABASE_DIR.c_str(), errno);
+    }
 }
 
 void ResourceManagerTest::SetUp()
