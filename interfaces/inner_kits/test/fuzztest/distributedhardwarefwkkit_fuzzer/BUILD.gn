@@ -44,8 +44,8 @@ ohos_fuzztest("DistributedHardwareFwkKitFuzzTest") {
   sources = [ "distributedhardwarefwkkit_fuzzer.cpp" ]
 
   deps = [
-    "${utils_path}:distributedhardwareutils",
     "${innerkits_path}:libdhfwk_sdk",
+    "${utils_path}:distributedhardwareutils",
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//utils/native/base:utils",
