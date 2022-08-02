@@ -86,7 +86,7 @@ const shared_ptr<CapabilityInfo> CAP_INFO_9 =
 void ResourceManagerTest::SetUpTestCase(void)
 {
     auto ret = mkdir(DATABASE_DIR.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    if (ret < 0) {
+    if (ret != 0) {
         DHLOGE("mkdir failed, path: %s, errno : %d", DATABASE_DIR.c_str(), errno);
     }
 }
@@ -94,7 +94,7 @@ void ResourceManagerTest::SetUpTestCase(void)
 void ResourceManagerTest::TearDownTestCase(void)
 {
     auto ret = remove(DATABASE_DIR.c_str());
-    if (ret < 0) {
+    if (ret != 0) {
         DHLOGE("remove dir failed, path: %s, errno : %d", DATABASE_DIR.c_str(), errno);
     }
 }
