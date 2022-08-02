@@ -15,6 +15,9 @@
 
 #include "resource_manager_test.h"
 
+#include <cerrno>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <vector>
 
 #include "capability_info.h"
@@ -34,6 +37,7 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "ResourceManagerTest"
 
 namespace {
+const string DATABASE_DIR = "/data/service/el1/public/database/dtbhardware_manager_service/";
 const string DEV_ID_0 = "bb536a637105409e904d4da83790a4a7";
 const string DEV_ID_1 = "bb536a637105409e904d4da83790a4a8";
 const string DEV_NAME = "Dev1";
@@ -79,9 +83,21 @@ const shared_ptr<CapabilityInfo> CAP_INFO_9 =
     make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_1);
 }
 
-void ResourceManagerTest::SetUpTestCase(void) {}
+void ResourceManagerTest::SetUpTestCase(void)
+{
+    auto ret = mkdir(DATABASE_DIR.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (ret != 0) {
+        DHLOGE("mkdir failed, path: %s, errno : %d", DATABASE_DIR.c_str(), errno);
+    }
+}
 
-void ResourceManagerTest::TearDownTestCase(void) {}
+void ResourceManagerTest::TearDownTestCase(void)
+{
+    auto ret = remove(DATABASE_DIR.c_str());
+    if (ret != 0) {
+        DHLOGE("remove dir failed, path: %s, errno : %d", DATABASE_DIR.c_str(), errno);
+    }
+}
 
 void ResourceManagerTest::SetUp()
 {
