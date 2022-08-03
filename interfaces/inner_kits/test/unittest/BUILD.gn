@@ -15,5 +15,5 @@ group("kit_test") {
   testonly = true
 
   deps =
-    [ "common/distributedhardwarefwkkit:distributed_hardware_fwk_kit_test" ]
+      [ "common/distributedhardwarefwkkit:distributed_hardware_fwk_kit_test" ]
 }
