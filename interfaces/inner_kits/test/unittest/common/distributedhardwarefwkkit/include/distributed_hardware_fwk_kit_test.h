@@ -49,7 +49,7 @@ public:
         uint32_t GetTopicMsgCnt(const DHTopic topic);
     private:
         std::mutex mutex_;
-        std::map<DHTopic, uint32_t> msgCnts_{};
+        std::map<DHTopic, uint32_t> msgCnts_ = {};
     };
 
 public:

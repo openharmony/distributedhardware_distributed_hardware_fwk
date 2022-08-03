@@ -60,7 +60,8 @@ void DistributedHardwareFwkKitFuzzTest(const uint8_t *data, size_t size)
     dhfwkKit.RegisterPublisherListener(DHTopic::TOPIC_DEV_OFFLINE, listener);
 
     dhfwkKit.PublishMessage(DHTopic::TOPIC_START_DSCREEN, TOPIC_MSGS[DHTopic::TOPIC_START_DSCREEN]);
-    dhfwkKit.PublishMessage(DHTopic::TOPIC_SINK_PROJECT_WINDOW_INFO, TOPIC_MSGS[DHTopic::TOPIC_SINK_PROJECT_WINDOW_INFO]);
+    dhfwkKit.PublishMessage(DHTopic::TOPIC_SINK_PROJECT_WINDOW_INFO,
+        TOPIC_MSGS[DHTopic::TOPIC_SINK_PROJECT_WINDOW_INFO]);
     dhfwkKit.PublishMessage(DHTopic::TOPIC_STOP_DSCREEN, TOPIC_MSGS[DHTopic::TOPIC_STOP_DSCREEN]);
     dhfwkKit.PublishMessage(DHTopic::TOPIC_DEV_OFFLINE, TOPIC_MSGS[DHTopic::TOPIC_DEV_OFFLINE]);
 

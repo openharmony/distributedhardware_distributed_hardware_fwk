@@ -18,8 +18,8 @@
 
 #define FUZZ_PROJECT_NAME "distributedhardwarefwkkit_fuzzer"
 
-#include "publisher_listener_stub.h"
 #include <string>
+#include "publisher_listener_stub.h"
 
 namespace OHOS {
 namespace DistributedHardware {

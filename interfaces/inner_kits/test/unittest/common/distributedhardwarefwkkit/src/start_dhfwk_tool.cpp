@@ -16,8 +16,8 @@
 #include "start_dhfwk_tool.h"
 
 #include <cstdint>
-#include <inttypes.h>
-#include <stdio.h>
+#include <cinttypes>
+#include <cstdio>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -65,8 +65,18 @@ bool StartDHFWKTool::StartDHFWK()
 
 void StartDHFWKTool::KillProcess(const char *processname)
 {
+    if (processname == nullptr) {
+        DHLOGE("process name invalid");
+        return;
+    }
+
     char cmd[128] = "";
-    sprintf(cmd, "kill -9 $(pidof %s)", processname);
+    int32_t ret = sprintf(cmd, "kill -9 $(pidof %s)", processname);
+    if (ret < 0) {
+        DHLOGE("Kill Process error, cmd: %s, ret: " PRId32, cmd, ret);
+        return;
+    }
+
     system(cmd);
 }
 
