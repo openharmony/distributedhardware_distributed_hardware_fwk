@@ -38,14 +38,14 @@ ohos_unittest("DistributedHardwareFwkKitTest") {
 
   sources = [
     "src/distributed_hardware_fwk_kit_test.cpp",
-    "src/start_dhfwk_tool.cpp"
+    "src/start_dhfwk_tool.cpp",
   ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${utils_path}:distributedhardwareutils",
     "${innerkits_path}:libdhfwk_sdk",
+    "${utils_path}:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
