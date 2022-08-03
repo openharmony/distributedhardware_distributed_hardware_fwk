@@ -27,9 +27,9 @@ namespace DistributedHardware {
 DistributedHardwareFwkKit::DistributedHardwareFwkKit() : listenerMap_({}), isDHFWKOnLine_(false)
 {
     DHLOGI("Ctor DistributedHardwareFwkKit");
-    DHFWKSAManager::GetInstance().RegisterAbilityListener();
     DHFWKSAManager::GetInstance().RegisterSAStateCallback(
         std::bind(&DistributedHardwareFwkKit::OnDHFWKOnLine, this, std::placeholders::_1));
+    DHFWKSAManager::GetInstance().RegisterAbilityListener();
 }
 
 DistributedHardwareFwkKit::~DistributedHardwareFwkKit()
@@ -39,7 +39,8 @@ DistributedHardwareFwkKit::~DistributedHardwareFwkKit()
 
 int32_t DistributedHardwareFwkKit::RegisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener)
 {
-    DHLOGI("Register publisher listener, topic: %" PRIu32, (uint32_t)topic);
+    DHLOGI("Register publisher listener, topic: %" PRIu32 ", is DHFWK online: %s",
+        (uint32_t)topic, isDHFWKOnLine_ ? "true" : "false");
     if (!IsDHTopicValid(topic)) {
         DHLOGE("Topic invalid, topic: " PRIu32 , (uint32_t)topic);
         return ERR_DH_FWK_PARA_INVALID;
@@ -60,7 +61,8 @@ int32_t DistributedHardwareFwkKit::RegisterPublisherListener(const DHTopic topic
 
 int32_t DistributedHardwareFwkKit::UnregisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener)
 {
-    DHLOGI("Unregister publisher listener, topic: %" PRIu32, (uint32_t)topic);
+    DHLOGI("Unregister publisher listener, topic: %" PRIu32 ", is DHFWK online: %s",
+        (uint32_t)topic, isDHFWKOnLine_ ? "true" : "false");
     if (!IsDHTopicValid(topic)) {
         DHLOGE("Topic invalid, topic: " PRIu32 , (uint32_t)topic);
         return ERR_DH_FWK_PARA_INVALID;
