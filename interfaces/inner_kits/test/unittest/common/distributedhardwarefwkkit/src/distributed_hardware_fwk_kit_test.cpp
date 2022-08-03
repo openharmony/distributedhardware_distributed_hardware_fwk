@@ -34,11 +34,11 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     std::map<DHTopic, std::string> TOPIC_MSGS = {
-            { DHTopic::TOPIC_START_DSCREEN, "Start DScreen" },
-            { DHTopic::TOPIC_SINK_PROJECT_WINDOW_INFO, "Sink Project Window" },
-            { DHTopic::TOPIC_STOP_DSCREEN, "Stop DScreen" },
-            { DHTopic::TOPIC_DEV_OFFLINE, "Dev Offline" }
-        };
+        { DHTopic::TOPIC_START_DSCREEN, "Start DScreen" },
+        { DHTopic::TOPIC_SINK_PROJECT_WINDOW_INFO, "Sink Project Window" },
+        { DHTopic::TOPIC_STOP_DSCREEN, "Stop DScreen" },
+        { DHTopic::TOPIC_DEV_OFFLINE, "Dev Offline" }
+    };
     const int32_t TOPIC_MSG_CNT = 100;
     const std::string DHARDWARE_PROC_NAME = "dhardware";
     const int32_t SA_EXIT_SLEEP_TIME = 1000;
