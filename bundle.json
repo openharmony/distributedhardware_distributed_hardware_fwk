@@ -36,7 +36,7 @@
         "hiviewdfx_hilog_native",
         "startup_l2",
         "bundle_framework",
-        "samgr_standard",
+        "samgr",
         "ipc",
         "safwk",
         "common",

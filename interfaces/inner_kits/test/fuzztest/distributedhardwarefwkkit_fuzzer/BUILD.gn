@@ -47,7 +47,7 @@ ohos_fuzztest("DistributedHardwareFwkKitFuzzTest") {
     "${innerkits_path}:libdhfwk_sdk",
     "${utils_path}:distributedhardwareutils",
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//utils/native/base:utils",
   ]
 
@@ -64,7 +64,7 @@ ohos_fuzztest("DistributedHardwareFwkKitFuzzTest") {
     "init:libbegetutil",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
+    "samgr:samgr_proxy",
   ]
 }
 
