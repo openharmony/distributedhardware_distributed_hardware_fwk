@@ -23,6 +23,7 @@
 
 #include "anonymous_string.h"
 #include "constants.h"
+#include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -139,6 +140,15 @@ void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
 
     auto networkId = std::string(deviceInfo.deviceId); // deviceId of DM actually is networkId
     auto uuid = GetUUIDBySoftBus(networkId);
+
+    // when other device restart, the device receives online and offline messages in sequence
+    // uuid is empty call by GetUUIDBySoftBus function. So, get uuid by memory cache when other device restart
+    uuid = uuid.empty() ? DHContext::GetInstance().GetUUIDByNetworkId(networkId) : uuid;
+    if (uuid.empty()) {
+        DHLOGI("uuid is empty!");
+        return;
+    }
+
     auto ret =
         DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
     DHLOGI("offline result = %d, networkId = %s, uuid = %s", ret, GetAnonyString(networkId).c_str(),
