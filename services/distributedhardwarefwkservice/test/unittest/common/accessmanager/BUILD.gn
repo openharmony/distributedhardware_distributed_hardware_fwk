@@ -28,7 +28,9 @@ config("module_private_config") {
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
     "${services_path}/distributedhardwarefwkservice/include/accessmanager",
+    "${utils_path}/include/eventbus",
   ]
 }
 
@@ -60,6 +62,7 @@ ohos_unittest("AccessManagerTest") {
   external_deps = [
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
     "init:libbegetutil",
