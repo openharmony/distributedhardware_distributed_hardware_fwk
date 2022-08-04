@@ -149,7 +149,6 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
         return offlineResult;
     }
 
-    DHContext::GetInstance().RemoveOnlineDevice(uuid);
     if (DistributedHardwareManager::GetInstance().GetOnLineCount() == 0) {
         DHLOGI("all devices are offline, start to free the resource");
         UnInit();
