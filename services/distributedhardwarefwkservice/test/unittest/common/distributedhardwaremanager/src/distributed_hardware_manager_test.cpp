@@ -80,7 +80,7 @@ HWTEST_F(DistributedHardwareManagerTest, sendOnLineEvent_test_002, TestSize.Leve
 
     onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent(TEST_DEVICES[0].first,
         TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
-    ASSERT_EQ(ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE, onlineResult);
+    ASSERT_EQ(DH_FWK_SUCCESS, onlineResult);
 
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
     ASSERT_TRUE(TaskBoard::GetInstance().IsAllTaskFinish());
@@ -143,7 +143,7 @@ HWTEST_F(DistributedHardwareManagerTest, sendOffLineEvent_test_002, TestSize.Lev
 
     offlineResult = DistributedHardwareManager::GetInstance().SendOffLineEvent(TEST_DEVICES[0].first,
         TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
-    ASSERT_EQ(ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_OFFLINE, offlineResult);
+    ASSERT_EQ(DH_FWK_SUCCESS, offlineResult);
 
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
     ASSERT_TRUE(TaskBoard::GetInstance().IsAllTaskFinish());
