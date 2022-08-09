@@ -49,7 +49,7 @@ ohos_unittest("VersionManagerTest") {
   ]
 
   external_deps = [
-    "distributeddatamgr:distributeddata_inner",
+    "kv_store:distributeddata_inner",
     "eventhandler:libeventhandler",
   ]
 

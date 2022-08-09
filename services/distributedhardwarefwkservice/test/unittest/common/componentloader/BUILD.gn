@@ -48,7 +48,7 @@ ohos_unittest("ComponentLoaderTest") {
   ]
 
   external_deps = [
-    "distributeddatamgr:distributeddata_inner",
+    "kv_store:distributeddata_inner",
     "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",
   ]
