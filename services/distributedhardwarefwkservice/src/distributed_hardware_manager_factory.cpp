@@ -138,9 +138,20 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
         return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
     }
 
+    if (uuid.empty()) {
+        DHLOGE("uuid is empty");
+        return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
+    }
+
     if (!isInit && !Init()) {
         DHLOGE("distributedHardwareMgr is null");
         return ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED;
+    }
+
+    if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
+        DHLOGE("Device not online, networkId: %s, uuid: %s",
+            GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
+        return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_OFFLINE;
     }
 
     auto offlineResult = DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId, uuid, deviceType);

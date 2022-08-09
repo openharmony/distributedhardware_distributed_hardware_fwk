@@ -131,14 +131,11 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
 
     if (uuid.empty()) {
         DHLOGW("uuid is empty");
+        return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
     }
 
     DHLOGI("networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
 
-    if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
-        DHLOGW("device is already offline, uuid = %s", GetAnonyString(uuid).c_str());
-        return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_OFFLINE;
-    }
     TaskParam taskParam = {
         .networkId = networkId,
         .uuid = uuid,
