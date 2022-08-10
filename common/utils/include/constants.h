@@ -25,7 +25,8 @@ namespace DistributedHardware {
     constexpr int32_t ENABLE_TIMEOUT_MS = 1000;
     constexpr int32_t DISABLE_TIMEOUT_MS = 500;
     const std::u16string DHMS_STUB_INTERFACE_TOKEN = u"ohos.distributedhardware.accessToken";
-    const std::string COMPONENTSLOAD_PROFILE_PATH = R"(/etc/distributed_hardware_components_cfg.json)";
+    const std::string COMPONENTSLOAD_PROFILE_PATH =
+        R"(/vendor/etc/distributedhardware/distributed_hardware_components_cfg.json)";
     const std::string APP_ID = "dtbhardware_manager_service";
     const std::string GLOBAL_CAPABILITY_ID = "global_capability_info";
     const std::string GLOBAL_VERSION_ID = "global_version_info";
