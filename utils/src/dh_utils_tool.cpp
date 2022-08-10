@@ -17,8 +17,6 @@
 
 #include <algorithm>
 #include <iomanip>
-#include <ios>
-#include <memory>
 #include <random>
 #include <sstream>
 #include <sys/time.h>
