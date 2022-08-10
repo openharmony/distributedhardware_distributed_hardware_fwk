@@ -67,11 +67,6 @@ sptr<IDistributedHardware> DHFWKSAManager::GetDHFWKProxy()
         RegisterAbilityListener();
     }
 
-    if (!dhfwkOnLine_) {
-        DHLOGW("DHFWK not online, return");
-        return nullptr;
-    }
-
     std::lock_guard<std::mutex> lock(proxyMutex_);
     if (dhfwkProxy_ == nullptr) {
         sptr<ISystemAbilityManager> saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();

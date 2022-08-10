@@ -47,7 +47,7 @@ int32_t DistributedHardwareFwkKit::RegisterPublisherListener(const DHTopic topic
     }
 
     int32_t ret = DH_FWK_SUCCESS;
-    if (isDHFWKOnLine_ && DHFWKSAManager::GetInstance().GetDHFWKProxy() != nullptr) {
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() != nullptr) {
         ret = DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterPublisherListener(topic, listener);
         DHLOGI("Register publisher listener to DHFWK, ret: %" PRId32, ret);
     } else {
@@ -69,7 +69,7 @@ int32_t DistributedHardwareFwkKit::UnregisterPublisherListener(const DHTopic top
     }
 
     int32_t ret = DH_FWK_SUCCESS;
-    if (isDHFWKOnLine_ && DHFWKSAManager::GetInstance().GetDHFWKProxy() != nullptr) {
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() != nullptr) {
         ret = DHFWKSAManager::GetInstance().GetDHFWKProxy()->UnregisterPublisherListener(topic, listener);
         DHLOGI("Unregister publisher listener to DHFWK, ret: %" PRId32, ret);
     }
@@ -87,7 +87,7 @@ int32_t DistributedHardwareFwkKit::PublishMessage(const DHTopic topic, const std
         return ERR_DH_FWK_PARA_INVALID;
     }
 
-    if (!isDHFWKOnLine_ || DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
         DHLOGI("DHFWK not online, can not publish message");
         return ERR_DH_FWK_PUBLISH_MSG_FAILED;
     }
@@ -108,7 +108,7 @@ void DistributedHardwareFwkKit::OnDHFWKOnLine(bool isOnLine)
     DHLOGI("Receive DHFWK online callback, %s", (isOnLine ? "true" : "false"));
     isDHFWKOnLine_ = isOnLine;
 
-    if (!isDHFWKOnLine_ || DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
         return;
     }
 
