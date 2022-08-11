@@ -98,7 +98,6 @@ std::string Sha256(const std::string& in)
     const char* hexCode = "0123456789abcdef";
     constexpr int32_t DOUBLE_TIMES = 2;
     for (int32_t i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
-
         unsigned char value = out[SHA256_DIGEST_LENGTH + i];
         // uint8_t is 2 digits in hexadecimal.
         out[i * DOUBLE_TIMES] = hexCode[(value >> WIDTH) & MASK];
