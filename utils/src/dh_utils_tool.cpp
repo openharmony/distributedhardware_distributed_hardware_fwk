@@ -82,24 +82,29 @@ std::string GetUUIDBySoftBus(const std::string &networkId)
 
 std::string GetDeviceIdByUUID(const std::string &uuid)
 {
-    unsigned char hash[SHA256_DIGEST_LENGTH * 2 + 1] = {0};
+    return Sha256(uuid);
+}
+
+std::string Sha256(const std::string& in)
+{
+    unsigned char out[SHA256_DIGEST_LENGTH * 2 + 1] = {0};
     SHA256_CTX ctx;
     SHA256_Init(&ctx);
-    SHA256_Update(&ctx, uuid.data(), uuid.size());
-    SHA256_Final(&hash[SHA256_DIGEST_LENGTH], &ctx);
+    SHA256_Update(&ctx, in.data(), in.size());
+    SHA256_Final(&out[SHA256_DIGEST_LENGTH], &ctx);
     // here we translate sha256 hash to hexadecimal. each 8-bit char will be presented by two characters([0-9a-f])
     constexpr int32_t WIDTH = 4;
     constexpr unsigned char MASK = 0x0F;
     const char* hexCode = "0123456789abcdef";
     constexpr int32_t DOUBLE_TIMES = 2;
     for (int32_t i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
-        unsigned char value = hash[SHA256_DIGEST_LENGTH + i];
+        unsigned char value = out[SHA256_DIGEST_LENGTH + i];
         // uint8_t is 2 digits in hexadecimal.
-        hash[i * DOUBLE_TIMES] = hexCode[(value >> WIDTH) & MASK];
-        hash[i * DOUBLE_TIMES + 1] = hexCode[value & MASK];
+        out[i * DOUBLE_TIMES] = hexCode[(value >> WIDTH) & MASK];
+        out[i * DOUBLE_TIMES + 1] = hexCode[value & MASK];
     }
-    hash[SHA256_DIGEST_LENGTH * DOUBLE_TIMES] = 0;
-    return reinterpret_cast<char*>(hash);
+    out[SHA256_DIGEST_LENGTH * DOUBLE_TIMES] = 0;
+    return reinterpret_cast<char*>(out);
 }
 
 DeviceInfo GetLocalDeviceInfo()

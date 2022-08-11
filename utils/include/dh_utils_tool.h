@@ -38,6 +38,8 @@ DeviceInfo GetLocalDeviceInfo();
 
 /* Convert uuid to deviceId by sha256 encode */
 std::string GetDeviceIdByUUID(const std::string &uuid);
+
+std::string Sha256(const std::string& string);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
