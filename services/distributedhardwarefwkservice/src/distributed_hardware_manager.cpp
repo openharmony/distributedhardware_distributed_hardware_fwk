@@ -26,6 +26,7 @@
 #include "distributed_hardware_log.h"
 #include "hidump_helper.h"
 #include "local_hardware_manager.h"
+#include "publisher.h"
 #include "task_board.h"
 #include "task_executor.h"
 #include "task_factory.h"
@@ -147,6 +148,7 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
 
     CapabilityInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(uuid));
     VersionInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(uuid));
+    Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_DEV_OFFLINE, networkId);
 
     HiSysEventWriteCompOfflineMsg(DHFWK_DEV_OFFLINE, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         GetAnonyString(networkId), "dhfwk device offline event.");
