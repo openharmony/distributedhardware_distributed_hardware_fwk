@@ -58,8 +58,7 @@ const std::string LIB_LOAD_PATH = "/system/lib/";
 std::map<std::string, DHType> g_mapDhTypeName = {
     { "UNKNOWN", DHType::UNKNOWN },
     { "CAMERA", DHType::CAMERA },
-    { "MIC", DHType::MIC },
-    { "SPEAKER", DHType::SPEAKER },
+    { "AUDIO", DHType::AUDIO },
     { "DISPLAY", DHType::DISPLAY },
     { "GPS", DHType::GPS },
     { "INPUT", DHType::INPUT },

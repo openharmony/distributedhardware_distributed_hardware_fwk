@@ -43,7 +43,7 @@ const string DEV_ID_1 = "bb536a637105409e904d4da83790a4a8";
 const string DEV_NAME = "Dev1";
 const string DH_ID_0 = "Camera_0";
 const string DH_ID_1 = "Mic_0";
-const string DH_ID_2 = "Speaker_0";
+const string DH_ID_2 = "Gps_0";
 const string DH_ID_3 = "Display_0";
 const string DH_ID_4 = "Input_0";
 const string DH_ATTR_0 = "attr0";
@@ -51,7 +51,7 @@ const string DH_ATTR_1 = "attr1";
 constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
 constexpr uint32_t TEST_DH_TYPE_CAMERA = 0x01;
 constexpr uint32_t TEST_DH_TYPE_MIC = 0x02;
-constexpr uint32_t TEST_DH_TYPE_SPEAKER = 0x4;
+constexpr uint32_t TEST_DH_TYPE_GPS = 0x10;
 constexpr uint32_t TEST_DH_TYPE_DISPLAY = 0x08;
 constexpr uint32_t TEST_DH_TYPE_BUTTON = 0x20;
 constexpr uint32_t TEST_SIZE_0 = 0;
@@ -63,9 +63,9 @@ const std::string EMPTY_PREFIX = "";
 const shared_ptr<CapabilityInfo> CAP_INFO_0 =
     make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_1 =
-    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::MIC, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_2 =
-    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SPEAKER, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_3 =
     make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::DISPLAY, DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_4 =
@@ -74,9 +74,9 @@ const shared_ptr<CapabilityInfo> CAP_INFO_4 =
 const shared_ptr<CapabilityInfo> CAP_INFO_5 =
     make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_6 =
-    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::MIC, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_7 =
-    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SPEAKER, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_8 =
     make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::DISPLAY, DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_9 =
@@ -243,7 +243,7 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_008, TestSize.Level0)
     map<CapabilityInfoFilter, string> queryMap10 { { CapabilityInfoFilter::FILTER_DH_TYPE,
         to_string(TEST_DH_TYPE_MIC) } };
     map<CapabilityInfoFilter, string> queryMap11 { { CapabilityInfoFilter::FILTER_DH_TYPE,
-        to_string(TEST_DH_TYPE_SPEAKER) } };
+        to_string(TEST_DH_TYPE_GPS) } };
     map<CapabilityInfoFilter, string> queryMap12 { { CapabilityInfoFilter::FILTER_DH_TYPE,
         to_string(TEST_DH_TYPE_DISPLAY) } };
     map<CapabilityInfoFilter, string> queryMap13 { { CapabilityInfoFilter::FILTER_DH_TYPE,

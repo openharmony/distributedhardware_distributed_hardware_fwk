@@ -52,7 +52,7 @@ const std::string TEST_SINK_VERSION_2 = "2.0";
 const std::string TEST_SINK_VERSION_3 = "2.0";
 const std::string TEST_DH_VERSION = "3.1";
 const std::string TEST_COMPONENT_NAME_1 = "distributed_camera";
-const std::string TEST_COMPONENT_NAME_2 = "distributed_speaker";
+const std::string TEST_COMPONENT_NAME_2 = "distributed_audio";
 const std::string TEST_COMPONENT_NAME_3 = "distributed_mic";
 }
 
@@ -91,10 +91,10 @@ HWTEST_F(VersionManagerTest, version_manager_test_002, TestSize.Level0)
     CompVersionGetValue(cVs1, TEST_COMPONENT_NAME_1, DHType::CAMERA, TEST_HANDLER_VERSION_1, TEST_SOURCE_VERSION_1,
         TEST_SINK_VERSION_1);
     CompVersion cVs2;
-    CompVersionGetValue(cVs2, TEST_COMPONENT_NAME_2, DHType::SPEAKER, TEST_HANDLER_VERSION_2, TEST_SOURCE_VERSION_2,
+    CompVersionGetValue(cVs2, TEST_COMPONENT_NAME_2, DHType::AUDIO, TEST_HANDLER_VERSION_2, TEST_SOURCE_VERSION_2,
         TEST_SINK_VERSION_2);
     CompVersion cVs3;
-    CompVersionGetValue(cVs3, TEST_COMPONENT_NAME_3, DHType::MIC, TEST_HANDLER_VERSION_3, TEST_SOURCE_VERSION_3,
+    CompVersionGetValue(cVs3, TEST_COMPONENT_NAME_3, DHType::DISPLAY, TEST_HANDLER_VERSION_3, TEST_SOURCE_VERSION_3,
         TEST_SINK_VERSION_3);
     dhVersion.uuid = TEST_DEVICE_ID_1;
     dhVersion.dhVersion = TEST_DH_VERSION;
@@ -131,7 +131,7 @@ HWTEST_F(VersionManagerTest, version_manager_test_004, TestSize.Level0)
     DHVersion dhVersion;
     int32_t ret = VersionManager::GetInstance().GetDHVersion(TEST_DEVICE_ID_2, dhVersion);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
-    EXPECT_EQ(TEST_HANDLER_VERSION_2, dhVersion.compVersions[DHType::SPEAKER].handlerVersion);
+    EXPECT_EQ(TEST_HANDLER_VERSION_2, dhVersion.compVersions[DHType::AUDIO].handlerVersion);
     EXPECT_EQ(TEST_DH_VERSION, dhVersion.dhVersion);
     ret = VersionManager::GetInstance().GetDHVersion(TEST_DEVICE_ID_3, dhVersion);
     EXPECT_EQ(ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST, ret);
