@@ -24,8 +24,7 @@ namespace DistributedHardware {
 enum class DHType : uint32_t {
     UNKNOWN = 0x0,            // unknown device
     CAMERA = 0x01,            // Camera
-    MIC = 0x02,               // Mic
-    SPEAKER = 0x04,           // Speaker
+    AUDIO = 0x02,             // Mic
     DISPLAY = 0x08,           // Display
     GPS = 0x10,               // GPS
     INPUT = 0x20,             // Key board
@@ -38,8 +37,7 @@ enum class DHType : uint32_t {
 
 const std::unordered_map<DHType, std::string> DHTypeStrMap = {
     { DHType::CAMERA, "CAMERA" },
-    { DHType::MIC, "MIC" },
-    { DHType::SPEAKER, "SPEAKER" },
+    { DHType::AUDIO, "AUDIO" },
     { DHType::DISPLAY, "DISPLAY" },
     { DHType::GPS, "GPS" },
     { DHType::INPUT, "INPUT" },

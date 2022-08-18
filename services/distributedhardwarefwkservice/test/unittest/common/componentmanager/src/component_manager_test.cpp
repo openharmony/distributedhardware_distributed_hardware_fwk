@@ -152,12 +152,12 @@ HWTEST_F(ComponentManagerTest, init_test_003, TestSize.Level0)
     ComponentManager::GetInstance().compSource_.insert(std::make_pair(DHType::CAMERA, &cameraSource));
     EXPECT_CALL(cameraSource, InitSource(testing::_)).Times(1).WillOnce(testing::Invoke(handler));
 
-    MockIDistributedHardwareSource speakerSource;
-    ComponentManager::GetInstance().compSource_.insert(std::make_pair(DHType::SPEAKER, &speakerSource));
-    EXPECT_CALL(speakerSource, InitSource(testing::_)).Times(1).WillOnce(testing::Invoke(handler));
-
+    MockIDistributedHardwareSource displaySource;
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(DHType::DISPLAY, &displaySource));
+    EXPECT_CALL(displaySource, InitSource(testing::_)).Times(1).WillOnce(testing::Invoke(handler));
+    
     MockIDistributedHardwareSink micSink;
-    ComponentManager::GetInstance().compSink_.insert(std::make_pair(DHType::MIC, &micSink));
+    ComponentManager::GetInstance().compSink_.insert(std::make_pair(DHType::AUDIO, &micSink));
     EXPECT_CALL(micSink, InitSink(testing::_)).Times(1).WillOnce(testing::Invoke(handler));
 
     auto start = std::chrono::system_clock::now();
@@ -187,12 +187,12 @@ HWTEST_F(ComponentManagerTest, unInit_test_001, TestSize.Level0)
     ComponentManager::GetInstance().compSource_.insert(std::make_pair(DHType::CAMERA, &cameraSource));
     EXPECT_CALL(cameraSource, ReleaseSource()).Times(1).WillOnce(testing::Invoke(handler));
 
-    MockIDistributedHardwareSink speakerSink;
-    ComponentManager::GetInstance().compSink_.insert(std::make_pair(DHType::SPEAKER, &speakerSink));
-    EXPECT_CALL(speakerSink, ReleaseSink()).Times(1).WillOnce(testing::Invoke(handler));
-
+    MockIDistributedHardwareSink displaycSink;
+    ComponentManager::GetInstance().compSink_.insert(std::make_pair(DHType::DISPLAY, &displaycSink));
+    EXPECT_CALL(displaycSink, ReleaseSink()).Times(1).WillOnce(testing::Invoke(handler));
+    
     MockIDistributedHardwareSink micSink;
-    ComponentManager::GetInstance().compSink_.insert(std::make_pair(DHType::MIC, &micSink));
+    ComponentManager::GetInstance().compSink_.insert(std::make_pair(DHType::AUDIO, &micSink));
     EXPECT_CALL(micSink, ReleaseSink()).Times(1).WillOnce(testing::Invoke(handler));
 
     auto start = std::chrono::system_clock::now();

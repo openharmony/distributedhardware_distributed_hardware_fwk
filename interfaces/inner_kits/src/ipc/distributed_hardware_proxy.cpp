@@ -29,9 +29,9 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DistributedHardwareProxy"
 const std::unordered_set<DHType> DH_TYPE_SET {
-    DHType::UNKNOWN, DHType::CAMERA, DHType::MIC, DHType::SPEAKER,      DHType::DISPLAY,          DHType::GPS,
-    DHType::INPUT,  DHType::HFP,    DHType::A2D, DHType::VIRMODEM_MIC, DHType::VIRMODEM_SPEAKER, DHType::MAX_DH,
-};
+    DHType::UNKNOWN, DHType::CAMERA, DHType::AUDIO, DHType::DISPLAY, DHType::GPS, DHType::INPUT,
+    DHType::HFP, DHType::A2D, DHType::VIRMODEM_MIC, DHType::VIRMODEM_SPEAKER, DHType::MAX_DH,
+   };
 
 int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic,
     const sptr<IPublisherListener> &listener)
