@@ -38,7 +38,7 @@ enum class DHType : uint32_t {
 const std::unordered_map<DHType, std::string> DHTypeStrMap = {
     { DHType::CAMERA, "CAMERA" },
     { DHType::AUDIO, "AUDIO" },
-    { DHType::MIC, "MIC" },
+    { DHType::DISPLAY, "DISPLAY" },
     { DHType::GPS, "GPS" },
     { DHType::INPUT, "INPUT" },
     { DHType::HFP, "HFP" },
