@@ -75,7 +75,6 @@ private:
     int32_t GetSinkVersion(const std::string &networkId, const std::string &uuid,
         DHType dhType, std::string &sinkVersion);
     void UpdateVersionCache(const std::string &uuid, const VersionInfo &versionInfo);
-    void UpdateVersionCache(const std::string &uuid, const std::unordered_map<DHType, std::string> &versions);
     sptr<IDistributedHardware> GetRemoteDHMS(const std::string &networkId) const;
 
 private:

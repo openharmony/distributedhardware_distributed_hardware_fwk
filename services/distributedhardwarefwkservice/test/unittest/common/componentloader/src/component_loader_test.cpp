@@ -73,7 +73,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_002, TestSize.Level0)
 }
 
 /**
- * @tc.name: component_loader_test_004
+ * @tc.name: component_loader_test_003
  * @tc.desc: Verify the GetSource function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
@@ -89,7 +89,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_003, TestSize.Level0)
 }
 
 /**
- * @tc.name: component_loader_test_005
+ * @tc.name: component_loader_test_004
  * @tc.desc: Verify the GetSink function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
@@ -105,7 +105,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_004, TestSize.Level0)
 }
 
 /**
- * @tc.name: component_loader_test_006
+ * @tc.name: component_loader_test_005
  * @tc.desc: Verify the ReleaseHardwareHandler function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
@@ -120,7 +120,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_005, TestSize.Level0)
 }
 
 /**
- * @tc.name: component_loader_test_007
+ * @tc.name: component_loader_test_006
  * @tc.desc: Verify the ReleaseSource function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
@@ -135,7 +135,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_006, TestSize.Level0)
 }
 
 /**
- * @tc.name: component_loader_test_008
+ * @tc.name: component_loader_test_007
  * @tc.desc: Verify the ReleaseSink function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
@@ -147,6 +147,18 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_007, TestSize.Level0)
         EXPECT_EQ(DH_FWK_SUCCESS, ret);
         EXPECT_TRUE(ComponentLoader::GetInstance().compHandlerMap_[iter.first].sinkHandler == nullptr);
     }
+}
+
+/**
+ * @tc.name: component_loader_test_008
+ * @tc.desc: Verify the GetAllCompTypes function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_008, TestSize.Level0)
+{
+    auto vec = ComponentLoader::GetInstance().GetAllCompTypes();
+    EXPECT_EQ(vec.size(), ComponentLoader::GetInstance().compHandlerMap_.size());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

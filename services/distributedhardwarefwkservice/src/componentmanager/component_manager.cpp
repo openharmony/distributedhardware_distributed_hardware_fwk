@@ -416,20 +416,6 @@ void ComponentManager::UpdateVersionCache(const std::string &uuid, const Version
     VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
 }
 
-void ComponentManager::UpdateVersionCache(const std::string &uuid,
-    const std::unordered_map<DHType, std::string> &versions)
-{
-    DHVersion dhVersion;
-    dhVersion.uuid = uuid;
-    for (const auto &versionPair : versions) {
-        CompVersion compVersion;
-        compVersion.dhType = versionPair.first;
-        compVersion.sinkVersion = versionPair.second;
-        dhVersion.compVersions.insert(std::pair<DHType, CompVersion>(compVersion.dhType, compVersion));
-    }
-    VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
-}
-
 sptr<IDistributedHardware> ComponentManager::GetRemoteDHMS(const std::string &networkId) const
 {
     DHLOGI("start, networkId = %s", GetAnonyString(networkId).c_str());
