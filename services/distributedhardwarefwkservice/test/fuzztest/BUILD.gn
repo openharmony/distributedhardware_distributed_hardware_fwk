@@ -16,7 +16,10 @@ group("fuzztest") {
 
   deps = [
     "accessmanager_fuzzer:fuzztest",
+    "componentloader_fuzzer:fuzztest",
     "componentmanager_fuzzer:fuzztest",
     "resourcemanager_fuzzer:fuzztest",
+    "task_fuzzer:fuzztest",
+    "versioninfomanager_fuzzer:fuzztest",
   ]
 }

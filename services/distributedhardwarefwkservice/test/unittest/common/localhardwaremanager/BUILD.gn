@@ -15,58 +15,57 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/component_manager_test"
+module_out_path = "distributed_hardware_fwk/local_hardware_manager_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
     "${utils_path}/include",
-    "${utils_path}/include/log",
     "${utils_path}/include/eventbus",
+    "${utils_path}/include/log",
     "${services_path}/distributedhardwarefwkservice/include",
-    "${services_path}/distributedhardwarefwkservice/include/componentloader",
-    "${services_path}/distributedhardwarefwkservice/include/componentmanager",
-    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${services_path}/distributedhardwarefwkservice/include/versionmanager",
+    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "${services_path}/distributedhardwarefwkservice/include/componentloader",
+    "${services_path}/distributedhardwarefwkservice/include/localhardwaremanager",
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "//third_party/json/include",
-    "//commonlibrary/c_utils/base/include",
   ]
 }
 
-ohos_unittest("ComponentManagerTest") {
+ohos_unittest("LocalHardwareManagerTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/component_manager_test.cpp" ]
+  sources = [
+    "src/local_hardware_manager_test.cpp",
+    "src/mock_hardware_handler.cpp",
+    "src/plugin_listener_impl_test.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
-    "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-  ]
-
-  defines = [
-    "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"ComponentManagerTest\"",
-    "LOG_DOMAIN=0xD004100",
   ]
 
   external_deps = [
     "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",
-    "hisysevent_native:libhisysevent",
-    "ipc:ipc_core",
     "kv_store:distributeddata_inner",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"LocalHardwareManagerTest\"",
+    "LOG_DOMAIN=0xD004100",
   ]
 }
 
-group("component_manager_test") {
+group("local_hardware_manager_test") {
   testonly = true
-  deps = [ ":ComponentManagerTest" ]
+  deps = [ ":LocalHardwareManagerTest" ]
 }

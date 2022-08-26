@@ -60,6 +60,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY = -10410;
     constexpr int32_t ERR_DH_FWK_RESOURCE_SYNC_VERSIONINFO_FAIL = -10411;
     constexpr int32_t ERR_DH_FWK_RESOURCE_DEVICE_ID_NOT_EXIST = -10412;
+    constexpr int32_t ERR_DH_FWK_RESOURCE_UUID_NOT_FOUND = -10413;
 
     /* DistributedHardwareManager errno, range: [-10500, -10599] */
     constexpr int32_t ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE = -10500;
