@@ -52,6 +52,7 @@ public:
 
     int32_t AddVersion(const VersionInfo &versionInfo);
     int32_t GetVersionInfoByDeviceId(const std::string &deviceId, VersionInfo &versionInfo);
+    int32_t RemoveVersionInfoByDeviceId(const std::string &deviceId);
     int32_t SyncVersionInfoFromDB(const std::string &deviceId);
     int32_t SyncRemoteVersionInfos();
 

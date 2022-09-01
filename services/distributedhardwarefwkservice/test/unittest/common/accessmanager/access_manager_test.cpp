@@ -225,5 +225,27 @@ HWTEST_F(AccessManagerTest, SendOffLineEvent_003, TestSize.Level0)
 
     for_each(threadVec.begin(), threadVec.end(), [](std::thread &t) { t.join(); });
 }
+
+/**
+ * @tc.name: AccessManagerInit
+ * @tc.desc: Verify the  Init  function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, AccessManagerInit, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+}
+
+/**
+ * @tc.name: AccessManagerUnInit
+ * @tc.desc: Verify the  Init UnInit function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, AccessManagerUnInit, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->UnInit());
+}
 } // namespace DistributedHardware
 } // namespace OHOS

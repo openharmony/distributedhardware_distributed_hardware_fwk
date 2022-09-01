@@ -134,6 +134,31 @@ void VersionInfoManager::UpdateVersionCache(const VersionInfo &versionInfo)
     VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
 }
 
+int32_t VersionInfoManager::RemoveVersionInfoByDeviceId(const std::string &deviceId)
+{
+    DHLOGI("Remove version device info, key: %s", GetAnonyString(deviceId).c_str());
+    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr_ is null");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
+    }
+
+    if (dbAdapterPtr_->RemoveDataByKey(deviceId) != DH_FWK_SUCCESS) {
+        DHLOGE("Remove version info failed, key: %s", GetAnonyString(deviceId).c_str());
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
+    }
+
+    std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
+    if (uuid.empty()) {
+        DHLOGI("Find uuid failed, deviceId: %s", GetAnonyString(deviceId).c_str());
+        return ERR_DH_FWK_RESOURCE_UUID_NOT_FOUND;
+    }
+    DHLOGI("Delete version ,uuid: %s", GetAnonyString(uuid).c_str());
+    VersionManager::GetInstance().RemoveDHVersion(uuid);
+
+    return DH_FWK_SUCCESS;
+}
+
 int32_t VersionInfoManager::SyncVersionInfoFromDB(const std::string &deviceId)
 {
     DHLOGI("Sync versionInfo from DB, deviceId: %s", GetAnonyString(deviceId).c_str());

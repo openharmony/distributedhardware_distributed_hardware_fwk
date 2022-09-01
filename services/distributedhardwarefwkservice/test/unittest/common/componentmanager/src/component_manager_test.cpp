@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,9 @@
 #include "component_manager_test.h"
 
 #include <chrono>
+#include <cerrno>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <thread>
 #include <vector>
 
@@ -23,14 +26,21 @@
 
 #include "component_disable.h"
 #include "component_enable.h"
+#include "component_loader.h"
+#include "capability_info.h"
+#include "capability_info_manager.h"
 #define private public
 #include "component_manager.h"
 #undef private
 #include "constants.h"
+#include "dh_context.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "mock_idistributed_hardware_sink.h"
 #include "mock_idistributed_hardware_source.h"
+#include "version_info_manager.h"
+#include "version_manager.h"
 
 using namespace testing::ext;
 
@@ -39,13 +49,39 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "ComponentManagerTest"
 
+namespace {
 constexpr int32_t EXECUTE_TIME_TEST = 1000;
+constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
+const std::string DATABASE_DIR = "/data/service/el1/public/database/dtbhardware_manager_service/";
+const std::string NAME_CAMERA = "distributed_camera";
+const std::string VERSION_1 = "1.0";
 const std::string DEV_ID_TEST = "123456";
 const std::string DH_ID_TEST = "Camera_0";
+const std::string NETWORK_TEST = "nt36a637105409e904d4da83790a4a8";
+const std::string UUID_TEST = "bb536a637105409e904d4da78290ab1";
+const std::string DH_ATTR_1 = "attr1";
+const std::string DEV_NAME = "Dev1";
+const std::string DH_ID_1 = "Camera_1";
+const std::shared_ptr<CapabilityInfo> CAP_INFO_1 =
+    std::make_shared<CapabilityInfo>(DH_ID_1, GetDeviceIdByUUID(UUID_TEST), DEV_NAME,
+    TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1);
+}
 
-void ComponentManagerTest::SetUpTestCase(void) {}
+void ComponentManagerTest::SetUpTestCase(void)
+{
+    auto ret = mkdir(DATABASE_DIR.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (ret != 0) {
+        DHLOGE("mkdir failed, path: %s, errno : %d", DATABASE_DIR.c_str(), errno);
+    }
+}
 
-void ComponentManagerTest::TearDownTestCase(void) {}
+void ComponentManagerTest::TearDownTestCase(void)
+{
+    auto ret = remove(DATABASE_DIR.c_str());
+    if (ret != 0) {
+        DHLOGE("remove dir failed, path: %s, errno : %d", DATABASE_DIR.c_str(), errno);
+    }
+}
 
 void ComponentManagerTest::SetUp()
 {
@@ -338,6 +374,95 @@ HWTEST_F(ComponentManagerTest, disable_test_004, TestSize.Level0)
     thread4.join();
     thread5.join();
     thread6.join();
+}
+
+/**
+ * @tc.name: init_compSource_test_001
+ * @tc.desc: Verify the InitCompSource
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK9
+ */
+HWTEST_F(ComponentManagerTest, init_compSource_test_001, TestSize.Level0)
+{
+    ComponentLoader::GetInstance().Init();
+    ComponentManager::GetInstance().compSource_.clear();
+    auto ret = ComponentManager::GetInstance().InitCompSource();
+    EXPECT_NE(ret, ComponentManager::GetInstance().compSource_.empty());
+}
+
+/**
+ * @tc.name: init_compSink_test_001
+ * @tc.desc: Verify the InitCompSource
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK9
+ */
+HWTEST_F(ComponentManagerTest, init_compSink_test_001, TestSize.Level0)
+{
+    ComponentLoader::GetInstance().Init();
+    ComponentManager::GetInstance().compSink_.clear();
+    auto ret = ComponentManager::GetInstance().InitCompSink();
+    EXPECT_NE(ret, ComponentManager::GetInstance().compSink_.empty());
+}
+
+/**
+ * @tc.name: get_enableparam_test_001
+ * @tc.desc: Verify the GetEnableParam
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK9
+ */
+HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
+{
+    DHContext::GetInstance().AddOnlineDevice(NETWORK_TEST, UUID_TEST);
+
+    CapabilityInfoManager::GetInstance()->Init();
+    std::vector<std::shared_ptr<CapabilityInfo>> resInfos { CAP_INFO_1 };
+    CapabilityInfoManager::GetInstance()->AddCapability(resInfos);
+
+    CompVersion compVersions1 = {
+        .name = NAME_CAMERA,
+        .dhType = DHType::CAMERA,
+        .handlerVersion = VERSION_1,
+        .sourceVersion = VERSION_1,
+        .sinkVersion = VERSION_1
+    };
+    VersionInfo verInfo1;
+    verInfo1.deviceId = GetDeviceIdByUUID(UUID_TEST);
+    verInfo1.dhVersion = VERSION_1;
+    verInfo1.compVersions.insert(std::pair<DHType, CompVersion>(compVersions1.dhType, compVersions1));
+
+    VersionInfoManager::GetInstance()->Init();
+    VersionInfoManager::GetInstance()->AddVersion(verInfo1);
+
+    EnableParam param;
+    auto ret = ComponentManager::GetInstance().GetEnableParam(NETWORK_TEST, UUID_TEST,
+        DH_ID_1, DHType::CAMERA, param);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: get_sinkversionfromvermgr_test_001
+ * @tc.desc: Verify the GetSinkVersionFromVerMgr
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK9
+ */
+HWTEST_F(ComponentManagerTest, get_sinkversion_fromvermgr_test_001, TestSize.Level0)
+{
+    CompVersion compVersions1 = {
+        .name = NAME_CAMERA,
+        .dhType = DHType::CAMERA,
+        .handlerVersion = VERSION_1,
+        .sourceVersion = VERSION_1,
+        .sinkVersion = VERSION_1
+    };
+    DHVersion dhVersion;
+    dhVersion.uuid = UUID_TEST;
+    dhVersion.dhVersion = VERSION_1;
+    dhVersion.compVersions.insert(std::pair<DHType, CompVersion>(compVersions1.dhType, compVersions1));
+
+    VersionManager::GetInstance().AddDHVersion(UUID_TEST, dhVersion);
+    std::string sinkVersion;
+    auto ret = ComponentManager::GetInstance().GetSinkVersionFromVerMgr(UUID_TEST, DHType::CAMERA, sinkVersion);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

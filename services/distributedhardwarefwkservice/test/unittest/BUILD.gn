@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -19,8 +19,11 @@ group("test") {
     "common/componentloader:component_loader_test",
     "common/componentmanager:component_manager_test",
     "common/distributedhardwaremanager:distributed_hardware_manager_test",
+    "common/distributedhardwareservice:distributed_hardware_service_test",
+    "common/localhardwaremanager:local_hardware_manager_test",
     "common/resourcemanager:resource_manager_test",
     "common/task:dh_task_test",
+    "common/versioninfomanager:versioninfo_manager_test",
     "common/versionmanager:version_manager_test",
   ]
 }

@@ -27,8 +27,6 @@
 #include "publisher_listener_stub.h"
 #include "system_ability_load_callback_stub.h"
 
-#include "start_dhfwk_tool.h"
-
 using OHOS::DistributedHardware::DHTopic;
 
 namespace OHOS {
@@ -54,7 +52,6 @@ public:
 
 public:
     std::shared_ptr<DistributedHardwareFwkKit> dhfwkPtr_ = nullptr;
-    std::shared_ptr<StartDHFWKTool> startDHFWKToolPtr_ = nullptr;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
