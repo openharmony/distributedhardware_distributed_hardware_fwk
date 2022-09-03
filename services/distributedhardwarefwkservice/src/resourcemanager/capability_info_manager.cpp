@@ -149,15 +149,20 @@ int32_t CapabilityInfoManager::AddCapability(const std::vector<std::shared_ptr<C
     }
     std::vector<std::string> keys;
     std::vector<std::string> values;
+    std::string data;
     for (auto &resInfo : resInfos) {
         if (!resInfo) {
             continue;
         }
         const std::string key = resInfo->GetKey();
+        globalCapInfoMap_[key] = resInfo;
+        if (dbAdapterPtr_->GetDataByKey(key, data) == DH_FWK_SUCCESS && data.compare(resInfo->ToJsonString())) {
+            DHLOGD("this record is exist, Key: %s", resInfo->GetAnonymousKey().c_str());
+            continue;
+        }
         DHLOGI("AddCapability, Key: %s", resInfo->GetAnonymousKey().c_str());
         keys.push_back(key);
         values.push_back(resInfo->ToJsonString());
-        globalCapInfoMap_[key] = resInfo;
     }
     if (dbAdapterPtr_->PutDataBatch(keys, values) != DH_FWK_SUCCESS) {
         DHLOGE("Fail to storage batch to kv");
