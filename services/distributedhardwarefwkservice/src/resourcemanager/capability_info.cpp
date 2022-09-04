@@ -22,6 +22,7 @@
 #include "anonymous_string.h"
 #include "constants.h"
 #include "distributed_hardware_errno.h"
+#include "distributed_hardware_log.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -118,6 +119,35 @@ std::string CapabilityInfo::ToJsonString()
     nlohmann::json jsonObj;
     ToJson(jsonObj, *this);
     return jsonObj.dump();
+}
+
+bool CapabilityInfo::Compare(const CapabilityInfo& capInfo)
+{
+    if (strcmp(this->deviceId_.c_str(), capInfo.deviceId_.c_str()) != 0) {
+        DHLOGE("deviceId is not equal");
+        return false;
+    }
+    if (strcmp(this->dhId_.c_str(), capInfo.dhId_.c_str()) != 0) {
+        DHLOGE("dhId is not equal");
+        return false;
+    }
+    if (strcmp(this->deviceName_.c_str(), capInfo.deviceName_.c_str()) != 0) {
+        DHLOGE("deviceName is not equal");
+        return false;
+    }
+    if (this->deviceType_ != capInfo.deviceType_) {
+        DHLOGE("deviceType is not equal");
+        return false;
+    }
+    if (this->dhType_ != capInfo.dhType_) {
+        DHLOGE("dhType is not equal");
+        return false;
+    }
+    if (strcmp(this->dhAttrs_.c_str(), capInfo.dhAttrs_.c_str()) != 0) {
+        DHLOGE("dhAttrs is not equal");
+        return false;
+    }
+    return true;
 }
 
 void ToJson(nlohmann::json &jsonObject, const CapabilityInfo &capability)

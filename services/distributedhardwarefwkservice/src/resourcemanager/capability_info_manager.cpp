@@ -149,12 +149,13 @@ int32_t CapabilityInfoManager::AddCapability(const std::vector<std::shared_ptr<C
     }
     std::vector<std::string> keys;
     std::vector<std::string> values;
+    std::string key;
     std::string data;
     for (auto &resInfo : resInfos) {
         if (!resInfo) {
             continue;
         }
-        const std::string key = resInfo->GetKey();
+        key = resInfo->GetKey();
         globalCapInfoMap_[key] = resInfo;
         if (dbAdapterPtr_->GetDataByKey(key, data) == DH_FWK_SUCCESS &&
             strcmp(key.c_str(), resInfo->ToJsonString().c_str()) == 0) {

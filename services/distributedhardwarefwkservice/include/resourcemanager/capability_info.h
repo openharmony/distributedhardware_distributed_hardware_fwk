@@ -72,6 +72,7 @@ public:
     virtual std::string GetAnonymousKey() const;
     virtual int32_t FromJsonString(const std::string &jsonStr);
     virtual std::string ToJsonString();
+    bool Compare(const CapabilityInfo& capInfo);
 
 private:
     std::string dhId_;
