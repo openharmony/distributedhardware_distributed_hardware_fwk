@@ -167,7 +167,7 @@ int32_t CapabilityInfoManager::AddCapability(const std::vector<std::shared_ptr<C
         values.push_back(resInfo->ToJsonString());
     }
     if (keys.empty() || values.empty()) {
-        DHLOGI("Records are empty, No need add data to db!");
+        DHLOGD("Records are empty, No need add data to db!");
         return ERR_DH_FWK_RESOURCE_NO_NEED_ADD;
     }
     if (dbAdapterPtr_->PutDataBatch(keys, values) != DH_FWK_SUCCESS) {
