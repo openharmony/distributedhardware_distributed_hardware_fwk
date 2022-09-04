@@ -157,8 +157,8 @@ int32_t CapabilityInfoManager::AddCapability(const std::vector<std::shared_ptr<C
         }
         key = resInfo->GetKey();
         globalCapInfoMap_[key] = resInfo;
-        if (dbAdapterPtr_->GetDataByKey(key, data) == DH_FWK_SUCCESS &&
-            strcmp(key.c_str(), resInfo->ToJsonString().c_str()) == 0) {
+        if (dbAdapterPtr_->GetDataByKey(key, data) == DH_FWK_SUCCESS && CapabilityUtils::IsCapInfoJsonEqual(data,
+            resInfo->ToJsonString())) {
             DHLOGD("this record is exist, Key: %s", resInfo->GetAnonymousKey().c_str());
             continue;
         }

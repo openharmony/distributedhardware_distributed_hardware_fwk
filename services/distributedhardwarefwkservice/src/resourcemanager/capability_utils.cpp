@@ -49,14 +49,14 @@ bool CapabilityUtils::IsCapInfoJsonEqual(const std::string& firstData, const std
 {
     nlohmann::json firstJson = nlohmann::json::parse(firstData, nullptr, false);
     if (firstJson.is_discarded()) {
-        DHLOGE("firstJson parse failed");
+        DHLOGE("firstData parse failed");
         return false;
     }
     CapabilityInfo firstCapInfo;
     FromJson(firstJson, firstCapInfo);
     nlohmann::json lastJson = nlohmann::json::parse(lastData, nullptr, false);
     if (lastJson.is_discarded()) {
-        DHLOGE("firstJson parse failed");
+        DHLOGE("lastData parse failed");
         return false;
     }
     CapabilityInfo lastCapInfo;
