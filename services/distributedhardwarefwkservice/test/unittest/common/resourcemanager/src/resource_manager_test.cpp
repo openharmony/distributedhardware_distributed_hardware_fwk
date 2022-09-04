@@ -180,7 +180,7 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_005, TestSize.Level0)
 {
     vector<shared_ptr<CapabilityInfo>> resInfos { CAP_INFO_0, CAP_INFO_1, CAP_INFO_2, CAP_INFO_3, CAP_INFO_4,
         CAP_INFO_5, CAP_INFO_6, CAP_INFO_7, CAP_INFO_8, CAP_INFO_9 };
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->AddCapability(resInfos), DH_FWK_SUCCESS);
+    EXPECT_EQ(CapabilityInfoManager::GetInstance()->AddCapability(resInfos), ERR_DH_FWK_RESOURCE_NO_NEED_ADD);
     EXPECT_EQ(CapabilityInfoManager::GetInstance()->globalCapInfoMap_.size(), TEST_SIZE_10);
 }
 
