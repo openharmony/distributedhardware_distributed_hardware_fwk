@@ -38,6 +38,7 @@ public:
     static int32_t GetCapabilityByValue(const std::string &value, std::shared_ptr<CapabilityInfo> &capPtr);
     static std::string GetCapabilityKey(const std::string &deviceId, const std::string &dhId);
     static bool IsCapKeyMatchDeviceId(const std::string &key, const std::string &deviceId);
+    static bool IsCapInfoJsonEqual(const std::string& firstData, const std::string& lastData);
 };
 } // namespace DistributedHardware
 } // namespace OHOS

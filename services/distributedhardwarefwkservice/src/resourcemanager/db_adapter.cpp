@@ -222,6 +222,10 @@ int32_t DBAdapter::PutDataBatch(const std::vector<std::string> &keys, const std:
         DHLOGE("Param invalid");
         return ERR_DH_FWK_PARA_INVALID;
     }
+    if (keys.empty() || values.empty()) {
+        DHLOGE("keys or values is empty!");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     std::vector<DistributedKv::Entry> entries;
     for (unsigned long i = 0; i < keys.size(); i++) {
         DistributedKv::Entry entry;
