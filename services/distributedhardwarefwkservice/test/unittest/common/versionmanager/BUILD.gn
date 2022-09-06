@@ -20,6 +20,8 @@ module_out_path = "distributed_hardware_fwk/version_manager_test"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
+    "//base/notification/eventhandler/interfaces/inner_api",
+    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "include",
     "${utils_path}/include",
     "${utils_path}/include/eventbus",
@@ -46,11 +48,6 @@ ohos_unittest("VersionManagerTest") {
   deps = [
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//third_party/googletest:gtest_main",
-  ]
-
-  external_deps = [
-    "eventhandler:libeventhandler",
-    "kv_store:distributeddata_inner",
   ]
 
   defines = [

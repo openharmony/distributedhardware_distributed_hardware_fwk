@@ -20,6 +20,8 @@ module_out_path = "distributed_hardware_fwk/resource_manager_test"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
+    "//base/notification/eventhandler/interfaces/inner_api",
+    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
@@ -50,15 +52,7 @@ ohos_unittest("ResourceManagerTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
-    "c_utils:utils",
-    "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
-    "hiviewdfx_hilog_native:libhilog",
-    "kv_store:distributeddata_inner",
-  ]
+  external_deps = [ "c_utils:utils" ]
 }
 
 group("resource_manager_test") {

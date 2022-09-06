@@ -42,12 +42,7 @@ ohos_fuzztest("AccessmanagerFuzzTest") {
   ]
   sources = [ "accessmanager_fuzzer.cpp" ]
 
-  deps = [
-    "${utils_path}:distributedhardwareutils",
-    "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp:devicemanagersdk",
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-  ]
+  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
   defines = [
     "HI_LOG_ENABLE",
@@ -55,15 +50,7 @@ ohos_fuzztest("AccessmanagerFuzzTest") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
-    "hisysevent_native:libhisysevent",
-    "init:libbegetutil",
-    "ipc:ipc_core",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
-  ]
+  external_deps = [ "init:libbegetutil" ]
 }
 
 ###############################################################################

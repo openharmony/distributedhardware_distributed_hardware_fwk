@@ -47,12 +47,6 @@ ohos_unittest("ComponentLoaderTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [
-    "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
-    "kv_store:distributeddata_inner",
-  ]
-
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"ComponentLoaderTest\"",

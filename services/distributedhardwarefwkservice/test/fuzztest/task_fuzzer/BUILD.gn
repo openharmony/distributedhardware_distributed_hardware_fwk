@@ -42,20 +42,12 @@ ohos_fuzztest("TaskFuzzTest") {
   ]
   sources = [ "task_fuzzer.cpp" ]
 
-  deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
-  ]
+  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"TaskFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
-  ]
-
-  external_deps = [
-    "hisysevent_native:libhisysevent",
-    "ipc:ipc_core",
   ]
 }
 

@@ -44,21 +44,12 @@ ohos_fuzztest("ComponentloaderFuzzTest") {
   ]
   sources = [ "componentloader_fuzzer.cpp" ]
 
-  deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
-  ]
+  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"ComponentloaderFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
-  ]
-
-  external_deps = [
-    "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
-    "kv_store:distributeddata_inner",
   ]
 }
 

@@ -33,6 +33,7 @@ ohos_fuzztest("ComponentmanagerFuzzTest") {
     "${common_path}/log/include",
     "//third_party/json/include",
     "//commonlibrary/c_utils/base/include",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
   cflags = [
     "-g",
@@ -42,20 +43,12 @@ ohos_fuzztest("ComponentmanagerFuzzTest") {
   ]
   sources = [ "componentmanager_fuzzer.cpp" ]
 
-  deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
-  ]
+  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"ComponentmanagerFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
-  ]
-
-  external_deps = [
-    "hisysevent_native:libhisysevent",
-    "ipc:ipc_core",
   ]
 }
 

@@ -20,6 +20,9 @@ module_out_path = "distributed_hardware_fwk/component_manager_test"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
+    "//base/notification/eventhandler/interfaces/inner_api",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
+    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
@@ -55,13 +58,6 @@ ohos_unittest("ComponentManagerTest") {
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"ComponentManagerTest\"",
     "LOG_DOMAIN=0xD004100",
-  ]
-
-  external_deps = [
-    "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
-    "ipc:ipc_core",
-    "kv_store:distributeddata_inner",
   ]
 }
 

@@ -31,9 +31,11 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
+    "//base/notification/eventhandler/interfaces/inner_api",
     "//commonlibrary/c_utils/base/include",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
+    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "//third_party/json/include",
-    "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
   ]
   cflags = [
@@ -44,10 +46,7 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
   ]
   sources = [ "resourcemanager_fuzzer.cpp" ]
 
-  deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
-  ]
+  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
   defines = [
     "HI_LOG_ENABLE",
@@ -55,15 +54,7 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
-    "c_utils:utils",
-    "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
-    "hiviewdfx_hilog_native:libhilog",
-    "kv_store:distributeddata_inner",
-  ]
+  external_deps = [ "c_utils:utils" ]
 }
 
 ###############################################################################
