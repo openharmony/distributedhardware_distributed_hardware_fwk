@@ -23,6 +23,8 @@ ohos_fuzztest("VersioninfoManagerFuzzTest") {
   fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/versioninfomanager_fuzzer"
 
   include_dirs = [
+    "//base/notification/eventhandler/interfaces/inner_api",
+    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${utils_path}/include/eventbus",
@@ -43,11 +45,7 @@ ohos_fuzztest("VersioninfoManagerFuzzTest") {
   ]
   sources = [ "versioninfomanager_fuzzer.cpp" ]
 
-  deps = [
-    "${utils_path}:distributedhardwareutils",
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-  ]
+  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
   defines = [
     "HI_LOG_ENABLE",
@@ -55,15 +53,7 @@ ohos_fuzztest("VersioninfoManagerFuzzTest") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
-    "c_utils:utils",
-    "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
-    "hiviewdfx_hilog_native:libhilog",
-    "kv_store:distributeddata_inner",
-  ]
+  external_deps = [ "c_utils:utils" ]
 }
 
 ###############################################################################

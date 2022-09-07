@@ -30,8 +30,10 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/versionmanager",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//third_party/json/include",
+    "//base/notification/eventhandler/interfaces/inner_api",
     "//commonlibrary/c_utils/base/include",
+    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
+    "//third_party/json/include",
     "//utils/system/safwk/native/include",
   ]
 }
@@ -53,15 +55,7 @@ ohos_unittest("VersioninfoManagerTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
-    "c_utils:utils",
-    "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
-    "hiviewdfx_hilog_native:libhilog",
-    "kv_store:distributeddata_inner",
-  ]
+  external_deps = [ "c_utils:utils" ]
 }
 
 group("versioninfo_manager_test") {
