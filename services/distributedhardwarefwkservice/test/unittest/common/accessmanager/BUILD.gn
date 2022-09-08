@@ -19,6 +19,9 @@ module_out_path = "distributed_hardware_fwk/access_manager_test"
 
 config("module_private_config") {
   include_dirs = [
+    "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
+    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
+    "//base/notification/eventhandler/interfaces/inner_api",
     "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
     "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp/include",
@@ -50,7 +53,6 @@ ohos_unittest("AccessManagerTest") {
     "${utils_path}:distributedhardwareutils",
     "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp:devicemanagersdk",
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//third_party/googletest:gtest_main",
   ]
   defines = [
@@ -59,17 +61,7 @@ ohos_unittest("AccessManagerTest") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
-    "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
-    "hitrace_native:hitrace_meter",
-    "init:libbegetutil",
-    "ipc:ipc_core",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
-  ]
+  external_deps = [ "init:libbegetutil" ]
 }
 
 group("unittest") {

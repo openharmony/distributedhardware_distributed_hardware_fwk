@@ -20,6 +20,7 @@ module_out_path = "distributed_hardware_fwk/dh_manager_test"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
+    "//base/notification/eventhandler/interfaces/inner_api",
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
@@ -43,7 +44,6 @@ ohos_unittest("DistributedHardwareManagerTest") {
 
   deps = [
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -52,14 +52,6 @@ ohos_unittest("DistributedHardwareManagerTest") {
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"DistributedHardwareManagerTest\"",
     "LOG_DOMAIN=0xD004100",
-  ]
-
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
-    "dsoftbus:softbus_client",
-    "eventhandler:libeventhandler",
-    "hiviewdfx_hilog_native:libhilog",
   ]
 }
 

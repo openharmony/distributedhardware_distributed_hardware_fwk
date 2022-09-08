@@ -22,7 +22,6 @@
 #include <vector>
 
 #include "dm_device_info.h"
-#include "hisysevent.h"
 
 #include "anonymous_string.h"
 #include "constants.h"
