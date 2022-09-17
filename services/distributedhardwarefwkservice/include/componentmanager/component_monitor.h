@@ -45,7 +45,7 @@ public:
 
 private:
     std::mutex saIdMutex_;
-    std::map<int32_t, sptr<SystemAbilityStatusChangeStub>> saIds_;
+    std::map<int32_t, sptr<SystemAbilityStatusChangeStub>> saListeners_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -29,7 +29,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-ComponentMonitor::ComponentMonitor() : saIds_({})
+ComponentMonitor::ComponentMonitor() : saListeners_({})
 {
     DHLOGI("Ctor ComponentMonitor");
 }
@@ -38,7 +38,7 @@ ComponentMonitor::~ComponentMonitor()
 {
     DHLOGI("Dtor ComponentMonitor");
     std::lock_guard<std::mutex> lock(saIdMutex_);
-    saIds_.clear();
+    saListeners_.clear();
 }
 
 void ComponentMonitor::CompSystemAbilityListener::OnAddSystemAbility(int32_t saId, const std::string &deviceId)
@@ -63,7 +63,7 @@ void ComponentMonitor::AddSAMonitor(int32_t saId)
 {
     DHLOGI("Try add sa monitor, saId: %" PRIu32, saId);
     std::lock_guard<std::mutex> lock(saIdMutex_);
-    if (saIds_.find(saId) != saIds_.end()) {
+    if (saListeners_.find(saId) != saListeners_.end()) {
         DHLOGW("SaId is in monitor, id: %" PRIu32, saId);
         return;
     }
@@ -82,7 +82,7 @@ void ComponentMonitor::AddSAMonitor(int32_t saId)
         return;
     }
 
-    saIds_[saId] = listener;
+    saListeners_[saId] = listener;
     DHLOGI("subscribe sa change listener success.");
     return;
 }
@@ -91,7 +91,7 @@ void ComponentMonitor::RemoveSAMonitor(int32_t saId)
 {
     DHLOGI("Try remove sa monitor, saId: %" PRIu32, saId);
     std::lock_guard<std::mutex> lock(saIdMutex_);
-    if (saIds_.find(saId) == saIds_.end()) {
+    if (saListeners_.find(saId) == saListeners_.end()) {
         DHLOGW("can not find sa listener info, id: %" PRIu32, saId);
         return;
     }
@@ -103,13 +103,13 @@ void ComponentMonitor::RemoveSAMonitor(int32_t saId)
         return;
     }
 
-    int32_t ret = systemAbilityManager->UnSubscribeSystemAbility(saId, saIds_[saId]);
+    int32_t ret = systemAbilityManager->UnSubscribeSystemAbility(saId, saListeners_[saId]);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("unsubscribe sa change listener failed: %d", ret);
         return;
     }
 
-    saIds_.erase(saId);
+    saListeners_.erase(saId);
     DHLOGI("unsubscribe sa change listener success");
     return;
 }
