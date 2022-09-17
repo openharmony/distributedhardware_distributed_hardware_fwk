@@ -37,7 +37,7 @@ ComponentMonitor::ComponentMonitor() : saListeners_({})
 ComponentMonitor::~ComponentMonitor()
 {
     DHLOGI("Dtor ComponentMonitor");
-    std::lock_guard<std::mutex> lock(saIdMutex_);
+    std::lock_guard<std::mutex> lock(saListenersMtx_);
     saListeners_.clear();
 }
 
@@ -62,7 +62,7 @@ void ComponentMonitor::CompSystemAbilityListener::OnRemoveSystemAbility(int32_t 
 void ComponentMonitor::AddSAMonitor(int32_t saId)
 {
     DHLOGI("Try add sa monitor, saId: %" PRIu32, saId);
-    std::lock_guard<std::mutex> lock(saIdMutex_);
+    std::lock_guard<std::mutex> lock(saListenersMtx_);
     if (saListeners_.find(saId) != saListeners_.end()) {
         DHLOGW("SaId is in monitor, id: %" PRIu32, saId);
         return;
@@ -90,7 +90,7 @@ void ComponentMonitor::AddSAMonitor(int32_t saId)
 void ComponentMonitor::RemoveSAMonitor(int32_t saId)
 {
     DHLOGI("Try remove sa monitor, saId: %" PRIu32, saId);
-    std::lock_guard<std::mutex> lock(saIdMutex_);
+    std::lock_guard<std::mutex> lock(saListenersMtx_);
     if (saListeners_.find(saId) == saListeners_.end()) {
         DHLOGW("can not find sa listener info, id: %" PRIu32, saId);
         return;

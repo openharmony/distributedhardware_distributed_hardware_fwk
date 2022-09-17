@@ -44,7 +44,7 @@ public:
     };
 
 private:
-    std::mutex saIdMutex_;
+    std::mutex saListenersMtx_;
     std::map<int32_t, sptr<SystemAbilityStatusChangeStub>> saListeners_;
 };
 } // namespace DistributedHardware
