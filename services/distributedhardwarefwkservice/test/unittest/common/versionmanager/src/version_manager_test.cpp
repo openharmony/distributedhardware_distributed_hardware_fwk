@@ -94,7 +94,7 @@ HWTEST_F(VersionManagerTest, version_manager_test_002, TestSize.Level0)
     CompVersionGetValue(cVs2, TEST_COMPONENT_NAME_2, DHType::AUDIO, TEST_HANDLER_VERSION_2, TEST_SOURCE_VERSION_2,
         TEST_SINK_VERSION_2);
     CompVersion cVs3;
-    CompVersionGetValue(cVs3, TEST_COMPONENT_NAME_3, DHType::DISPLAY, TEST_HANDLER_VERSION_3, TEST_SOURCE_VERSION_3,
+    CompVersionGetValue(cVs3, TEST_COMPONENT_NAME_3, DHType::SCREEN, TEST_HANDLER_VERSION_3, TEST_SOURCE_VERSION_3,
         TEST_SINK_VERSION_3);
     dhVersion.uuid = TEST_DEVICE_ID_1;
     dhVersion.dhVersion = TEST_DH_VERSION;

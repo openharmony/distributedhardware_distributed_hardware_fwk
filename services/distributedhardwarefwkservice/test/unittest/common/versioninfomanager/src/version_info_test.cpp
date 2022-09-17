@@ -67,7 +67,7 @@ HWTEST_F(VersionInfoTest, version_info_test_001, TestSize.Level0)
 {
     CompVersion compVersions1 = {
         .name = NAME_SCREEN,
-        .dhType = DHType::DISPLAY,
+        .dhType = DHType::SCREEN,
         .handlerVersion = VERSION_1,
         .sourceVersion = VERSION_1,
         .sinkVersion = VERSION_1

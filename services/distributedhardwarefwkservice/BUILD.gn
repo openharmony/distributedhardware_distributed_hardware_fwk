@@ -51,6 +51,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/componentmanager/component_disable.cpp",
     "src/componentmanager/component_enable.cpp",
     "src/componentmanager/component_manager.cpp",
+    "src/componentmanager/component_monitor.cpp",
     "src/distributed_hardware_manager.cpp",
     "src/distributed_hardware_manager_factory.cpp",
     "src/distributed_hardware_service.cpp",

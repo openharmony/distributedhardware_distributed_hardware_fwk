@@ -189,7 +189,7 @@ HWTEST_F(ComponentManagerTest, init_test_003, TestSize.Level0)
     EXPECT_CALL(cameraSource, InitSource(testing::_)).Times(1).WillOnce(testing::Invoke(handler));
 
     MockIDistributedHardwareSource displaySource;
-    ComponentManager::GetInstance().compSource_.insert(std::make_pair(DHType::DISPLAY, &displaySource));
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(DHType::SCREEN, &displaySource));
     EXPECT_CALL(displaySource, InitSource(testing::_)).Times(1).WillOnce(testing::Invoke(handler));
     
     MockIDistributedHardwareSink micSink;
@@ -224,7 +224,7 @@ HWTEST_F(ComponentManagerTest, unInit_test_001, TestSize.Level0)
     EXPECT_CALL(cameraSource, ReleaseSource()).Times(1).WillOnce(testing::Invoke(handler));
 
     MockIDistributedHardwareSink displaycSink;
-    ComponentManager::GetInstance().compSink_.insert(std::make_pair(DHType::DISPLAY, &displaycSink));
+    ComponentManager::GetInstance().compSink_.insert(std::make_pair(DHType::SCREEN, &displaycSink));
     EXPECT_CALL(displaycSink, ReleaseSink()).Times(1).WillOnce(testing::Invoke(handler));
     
     MockIDistributedHardwareSink micSink;

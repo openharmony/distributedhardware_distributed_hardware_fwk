@@ -518,6 +518,18 @@ int32_t CapabilityInfoManager::GetDataByKey(const std::string &key, std::shared_
     return CapabilityUtils::GetCapabilityByValue(data, capInfoPtr);
 }
 
+int32_t CapabilityInfoManager::GetDataByDHType(const DHType dhType, CapabilityInfoMap &capabilityMap)
+{
+    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
+    for (const auto &capInfo : globalCapInfoMap_) {
+        if (capInfo.second->GetDHType() != dhType) {
+            continue;
+        }
+        capabilityMap[capInfo.first] = capInfo.second;
+    }
+    return DH_FWK_SUCCESS;
+}
+
 int32_t CapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, CapabilityInfoMap &capabilityMap)
 {
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
