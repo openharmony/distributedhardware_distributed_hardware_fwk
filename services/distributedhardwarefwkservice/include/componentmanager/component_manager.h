@@ -32,6 +32,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+using ActionResult = std::unordered_map<DHType, std::shared_future<int32_t>>;
 class ComponentManager {
     DECLARE_SINGLE_INSTANCE_BASE(ComponentManager);
 
@@ -57,8 +58,6 @@ private:
         STOP_SOURCE,
         STOP_SINK
     };
-
-    using ActionResult = std::unordered_map<DHType, std::shared_future<int32_t>>;
 
     DHType GetDHType(const std::string &uuid, const std::string &dhId) const;
     bool InitCompSource();
