@@ -43,7 +43,7 @@ IMPLEMENT_SINGLE_INSTANCE(ComponentLoader);
 using GetHardwareClass = IHardwareHandler *(*)();
 using GetSourceHardwareClass = IDistributedHardwareSource *(*)();
 using GetSinkHardwareClass = IDistributedHardwareSink *(*)();
-namespace {
+
 const std::string COMP_NAME = "name";
 const std::string COMP_TYPE = "type";
 const std::string COMP_HANDLER_LOC = "comp_handler_loc";
@@ -66,7 +66,7 @@ const std::string LIB_LOAD_PATH = "/system/lib64/";
 #else
 const std::string LIB_LOAD_PATH = "/system/lib/";
 #endif
-}
+
 std::map<std::string, DHType> g_mapDhTypeName = {
     { "UNKNOWN", DHType::UNKNOWN },
     { "CAMERA", DHType::CAMERA },
