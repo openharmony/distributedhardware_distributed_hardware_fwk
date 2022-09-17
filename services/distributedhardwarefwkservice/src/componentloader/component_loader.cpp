@@ -43,7 +43,7 @@ IMPLEMENT_SINGLE_INSTANCE(ComponentLoader);
 using GetHardwareClass = IHardwareHandler *(*)();
 using GetSourceHardwareClass = IDistributedHardwareSource *(*)();
 using GetSinkHardwareClass = IDistributedHardwareSink *(*)();
-
+namespace {
 const std::string COMP_NAME = "name";
 const std::string COMP_TYPE = "type";
 const std::string COMP_HANDLER_LOC = "comp_handler_loc";
@@ -79,6 +79,7 @@ std::map<std::string, DHType> g_mapDhTypeName = {
     { "VIRMODEM_MIC", DHType::VIRMODEM_MIC },
     { "VIRMODEM_SPEAKER", DHType::VIRMODEM_SPEAKER },
 };
+}
 
 int32_t ComponentLoader::Init()
 {

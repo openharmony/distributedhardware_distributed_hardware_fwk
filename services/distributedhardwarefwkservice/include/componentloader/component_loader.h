@@ -31,6 +31,18 @@
 namespace OHOS {
 namespace DistributedHardware {
 namespace {
+struct CompHandler {
+    DHType type;
+    void *sourceHandler;
+    int32_t sourceSaId;
+    void *sinkHandler;
+    int32_t sinkSaId;
+    void *hardwareHandler;
+};
+
+const std::string COMPONENTSLOAD_DISTRIBUTED_COMPONENTS = "distributed_components";
+}
+
 struct CompConfig {
     std::string name;
     DHType type;
@@ -43,18 +55,6 @@ struct CompConfig {
     std::string compSinkVersion;
     int32_t compSinkSaId;
 };
-
-struct CompHandler {
-    DHType type;
-    void *sourceHandler;
-    int32_t sourceSaId;
-    void *sinkHandler;
-    int32_t sinkSaId;
-    void *hardwareHandler;
-};
-
-const std::string COMPONENTSLOAD_DISTRIBUTED_COMPONENTS = "distributed_components";
-}
 
 class ComponentLoader {
     DECLARE_SINGLE_INSTANCE_BASE(ComponentLoader);
