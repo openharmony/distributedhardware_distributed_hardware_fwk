@@ -103,28 +103,16 @@ std::vector<DHType> ComponentLoader::GetAllCompTypes()
 
 void from_json(const nlohmann::json &json, CompConfig &cfg)
 {
-    cfg.name = (json.find(COMP_NAME) != json.end()) ? json.at(COMP_NAME).get<std::string>() : DEFAULT_NAME;
-    std::string typeStr = (json.find(COMP_TYPE) != json.end()) ? json.at(COMP_TYPE).get<std::string>() : DEFAULT_TYPE;
-    cfg.type = g_mapDhTypeName[typeStr];
-
-    cfg.compHandlerLoc = (json.find(COMP_HANDLER_LOC) != json.end()) ?
-        json.at(COMP_HANDLER_LOC).get<std::string>() : DEFAULT_LOC;
-    cfg.compHandlerVersion = (json.find(COMP_HANDLER_VERSION) != json.end()) ?
-        json.at(COMP_HANDLER_VERSION).get<std::string>() : DEFAULT_VERSION;
-
-    cfg.compSourceLoc = (json.find(COMP_SOURCE_LOC) != json.end()) ?
-        json.at(COMP_SOURCE_LOC).get<std::string>() : DEFAULT_LOC;
-    cfg.compSourceVersion = (json.find(COMP_SOURCE_VERSION) != json.end()) ?
-        json.at(COMP_SOURCE_VERSION).get<std::string>() : DEFAULT_VERSION;
-    cfg.compSourceSaId = (json.find(COMP_SOURCE_SA_ID) != json.end()) ?
-        json.at(COMP_SOURCE_SA_ID).get<int32_t>() : DEFAULT_SA_ID;
-
-    cfg.compSinkLoc = (json.find(COMP_SINK_LOC) != json.end()) ?
-        json.at(COMP_SINK_LOC).get<std::string>() : DEFAULT_LOC;
-    cfg.compSinkVersion = (json.find(COMP_SINK_VERSION) != json.end()) ?
-        json.at(COMP_SINK_VERSION).get<std::string>() : DEFAULT_VERSION;
-    cfg.compSinkSaId = (json.find(COMP_SINK_SA_ID) != json.end()) ?
-        json.at(COMP_SINK_SA_ID).get<int32_t>() : DEFAULT_SA_ID;
+    cfg.name = json.value(COMP_NAME, DEFAULT_NAME);
+    cfg.type = g_mapDhTypeName[json.value(COMP_TYPE, DEFAULT_TYPE)];
+    cfg.compHandlerLoc = json.value(COMP_HANDLER_LOC, DEFAULT_LOC);
+    cfg.compHandlerVersion = json.value(COMP_HANDLER_VERSION, DEFAULT_VERSION);
+    cfg.compSourceLoc = json.value(COMP_SOURCE_LOC, DEFAULT_LOC);
+    cfg.compSourceVersion = json.value(COMP_SOURCE_VERSION, DEFAULT_VERSION);
+    cfg.compSourceSaId = json.value(COMP_SOURCE_SA_ID, DEFAULT_SA_ID);
+    cfg.compSinkLoc = json.value(COMP_SINK_LOC, DEFAULT_LOC);
+    cfg.compSinkVersion = json.value(COMP_SINK_VERSION, DEFAULT_VERSION);
+    cfg.compSinkSaId = json.value(COMP_SINK_SA_ID, DEFAULT_SA_ID);
 }
 
 CompVersion ComponentLoader::GetCompVersionFromComConfig(const CompConfig& cCfg)
