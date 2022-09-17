@@ -50,7 +50,6 @@ void ComponentMonitor::CompSystemAbilityListener::OnRemoveSystemAbility(int32_t 
 {
     DHLOGI("OnRemoveSystemAbility, saId: %d, deviceId: %s", saId, GetAnonyString(deviceId).c_str());
     DHType dhType = ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId);
-
     if (dhType == DHType::UNKNOWN) {
         DHLOGE("Can not find DHType by sa Id: %d", saId);
         return;

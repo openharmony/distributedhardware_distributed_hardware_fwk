@@ -24,7 +24,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 namespace {
-    uint32_t MAX_TASK_QUEUE_LENGTH = 256;
+    const uint32_t MAX_TASK_QUEUE_LENGTH = 256;
 }
 IMPLEMENT_SINGLE_INSTANCE(TaskExecutor);
 TaskExecutor::TaskExecutor() : taskThreadFlag_(true)
