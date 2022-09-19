@@ -66,7 +66,7 @@ int32_t DistributedHardwareStub::RegisterPublisherListenerInner(MessageParcel &d
         reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
         return ERR_DH_FWK_PARA_INVALID;
     }
-    DHLOGI("Register listener, topic: %" PRIu32 , (uint32_t)topic);
+    DHLOGI("Register listener, topic: %" PRIu32, (uint32_t)topic);
     RegisterPublisherListener(topic, listener);
     reply.WriteInt32(DH_FWK_SUCCESS);
     return DH_FWK_SUCCESS;
@@ -88,7 +88,7 @@ int32_t DistributedHardwareStub::UnregisterPublisherListenerInner(MessageParcel 
         reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
         return ERR_DH_FWK_PARA_INVALID;
     }
-    DHLOGI("Unregister listener, topic: %" PRIu32 , (uint32_t)topic);
+    DHLOGI("Unregister listener, topic: %" PRIu32, (uint32_t)topic);
     UnregisterPublisherListener(topic, listener);
     reply.WriteInt32(DH_FWK_SUCCESS);
     return DH_FWK_SUCCESS;

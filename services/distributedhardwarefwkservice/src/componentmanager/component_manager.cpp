@@ -15,8 +15,14 @@
 
 #include "component_manager.h"
 
+#include <cinttypes>
 #include <future>
 #include <string>
+#include <thread>
+
+#include "ipc_object_stub.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
 
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
@@ -31,10 +37,9 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "enabled_comps_dump.h"
-#include "ipc_object_stub.h"
-#include "iservice_registry.h"
 #include "monitor_task_timer.h"
-#include "system_ability_definition.h"
+#include "task_executor.h"
+#include "task_factory.h"
 #include "version_info_manager.h"
 #include "version_manager.h"
 
@@ -49,11 +54,18 @@ namespace {
     constexpr int32_t ENABLE_RETRY_MAX_TIMES = 30;
     constexpr int32_t DISABLE_RETRY_MAX_TIMES = 30;
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
+    const int32_t INVALID_SA_ID = -1;
+}
+
+ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
+    compMonitorPtr_(std::make_shared<ComponentMonitor>())
+{
+    DHLOGI("Ctor ComponentManager");
 }
 
 ComponentManager::~ComponentManager()
 {
-    DHLOGD("start.");
+    DHLOGD("Dtor ComponentManager");
 }
 
 int32_t ComponentManager::Init()
@@ -70,6 +82,13 @@ int32_t ComponentManager::Init()
         compSource_.clear();
         DHTraceEnd();
         return ERR_DH_FWK_COMPONENT_INIT_SINK_FAILED;
+    }
+
+    for (const auto &comp : compSource_) {
+        if (compSrcSaId_.find(comp.first) == compSrcSaId_.end()) {
+            continue;
+        }
+        compMonitorPtr_->AddSAMonitor(compSrcSaId_.at(comp.first));
     }
 
     auto sourceResult = StartSource();
@@ -94,6 +113,12 @@ int32_t ComponentManager::Init()
 int32_t ComponentManager::UnInit()
 {
     DHLOGI("start.");
+    for (const auto &comp : compSource_) {
+        if (compSrcSaId_.find(comp.first) == compSrcSaId_.end()) {
+            continue;
+        }
+        compMonitorPtr_->RemoveSAMonitor(compSrcSaId_.at(comp.first));
+    }
     auto sourceResult = StopSource();
     auto sinkResult = StopSink();
 
@@ -112,7 +137,7 @@ int32_t ComponentManager::UnInit()
     return DH_FWK_SUCCESS;
 }
 
-ComponentManager::ActionResult ComponentManager::StartSource()
+ActionResult ComponentManager::StartSource()
 {
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
@@ -127,7 +152,28 @@ ComponentManager::ActionResult ComponentManager::StartSource()
     return futures;
 }
 
-ComponentManager::ActionResult ComponentManager::StartSink()
+ActionResult ComponentManager::StartSource(DHType dhType)
+{
+    DHLOGI("Start Source, dhType: %" PRIu32, (uint32_t)dhType);
+    std::unordered_map<DHType, std::shared_future<int32_t>> futures;
+    if (compSource_.find(dhType) == compSource_.end()) {
+        DHLOGE("Component for DHType: %" PRIu32 " not init source handler", (uint32_t)dhType);
+        return futures;
+    }
+
+    std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
+    CompVersion compVersion;
+    VersionManager::GetInstance().GetCompVersion(uuid, dhType, compVersion);
+    auto params = compVersion.sourceVersion;
+    auto future = std::async(std::launch::async, [this, dhType, params]() {
+        return compSource_[dhType]->InitSource(params);
+    });
+    futures.emplace(dhType, future.share());
+
+    return futures;
+}
+
+ActionResult ComponentManager::StartSink()
 {
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
@@ -142,7 +188,28 @@ ComponentManager::ActionResult ComponentManager::StartSink()
     return futures;
 }
 
-ComponentManager::ActionResult ComponentManager::StopSource()
+ActionResult ComponentManager::StartSink(DHType dhType)
+{
+    DHLOGI("Start Sink, dhType: %" PRIu32, (uint32_t)dhType);
+    std::unordered_map<DHType, std::shared_future<int32_t>> futures;
+    if (compSink_.find(dhType) == compSink_.end()) {
+        DHLOGE("Component for DHType: %" PRIu32 " not init sink handler", (uint32_t)dhType);
+        return futures;
+    }
+
+    std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
+    CompVersion compVersion;
+    VersionManager::GetInstance().GetCompVersion(uuid, dhType, compVersion);
+    auto params = compVersion.sinkVersion;
+    auto future = std::async(std::launch::async, [this, dhType, params]() {
+        return compSink_[dhType]->InitSink(params);
+    });
+    futures.emplace(dhType, future.share());
+
+    return futures;
+}
+
+ActionResult ComponentManager::StopSource()
 {
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
@@ -153,7 +220,7 @@ ComponentManager::ActionResult ComponentManager::StopSource()
     return futures;
 }
 
-ComponentManager::ActionResult ComponentManager::StopSink()
+ActionResult ComponentManager::StopSink()
 {
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
@@ -206,6 +273,11 @@ bool ComponentManager::InitCompSource()
             continue;
         }
         compSource_.insert(std::make_pair(type, sourcePtr));
+
+        int32_t saId = ComponentLoader::GetInstance().GetSourceSaId(type);
+        if (saId != INVALID_SA_ID) {
+            compSrcSaId_.insert(std::make_pair(type, saId));
+        }
     }
     return !compSource_.empty();
 }
@@ -416,26 +488,6 @@ void ComponentManager::UpdateVersionCache(const std::string &uuid, const Version
     VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
 }
 
-sptr<IDistributedHardware> ComponentManager::GetRemoteDHMS(const std::string &networkId) const
-{
-    DHLOGI("start, networkId = %s", GetAnonyString(networkId).c_str());
-    if (networkId.empty()) {
-        DHLOGE("networkId is empty");
-        return nullptr;
-    }
-    auto samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (samgr == nullptr) {
-        DHLOGE("GetSystemAbilityManager failed");
-        return nullptr;
-    }
-    auto object = samgr->CheckSystemAbility(DISTRIBUTED_HARDWARE_SA_ID, networkId);
-    if (object == nullptr) {
-        DHLOGE("CheckSystemAbility failed");
-        return nullptr;
-    }
-    return iface_cast<IDistributedHardware>(object);
-}
-
 void ComponentManager::DumpLoadedComps(std::set<DHType> &compSourceType, std::set<DHType> &compSinkType)
 {
     for (auto compSource : compSource_) {
@@ -443,6 +495,64 @@ void ComponentManager::DumpLoadedComps(std::set<DHType> &compSourceType, std::se
     }
     for (auto compSink : compSink_) {
         compSinkType.emplace(compSink.first);
+    }
+}
+
+void ComponentManager::Recover(DHType dhType)
+{
+    std::thread(&ComponentManager::DoRecover, this, dhType).detach();
+}
+
+void ComponentManager::DoRecover(DHType dhType)
+{
+    // step1: restart sa process
+    ReStartSA(dhType);
+    // step2: recover distributed hardware virtual driver
+    RecoverDistributedHardware(dhType);
+}
+
+void ComponentManager::ReStartSA(DHType dhType)
+{
+    DHLOGI("Restart SA for DHType %" PRIu32, (uint32_t)dhType);
+    auto sourceResult = StartSource(dhType);
+    auto sinkResult = StartSink(dhType);
+
+    if (!WaitForResult(Action::START_SOURCE, sourceResult)) {
+        DHLOGE("ReStartSource failed, DHType: %" PRIu32, (uint32_t)dhType);
+    }
+
+    if (!WaitForResult(Action::START_SINK, sinkResult)) {
+        DHLOGE("ReStartSink failed, DHType: %" PRIu32, (uint32_t)dhType);
+    }
+    DHLOGI("Finish Restart");
+}
+
+void ComponentManager::RecoverDistributedHardware(DHType dhType)
+{
+    CapabilityInfoMap capabilityMap;
+    CapabilityInfoManager::GetInstance()->GetDataByDHType(dhType, capabilityMap);
+    for (const auto &capInfo : capabilityMap) {
+        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(capInfo.second->GetDeviceId());
+        if (uuid.empty()) {
+            DHLOGE("Can not find uuid by capability deviceId: %s",
+                GetAnonyString(capInfo.second->GetDeviceId()).c_str());
+            continue;
+        }
+
+        std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
+        if (networkId.empty()) {
+            DHLOGI("Can not find network id by uuid: %s", GetAnonyString(uuid).c_str());
+            continue;
+        }
+
+        TaskParam taskParam = {
+            .networkId = networkId,
+            .uuid = uuid,
+            .dhId = capInfo.second->GetDHId(),
+            .dhType = capInfo.second->GetDHType()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
+        TaskExecutor::GetInstance().PushTask(task);
     }
 }
 } // namespace DistributedHardware

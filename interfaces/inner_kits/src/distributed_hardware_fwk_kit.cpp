@@ -42,7 +42,7 @@ int32_t DistributedHardwareFwkKit::RegisterPublisherListener(const DHTopic topic
     DHLOGI("Register publisher listener, topic: %" PRIu32 ", is DHFWK online: %s",
         (uint32_t)topic, isDHFWKOnLine_ ? "true" : "false");
     if (!IsDHTopicValid(topic)) {
-        DHLOGE("Topic invalid, topic: " PRIu32 , (uint32_t)topic);
+        DHLOGE("Topic invalid, topic: " PRIu32, (uint32_t)topic);
         return ERR_DH_FWK_PARA_INVALID;
     }
 
@@ -64,7 +64,7 @@ int32_t DistributedHardwareFwkKit::UnregisterPublisherListener(const DHTopic top
     DHLOGI("Unregister publisher listener, topic: %" PRIu32 ", is DHFWK online: %s",
         (uint32_t)topic, isDHFWKOnLine_ ? "true" : "false");
     if (!IsDHTopicValid(topic)) {
-        DHLOGE("Topic invalid, topic: " PRIu32 , (uint32_t)topic);
+        DHLOGE("Topic invalid, topic: " PRIu32, (uint32_t)topic);
         return ERR_DH_FWK_PARA_INVALID;
     }
 
@@ -83,7 +83,7 @@ int32_t DistributedHardwareFwkKit::PublishMessage(const DHTopic topic, const std
 {
     DHLOGI("Publish message, topic: %" PRIu32 ", msg: %s", (uint32_t)topic, message.c_str());
     if (!IsDHTopicValid(topic)) {
-        DHLOGE("Topic invalid, topic: " PRIu32 , (uint32_t)topic);
+        DHLOGE("Topic invalid, topic: " PRIu32, (uint32_t)topic);
         return ERR_DH_FWK_PARA_INVALID;
     }
 

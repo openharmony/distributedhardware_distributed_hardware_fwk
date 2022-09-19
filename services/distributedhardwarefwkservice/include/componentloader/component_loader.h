@@ -30,6 +30,19 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+struct CompHandler {
+    DHType type;
+    void *sourceHandler;
+    int32_t sourceSaId;
+    void *sinkHandler;
+    int32_t sinkSaId;
+    void *hardwareHandler;
+};
+
+const std::string COMPONENTSLOAD_DISTRIBUTED_COMPONENTS = "distributed_components";
+}
+
 struct CompConfig {
     std::string name;
     DHType type;
@@ -37,17 +50,11 @@ struct CompConfig {
     std::string compHandlerVersion;
     std::string compSourceLoc;
     std::string compSourceVersion;
+    int32_t compSourceSaId;
     std::string compSinkLoc;
     std::string compSinkVersion;
+    int32_t compSinkSaId;
 };
-
-struct CompHandler {
-    void *sourceHandler;
-    void *sinkHandler;
-    void *hardwareHandler;
-};
-
-const std::string COMPONENTSLOAD_DISTRIBUTED_COMPONENTS = "distributed_components";
 
 class ComponentLoader {
     DECLARE_SINGLE_INSTANCE_BASE(ComponentLoader);
@@ -67,6 +74,8 @@ public:
     int32_t ReleaseSink(const DHType dhType);
     std::vector<DHType> GetAllCompTypes();
     int32_t GetLocalDHVersion(DHVersion &dhVersion);
+    int32_t GetSourceSaId(const DHType dhType);
+    DHType GetDHTypeBySrcSaId(const int32_t saId);
 
 private:
     void *GetHandler(const std::string &soName);

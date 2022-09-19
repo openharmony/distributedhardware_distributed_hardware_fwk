@@ -23,6 +23,7 @@
 #include <future>
 
 #include "single_instance.h"
+#include "component_monitor.h"
 #include "device_type.h"
 #include "idistributed_hardware.h"
 #include "idistributed_hardware_sink.h"
@@ -31,11 +32,12 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+using ActionResult = std::unordered_map<DHType, std::shared_future<int32_t>>;
 class ComponentManager {
     DECLARE_SINGLE_INSTANCE_BASE(ComponentManager);
 
 public:
-    ComponentManager() {}
+    ComponentManager();
     ~ComponentManager();
 
 public:
@@ -47,6 +49,7 @@ public:
         const DHType dhType);
 
     void DumpLoadedComps(std::set<DHType> &compSourceType, std::set<DHType> &compSinkType);
+    void Recover(DHType dhType);
 
 private:
     enum class Action : int32_t {
@@ -56,14 +59,14 @@ private:
         STOP_SINK
     };
 
-    using ActionResult = std::unordered_map<DHType, std::shared_future<int32_t>>;
-
     DHType GetDHType(const std::string &uuid, const std::string &dhId) const;
     bool InitCompSource();
     bool InitCompSink();
     ActionResult StartSource();
+    ActionResult StartSource(DHType dhType);
     ActionResult StopSource();
     ActionResult StartSink();
+    ActionResult StartSink(DHType dhType);
     ActionResult StopSink();
     bool WaitForResult(const Action &action, ActionResult result);
     int32_t GetEnableParam(const std::string &networkId, const std::string &uuid, const std::string &dhId,
@@ -75,11 +78,16 @@ private:
     int32_t GetSinkVersion(const std::string &networkId, const std::string &uuid,
         DHType dhType, std::string &sinkVersion);
     void UpdateVersionCache(const std::string &uuid, const VersionInfo &versionInfo);
-    sptr<IDistributedHardware> GetRemoteDHMS(const std::string &networkId) const;
+
+    void DoRecover(DHType dhType);
+    void ReStartSA(DHType dhType);
+    void RecoverDistributedHardware(DHType dhType);
 
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::map<DHType, IDistributedHardwareSink*> compSink_;
+    std::map<DHType, int32_t> compSrcSaId_;
+    std::shared_ptr<ComponentMonitor> compMonitorPtr_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

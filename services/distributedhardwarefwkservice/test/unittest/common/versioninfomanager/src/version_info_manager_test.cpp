@@ -61,7 +61,7 @@ std::vector<VersionInfo> CreateVersionInfos()
 
     CompVersion compVersions2 = {
         .name = NAME_SCREEN,
-        .dhType = DHType::DISPLAY,
+        .dhType = DHType::SCREEN,
         .handlerVersion = VERSION_2,
         .sourceVersion = VERSION_2,
         .sinkVersion = VERSION_2
