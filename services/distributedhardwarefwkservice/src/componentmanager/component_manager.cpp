@@ -137,7 +137,7 @@ int32_t ComponentManager::UnInit()
     return DH_FWK_SUCCESS;
 }
 
-ComponentManager::ActionResult ComponentManager::StartSource()
+ActionResult ComponentManager::StartSource()
 {
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
@@ -152,7 +152,7 @@ ComponentManager::ActionResult ComponentManager::StartSource()
     return futures;
 }
 
-ComponentManager::ActionResult ComponentManager::StartSource(DHType dhType)
+ActionResult ComponentManager::StartSource(DHType dhType)
 {
     DHLOGI("Start Source, dhType: %" PRIu32, (uint32_t)dhType);
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
@@ -173,7 +173,7 @@ ComponentManager::ActionResult ComponentManager::StartSource(DHType dhType)
     return futures;
 }
 
-ComponentManager::ActionResult ComponentManager::StartSink()
+ActionResult ComponentManager::StartSink()
 {
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
@@ -188,7 +188,7 @@ ComponentManager::ActionResult ComponentManager::StartSink()
     return futures;
 }
 
-ComponentManager::ActionResult ComponentManager::StartSink(DHType dhType)
+ActionResult ComponentManager::StartSink(DHType dhType)
 {
     DHLOGI("Start Sink, dhType: %" PRIu32, (uint32_t)dhType);
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
@@ -209,7 +209,7 @@ ComponentManager::ActionResult ComponentManager::StartSink(DHType dhType)
     return futures;
 }
 
-ComponentManager::ActionResult ComponentManager::StopSource()
+ActionResult ComponentManager::StopSource()
 {
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
@@ -220,7 +220,7 @@ ComponentManager::ActionResult ComponentManager::StopSource()
     return futures;
 }
 
-ComponentManager::ActionResult ComponentManager::StopSink()
+ActionResult ComponentManager::StopSink()
 {
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
