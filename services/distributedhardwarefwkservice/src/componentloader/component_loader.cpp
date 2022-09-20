@@ -202,7 +202,7 @@ void ComponentLoader::GetAllHandler(std::map<DHType, CompConfig> &dhtypeMap)
         comHandler.sourceSaId = itor->second.compSourceSaId;
         comHandler.sinkHandler = GetHandler(itor->second.compSinkLoc);
         comHandler.sinkSaId = itor->second.compSinkSaId;
-        compHandlerMap_.insert(std::pair<DHType, CompHandler>(itor->second.type, comHandler));
+        compHandlerMap_[itor->second.type] = comHandler;
     }
 }
 
