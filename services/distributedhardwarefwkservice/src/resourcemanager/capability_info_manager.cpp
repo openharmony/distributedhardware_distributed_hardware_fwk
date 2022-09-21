@@ -266,9 +266,8 @@ std::map<std::string, std::shared_ptr<CapabilityInfo>> CapabilityInfoManager::Qu
 {
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     std::map<std::string, std::shared_ptr<CapabilityInfo>> capMap;
-    bool isMatch = true;
     for (auto &info : globalCapInfoMap_) {
-        isMatch = true;
+        bool isMatch = true;
         for (auto &filter : filters) {
             if (!IsCapabilityMatchFilter(info.second, filter.first, filter.second)) {
                 isMatch = false;

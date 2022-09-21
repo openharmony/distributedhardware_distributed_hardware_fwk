@@ -127,7 +127,7 @@ void LocalHardwareManager::CheckNonExistCapabilityInfo(const std::vector<DHItem>
     for (auto capabilityInfo : allLocalCapabilityInfos) {
         std::shared_ptr<CapabilityInfo> capabilityValue = capabilityInfo.second;
         if (capabilityValue == nullptr) {
-            DHLOGE("capabilityInfo value is nullptr, key: %s", capabilityValue->GetAnonymousKey().c_str());
+            DHLOGE("capabilityInfo value is nullptr");
             continue;
         }
         DHLOGI("The key in allLocalCapabilityInfos is %s", capabilityValue->GetAnonymousKey().c_str());
