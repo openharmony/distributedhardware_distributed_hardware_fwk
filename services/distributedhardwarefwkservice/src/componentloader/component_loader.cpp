@@ -82,7 +82,7 @@ int32_t ComponentLoader::Init()
 std::vector<DHType> ComponentLoader::GetAllCompTypes()
 {
     std::vector<DHType> DHTypeALL;
-    for (std::map<DHType, CompHandler>::iterator it = compHandlerMap_.begin(); it != compHandlerMap_.end(); it++) {
+    for (std::map<DHType, CompHandler>::iterator it = compHandlerMap_.begin(); it != compHandlerMap_.end(); ++it) {
         DHTypeALL.push_back(it->first);
     }
     return DHTypeALL;
@@ -122,7 +122,7 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
     std::vector<CompConfig> vecJsnCfg =
         jsonCfg.at(COMPONENTSLOAD_DISTRIBUTED_COMPONENTS).get<std::vector<CompConfig>>();
     DHLOGI("get distributed_components CompConfig size is %d", vecJsnCfg.size());
-    for (std::vector<CompConfig>::iterator iter = vecJsnCfg.begin(); iter != vecJsnCfg.end(); iter++) {
+    for (std::vector<CompConfig>::iterator iter = vecJsnCfg.begin(); iter != vecJsnCfg.end(); ++iter) {
         dhtypeMap.insert(std::pair<DHType, CompConfig>((*iter).type, (*iter)));
         localDHVersion_.compVersions.insert(
             std::pair<DHType, CompVersion>((*iter).type, GetCompVersionFromComConfig(*iter)));
@@ -179,7 +179,7 @@ void *ComponentLoader::GetHandler(const std::string &soName)
 void ComponentLoader::GetAllHandler(std::map<DHType, CompConfig> &dhtypeMap)
 {
     std::map<DHType, CompConfig>::iterator itor;
-    for (itor = dhtypeMap.begin(); itor != dhtypeMap.end(); itor++) {
+    for (itor = dhtypeMap.begin(); itor != dhtypeMap.end(); ++itor) {
         CompHandler comHandler;
         comHandler.hardwareHandler = GetHandler(itor->second.compHandlerLoc);
         comHandler.sinkHandler = GetHandler(itor->second.compSinkLoc);
@@ -302,7 +302,7 @@ int32_t ComponentLoader::UnInit()
     DHTraceStart(COMPONENT_RELEASE_START);
     int32_t ret = DH_FWK_SUCCESS;
     for (std::map<DHType, CompHandler>::iterator iter = compHandlerMap_.begin();
-        iter != compHandlerMap_.end(); iter++) {
+        iter != compHandlerMap_.end(); ++iter) {
         ret += ReleaseHardwareHandler(iter->first);
         ret += ReleaseSource(iter->first);
         ret += ReleaseSink(iter->first);
