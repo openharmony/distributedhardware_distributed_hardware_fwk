@@ -13,13 +13,12 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_VERSION_INFO_MANAGER_H
-#define OHOS_DISTRIBUTED_HARDWARE_VERSION_INFO_MANAGER_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_MOCK_DB_CHANGE_LISTENER_H
+#define OHOS_DISTRIBUTED_HARDWARE_MOCK_DB_CHANGE_LISTENER_H
 
 #include "distributed_kv_data_manager.h"
 #include "kvstore_observer.h"
 
-class DBAdapter;
 namespace OHOS {
 namespace DistributedHardware {
 class MockDBChangeListener : public DistributedKv::KvStoreObserver {

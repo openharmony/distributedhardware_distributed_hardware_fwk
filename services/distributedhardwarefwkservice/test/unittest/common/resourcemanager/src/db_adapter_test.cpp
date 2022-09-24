@@ -87,11 +87,16 @@ void DbAdapterTest::SetUpTestCase(void)
 
     std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = std::make_shared<MockDBChangeListener>();
     g_dbAdapterPtr = std::make_shared<DBAdapter>(APP_ID, GLOBAL_CAPABILITY_ID, changeListener);
+    if (g_dbAdapterPtr != nullptr) {
+        g_dbAdapterPtr->Init();
+    }
 }
 
 void DbAdapterTest::TearDownTestCase(void)
 {
-    g_dbAdapterPtr->UnInit();
+    if (g_dbAdapterPtr != nullptr) {
+        g_dbAdapterPtr->UnInit();
+    }
 
     auto ret = remove(DATABASE_DIR.c_str());
     if (ret != 0) {
@@ -148,14 +153,51 @@ HWTEST_F(DbAdapterTest, db_adapter_test_001, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
 {
-    std::vector<std::string> keysEmpty;
-    std::vector<std::string> valuesEmpty;
     std::vector<std::string> keys { std::string(DEV_ID_2 + DH_ID_0) };
     std::vector<std::string> values { DH_ATTR_0 };
 
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keys, values), DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: db_adapter_test_003
+ * @tc.desc: Verify the PutDataBatch function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, db_adapter_test_003, TestSize.Level0)
+{
+    std::vector<std::string> valuesEmpty;
+    std::vector<std::string> keys { std::string(DEV_ID_2 + DH_ID_0) };
+
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keys, valuesEmpty), ERR_DH_FWK_PARA_INVALID);
+}
+
+/**
+ * @tc.name: db_adapter_test_004
+ * @tc.desc: Verify the PutDataBatch function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, db_adapter_test_004, TestSize.Level0)
+{
+    std::vector<std::string> keysEmpty;
+    std::vector<std::string> values { DH_ATTR_0 };
+
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keysEmpty, values), ERR_DH_FWK_PARA_INVALID);
+}
+
+/**
+ * @tc.name: db_adapter_test_005
+ * @tc.desc: Verify the PutDataBatch function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, db_adapter_test_005, TestSize.Level0)
+{
+    std::vector<std::string> keysEmpty;
+    std::vector<std::string> valuesEmpty;
+
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keysEmpty, valuesEmpty), ERR_DH_FWK_PARA_INVALID);
 }
 } // namespace DistributedHardware
