@@ -41,6 +41,7 @@ namespace {
 const string DATABASE_DIR = "/data/service/el1/public/database/dtbhardware_manager_service/";
 const string DEV_ID_0 = "bb536a637105409e904d4da83790aa11";
 const string DEV_ID_1 = "bb536a637105409e904d4da83790bb22";
+const string DEV_ID_2 = "bb536a637105409e904d4da83790bb33";
 const string DEV_NAME = "Dev1";
 const string DH_ID_0 = "Camera_00";
 const string DH_ID_1 = "Mic_01";
@@ -148,7 +149,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
 {
     std::vector<std::string> keysEmpty;
     std::vector<std::string> valuesEmpty;
-    std::vector<std::string> keys { std::string(DEV_ID_0 + DH_ID_0) };
+    std::vector<std::string> keys { std::string(DEV_ID_2 + DH_ID_0) };
     std::vector<std::string> values { DH_ATTR_0 };
 
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keys, values), DH_FWK_SUCCESS);
