@@ -15,7 +15,7 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/resource_manager_test"
+module_out_path = "distributed_hardware_fwk/db_adapter_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -38,11 +38,14 @@ config("module_private_config") {
   ]
 }
 
-## UnitTest resource_manager_test
-ohos_unittest("ResourceManagerTest") {
+## UnitTest db_adapter_test
+ohos_unittest("DbAdapterTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/resource_manager_test.cpp" ]
+  sources = [
+    "src/db_adapter_test.cpp",
+    "src/mock_db_change_listener.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 
@@ -55,7 +58,7 @@ ohos_unittest("ResourceManagerTest") {
   external_deps = [ "c_utils:utils" ]
 }
 
-group("resource_manager_test") {
+group("db_adapter_test") {
   testonly = true
-  deps = [ ":ResourceManagerTest" ]
+  deps = [ ":DbAdapterTest" ]
 }

@@ -40,40 +40,40 @@ namespace DistributedHardware {
 
 namespace {
 const string DATABASE_DIR = "/data/service/el1/public/database/dtbhardware_manager_service/";
-const string DEV_ID_0 = "bb536a637105409e904d4da83790aa11";
-const string DEV_ID_1 = "bb536a637105409e904d4da83790bb22";
-const string DEV_ID_2 = "bb536a637105409e904d4da83790bb33";
-const string DEV_NAME = "Dev1";
-const string DH_ID_0 = "Camera_00";
-const string DH_ID_1 = "Mic_01";
-const string DH_ID_2 = "Gps_02";
-const string DH_ID_3 = "Display_03";
-const string DH_ID_4 = "Input_04";
-const string DH_ATTR_0 = "db_test_attr0";
-const string DH_ATTR_1 = "db_test_attr1";
+const string TEST_DEV_ID_0 = "bb536a637105409e904d4da83791aa11";
+const string TEST_DEV_ID_1 = "bb536a637105409e904d4da83791bb22";
+const string TEST_DEV_ID_2 = "bb536a637105409e904d4da83791bb33";
+const string TEST_DEV_NAME = "Dev1";
+const string TEST_DH_ID_0 = "Camera_00";
+const string TEST_DH_ID_1 = "Mic_01";
+const string TEST_DH_ID_2 = "Gps_02";
+const string TEST_DH_ID_3 = "Display_03";
+const string TEST_DH_ID_4 = "Input_04";
+const string TEST_DH_ATTR_0 = "db_test_attr0";
+const string TEST_DH_ATTR_1 = "db_test_attr1";
 constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
 
 const shared_ptr<CapabilityInfo> CAP_INFO_0 =
-    make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0);
+    make_shared<CapabilityInfo>(TEST_DH_ID_0, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, TEST_DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_1 =
-    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_0);
+    make_shared<CapabilityInfo>(TEST_DH_ID_1, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, TEST_DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_2 =
-    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_0);
+    make_shared<CapabilityInfo>(TEST_DH_ID_2, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, TEST_DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_3 =
-    make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, DH_ATTR_0);
+    make_shared<CapabilityInfo>(TEST_DH_ID_3, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, TEST_DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_4 =
-    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_0);
+    make_shared<CapabilityInfo>(TEST_DH_ID_4, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, TEST_DH_ATTR_0);
 
 const shared_ptr<CapabilityInfo> CAP_INFO_5 =
-    make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1);
+    make_shared<CapabilityInfo>(TEST_DH_ID_0, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, TEST_DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_6 =
-    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_1);
+    make_shared<CapabilityInfo>(TEST_DH_ID_1, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, TEST_DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_7 =
-    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_1);
+    make_shared<CapabilityInfo>(TEST_DH_ID_2, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, TEST_DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_8 =
-    make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, DH_ATTR_1);
+    make_shared<CapabilityInfo>(TEST_DH_ID_3, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, TEST_DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_9 =
-    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_1);
+    make_shared<CapabilityInfo>(TEST_DH_ID_4, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, TEST_DH_ATTR_1);
 
 std::shared_ptr<DBAdapter> g_dbAdapterPtr;
 }
@@ -153,8 +153,8 @@ HWTEST_F(DbAdapterTest, db_adapter_test_001, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
 {
-    std::vector<std::string> keys { std::string(DEV_ID_2 + DH_ID_0) };
-    std::vector<std::string> values { DH_ATTR_0 };
+    std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DEV_ID_0) };
+    std::vector<std::string> values { TEST_DH_ATTR_0 };
 
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keys, values), DH_FWK_SUCCESS);
 }
@@ -167,8 +167,8 @@ HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_003, TestSize.Level0)
 {
+    std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DEV_ID_0) };
     std::vector<std::string> valuesEmpty;
-    std::vector<std::string> keys { std::string(DEV_ID_2 + DH_ID_0) };
 
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keys, valuesEmpty), ERR_DH_FWK_PARA_INVALID);
 }
@@ -182,7 +182,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_003, TestSize.Level0)
 HWTEST_F(DbAdapterTest, db_adapter_test_004, TestSize.Level0)
 {
     std::vector<std::string> keysEmpty;
-    std::vector<std::string> values { DH_ATTR_0 };
+    std::vector<std::string> values { TEST_DH_ATTR_0 };
 
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keysEmpty, values), ERR_DH_FWK_PARA_INVALID);
 }
