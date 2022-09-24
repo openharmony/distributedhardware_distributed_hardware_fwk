@@ -23,6 +23,7 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "MockDBChangeListener"
+
 void MockDBChangeListener::OnChange(const DistributedKv::ChangeNotification &changeNotification)
 {
     (void)changeNotification;
