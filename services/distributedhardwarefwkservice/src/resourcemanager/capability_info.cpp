@@ -109,7 +109,13 @@ std::string CapabilityInfo::GetAnonymousKey() const
 
 int32_t CapabilityInfo::FromJsonString(const std::string &jsonStr)
 {
-    nlohmann::json jsonObj = nlohmann::json::parse(jsonStr);
+    DHLOGE("dl add ,jsonStr is: %s", jsonStr.c_str());
+    nlohmann::json jsonObj = nlohmann::json::parse(jsonStr, nullptr, false);
+    if (jsonObj.is_discarded()) {
+        DHLOGE("jsonStr parse failed");
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
+    }
+
     FromJson(jsonObj, *this);
     return DH_FWK_SUCCESS;
 }
@@ -162,22 +168,24 @@ void ToJson(nlohmann::json &jsonObject, const CapabilityInfo &capability)
 
 void FromJson(const nlohmann::json &jsonObject, CapabilityInfo &capability)
 {
-    if (jsonObject.find(DH_ID) != jsonObject.end()) {
+if (jsonObject.find(DH_ID) != jsonObject.end() && jsonObject[DH_ID].is_string()) {
         capability.SetDHId(jsonObject.at(DH_ID).get<std::string>());
     }
-    if (jsonObject.find(DEV_ID) != jsonObject.end()) {
+    if (jsonObject.find(DEV_ID) != jsonObject.end() && jsonObject[DH_ID].is_string()) {
         capability.SetDeviceId(jsonObject.at(DEV_ID).get<std::string>());
     }
-    if (jsonObject.find(DEV_NAME) != jsonObject.end()) {
+    if (jsonObject.find(DEV_NAME) != jsonObject.end() && jsonObject[DH_ID].is_string()) {
         capability.SetDeviceName(jsonObject.at(DEV_NAME).get<std::string>());
     }
-    if (jsonObject.find(DEV_TYPE) != jsonObject.end()) {
+    if (jsonObject.find(DEV_TYPE) != jsonObject.end() && jsonObject[DEV_TYPE].is_number_unsigned() &&
+        jsonObject[DEV_TYPE] <= UINT16_MAX) {
         capability.SetDeviceType(jsonObject.at(DEV_TYPE).get<uint16_t>());
     }
-    if (jsonObject.find(DH_TYPE) != jsonObject.end()) {
+    if (jsonObject.find(DH_TYPE) != jsonObject.end() && jsonObject[DEV_TYPE].is_number_unsigned() &&
+        jsonObject[DEV_TYPE] <= UINT32_MAX) {
         capability.SetDHType(jsonObject.at(DH_TYPE).get<DHType>());
     }
-    if (jsonObject.find(DH_ATTRS) != jsonObject.end()) {
+    if (jsonObject.find(DH_ATTRS) != jsonObject.end() && jsonObject[DH_ATTRS].is_string()) {
         capability.SetDHAttrs(jsonObject.at(DH_ATTRS).get<std::string>());
     }
 }
