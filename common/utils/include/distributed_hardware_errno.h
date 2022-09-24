@@ -30,6 +30,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY = -10002;
     constexpr int32_t ERR_DH_FWK_TYPE_NOT_EXIST = -10003;
     constexpr int32_t ERR_DH_FWK_JSON_PARSE_FAILED = -10004;
+    constexpr int32_t ERR_DH_FWK_POINTER_IS_NULL = -10005;
 
     /* VersionManager errno, range: [-10200, -10299] */
     constexpr int32_t ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST = -10200;
