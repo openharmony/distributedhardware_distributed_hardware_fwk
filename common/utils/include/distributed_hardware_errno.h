@@ -29,6 +29,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY = -10001;
     constexpr int32_t ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY = -10002;
     constexpr int32_t ERR_DH_FWK_TYPE_NOT_EXIST = -10003;
+    constexpr int32_t ERR_DH_FWK_JSON_PARSE_FAILED = -10004;
 
     /* VersionManager errno, range: [-10200, -10299] */
     constexpr int32_t ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST = -10200;
@@ -45,6 +46,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_COMPONENT_GET_REMOTE_SA_FAILED = -10008;
     constexpr int32_t ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED = -10009;
     constexpr int32_t ERR_DH_FWK_COMPONENT_DHTYPE_NOT_FOUND = -10010;
+    constexpr int32_t ERR_DH_FWK_COMPONENT_MONITOR_NULL = -10011;
 
     /* ResourceManager errno, range: [-10400, -10499] */
     constexpr int32_t ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL = -10400;
@@ -61,6 +63,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_RESOURCE_SYNC_VERSIONINFO_FAIL = -10411;
     constexpr int32_t ERR_DH_FWK_RESOURCE_DEVICE_ID_NOT_EXIST = -10412;
     constexpr int32_t ERR_DH_FWK_RESOURCE_UUID_NOT_FOUND = -10413;
+    constexpr int32_t ERR_DH_FWK_RESOURCE_CAPINFO_POINTER_NULL = -10414;
 
     /* DistributedHardwareManager errno, range: [-10500, -10599] */
     constexpr int32_t ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE = -10500;
@@ -85,6 +88,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL = -10805;
     constexpr int32_t ERR_DH_FWK_SERVICE_REMOTE_IS_NULL = -10806;
     constexpr int32_t ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL = -10807;
+    constexpr int32_t ERR_DH_FWK_PUBLISHER_LISTENER_IS_NULL = -10808;
 
     /* AccessManager errno, range: [-10900, -10999] */
     constexpr int32_t ERR_DH_FWK_ACCESS_INIT_DM_FAILED = -10900;

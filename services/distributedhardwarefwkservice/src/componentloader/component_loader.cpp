@@ -128,7 +128,12 @@ CompVersion ComponentLoader::GetCompVersionFromComConfig(const CompConfig& cCfg)
 
 int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::map<DHType, CompConfig> &dhtypeMap)
 {
-    auto jsonCfg = json::parse(jsonStr);
+    auto jsonCfg = json::parse(jsonStr, nullptr, false);
+    if (jsonCfg.is_discarded()) {
+        DHLOGE("jsonStr parse failed");
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
+    }
+
     if (jsonCfg.find(COMPONENTSLOAD_DISTRIBUTED_COMPONENTS) == jsonCfg.end()) {
         DHLOGE("not find distributed_components");
         return ERR_DH_FWK_PARA_INVALID;
