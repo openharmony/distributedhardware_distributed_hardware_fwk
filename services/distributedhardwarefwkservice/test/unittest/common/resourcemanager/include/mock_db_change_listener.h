@@ -19,9 +19,6 @@
 #include "distributed_kv_data_manager.h"
 #include "kvstore_observer.h"
 
-#include "db_adapter.h"
-#include "impl_utils.h"
-
 class DBAdapter;
 namespace OHOS {
 namespace DistributedHardware {

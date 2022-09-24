@@ -45,7 +45,7 @@ ohos_unittest("ResourceManagerTest") {
   sources = [
     "src/db_adapter_test.cpp",
     "src/mock_db_change_listener.cpp",
-    "src/resource_manager_test.cpp"
+    "src/resource_manager_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]

@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "capability_info.h"
+#include "constants.h"
 #define private public
 #include "db_adapter.h"
 #undef private
