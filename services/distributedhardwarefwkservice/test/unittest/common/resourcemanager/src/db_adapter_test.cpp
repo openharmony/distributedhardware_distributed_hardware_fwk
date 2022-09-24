@@ -89,7 +89,7 @@ void DbAdapterTest::SetUpTestCase(void)
 
 void DbAdapterTest::TearDownTestCase(void)
 {
-    g_dbAdapterPtr->Init();
+    g_dbAdapterPtr->UnInit();
 
     auto ret = remove(DATABASE_DIR.c_str());
     if (ret != 0) {
@@ -106,23 +106,23 @@ void DbAdapterTest::TearDown()
 }
 
 /**
- * @tc.name: db_Adapter_test_000
+ * @tc.name: db_adapter_test_000
  * @tc.desc: Verify the Init function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(DbAdapterTest, db_Adapter_test_000, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_000, TestSize.Level0)
 {
     EXPECT_EQ(g_dbAdapterPtr->Init(), DH_FWK_SUCCESS);
 }
 
 /**
- * @tc.name: db_Adapter_test_001
+ * @tc.name: db_adapter_test_001
  * @tc.desc: Verify the PutDataBatch function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(DbAdapterTest, db_Adapter_test_001, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_001, TestSize.Level0)
 {
     vector<shared_ptr<CapabilityInfo>> resInfos { CAP_INFO_0, CAP_INFO_1, CAP_INFO_2, CAP_INFO_3, CAP_INFO_4,
         CAP_INFO_5, CAP_INFO_6, CAP_INFO_7, CAP_INFO_8, CAP_INFO_9 };
@@ -139,12 +139,12 @@ HWTEST_F(DbAdapterTest, db_Adapter_test_001, TestSize.Level0)
 }
 
 /**
- * @tc.name: db_Adapter_test_002
+ * @tc.name: db_adapter_test_002
  * @tc.desc: Verify the PutDataBatch function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_Adapter_test_002, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
 {
     std::vector<std::string> keysEmpty;
     std::vector<std::string> valuesEmpty;
