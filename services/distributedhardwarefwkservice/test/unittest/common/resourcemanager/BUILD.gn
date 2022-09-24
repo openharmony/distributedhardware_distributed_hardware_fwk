@@ -42,7 +42,11 @@ config("module_private_config") {
 ohos_unittest("ResourceManagerTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/resource_manager_test.cpp" ]
+  sources = [
+    "src/db_adapter_test.cpp",
+    "src/mock_db_change_listener.cpp",
+    "src/resource_manager_test.cpp"
+  ]
 
   configs = [ ":module_private_config" ]
 
