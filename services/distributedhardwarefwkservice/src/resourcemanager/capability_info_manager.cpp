@@ -58,6 +58,10 @@ int32_t CapabilityInfoManager::Init()
     DHLOGI("CapabilityInfoManager instance init!");
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, GLOBAL_CAPABILITY_ID, shared_from_this());
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr_ is null");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
+    }
     if (dbAdapterPtr_->Init() != DH_FWK_SUCCESS) {
         DHLOGE("Init dbAdapterPtr_ failed");
         return ERR_DH_FWK_RESOURCE_INIT_DB_FAILED;
@@ -432,6 +436,11 @@ void CapabilityInfoManager::HandleCapabilityDeleteChange(const std::vector<Distr
 bool CapabilityInfoManager::IsCapabilityMatchFilter(const std::shared_ptr<CapabilityInfo> &cap,
     const CapabilityInfoFilter &filter, const std::string &value)
 {
+    if (cap == nullptr) {
+        DHLOGE("cap is null");
+        return false;
+    }
+
     bool isMatch = false;
     switch (filter) {
         case CapabilityInfoFilter::FILTER_DH_ID: {

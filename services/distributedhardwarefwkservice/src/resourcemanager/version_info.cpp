@@ -29,10 +29,15 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "VersionInfo"
 
-void VersionInfo::FromJsonString(const std::string &jsonStr)
+int32_t VersionInfo::FromJsonString(const std::string &jsonStr)
 {
-    nlohmann::json jsonObj = nlohmann::json::parse(jsonStr);
+    nlohmann::json jsonObj = nlohmann::json::parse(jsonStr, nullptr, false);
+    if (jsonObj.is_discarded()) {
+        DHLOGE("json string parse failed");
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
+    }
     FromJson(jsonObj, *this);
+    return DH_FWK_SUCCESS;
 }
 
 std::string VersionInfo::ToJsonString() const
