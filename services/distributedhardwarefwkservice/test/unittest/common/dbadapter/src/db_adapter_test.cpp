@@ -98,6 +98,8 @@ void DbAdapterTest::TearDownTestCase(void)
         g_dbAdapterPtr->UnInit();
     }
 
+    g_dbAdapterPtr = nullptr;
+
     auto ret = remove(DATABASE_DIR.c_str());
     if (ret != 0) {
         DHLOGE("remove dir failed, path: %s, errno : %d", DATABASE_DIR.c_str(), errno);
@@ -153,7 +155,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_001, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
 {
-    std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DEV_ID_0) };
+    std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DH_ID_0) };
     std::vector<std::string> values { TEST_DH_ATTR_0 };
 
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keys, values), DH_FWK_SUCCESS);
@@ -167,7 +169,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_003, TestSize.Level0)
 {
-    std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DEV_ID_0) };
+    std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DH_ID_0) };
     std::vector<std::string> valuesEmpty;
 
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keys, valuesEmpty), ERR_DH_FWK_PARA_INVALID);
@@ -199,6 +201,35 @@ HWTEST_F(DbAdapterTest, db_adapter_test_005, TestSize.Level0)
     std::vector<std::string> valuesEmpty;
 
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keysEmpty, valuesEmpty), ERR_DH_FWK_PARA_INVALID);
+}
+
+/**
+ * @tc.name: db_adapter_test_006
+ * @tc.desc: Verify the PutDataBatch function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, db_adapter_test_006, TestSize.Level0)
+{
+    std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DH_ID_0) };
+    std::vector<std::string> values { TEST_DH_ATTR_0, TEST_DH_ATTR_1 };
+
+    EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keys, values), ERR_DH_FWK_PARA_INVALID);
+}
+
+/**
+ * @tc.name: db_adapter_test_007
+ * @tc.desc: Verify the PutDataBatch function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, db_adapter_test_007, TestSize.Level0)
+{
+    g_dbAdapterPtr->kvStoragePtr_ = nullptr;
+    std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DH_ID_0) };
+    std::vector<std::string> values { TEST_DH_ATTR_0 };
+
+    EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keys, values), ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
