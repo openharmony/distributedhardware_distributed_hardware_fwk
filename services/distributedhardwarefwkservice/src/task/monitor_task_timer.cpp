@@ -68,6 +68,11 @@ void MonitorTaskTimer::StartEventRunner()
 {
     DHLOGI("start");
     auto busRunner = AppExecFwk::EventRunner::Create(false);
+    if (busRunner == nullptr) {
+        DHLOGE("busRunner is nullptr!");
+        return;
+    }
+
     {
         std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
         eventHandler_ = std::make_shared<AppExecFwk::EventHandler>(busRunner);
@@ -96,7 +101,9 @@ void MonitorTaskTimer::StopTimer()
     std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
     if (eventHandler_ != nullptr) {
         eventHandler_->RemoveTask(MONITOR_TASK_TIMER_ID);
-        eventHandler_->GetEventRunner()->Stop();
+        if (eventHandler_->GetEventRunner() != nullptr) {
+            eventHandler_->GetEventRunner()->Stop();
+        }
     }
     if (eventHandlerThread_.joinable()) {
         eventHandlerThread_.join();
