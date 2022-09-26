@@ -48,7 +48,7 @@ public:
     EventBus()
     {
         ULOGI("ctor EventBus");
-        if (!eventbusHandler_) {
+        if (eventbusHandler_ == nullptr) {
             eventThread_ = std::thread(&EventBus::StartEvent, this);
             std::unique_lock<std::mutex> lock(eventMutex_);
             eventCon_.wait(lock, [this] {
@@ -60,7 +60,7 @@ public:
     EventBus(const std::string &threadName)
     {
         ULOGI("ctor EventBus threadName: %s", threadName.c_str());
-        if (!eventbusHandler_) {
+        if (eventbusHandler_ == nullptr) {
             eventThread_ = std::thread(&EventBus::StartEventWithName, this, threadName);
             std::unique_lock<std::mutex> lock(eventMutex_);
             eventCon_.wait(lock, [this] {
@@ -72,7 +72,9 @@ public:
     ~EventBus()
     {
         ULOGI("dtor EventBus");
-        eventbusHandler_->GetEventRunner()->Stop();
+        if ((eventbusHandler_ != nullptr) && (eventbusHandler_->GetEventRunner() != nullptr)) {
+            eventbusHandler_->GetEventRunner()->Stop();
+        }
         eventThread_.join();
         eventbusHandler_ = nullptr;
     }

@@ -116,8 +116,7 @@ int32_t VersionInfoManager::GetVersionInfoByDeviceId(const std::string &deviceId
         DHLOGE("Query data from DB by deviceId failed, deviceId: %s", GetAnonyString(deviceId).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    versionInfo.FromJsonString(data);
-    return DH_FWK_SUCCESS;
+    return versionInfo.FromJsonString(data);
 }
 
 void VersionInfoManager::UpdateVersionCache(const VersionInfo &versionInfo)
@@ -176,7 +175,10 @@ int32_t VersionInfoManager::SyncVersionInfoFromDB(const std::string &deviceId)
 
     DHLOGI("Query data from DB by deviceId success, deviceId: %s", GetAnonyString(deviceId).c_str());
     VersionInfo versionInfo;
-    versionInfo.FromJsonString(data);
+    int32_t ret = versionInfo.FromJsonString(data);
+    if (ret != DH_FWK_SUCCESS) {
+        return ret;
+    }
     UpdateVersionCache(versionInfo);
     return DH_FWK_SUCCESS;
 }
@@ -197,7 +199,9 @@ int32_t VersionInfoManager::SyncRemoteVersionInfos()
 
     for (const auto &data : dataVector) {
         VersionInfo versionInfo;
-        versionInfo.FromJsonString(data);
+        if (versionInfo.FromJsonString(data) != DH_FWK_SUCCESS) {
+            continue;
+        }
         const std::string &deviceId = versionInfo.deviceId;
         const std::string &localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
         if (deviceId.compare(localDeviceId) == 0) {
@@ -272,7 +276,9 @@ void VersionInfoManager::HandleVersionAddChange(const std::vector<DistributedKv:
     for (const auto &item : insertRecords) {
         const std::string value = item.value.ToString();
         VersionInfo versionInfo;
-        versionInfo.FromJsonString(value);
+        if (versionInfo.FromJsonString(value) != DH_FWK_SUCCESS) {
+            continue;
+        }
         UpdateVersionCache(versionInfo);
     }
 }
@@ -283,7 +289,9 @@ void VersionInfoManager::HandleVersionUpdateChange(const std::vector<Distributed
     for (const auto &item : updateRecords) {
         const std::string value = item.value.ToString();
         VersionInfo versionInfo;
-        versionInfo.FromJsonString(value);
+        if (versionInfo.FromJsonString(value) != DH_FWK_SUCCESS) {
+            continue;
+        }
         UpdateVersionCache(versionInfo);
     }
 }
@@ -293,12 +301,13 @@ void VersionInfoManager::HandleVersionDeleteChange(const std::vector<Distributed
     DHLOGI("Version delete change");
     for (const auto &item : deleteRecords) {
         const std::string value = item.value.ToString();
-        VersionInfo dhVersion;
-        dhVersion.FromJsonString(value);
-        const std::string &deviceId = dhVersion.deviceId;
-        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
+        VersionInfo versionInfo;
+        if (versionInfo.FromJsonString(value) != DH_FWK_SUCCESS) {
+            continue;
+        }
+        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(versionInfo.deviceId);
         if (uuid.empty()) {
-            DHLOGI("Find uuid failed, deviceId: %s", GetAnonyString(deviceId).c_str());
+            DHLOGI("Find uuid failed, deviceId: %s", GetAnonyString(versionInfo.deviceId).c_str());
             continue;
         }
         DHLOGI("Delete version ,uuid: %s", GetAnonyString(uuid).c_str());
