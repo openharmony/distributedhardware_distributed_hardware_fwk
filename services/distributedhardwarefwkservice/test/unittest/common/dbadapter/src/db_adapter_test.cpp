@@ -60,7 +60,7 @@ const shared_ptr<CapabilityInfo> CAP_INFO_1 =
 const shared_ptr<CapabilityInfo> CAP_INFO_2 =
     make_shared<CapabilityInfo>(TEST_DH_ID_2, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, TEST_DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_3 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_3, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, TEST_DH_ATTR_0);
+    make_shared<CapabilityInfo>(TEST_DH_ID_3, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::HFP, TEST_DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_4 =
     make_shared<CapabilityInfo>(TEST_DH_ID_4, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, TEST_DH_ATTR_0);
 
@@ -71,7 +71,7 @@ const shared_ptr<CapabilityInfo> CAP_INFO_6 =
 const shared_ptr<CapabilityInfo> CAP_INFO_7 =
     make_shared<CapabilityInfo>(TEST_DH_ID_2, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, TEST_DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_8 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_3, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, TEST_DH_ATTR_1);
+    make_shared<CapabilityInfo>(TEST_DH_ID_3, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::HFP, TEST_DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_9 =
     make_shared<CapabilityInfo>(TEST_DH_ID_4, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, TEST_DH_ATTR_1);
 
@@ -145,6 +145,9 @@ HWTEST_F(DbAdapterTest, db_adapter_test_001, TestSize.Level0)
         values.push_back(resInfo->ToJsonString());
     }
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keys, values), DH_FWK_SUCCESS);
+    for (auto &resInfo : resInfos) {
+        g_dbAdapterPtr->RemoveDataByKey(resInfo->GetKey());
+    }
 }
 
 /**
@@ -159,6 +162,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
     std::vector<std::string> values { TEST_DH_ATTR_0 };
 
     EXPECT_EQ(g_dbAdapterPtr->PutDataBatch(keys, values), DH_FWK_SUCCESS);
+    g_dbAdapterPtr->RemoveDataByKey(keys[0]);
 }
 
 /**
