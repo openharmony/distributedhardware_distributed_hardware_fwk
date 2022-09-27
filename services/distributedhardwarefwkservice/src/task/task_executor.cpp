@@ -23,6 +23,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    const uint32_t MAX_TASK_QUEUE_LENGTH = 256;
+}
 IMPLEMENT_SINGLE_INSTANCE(TaskExecutor);
 TaskExecutor::TaskExecutor() : taskThreadFlag_(true)
 {
@@ -46,6 +49,10 @@ void TaskExecutor::PushTask(const std::shared_ptr<Task>& task)
     {
         DHLOGI("Push task: %s", task->GetId().c_str());
         std::unique_lock<std::mutex> lock(taskQueueMtx_);
+        if (taskQueue_.size() > MAX_TASK_QUEUE_LENGTH) {
+            DHLOGE("Task queue is full");
+            return;
+        }
         taskQueue_.push(task);
     }
 

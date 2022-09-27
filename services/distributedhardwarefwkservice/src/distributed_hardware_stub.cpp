@@ -116,20 +116,7 @@ bool DistributedHardwareStub::ValidTopic(uint32_t topic)
     if (topic <= (uint32_t)DHTopic::TOPIC_MIN || topic >= (uint32_t)DHTopic::TOPIC_MAX) {
         return false;
     }
-
     return true;
-}
-
-std::string DistributedHardwareStub::ToJson(const std::unordered_map<DHType, std::string> &versionMap) const
-{
-    nlohmann::json jsonObj;
-    for (const auto &item : versionMap) {
-        nlohmann::json json;
-        json[DH_COMPONENT_TYPE] = item.first;
-        json[DH_COMPONENT_SINK_VER] = item.second;
-        jsonObj[DH_COMPONENT_VERSIONS].emplace_back(json);
-    }
-    return jsonObj.dump();
 }
 } // namespace DistributedHardware
 } // namespace OHOS

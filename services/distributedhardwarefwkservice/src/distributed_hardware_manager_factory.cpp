@@ -71,8 +71,8 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
 {
     std::vector<DmDeviceInfo> deviceList;
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
-    if (deviceList.size() == 0) {
-        DHLOGI("DM report devices offline, exit sa process");
+    if (deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) {
+        DHLOGI("DM report devices offline or deviceList is over size, exit sa process");
         HiSysEventWriteMsg(DHFWK_EXIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
             "dhfwk sa exit end.");
 
@@ -99,14 +99,9 @@ bool DistributedHardwareManagerFactory::IsInit()
 int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &networkId, const std::string &uuid,
     uint16_t deviceType)
 {
-    if (networkId.empty()) {
-        DHLOGE("networkId is empty");
-        return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
-    }
-
-    if (uuid.empty()) {
-        DHLOGE("uuid is empty");
-        return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
+    if (networkId.size() == 0 || networkId.size() > MAX_ID_LEN || uuid.size() == 0 || uuid.size() > MAX_ID_LEN) {
+        DHLOGE("NetworkId or uuid is invalid");
+        return ERR_DH_FWK_PARA_INVALID;
     }
 
     if (DHContext::GetInstance().IsDeviceOnline(uuid)) {
@@ -132,14 +127,9 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
 int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &networkId, const std::string &uuid,
     uint16_t deviceType)
 {
-    if (networkId.empty()) {
-        DHLOGE("networkId is empty");
-        return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
-    }
-
-    if (uuid.empty()) {
-        DHLOGE("uuid is empty");
-        return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
+    if (networkId.empty() || networkId.size() > MAX_ID_LEN || uuid.empty() || uuid.size() > MAX_ID_LEN) {
+        DHLOGE("NetworkId or uuid is invalid");
+        return ERR_DH_FWK_PARA_INVALID;
     }
 
     if (!isInit && !Init()) {
