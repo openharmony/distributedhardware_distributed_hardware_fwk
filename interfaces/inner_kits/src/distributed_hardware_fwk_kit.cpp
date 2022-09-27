@@ -17,6 +17,7 @@
 
 #include <cinttypes>
 
+#include "constants.h"
 #include "dhfwk_sa_manager.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -53,6 +54,10 @@ int32_t DistributedHardwareFwkKit::RegisterPublisherListener(const DHTopic topic
     } else {
         DHLOGI("DHFWK not online, or get proxy failed, save listener temporary");
         std::lock_guard<std::mutex> lock(listenerMutex_);
+        if (listenerMap_.size() >= MAX_TOPIC_SIZE || listenerMap_[topic].size() >= MAX_LISTENER_SIZE) {
+            DHLOGE("listeners are over size!");
+            return ERR_DH_FWK_PUBLISH_LISTENER_OVER_SIZE;
+        }
         listenerMap_[topic].insert(listener);
     }
 
@@ -84,6 +89,10 @@ int32_t DistributedHardwareFwkKit::PublishMessage(const DHTopic topic, const std
     DHLOGI("Publish message, topic: %" PRIu32 ", msg: %s", (uint32_t)topic, message.c_str());
     if (!IsDHTopicValid(topic)) {
         DHLOGE("Topic invalid, topic: " PRIu32, (uint32_t)topic);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (message.empty() || message.size() > MAX_MESSAGE_LEN) {
+        DHLOGE("Message size is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
     }
 

@@ -37,7 +37,6 @@ public:
     int32_t PublishMessage(const DHTopic topic, const std::string &msg) override;
 
 private:
-    std::unordered_map<DHType, std::string> FromJson(const std::string &json) const;
     static inline BrokerDelegator<DistributedHardwareProxy> delegator_;
 };
 } // namespace DistributedHardware

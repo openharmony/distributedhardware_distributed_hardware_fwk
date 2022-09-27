@@ -46,6 +46,10 @@ int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic,
         DHLOGE("remote service is null");
         return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
     }
+    if (DHTopic::TOPIC_MIN > topic || topic > DHTopic::TOPIC_MAX) {
+        DHLOGE("Topic is invalid!");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
 
     MessageParcel data;
     MessageParcel reply;
@@ -91,6 +95,10 @@ int32_t DistributedHardwareProxy::UnregisterPublisherListener(const DHTopic topi
         DHLOGE("remote service is null");
         return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
     }
+    if (DHTopic::TOPIC_MIN > topic || topic > DHTopic::TOPIC_MAX) {
+        DHLOGE("Topic is invalid!");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
 
     MessageParcel data;
     MessageParcel reply;
@@ -129,6 +137,14 @@ int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std:
     if (remote == nullptr) {
         DHLOGE("remote service is null");
         return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
+    }
+    if (DHTopic::TOPIC_MIN > topic || topic > DHTopic::TOPIC_MAX) {
+        DHLOGE("Topic is invalid!");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (msg.empty() || msg.size() > MAX_MESSAGE_LEN) {
+        DHLOGE("Msg is invalid");
+        return ERR_DH_FWK_SERVICE_MSG_INVALID;
     }
 
     MessageParcel data;

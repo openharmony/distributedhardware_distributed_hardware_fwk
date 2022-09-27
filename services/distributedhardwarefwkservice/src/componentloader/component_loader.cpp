@@ -142,7 +142,11 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
     std::vector<CompConfig> vecJsnCfg =
         jsonCfg.at(COMPONENTSLOAD_DISTRIBUTED_COMPONENTS).get<std::vector<CompConfig>>();
     DHLOGI("get distributed_components CompConfig size is %d", vecJsnCfg.size());
-    for (std::vector<CompConfig>::iterator iter = vecJsnCfg.begin(); iter != vecJsnCfg.end(); ++iter) {
+    if (vecJsnCfg.size() == 0 || vecJsnCfg.size() > MAX_COMP_SIZE) {
+        DHLOGE("CompConfig size is invalid!");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    for (auto iter = vecJsnCfg.begin(); iter != vecJsnCfg.end(); ++iter) {
         dhtypeMap.insert(std::pair<DHType, CompConfig>((*iter).type, (*iter)));
         localDHVersion_.compVersions.insert(
             std::pair<DHType, CompVersion>((*iter).type, GetCompVersionFromComConfig(*iter)));
@@ -176,10 +180,6 @@ void ComponentLoader::StoreLocalDHVersionInDB()
 
 void *ComponentLoader::GetHandler(const std::string &soName)
 {
-    if (soName.length() <= 0) {
-        DHLOGE("%s soName length is 0", soName.c_str());
-        return nullptr;
-    }
     char path[PATH_MAX + 1] = {0x00};
     if (soName.length() == 0 || (LIB_LOAD_PATH.length() + soName.length()) > PATH_MAX ||
         realpath((LIB_LOAD_PATH + soName).c_str(), path) == nullptr) {
@@ -307,9 +307,9 @@ int32_t ComponentLoader::ParseConfig()
     int32_t ret;
     DHLOGI("ParseConfig start");
     std::string jsonStr = Readfile(COMPONENTSLOAD_PROFILE_PATH);
-    if (jsonStr.length() == 0) {
-        DHLOGE("profile is empty return");
-        return ERR_DH_FWK_LOADER_COMPONENT_PROFILE_IS_EMPTY;
+    if (jsonStr.length() == 0 || jsonStr.size() > MAX_MESSAGE_LEN) {
+        DHLOGE("ConfigJson size is invalid!");
+        return ERR_DH_FWK_LOADER_CONFIG_JSON_INVALID;
     }
     ret = GetCompPathAndVersion(jsonStr, dhtypeMap);
     if (ret != DH_FWK_SUCCESS) {
@@ -407,7 +407,6 @@ int32_t ComponentLoader::GetSourceSaId(const DHType dhType)
         DHLOGE("DHType not exist, dhType: " PRIu32, (uint32_t)dhType);
         return DEFAULT_SA_ID;
     }
-
     return compHandlerMap_[dhType].sourceSaId;
 }
 
@@ -420,7 +419,6 @@ DHType ComponentLoader::GetDHTypeBySrcSaId(const int32_t saId)
             break;
         }
     }
-
     return type;
 }
 } // namespace DistributedHardware
