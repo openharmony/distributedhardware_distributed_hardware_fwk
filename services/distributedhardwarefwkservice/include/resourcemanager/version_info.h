@@ -27,7 +27,7 @@ struct VersionInfo {
     std::string dhVersion;
     std::unordered_map<DHType, CompVersion> compVersions;
 
-    void FromJsonString(const std::string &jsonStr);
+    int32_t FromJsonString(const std::string &jsonStr);
     std::string ToJsonString() const;
 };
 

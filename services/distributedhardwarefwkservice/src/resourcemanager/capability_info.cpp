@@ -109,7 +109,12 @@ std::string CapabilityInfo::GetAnonymousKey() const
 
 int32_t CapabilityInfo::FromJsonString(const std::string &jsonStr)
 {
-    nlohmann::json jsonObj = nlohmann::json::parse(jsonStr);
+    nlohmann::json jsonObj = nlohmann::json::parse(jsonStr, nullptr, false);
+    if (jsonObj.is_discarded()) {
+        DHLOGE("jsonStr parse failed");
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
+    }
+
     FromJson(jsonObj, *this);
     return DH_FWK_SUCCESS;
 }

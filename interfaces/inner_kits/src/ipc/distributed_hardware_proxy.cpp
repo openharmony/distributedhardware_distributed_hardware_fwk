@@ -36,6 +36,11 @@ const std::unordered_set<DHType> DH_TYPE_SET {
 int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic,
     const sptr<IPublisherListener> &listener)
 {
+    if (listener == nullptr) {
+        DHLOGE("publisher listener is null");
+        return ERR_DH_FWK_PUBLISHER_LISTENER_IS_NULL;
+    }
+
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         DHLOGE("remote service is null");
@@ -76,6 +81,11 @@ int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic,
 int32_t DistributedHardwareProxy::UnregisterPublisherListener(const DHTopic topic,
     const sptr<IPublisherListener> &listener)
 {
+    if (listener == nullptr) {
+        DHLOGE("publisher listener is null");
+        return ERR_DH_FWK_PUBLISHER_LISTENER_IS_NULL;
+    }
+
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         DHLOGE("remote service is null");
@@ -150,22 +160,6 @@ int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std:
     }
 
     return ret;
-}
-
-void from_json(const nlohmann::json &jsonObj, std::unordered_map<DHType, std::string> &versionMap)
-{
-    for (const auto &item : jsonObj.value(DH_COMPONENT_VERSIONS, nlohmann::json {})) {
-        DHType dhType = (DH_TYPE_SET.find(item.value(DH_COMPONENT_TYPE, DHType::UNKNOWN)) != DH_TYPE_SET.end()) ?
-            item.value(DH_COMPONENT_TYPE, DHType::UNKNOWN) :
-            DHType::UNKNOWN;
-        std::string sinkVersion = item.value(DH_COMPONENT_SINK_VER, DH_COMPONENT_DEFAULT_VERSION);
-        versionMap.emplace(std::pair<DHType, std::string>(dhType, sinkVersion));
-    }
-}
-
-std::unordered_map<DHType, std::string> DistributedHardwareProxy::FromJson(const std::string &json) const
-{
-    return nlohmann::json::parse(json).get<std::unordered_map<DHType, std::string>>();
 }
 } // namespace DistributedHardware
 } // namespace OHOS
