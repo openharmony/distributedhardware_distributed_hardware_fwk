@@ -95,11 +95,11 @@ HWTEST_F(DistributedHardwareManagerTest, sendOnLineEvent_test_002, TestSize.Leve
 HWTEST_F(DistributedHardwareManagerTest, sendOnLineEvent_test_003, TestSize.Level0)
 {
     auto onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent("", "", TEST_DEV_TYPE_PAD);
-    ASSERT_EQ(ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY, onlineResult);
+    ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, onlineResult);
 
     onlineResult =
         DistributedHardwareManager::GetInstance().SendOnLineEvent(TEST_DEVICES[0].first, "", TEST_DEV_TYPE_PAD);
-    ASSERT_EQ(ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY, onlineResult);
+    ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, onlineResult);
 
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
     ASSERT_TRUE(TaskBoard::GetInstance().IsAllTaskFinish());
@@ -159,11 +159,11 @@ HWTEST_F(DistributedHardwareManagerTest, sendOffLineEvent_test_003, TestSize.Lev
 {
     auto offlineResult =
         DistributedHardwareManager::GetInstance().SendOffLineEvent("", "", TEST_DEV_TYPE_PAD);
-    ASSERT_EQ(ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY, offlineResult);
+    ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, offlineResult);
 
     offlineResult =
         DistributedHardwareManager::GetInstance().SendOffLineEvent(TEST_DEVICES[0].first, "", TEST_DEV_TYPE_PAD);
-    ASSERT_EQ(ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY, offlineResult);
+    ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, offlineResult);
 
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
     ASSERT_TRUE(TaskBoard::GetInstance().IsAllTaskFinish());

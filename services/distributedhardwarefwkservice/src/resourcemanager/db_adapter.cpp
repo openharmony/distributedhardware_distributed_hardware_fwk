@@ -125,6 +125,10 @@ int32_t DBAdapter::ReInit()
 void DBAdapter::SyncCompleted(const std::map<std::string, DistributedKv::Status> &results)
 {
     DHLOGI("DBAdapter SyncCompleted start");
+    if (results.size() == 0 || results.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("Results size is invalid!");
+        return;
+    }
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     for (const auto &result : results) {
         std::string deviceId = result.first;
@@ -188,14 +192,22 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
             GetAnonyString(keyPrefix).c_str());
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
+    if (allEntries.size() == 0 || allEntries.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("AllEntries size is invalid!");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     for (const auto& item : allEntries) {
         values.push_back(item.value.ToString());
     }
     return DH_FWK_SUCCESS;
 }
 
-int32_t DBAdapter::PutData(const std::string &key, std::string &value)
+int32_t DBAdapter::PutData(const std::string &key, const std::string &value)
 {
+    if (key.empty() || key.size() > MAX_MESSAGE_LEN || value.empty() || value.size() > MAX_MESSAGE_LEN) {
+        DHLOGI("Param is invalid!");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is null");
@@ -218,12 +230,8 @@ int32_t DBAdapter::PutDataBatch(const std::vector<std::string> &keys, const std:
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    if (keys.size() != values.size()) {
-        DHLOGE("Param invalid");
-        return ERR_DH_FWK_PARA_INVALID;
-    }
-    if (keys.empty() || values.empty()) {
-        DHLOGE("keys or values is empty!");
+    if (keys.size() != values.size() || keys.empty() || values.empty()) {
+        DHLOGE("Param is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
     }
     std::vector<DistributedKv::Entry> entries;

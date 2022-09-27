@@ -131,13 +131,17 @@ void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
         GetAnonyString(deviceInfo.deviceName).c_str(), deviceInfo.deviceTypeId);
 
     auto networkId = std::string(deviceInfo.deviceId); // deviceId of DM actually is networkId
+    if (networkId.size() == 0 || networkId.size() > MAX_ID_LEN) {
+        DHLOGE("NetworkId is invalid!");
+        return;
+    }
     auto uuid = GetUUIDBySoftBus(networkId);
 
     // when other device restart, the device receives online and offline messages in sequence
     // uuid is empty call by GetUUIDBySoftBus function. So, get uuid by memory cache when other device restart
     uuid = uuid.empty() ? DHContext::GetInstance().GetUUIDByNetworkId(networkId) : uuid;
-    if (uuid.empty()) {
-        DHLOGI("uuid is empty!");
+    if (uuid.size() == 0 || uuid.size() > MAX_ID_LEN) {
+        DHLOGE("Uuid is invalid!");
         return;
     }
 
@@ -153,8 +157,16 @@ void AccessManager::OnDeviceReady(const DmDeviceInfo &deviceInfo)
     DHLOGI("start, networkId = %s, deviceName = %s, deviceTypeId = %d", GetAnonyString(deviceInfo.deviceId).c_str(),
         GetAnonyString(deviceInfo.deviceName).c_str(), deviceInfo.deviceTypeId);
 
-    auto networkId = std::string(deviceInfo.deviceId); // deviceId of DM actually is networkId
+    auto networkId = std::string(deviceInfo.deviceId);
+    if (networkId.size() == 0 || networkId.size() > MAX_ID_LEN) {
+        DHLOGE("NetworkId is invalid!");
+        return;
+    }
     auto uuid = GetUUIDBySoftBus(networkId);
+    if (uuid.size() == 0 || uuid.size() > MAX_ID_LEN) {
+        DHLOGE("Uuid is invalid!");
+        return;
+    }
     auto ret =
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
     DHLOGI("online result = %d, networkId = %s, uuid = %s", ret, GetAnonyString(networkId).c_str(),
@@ -171,6 +183,10 @@ void AccessManager::SendTrustedDeviceOnline()
 {
     std::vector<DmDeviceInfo> deviceList;
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
+    if (deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) {
+        DHLOGE("DeviceList size is invalid!");
+        return;
+    }
     for (const auto &deviceInfo : deviceList) {
         const auto networkId = std::string(deviceInfo.deviceId);
         const auto uuid = GetUUIDBySoftBus(networkId);

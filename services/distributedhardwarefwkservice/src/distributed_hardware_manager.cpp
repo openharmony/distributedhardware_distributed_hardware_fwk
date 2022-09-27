@@ -83,13 +83,9 @@ int32_t DistributedHardwareManager::SendOnLineEvent(const std::string &networkId
 {
     (void)deviceType;
 
-    if (networkId.empty()) {
-        DHLOGE("networkId is empty");
-        return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
-    }
-    if (uuid.empty()) {
-        DHLOGE("uuid is empty, networkId = %s", GetAnonyString(networkId).c_str());
-        return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
+    if (networkId.size() == 0 || networkId.size() > MAX_ID_LEN || uuid.size() == 0 || uuid.size() > MAX_ID_LEN) {
+        DHLOGE("NetworkId or uuid is invalid");
+        return ERR_DH_FWK_PARA_INVALID;
     }
 
     DHLOGI("networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
@@ -114,14 +110,9 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
 {
     (void)deviceType;
 
-    if (networkId.empty()) {
-        DHLOGE("networkId is empty");
-        return ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY;
-    }
-
-    if (uuid.empty()) {
-        DHLOGW("uuid is empty");
-        return ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY;
+    if (networkId.empty() || networkId.size() > MAX_ID_LEN || uuid.empty() || uuid.size() > MAX_ID_LEN) {
+        DHLOGE("NetworkId or uuid is invalid");
+        return ERR_DH_FWK_PARA_INVALID;
     }
 
     DHLOGI("networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());

@@ -15,8 +15,8 @@
 
 #include <algorithm>
 
+#include "constants.h"
 #include "dh_context.h"
-
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -52,10 +52,12 @@ const DeviceInfo& DHContext::GetDeviceInfo()
 void DHContext::AddOnlineDevice(const std::string &uuid, const std::string &networkId)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    if (!uuid.empty() && !networkId.empty()) {
-        onlineDeviceMap_[uuid] = networkId;
-        deviceIdUUIDMap_[GetDeviceIdByUUID(uuid)] = uuid;
+    if (onlineDeviceMap_.size() > MAX_ONLINE_DEVICE_SIZE || deviceIdUUIDMap_.size() > MAX_ONLINE_DEVICE_SIZE) {
+        DHLOGE("OnlineDeviceMap or deviceIdUUIDMap is over size!");
+        return;
     }
+    onlineDeviceMap_[uuid] = networkId;
+    deviceIdUUIDMap_[GetDeviceIdByUUID(uuid)] = uuid;
 }
 
 void DHContext::RemoveOnlineDevice(const std::string &uuid)

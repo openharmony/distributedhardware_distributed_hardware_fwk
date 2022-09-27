@@ -15,6 +15,7 @@
 
 #include "component_manager.h"
 
+#include <cinttypes>
 #include <future>
 #include <string>
 

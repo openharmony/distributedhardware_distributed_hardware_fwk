@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-#include "publisher_listener_proxy.h"
+#include "constants.h"
 #include "distributed_hardware_log.h"
+#include "publisher_listener_proxy.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -32,6 +33,14 @@ void PublisherListenerProxy::OnMessage(const DHTopic topic, const std::string& m
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         DHLOGE("Get Remote IRemoteObject failed");
+        return;
+    }
+    if (DHTopic::TOPIC_MIN > topic || topic > DHTopic::TOPIC_MAX) {
+        DHLOGE("Topic is invalid!");
+        return;
+    }
+    if (message.size() == 0 || message.size() > MAX_MESSAGE_LEN) {
+        DHLOGE("Message is invalid");
         return;
     }
 

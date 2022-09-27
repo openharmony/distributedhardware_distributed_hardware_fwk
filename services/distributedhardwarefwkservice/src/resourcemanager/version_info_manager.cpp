@@ -196,7 +196,10 @@ int32_t VersionInfoManager::SyncRemoteVersionInfos()
         DHLOGE("Query all data from DB failed");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-
+    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("DataVector Size is invalid!");
+        return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
+    }
     for (const auto &data : dataVector) {
         VersionInfo versionInfo;
         if (versionInfo.FromJsonString(data) != DH_FWK_SUCCESS) {
@@ -256,15 +259,18 @@ int32_t VersionInfoManager::ManualSync(const std::string &networkId)
 void VersionInfoManager::OnChange(const DistributedKv::ChangeNotification &changeNotification)
 {
     DHLOGI("DB data OnChange");
-    if (!changeNotification.GetInsertEntries().empty()) {
+    if (!changeNotification.GetInsertEntries().empty() &&
+        changeNotification.GetInsertEntries().size() <= MAX_DB_RECORD_SIZE) {
         DHLOGI("Handle version data add change");
         HandleVersionAddChange(changeNotification.GetInsertEntries());
     }
-    if (!changeNotification.GetUpdateEntries().empty()) {
+    if (!changeNotification.GetUpdateEntries().empty() &&
+        changeNotification.GetUpdateEntries().size() <= MAX_DB_RECORD_SIZE) {
         DHLOGI("Handle version data update change");
         HandleVersionUpdateChange(changeNotification.GetUpdateEntries());
     }
-    if (!changeNotification.GetDeleteEntries().empty()) {
+    if (!changeNotification.GetDeleteEntries().empty() &&
+        changeNotification.GetDeleteEntries().size() <= MAX_DB_RECORD_SIZE) {
         DHLOGI("Handle version data delete change");
         HandleVersionDeleteChange(changeNotification.GetDeleteEntries());
     }

@@ -71,7 +71,7 @@ bool DistributedHardwareService::Init()
     }
     auto ret = AccessManager::GetInstance()->Init();
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGI("DistributedHardwareService::Init failed.");
+        DHLOGE("DistributedHardwareService::Init failed.");
         HiSysEventWriteErrCodeMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             ret, "dhfwk sa AccessManager init fail.");
         return false;
