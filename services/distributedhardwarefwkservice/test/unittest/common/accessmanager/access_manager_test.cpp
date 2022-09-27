@@ -104,12 +104,12 @@ HWTEST_F(AccessManagerTest, SendOnLineEvent_002, TestSize.Level1)
 
     auto ret =
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent("", TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
-    ASSERT_EQ(ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY, ret);
+    ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
     ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
 
     ret =
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(TEST_DEVICES[0].first, "", TEST_DEV_TYPE_PAD);
-    ASSERT_EQ(ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY, ret);
+    ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
     ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
 }
 
@@ -150,12 +150,12 @@ HWTEST_F(AccessManagerTest, SendOffLineEvent_002, TestSize.Level1)
 
     auto ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent("", TEST_DEVICES[0].second,
         TEST_DEV_TYPE_PAD);
-    ASSERT_EQ(ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY, ret);
+    ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
     ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
 
     ret =
         DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(TEST_DEVICES[0].first, "", TEST_DEV_TYPE_PAD);
-    ASSERT_EQ(ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY, ret);
+    ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
     ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
 }
 

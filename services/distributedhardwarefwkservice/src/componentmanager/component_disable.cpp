@@ -67,6 +67,11 @@ int32_t ComponentDisable::Disable(const std::string &networkId, const std::strin
 int32_t ComponentDisable::OnUnregisterResult(const std::string &networkId, const std::string &dhId, int32_t status,
     const std::string &data)
 {
+    if (networkId.size() == 0 || networkId.size() > MAX_ID_LEN || dhId.size() == 0 || dhId.size() > MAX_ID_LEN ||
+        data.size() == 0 || data.size() > MAX_STRING_LEN) {
+        DHLOGE("Param is invalid!");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     if (status == DH_FWK_SUCCESS) {
         DHLOGI("disable success, networkId = %s, dhId = %s, data = %s.", GetAnonyString(networkId).c_str(),
             GetAnonyString(dhId).c_str(), data.c_str());

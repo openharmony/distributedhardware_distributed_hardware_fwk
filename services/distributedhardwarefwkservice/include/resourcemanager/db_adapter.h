@@ -55,7 +55,7 @@ public:
     void SyncCompleted(const std::map<std::string, DistributedKv::Status> &results) override;
     int32_t GetDataByKey(const std::string &key, std::string &data);
     int32_t GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<std::string> &values);
-    int32_t PutData(const std::string &key, std::string &value);
+    int32_t PutData(const std::string &key, const std::string &value);
     int32_t PutDataBatch(const std::vector<std::string> &keys, const std::vector<std::string> &values);
     void CreateManualSyncCount(const std::string &deviceId);
     void RemoveManualSyncCount(const std::string &deviceId);

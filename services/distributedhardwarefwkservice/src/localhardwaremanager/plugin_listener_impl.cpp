@@ -18,6 +18,7 @@
 #include "anonymous_string.h"
 #include "capability_info.h"
 #include "capability_info_manager.h"
+#include "constants.h"
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -29,6 +30,10 @@ namespace DistributedHardware {
 
 void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::string &attrs)
 {
+    if (dhId.size() == 0 || dhId.size() > MAX_ID_LEN || attrs.size() == 0 || attrs.size() > MAX_STRING_LEN) {
+        DHLOGE("Param is invalid!");
+        return;
+    }
     DHLOGI("plugin start, dhId: %s", GetAnonyString(dhId).c_str());
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
@@ -44,6 +49,10 @@ void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::stri
 
 void PluginListenerImpl::UnPluginHardware(const std::string &dhId)
 {
+    if (dhId.size() == 0 || dhId.size() > MAX_ID_LEN) {
+        DHLOGE("DhId is invalid!");
+        return;
+    }
     DHLOGI("unplugin start, dhId: %s", GetAnonyString(dhId).c_str());
     std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
     std::shared_ptr<CapabilityInfo> capability = nullptr;

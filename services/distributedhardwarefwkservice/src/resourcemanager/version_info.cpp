@@ -68,30 +68,31 @@ void ToJson(nlohmann::json &jsonObject, const VersionInfo &versionInfo)
 
 void FromJson(const nlohmann::json &jsonObject, CompVersion &compVer)
 {
-    if (jsonObject.find(NAME) != jsonObject.end()) {
+    if (jsonObject.find(NAME) != jsonObject.end() && jsonObject[NAME].is_string()) {
         compVer.name = jsonObject.at(NAME).get<std::string>();
     }
-    if (jsonObject.find(TYPE) != jsonObject.end()) {
+    if (jsonObject.find(TYPE) != jsonObject.end() && jsonObject[TYPE].is_number_unsigned() &&
+        jsonObject[TYPE] <= DHType::MAX_DH) {
         compVer.dhType = jsonObject.at(TYPE).get<DHType>();
     }
-    if (jsonObject.find(HANDLER) != jsonObject.end()) {
+    if (jsonObject.find(HANDLER) != jsonObject.end() && jsonObject[HANDLER].is_string()) {
         compVer.handlerVersion = jsonObject.at(HANDLER).get<std::string>();
     }
-    if (jsonObject.find(SOURCE_VER) != jsonObject.end()) {
+    if (jsonObject.find(SOURCE_VER) != jsonObject.end() && jsonObject[SOURCE_VER].is_string()) {
         compVer.sourceVersion = jsonObject.at(SOURCE_VER).get<std::string>();
     }
-    if (jsonObject.find(SINK_VER) != jsonObject.end()) {
+    if (jsonObject.find(SINK_VER) != jsonObject.end() && jsonObject[SINK_VER].is_string()) {
         compVer.sinkVersion = jsonObject.at(SINK_VER).get<std::string>();
     }
 }
 
 void FromJson(const nlohmann::json &jsonObject, VersionInfo &versionInfo)
 {
-    if (jsonObject.find(DEV_ID) != jsonObject.end()) {
+    if (jsonObject.find(DEV_ID) != jsonObject.end() && jsonObject[DEV_ID].is_string()) {
         versionInfo.deviceId = jsonObject.at(DEV_ID).get<std::string>();
     }
 
-    if (jsonObject.find(DH_VER) != jsonObject.end()) {
+    if (jsonObject.find(DH_VER) != jsonObject.end() && jsonObject[DH_VER].is_string()) {
         versionInfo.dhVersion = jsonObject.at(DH_VER).get<std::string>();
     }
 

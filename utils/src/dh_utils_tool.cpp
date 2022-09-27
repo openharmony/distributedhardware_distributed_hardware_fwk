@@ -82,6 +82,10 @@ std::string GetUUIDBySoftBus(const std::string &networkId)
 
 std::string GetDeviceIdByUUID(const std::string &uuid)
 {
+    if (uuid.size() == 0 || uuid.size() > MAX_ID_LEN) {
+        DHLOGE("uuid is invalid!");
+        return "";
+    }
     return Sha256(uuid);
 }
 

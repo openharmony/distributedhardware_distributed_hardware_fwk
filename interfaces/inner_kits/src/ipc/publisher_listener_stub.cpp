@@ -15,6 +15,7 @@
 
 #include "publisher_listener_stub.h"
 
+#include "constants.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
@@ -39,7 +40,15 @@ int32_t PublisherListenerStub::OnRemoteRequest(
     switch (msgCode) {
         case IPublisherListener::Message::ON_MESSAGE: {
             DHTopic topic = (DHTopic)data.ReadUint32();
+            if (DHTopic::TOPIC_MIN > topic || topic > DHTopic::TOPIC_MAX) {
+                DHLOGE("Topic is invalid!");
+                return ERR_INVALID_DATA;
+            }
             std::string message = data.ReadString();
+            if (message.empty() || message.size() > MAX_STRING_LEN) {
+                DHLOGE("Message is invalid!");
+                return ERR_INVALID_DATA;
+            }
             OnMessage(topic, message);
             break;
         }

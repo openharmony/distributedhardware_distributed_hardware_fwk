@@ -152,6 +152,10 @@ void LocalHardwareManager::CheckNonExistCapabilityInfo(const std::vector<DHItem>
 void LocalHardwareManager::GetLocalCapabilityMapByPrefix(const DHType dhType, CapabilityInfoMap &capabilityInfoMap)
 {
     std::string localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+    if (localDeviceId.size() == 0 || localDeviceId.size() > MAX_ID_LEN) {
+        DHLOGE("LocalDeviceId is invalid");
+        return;
+    }
     if (DHTypePrefixMap.find(dhType) == DHTypePrefixMap.end()) {
         DHLOGE("DHTypePrefixMap can not find dhType: %#X", dhType);
         return;

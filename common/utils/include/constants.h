@@ -24,6 +24,13 @@ namespace DistributedHardware {
     constexpr int32_t LOG_MAX_LEN = 4096;
     constexpr int32_t ENABLE_TIMEOUT_MS = 1000;
     constexpr int32_t DISABLE_TIMEOUT_MS = 500;
+    constexpr uint32_t MAX_STRING_LEN = 40 * 1024 * 1024;
+    constexpr uint32_t MAX_ID_LEN = 256;
+    constexpr uint32_t MAX_TOPIC_SIZE = 128;
+    constexpr uint32_t MAX_LISTENER_SIZE = 256;
+    constexpr uint32_t MAX_COMP_SIZE = 128;
+    constexpr uint32_t MAX_DB_DATA_SIZE = 10000;
+    constexpr uint32_t MAX_ONLINE_DEVICE_SIZE = 10000;
     const std::u16string DHMS_STUB_INTERFACE_TOKEN = u"ohos.distributedhardware.accessToken";
     const std::string COMPONENTSLOAD_PROFILE_PATH =
         R"(/vendor/etc/distributedhardware/distributed_hardware_components_cfg.json)";
