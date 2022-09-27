@@ -307,7 +307,7 @@ int32_t ComponentLoader::ParseConfig()
     int32_t ret;
     DHLOGI("ParseConfig start");
     std::string jsonStr = Readfile(COMPONENTSLOAD_PROFILE_PATH);
-    if (jsonStr.length() == 0 || jsonStr.size() > MAX_STRING_LEN) {
+    if (jsonStr.length() == 0 || jsonStr.size() > MAX_MESSAGE_LEN) {
         DHLOGE("ConfigJson size is invalid!");
         return ERR_DH_FWK_LOADER_CONFIG_JSON_INVALID;
     }

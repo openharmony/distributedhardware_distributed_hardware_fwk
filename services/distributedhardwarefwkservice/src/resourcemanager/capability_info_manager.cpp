@@ -98,7 +98,7 @@ int32_t CapabilityInfoManager::SyncDeviceInfoFromDB(const std::string &deviceId)
         DHLOGE("Query data from DB by deviceId failed, id: %s", GetAnonyString(deviceId).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_DATA_SIZE) {
+    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
         DHLOGE("DataVector size is invalid!");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
@@ -126,7 +126,7 @@ int32_t CapabilityInfoManager::SyncRemoteCapabilityInfos()
         DHLOGE("Query all data from DB failed");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_DATA_SIZE) {
+    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
         DHLOGE("DataVector size is invalid!");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
@@ -153,7 +153,7 @@ int32_t CapabilityInfoManager::SyncRemoteCapabilityInfos()
 
 int32_t CapabilityInfoManager::AddCapability(const std::vector<std::shared_ptr<CapabilityInfo>> &resInfos)
 {
-    if (resInfos.size() == 0 || resInfos.size() > MAX_DB_DATA_SIZE) {
+    if (resInfos.size() == 0 || resInfos.size() > MAX_DB_RECORD_SIZE) {
         DHLOGE("ResInfos size is invalid!");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
@@ -327,17 +327,17 @@ void CapabilityInfoManager::OnChange(const DistributedKv::ChangeNotification &ch
 {
     DHLOGI("CapabilityInfoManager: DB data OnChange");
     if (!changeNotification.GetInsertEntries().empty() &&
-        changeNotification.GetInsertEntries().size() <= MAX_DB_DATA_SIZE) {
+        changeNotification.GetInsertEntries().size() <= MAX_DB_RECORD_SIZE) {
         DHLOGI("Handle capability data add change");
         HandleCapabilityAddChange(changeNotification.GetInsertEntries());
     }
     if (!changeNotification.GetUpdateEntries().empty() &&
-        changeNotification.GetUpdateEntries().size() <= MAX_DB_DATA_SIZE) {
+        changeNotification.GetUpdateEntries().size() <= MAX_DB_RECORD_SIZE) {
         DHLOGI("Handle capability data update change");
         HandleCapabilityUpdateChange(changeNotification.GetUpdateEntries());
     }
     if (!changeNotification.GetDeleteEntries().empty() &&
-        changeNotification.GetDeleteEntries().size() <= MAX_DB_DATA_SIZE) {
+        changeNotification.GetDeleteEntries().size() <= MAX_DB_RECORD_SIZE) {
         DHLOGI("Handle capability data delete change");
         HandleCapabilityDeleteChange(changeNotification.GetDeleteEntries());
     }
@@ -556,7 +556,7 @@ int32_t CapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, 
         DHLOGE("Query capability info from db failed, key: %s", GetAnonyString(keyPrefix).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_DATA_SIZE) {
+    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
         DHLOGE("DataVector size is invalid!");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }

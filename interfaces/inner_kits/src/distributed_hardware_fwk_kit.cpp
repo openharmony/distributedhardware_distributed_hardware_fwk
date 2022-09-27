@@ -91,7 +91,7 @@ int32_t DistributedHardwareFwkKit::PublishMessage(const DHTopic topic, const std
         DHLOGE("Topic invalid, topic: " PRIu32, (uint32_t)topic);
         return ERR_DH_FWK_PARA_INVALID;
     }
-    if (message.empty() || message.size() > MAX_STRING_LEN) {
+    if (message.empty() || message.size() > MAX_MESSAGE_LEN) {
         DHLOGE("Message size is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
     }

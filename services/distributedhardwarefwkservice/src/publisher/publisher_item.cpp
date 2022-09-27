@@ -64,7 +64,7 @@ void PublisherItem::RemoveListener(const sptr<IPublisherListener> &listener)
 
 void PublisherItem::PublishMessage(const std::string &message)
 {
-    if (message.size() == 0 || message.size() > MAX_STRING_LEN) {
+    if (message.size() == 0 || message.size() > MAX_MESSAGE_LEN) {
         DHLOGE("Message is invalid");
         return;
     }

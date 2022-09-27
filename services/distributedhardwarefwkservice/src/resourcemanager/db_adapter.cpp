@@ -125,7 +125,7 @@ int32_t DBAdapter::ReInit()
 void DBAdapter::SyncCompleted(const std::map<std::string, DistributedKv::Status> &results)
 {
     DHLOGI("DBAdapter SyncCompleted start");
-    if (results.size() == 0 || results.size() > MAX_DB_DATA_SIZE) {
+    if (results.size() == 0 || results.size() > MAX_DB_RECORD_SIZE) {
         DHLOGE("Results size is invalid!");
         return;
     }
@@ -192,7 +192,7 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
             GetAnonyString(keyPrefix).c_str());
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
-    if (allEntries.size() == 0 || allEntries.size() > MAX_DB_DATA_SIZE) {
+    if (allEntries.size() == 0 || allEntries.size() > MAX_DB_RECORD_SIZE) {
         DHLOGE("AllEntries size is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
     }
@@ -204,7 +204,7 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
 
 int32_t DBAdapter::PutData(const std::string &key, const std::string &value)
 {
-    if (key.empty() || key.size() > MAX_STRING_LEN || value.empty() || value.size() > MAX_STRING_LEN) {
+    if (key.empty() || key.size() > MAX_MESSAGE_LEN || value.empty() || value.size() > MAX_MESSAGE_LEN) {
         DHLOGI("Param is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
     }

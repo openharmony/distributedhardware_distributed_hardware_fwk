@@ -45,7 +45,7 @@ int32_t PublisherListenerStub::OnRemoteRequest(
                 return ERR_INVALID_DATA;
             }
             std::string message = data.ReadString();
-            if (message.empty() || message.size() > MAX_STRING_LEN) {
+            if (message.empty() || message.size() > MAX_MESSAGE_LEN) {
                 DHLOGE("Message is invalid!");
                 return ERR_INVALID_DATA;
             }

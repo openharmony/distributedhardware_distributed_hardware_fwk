@@ -142,7 +142,7 @@ int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std:
         DHLOGE("Topic is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
     }
-    if (msg.empty() || msg.size() > MAX_STRING_LEN) {
+    if (msg.empty() || msg.size() > MAX_MESSAGE_LEN) {
         DHLOGE("Msg is invalid");
         return ERR_DH_FWK_SERVICE_MSG_INVALID;
     }

@@ -30,7 +30,7 @@ namespace DistributedHardware {
 
 void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::string &attrs)
 {
-    if (dhId.size() == 0 || dhId.size() > MAX_ID_LEN || attrs.size() == 0 || attrs.size() > MAX_STRING_LEN) {
+    if (dhId.size() == 0 || dhId.size() > MAX_ID_LEN || attrs.size() == 0 || attrs.size() > MAX_MESSAGE_LEN) {
         DHLOGE("Param is invalid!");
         return;
     }
