@@ -68,11 +68,11 @@ int32_t ComponentEnable::OnRegisterResult(const std::string &networkId, const st
     const std::string &data)
 {
     if (status == DH_FWK_SUCCESS) {
-        DHLOGI("enable success, networkId = %s, dhId = %s, data = %s.", GetAnonyString(networkId).c_str(),
-            GetAnonyString(dhId).c_str(), data.c_str());
+        DHLOGI("enable success, networkId = %s, dhId = %s.", GetAnonyString(networkId).c_str(),
+            GetAnonyString(dhId).c_str());
     } else {
-        DHLOGE("enable failed, networkId = %s, dhId = %s, status = %d, data = %s.", GetAnonyString(networkId).c_str(),
-            GetAnonyString(dhId).c_str(), status, data.c_str());
+        DHLOGE("enable failed, networkId = %s, dhId = %s, status = %d.", GetAnonyString(networkId).c_str(),
+            GetAnonyString(dhId).c_str(), status);
     }
 
     std::unique_lock<std::mutex> lock(mutex_);

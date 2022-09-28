@@ -68,11 +68,11 @@ int32_t ComponentDisable::OnUnregisterResult(const std::string &networkId, const
     const std::string &data)
 {
     if (status == DH_FWK_SUCCESS) {
-        DHLOGI("disable success, networkId = %s, dhId = %s, data = %s.", GetAnonyString(networkId).c_str(),
-            GetAnonyString(dhId).c_str(), data.c_str());
+        DHLOGI("disable success, networkId = %s, dhId = %s.", GetAnonyString(networkId).c_str(),
+            GetAnonyString(dhId).c_str());
     } else {
-        DHLOGE("disable failed, networkId = %s, dhId = %s, status = %d, data = %s.", GetAnonyString(networkId).c_str(),
-            GetAnonyString(dhId).c_str(), status, data.c_str());
+        DHLOGE("disable failed, networkId = %s, dhId = %s, status = %d.", GetAnonyString(networkId).c_str(),
+            GetAnonyString(dhId).c_str(), status);
     }
 
     std::unique_lock<std::mutex> lock(mutex_);
