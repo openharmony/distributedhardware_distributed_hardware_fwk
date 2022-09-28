@@ -86,7 +86,7 @@ int32_t DistributedHardwareFwkKit::UnregisterPublisherListener(const DHTopic top
 
 int32_t DistributedHardwareFwkKit::PublishMessage(const DHTopic topic, const std::string &message)
 {
-    DHLOGI("Publish message, topic: %" PRIu32 ", msg: %s", (uint32_t)topic, message.c_str());
+    DHLOGI("Publish message, topic: " PRIu32, (uint32_t)topic);
     if (!IsDHTopicValid(topic)) {
         DHLOGE("Topic invalid, topic: " PRIu32, (uint32_t)topic);
         return ERR_DH_FWK_PARA_INVALID;
