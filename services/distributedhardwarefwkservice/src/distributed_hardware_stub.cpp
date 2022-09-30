@@ -105,7 +105,7 @@ int32_t DistributedHardwareStub::PublishMessageInner(MessageParcel &data, Messag
 
     DHTopic topic = (DHTopic)topicInt;
     std::string message = data.ReadString();
-    DHLOGI("Publish Message, topic: %" PRIu32 ", message: %s", (uint32_t)topic, message.c_str());
+    DHLOGI("Publish message, topic: %" PRIu32, (uint32_t)topic);
     PublishMessage(topic, message);
     reply.WriteInt32(DH_FWK_SUCCESS);
     return DH_FWK_SUCCESS;
