@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "enableedcompsdump_fuzzer.h"
+#include "enabledcompsdump_fuzzer.h"
 
 #include <algorithm>
 #include <chrono>
