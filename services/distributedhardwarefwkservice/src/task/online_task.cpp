@@ -47,7 +47,7 @@ void OnLineTask::DoTask()
 {
     DHLOGD("start online task, id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
     this->SetTaskState(TaskState::RUNNING);
-    for (auto& step : this->GetTaskSteps()) {
+    for (const auto& step : this->GetTaskSteps()) {
         switch (step) {
             case TaskStep::SYNC_ONLINE_INFO: {
                 DoSyncInfo();
