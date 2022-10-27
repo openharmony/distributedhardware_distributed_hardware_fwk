@@ -30,7 +30,7 @@ MockOffLineTask::MockOffLineTask(const std::string &networkId, const std::string
 
 void MockOffLineTask::CreateDisableTask()
 {
-    for (auto &devInfo : offLineDevInfos) {
+    for (const auto &devInfo : offLineDevInfos) {
         TaskParam taskParam = {
             .networkId = devInfo.networkId,
             .uuid = devInfo.uuid,
