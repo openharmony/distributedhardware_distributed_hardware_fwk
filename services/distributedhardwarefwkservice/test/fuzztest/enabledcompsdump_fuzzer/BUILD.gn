@@ -18,9 +18,9 @@ import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("EnableedCompsDumpFuzzTest") {
+ohos_fuzztest("EnabledCompsDumpFuzzTest") {
   module_out_path = "distributed_hardware_fwk/enableedcompsdump"
-  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/enableedcompsdump_fuzzer"
+  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/enabledcompsdump_fuzzer"
 
   include_dirs = [
     "//commonlibrary/c_utils/base/include",
@@ -40,13 +40,13 @@ ohos_fuzztest("EnableedCompsDumpFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "enableedcompsdump_fuzzer.cpp" ]
+  sources = [ "enabledcompsdump_fuzzer.cpp" ]
 
   deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"EnableedCompsDumpFuzzTest\"",
+    "DH_LOG_TAG=\"EnabledCompsDumpFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
@@ -57,6 +57,6 @@ ohos_fuzztest("EnableedCompsDumpFuzzTest") {
 group("fuzztest") {
   testonly = true
 
-  deps = [ ":EnableedCompsDumpFuzzTest" ]
+  deps = [ ":EnabledCompsDumpFuzzTest" ]
 }
 ###############################################################################
