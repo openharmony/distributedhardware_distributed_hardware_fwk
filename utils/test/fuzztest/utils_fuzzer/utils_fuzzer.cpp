@@ -31,7 +31,7 @@ void GetAnonyStringTest(const uint8_t* data, size_t size)
     }
 
     std::string str(reinterpret_cast<const char*>(data), size);
-    std::string anonyStr = GetAnonyString(str);
+    GetAnonyString(str);
 }
 
 void GetAnonyInt32Test(const uint8_t* data, size_t size)
@@ -41,7 +41,7 @@ void GetAnonyInt32Test(const uint8_t* data, size_t size)
     }
 
     int32_t i = *(reinterpret_cast<const int32_t*>(data));
-    std::string anonyStr = GetAnonyInt32(i);
+    GetAnonyInt32(i);
 }
 
 void UtilsToolTest(const uint8_t* data, size_t size)
@@ -52,8 +52,8 @@ void UtilsToolTest(const uint8_t* data, size_t size)
 
     std::string networkId(reinterpret_cast<const char*>(data), size);
     std::string uuid(reinterpret_cast<const char*>(data), size);
-    std::string uuidStr = GetUUIDBySoftBus(networkId);
-    std::string deviceIdStr = GetDeviceIdByUUID(uuid);
+    GetUUIDBySoftBus(networkId);
+    GetDeviceIdByUUID(uuid);
 }
 }
 }

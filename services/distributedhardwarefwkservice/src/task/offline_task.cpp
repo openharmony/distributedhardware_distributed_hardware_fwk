@@ -54,7 +54,7 @@ void OffLineTask::DoTaskInner()
 {
     DHLOGD("start offline task, id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
     this->SetTaskState(TaskState::RUNNING);
-    for (auto& step : this->GetTaskSteps()) {
+    for (const auto& step : this->GetTaskSteps()) {
         switch (step) {
             case TaskStep::UNREGISTER_OFFLINE_DISTRIBUTED_HARDWARE: {
                 CreateDisableTask();
