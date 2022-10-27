@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "accessmanager_fuzzer.h"
+#include "enabledcompsdump_fuzzer.h"
 
 #include <algorithm>
 #include <chrono>
@@ -22,28 +22,33 @@
 #include <string>
 #include <unistd.h>
 
-#include "access_manager.h"
 #include "distributed_hardware_errno.h"
-#include "distributed_hardware_manager_factory.h"
+#include "enabled_comps_dump.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 namespace {
-    constexpr uint32_t SLEEP_TIME_US = 10 * 1000;
+    const uint32_t DH_TYPE_SIZE = 10;
+    const DHType dhTypeFuzz[DH_TYPE_SIZE] = {
+        DHType::CAMERA, DHType::AUDIO, DHType::SCREEN, DHType::VIRMODEM_MIC,
+        DHType::INPUT, DHType::A2D, DHType::GPS, DHType::HFP, DHType::VIRMODEM_SPEAKER
+    };
 }
 
-void AccessManagerFuzzTest(const uint8_t* data, size_t size)
+void EnableedCompsDumpFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size <= sizeof(DmDeviceInfo))) {
+    if ((data == nullptr) || (size <= 0)) {
         return;
     }
 
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::string dhId(reinterpret_cast<const char*>(data), size);
+    DHType dhType = dhTypeFuzz[data[0] % DH_TYPE_SIZE];
     
-    AccessManager::GetInstance()->Init();
-    const DmDeviceInfo deviceInfo = *(reinterpret_cast<const DmDeviceInfo *>(data));
-    AccessManager::GetInstance()->OnDeviceReady(deviceInfo);
-
-    usleep(SLEEP_TIME_US);
+    std::set<HidumpCompInfo> compInfoSet {};
+    EnabledCompsDump::GetInstance().DumpEnabledComp(networkId, dhType, dhId);
+    EnabledCompsDump::GetInstance().Dump(compInfoSet);
+    EnabledCompsDump::GetInstance().DumpDisabledComp(networkId, dhType, dhId);
 }
 }
 }
@@ -52,7 +57,7 @@ void AccessManagerFuzzTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DistributedHardware::AccessManagerFuzzTest(data, size);
+    OHOS::DistributedHardware::EnableedCompsDumpFuzzTest(data, size);
     return 0;
 }
 
