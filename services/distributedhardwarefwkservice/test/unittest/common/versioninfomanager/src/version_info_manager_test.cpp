@@ -138,22 +138,11 @@ HWTEST_F(VersionInfoManagerTest, version_info_manager_test_001, TestSize.Level0)
 
 /**
  * @tc.name:version_info_manager_test_002
- * @tc.desc: Verify the VersionInfoManager SyncRemoteVersionInfos function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSJE
- */
-HWTEST_F(VersionInfoManagerTest, version_info_manager_test_002, TestSize.Level0)
-{
-    EXPECT_EQ(VersionInfoManager::GetInstance()->SyncRemoteVersionInfos(), DH_FWK_SUCCESS);
-}
-
-/**
- * @tc.name:version_info_manager_test_003
  * @tc.desc: Verify the VersionInfoManager AddVersion function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(VersionInfoManagerTest, version_info_manager_test_004, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, version_info_manager_test_002, TestSize.Level0)
 {
     for (const auto& verInfo : g_versionInfos) {
         EXPECT_EQ(VersionInfoManager::GetInstance()->AddVersion(verInfo), DH_FWK_SUCCESS);
@@ -161,12 +150,12 @@ HWTEST_F(VersionInfoManagerTest, version_info_manager_test_004, TestSize.Level0)
 }
 
 /**
- * @tc.name:version_info_manager_test_005
+ * @tc.name:version_info_manager_test_003
  * @tc.desc: Verify the VersionInfoManager GetVersionInfoByDeviceId function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(VersionInfoManagerTest, version_info_manager_test_005, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, version_info_manager_test_003, TestSize.Level0)
 {
     VersionInfo versionInfo;
     for (const auto& verInfo : g_versionInfos) {
@@ -176,23 +165,23 @@ HWTEST_F(VersionInfoManagerTest, version_info_manager_test_005, TestSize.Level0)
 }
 
 /**
- * @tc.name:version_info_manager_test_006
+ * @tc.name:version_info_manager_test_004
  * @tc.desc: Verify the VersionInfoManager SyncVersionInfoFromDB function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(VersionInfoManagerTest, version_info_manager_test_006, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, version_info_manager_test_004, TestSize.Level0)
 {
     EXPECT_EQ(VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(DEV_ID_1), DH_FWK_SUCCESS);
 }
 
 /**
- * @tc.name:version_info_manager_test_007
+ * @tc.name:version_info_manager_test_005
  * @tc.desc: Verify the VersionInfoManager UnInit function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(VersionInfoManagerTest, version_info_manager_test_007, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, version_info_manager_test_005, TestSize.Level0)
 {
     EXPECT_EQ(VersionInfoManager::GetInstance()->UnInit(), DH_FWK_SUCCESS);
 }
