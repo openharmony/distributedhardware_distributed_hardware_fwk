@@ -38,7 +38,6 @@ void AccessManagerFuzzTest(const uint8_t* data, size_t size)
         return;
     }
 
-    
     AccessManager::GetInstance()->Init();
     const DmDeviceInfo deviceInfo = *(reinterpret_cast<const DmDeviceInfo *>(data));
     AccessManager::GetInstance()->OnDeviceReady(deviceInfo);
