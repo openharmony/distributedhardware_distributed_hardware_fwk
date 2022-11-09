@@ -35,9 +35,6 @@
 class DBAdapter;
 namespace OHOS {
 namespace DistributedHardware {
-namespace {
-    constexpr int32_t MANUAL_SYNC_TIMEOUT = 1;
-}
 class CapabilityInfoManager : public std::enable_shared_from_this<CapabilityInfoManager>,
                               public EventSender,
                               public DistributedKv::KvStoreObserver,
@@ -89,7 +86,7 @@ public:
     /* Actively synchronizes data */
     int32_t ManualSync(const std::string &networkId);
     /* Database data changes callback */
-    virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
+    void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     /* EventBus async processing callback */
     void OnEvent(CapabilityInfoEvent &e) override;
 

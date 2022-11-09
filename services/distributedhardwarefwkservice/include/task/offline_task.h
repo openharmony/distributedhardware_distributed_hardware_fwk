@@ -26,11 +26,11 @@ class OffLineTask : public Task {
 public:
     OffLineTask() = delete;
     OffLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId, const DHType dhType);
-    virtual ~OffLineTask();
-    virtual void DoTask();
+    ~OffLineTask() override;
+    void DoTask() override;
 
     virtual void NotifyFatherFinish(std::string taskId);
-    virtual void AddChildrenTask(std::shared_ptr<Task> childrenTask);
+    void AddChildrenTask(std::shared_ptr<Task> childrenTask) override;
 
 private:
     /* OffLineTask should wait until all Disable task finish, we run it in a independent thread */

@@ -32,7 +32,13 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "DBAdapter"
 
 namespace {
-const std::string DATABASE_DIR = "/data/service/el1/public/database/";
+    constexpr int32_t MAX_INIT_RETRY_TIMES = 20;
+    constexpr int32_t INIT_RETRY_SLEEP_INTERVAL = 200 * 1000; // 200ms
+    constexpr int32_t MANUAL_SYNC_TIMES = 6;
+    constexpr int32_t MANUAL_SYNC_INTERVAL = 100 * 1000; // 100ms
+    constexpr int32_t DIED_CHECK_MAX_TIMES = 300;
+    constexpr int32_t DIED_CHECK_INTERVAL = 100 * 1000; // 100ms
+    const std::string DATABASE_DIR = "/data/service/el1/public/database/";
 }
 
 DBAdapter::DBAdapter(const std::string &appId, const std::string &storeId,
@@ -360,7 +366,7 @@ void DBAdapter::UnRegisterManualSyncListener()
 void DBAdapter::OnRemoteDied()
 {
     DHLOGI("OnRemoteDied, recover db begin");
-    auto ReInitTask = [this] {
+    auto reInitTask = [this] {
         int32_t times = 0;
         while (times < DIED_CHECK_MAX_TIMES) {
             // init kvStore.
@@ -375,7 +381,7 @@ void DBAdapter::OnRemoteDied()
             usleep(DIED_CHECK_INTERVAL);
         }
     };
-    DHContext::GetInstance().GetEventBus()->PostTask(ReInitTask, "ReInitTask", 0);
+    DHContext::GetInstance().GetEventBus()->PostTask(reInitTask, "reInitTask", 0);
     DHLOGI("OnRemoteDied, recover db end");
 }
 
