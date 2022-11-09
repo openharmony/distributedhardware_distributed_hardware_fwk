@@ -35,7 +35,7 @@ void PublisherListenerProxy::OnMessage(const DHTopic topic, const std::string& m
         DHLOGE("Get Remote IRemoteObject failed");
         return;
     }
-    if (DHTopic::TOPIC_MIN > topic || topic > DHTopic::TOPIC_MAX) {
+    if (topic < DHTopic::TOPIC_MIN || topic > DHTopic::TOPIC_MAX) {
         DHLOGE("Topic is invalid!");
         return;
     }

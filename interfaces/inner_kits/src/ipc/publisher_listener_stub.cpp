@@ -39,8 +39,8 @@ int32_t PublisherListenerStub::OnRemoteRequest(
     IPublisherListener::Message msgCode = static_cast<IPublisherListener::Message>(code);
     switch (msgCode) {
         case IPublisherListener::Message::ON_MESSAGE: {
-            DHTopic topic = (DHTopic)data.ReadUint32();
-            if (DHTopic::TOPIC_MIN > topic || topic > DHTopic::TOPIC_MAX) {
+            DHTopic topic = static_cast<DHTopic>(data.ReadUint32());
+            if (topic < DHTopic::TOPIC_MIN || topic > DHTopic::TOPIC_MAX) {
                 DHLOGE("Topic is invalid!");
                 return ERR_INVALID_DATA;
             }

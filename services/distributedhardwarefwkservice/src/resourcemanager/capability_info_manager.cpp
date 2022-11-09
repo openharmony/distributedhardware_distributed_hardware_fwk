@@ -343,14 +343,14 @@ void CapabilityInfoManager::OnChange(const DistributedKv::ChangeNotification &ch
     }
 }
 
-void CapabilityInfoManager::OnEvent(CapabilityInfoEvent &ev)
+void CapabilityInfoManager::OnEvent(CapabilityInfoEvent &e)
 {
-    switch (ev.GetAction()) {
+    switch (e.GetAction()) {
         case CapabilityInfoEvent::EventType::RECOVER:
             SyncRemoteCapabilityInfos();
             break;
         default:
-            DHLOGE("Event is undefined, type is %d", ev.GetAction());
+            DHLOGE("Event is undefined, type is %d", e.GetAction());
             break;
     }
 }

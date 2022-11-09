@@ -28,6 +28,10 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    constexpr int32_t QUERY_INTERVAL_TIME = 1000 * 1000; // 1s
+    constexpr int32_t QUERY_RETRY_MAX_TIMES = 30;
+}
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "LocalHardwareManager"
 

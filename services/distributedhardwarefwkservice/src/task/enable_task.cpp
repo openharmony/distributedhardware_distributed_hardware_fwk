@@ -56,7 +56,6 @@ void EnableTask::DoTaskInner()
     auto state = (result == DH_FWK_SUCCESS) ? TaskState::SUCCESS : TaskState::FAIL;
     SetTaskState(state);
     DHLOGD("finish enable task, remove it, id = %s", GetId().c_str());
-    TaskBoard::GetInstance().RemoveTask(GetId());
     if (result == DH_FWK_SUCCESS) {
         TaskParam taskParam = {
             .networkId = GetNetworkId(),
@@ -67,6 +66,7 @@ void EnableTask::DoTaskInner()
         std::string enabledDeviceKey = CapabilityUtils::GetCapabilityKey(GetDeviceIdByUUID(GetUUID()), GetDhId());
         TaskBoard::GetInstance().SaveEnabledDevice(enabledDeviceKey, taskParam);
     }
+    TaskBoard::GetInstance().RemoveTask(GetId());
 }
 
 int32_t EnableTask::RegisterHardware()
