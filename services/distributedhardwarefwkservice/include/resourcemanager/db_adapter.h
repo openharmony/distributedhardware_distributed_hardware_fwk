@@ -53,7 +53,7 @@ public:
     void RemoveManualSyncCount(const std::string &deviceId);
     int32_t ManualSync(const std::string &networkId);
     void SyncDBForRecover();
-    void OnRemoteDied() override;
+    virtual void OnRemoteDied() override;
     void DeleteKvStore();
     int32_t RemoveDeviceData(const std::string &deviceId);
     int32_t RemoveDataByKey(const std::string &key);

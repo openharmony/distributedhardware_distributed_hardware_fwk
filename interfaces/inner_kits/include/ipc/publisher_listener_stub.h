@@ -25,7 +25,7 @@ namespace DistributedHardware {
 class PublisherListenerStub : public IRemoteStub<IPublisherListener> {
 public:
     PublisherListenerStub();
-    ~PublisherListenerStub() override;
+    virtual ~PublisherListenerStub() override;
     int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 
 private:

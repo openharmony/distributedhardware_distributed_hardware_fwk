@@ -24,8 +24,8 @@ class OnLineTask : public Task {
 public:
     OnLineTask() = delete;
     OnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId, const DHType dhType);
-    ~OnLineTask() override;
-    void DoTask() override;
+    virtual ~OnLineTask();
+    virtual void DoTask();
 
 private:
     void DoSyncInfo();

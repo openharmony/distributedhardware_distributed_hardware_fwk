@@ -33,7 +33,7 @@ class DistributedHardwareService : public SystemAbility, public DistributedHardw
 DECLARE_SYSTEM_ABILITY(DistributedHardwareService);
 public:
     DistributedHardwareService(int32_t saId, bool runOnCreate);
-    ~DistributedHardwareService() override = default;
+    ~DistributedHardwareService() = default;
     int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
     int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
     int32_t PublishMessage(const DHTopic topic, const std::string &msg) override;
