@@ -86,7 +86,7 @@ public:
     /* Actively synchronizes data */
     int32_t ManualSync(const std::string &networkId);
     /* Database data changes callback */
-    virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
+    void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     /* EventBus async processing callback */
     void OnEvent(CapabilityInfoEvent &e) override;
 

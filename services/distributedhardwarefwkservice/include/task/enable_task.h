@@ -24,8 +24,8 @@ class EnableTask : public Task {
 public:
     EnableTask() = delete;
     EnableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId, const DHType dhType);
-    virtual ~EnableTask();
-    virtual void DoTask();
+    ~EnableTask() override;
+    void DoTask() override;
 
 private:
     /* synchronous function for register distributed hardware, return on asynchronous register finish */
