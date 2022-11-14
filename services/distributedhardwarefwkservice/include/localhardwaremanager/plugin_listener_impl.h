@@ -26,8 +26,8 @@ public:
     explicit PluginListenerImpl(const DHType type) : dhType_(type) {}
     virtual ~PluginListenerImpl() = default;
 
-    void PluginHardware(const std::string &dhId, const std::string &attrs) override;
-    void UnPluginHardware(const std::string &dhId) override;
+    virtual void PluginHardware(const std::string &dhId, const std::string &attrs) override;
+    virtual void UnPluginHardware(const std::string &dhId) override;
 
 private:
     DHType dhType_;

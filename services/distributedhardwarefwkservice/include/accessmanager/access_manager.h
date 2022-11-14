@@ -35,16 +35,16 @@ public:
     AccessManager &operator = (const AccessManager &) = delete;
     AccessManager(AccessManager &&) = delete;
     AccessManager &operator = (AccessManager &&) = delete;
-    ~AccessManager() override;
+    virtual ~AccessManager();
     static std::shared_ptr<AccessManager> GetInstance();
     int32_t Init();
     int32_t UnInit();
     bool IsDeviceOnline(const std::string &uuid);
-    void OnRemoteDied() override;
-    void OnDeviceOnline(const DmDeviceInfo &deviceInfo) override;
-    void OnDeviceOffline(const DmDeviceInfo &deviceInfo) override;
-    void OnDeviceReady(const DmDeviceInfo &deviceInfo) override;
-    void OnDeviceChanged(const DmDeviceInfo &deviceInfo) override;
+    virtual void OnRemoteDied() override;
+    virtual void OnDeviceOnline(const DmDeviceInfo &deviceInfo) override;
+    virtual void OnDeviceOffline(const DmDeviceInfo &deviceInfo) override;
+    virtual void OnDeviceReady(const DmDeviceInfo &deviceInfo) override;
+    virtual void OnDeviceChanged(const DmDeviceInfo &deviceInfo) override;
 
     int32_t Dump(const std::vector<std::string> &argsStr, std::string &result);
 

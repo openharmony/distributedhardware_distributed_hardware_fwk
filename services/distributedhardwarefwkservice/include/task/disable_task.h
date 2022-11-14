@@ -24,8 +24,8 @@ class DisableTask : public Task {
 public:
     DisableTask() = delete;
     DisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId, const DHType dhType);
-    ~DisableTask() override;
-    void DoTask() override;
+    virtual ~DisableTask();
+    virtual void DoTask();
 
 private:
     /* synchronous function for unregister distributed hardware, return on asynchronous unregister finish */

@@ -26,9 +26,9 @@ class PublisherListenerProxy : public IRemoteProxy<IPublisherListener> {
 public:
     explicit PublisherListenerProxy(const sptr<IRemoteObject> &object);
 
-    ~PublisherListenerProxy() override;
+    virtual ~PublisherListenerProxy() override;
 
-    void OnMessage(const DHTopic topic, const std::string& message) override;
+    virtual void OnMessage(const DHTopic topic, const std::string& message) override;
 
 private:
     static inline BrokerDelegator<PublisherListenerProxy> delegator_;
