@@ -126,5 +126,17 @@ DeviceInfo GetLocalDeviceInfo()
     devInfo.deviceType = info->deviceTypeId;
     return devInfo;
 }
+
+bool IsUint32(const nlohmann::json& jsonObj, const std::string& key)
+{
+    bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT32_MAX;
+    return res;
+}
+
+bool IsBool(const nlohmann::json& jsonObj, const std::string& key)
+{
+    bool res = jsonObj.contains(key) && jsonObj[key].is_boolean();
+    return res;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

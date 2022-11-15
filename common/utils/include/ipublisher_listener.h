@@ -34,8 +34,10 @@ enum class DHTopic : uint32_t {
     TOPIC_STOP_DSCREEN = 3,
     // publish device offline message
     TOPIC_DEV_OFFLINE = 4,
+    // publish low latency message
+    TOPIC_LOW_LATENCY = 5,
     // Topic max border, not use for real topic
-    TOPIC_MAX = 5
+    TOPIC_MAX = 6
 };
 
 class IPublisherListener : public IRemoteBroker {

@@ -28,6 +28,7 @@
 #include "idistributed_hardware.h"
 #include "idistributed_hardware_sink.h"
 #include "idistributed_hardware_source.h"
+#include "low_latency_listener.h"
 #include "version_info.h"
 
 namespace OHOS {
@@ -87,7 +88,8 @@ private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::map<DHType, IDistributedHardwareSink*> compSink_;
     std::map<DHType, int32_t> compSrcSaId_;
-    std::shared_ptr<ComponentMonitor> compMonitorPtr_;
+    std::shared_ptr<ComponentMonitor> compMonitorPtr_ = nullptr;
+    sptr<LowLatencyListener> lowLatencyListener_ = nullptr;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

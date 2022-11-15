@@ -23,3 +23,7 @@ services_path = "${distributedhardwarefwk_path}/services"
 innerkits_path = "${distributedhardwarefwk_path}/interfaces/inner_kits"
 
 build_flags = [ "-Werror" ]
+
+declare_args() {
+  dhardware_low_latency = false
+}
