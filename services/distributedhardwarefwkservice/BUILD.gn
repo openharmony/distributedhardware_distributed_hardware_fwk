@@ -43,6 +43,8 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "include/hidumphelper",
     "include/ipc",
     "${utils_path}/include/eventbus",
+    "include/lowlatency",
+    "//foundation/resourceschedule/resource_schedule_service/ressched/interfaces/innerkits/ressched_client/include",
   ]
 
   sources = [
@@ -61,6 +63,8 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/ipc/publisher_listener_proxy.cpp",
     "src/localhardwaremanager/local_hardware_manager.cpp",
     "src/localhardwaremanager/plugin_listener_impl.cpp",
+    "src/lowlatency/low_latency.cpp",
+    "src/lowlatency/low_latency_listener.cpp",
     "src/publisher/publisher.cpp",
     "src/publisher/publisher_item.cpp",
     "src/resourcemanager/capability_info.cpp",
@@ -85,6 +89,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
   deps = [
     "${utils_path}:distributedhardwareutils",
     "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp:devicemanagersdk",
+    "//foundation/resourceschedule/resource_schedule_service/ressched/interfaces/innerkits/ressched_client:ressched_client",
     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
   ]
 
@@ -93,6 +98,10 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "DH_LOG_TAG=\"dhfwksvr\"",
     "LOG_DOMAIN=0xD004100",
   ]
+
+  if (dhardware_low_latency) {
+    defines += [ "DHARDWARE_LOW_LATENCY" ]
+  }
 
   external_deps = [
     "c_utils:utils",

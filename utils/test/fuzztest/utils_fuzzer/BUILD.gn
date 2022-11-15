@@ -27,6 +27,7 @@ ohos_fuzztest("UtilsFuzzTest") {
     "${utils_path}/include/log",
     "${common_path}/utils/include",
     "//commonlibrary/c_utils/base/include",
+    "//third_party/json/include",
   ]
   cflags = [
     "-g",

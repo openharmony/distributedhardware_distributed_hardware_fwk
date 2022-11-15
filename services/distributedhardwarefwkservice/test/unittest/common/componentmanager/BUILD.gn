@@ -30,6 +30,7 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/componentloader",
     "${services_path}/distributedhardwarefwkservice/include/componentmanager",
+    "${services_path}/distributedhardwarefwkservice/include/lowlatency",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${services_path}/distributedhardwarefwkservice/include/versionmanager",
     "${services_path}/distributedhardwarefwkservice/include/utils",

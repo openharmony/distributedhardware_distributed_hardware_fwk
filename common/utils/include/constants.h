@@ -58,6 +58,7 @@ namespace DistributedHardware {
     const std::string DH_COMPONENT_TYPE = "dhType";
     const std::string DH_COMPONENT_SINK_VER = "version";
     const std::string DH_COMPONENT_DEFAULT_VERSION = "1.0";
+    const std::string LOW_LATENCY_ENABLE = "low_latency_enable";
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

@@ -23,6 +23,7 @@ config("module_private_config") {
     "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
     "//base/notification/eventhandler/interfaces/inner_api",
     "//commonlibrary/c_utils/base/include",
+    "//third_party/json/include",
     "//utils/system/safwk/native/include",
     "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp/include",
     "//foundation/distributedhardware/device_manager/common/include",

@@ -37,7 +37,9 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "enabled_comps_dump.h"
+#include "low_latency.h"
 #include "monitor_task_timer.h"
+#include "publisher.h"
 #include "task_executor.h"
 #include "task_factory.h"
 #include "version_info_manager.h"
@@ -58,7 +60,7 @@ namespace {
 }
 
 ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
-    compMonitorPtr_(std::make_shared<ComponentMonitor>())
+    compMonitorPtr_(std::make_shared<ComponentMonitor>()), lowLatencyListener_(new(std::nothrow) LowLatencyListener)
 {
     DHLOGI("Ctor ComponentManager");
 }
@@ -66,6 +68,9 @@ ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSa
 ComponentManager::~ComponentManager()
 {
     DHLOGD("Dtor ComponentManager");
+    compMonitorPtr_.reset();
+    compMonitorPtr_ = nullptr;
+    lowLatencyListener_ = nullptr;
 }
 
 int32_t ComponentManager::Init()
@@ -109,6 +114,9 @@ int32_t ComponentManager::Init()
             "dhfwk start sink failed.");
     }
     MonitorTaskTimer::GetInstance().StartTimer();
+#ifdef DHARDWARE_LOW_LATENCY
+    Publisher::GetInstance().RegisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
+#endif
     DHLOGI("Init component success");
     DHTraceEnd();
     return DH_FWK_SUCCESS;
@@ -141,6 +149,10 @@ int32_t ComponentManager::UnInit()
     compSink_.clear();
 
     MonitorTaskTimer::GetInstance().StopTimer();
+#ifdef DHARDWARE_LOW_LATENCY
+    Publisher::GetInstance().UnregisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
+    LowLatency::GetInstance().CloseLowLatency();
+#endif
     DHLOGI("Release component success");
     return DH_FWK_SUCCESS;
 }
