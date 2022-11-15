@@ -35,9 +35,6 @@
 class DBAdapter;
 namespace OHOS {
 namespace DistributedHardware {
-namespace {
-    constexpr int32_t MANUAL_SYNC_TIMEOUT = 1;
-}
 class CapabilityInfoManager : public std::enable_shared_from_this<CapabilityInfoManager>,
                               public EventSender,
                               public DistributedKv::KvStoreObserver,

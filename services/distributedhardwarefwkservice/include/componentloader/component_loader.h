@@ -39,8 +39,6 @@ struct CompHandler {
     int32_t sinkSaId;
     void *hardwareHandler;
 };
-
-const std::string COMPONENTSLOAD_DISTRIBUTED_COMPONENTS = "distributed_components";
 }
 
 struct CompConfig {

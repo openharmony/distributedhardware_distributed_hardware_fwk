@@ -31,14 +31,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-namespace {
-constexpr int32_t MAX_INIT_RETRY_TIMES = 20;
-constexpr int32_t INIT_RETRY_SLEEP_INTERVAL = 200 * 1000; // 200ms
-constexpr int32_t MANUAL_SYNC_TIMES = 6;
-constexpr int32_t MANUAL_SYNC_INTERVAL = 100 * 1000; // 100ms
-constexpr int32_t DIED_CHECK_MAX_TIMES = 300;
-constexpr int32_t DIED_CHECK_INTERVAL = 100 * 1000; // 100ms
-}
 class DBAdapter : public std::enable_shared_from_this<DBAdapter>,
     public EventSender,
     public DistributedKv::KvStoreSyncCallback,

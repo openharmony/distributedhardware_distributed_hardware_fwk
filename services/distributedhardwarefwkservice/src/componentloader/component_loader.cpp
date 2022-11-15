@@ -55,6 +55,8 @@ const std::string COMP_SINK_LOC = "comp_sink_loc";
 const std::string COMP_SINK_VERSION = "comp_sink_version";
 const std::string COMP_SINK_SA_ID = "comp_sink_sa_id";
 
+const std::string COMPONENTSLOAD_DISTRIBUTED_COMPONENTS = "distributed_components";
+
 const std::string DEFAULT_NAME = "";
 const std::string DEFAULT_TYPE = "UNKNOWN";
 const std::string DEFAULT_LOC = "";
