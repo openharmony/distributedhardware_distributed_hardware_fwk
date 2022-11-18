@@ -351,10 +351,6 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
     }
 
     auto compEnable = std::make_shared<ComponentEnable>();
-    if (compEnable == nullptr) {
-        DHLOGE("compEnable is null");
-        return ERR_DH_FWK_POINTER_IS_NULL;
-    }
     auto result = compEnable->Enable(networkId, dhId, param, find->second);
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
@@ -388,10 +384,6 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
     }
 
     auto compDisable = std::make_shared<ComponentDisable>();
-    if (compDisable == nullptr) {
-        DHLOGE("compDisable is null");
-        return ERR_DH_FWK_POINTER_IS_NULL;
-    }
     auto result = compDisable->Disable(networkId, dhId, find->second);
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < DISABLE_RETRY_MAX_TIMES; retryCount++) {
