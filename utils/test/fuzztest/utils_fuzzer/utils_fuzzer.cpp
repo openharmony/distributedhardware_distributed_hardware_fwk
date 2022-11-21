@@ -26,7 +26,7 @@ namespace OHOS {
 namespace DistributedHardware {
 void GetAnonyStringTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size <= 0)) {
+    if ((data == nullptr) || (size == 0)) {
         return;
     }
 
@@ -46,7 +46,7 @@ void GetAnonyInt32Test(const uint8_t* data, size_t size)
 
 void UtilsToolTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size <= 0)) {
+    if ((data == nullptr) || (size == 0)) {
         return;
     }
 

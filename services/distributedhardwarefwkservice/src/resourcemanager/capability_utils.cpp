@@ -28,10 +28,6 @@ namespace DistributedHardware {
 int32_t CapabilityUtils::GetCapabilityByValue(const std::string &value, std::shared_ptr<CapabilityInfo> &capPtr)
 {
     capPtr = std::make_shared<CapabilityInfo>();
-    if (capPtr == nullptr) {
-        DHLOGE("capPtr is null");
-        return ERR_DH_FWK_RESOURCE_CAPINFO_POINTER_NULL;
-    }
     return capPtr->FromJsonString(value);
 }
 

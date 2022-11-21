@@ -120,9 +120,9 @@ void MonitorTaskTimer::Execute(const std::shared_ptr<OHOS::AppExecFwk::EventHand
         return;
     }
     auto enabledDevices = TaskBoard::GetInstance().GetEnabledDevice();
-    std::string capabilityKey;
     std::shared_ptr<CapabilityInfo> capInfoPtr = nullptr;
     TaskParam taskParam;
+    std::string capabilityKey;
     for (auto item : enabledDevices) {
         capabilityKey = item.first;
         taskParam = item.second;
