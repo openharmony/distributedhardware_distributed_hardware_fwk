@@ -15,12 +15,16 @@
 
 #include <algorithm>
 #include <chrono>
+#include <securec.h>
 #include <thread>
 #include <vector>
 
 #include "gtest/gtest.h"
 
+#define private public
 #include "access_manager.h"
+#undef private
+#include "dm_device_info.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_manager_factory.h"
 using namespace testing::ext;
@@ -235,6 +239,147 @@ HWTEST_F(AccessManagerTest, SendOffLineEvent_003, TestSize.Level0)
 HWTEST_F(AccessManagerTest, AccessManagerInit, TestSize.Level0)
 {
     EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+}
+
+/**
+ * @tc.name: OnRemoteDied_001
+ * @tc.desc: Verify the  OnRemoteDied function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, OnRemoteDied_001, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    AccessManager::GetInstance()->OnRemoteDied();
+}
+
+/**
+ * @tc.name: OnDeviceOnline_001
+ * @tc.desc: Verify the  OnDeviceOnline function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, OnDeviceOnline_001, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    DmDeviceInfo deviceInfo;
+    AccessManager::GetInstance()->OnDeviceOnline(deviceInfo);
+}
+
+/**
+ * @tc.name: OnDeviceOffline_001
+ * @tc.desc: Verify the  OnDeviceOffline function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, OnDeviceOffline_001, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    DmDeviceInfo deviceInfo;
+    AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
+}
+
+/**
+ * @tc.name: OnDeviceOffline_002
+ * @tc.desc: Verify the  OnDeviceOffline function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, OnDeviceOffline_002, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    DmDeviceInfo deviceInfo;
+    std::string devId = "000001";
+    EXPECT_EQ(EOK, memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length()));
+    AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
+}
+
+/**
+ * @tc.name: OnDeviceOffline_003
+ * @tc.desc: Verify the  OnDeviceOffline function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, OnDeviceOffline_003, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    DmDeviceInfo deviceInfo;
+    std::string devId = "000001";
+    EXPECT_EQ(EOK, memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length()));
+    std::string netId = "000002";
+    EXPECT_EQ(EOK, memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, netId.c_str(), netId.length()));
+    AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
+}
+
+/**
+ * @tc.name: OnDeviceReady_001
+ * @tc.desc: Verify the  OnDeviceReady function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, OnDeviceReady_001, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    DmDeviceInfo deviceInfo;
+    AccessManager::GetInstance()->OnDeviceReady(deviceInfo);
+}
+
+/**
+ * @tc.name: OnDeviceReady_002
+ * @tc.desc: Verify the  OnDeviceReady function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, OnDeviceReady_002, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    DmDeviceInfo deviceInfo;
+    std::string devId = "000001";
+    EXPECT_EQ(EOK, memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length()));
+    AccessManager::GetInstance()->OnDeviceReady(deviceInfo);
+}
+
+/**
+ * @tc.name: OnDeviceReady_003
+ * @tc.desc: Verify the  OnDeviceReady function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, OnDeviceReady_003, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    DmDeviceInfo deviceInfo;
+    std::string devId = "000001";
+    EXPECT_EQ(EOK, memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length()));
+    std::string netId = "000002";
+    EXPECT_EQ(EOK, memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, netId.c_str(), netId.length()));
+    AccessManager::GetInstance()->OnDeviceReady(deviceInfo);
+}
+
+/**
+ * @tc.name: OnDeviceChanged_001
+ * @tc.desc: Verify the  OnDeviceChanged function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, OnDeviceChanged_001, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    DmDeviceInfo deviceInfo;
+    AccessManager::GetInstance()->OnDeviceChanged(deviceInfo);
+}
+
+/**
+ * @tc.name: UnInit_001
+ * @tc.desc: Verify the  UnInit function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, UnInit_001, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    DmDeviceInfo deviceInfo;
+    AccessManager::GetInstance()->OnDeviceChanged(deviceInfo);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
