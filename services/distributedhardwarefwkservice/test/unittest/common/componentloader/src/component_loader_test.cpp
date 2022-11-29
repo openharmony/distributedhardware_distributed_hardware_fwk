@@ -160,5 +160,70 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_008, TestSize.Level0)
     auto vec = ComponentLoader::GetInstance().GetAllCompTypes();
     EXPECT_EQ(vec.size(), ComponentLoader::GetInstance().compHandlerMap_.size());
 }
+
+/**
+ * @tc.name: component_loader_test_009
+ * @tc.desc: Verify the GetHandler function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_009, TestSize.Level0)
+{
+    std::string soNameEmpty = "";
+    auto handler = ComponentLoader::GetInstance().GetHandler(soNameEmpty);
+    EXPECT_EQ(nullptr, handler);
+}
+
+/**
+ * @tc.name: component_loader_test_010
+ * @tc.desc: Verify the GetHandler function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_010, TestSize.Level0)
+{
+    std::string soName = "NON_EXISTENT_SO";
+    auto handler = ComponentLoader::GetInstance().GetHandler(soName);
+    EXPECT_EQ(nullptr, handler);
+}
+
+/**
+ * @tc.name: component_loader_test_011
+ * @tc.desc: Verify the GetCompPathAndVersion function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_011, TestSize.Level0)
+{
+    std::string jsonStr = "";
+    std::map<DHType, CompConfig> dhtypeMap;
+    int32_t ret = ComponentLoader::GetInstance().GetCompPathAndVersion(jsonStr, dhtypeMap);
+    EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
+}
+
+/**
+ * @tc.name: component_loader_test_012
+ * @tc.desc: Verify the IsDHTypeExist function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_012, TestSize.Level0)
+{
+    bool ret = ComponentLoader::GetInstance().IsDHTypeExist(DHType::CAMERA);
+    EXPECT_EQ(true, ret);
+}
+
+/**
+ * @tc.name: component_loader_test_013
+ * @tc.desc: Verify the GetSourceSaId function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_013, TestSize.Level0)
+{
+    const int32_t INVALID_SA_ID = -1;
+    int32_t ret = ComponentLoader::GetInstance().GetSourceSaId(DHType::UNKNOWN);
+    EXPECT_EQ(INVALID_SA_ID, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

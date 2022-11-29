@@ -62,7 +62,10 @@ ohos_unittest("AccessManagerTest") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [ "init:libbegetutil" ]
+  external_deps = [
+    "c_utils:utils",
+    "init:libbegetutil",
+  ]
 }
 
 group("unittest") {
