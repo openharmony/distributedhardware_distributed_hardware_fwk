@@ -154,5 +154,26 @@ HWTEST_F(VersionManagerTest, version_manager_test_005, TestSize.Level0)
     ret = VersionManager::GetInstance().RemoveDHVersion(TEST_DEVICE_ID_1);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
+
+/**
+ * @tc.name: version_manager_test_006
+ * @tc.desc: Verify GetCompVersion function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(VersionManagerTest, version_manager_test_006, TestSize.Level0)
+{
+    DHVersion dhVersion;
+    CompVersion cVs1;
+    CompVersionGetValue(cVs1, TEST_COMPONENT_NAME_1, DHType::CAMERA, TEST_HANDLER_VERSION_1, TEST_SOURCE_VERSION_1,
+        TEST_SINK_VERSION_1);
+    dhVersion.uuid = TEST_DEVICE_ID_1;
+    dhVersion.dhVersion = TEST_DH_VERSION;
+    dhVersion.compVersions.insert(std::make_pair(cVs1.dhType, cVs1));
+    int32_t ret = VersionManager::GetInstance().AddDHVersion(dhVersion.uuid, dhVersion);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    ret = VersionManager::GetInstance().GetCompVersion(TEST_DEVICE_ID_1, DHType::CAMERA, cVs1);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

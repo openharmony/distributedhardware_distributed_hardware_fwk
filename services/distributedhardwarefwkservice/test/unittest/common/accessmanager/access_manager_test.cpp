@@ -15,12 +15,16 @@
 
 #include <algorithm>
 #include <chrono>
+#include <securec.h>
 #include <thread>
 #include <vector>
 
 #include "gtest/gtest.h"
 
+#define private public
 #include "access_manager.h"
+#undef private
+#include "dm_device_info.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_manager_factory.h"
 using namespace testing::ext;

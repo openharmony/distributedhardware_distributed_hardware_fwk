@@ -136,5 +136,34 @@ HWTEST_F(DistributedHardwareServiceTest, dump_test_001, TestSize.Level0)
     ret = service.Dump(fd, std::vector<std::u16string> { ARGS_C });
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
+
+/**
+ * @tc.name: OnStart_001
+ * @tc.desc: Verify the OnStart function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, OnStart_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    service.state_ = ServiceRunningState::STATE_RUNNING;
+    service.OnStart();
+    service.OnStop();
+    EXPECT_EQ(ServiceRunningState::STATE_NOT_START, service.state_);
+}
+
+/**
+ * @tc.name: Init_001
+ * @tc.desc: Verify the Init function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, Init_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    service.registerToService_ = false;
+
+    EXPECT_EQ(false, service.Init());
+}
 } // namespace DistributedHardware
 } // namespace OHOS
