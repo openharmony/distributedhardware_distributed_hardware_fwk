@@ -57,7 +57,7 @@ public:
         }
     }
 
-    EventBus(const std::string &threadName)
+    explicit EventBus(const std::string &threadName)
     {
         ULOGI("ctor EventBus threadName: %s", threadName.c_str());
         if (eventbusHandler_ == nullptr) {

@@ -168,5 +168,28 @@ HWTEST_F(DistributedHardwareManagerTest, sendOffLineEvent_test_003, TestSize.Lev
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
     ASSERT_TRUE(TaskBoard::GetInstance().IsAllTaskFinish());
 }
+
+/**
+ * @tc.name: Release_001
+ * @tc.desc: Verify the Release function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareManagerTest, Release_001, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, DistributedHardwareManager::GetInstance().Release());
+}
+
+/**
+ * @tc.name: GetComponentVersion_001
+ * @tc.desc: Verify the GetComponentVersion function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareManagerTest, RGetComponentVersion_001, TestSize.Level0)
+{
+    std::unordered_map<DHType, std::string> versionMap;
+    EXPECT_NE(DH_FWK_SUCCESS, DistributedHardwareManager::GetInstance().GetComponentVersion(versionMap));
+}
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -372,5 +372,99 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_013, TestSize.Level0)
         DH_FWK_SUCCESS);
     EXPECT_EQ(capMap.size(), TEST_SIZE_10);
 }
+
+/**
+ * @tc.name: resource_manager_test_014
+ * @tc.desc: Verify the RemoveCapabilityInfoInDB function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, resource_manager_test_014, TestSize.Level0)
+{
+    std::string deviceIdEmpty = "";
+    int32_t ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceIdEmpty);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+/**
+ * @tc.name: resource_manager_test_015
+ * @tc.desc: Verify the GetCapabilityByValue function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, resource_manager_test_015, TestSize.Level0)
+{
+    std::string value = "";
+    std::shared_ptr<CapabilityInfo> capPtr = nullptr;
+    int32_t ret = CapabilityUtils::GetCapabilityByValue(value, capPtr);
+    EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
+}
+
+/**
+ * @tc.name: resource_manager_test_016
+ * @tc.desc: Verify the GetCapabilityKey function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, resource_manager_test_016, TestSize.Level0)
+{
+    std::string deviceId = "deviceIdtest";
+    std::string dhId = "dhIdtest";
+    std::string str = CapabilityUtils::GetCapabilityKey(deviceId, dhId);
+    EXPECT_EQ("deviceIdtest###dhIdtest", str);
+}
+
+/**
+ * @tc.name: resource_manager_test_017
+ * @tc.desc: Verify the IsCapKeyMatchDeviceId function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, resource_manager_test_017, TestSize.Level0)
+{
+    std::string key = "keytest";
+    bool ret = CapabilityUtils::IsCapKeyMatchDeviceId(key, DEV_ID_0);
+    EXPECT_EQ(false, ret);
+}
+
+/**
+ * @tc.name: resource_manager_test_018
+ * @tc.desc: Verify the IsCapKeyMatchDeviceId function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, resource_manager_test_018, TestSize.Level0)
+{
+    std::string key = "bb536a637105409e904d4da83790a4a7###keytest";
+    bool ret = CapabilityUtils::IsCapKeyMatchDeviceId(key, DEV_ID_0);
+    EXPECT_EQ(true, ret);
+}
+
+/**
+ * @tc.name: resource_manager_test_019
+ * @tc.desc: Verify the FromJsonString function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, resource_manager_test_019, TestSize.Level0)
+{
+    CapabilityInfo capaInfo;
+    std::string jsonStr = "";
+    int32_t ret = capaInfo.FromJsonString(jsonStr);
+    EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
+}
+
+/**
+ * @tc.name: resource_manager_test_020
+ * @tc.desc: Verify the Compare function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, resource_manager_test_020, TestSize.Level0)
+{
+    CapabilityInfo capaInfo(DH_ID_0, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0);
+    bool ret = CAP_INFO_1->Compare(capaInfo);
+    EXPECT_EQ(false, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
