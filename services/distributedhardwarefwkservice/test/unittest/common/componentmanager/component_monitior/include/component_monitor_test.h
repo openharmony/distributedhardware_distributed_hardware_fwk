@@ -13,21 +13,25 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_COMPONENT_MANAGER_TEST_H
-#define OHOS_DISTRIBUTED_HARDWARE_COMPONENT_MANAGER_TEST_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_COMPONENT_MONITOR_TEST_H
+#define OHOS_DISTRIBUTED_HARDWARE_COMPONENT_MONITOR_TEST_H
 
 #include "gtest/gtest.h"
 
+#define private public
+#include "component_monitor.h"
+#undef private
+
 namespace OHOS {
 namespace DistributedHardware {
-class ComponentManagerTest : public testing::Test {
+class ComponentMonitorTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-    int32_t Enable(int32_t timeout, int32_t status);
-    int32_t Disable(int32_t timeout, int32_t status);
+
+    std::shared_ptr<ComponentMonitor> compMonitorPtr_ = nullptr;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
