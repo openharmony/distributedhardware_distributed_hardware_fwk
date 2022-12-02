@@ -39,7 +39,7 @@ public:
 public:
     class CompSystemAbilityListener : public SystemAbilityStatusChangeStub {
     public:
-	    ~CompSystemAbilityListener() = default;
+        ~CompSystemAbilityListener() = default;
         void OnAddSystemAbility(int32_t saId, const std::string &deviceId) override;
         void OnRemoveSystemAbility(int32_t saId, const std::string &deviceId) override;
     };
