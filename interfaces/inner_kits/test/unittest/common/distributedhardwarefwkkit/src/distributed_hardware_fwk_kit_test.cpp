@@ -20,12 +20,12 @@
 #include <cinttypes>
 #include <thread>
 
-#include "iservice_registry.h"
-#include "system_ability_definition.h"
-
+#include "distributed_hardware_errno.h"
+#include "dhfwk_sa_manager.h"
 #include "distributed_hardware_fwk_kit.h"
 #include "distributed_hardware_log.h"
-#include "distributed_hardware_errno.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
 
 using OHOS::DistributedHardware::DHTopic;
 
@@ -73,7 +73,13 @@ uint32_t DistributedHardwareFwkKitTest::TestPublisherListener::GetTopicMsgCnt(co
     return msgCnts_[topic];
 }
 
-HWTEST_F(DistributedHardwareFwkKitTest, RegisterListener01, testing::ext::TestSize.Level0)
+/**
+ * @tc.name: RegisterPublisherListener_001
+ * @tc.desc: Verify the RegisterPublisherListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_001, testing::ext::TestSize.Level0)
 {
     sptr<TestPublisherListener> listener1 = new TestPublisherListener();
     int32_t ret = dhfwkPtr_->RegisterPublisherListener(DHTopic::TOPIC_START_DSCREEN, listener1);
@@ -102,6 +108,59 @@ HWTEST_F(DistributedHardwareFwkKitTest, RegisterListener01, testing::ext::TestSi
 
     ret = dhfwkPtr_->UnregisterPublisherListener(DHTopic::TOPIC_DEV_OFFLINE, listener4);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: PublishMessage_001
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_001, testing::ext::TestSize.Level0)
+{
+    uint32_t invalid = 7;
+    DHTopic topic = static_cast<DHTopic>(invalid);
+    std::string message;
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, dhfwkPtr_->PublishMessage(topic, message));
+}
+
+/**
+ * @tc.name: PublishMessage_002
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_002, testing::ext::TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
+    std::string message;
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, dhfwkPtr_->PublishMessage(topic, message));
+}
+
+/**
+ * @tc.name: PublishMessage_003
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_003, testing::ext::TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
+    std::string message = "TOPIC_STOP_DSCREEN";
+    EXPECT_EQ(ERR_DH_FWK_PUBLISH_MSG_FAILED, dhfwkPtr_->PublishMessage(topic, message));
+}
+
+/**
+ * @tc.name: OnDHFWKOnLine_001
+ * @tc.desc: Verify the OnDHFWKOnLine function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, OnDHFWKOnLine_001, testing::ext::TestSize.Level0)
+{
+    bool isOnLine = true;
+    dhfwkPtr_->OnDHFWKOnLine(isOnLine);
+    EXPECT_EQ(nullptr, DHFWKSAManager::GetInstance().GetDHFWKProxy());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
