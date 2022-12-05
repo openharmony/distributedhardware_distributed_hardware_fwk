@@ -53,7 +53,7 @@ HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_001, TestSize.Level0)
 {
     int32_t saId = static_cast<int32_t>(DHType::GPS);
     compMonitorPtr_->RemoveSAMonitor(saId);
-    EXPECT_EQ(true, compMonitorPtr_->saListeners_.count(saId));
+    EXPECT_EQ(DH_FWK_SUCCESS, compMonitorPtr_->saListeners_.count(saId));
 }
 } // namespace DistributedHardware
 } // namespace OHOS
