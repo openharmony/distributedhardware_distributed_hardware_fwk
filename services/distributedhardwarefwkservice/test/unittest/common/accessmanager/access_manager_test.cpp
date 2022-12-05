@@ -289,7 +289,10 @@ HWTEST_F(AccessManagerTest, OnDeviceOffline_002, TestSize.Level0)
 {
     DmDeviceInfo deviceInfo;
     std::string devId = "000001";
-    EXPECT_EQ(EOK, memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length()));
+    int32_t ret = memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length());
+    if (ret != EOK) {
+        return 0;
+    }
     AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
     EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
 }
@@ -304,9 +307,12 @@ HWTEST_F(AccessManagerTest, OnDeviceOffline_003, TestSize.Level0)
 {
     DmDeviceInfo deviceInfo;
     std::string devId = "000001";
-    EXPECT_EQ(EOK, memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length()));
+    int32_t ret = memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length());
+    if (ret != EOK) {
+        return 0;
+    }
     std::string netId = "000002";
-    EXPECT_EQ(EOK, memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, netId.c_str(), netId.length()));
+    ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, netId.c_str(), netId.length());
     AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
     EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
 }
@@ -334,7 +340,10 @@ HWTEST_F(AccessManagerTest, OnDeviceReady_002, TestSize.Level0)
 {
     DmDeviceInfo deviceInfo;
     std::string devId = "000001";
-    EXPECT_EQ(EOK, memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length()));
+    int32_t ret = memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length());
+    if (ret != EOK) {
+        return 0;
+    }
     AccessManager::GetInstance()->OnDeviceReady(deviceInfo);
     EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
 }
@@ -349,9 +358,15 @@ HWTEST_F(AccessManagerTest, OnDeviceReady_003, TestSize.Level0)
 {
     DmDeviceInfo deviceInfo;
     std::string devId = "000001";
-    EXPECT_EQ(EOK, memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length()));
+    int32_t ret = memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length());
+    if (ret != EOK) {
+        return 0;
+    }
     std::string netId = "000002";
-    EXPECT_EQ(EOK, memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, netId.c_str(), netId.length()));
+    ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, netId.c_str(), netId.length());
+    if (ret != EOK) {
+        return 0;
+    }
     AccessManager::GetInstance()->OnDeviceReady(deviceInfo);
     EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
 }
