@@ -13,8 +13,7 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_COMPONENT_MONITOR_H
-#define OHOS_DISTRIBUTED_HARDWARE_COMPONENT_MONITOR_H
+#include "component_monitor_test.h"
 
 #include <cstdint>
 #include <map>
@@ -22,32 +21,39 @@
 #include <mutex>
 #include <refbase.h>
 
+#include "component_loader.h"
 #include "system_ability_status_change_stub.h"
-
 #include "single_instance.h"
+
+using namespace testing::ext;
 
 namespace OHOS {
 namespace DistributedHardware {
-class ComponentMonitor {
-REMOVE_NO_USE_CONSTRUCTOR(ComponentMonitor);
-public:
-    explicit ComponentMonitor();
-    ~ComponentMonitor();
-    void AddSAMonitor(int32_t saId);
-    void RemoveSAMonitor(int32_t saId);
+void ComponentMonitorTest::SetUpTestCase(void) {}
 
-public:
-    class CompSystemAbilityListener : public SystemAbilityStatusChangeStub {
-    public:
-        ~CompSystemAbilityListener() = default;
-        void OnAddSystemAbility(int32_t saId, const std::string &deviceId) override;
-        void OnRemoveSystemAbility(int32_t saId, const std::string &deviceId) override;
-    };
+void ComponentMonitorTest::TearDownTestCase(void) {}
 
-private:
-    std::mutex saListenersMtx_;
-    std::map<int32_t, sptr<SystemAbilityStatusChangeStub>> saListeners_;
-};
+void ComponentMonitorTest::SetUp()
+{
+    compMonitorPtr_ = std::make_shared<ComponentMonitor>();
+}
+
+void ComponentMonitorTest::TearDown()
+{
+    compMonitorPtr_ = nullptr;
+}
+
+/**
+ * @tc.name: RemoveSAMonitor_001
+ * @tc.desc: Verify the RemoveSAMonitor function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_001, TestSize.Level0)
+{
+    int32_t saId = static_cast<int32_t>(DHType::GPS);
+    compMonitorPtr_->RemoveSAMonitor(saId);
+    EXPECT_EQ(DH_FWK_SUCCESS, compMonitorPtr_->saListeners_.count(saId));
+}
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
