@@ -17,10 +17,12 @@ group("test") {
   deps = [
     "common/accessmanager:AccessManagerTest",
     "common/componentloader:component_loader_test",
-    "common/componentmanager:component_manager_test",
+    "common/componentmanager/component_manager:component_manager_test",
+    "common/componentmanager/component_monitior:component_monitor_test",
     "common/dbadapter:db_adapter_test",
     "common/distributedhardwaremanager:distributed_hardware_manager_test",
     "common/distributedhardwareservice:distributed_hardware_service_test",
+    "common/hidumphelper:enabled_comps_dump_test",
     "common/localhardwaremanager:local_hardware_manager_test",
     "common/resourcemanager:resource_manager_test",
     "common/task:dh_task_test",
