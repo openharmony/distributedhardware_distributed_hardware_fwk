@@ -22,6 +22,7 @@
 #include <refbase.h>
 
 #include "component_loader.h"
+#include "iservice_registry.h"
 #include "system_ability_status_change_stub.h"
 #include "single_instance.h"
 
@@ -44,6 +45,34 @@ void ComponentMonitorTest::TearDown()
 }
 
 /**
+ * @tc.name: AddSAMonitor_001
+ * @tc.desc: Verify the AddSAMonitor function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentMonitorTest, AddSAMonitor_001, TestSize.Level0)
+{
+    int32_t saId = static_cast<int32_t>(DHType::AUDIO);
+    compMonitorPtr_->AddSAMonitor(saId);
+    EXPECT_EQ(true, compMonitorPtr_->saListeners_.empty());
+}
+
+/**
+ * @tc.name: AddSAMonitor_002
+ * @tc.desc: Verify the AddSAMonitor function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentMonitorTest, AddSAMonitor_002, TestSize.Level0)
+{
+    int32_t saId = static_cast<int32_t>(DHType::CAMERA);
+    sptr<ComponentMonitor::CompSystemAbilityListener> listener = new ComponentMonitor::CompSystemAbilityListener();
+    compMonitorPtr_->saListeners_[saId] = listener;
+    compMonitorPtr_->AddSAMonitor(saId);
+    EXPECT_EQ(false, compMonitorPtr_->saListeners_.empty());
+}
+
+/**
  * @tc.name: RemoveSAMonitor_001
  * @tc.desc: Verify the RemoveSAMonitor function
  * @tc.type: FUNC
@@ -53,7 +82,54 @@ HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_001, TestSize.Level0)
 {
     int32_t saId = static_cast<int32_t>(DHType::GPS);
     compMonitorPtr_->RemoveSAMonitor(saId);
-    EXPECT_EQ(DH_FWK_SUCCESS, compMonitorPtr_->saListeners_.count(saId));
+    EXPECT_EQ(true, compMonitorPtr_->saListeners_.empty());
+}
+
+/**
+ * @tc.name: RemoveSAMonitor_002
+ * @tc.desc: Verify the RemoveSAMonitor function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_002, TestSize.Level0)
+{
+    int32_t saId = static_cast<int32_t>(DHType::CAMERA);
+    sptr<ComponentMonitor::CompSystemAbilityListener> listener = new ComponentMonitor::CompSystemAbilityListener();
+    compMonitorPtr_->saListeners_[saId] = listener;
+    compMonitorPtr_->RemoveSAMonitor(saId);
+    EXPECT_EQ(false, compMonitorPtr_->saListeners_.empty());
+}
+
+/**
+ * @tc.name: OnRemoveSystemAbility_001
+ * @tc.desc: Verify the OnRemoveSystemAbility function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_001, TestSize.Level0)
+{
+    sptr<ComponentMonitor::CompSystemAbilityListener> listener = new ComponentMonitor::CompSystemAbilityListener();
+    int32_t saId = static_cast<int32_t>(DHType::UNKNOWN);
+    std::string deviceId;
+    compMonitorPtr_->AddSAMonitor(saId);
+    listener->OnRemoveSystemAbility(saId, deviceId);
+    EXPECT_EQ(DHType::UNKNOWN, ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId));
+}
+
+/**
+ * @tc.name: OnRemoveSystemAbility_002
+ * @tc.desc: Verify the OnRemoveSystemAbility function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_002, TestSize.Level0)
+{
+    sptr<ComponentMonitor::CompSystemAbilityListener> listener = new ComponentMonitor::CompSystemAbilityListener();
+    int32_t saId = static_cast<int32_t>(DHType::CAMERA);
+    std::string deviceId;
+    compMonitorPtr_->AddSAMonitor(saId);
+    listener->OnRemoveSystemAbility(saId, deviceId);
+    EXPECT_EQ(DHType::UNKNOWN, ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId));
 }
 } // namespace DistributedHardware
 } // namespace OHOS
