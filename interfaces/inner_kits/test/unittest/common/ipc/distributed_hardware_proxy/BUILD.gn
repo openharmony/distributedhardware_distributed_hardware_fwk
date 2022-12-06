@@ -41,11 +41,11 @@ ohos_unittest("DistributedHardwareProxyTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//third_party/googletest:gtest_main",
     "${innerkits_path}:libdhfwk_sdk",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
+    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//third_party/googletest:gtest_main",
   ]
 
   defines = [
