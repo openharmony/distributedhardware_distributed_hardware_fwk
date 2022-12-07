@@ -36,7 +36,7 @@ public:
     virtual void SetUp();
     virtual void TearDown();
 
-    std::shared_ptr<DistributedHardwareProxy> hardwareProxy_= nullptr;
+    std::shared_ptr<DistributedHardwareProxy> hardwareProxy_ = nullptr;
 };
 
 class MockIDistributedHardware : public IDistributedHardware {
