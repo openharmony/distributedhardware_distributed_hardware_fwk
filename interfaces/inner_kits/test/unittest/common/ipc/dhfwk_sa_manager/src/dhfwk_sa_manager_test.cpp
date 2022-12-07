@@ -40,7 +40,6 @@ void DHFWKSAManagerTest::TearDown()
 
 void DHFWKSaStateCallback(bool callback)
 {
-
 }
 
 /**
