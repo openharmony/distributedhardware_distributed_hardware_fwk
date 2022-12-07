@@ -47,16 +47,22 @@ public:
 
     int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener)
     {
+        (void)topic;
+        (void)listener;
         return DH_FWK_SUCCESS;
     }
 
     int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener)
     {
+        (void)topic;
+        (void)listener;
         return DH_FWK_SUCCESS;
     }
 
     int32_t PublishMessage(const DHTopic topic, const std::string &msg)
     {
+        (void)topic;
+        (void)msg;
         return DH_FWK_SUCCESS;
     }
 };
