@@ -46,6 +46,8 @@ class MockPublisherListenerStub : public PublisherListenerStub {
 public:
     void OnMessage(const DHTopic topic, const std::string& message)
     {
+        (void)topic;
+        (void)message;
     }
 };
 } // namespace DistributedHardware
