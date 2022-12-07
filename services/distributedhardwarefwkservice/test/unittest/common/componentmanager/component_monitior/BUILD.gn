@@ -49,11 +49,11 @@ ohos_unittest("ComponentMonitorTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
   ]
 
   external_deps = [
