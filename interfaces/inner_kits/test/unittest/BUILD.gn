@@ -14,6 +14,10 @@
 group("kit_test") {
   testonly = true
 
-  deps =
-      [ "common/distributedhardwarefwkkit:distributed_hardware_fwk_kit_test" ]
+  deps = [
+    "common/distributedhardwarefwkkit:distributed_hardware_fwk_kit_test",
+    "common/ipc/dhfwk_sa_manager:dhfwk_sa_manager_test",
+    "common/ipc/distributed_hardware_proxy:DistributedHardwareProxyTest",
+    "common/ipc/publisher_listener_stub:PublisherListenerStubTest",
+  ]
 }

@@ -1,0 +1,66 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import(
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+
+module_out_path = "distributed_hardware_fwk/distributed_hardware_proxy_test"
+
+config("module_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "include",
+    "//commonlibrary/c_utils/base/include",
+    "//utils/system/safwk/native/include",
+    "${utils_path}/include",
+    "${utils_path}/include/log",
+    "${common_path}/utils/include",
+    "${common_path}/log/include",
+    "${innerkits_path}/include",
+    "${innerkits_path}/include/ipc",
+    "//third_party/json/include",
+  ]
+}
+
+ohos_unittest("DistributedHardwareProxyTest") {
+  module_out_path = module_out_path
+
+  sources = [ "src/distributed_hardware_proxy_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${innerkits_path}:libdhfwk_sdk",
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"DistributedHardwareProxyTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "ipc:ipc_core",
+  ]
+}
+
+group("distributed_hardware_proxy_test") {
+  testonly = true
+  deps = [ ":DistributedHardwareProxyTest" ]
+}
