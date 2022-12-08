@@ -34,12 +34,10 @@ config("module_private_config") {
   ]
 }
 
-
 ohos_unittest("EventTranceTest") {
   module_out_path = module_out_path
 
-  sources =
-      [ "./event_trance_test.cpp" ]
+  sources = [ "./event_trance_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
