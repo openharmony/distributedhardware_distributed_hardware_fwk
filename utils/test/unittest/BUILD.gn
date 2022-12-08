@@ -16,5 +16,6 @@ group("utils_test") {
   deps = [
     "common/eventbus:event_bus_test",
     "common/utilstool:utils_tool_test",
+    "common/eventtrance:event_trance_test",
   ]
 }
