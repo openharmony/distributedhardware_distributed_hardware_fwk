@@ -70,6 +70,20 @@ HWTEST_F(DistributedHardwareServiceTest, register_publisher_listener_001, TestSi
 }
 
 /**
+ * @tc.name: register_publisher_listener_002
+ * @tc.desc: Verify the RegisterPublisherListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, register_publisher_listener_002, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    sptr<IPublisherListener> listener = nullptr;
+    auto ret = service.RegisterPublisherListener(TOPIC, listener);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
  * @tc.name: unregister_publisher_listener_001
  * @tc.desc: Verify the UnregisterPublisherListener function
  * @tc.type: FUNC
@@ -94,6 +108,22 @@ HWTEST_F(DistributedHardwareServiceTest, publish_message_001, TestSize.Level0)
 {
     DistributedHardwareService service(ASID, true);
     std::string msg;
+    service.RegisterPublisherListener(TOPIC, g_listener);
+    auto ret = service.PublishMessage(TOPIC, msg);
+
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: publish_message_002
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, publish_message_002, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string msg = "msg";
     service.RegisterPublisherListener(TOPIC, g_listener);
     auto ret = service.PublishMessage(TOPIC, msg);
 
