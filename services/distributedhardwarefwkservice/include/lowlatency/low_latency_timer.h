@@ -22,7 +22,7 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     const std::string LOW_LATENCY_TIMER_ID = "low_latency_timer_id";
-    constexpr int32_t LOW_LATENCY_DELAY_MS = 1 * 1000;
+    constexpr int32_t LOW_LATENCY_DELAY_MS = 50 * 1000;
 }
 class LowLatencyTimer : public DHTimer {
 public:
