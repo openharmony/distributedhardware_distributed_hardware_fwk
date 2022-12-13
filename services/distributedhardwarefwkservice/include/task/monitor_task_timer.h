@@ -13,40 +13,26 @@
  * limitations under the License.
  */
 
-#ifndef DISTRIBUTED_HARDWARE_FWK_MONITOR_TASK_TIMER_H
-#define DISTRIBUTED_HARDWARE_FWK_MONITOR_TASK_TIMER_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_MONITOR_TASK_TIMER_H
+#define OHOS_DISTRIBUTED_HARDWARE_MONITOR_TASK_TIMER_H
 
-#include <condition_variable>
-#include <cstdint>
-#include <memory>
-#include <mutex>
-#include <thread>
-
-#include "event_handler.h"
-
-#include "single_instance.h"
+#include "dh_timer.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class MonitorTaskTimer {
-DECLARE_SINGLE_INSTANCE_BASE(MonitorTaskTimer);
+namespace {
+    const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
+    constexpr int32_t MONITOR_TASK_DELAY_MS = 5 * 1000;
+}
+
+class MonitorTaskTimer : public DHTimer {
 public:
+    MonitorTaskTimer(std::string timerId, int32_t delayTimerMs);
     ~MonitorTaskTimer();
-    void StartTimer();
-    void StopTimer();
-    void StartEventRunner();
 
 private:
-    MonitorTaskTimer();
-    void Execute(const std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler);
-    void InitTimer();
-    void ReleaseTimer();
-
-private:
-    std::thread eventHandlerThread_;
-    std::mutex monitorTaskTimerMutex_;
-    std::condition_variable monitorTaskTimerCond_;
-    std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler_;
+    void ExecuteInner() override;
+    void HandleStopTimer() override;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

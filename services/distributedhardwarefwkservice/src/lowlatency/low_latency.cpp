@@ -20,18 +20,25 @@
 #include "res_sched_client.h"
 #include "res_type.h"
 
+#include "constants.h"
 #include "distributed_hardware_log.h"
+#include "low_latency_timer.h"
 
 namespace OHOS {
 namespace DistributedHardware {
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "LowLatency"
 IMPLEMENT_SINGLE_INSTANCE(LowLatency);
 
-namespace {
-    constexpr int32_t MODE_ENABLE = 0;
-    constexpr int32_t MODE_DISABLE = 1;
-    constexpr uint32_t MAX_SWITCH_SIZE = 256;
-    const std::string KEY = "identity";
-    const std::string PKG_NAME = "ohos.DistributedHardware";
+LowLatency::LowLatency() : lowLatencyTimer_(std::make_shared<LowLatencyTimer>(LOW_LATENCY_TIMER_ID,
+    LOW_LATENCY_DELAY_MS))
+{
+    DHLOGI("LowLatency ctor!");
+}
+
+LowLatency::~LowLatency()
+{
+    DHLOGI("LowLatency dtor!");
 }
 
 void LowLatency::EnableLowLatency(DHType dhType)
@@ -43,12 +50,9 @@ void LowLatency::EnableLowLatency(DHType dhType)
     }
     std::lock_guard<std::mutex> lock(lowLatencyMutex_);
     DHLOGI("lowLatencySwitchSet size: %d", lowLatencySwitchSet_.size());
-    if (lowLatencySwitchSet_.empty()) {
+    if (lowLatencySwitchSet_.empty() && lowLatencyTimer_ != nullptr) {
         DHLOGD("Open LowLatency dhType: %#X", dhType);
-        auto &rssClient = OHOS::ResourceSchedule::ResSchedClient::GetInstance();
-        // to enable low latency mode: value = 0
-        rssClient.ReportData(OHOS::ResourceSchedule::ResType::RES_TYPE_NETWORK_LATENCY_REQUEST, MODE_ENABLE,
-            {{KEY, PKG_NAME}});
+        lowLatencyTimer_->StartTimer();
     }
     if (lowLatencySwitchSet_.size() >= MAX_SWITCH_SIZE) {
         DHLOGE("lowLatencySwitchSet_ is oversize");
@@ -67,13 +71,9 @@ void LowLatency::DisableLowLatency(DHType dhType)
     }
     std::lock_guard<std::mutex> lock(lowLatencyMutex_);
     lowLatencySwitchSet_.erase(dhType);
-    if (lowLatencySwitchSet_.empty()) {
+    if (lowLatencySwitchSet_.empty() && lowLatencyTimer_ != nullptr) {
         DHLOGD("Close LowLatency dhType: %#X", dhType);
-
-        auto &rssClient = OHOS::ResourceSchedule::ResSchedClient::GetInstance();
-        // to restore normal latency mode: value = 1
-        rssClient.ReportData(OHOS::ResourceSchedule::ResType::RES_TYPE_NETWORK_LATENCY_REQUEST, MODE_DISABLE,
-            {{KEY, PKG_NAME}});
+        lowLatencyTimer_->StopTimer();
     }
     DHLOGI("End DisableLowLatency dhType: %#X", dhType);
 }
@@ -86,7 +86,7 @@ void LowLatency::CloseLowLatency()
     auto &rssClient = OHOS::ResourceSchedule::ResSchedClient::GetInstance();
     // to restore normal latency mode: value = 1
     rssClient.ReportData(OHOS::ResourceSchedule::ResType::RES_TYPE_NETWORK_LATENCY_REQUEST, MODE_DISABLE,
-        {{KEY, PKG_NAME}});
+        {{LOW_LATENCY_KEY, DH_FWK_PKG_NAME}});
 }
 } // namespace DistributedHardware
 } // namespace OHOS

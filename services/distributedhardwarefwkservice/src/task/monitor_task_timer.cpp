@@ -15,110 +15,32 @@
 
 #include "monitor_task_timer.h"
 
-#include "anonymous_string.h"
+#include "capability_info.h"
 #include "capability_info_manager.h"
 #include "distributed_hardware_errno.h"
-#include "distributed_hardware_log.h"
+#include "dh_timer.h"
 #include "task_board.h"
 #include "task_executor.h"
 #include "task_factory.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-IMPLEMENT_SINGLE_INSTANCE(MonitorTaskTimer);
-namespace {
-    const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
-    constexpr int32_t DELAY_TIME_MS = 5000;
-}
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "MonitorTaskTimer"
 
-MonitorTaskTimer::MonitorTaskTimer()
+MonitorTaskTimer::MonitorTaskTimer(std::string timerId, int32_t delayTimeMs) : DHTimer(timerId, delayTimeMs)
 {
-    DHLOGI("MonitorTaskTimer construction");
+    DHLOGI("MonitorTaskTimer ctor!");
 }
 
 MonitorTaskTimer::~MonitorTaskTimer()
 {
-    DHLOGI("MonitorTaskTimer destruction");
-    ReleaseTimer();
+    DHLOGI("MonitorTaskTimer dtor!");
 }
 
-void MonitorTaskTimer::InitTimer()
+void MonitorTaskTimer::ExecuteInner()
 {
-    DHLOGI("start");
-    std::unique_lock<std::mutex> lock(monitorTaskTimerMutex_);
-    if (eventHandler_ == nullptr) {
-        eventHandlerThread_ = std::thread(&MonitorTaskTimer::StartEventRunner, this);
-        monitorTaskTimerCond_.wait(lock, [this] {
-            return eventHandler_ != nullptr;
-        });
-    }
-    DHLOGI("end");
-}
-
-void MonitorTaskTimer::ReleaseTimer()
-{
-    DHLOGI("start");
-    StopTimer();
-    DHLOGI("end");
-}
-
-void MonitorTaskTimer::StartEventRunner()
-{
-    DHLOGI("start");
-    auto busRunner = AppExecFwk::EventRunner::Create(false);
-    if (busRunner == nullptr) {
-        DHLOGE("busRunner is nullptr!");
-        return;
-    }
-
-    {
-        std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
-        eventHandler_ = std::make_shared<AppExecFwk::EventHandler>(busRunner);
-    }
-    monitorTaskTimerCond_.notify_all();
-    busRunner->Run();
-    DHLOGI("end");
-}
-
-void MonitorTaskTimer::StartTimer()
-{
-    DHLOGI("start");
-    InitTimer();
-    std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
-    if (eventHandler_ == nullptr) {
-        DHLOGE("eventHandler is nullptr!");
-        return;
-    }
-    auto monitorTaskTimer = [this] {Execute(eventHandler_);};
-    eventHandler_->PostTask(monitorTaskTimer, MONITOR_TASK_TIMER_ID, DELAY_TIME_MS);
-}
-
-void MonitorTaskTimer::StopTimer()
-{
-    DHLOGI("start");
-    std::lock_guard<std::mutex> lock(monitorTaskTimerMutex_);
-    if (eventHandler_ != nullptr) {
-        eventHandler_->RemoveTask(MONITOR_TASK_TIMER_ID);
-        if (eventHandler_->GetEventRunner() != nullptr) {
-            eventHandler_->GetEventRunner()->Stop();
-        }
-    }
-    if (eventHandlerThread_.joinable()) {
-        eventHandlerThread_.join();
-    }
-    eventHandler_ = nullptr;
-    DHLOGI("end");
-}
-
-void MonitorTaskTimer::Execute(const std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler)
-{
-    DHLOGI("start");
-    if (eventHandler == nullptr) {
-        DHLOGE("eventHandler is nullptr!");
-        return;
-    }
+    DHLOGD("ExecuteInner!");
     auto enabledDevices = TaskBoard::GetInstance().GetEnabledDevice();
     std::shared_ptr<CapabilityInfo> capInfoPtr = nullptr;
     TaskParam taskParam;
@@ -137,8 +59,11 @@ void MonitorTaskTimer::Execute(const std::shared_ptr<OHOS::AppExecFwk::EventHand
             TaskExecutor::GetInstance().PushTask(task);
         }
     }
-    auto monitorTaskTimer = [this, eventHandler] {Execute(eventHandler);};
-    eventHandler->PostTask(monitorTaskTimer, MONITOR_TASK_TIMER_ID, DELAY_TIME_MS);
+}
+
+void MonitorTaskTimer::HandleStopTimer()
+{
+    DHLOGI("HandleStopTimer!");
 }
 } // namespace DistributedHardware
 } // namespace OHOS

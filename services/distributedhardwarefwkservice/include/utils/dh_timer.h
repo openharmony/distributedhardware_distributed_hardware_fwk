@@ -13,33 +13,41 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_LOW_LATENCY_H
-#define OHOS_DISTRIBUTED_HARDWARE_LOW_LATENCY_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_DH_TIMER_H
+#define OHOS_DISTRIBUTED_HARDWARE_DH_TIMER_H
 
+#include <condition_variable>
+#include <cstdint>
+#include <memory>
 #include <mutex>
-#include <unordered_set>
+#include <thread>
 
-#include "device_type.h"
-#include "dh_timer.h"
-#include "single_instance.h"
+#include "event_handler.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class LowLatency {
-DECLARE_SINGLE_INSTANCE_BASE(LowLatency);
+class DHTimer {
 public:
-    void EnableLowLatency(DHType dhType);
-    void DisableLowLatency(DHType dhType);
-    void CloseLowLatency();
+    DHTimer(std::string timerId, int32_t delayTimeMs);
+    virtual ~DHTimer();
+    void StartTimer();
+    void StopTimer();
 
 private:
-    LowLatency();
-    ~LowLatency();
+    virtual void ExecuteInner() = 0;
+    virtual void HandleStopTimer() = 0;
+    void InitTimer();
+    void ReleaseTimer();
+    void Execute();
+    void StartEventRunner();
 
 private:
-    std::unordered_set<DHType> lowLatencySwitchSet_;
-    std::mutex lowLatencyMutex_;
-    std::shared_ptr<DHTimer> lowLatencyTimer_ = nullptr;
+    std::thread eventHandlerThread_;
+    std::mutex timerMutex_;
+    std::condition_variable timerCond_;
+    std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler_;
+    std::string timerId_;
+    int32_t delayTimeMs_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

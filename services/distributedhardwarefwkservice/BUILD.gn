@@ -65,6 +65,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/localhardwaremanager/plugin_listener_impl.cpp",
     "src/lowlatency/low_latency.cpp",
     "src/lowlatency/low_latency_listener.cpp",
+    "src/lowlatency/low_latency_timer.cpp",
     "src/publisher/publisher.cpp",
     "src/publisher/publisher_item.cpp",
     "src/resourcemanager/capability_info.cpp",
@@ -83,6 +84,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/task/task_executor.cpp",
     "src/task/task_factory.cpp",
     "src/utils/dh_context.cpp",
+    "src/utils/dh_timer.cpp",
     "src/versionmanager/version_manager.cpp",
   ]
 
