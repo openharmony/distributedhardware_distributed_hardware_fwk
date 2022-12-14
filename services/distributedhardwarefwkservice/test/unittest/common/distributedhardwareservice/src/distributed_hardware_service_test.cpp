@@ -181,19 +181,5 @@ HWTEST_F(DistributedHardwareServiceTest, OnStart_001, TestSize.Level0)
     service.OnStop();
     EXPECT_EQ(ServiceRunningState::STATE_NOT_START, service.state_);
 }
-
-/**
- * @tc.name: Init_001
- * @tc.desc: Verify the Init function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DistributedHardwareServiceTest, Init_001, TestSize.Level0)
-{
-    DistributedHardwareService service(ASID, true);
-    service.registerToService_ = false;
-
-    EXPECT_EQ(false, service.Init());
-}
 } // namespace DistributedHardware
 } // namespace OHOS

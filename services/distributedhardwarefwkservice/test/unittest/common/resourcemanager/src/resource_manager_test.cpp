@@ -466,5 +466,180 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_020, TestSize.Level0)
     bool ret = CAP_INFO_1->Compare(capaInfo);
     EXPECT_EQ(false, ret);
 }
+
+/**
+ * @tc.name: OnEvent_001
+ * @tc.desc: Verify the OnEvent function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, OnEvent_001, TestSize.Level0)
+{
+    EventSender sender;
+    CapabilityInfoEvent ev(sender);
+    CapabilityInfoManager::GetInstance()->OnEvent(ev);
+    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+}
+
+/**
+ * @tc.name: HandleCapabilityAddChange_001
+ * @tc.desc: Verify the HandleCapabilityAddChange function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, HandleCapabilityAddChange_001, TestSize.Level0)
+{
+    std::vector<DistributedKv::Entry> insertRecords;
+    CapabilityInfoManager::GetInstance()->HandleCapabilityAddChange(insertRecords);
+    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+}
+
+/**
+ * @tc.name: HandleCapabilityUpdateChange_001
+ * @tc.desc: Verify the HandleCapabilityUpdateChange function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, HandleCapabilityUpdateChange_001, TestSize.Level0)
+{
+    std::vector<DistributedKv::Entry> updateRecords;
+    CapabilityInfoManager::GetInstance()->HandleCapabilityUpdateChange(updateRecords);
+    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+}
+
+/**
+ * @tc.name: IsCapabilityMatchFilter_001
+ * @tc.desc: Verify the IsCapabilityMatchFilter function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_001, TestSize.Level0)
+{
+    std::shared_ptr<CapabilityInfo> cap = nullptr;
+    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_ID;
+    std::string value;
+    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
+    EXPECT_EQ(false, ret);
+}
+
+/**
+ * @tc.name: IsCapabilityMatchFilter_002
+ * @tc.desc: Verify the IsCapabilityMatchFilter function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_002, TestSize.Level0)
+{
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_ID;
+    std::string value;
+    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
+    EXPECT_EQ(true, ret);
+}
+
+/**
+ * @tc.name: IsCapabilityMatchFilter_003
+ * @tc.desc: Verify the IsCapabilityMatchFilter function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_003, TestSize.Level0)
+{
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DEVICE_ID;
+    std::string value;
+    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
+    EXPECT_EQ(true, ret);
+}
+
+/**
+ * @tc.name: IsCapabilityMatchFilter_004
+ * @tc.desc: Verify the IsCapabilityMatchFilter function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_004, TestSize.Level0)
+{
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DEVICE_NAME;
+    std::string value;
+    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
+    EXPECT_EQ(true, ret);
+}
+
+/**
+ * @tc.name: IsCapabilityMatchFilter_005
+ * @tc.desc: Verify the IsCapabilityMatchFilter function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_005, TestSize.Level0)
+{
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DEVICE_TYPE;
+    uint16_t devType = 123;
+    std::string value = std::to_string(devType);
+    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
+    EXPECT_EQ(false, ret);
+}
+
+/**
+ * @tc.name: IsCapabilityMatchFilter_006
+ * @tc.desc: Verify the IsCapabilityMatchFilter function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_006, TestSize.Level0)
+{
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_TYPE;
+    DHType dhType = DHType::AUDIO;
+    std::string value = std::to_string(static_cast<uint32_t>(dhType));
+    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
+    EXPECT_EQ(false, ret);
+}
+
+/**
+ * @tc.name: IsCapabilityMatchFilter_007
+ * @tc.desc: Verify the IsCapabilityMatchFilter function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_007, TestSize.Level0)
+{
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_ATTRS;
+    std::string value;
+    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
+    EXPECT_EQ(true, ret);
+}
+
+/**
+ * @tc.name: GetCapabilitiesByDeviceId_001
+ * @tc.desc: Verify the GetCapabilitiesByDeviceId function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, GetCapabilitiesByDeviceId_001, TestSize.Level0)
+{
+    std::string deviceId;
+    std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
+    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, resInfos);
+    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+}
+
+/**
+ * @tc.name: HasCapability_001
+ * @tc.desc: Verify the HasCapability function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, HasCapability_001, TestSize.Level0)
+{
+    std::string deviceId;
+    std::string dhId;
+    bool ret = CapabilityInfoManager::GetInstance()->HasCapability(deviceId, dhId);
+    EXPECT_EQ(false, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

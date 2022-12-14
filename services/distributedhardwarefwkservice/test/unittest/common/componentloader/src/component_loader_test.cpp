@@ -42,6 +42,7 @@ void ComponentLoaderTest::TearDown()
 {
     ComponentLoader::GetInstance().UnInit();
     g_compHandlerMap.clear();
+    ComponentLoader::GetInstance().compHandlerMap_.clear();
 }
 
 /**
@@ -81,6 +82,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_002, TestSize.Level0)
  */
 HWTEST_F(ComponentLoaderTest, component_loader_test_003, TestSize.Level0)
 {
+    ComponentLoader::GetInstance().compHandlerMap_.clear();
     DHType dhType = DHType::AUDIO;
     IHardwareHandler *hardwareHandlerPtr = nullptr;
     auto ret = ComponentLoader::GetInstance().GetHardwareHandler(dhType, hardwareHandlerPtr);
@@ -127,6 +129,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_005, TestSize.Level0)
  */
 HWTEST_F(ComponentLoaderTest, component_loader_test_006, TestSize.Level0)
 {
+    ComponentLoader::GetInstance().compHandlerMap_.clear();
     DHType dhType = DHType::AUDIO;
     IDistributedHardwareSource *sourcePtr = nullptr;
     auto ret = ComponentLoader::GetInstance().GetSource(dhType, sourcePtr);
@@ -173,6 +176,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_008, TestSize.Level0)
  */
 HWTEST_F(ComponentLoaderTest, component_loader_test_009, TestSize.Level0)
 {
+    ComponentLoader::GetInstance().compHandlerMap_.clear();
     DHType dhType = DHType::AUDIO;
     IDistributedHardwareSink *sinkPtr = nullptr;
     auto ret = ComponentLoader::GetInstance().GetSink(dhType, sinkPtr);
