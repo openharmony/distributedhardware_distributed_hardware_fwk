@@ -23,6 +23,19 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "LowLatencyListener"
+
+LowLatencyListener::LowLatencyListener()
+{
+    DHLOGI("LowLatencyListener ctor!");
+}
+
+LowLatencyListener::~LowLatencyListener()
+{
+    DHLOGI("LowLatencyListener dtor!");
+}
+
 void LowLatencyListener::OnMessage(const DHTopic topic, const std::string& message)
 {
     (void) topic;

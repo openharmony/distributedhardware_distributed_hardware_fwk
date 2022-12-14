@@ -38,7 +38,6 @@
 #include "distributed_hardware_log.h"
 #include "enabled_comps_dump.h"
 #include "low_latency.h"
-#include "monitor_task_timer.h"
 #include "publisher.h"
 #include "task_executor.h"
 #include "task_factory.h"
@@ -56,11 +55,12 @@ namespace {
     constexpr int32_t ENABLE_RETRY_MAX_TIMES = 30;
     constexpr int32_t DISABLE_RETRY_MAX_TIMES = 30;
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
-    const int32_t INVALID_SA_ID = -1;
+    constexpr int32_t INVALID_SA_ID = -1;
 }
 
 ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
-    compMonitorPtr_(std::make_shared<ComponentMonitor>()), lowLatencyListener_(new(std::nothrow) LowLatencyListener)
+    compMonitorPtr_(std::make_shared<ComponentMonitor>()), lowLatencyListener_(new(std::nothrow) LowLatencyListener),
+    monitorTaskTimer_(std::make_shared<MonitorTaskTimer>(MONITOR_TASK_TIMER_ID, MONITOR_TASK_DELAY_MS))
 {
     DHLOGI("Ctor ComponentManager");
 }
@@ -113,7 +113,9 @@ int32_t ComponentManager::Init()
         HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             "dhfwk start sink failed.");
     }
-    MonitorTaskTimer::GetInstance().StartTimer();
+    if (monitorTaskTimer_ != nullptr) {
+        monitorTaskTimer_->StartTimer();
+    }
 #ifdef DHARDWARE_LOW_LATENCY
     Publisher::GetInstance().RegisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
 #endif
@@ -148,7 +150,9 @@ int32_t ComponentManager::UnInit()
     compSource_.clear();
     compSink_.clear();
 
-    MonitorTaskTimer::GetInstance().StopTimer();
+    if (monitorTaskTimer_ != nullptr) {
+        monitorTaskTimer_->StopTimer();
+    }
 #ifdef DHARDWARE_LOW_LATENCY
     Publisher::GetInstance().UnregisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
     LowLatency::GetInstance().CloseLowLatency();

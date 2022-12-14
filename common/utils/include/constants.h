@@ -31,6 +31,10 @@ namespace DistributedHardware {
     constexpr uint32_t MAX_COMP_SIZE = 128;
     constexpr uint32_t MAX_DB_RECORD_SIZE = 10000;
     constexpr uint32_t MAX_ONLINE_DEVICE_SIZE = 10000;
+    constexpr int32_t MODE_ENABLE = 0;
+    constexpr int32_t MODE_DISABLE = 1;
+    constexpr uint32_t MAX_SWITCH_SIZE = 256;
+    const std::string LOW_LATENCY_KEY = "identity";
     const std::u16string DHMS_STUB_INTERFACE_TOKEN = u"ohos.distributedhardware.accessToken";
     const std::string COMPONENTSLOAD_PROFILE_PATH =
         R"(/vendor/etc/distributedhardware/distributed_hardware_components_cfg.json)";

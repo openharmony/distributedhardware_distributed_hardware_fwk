@@ -13,20 +13,23 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_LOW_LATENCY_LISTENER_H
-#define OHOS_DISTRIBUTED_HARDWARE_LOW_LATENCY_LISTENER_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_LOW_LATENCY_TIMER_H
+#define OHOS_DISTRIBUTED_HARDWARE_LOW_LATENCY_TIMER_H
 
-#include "ipublisher_listener.h"
-#include "low_latency.h"
+#include "dh_timer.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class LowLatencyListener : public IPublisherListener {
+namespace {
+    const std::string LOW_LATENCY_TIMER_ID = "low_latency_timer_id";
+    constexpr int32_t LOW_LATENCY_DELAY_MS = 50 * 1000;
+}
+class LowLatencyTimer : public DHTimer {
 public:
-    LowLatencyListener();
-    ~LowLatencyListener();
-    void OnMessage(const DHTopic topic, const std::string& message) override;
-    sptr<IRemoteObject> AsObject() override;
+    LowLatencyTimer(std::string timerId, int32_t delayTimeMs);
+    ~LowLatencyTimer();
+    void ExecuteInner() override;
+    void HandleStopTimer() override;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
