@@ -20,15 +20,10 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-namespace {
-    const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
-    constexpr int32_t MONITOR_TASK_DELAY_MS = 5 * 1000;
-}
-
 class MonitorTaskTimer : public DHTimer {
 public:
     MonitorTaskTimer(std::string timerId, int32_t delayTimerMs);
-    ~MonitorTaskTimer();
+    ~MonitorTaskTimer() override;
 
 private:
     void ExecuteInner() override;

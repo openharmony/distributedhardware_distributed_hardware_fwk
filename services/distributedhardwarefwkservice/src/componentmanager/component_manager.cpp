@@ -56,6 +56,8 @@ namespace {
     constexpr int32_t DISABLE_RETRY_MAX_TIMES = 30;
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
     constexpr int32_t INVALID_SA_ID = -1;
+    constexpr int32_t MONITOR_TASK_DELAY_MS = 5 * 1000;
+    const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
 }
 
 ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),

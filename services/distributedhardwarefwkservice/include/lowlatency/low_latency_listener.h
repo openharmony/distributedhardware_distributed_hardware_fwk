@@ -24,7 +24,7 @@ namespace DistributedHardware {
 class LowLatencyListener : public IPublisherListener {
 public:
     LowLatencyListener();
-    ~LowLatencyListener();
+    ~LowLatencyListener() override;
     void OnMessage(const DHTopic topic, const std::string& message) override;
     sptr<IRemoteObject> AsObject() override;
 };
