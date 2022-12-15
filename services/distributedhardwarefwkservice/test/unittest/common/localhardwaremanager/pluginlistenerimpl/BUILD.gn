@@ -15,7 +15,7 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/local_hardware_manager_test"
+module_out_path = "distributed_hardware_fwk/plugin_listener_impl_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -36,11 +36,10 @@ config("module_private_config") {
   ]
 }
 
-ohos_unittest("LocalHardwareManagerTest") {
+ohos_unittest("PluginListenerImplTest") {
   module_out_path = module_out_path
 
   sources = [
-    "src/local_hardware_manager_test.cpp",
     "src/mock_hardware_handler.cpp",
     "src/plugin_listener_impl_test.cpp",
   ]
@@ -60,12 +59,12 @@ ohos_unittest("LocalHardwareManagerTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"LocalHardwareManagerTest\"",
+    "DH_LOG_TAG=\"PluginListenerImplTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 }
 
-group("local_hardware_manager_test") {
+group("plugin_listener_impl_test") {
   testonly = true
-  deps = [ ":LocalHardwareManagerTest" ]
+  deps = [ ":PluginListenerImplTest" ]
 }

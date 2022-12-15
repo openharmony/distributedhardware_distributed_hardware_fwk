@@ -19,6 +19,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+#include "db_adapter.h"
+#include "distributed_hardware_errno.h"
 #include "version_info.h"
 
 namespace OHOS {
@@ -29,6 +31,45 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
+};
+
+class MockDBAdapter : public DBAdapter {
+public:
+    MockDBAdapter(const std::string &appId, const std::string &storeId,
+        const std::shared_ptr<DistributedKv::KvStoreObserver> &changeListener)
+            : DBAdapter(appId, storeId, changeListener) {}
+
+    int32_t RemoveCapabilityInfoByKey(const std::string &key)
+    {
+        (void)key;
+        return DH_FWK_SUCCESS;
+    }
+
+    int32_t GetDataByKey(const std::string &key, std::string &data)
+    {
+        (void)key;
+        (void)data;
+        return DH_FWK_SUCCESS;
+    }
+
+    int32_t RemoveDataByKey(const std::string &key)
+    {
+        (void)key;
+        return DH_FWK_SUCCESS;
+    }
+
+    int32_t GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<std::string> &values)
+    {
+        (void)keyPrefix;
+        (void)values;
+        return DH_FWK_SUCCESS;
+    }
+
+    int32_t ManualSync(const std::string &networkId)
+    {
+        (void)networkId;
+        return DH_FWK_SUCCESS;
+    }
 };
 } // namespace DistributedHardware
 } // namespace OHOS

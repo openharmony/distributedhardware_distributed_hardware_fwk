@@ -24,7 +24,6 @@
 #include "version_manager.h"
 #undef private
 #include "dh_context.h"
-#include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
 using namespace testing::ext;
@@ -184,6 +183,233 @@ HWTEST_F(VersionInfoManagerTest, version_info_manager_test_004, TestSize.Level0)
 HWTEST_F(VersionInfoManagerTest, version_info_manager_test_005, TestSize.Level0)
 {
     EXPECT_EQ(VersionInfoManager::GetInstance()->UnInit(), DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: UpdateVersionCache_001
+ * @tc.desc: Verify the UpdateVersionCache function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_001, TestSize.Level0)
+{
+    VersionInfo versionInfo;
+    versionInfo.deviceId = "deviceId";
+    VersionInfoManager::GetInstance()->UpdateVersionCache(versionInfo);
+    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
+}
+
+/**
+ * @tc.name: UpdateVersionCache_002
+ * @tc.desc: Verify the UpdateVersionCache function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_002, TestSize.Level0)
+{
+    VersionInfo versionInfo;
+    VersionInfoManager::GetInstance()->UpdateVersionCache(versionInfo);
+    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
+}
+
+/**
+ * @tc.name: RemoveVersionInfoByDeviceId_001
+ * @tc.desc: Verify the RemoveVersionInfoByDeviceId function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, RemoveVersionInfoByDeviceId_001, TestSize.Level0)
+{
+    std::string deviceId;
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    int32_t ret = VersionInfoManager::GetInstance()->RemoveVersionInfoByDeviceId(deviceId);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+/**
+ * @tc.name: RemoveVersionInfoByDeviceId_002
+ * @tc.desc: Verify the RemoveVersionInfoByDeviceId function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, RemoveVersionInfoByDeviceId_002, TestSize.Level0)
+{
+    std::string deviceId = "deviceId";
+    std::string appId;
+    std::string storeId;
+    std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = nullptr;
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = std::make_shared<MockDBAdapter>(appId, storeId, changeListener);
+    int32_t ret =  VersionInfoManager::GetInstance()->RemoveVersionInfoByDeviceId(deviceId);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
+}
+
+/**
+ * @tc.name: SyncVersionInfoFromDB_001
+ * @tc.desc: Verify the SyncVersionInfoFromDB function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_001, TestSize.Level0)
+{
+    std::string deviceId;
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    int32_t ret = VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(deviceId);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+/**
+ * @tc.name: SyncVersionInfoFromDB_002
+ * @tc.desc: Verify the SyncVersionInfoFromDB function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_002, TestSize.Level0)
+{
+    std::string deviceId = "deviceId";
+    std::string appId;
+    std::string storeId;
+    std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = nullptr;
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = std::make_shared<MockDBAdapter>(appId, storeId, changeListener);
+    int32_t ret =  VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(deviceId);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
+}
+
+/**
+ * @tc.name: SyncVersionInfoFromDB_003
+ * @tc.desc: Verify the SyncVersionInfoFromDB function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_003, TestSize.Level0)
+{
+    std::string deviceId = "device";
+    int32_t ret =  VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(deviceId);
+    EXPECT_NE(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: SyncRemoteVersionInfos_001
+ * @tc.desc: Verify the SyncRemoteVersionInfos function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_001, TestSize.Level0)
+{
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    int32_t ret = VersionInfoManager::GetInstance()->SyncRemoteVersionInfos();
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+/**
+ * @tc.name: CreateManualSyncCount_001
+ * @tc.desc: Verify the CreateManualSyncCount function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, CreateManualSyncCount_001, TestSize.Level0)
+{
+    std::string deviceId;
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    VersionInfoManager::GetInstance()->CreateManualSyncCount(deviceId);
+    EXPECT_EQ(nullptr, VersionInfoManager::GetInstance()->dbAdapterPtr_);
+}
+
+/**
+ * @tc.name: RemoveManualSyncCount_001
+ * @tc.desc: Verify the RemoveManualSyncCount function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, RemoveManualSyncCount_001, TestSize.Level0)
+{
+    std::string deviceId;
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    VersionInfoManager::GetInstance()->RemoveManualSyncCount(deviceId);
+    EXPECT_EQ(nullptr, VersionInfoManager::GetInstance()->dbAdapterPtr_);
+}
+
+/**
+ * @tc.name: ManualSync_001
+ * @tc.desc: Verify the ManualSync function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, ManualSync_001, TestSize.Level0)
+{
+    std::string deviceId;
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    int32_t ret = VersionInfoManager::GetInstance()->ManualSync(deviceId);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+/**
+ * @tc.name: ManualSync_002
+ * @tc.desc: Verify the ManualSync function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, ManualSync_002, TestSize.Level0)
+{
+    std::string appId;
+    std::string storeId;
+    std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = nullptr;
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = std::make_shared<MockDBAdapter>(appId, storeId, changeListener);
+    std::string deviceId;
+    int32_t ret = VersionInfoManager::GetInstance()->ManualSync(deviceId);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
+}
+
+/**
+ * @tc.name: HandleVersionAddChange_001
+ * @tc.desc: Verify the HandleVersionAddChange function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, HandleVersionAddChange_001, TestSize.Level0)
+{
+    std::vector<DistributedKv::Entry> insertRecords;
+    VersionInfoManager::GetInstance()->HandleVersionAddChange(insertRecords);
+    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
+}
+
+/**
+ * @tc.name: HandleVersionUpdateChange_001
+ * @tc.desc: Verify the HandleVersionUpdateChange function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, HandleVersionUpdateChange_001, TestSize.Level0)
+{
+    std::vector<DistributedKv::Entry> updateRecords;
+    VersionInfoManager::GetInstance()->HandleVersionUpdateChange(updateRecords);
+    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
+}
+
+/**
+ * @tc.name: HandleVersionDeleteChange_001
+ * @tc.desc: Verify the HandleVersionDeleteChange function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, HandleVersionDeleteChange_001, TestSize.Level0)
+{
+    std::vector<DistributedKv::Entry> deleteRecords;
+    VersionInfoManager::GetInstance()->HandleVersionDeleteChange(deleteRecords);
+    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
+}
+
+/**
+ * @tc.name: VersionInfoEvent_001
+ * @tc.desc: Verify the VersionInfoEvent function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, VersionInfoEvent_001, TestSize.Level0)
+{
+    EventSender sender;
+    VersionInfoEvent ev(sender);
+    VersionInfoManager::GetInstance()->OnEvent(ev);
+    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

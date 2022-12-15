@@ -89,7 +89,11 @@ void ComponentManagerTest::SetUp()
     ComponentManager::GetInstance().compSink_.clear();
 }
 
-void ComponentManagerTest::TearDown() {}
+void ComponentManagerTest::TearDown()
+{
+    ComponentManager::GetInstance().compSource_.clear();
+    ComponentManager::GetInstance().compSink_.clear();
+}
 
 int32_t ComponentManagerTest::Enable(int32_t timeout, int32_t status)
 {
@@ -509,6 +513,358 @@ HWTEST_F(ComponentManagerTest, GetDHType_test_001, TestSize.Level0)
     std::string dhId = "camera_1234567489";
     auto ret = ComponentManager::GetInstance().GetDHType(uuid, dhId);
     EXPECT_EQ(DHType::UNKNOWN, ret);
+}
+
+/**
+ * @tc.name: UnInit_001
+ * @tc.desc: Verify the UnInit function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, UnInit_001, TestSize.Level0)
+{
+    ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
+    int32_t ret = ComponentManager::GetInstance().UnInit();
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_MONITOR_NULL, ret);
+}
+
+/**
+ * @tc.name: StartSource_001
+ * @tc.desc: Verify the StartSource function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, StartSource_001, TestSize.Level0)
+{
+    auto ret = ComponentManager::GetInstance().StartSource();
+    EXPECT_EQ(true, ret.empty());
+}
+
+/**
+ * @tc.name: StartSource_002
+ * @tc.desc: Verify the StartSource function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, StartSource_002, TestSize.Level0)
+{
+    DHType dhType = DHType::AUDIO;
+    auto ret = ComponentManager::GetInstance().StartSource(dhType);
+    EXPECT_EQ(true, ret.empty());
+}
+
+/**
+ * @tc.name: StartSink_001
+ * @tc.desc: Verify the StartSink function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, StartSink_001, TestSize.Level0)
+{
+    auto ret = ComponentManager::GetInstance().StartSink();
+    EXPECT_EQ(true, ret.empty());
+}
+
+/**
+ * @tc.name: StartSink_002
+ * @tc.desc: Verify the StartSink function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, StartSink_002, TestSize.Level0)
+{
+    DHType dhType = DHType::AUDIO;
+    auto ret = ComponentManager::GetInstance().StartSink(dhType);
+    EXPECT_EQ(true, ret.empty());
+}
+
+/**
+ * @tc.name: StopSource_001
+ * @tc.desc: Verify the StopSource function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, StopSource_001, TestSize.Level0)
+{
+    auto ret = ComponentManager::GetInstance().StopSource();
+    EXPECT_EQ(true, ret.empty());
+}
+
+/**
+ * @tc.name: StopSink_001
+ * @tc.desc: Verify the StopSink function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, StopSink_001, TestSize.Level0)
+{
+    auto ret = ComponentManager::GetInstance().StopSink();
+    EXPECT_EQ(true, ret.empty());
+}
+
+/**
+ * @tc.name: WaitForResult_001
+ * @tc.desc: Verify the WaitForResult function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, WaitForResult_001, TestSize.Level0)
+{
+    ComponentManager::Action action = ComponentManager::Action::START_SINK;
+    ActionResult actionsResult;
+    bool ret = ComponentManager::GetInstance().WaitForResult(action, actionsResult);
+    EXPECT_EQ(true, ret);
+}
+
+/**
+ * @tc.name: InitCompSource_001
+ * @tc.desc: Verify the InitCompSource function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, InitCompSource_001, TestSize.Level0)
+{
+    bool ret = ComponentManager::GetInstance().InitCompSource();
+    EXPECT_EQ(true, ret);
+}
+
+/**
+ * @tc.name: InitCompSink_001
+ * @tc.desc: Verify the InitCompSink function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, InitCompSink_001, TestSize.Level0)
+{
+    bool ret = ComponentManager::GetInstance().InitCompSink();
+    EXPECT_EQ(true, ret);
+}
+
+/**
+ * @tc.name: Enable_001
+ * @tc.desc: Verify the Enable function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, Enable_001, TestSize.Level0)
+{
+    ComponentManager::GetInstance().compSource_.clear();
+    std::string networkId;
+    std::string uuid;
+    std::string dhId;
+    DHType dhType = DHType::CAMERA;
+    int32_t ret = ComponentManager::GetInstance().Enable(networkId, uuid, dhId, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+/**
+ * @tc.name: Enable_002
+ * @tc.desc: Verify the Enable function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, Enable_002, TestSize.Level0)
+{
+    std::string networkId;
+    std::string uuid;
+    std::string dhId;
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
+    int32_t ret = ComponentManager::GetInstance().Enable(networkId, uuid, dhId, dhType);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND, ret);
+}
+
+/**
+ * @tc.name: Disable_001
+ * @tc.desc: Verify the Disable function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, Disable_001, TestSize.Level0)
+{
+    ComponentManager::GetInstance().compSource_.clear();
+    std::string networkId;
+    std::string uuid;
+    std::string dhId;
+    DHType dhType = DHType::INPUT;
+    int32_t ret = ComponentManager::GetInstance().Disable(networkId, uuid, dhId, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+/**
+ * @tc.name: Disable_002
+ * @tc.desc: Verify the Disable function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, Disable_002, TestSize.Level0)
+{
+    std::string networkId;
+    std::string uuid;
+    std::string dhId;
+    DHType dhType = DHType::INPUT;
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
+    int32_t ret = ComponentManager::GetInstance().Disable(networkId, uuid, dhId, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+/**
+ * @tc.name: GetDHType_001
+ * @tc.desc: Verify the GetDHType function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, GetDHType_001, TestSize.Level0)
+{
+    std::string uuid;
+    std::string dhId;
+    auto ret = ComponentManager::GetInstance().GetDHType(uuid, dhId);
+    EXPECT_EQ(DHType::UNKNOWN, ret);
+}
+
+/**
+ * @tc.name: GetEnableParam_001
+ * @tc.desc: Verify the GetEnableParam function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, GetEnableParam_001, TestSize.Level0)
+{
+    std::string networkId;
+    std::string uuid;
+    std::string dhId;
+    DHType dhType = DHType::CAMERA;
+    EnableParam param;
+    int32_t ret = ComponentManager::GetInstance().GetEnableParam(networkId, uuid, dhId, dhType, param);
+    EXPECT_NE(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: GetSinkVersionFromVerMgr_001
+ * @tc.desc: Verify the GetSinkVersionFromVerMgr function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, GetSinkVersionFromVerMgr_001, TestSize.Level0)
+{
+    std::string uuid;
+    DHType dhType = DHType::CAMERA;
+    std::string sinkVersion;
+    int32_t ret = ComponentManager::GetInstance().GetSinkVersionFromVerMgr(uuid, dhType, sinkVersion);
+    EXPECT_NE(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: GetSinkVersionFromVerInfoMgr_001
+ * @tc.desc: Verify the GetSinkVersionFromVerInfoMgr function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, GetSinkVersionFromVerInfoMgr_001, TestSize.Level0)
+{
+    std::string uuid;
+    DHType dhType = DHType::CAMERA;
+    std::string sinkVersion;
+    int32_t ret = ComponentManager::GetInstance().GetSinkVersionFromVerInfoMgr(uuid, dhType, sinkVersion);
+    EXPECT_NE(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: GetSinkVersion_001
+ * @tc.desc: Verify the GetSinkVersion function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, GetSinkVersion_001, TestSize.Level0)
+{
+    std::string networkId;
+    std::string uuid;
+    DHType dhType = DHType::CAMERA;
+    std::string sinkVersion;
+    int32_t ret = ComponentManager::GetInstance().GetSinkVersion(networkId, uuid, dhType, sinkVersion);
+    EXPECT_NE(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: UpdateVersionCache_001
+ * @tc.desc: Verify the UpdateVersionCache function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, UpdateVersionCache_001, TestSize.Level0)
+{
+    std::string uuid;
+    VersionInfo versionInfo;
+    ComponentManager::GetInstance().UpdateVersionCache(uuid, versionInfo);
+    EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
+}
+
+/**
+ * @tc.name: DumpLoadedComps_001
+ * @tc.desc: Verify the DumpLoadedComps function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, DumpLoadedComps_001, TestSize.Level0)
+{
+    std::set<DHType> compSourceType;
+    std::set<DHType> compSinkType;
+    ComponentManager::GetInstance().DumpLoadedComps(compSourceType, compSinkType);
+    EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
+}
+
+/**
+ * @tc.name: Recover_001
+ * @tc.desc: Verify the Recover function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, Recover_001, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    ComponentManager::GetInstance().Recover(dhType);
+    EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
+}
+
+/**
+ * @tc.name: DoRecover_001
+ * @tc.desc: Verify the DoRecover function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, DoRecover_001, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    ComponentManager::GetInstance().DoRecover(dhType);
+    EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
+}
+
+/**
+ * @tc.name: ReStartSA_001
+ * @tc.desc: Verify the ReStartSA function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, ReStartSA_001, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    ComponentManager::GetInstance().ReStartSA(dhType);
+    EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
+}
+
+/**
+ * @tc.name: RecoverDistributedHardware_001
+ * @tc.desc: Verify the RecoverDistributedHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, RecoverDistributedHardware_001, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    ComponentManager::GetInstance().RecoverDistributedHardware(dhType);
+    EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

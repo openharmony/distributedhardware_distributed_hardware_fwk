@@ -113,6 +113,7 @@ void DbAdapterTest::SetUp()
 
 void DbAdapterTest::TearDown()
 {
+    g_dbAdapterPtr->manualSyncCountMap_.clear();
 }
 
 /**
@@ -335,6 +336,170 @@ HWTEST_F(DbAdapterTest, db_adapter_test_015, TestSize.Level0)
 {
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL, g_dbAdapterPtr->UnRegisterChangeListener());
+}
+
+/**
+ * @tc.name: SyncCompleted_001
+ * @tc.desc: Verify the SyncCompleted function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, SyncCompleted_001, TestSize.Level0)
+{
+    std::map<std::string, DistributedKv::Status> results;
+    g_dbAdapterPtr->SyncCompleted(results);
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: SyncCompleted_002
+ * @tc.desc: Verify the SyncCompleted function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, SyncCompleted_002, TestSize.Level0)
+{
+    std::map<std::string, DistributedKv::Status> results;
+    g_dbAdapterPtr->SyncCompleted(results);
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: CreateManualSyncCount_001
+ * @tc.desc: Verify the CreateManualSyncCount function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, CreateManualSyncCount_001, TestSize.Level0)
+{
+    std::string deviceId;
+    g_dbAdapterPtr->CreateManualSyncCount(deviceId);
+    EXPECT_EQ(false, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: RemoveManualSyncCount_001
+ * @tc.desc: Verify the RemoveManualSyncCount function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, RemoveManualSyncCount_001, TestSize.Level0)
+{
+    std::string deviceId;
+    g_dbAdapterPtr->RemoveManualSyncCount(deviceId);
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: SyncDBForRecover_001
+ * @tc.desc: Verify the SyncDBForRecover function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, SyncDBForRecover_001, TestSize.Level0)
+{
+    g_dbAdapterPtr->storeId_.storeId = GLOBAL_CAPABILITY_ID;
+    g_dbAdapterPtr->SyncDBForRecover();
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: SyncDBForRecover_002
+ * @tc.desc: Verify the SyncDBForRecover function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, SyncDBForRecover_002, TestSize.Level0)
+{
+    g_dbAdapterPtr->storeId_.storeId = GLOBAL_VERSION_ID;
+    g_dbAdapterPtr->SyncDBForRecover();
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: RegisterKvStoreDeathListener_001
+ * @tc.desc: Verify the RegisterKvStoreDeathListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, RegisterKvStoreDeathListener_001, TestSize.Level0)
+{
+    g_dbAdapterPtr->RegisterKvStoreDeathListener();
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: UnRegisterKvStoreDeathListener_001
+ * @tc.desc: Verify the UnRegisterKvStoreDeathListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, UnRegisterKvStoreDeathListener_001, TestSize.Level0)
+{
+    g_dbAdapterPtr->UnRegisterKvStoreDeathListener();
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: RegisterManualSyncListener_001
+ * @tc.desc: Verify the RegisterManualSyncListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, RegisterManualSyncListener_001, TestSize.Level0)
+{
+    g_dbAdapterPtr->kvStoragePtr_ = nullptr;
+    g_dbAdapterPtr->UnRegisterKvStoreDeathListener();
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: RegisterManualSyncListener_002
+ * @tc.desc: Verify the RegisterManualSyncListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, RegisterManualSyncListener_002, TestSize.Level0)
+{
+    g_dbAdapterPtr->UnRegisterKvStoreDeathListener();
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: UnRegisterManualSyncListener_001
+ * @tc.desc: Verify the UnRegisterManualSyncListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, UnRegisterManualSyncListener_001, TestSize.Level0)
+{
+    g_dbAdapterPtr->kvStoragePtr_ = nullptr;
+    g_dbAdapterPtr->UnRegisterManualSyncListener();
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: UnRegisterManualSyncListener_002
+ * @tc.desc: Verify the UnRegisterManualSyncListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, UnRegisterManualSyncListener_002, TestSize.Level0)
+{
+    g_dbAdapterPtr->UnRegisterManualSyncListener();
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: OnRemoteDied_001
+ * @tc.desc: Verify the OnRemoteDied function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, OnRemoteDied_001, TestSize.Level0)
+{
+    g_dbAdapterPtr->OnRemoteDied();
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
