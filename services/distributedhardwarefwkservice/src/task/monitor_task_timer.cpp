@@ -27,7 +27,6 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "MonitorTaskTimer"
-
 MonitorTaskTimer::MonitorTaskTimer(std::string timerId, int32_t delayTimeMs) : DHTimer(timerId, delayTimeMs)
 {
     DHLOGI("MonitorTaskTimer ctor!");

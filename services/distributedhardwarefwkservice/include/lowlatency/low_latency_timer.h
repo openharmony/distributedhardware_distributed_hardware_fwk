@@ -20,14 +20,10 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-namespace {
-    const std::string LOW_LATENCY_TIMER_ID = "low_latency_timer_id";
-    constexpr int32_t LOW_LATENCY_DELAY_MS = 50 * 1000;
-}
 class LowLatencyTimer : public DHTimer {
 public:
     LowLatencyTimer(std::string timerId, int32_t delayTimeMs);
-    ~LowLatencyTimer();
+    ~LowLatencyTimer() override;
     void ExecuteInner() override;
     void HandleStopTimer() override;
 };

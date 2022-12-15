@@ -29,6 +29,10 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "LowLatency"
 IMPLEMENT_SINGLE_INSTANCE(LowLatency);
+namespace {
+    const std::string LOW_LATENCY_TIMER_ID = "low_latency_timer_id";
+    constexpr int32_t LOW_LATENCY_DELAY_MS = 50 * 1000;
+}
 
 LowLatency::LowLatency() : lowLatencyTimer_(std::make_shared<LowLatencyTimer>(LOW_LATENCY_TIMER_ID,
     LOW_LATENCY_DELAY_MS))
