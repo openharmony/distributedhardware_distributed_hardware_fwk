@@ -219,10 +219,10 @@ private:
         }
 
         for (auto &reg : *registrations) {
+            if (reg->GetHandler() == nullptr) {
+                continue;
+            }
             if ((reg->GetSender() == nullptr) || (reg->GetSender() == &e.GetSender())) {
-                if (reg->GetHandler() == nullptr) {
-                    continue;
-                }
                 static_cast<EventBusHandler<Event> *>(const_cast<void *>(reg->GetHandler()))->Dispatch(e);
             }
         }
