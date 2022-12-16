@@ -13,20 +13,14 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_EVENT_TRANCE_TEST_H
-#define OHOS_DISTRIBUTED_EVENT_TRANCE_TEST_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_HIDUMP_HELPER_TEST_H
+#define OHOS_DISTRIBUTED_HARDWARE_HIDUMP_HELPER_TEST_H
 
 #include <gtest/gtest.h>
 
-#define private public
-#include "dh_context.h"
-#undef private
-#include "dh_utils_hisysevent.h"
-#include "dh_utils_hitrace.h"
-
 namespace OHOS {
 namespace DistributedHardware {
-class EventTraceTest : public testing::Test {
+class HidumpHelperTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);

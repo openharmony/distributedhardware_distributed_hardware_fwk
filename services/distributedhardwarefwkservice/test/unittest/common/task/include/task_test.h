@@ -18,6 +18,11 @@
 
 #include <gtest/gtest.h>
 
+#define private public
+#include "disable_task.h"
+#include "enable_task.h"
+#undef private
+
 namespace OHOS {
 namespace DistributedHardware {
 class TaskTest : public testing::Test {

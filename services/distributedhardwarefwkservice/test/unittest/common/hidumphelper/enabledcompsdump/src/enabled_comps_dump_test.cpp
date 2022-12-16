@@ -60,8 +60,8 @@ HWTEST_F(EnabledCompsDumpTest, DumpDisabledComp_001, TestSize.Level0)
     std::string networkId;
     DHType dhType = DHType::CAMERA;
     std::string dhId;
-    EnabledCompsDump::GetInstance().DumpEnabledComp(networkId, dhType, dhId);
-    EXPECT_EQ(false, EnabledCompsDump::GetInstance().compInfoSet_.empty());
+    EnabledCompsDump::GetInstance().DumpDisabledComp(networkId, dhType, dhId);
+    EXPECT_EQ(true, EnabledCompsDump::GetInstance().compInfoSet_.empty());
 }
 
 /**
@@ -74,7 +74,7 @@ HWTEST_F(EnabledCompsDumpTest, Dump_001, TestSize.Level0)
 {
     std::set<HidumpCompInfo> compInfoSet;
     EnabledCompsDump::GetInstance().Dump(compInfoSet);
-    EXPECT_EQ(false, EnabledCompsDump::GetInstance().compInfoSet_.empty());
+    EXPECT_EQ(true, EnabledCompsDump::GetInstance().compInfoSet_.empty());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
