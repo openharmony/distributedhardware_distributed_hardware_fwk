@@ -45,9 +45,9 @@ ohos_unittest("EventTranceTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
-    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
   ]
 
   external_deps = [
