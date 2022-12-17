@@ -752,7 +752,6 @@ HWTEST_F(ResourceManagerTest, GetDataByKeyPrefix_001, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, DumpCapabilityInfos_001, TestSize.Level0)
 {
-    
     std::vector<CapabilityInfo> capInfos;
     std::string dhId;
     std::string devId;
