@@ -191,5 +191,69 @@ HWTEST_F(DistributedHardwareManagerTest, RGetComponentVersion_001, TestSize.Leve
     std::unordered_map<DHType, std::string> versionMap;
     EXPECT_NE(DH_FWK_SUCCESS, DistributedHardwareManager::GetInstance().GetComponentVersion(versionMap));
 }
+
+/**
+ * @tc.name: SendOnLineEvent_001
+ * @tc.desc: Verify the SendOnLineEvent function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareManagerTest, SendOnLineEvent_001, TestSize.Level0)
+{
+    uint32_t MAX_ID_LEN = 257;
+    std::string networkId1;
+    std::string networkId2;
+    networkId2.resize(MAX_ID_LEN);
+
+    std::string networkId3 = "networkId";
+    std::string uuid1;
+    std::string uuid2;
+    uuid2.resize(MAX_ID_LEN);
+    std::string uuid3 = "uuid3";
+
+    uint16_t deviceType = 0;
+    int32_t ret1 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId1, uuid3, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret1);
+    int32_t ret2 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId2, uuid3, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret2);
+    int32_t ret3 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId3, uuid3, deviceType);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret3);
+    int32_t ret4 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId3, uuid1, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret4);
+    int32_t ret5 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId3, uuid2, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret5);
+}
+
+/**
+ * @tc.name: SendOffLineEvent_001
+ * @tc.desc: Verify the SendOffLineEvent function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareManagerTest, SendOffLineEvent_001, TestSize.Level0)
+{
+    uint32_t MAX_ID_LEN = 257;
+    std::string networkId1;
+    std::string networkId2;
+    networkId2.resize(MAX_ID_LEN);
+
+    std::string networkId3 = "networkId";
+    std::string uuid1;
+    std::string uuid2;
+    uuid2.resize(MAX_ID_LEN);
+    std::string uuid3 = "uuid3";
+
+    uint16_t deviceType = 0;
+    int32_t ret1 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId1, uuid3, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret1);
+    int32_t ret2 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId2, uuid3, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret2);
+    int32_t ret3 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId3, uuid3, deviceType);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret3);
+    int32_t ret4 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId3, uuid1, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret4);
+    int32_t ret5 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId3, uuid2, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret5);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -195,6 +195,7 @@ HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_001, TestSize.Level0)
 {
     VersionInfo versionInfo;
     versionInfo.deviceId = "deviceId";
+    versionInfo.dhVersion = "dhVersion";
     VersionInfoManager::GetInstance()->UpdateVersionCache(versionInfo);
     EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
 }
@@ -411,5 +412,21 @@ HWTEST_F(VersionInfoManagerTest, VersionInfoEvent_001, TestSize.Level0)
     VersionInfoManager::GetInstance()->OnEvent(ev);
     EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
 }
+
+/**
+ * @tc.name: GetVersionInfoByDeviceId_001
+ * @tc.desc: Verify the VersionInfoManager GetVersionInfoByDeviceId function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(VersionInfoManagerTest, GetVersionInfoByDeviceId_001, TestSize.Level0)
+{
+    std::string deviceId;
+    VersionInfo versionInfo;
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    int32_t ret = VersionInfoManager::GetInstance()->GetVersionInfoByDeviceId(deviceId, versionInfo);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
 } // namespace DistributedHardware
 } // namespace OHOS
