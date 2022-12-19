@@ -20,6 +20,7 @@
 
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
+#include "task_factory.h"
 #include "mock_disable_task.h"
 #include "mock_enable_task.h"
 #include "mock_offline_task.h"
@@ -28,8 +29,12 @@
 #include "mock_task_utils.h"
 
 #include "task_board.h"
+#define private public
+#include "disable_task.h"
+#include "enable_task.h"
+#include "task.h"
 #include "task_executor.h"
-
+#undef private
 using namespace testing::ext;
 
 namespace OHOS {
@@ -167,6 +172,186 @@ HWTEST_F(TaskTest, task_test_004, TestSize.Level0)
     TaskExecutor::GetInstance().PushTask(offlineTask);
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
     ASSERT_TRUE(TaskBoard::GetInstance().IsAllTaskFinish());
+}
+
+/**
+ * @tc.name: task_test_005
+ * @tc.desc: Verify the PushTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, task_test_005, TestSize.Level0)
+{
+    std::shared_ptr<Task> task = nullptr;
+    TaskExecutor::GetInstance().PushTask(task);
+    ASSERT_EQ(true, TaskExecutor::GetInstance().taskQueue_.empty());
+}
+
+/**
+ * @tc.name: task_test_006
+ * @tc.desc: Verify the CreateTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, task_test_006, TestSize.Level0)
+{
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, taskParam, nullptr);
+    ASSERT_NE(nullptr, task);
+}
+
+/**
+ * @tc.name: task_test_007
+ * @tc.desc: Verify the CreateTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, task_test_007, TestSize.Level0)
+{
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, nullptr);
+    ASSERT_NE(nullptr, task);
+}
+
+/**
+ * @tc.name: task_test_008
+ * @tc.desc: Verify the CreateTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, task_test_008, TestSize.Level0)
+{
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, taskParam, nullptr);
+    ASSERT_NE(nullptr, task);
+}
+
+/**
+ * @tc.name: task_test_009
+ * @tc.desc: Verify the CreateTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, task_test_009, TestSize.Level0)
+{
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);
+    ASSERT_NE(nullptr, task);
+}
+
+/**
+ * @tc.name: task_test_010
+ * @tc.desc: Verify the CreateTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, task_test_010, TestSize.Level0)
+{
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::UNKNOWN, taskParam, nullptr);
+    ASSERT_EQ(nullptr, task);
+}
+
+/**
+ * @tc.name: DisableTask_001
+ * @tc.desc: Verify the DoTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, DisableTask_001, TestSize.Level0)
+{
+    std::string networkId;
+    std::string uuid;
+    std::string dhId;
+    DHType dhType = DHType::CAMERA;
+    DisableTask task(networkId, uuid, dhId, dhType);
+    task.DoTask();
+    ASSERT_EQ(true, networkId.empty());
+}
+
+/**
+ * @tc.name: DisableTask_002
+ * @tc.desc: Verify the DoTaskInner function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, DisableTask_002, TestSize.Level0)
+{
+    std::string networkId;
+    std::string uuid;
+    std::string dhId;
+    DHType dhType = DHType::CAMERA;
+    DisableTask task(networkId, uuid, dhId, dhType);
+    task.DoTaskInner();
+    ASSERT_EQ(true, networkId.empty());
+}
+
+/**
+ * @tc.name: DisableTask_003
+ * @tc.desc: Verify the DoTaskInner function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, DisableTask_003, TestSize.Level0)
+{
+    std::string networkId;
+    std::string uuid;
+    std::string dhId;
+    DHType dhType = DHType::CAMERA;
+    DisableTask task(networkId, uuid, dhId, dhType);
+    int32_t ret = task.UnRegisterHardware();
+    ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+/**
+ * @tc.name: EnableTask_001
+ * @tc.desc: Verify the DoTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, EnableTask_001, TestSize.Level0)
+{
+    std::string networkId;
+    std::string uuid;
+    std::string dhId;
+    DHType dhType = DHType::CAMERA;
+    EnableTask task(networkId, uuid, dhId, dhType);
+    task.DoTask();
+    ASSERT_EQ(true, networkId.empty());
+}
+
+/**
+ * @tc.name: EnableTask_002
+ * @tc.desc: Verify the DoTaskInner function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, EnableTask_002, TestSize.Level0)
+{
+    std::string networkId;
+    std::string uuid;
+    std::string dhId;
+    DHType dhType = DHType::CAMERA;
+    EnableTask task(networkId, uuid, dhId, dhType);
+    task.DoTaskInner();
+    ASSERT_EQ(true, networkId.empty());
+}
+
+/**
+ * @tc.name: EnableTask_003
+ * @tc.desc: Verify the RegisterHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, EnableTask_003, TestSize.Level0)
+{
+    std::string networkId;
+    std::string uuid;
+    std::string dhId;
+    DHType dhType = DHType::CAMERA;
+    EnableTask task(networkId, uuid, dhId, dhType);
+    int32_t ret = task.RegisterHardware();
+    ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

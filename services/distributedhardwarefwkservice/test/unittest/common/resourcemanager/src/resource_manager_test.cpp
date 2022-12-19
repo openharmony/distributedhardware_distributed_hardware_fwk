@@ -615,6 +615,22 @@ HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_007, TestSize.Level0)
 }
 
 /**
+ * @tc.name: IsCapabilityMatchFilter_008
+ * @tc.desc: Verify the IsCapabilityMatchFilter function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_008, TestSize.Level0)
+{
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    uint32_t invalid = 6;
+    CapabilityInfoFilter filter = static_cast<CapabilityInfoFilter>(invalid);
+    std::string value;
+    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
+    EXPECT_EQ(false, ret);
+}
+
+/**
  * @tc.name: GetCapabilitiesByDeviceId_001
  * @tc.desc: Verify the GetCapabilitiesByDeviceId function
  * @tc.type: FUNC
@@ -640,6 +656,113 @@ HWTEST_F(ResourceManagerTest, HasCapability_001, TestSize.Level0)
     std::string dhId;
     bool ret = CapabilityInfoManager::GetInstance()->HasCapability(deviceId, dhId);
     EXPECT_EQ(false, ret);
+}
+
+/**
+ * @tc.name: SyncRemoteCapabilityInfos_001
+ * @tc.desc: Verify the CapabilityInfoManager SyncRemoteCapabilityInfos function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, SyncRemoteCapabilityInfos_001, TestSize.Level0)
+{
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    CapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    int32_t ret = CapabilityInfoManager::GetInstance()->SyncRemoteCapabilityInfos();
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+/**
+ * @tc.name: RemoveCapabilityInfoInDB_001
+ * @tc.desc: Verify the RemoveCapabilityInfoInDB function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, RemoveCapabilityInfoInDB_001, TestSize.Level0)
+{
+    std::string deviceIdEmpty;
+    uint32_t MAX_ID_LEN = 257;
+    deviceIdEmpty.resize(MAX_ID_LEN);
+    int32_t ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceIdEmpty);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+/**
+ * @tc.name: RemoveCapabilityInfoInDB_002
+ * @tc.desc: Verify the RemoveCapabilityInfoInDB function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, RemoveCapabilityInfoInDB_002, TestSize.Level0)
+{
+    std::string deviceIdEmpty = "deviceIdEmpty";
+    CapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    int32_t ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceIdEmpty);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+/**
+ * @tc.name: HandleCapabilityDeleteChange_001
+ * @tc.desc: Verify the HandleCapabilityDeleteChange function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, HandleCapabilityDeleteChange_001, TestSize.Level0)
+{
+    std::vector<DistributedKv::Entry> deleteRecords;
+    CapabilityInfoManager::GetInstance()->HandleCapabilityDeleteChange(deleteRecords);
+    EXPECT_EQ(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+}
+
+/**
+ * @tc.name: GetDataByKey_001
+ * @tc.desc: Verify the GetDataByKey function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, GetDataByKey_001, TestSize.Level0)
+{
+    std::string key;
+    std::shared_ptr<CapabilityInfo> capInfoPtr;
+    CapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    int32_t ret = CapabilityInfoManager::GetInstance()->GetDataByKey(key, capInfoPtr);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+/**
+ * @tc.name: GetDataByKeyPrefix_001
+ * @tc.desc: Verify the GetDataByKeyPrefix function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, GetDataByKeyPrefix_001, TestSize.Level0)
+{
+    std::string keyPrefix;
+    CapabilityInfoMap capabilityMap;
+    CapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    int32_t ret = CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(keyPrefix, capabilityMap);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+/**
+ * @tc.name: DumpCapabilityInfos_001
+ * @tc.desc: Verify the DumpCapabilityInfos function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, DumpCapabilityInfos_001, TestSize.Level0)
+{
+    std::vector<CapabilityInfo> capInfos;
+    std::string dhId;
+    std::string devId;
+    std::string devName;
+    uint16_t devType = 0;
+    DHType dhType = DHType::GPS;
+    std::string dhAttrs;
+    CapabilityInfo info(dhId, devId, devName, devType, dhType, dhAttrs);
+    capInfos.push_back(info);
+    CapabilityInfoManager::GetInstance()->DumpCapabilityInfos(capInfos);
+    EXPECT_EQ(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

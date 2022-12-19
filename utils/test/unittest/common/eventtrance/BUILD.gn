@@ -22,13 +22,16 @@ config("module_private_config") {
   include_dirs = [
     "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
     "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/unittest/common/eventtrance/",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils/include/",
+    "//foundation/distributedhardware/distributed_hardware_fwk/utils/include",
+    "//foundation/distributedhardware/distributed_hardware_fwk/utils/include/log",
+    "//foundation/distributedhardware/distributed_hardware_fwk/utils/include/eventbus",
+    "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/unittest/common/eventtrance",
     "//third_party/json/include",
     "//third_party/openssl:libcrypto_static",
     "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
     "${common_path}/utils/include",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
     "${utils_path}/include/eventtrance",
     "${utils_path}/include",
   ]
@@ -42,6 +45,7 @@ ohos_unittest("EventTranceTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
   ]

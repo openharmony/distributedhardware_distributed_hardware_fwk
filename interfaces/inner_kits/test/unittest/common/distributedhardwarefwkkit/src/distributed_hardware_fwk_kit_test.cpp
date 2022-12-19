@@ -151,6 +151,21 @@ HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_003, testing::ext::TestSi
 }
 
 /**
+ * @tc.name: PublishMessage_004
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_004, testing::ext::TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
+    std::string message;
+    uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024 + 10;
+    message.resize(MAX_MESSAGE_LEN);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, dhfwkPtr_->PublishMessage(topic, message));
+}
+
+/**
  * @tc.name: OnDHFWKOnLine_001
  * @tc.desc: Verify the OnDHFWKOnLine function
  * @tc.type: FUNC
@@ -161,6 +176,64 @@ HWTEST_F(DistributedHardwareFwkKitTest, OnDHFWKOnLine_001, testing::ext::TestSiz
     bool isOnLine = true;
     dhfwkPtr_->OnDHFWKOnLine(isOnLine);
     EXPECT_EQ(nullptr, DHFWKSAManager::GetInstance().GetDHFWKProxy());
+}
+
+/**
+ * @tc.name: RegisterPublisherListener_002
+ * @tc.desc: Verify the RegisterPublisherListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_002, testing::ext::TestSize.Level0)
+{
+    uint32_t invalid = 8;
+    DHTopic topic = static_cast<DHTopic>(invalid);
+    sptr<IPublisherListener> listener = nullptr;
+    int32_t ret = dhfwkPtr_->RegisterPublisherListener(topic, listener);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+/**
+ * @tc.name: RegisterPublisherListener_003
+ * @tc.desc: Verify the RegisterPublisherListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_003, testing::ext::TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
+    sptr<IPublisherListener> listener = nullptr;
+    int32_t ret = dhfwkPtr_->RegisterPublisherListener(topic, listener);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: UnregisterPublisherListener_001
+ * @tc.desc: Verify the UnregisterPublisherListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, UnregisterPublisherListener_001, testing::ext::TestSize.Level0)
+{
+    uint32_t invalid = 8;
+    DHTopic topic = static_cast<DHTopic>(invalid);
+    sptr<IPublisherListener> listener = nullptr;
+    int32_t ret = dhfwkPtr_->UnregisterPublisherListener(topic, listener);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+/**
+ * @tc.name: UnregisterPublisherListener_002
+ * @tc.desc: Verify the UnregisterPublisherListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, UnregisterPublisherListener_002, testing::ext::TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
+    sptr<IPublisherListener> listener = nullptr;
+    int32_t ret = dhfwkPtr_->UnregisterPublisherListener(topic, listener);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

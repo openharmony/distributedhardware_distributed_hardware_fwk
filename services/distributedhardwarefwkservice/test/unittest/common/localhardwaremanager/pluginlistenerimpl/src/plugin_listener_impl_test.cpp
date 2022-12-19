@@ -83,6 +83,33 @@ HWTEST_F(PluginListenerImplTest, PluginHardware_001, TestSize.Level0)
 }
 
 /**
+ * @tc.name: PluginHardware_002
+ * @tc.desc: Verify the PluginHardware function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(PluginListenerImplTest, PluginHardware_002, TestSize.Level0)
+{
+    uint32_t MAX_ID_LEN = 257;
+    DHType type = DHType::AUDIO;
+    std::shared_ptr<PluginListenerImpl> listener = std::make_shared<PluginListenerImpl>(type);
+    std::string dhId1;
+    std::string dhId2;
+    dhId2.resize(MAX_ID_LEN);
+    std::string dhId3 = "dhId3";
+    std::string attrs1;
+    std::string attrs2;
+    attrs2.resize(MAX_ID_LEN);
+    std::string attrs3 = "attrs3";
+    listener->PluginHardware(dhId1, attrs1);
+    listener->PluginHardware(dhId2, attrs1);
+    listener->PluginHardware(dhId3, attrs1);
+    listener->PluginHardware(dhId3, attrs2);
+    listener->PluginHardware(dhId3, attrs3);
+    EXPECT_EQ(true, dhId1.empty());
+}
+
+/**
  * @tc.name: UnPluginHardware_001
  * @tc.desc: Verify the UnPluginHardware function.
  * @tc.type: FUNC
@@ -95,6 +122,27 @@ HWTEST_F(PluginListenerImplTest, UnPluginHardware_001, TestSize.Level0)
     std::string dhId;
     listener->UnPluginHardware(dhId);
     EXPECT_EQ(true, dhId.empty());
+}
+
+/**
+ * @tc.name: UnPluginHardware_002
+ * @tc.desc: Verify the UnPluginHardware function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(PluginListenerImplTest, UnPluginHardware_002, TestSize.Level0)
+{
+    uint32_t MAX_ID_LEN = 257;
+    DHType type = DHType::AUDIO;
+    std::shared_ptr<PluginListenerImpl> listener = std::make_shared<PluginListenerImpl>(type);
+    std::string dhId1;
+    std::string dhId2;
+    dhId2.resize(MAX_ID_LEN);
+    std::string dhId3 = "dhId3";
+    listener->UnPluginHardware(dhId1);
+    listener->UnPluginHardware(dhId2);
+    listener->UnPluginHardware(dhId3);
+    EXPECT_EQ(true, dhId1.empty());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
