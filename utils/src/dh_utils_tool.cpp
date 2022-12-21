@@ -154,7 +154,8 @@ bool IsBool(const nlohmann::json& jsonObj, const std::string& key)
 
 bool IsString(const nlohmann::json& jsonObj, const std::string& key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_string() && jsonObj[key].size() <= MAX_MESSAGE_LEN;
+    bool res = jsonObj.contains(key) && jsonObj[key].is_string() && MIN_MESSAGE_LEN < jsonObj[key].size() &&
+        jsonObj[key].size() <= MAX_MESSAGE_LEN;
     return res;
 }
 } // namespace DistributedHardware
