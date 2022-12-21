@@ -54,7 +54,7 @@ void LowLatencyListener::OnMessage(const DHTopic topic, const std::string& messa
         DHLOGE("jsonStr parse failed");
         return;
     }
-    if (!IsUint32(jsonObj, DH_TYPE)) {
+    if (!IsUInt32(jsonObj, DH_TYPE)) {
         DHLOGE("The DH_TYPE key is invalid");
         return;
     }
