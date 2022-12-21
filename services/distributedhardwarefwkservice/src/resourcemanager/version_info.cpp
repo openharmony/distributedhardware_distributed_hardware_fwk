@@ -51,7 +51,6 @@ void ToJson(nlohmann::json &jsonObject, const VersionInfo &versionInfo)
 {
     jsonObject[DEV_ID] = versionInfo.deviceId;
     jsonObject[DH_VER] = versionInfo.dhVersion;
-
     nlohmann::json compVers;
     for (const auto &compVersion : versionInfo.compVersions) {
         nlohmann::json compVer;
@@ -62,7 +61,6 @@ void ToJson(nlohmann::json &jsonObject, const VersionInfo &versionInfo)
         compVer[SINK_VER] = compVersion.second.sinkVersion;
         compVers.push_back(compVer);
     }
-
     jsonObject[COMP_VER] = compVers;
 }
 
