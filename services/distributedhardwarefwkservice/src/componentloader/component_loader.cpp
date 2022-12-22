@@ -125,7 +125,7 @@ void from_json(const nlohmann::json &json, CompConfig &cfg)
         DHLOGE("COMP_HANDLER_VERSION is invalid");
         return;
     }
-    cfg.compHandlerVersion = json.at(COMP_HANDLER_LOC).get<std::string>();
+    cfg.compHandlerVersion = json.at(COMP_HANDLER_VERSION).get<std::string>();
     if (!IsString(json, COMP_SOURCE_LOC)) {
         DHLOGE("COMP_SOURCE_LOC is invalid");
         return;
