@@ -111,11 +111,11 @@ void from_json(const nlohmann::json &json, CompConfig &cfg)
         return;
     }
     cfg.name = json.at(COMP_NAME).get<std::string>();
-    if (!IsUInt32(json, COMP_TYPE)) {
+    if (!IsString(json, COMP_TYPE)) {
         DHLOGE("COMP_TYPE is invalid");
         return;
     }
-    cfg.type = json.at(COMP_TYPE).get<DHType>();
+    cfg.type = g_mapDhTypeName[json.at(COMP_TYPE).get<std::string>()];;
     if (!IsString(json, COMP_HANDLER_LOC)) {
         DHLOGE("COMP_HANDLER_LOC is invalid");
         return;
@@ -125,7 +125,7 @@ void from_json(const nlohmann::json &json, CompConfig &cfg)
         DHLOGE("COMP_HANDLER_VERSION is invalid");
         return;
     }
-    cfg.compHandlerVersion = json.at(COMP_HANDLER_LOC).get<std::string>();
+    cfg.compHandlerVersion = json.at(COMP_HANDLER_VERSION).get<std::string>();
     if (!IsString(json, COMP_SOURCE_LOC)) {
         DHLOGE("COMP_SOURCE_LOC is invalid");
         return;
@@ -145,12 +145,12 @@ void from_json(const nlohmann::json &json, CompConfig &cfg)
         DHLOGE("COMP_SINK_LOC is invalid");
         return;
     }
-    cfg.compSinkLoc = json.at(COMP_SOURCE_SA_ID).get<std::string>();
+    cfg.compSinkLoc = json.at(COMP_SINK_LOC).get<std::string>();
     if (!IsString(json, COMP_SINK_VERSION)) {
         DHLOGE("COMP_SINK_VERSION is invalid");
         return;
     }
-    cfg.compSinkVersion = json.at(COMP_SOURCE_SA_ID).get<std::string>();
+    cfg.compSinkVersion = json.at(COMP_SINK_VERSION).get<std::string>();
     if (!IsInt32(json, COMP_SINK_SA_ID)) {
         DHLOGE("COMP_SINK_SA_ID is invalid");
         return;
