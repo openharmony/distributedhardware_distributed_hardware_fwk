@@ -21,6 +21,7 @@
 
 #include "anonymous_string.h"
 #include "constants.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
@@ -167,24 +168,36 @@ void ToJson(nlohmann::json &jsonObject, const CapabilityInfo &capability)
 
 void FromJson(const nlohmann::json &jsonObject, CapabilityInfo &capability)
 {
-    if (jsonObject.find(DH_ID) != jsonObject.end()) {
-        capability.SetDHId(jsonObject.at(DH_ID).get<std::string>());
+    if (!IsString(jsonObject, DH_ID)) {
+        DHLOGE("DH_ID is invalid!");
+        return;
     }
-    if (jsonObject.find(DEV_ID) != jsonObject.end()) {
-        capability.SetDeviceId(jsonObject.at(DEV_ID).get<std::string>());
+    capability.SetDHId(jsonObject.at(DH_ID).get<std::string>());
+    if (!IsString(jsonObject, DEV_ID)) {
+        DHLOGE("DEV_ID is invalid!");
+        return;
     }
-    if (jsonObject.find(DEV_NAME) != jsonObject.end()) {
-        capability.SetDeviceName(jsonObject.at(DEV_NAME).get<std::string>());
+    capability.SetDeviceId(jsonObject.at(DEV_ID).get<std::string>());
+    if (!IsString(jsonObject, DEV_NAME)) {
+        DHLOGE("DEV_NAME is invalid!");
+        return;
     }
-    if (jsonObject.find(DEV_TYPE) != jsonObject.end()) {
-        capability.SetDeviceType(jsonObject.at(DEV_TYPE).get<uint16_t>());
+    capability.SetDeviceName(jsonObject.at(DEV_NAME).get<std::string>());
+    if (!IsUInt16(jsonObject, DEV_TYPE)) {
+        DHLOGE("DEV_TYPE is invalid!");
+        return;
     }
-    if (jsonObject.find(DH_TYPE) != jsonObject.end()) {
-        capability.SetDHType(jsonObject.at(DH_TYPE).get<DHType>());
+    capability.SetDeviceType(jsonObject.at(DEV_TYPE).get<uint16_t>());
+    if (!IsUInt32(jsonObject, DH_TYPE)) {
+        DHLOGE("DH_TYPE is invalid!");
+        return;
     }
-    if (jsonObject.find(DH_ATTRS) != jsonObject.end()) {
-        capability.SetDHAttrs(jsonObject.at(DH_ATTRS).get<std::string>());
+    capability.SetDHType(jsonObject.at(DH_TYPE).get<DHType>());
+    if (!IsString(jsonObject, DH_ATTRS)) {
+        DHLOGE("DH_ATTRS is invalid!");
+        return;
     }
+    capability.SetDHAttrs(jsonObject.at(DH_ATTRS).get<std::string>());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
