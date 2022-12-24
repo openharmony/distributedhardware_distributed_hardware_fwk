@@ -136,6 +136,7 @@ bool ParseHandlerInfo(const nlohmann::json &json, CompConfig &cfg)
         return false;
     }
     cfg.compHandlerVersion = json.at(COMP_HANDLER_VERSION).get<std::string>();
+    return true;
 }
 
 bool ParseCompInfo(const nlohmann::json &json, CompConfig &cfg)
@@ -170,6 +171,7 @@ bool ParseCompInfo(const nlohmann::json &json, CompConfig &cfg)
         return false;
     }
     cfg.compSinkSaId = json.at(COMP_SINK_SA_ID).get<int32_t>();
+    return true;
 }
 
 CompVersion ComponentLoader::GetCompVersionFromComConfig(const CompConfig& cCfg)
