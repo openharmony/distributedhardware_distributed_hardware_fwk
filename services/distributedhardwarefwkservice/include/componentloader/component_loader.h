@@ -76,8 +76,6 @@ public:
     int32_t GetLocalDHVersion(DHVersion &dhVersion);
     int32_t GetSourceSaId(const DHType dhType);
     DHType GetDHTypeBySrcSaId(const int32_t saId);
-    bool ParseHandlerInfo(const nlohmann::json &json, CompConfig &cfg);
-    bool ParseCompInfo(const nlohmann::json &json, CompConfig &cfg);
 
 private:
     void *GetHandler(const std::string &soName);

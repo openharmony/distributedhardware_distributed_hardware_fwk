@@ -104,74 +104,54 @@ std::vector<DHType> ComponentLoader::GetAllCompTypes()
 
 void from_json(const nlohmann::json &json, CompConfig &cfg)
 {
-    if (ParseHandlerInfo(json, cfg)) {
-        DHLOGE("Parse HandlerInfo fail!");
-        return;
-    }
-    if (ParseCompInfo(json, cfg)) {
-        DHLOGE("Parse CompInfo fail!");
-        return;
-    }
-}
-
-bool ParseHandlerInfo(const nlohmann::json &json, CompConfig &cfg)
-{
     if (!IsString(json, COMP_NAME)) {
         DHLOGE("COMP_NAME is invalid");
-        return false;
+        return;
     }
     cfg.name = json.at(COMP_NAME).get<std::string>();
     if (!IsString(json, COMP_TYPE)) {
         DHLOGE("COMP_TYPE is invalid");
-        return false;
+        return;
     }
     cfg.type = g_mapDhTypeName[json.at(COMP_TYPE).get<std::string>()];
     if (!IsString(json, COMP_HANDLER_LOC)) {
         DHLOGE("COMP_HANDLER_LOC is invalid");
-        return false;
+        return;
     }
     cfg.compHandlerLoc = json.at(COMP_HANDLER_LOC).get<std::string>();
     if (!IsString(json, COMP_HANDLER_VERSION)) {
         DHLOGE("COMP_HANDLER_VERSION is invalid");
-        return false;
+        return;
     }
     cfg.compHandlerVersion = json.at(COMP_HANDLER_VERSION).get<std::string>();
-    return true;
-}
-
-bool ParseCompInfo(const nlohmann::json &json, CompConfig &cfg)
-{
     if (!IsString(json, COMP_SOURCE_LOC)) {
         DHLOGE("COMP_SOURCE_LOC is invalid");
-        return false;
+        return;
     }
     cfg.compSourceLoc = json.at(COMP_SOURCE_LOC).get<std::string>();
     if (!IsString(json, COMP_SOURCE_VERSION)) {
-        DHLOGE("COMP_SOURCE_VERSION is invalid");
-        return false;
+        return;
     }
     cfg.compSourceVersion = json.at(COMP_SOURCE_VERSION).get<std::string>();
     if (!IsInt32(json, COMP_SOURCE_SA_ID)) {
         DHLOGE("COMP_SOURCE_SA_ID is invalid");
-        return false;
+        return;
     }
     cfg.compSourceSaId = json.at(COMP_SOURCE_SA_ID).get<int32_t>();
     if (!IsString(json, COMP_SINK_LOC)) {
         DHLOGE("COMP_SINK_LOC is invalid");
-        return false;
+        return;
     }
     cfg.compSinkLoc = json.at(COMP_SINK_LOC).get<std::string>();
     if (!IsString(json, COMP_SINK_VERSION)) {
-        DHLOGE("COMP_SINK_VERSION is invalid");
-        return false;
+        return;
     }
     cfg.compSinkVersion = json.at(COMP_SINK_VERSION).get<std::string>();
     if (!IsInt32(json, COMP_SINK_SA_ID)) {
         DHLOGE("COMP_SINK_SA_ID is invalid");
-        return false;
+        return;
     }
     cfg.compSinkSaId = json.at(COMP_SINK_SA_ID).get<int32_t>();
-    return true;
 }
 
 CompVersion ComponentLoader::GetCompVersionFromComConfig(const CompConfig& cCfg)
