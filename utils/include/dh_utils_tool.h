@@ -18,6 +18,8 @@
 
 #include <cstdint>
 
+#include "nlohmann/json.hpp"
+
 #include "device_type.h"
 
 namespace OHOS {
@@ -40,6 +42,16 @@ DeviceInfo GetLocalDeviceInfo();
 std::string GetDeviceIdByUUID(const std::string &uuid);
 
 std::string Sha256(const std::string& string);
+
+bool IsUInt16(const nlohmann::json& jsonObj, const std::string& key);
+
+bool IsInt32(const nlohmann::json& jsonObj, const std::string& key);
+
+bool IsUInt32(const nlohmann::json& jsonObj, const std::string& key);
+
+bool IsBool(const nlohmann::json& jsonObj, const std::string& key);
+
+bool IsString(const nlohmann::json& jsonObj, const std::string& key);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

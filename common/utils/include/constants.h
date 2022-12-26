@@ -25,6 +25,7 @@ namespace DistributedHardware {
     constexpr int32_t ENABLE_TIMEOUT_MS = 1000;
     constexpr int32_t DISABLE_TIMEOUT_MS = 500;
     constexpr uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024;
+    constexpr uint32_t MIN_MESSAGE_LEN = 0;
     constexpr uint32_t MAX_ID_LEN = 256;
     constexpr uint32_t MAX_TOPIC_SIZE = 128;
     constexpr uint32_t MAX_LISTENER_SIZE = 256;

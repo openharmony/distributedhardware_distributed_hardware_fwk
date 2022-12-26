@@ -126,5 +126,37 @@ DeviceInfo GetLocalDeviceInfo()
     devInfo.deviceType = info->deviceTypeId;
     return devInfo;
 }
+
+bool IsUInt16(const nlohmann::json& jsonObj, const std::string& key)
+{
+    bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT16_MAX;
+    return res;
+}
+
+bool IsInt32(const nlohmann::json& jsonObj, const std::string& key)
+{
+    bool res = jsonObj.contains(key) && jsonObj[key].is_number_integer() && INT32_MIN <= jsonObj[key] &&
+        jsonObj[key] <= INT32_MAX;
+    return res;
+}
+
+bool IsUInt32(const nlohmann::json& jsonObj, const std::string& key)
+{
+    bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT32_MAX;
+    return res;
+}
+
+bool IsBool(const nlohmann::json& jsonObj, const std::string& key)
+{
+    bool res = jsonObj.contains(key) && jsonObj[key].is_boolean();
+    return res;
+}
+
+bool IsString(const nlohmann::json& jsonObj, const std::string& key)
+{
+    bool res = jsonObj.contains(key) && jsonObj[key].is_string() && MIN_MESSAGE_LEN < jsonObj[key].size() &&
+        jsonObj[key].size() <= MAX_MESSAGE_LEN;
+    return res;
+}
 } // namespace DistributedHardware
 } // namespace OHOS
