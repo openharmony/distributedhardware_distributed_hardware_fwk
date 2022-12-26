@@ -20,7 +20,6 @@ ohos_shared_library("distributedhardwareutils") {
     "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
     "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
     "//third_party/json/include",
-    "//third_party/openssl:libcrypto_static",
     "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
     "${common_path}/log/include",
@@ -38,7 +37,7 @@ ohos_shared_library("distributedhardwareutils") {
     "src/log/dh_log.cpp",
   ]
 
-  deps = [ "//third_party/openssl:libcrypto_static" ]
+  deps = [ "//third_party/openssl:libcrypto_shared" ]
 
   defines = [
     "HI_LOG_ENABLE",
