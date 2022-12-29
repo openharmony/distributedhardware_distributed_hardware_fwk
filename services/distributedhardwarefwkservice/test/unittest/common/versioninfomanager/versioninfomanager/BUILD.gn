@@ -44,7 +44,6 @@ ohos_unittest("VersioninfoManagerTest") {
 
   sources = [
     "src/version_info_manager_test.cpp",
-    "src/version_info_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
@@ -55,7 +54,10 @@ ohos_unittest("VersioninfoManagerTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [ "c_utils:utils" ]
+  external_deps = [
+    "c_utils:utils",
+    "kv_store:distributeddata_inner",
+  ]
 }
 
 group("versioninfo_manager_test") {

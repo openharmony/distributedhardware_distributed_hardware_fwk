@@ -282,23 +282,6 @@ HWTEST_F(TaskTest, DisableTask_002, TestSize.Level0)
     std::string dhId;
     DHType dhType = DHType::CAMERA;
     DisableTask task(networkId, uuid, dhId, dhType);
-    task.DoTaskInner();
-    ASSERT_EQ(true, networkId.empty());
-}
-
-/**
- * @tc.name: DisableTask_003
- * @tc.desc: Verify the DoTaskInner function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJE
- */
-HWTEST_F(TaskTest, DisableTask_003, TestSize.Level0)
-{
-    std::string networkId;
-    std::string uuid;
-    std::string dhId;
-    DHType dhType = DHType::CAMERA;
-    DisableTask task(networkId, uuid, dhId, dhType);
     int32_t ret = task.UnRegisterHardware();
     ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
@@ -322,28 +305,11 @@ HWTEST_F(TaskTest, EnableTask_001, TestSize.Level0)
 
 /**
  * @tc.name: EnableTask_002
- * @tc.desc: Verify the DoTaskInner function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJE
- */
-HWTEST_F(TaskTest, EnableTask_002, TestSize.Level0)
-{
-    std::string networkId;
-    std::string uuid;
-    std::string dhId;
-    DHType dhType = DHType::CAMERA;
-    EnableTask task(networkId, uuid, dhId, dhType);
-    task.DoTaskInner();
-    ASSERT_EQ(true, networkId.empty());
-}
-
-/**
- * @tc.name: EnableTask_003
  * @tc.desc: Verify the RegisterHardware function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(TaskTest, EnableTask_003, TestSize.Level0)
+HWTEST_F(TaskTest, EnableTask_002, TestSize.Level0)
 {
     std::string networkId;
     std::string uuid;

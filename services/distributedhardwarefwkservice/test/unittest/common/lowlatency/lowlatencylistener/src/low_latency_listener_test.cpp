@@ -14,6 +14,7 @@
  */
 
 #include "low_latency_listener_test.h"
+#include "nlohmann/json.hpp"
 
 using namespace testing::ext;
 
@@ -75,6 +76,27 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_003, TestSize.Level0)
 {
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     std::string message = "message";
+    Listener_->OnMessage(topic, message);
+    EXPECT_EQ(nullptr, Listener_->AsObject());
+}
+
+/**
+ * @tc.name: OnMessage_004
+ * @tc.desc: Verify the OnMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(LowLatencyListenerTest, OnMessage_004, TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
+
+    nlohmann::json json;
+    const std::string DH_TYPE = "dh_type";
+    const std::string LOW_LATENCY_ENABLE = "low_latency_enable";
+
+    json[DH_TYPE] = "dh_type";
+    json[LOW_LATENCY_ENABLE] = "low_latency_enable";
+    std::string message = json.dump();
     Listener_->OnMessage(topic, message);
     EXPECT_EQ(nullptr, Listener_->AsObject());
 }

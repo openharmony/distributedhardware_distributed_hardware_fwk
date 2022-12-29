@@ -86,5 +86,59 @@ HWTEST_F(VersionInfoTest, version_info_test_001, TestSize.Level0)
 
     EXPECT_EQ(verInfo2.ToJsonString(), jsonStr);
 }
+
+/**
+ * @tc.name: FromJson_001
+ * @tc.desc: Verify the FromJson ToJson function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(VersionInfoTest, FromJson_001, TestSize.Level0)
+{
+    VersionInfo verInfo;
+    const std::string DH_ID = "dh_id";
+    const std::string DEV_ID = "dev_id";
+    const std::string DEV_NAME = "dev_name";
+    const std::string DEV_TYPE = "dev_type";
+    const std::string DH_TYPE = "dh_type";
+    const std::string DH_ATTRS = "dh_attrs";
+    nlohmann::json jsonObject;
+    jsonObject[DH_ID] = "dh_id";
+    jsonObject[DEV_ID] = "dev_id";
+    jsonObject[DEV_NAME] = "dev_name";
+    jsonObject[DEV_TYPE] = "dev_type";
+    jsonObject[DH_TYPE] = "dh_type";
+    jsonObject[DH_ATTRS] = "dh_attrs";
+    CompVersion compVer;
+    std::string jsonStr = jsonObject.dump();
+    EXPECT_EQ(DH_FWK_SUCCESS, verInfo.FromJsonString(jsonStr));
+}
+
+/**
+ * @tc.name: FromJson_002
+ * @tc.desc: Verify the FromJson ToJson function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(VersionInfoTest, FromJson_002, TestSize.Level0)
+{
+    VersionInfo verInfo;
+    const std::string DH_ID = "dh_id";
+    const std::string DEV_ID = "dev_id";
+    const std::string DEV_NAME = "dev_name";
+    const std::string DEV_TYPE = "dev_type";
+    const std::string DH_TYPE = "dh_type";
+    const std::string DH_ATTRS = "dh_attrs";
+    nlohmann::json jsonObject;
+    jsonObject[DH_ID] = "dh_id";
+    jsonObject[DEV_ID] = "dev_id";
+    jsonObject[DEV_NAME] = "dev_name";
+    jsonObject[DEV_TYPE] = "dev_type";
+    jsonObject[DH_TYPE] = "dh_type";
+    jsonObject[DH_ATTRS] = "dh_attrs";
+    VersionInfo versionInfo;
+    std::string jsonStr = jsonObject.dump();
+    EXPECT_EQ(DH_FWK_SUCCESS, verInfo.FromJsonString(jsonStr));
+}
 } // namespace DistributedHardware
 } // namespace OHOS
