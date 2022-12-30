@@ -23,10 +23,10 @@
 
 #define private public
 #include "access_manager.h"
+#include "distributed_hardware_manager_factory.h"
 #undef private
 #include "dm_device_info.h"
 #include "distributed_hardware_errno.h"
-#include "distributed_hardware_manager_factory.h"
 using namespace testing::ext;
 
 namespace OHOS {
@@ -407,6 +407,54 @@ HWTEST_F(AccessManagerTest, UnInit_001, TestSize.Level0)
 HWTEST_F(AccessManagerTest, UnRegisterDevStateCallback_001, TestSize.Level0)
 {
     EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->UnRegisterDevStateCallback());
+}
+
+/**
+ * @tc.name: SendOffLineEvent_004
+ * @tc.desc: Verify the  SendOffLineEvent function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, SendOffLineEvent_004, TestSize.Level0)
+{
+    ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
+    uint32_t maxIdLen = 257;
+    std::string networkId;
+    std::string networkId1;
+    networkId1.resize(maxIdLen);
+    std::string networkId2 = "networkId3";
+    std::string uuid;
+    std::string uuid1;
+    uuid1.resize(maxIdLen);
+    std::string uuid2 = "uuid3";
+    uint16_t deviceType = 1;
+    int32_t ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId, uuid, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    int32_t ret1 = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId1, uuid, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret1);
+
+    int32_t ret2 = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId2, uuid, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret2);
+
+    int32_t ret3 = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId2, uuid1, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret3);
+
+    int32_t ret4 = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId2, uuid2, deviceType);
+    EXPECT_EQ(ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_OFFLINE, ret4);
+}
+
+/**
+ * @tc.name: GetComponentVersion_001
+ * @tc.desc: Verify the  GetComponentVersion function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, GetComponentVersion_001, TestSize.Level0)
+{
+    std::unordered_map<DHType, std::string> versionMap;
+    int32_t ret = DistributedHardwareManagerFactory::GetInstance().GetComponentVersion(versionMap);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -13,20 +13,38 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_VERSION_INFO_MANAGER_TEST_H
-#define OHOS_DISTRIBUTED_HARDWARE_VERSION_INFO_MANAGER_TEST_H
+#ifndef OHOS_PUBLISHER_ITEM_TEST_H
+#define OHOS_PUBLISHER_ITEM_TEST_H
 
 #include <gtest/gtest.h>
-#include <vector>
+#include <iremote_broker.h>
+
+#define private public
+#include "publisher_item.h"
+#undef private
 
 namespace OHOS {
 namespace DistributedHardware {
-class VersionInfoTest : public testing::Test {
+class PublisherItemTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
+};
+
+class MockIPublisherListener : public IPublisherListener {
+public:
+sptr<IRemoteObject> AsObject()
+{
+    return nullptr;
+}
+
+void OnMessage(const DHTopic topic, const std::string& message)
+{
+    (void)topic;
+    (void)message;
+}
 };
 } // namespace DistributedHardware
 } // namespace OHOS

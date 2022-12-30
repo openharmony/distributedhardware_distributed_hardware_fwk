@@ -50,6 +50,21 @@ HWTEST_F(HidumpHelperTest, Dump_001, TestSize.Level0)
 }
 
 /**
+ * @tc.name: Dump_002
+ * @tc.desc: Verify the Dump function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK0
+ */
+HWTEST_F(HidumpHelperTest, Dump_002, TestSize.Level0)
+{
+    std::vector<std::string> args;
+    args.push_back("ARGS_HELP");
+    std::string result;
+    int32_t ret = HidumpHelper::GetInstance().Dump(args, result);
+    EXPECT_EQ(ERR_DH_FWK_HIDUMP_INVALID_ARGS, ret);
+}
+
+/**
  * @tc.name: ProcessDump_001
  * @tc.desc: Verify the ProcessDump function
  * @tc.type: FUNC

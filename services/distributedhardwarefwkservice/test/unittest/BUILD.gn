@@ -29,9 +29,11 @@ group("test") {
     "common/localhardwaremanager/pluginlistenerimpl:plugin_listener_impl_test",
     "common/lowlatency/lowlatency:low_latency_test",
     "common/lowlatency/lowlatencylistener:low_latency_listener_test",
+    "common/publisher:publisher_item_test",
     "common/resourcemanager:resource_manager_test",
     "common/task:dh_task_test",
-    "common/versioninfomanager:versioninfo_manager_test",
+    "common/versioninfomanager/versioninfo:version_info_test",
+    "common/versioninfomanager/versioninfomanager:versioninfo_manager_test",
     "common/versionmanager:version_manager_test",
   ]
 }

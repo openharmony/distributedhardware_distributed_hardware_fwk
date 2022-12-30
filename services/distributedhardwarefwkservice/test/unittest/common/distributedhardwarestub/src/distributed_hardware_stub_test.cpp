@@ -52,6 +52,21 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_001, TestSize.Level0)
 }
 
 /**
+ * @tc.name: OnRemoteRequest_002
+ * @tc.desc: Verify the OnRemoteRequest function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_002, TestSize.Level0)
+{
+    uint32_t code = 0;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    EXPECT_EQ(ERR_INVALID_DATA, stubTest_->OnRemoteRequest(code, data, reply, option));
+}
+
+/**
  * @tc.name: RegisterPublisherListenerInner_001
  * @tc.desc: Verify the RegisterPublisherListenerInner function
  * @tc.type: FUNC
@@ -88,6 +103,24 @@ HWTEST_F(DistributedHardwareStubTest, PublishMessageInner_001, TestSize.Level0)
     MessageParcel data;
     MessageParcel reply;
     EXPECT_NE(DH_FWK_SUCCESS, stubTest_->PublishMessageInner(data, reply));
+}
+
+/**
+ * @tc.name: ValidTopic_001
+ * @tc.desc: Verify the ValidTopic function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareStubTest, ValidTopic_001, TestSize.Level0)
+{
+    uint32_t topic = static_cast<uint32_t>(DHTopic::TOPIC_MIN);
+    EXPECT_EQ(false, stubTest_->ValidTopic(topic));
+
+    uint32_t topic1 = static_cast<uint32_t>(DHTopic::TOPIC_MAX);
+    EXPECT_EQ(false, stubTest_->ValidTopic(topic1));
+
+    uint32_t topic2 = static_cast<uint32_t>(DHTopic::TOPIC_START_DSCREEN);
+    EXPECT_EQ(true, stubTest_->ValidTopic(topic2));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

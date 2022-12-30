@@ -360,6 +360,27 @@ HWTEST_F(DbAdapterTest, SyncCompleted_001, TestSize.Level0)
 HWTEST_F(DbAdapterTest, SyncCompleted_002, TestSize.Level0)
 {
     std::map<std::string, DistributedKv::Status> results;
+    uint32_t MAX_DB_RECORD_SIZE = 10002;
+    for (uint32_t i = 0; i < MAX_DB_RECORD_SIZE; ++i) {
+        results.insert(std::pair<std::string, DistributedKv::Status>(to_string(i), DistributedKv::Status::SUCCESS));
+    }
+    g_dbAdapterPtr->SyncCompleted(results);
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: SyncCompleted_003
+ * @tc.desc: Verify the SyncCompleted function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, SyncCompleted_003, TestSize.Level0)
+{
+    std::map<std::string, DistributedKv::Status> results;
+    uint32_t MAX_DB_RECORD_SIZE = 500;
+    for (uint32_t i = 0; i < MAX_DB_RECORD_SIZE; ++i) {
+        results.insert(std::pair<std::string, DistributedKv::Status>(to_string(i), DistributedKv::Status::SUCCESS));
+    }
     g_dbAdapterPtr->SyncCompleted(results);
     EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
 }
@@ -500,6 +521,42 @@ HWTEST_F(DbAdapterTest, OnRemoteDied_001, TestSize.Level0)
 {
     g_dbAdapterPtr->OnRemoteDied();
     EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: DeleteKvStore_001
+ * @tc.desc: Verify the DeleteKvStore function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, DeleteKvStore_001, TestSize.Level0)
+{
+    g_dbAdapterPtr->DeleteKvStore();
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: ReInit_001
+ * @tc.desc: Verify the ReInit_001 function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, ReInit_001, TestSize.Level0)
+{
+    g_dbAdapterPtr->GetKvStorePtr();
+    EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->ReInit());
+}
+
+/**
+ * @tc.name: RemoveDeviceData_001
+ * @tc.desc: Verify the RemoveDeviceData function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, RemoveDeviceData_001, TestSize.Level0)
+{
+    g_dbAdapterPtr->GetKvStorePtr();
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL, g_dbAdapterPtr->RemoveDeviceData(TEST_DEV_ID_0));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

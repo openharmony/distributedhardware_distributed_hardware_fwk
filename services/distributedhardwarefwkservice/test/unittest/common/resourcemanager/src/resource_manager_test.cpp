@@ -20,13 +20,15 @@
 #include <sys/types.h>
 #include <vector>
 
-#include "capability_info.h"
 #define private public
+#include "capability_info.h"
 #include "capability_info_manager.h"
+#include "version_info_event.h"
 #undef private
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "nlohmann/json.hpp"
 
 using namespace testing::ext;
 using namespace std;
@@ -468,6 +470,32 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_020, TestSize.Level0)
 }
 
 /**
+ * @tc.name: OnChange_001
+ * @tc.desc: Verify the OnChange function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, OnChange_001, TestSize.Level0)
+{
+    DistributedKv::Entry insert, update, del;
+    insert.key = "strBase";
+    update.key = "strBase";
+    del.key = "strBase";
+    insert.value = "strBase";
+    update.value = "strBase";
+    del.value = "strBase";
+    std::vector<DistributedKv::Entry> inserts, updates, deleteds;
+    inserts.push_back(insert);
+    updates.push_back(update);
+    deleteds.push_back(del);
+
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), "", true);
+
+    CapabilityInfoManager::GetInstance()->OnChange(changeIn);
+    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+}
+
+/**
  * @tc.name: OnEvent_001
  * @tc.desc: Verify the OnEvent function
  * @tc.type: FUNC
@@ -482,6 +510,21 @@ HWTEST_F(ResourceManagerTest, OnEvent_001, TestSize.Level0)
 }
 
 /**
+ * @tc.name: OnEvent_002
+ * @tc.desc: Verify the OnEvent function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ResourceManagerTest, OnEvent_002, TestSize.Level0)
+{
+    EventSender sender;
+    CapabilityInfoEvent ev(sender);
+    ev.action_ = CapabilityInfoEvent::EventType::RECOVER;
+    CapabilityInfoManager::GetInstance()->OnEvent(ev);
+    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+}
+
+/**
  * @tc.name: HandleCapabilityAddChange_001
  * @tc.desc: Verify the HandleCapabilityAddChange function
  * @tc.type: FUNC
@@ -490,6 +533,10 @@ HWTEST_F(ResourceManagerTest, OnEvent_001, TestSize.Level0)
 HWTEST_F(ResourceManagerTest, HandleCapabilityAddChange_001, TestSize.Level0)
 {
     std::vector<DistributedKv::Entry> insertRecords;
+    DistributedKv::Entry entry;
+    entry.key = "strBase";
+    entry.value = "strBase";
+    insertRecords.push_back(entry);
     CapabilityInfoManager::GetInstance()->HandleCapabilityAddChange(insertRecords);
     EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
 }
@@ -503,6 +550,10 @@ HWTEST_F(ResourceManagerTest, HandleCapabilityAddChange_001, TestSize.Level0)
 HWTEST_F(ResourceManagerTest, HandleCapabilityUpdateChange_001, TestSize.Level0)
 {
     std::vector<DistributedKv::Entry> updateRecords;
+    DistributedKv::Entry entry;
+    entry.key = "strBase";
+    entry.value = "strBase";
+    updateRecords.push_back(entry);
     CapabilityInfoManager::GetInstance()->HandleCapabilityUpdateChange(updateRecords);
     EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
 }
@@ -710,6 +761,10 @@ HWTEST_F(ResourceManagerTest, RemoveCapabilityInfoInDB_002, TestSize.Level0)
 HWTEST_F(ResourceManagerTest, HandleCapabilityDeleteChange_001, TestSize.Level0)
 {
     std::vector<DistributedKv::Entry> deleteRecords;
+    DistributedKv::Entry entry;
+    entry.key = "strBase";
+    entry.value = "strBase";
+    deleteRecords.push_back(entry);
     CapabilityInfoManager::GetInstance()->HandleCapabilityDeleteChange(deleteRecords);
     EXPECT_EQ(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
 }
@@ -763,6 +818,39 @@ HWTEST_F(ResourceManagerTest, DumpCapabilityInfos_001, TestSize.Level0)
     capInfos.push_back(info);
     CapabilityInfoManager::GetInstance()->DumpCapabilityInfos(capInfos);
     EXPECT_EQ(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+}
+
+/**
+ * @tc.name: FromJson_001
+ * @tc.desc: Verify the FromJson function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, FromJson_001, TestSize.Level0)
+{
+    std::string dhId;
+    std::string devId;
+    std::string devName;
+    uint16_t devType = 0;
+    DHType dhType = DHType::GPS;
+    std::string dhAttrs;
+    CapabilityInfo info(dhId, devId, devName, devType, dhType, dhAttrs);
+    nlohmann::json jsonObject;
+    const std::string DH_ID = "dh_id";
+    const std::string DEV_ID = "dev_id";
+    const std::string DEV_NAME = "dev_name";
+    const std::string DEV_TYPE = "dev_type";
+    const std::string DH_TYPE = "dh_type";
+    const std::string DH_ATTRS = "dh_attrs";
+    jsonObject[DH_ID] = "dh_id";
+    jsonObject[DEV_ID] = "dev_id";
+    jsonObject[DEV_NAME] = "dev_name";
+    jsonObject[DEV_TYPE] = "dev_type";
+    jsonObject[DH_TYPE] = "dh_type";
+    jsonObject[DH_ATTRS] = "dh_attrs";
+    CapabilityInfo capability;
+    std::string jsonStr = jsonObject.dump();
+    EXPECT_EQ(DH_FWK_SUCCESS, info.FromJsonString(jsonStr));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

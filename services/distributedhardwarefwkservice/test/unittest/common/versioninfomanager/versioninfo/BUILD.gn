@@ -15,7 +15,7 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/versioninfo_manager_test"
+module_out_path = "distributed_hardware_fwk/version_info_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -38,14 +38,10 @@ config("module_private_config") {
   ]
 }
 
-## UnitTest versioninfo_manager_test
-ohos_unittest("VersioninfoManagerTest") {
+ohos_unittest("VersionInfoTest") {
   module_out_path = module_out_path
 
-  sources = [
-    "src/version_info_manager_test.cpp",
-    "src/version_info_test.cpp",
-  ]
+  sources = [ "src/version_info_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
@@ -55,10 +51,13 @@ ohos_unittest("VersioninfoManagerTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [ "c_utils:utils" ]
+  external_deps = [
+    "c_utils:utils",
+    "kv_store:distributeddata_inner",
+  ]
 }
 
-group("versioninfo_manager_test") {
+group("version_info_test") {
   testonly = true
-  deps = [ ":VersioninfoManagerTest" ]
+  deps = [ ":VersionInfoTest" ]
 }

@@ -22,6 +22,7 @@
 #define private public
 #include "version_info_manager.h"
 #include "version_manager.h"
+#include "version_info_event.h"
 #undef private
 #include "dh_context.h"
 #include "distributed_hardware_log.h"
@@ -302,6 +303,22 @@ HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_001, TestSize.Level0)
 }
 
 /**
+ * @tc.name: SyncRemoteVersionInfos_002
+ * @tc.desc: Verify the SyncRemoteVersionInfos function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_002, TestSize.Level0)
+{
+    std::string appId;
+    std::string storeId;
+    std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = nullptr;
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = std::make_shared<MockDBAdapter>(appId, storeId, changeListener);
+    int32_t ret = VersionInfoManager::GetInstance()->SyncRemoteVersionInfos();
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
+}
+
+/**
  * @tc.name: CreateManualSyncCount_001
  * @tc.desc: Verify the CreateManualSyncCount function
  * @tc.type: FUNC
@@ -361,6 +378,32 @@ HWTEST_F(VersionInfoManagerTest, ManualSync_002, TestSize.Level0)
 }
 
 /**
+ * @tc.name: OnChange_001
+ * @tc.desc: Verify the OnChange function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(VersionInfoManagerTest, OnChange_001, TestSize.Level0)
+{
+    DistributedKv::Entry insert, update, del;
+    insert.key = "strBase";
+    update.key = "strBase";
+    del.key = "strBase";
+    insert.value = "strBase";
+    update.value = "strBase";
+    del.value = "strBase";
+    std::vector<DistributedKv::Entry> inserts, updates, deleteds;
+    inserts.push_back(insert);
+    updates.push_back(update);
+    deleteds.push_back(del);
+
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), "", true);
+
+    VersionInfoManager::GetInstance()->OnChange(changeIn);
+    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
+}
+
+/**
  * @tc.name: HandleVersionAddChange_001
  * @tc.desc: Verify the HandleVersionAddChange function
  * @tc.type: FUNC
@@ -369,6 +412,10 @@ HWTEST_F(VersionInfoManagerTest, ManualSync_002, TestSize.Level0)
 HWTEST_F(VersionInfoManagerTest, HandleVersionAddChange_001, TestSize.Level0)
 {
     std::vector<DistributedKv::Entry> insertRecords;
+    DistributedKv::Entry entry;
+    entry.key = "strBase";
+    entry.value = "strBase";
+    insertRecords.push_back(entry);
     VersionInfoManager::GetInstance()->HandleVersionAddChange(insertRecords);
     EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
 }
@@ -382,6 +429,10 @@ HWTEST_F(VersionInfoManagerTest, HandleVersionAddChange_001, TestSize.Level0)
 HWTEST_F(VersionInfoManagerTest, HandleVersionUpdateChange_001, TestSize.Level0)
 {
     std::vector<DistributedKv::Entry> updateRecords;
+    DistributedKv::Entry entry;
+    entry.key = "strBase";
+    entry.value = "strBase";
+    updateRecords.push_back(entry);
     VersionInfoManager::GetInstance()->HandleVersionUpdateChange(updateRecords);
     EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
 }
@@ -395,6 +446,10 @@ HWTEST_F(VersionInfoManagerTest, HandleVersionUpdateChange_001, TestSize.Level0)
 HWTEST_F(VersionInfoManagerTest, HandleVersionDeleteChange_001, TestSize.Level0)
 {
     std::vector<DistributedKv::Entry> deleteRecords;
+    DistributedKv::Entry entry;
+    entry.key = "strBase";
+    entry.value = "strBase";
+    deleteRecords.push_back(entry);
     VersionInfoManager::GetInstance()->HandleVersionDeleteChange(deleteRecords);
     EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
 }
@@ -409,6 +464,7 @@ HWTEST_F(VersionInfoManagerTest, VersionInfoEvent_001, TestSize.Level0)
 {
     EventSender sender;
     VersionInfoEvent ev(sender);
+    ev.action_ = VersionInfoEvent::EventType::RECOVER;
     VersionInfoManager::GetInstance()->OnEvent(ev);
     EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
 }

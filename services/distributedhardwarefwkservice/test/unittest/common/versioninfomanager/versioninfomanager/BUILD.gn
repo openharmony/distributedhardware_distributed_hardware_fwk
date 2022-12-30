@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+# Copyright (c) 2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -15,13 +15,11 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/resource_manager_test"
+module_out_path = "distributed_hardware_fwk/versioninfo_manager_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "//base/notification/eventhandler/interfaces/inner_api",
-    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
@@ -29,20 +27,24 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${services_path}/distributedhardwarefwkservice/include/utils",
+    "${services_path}/distributedhardwarefwkservice/include/versionmanager",
     "${common_path}/utils/include",
     "${common_path}/log/include",
+    "//base/notification/eventhandler/interfaces/inner_api",
     "//commonlibrary/c_utils/base/include",
+    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "//third_party/json/include",
-    "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
   ]
 }
 
-## UnitTest resource_manager_test
-ohos_unittest("ResourceManagerTest") {
+## UnitTest versioninfo_manager_test
+ohos_unittest("VersioninfoManagerTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/resource_manager_test.cpp" ]
+  sources = [
+    "src/version_info_manager_test.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 
@@ -58,7 +60,7 @@ ohos_unittest("ResourceManagerTest") {
   ]
 }
 
-group("resource_manager_test") {
+group("versioninfo_manager_test") {
   testonly = true
-  deps = [ ":ResourceManagerTest" ]
+  deps = [ ":VersioninfoManagerTest" ]
 }
