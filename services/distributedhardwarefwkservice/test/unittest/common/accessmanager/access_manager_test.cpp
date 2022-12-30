@@ -418,14 +418,14 @@ HWTEST_F(AccessManagerTest, UnRegisterDevStateCallback_001, TestSize.Level0)
 HWTEST_F(AccessManagerTest, SendOffLineEvent_004, TestSize.Level0)
 {
     ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
-    uint32_t MAX_ID_LEN = 257;
+    uint32_t maxIdLen = 257;
     std::string networkId;
     std::string networkId1;
-    networkId1.resize(MAX_ID_LEN);
+    networkId1.resize(maxIdLen);
     std::string networkId2 = "networkId3";
     std::string uuid;
     std::string uuid1;
-    uuid1.resize(MAX_ID_LEN);
+    uuid1.resize(maxIdLen);
     std::string uuid2 = "uuid3";
     uint16_t deviceType = 1;
     int32_t ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId, uuid, deviceType);

@@ -113,13 +113,13 @@ HWTEST_F(DistributedHardwareStubTest, PublishMessageInner_001, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareStubTest, ValidTopic_001, TestSize.Level0)
 {
-    uint32_t topic = static_cast<uint32_t>(DHTopic::TOPIC_MIN );
+    uint32_t topic = static_cast<uint32_t>(DHTopic::TOPIC_MIN);
     EXPECT_EQ(false, stubTest_->ValidTopic(topic));
 
-    uint32_t topic1 = static_cast<uint32_t>(DHTopic::TOPIC_MAX );
+    uint32_t topic1 = static_cast<uint32_t>(DHTopic::TOPIC_MAX);
     EXPECT_EQ(false, stubTest_->ValidTopic(topic1));
 
-    uint32_t topic2 = static_cast<uint32_t>(DHTopic::TOPIC_START_DSCREEN );
+    uint32_t topic2 = static_cast<uint32_t>(DHTopic::TOPIC_START_DSCREEN);
     EXPECT_EQ(true, stubTest_->ValidTopic(topic2));
 }
 } // namespace DistributedHardware
