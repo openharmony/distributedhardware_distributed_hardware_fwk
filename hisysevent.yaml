@@ -62,7 +62,7 @@ DHFWK_EXIT_END:
 
 DHFWK_RELEASE_FAIL:
   __BASE: {type: FAULT, level: CRITICAL, desc: dhfwk component dlclose failed}
-  DHTYPE: {type: STRING, desc: dhtype}
+  DHTYPE: {type: STRING, desc: the dhardware module which release fail}
   ERR_CODE: {type: INT32, desc: dlclose failed result}
   ERR_MSG: {type: STRING, desc: dhfwk component dlclose failed}
 
