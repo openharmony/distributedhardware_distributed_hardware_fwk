@@ -48,7 +48,17 @@ void DHTimer::InitTimer()
 void DHTimer::ReleaseTimer()
 {
     DHLOGI("start");
-    StopTimer();
+    std::lock_guard<std::mutex> lock(timerMutex_);
+    if (eventHandler_ != nullptr) {
+        eventHandler_->RemoveTask(timerId_);
+        if (eventHandler_->GetEventRunner() != nullptr) {
+            eventHandler_->GetEventRunner()->Stop();
+        }
+    }
+    if (eventHandlerThread_.joinable()) {
+        eventHandlerThread_.join();
+    }
+    eventHandler_ = nullptr;
     DHLOGI("end");
 }
 
@@ -85,17 +95,7 @@ void DHTimer::StartTimer()
 void DHTimer::StopTimer()
 {
     DHLOGI("start");
-    std::lock_guard<std::mutex> lock(timerMutex_);
-    if (eventHandler_ != nullptr) {
-        eventHandler_->RemoveTask(timerId_);
-        if (eventHandler_->GetEventRunner() != nullptr) {
-            eventHandler_->GetEventRunner()->Stop();
-        }
-    }
-    if (eventHandlerThread_.joinable()) {
-        eventHandlerThread_.join();
-    }
-    eventHandler_ = nullptr;
+    ReleaseTimer();
     HandleStopTimer();
     DHLOGI("end");
 }
