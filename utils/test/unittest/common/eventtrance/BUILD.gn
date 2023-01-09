@@ -27,7 +27,7 @@ config("module_private_config") {
     "//foundation/distributedhardware/distributed_hardware_fwk/utils/include/eventbus",
     "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/unittest/common/eventtrance",
     "//third_party/json/include",
-    "//third_party/openssl:libcrypto_static",
+    "//third_party/openssl:libcrypto_shared",
     "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
     "${common_path}/utils/include",
