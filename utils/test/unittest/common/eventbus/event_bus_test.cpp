@@ -34,7 +34,7 @@ namespace {
     FakeListener *g_listener = nullptr;
     std::shared_ptr<OHOS::DistributedHardware::EventRegistration> g_regHandler = nullptr;
     EventBus* g_eventBus = nullptr;
-    constexpr int32_t WAIT_TIME= 2;
+    const int32_t TEST_TWENTY_MS = 20000;
 }
 
 void EventbusTest::SetUpTestCase(void)
@@ -72,6 +72,7 @@ void EventbusTest::SetUp()
 
 void EventbusTest::TearDown()
 {
+    usleep(TEST_TWENTY_MS);
     if (g_obj != nullptr) {
         delete g_obj;
         g_obj = nullptr;
@@ -104,11 +105,9 @@ HWTEST_F(EventbusTest, event_bus_test_001, TestSize.Level0)
 
     FakeEvent e(*g_sender, *g_obj);
     g_regHandler = g_eventBus->AddHandler<FakeEvent>(e.GetType(), *g_listener);
-    sleep(WAIT_TIME);
+
     EXPECT_NE(g_regHandler, nullptr);
-    sleep(WAIT_TIME);
     EXPECT_EQ(g_regHandler->GetSender(), nullptr);
-    sleep(WAIT_TIME);
     EXPECT_EQ(g_regHandler->GetHandler(), (void *)g_listener);
 }
 
@@ -125,9 +124,8 @@ HWTEST_F(EventbusTest, event_bus_test_002, TestSize.Level0)
     FakeEvent e(*g_sender, *g_obj);
     g_regHandler = g_eventBus->AddHandler<FakeEvent>(e.GetType(), *g_listener);
     std::shared_ptr<EventRegistration> secondHandler = g_eventBus->AddHandler<FakeEvent>(e.GetType(), *g_listener);
-    sleep(WAIT_TIME);
+
     EXPECT_NE(secondHandler, nullptr);
-    sleep(WAIT_TIME);
     EXPECT_EQ(g_regHandler, secondHandler);
 }
 
@@ -145,15 +143,11 @@ HWTEST_F(EventbusTest, event_bus_test_003, TestSize.Level0)
     g_regHandler = g_eventBus->AddHandler<FakeEvent>(e.GetType(), *g_listener);
     std::shared_ptr<EventRegistration> secondHandler =
         g_eventBus->AddHandler<FakeEvent>(e.GetType(), *g_listener, *g_sender);
-    sleep(WAIT_TIME);
+
     EXPECT_NE(g_regHandler, nullptr);
-    sleep(WAIT_TIME);
     EXPECT_NE(secondHandler, nullptr);
-    sleep(WAIT_TIME);
     EXPECT_NE(g_regHandler, secondHandler);
-    sleep(WAIT_TIME);
     EXPECT_EQ(secondHandler->GetSender(), g_sender);
-    sleep(WAIT_TIME);
     EXPECT_EQ(secondHandler->GetHandler(), (void *)g_listener);
 }
 
@@ -167,11 +161,9 @@ HWTEST_F(EventbusTest, event_bus_test_004, TestSize.Level0)
 {
     EXPECT_EQ(g_regHandler, nullptr);
     FakeEvent e(*g_sender, *g_obj);
-    sleep(WAIT_TIME);
     EXPECT_EQ(false, g_eventBus->RemoveHandler<FakeEvent>(e.GetType(), g_regHandler));
 
     g_regHandler = g_eventBus->AddHandler<FakeEvent>(e.GetType(), *g_listener);
-    sleep(WAIT_TIME);
     EXPECT_EQ(true, g_eventBus->RemoveHandler<FakeEvent>(e.GetType(), g_regHandler));
 }
 
@@ -188,7 +180,6 @@ HWTEST_F(EventbusTest, event_bus_test_005, TestSize.Level0)
     FakeEvent e(*g_sender, *g_obj, 10);
     g_regHandler = g_eventBus->AddHandler<FakeEvent>(e.GetType(), *g_listener);
     g_eventBus->PostEvent<FakeEvent>(e, POSTMODE::POST_SYNC);
-    sleep(WAIT_TIME);
     EXPECT_EQ(10, g_obj->GetAge());
 }
 } // namespace DistributedHardware
