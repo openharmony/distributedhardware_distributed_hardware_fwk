@@ -43,6 +43,7 @@ ohos_shared_library("distributedhardwareutils") {
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"distributedhardwareutils\"",
     "LOG_DOMAIN=0xD004100",
+    "OPENSSL_SUPPRESS_DEPRECATED",
   ]
 
   external_deps = [
