@@ -18,6 +18,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <new>
+#include <sys/time.h>
 
 #include "distributed_hardware_log.h"
 #include "event_bus.h"
@@ -33,6 +34,7 @@ namespace {
     FakeListener *g_listener = nullptr;
     std::shared_ptr<OHOS::DistributedHardware::EventRegistration> g_regHandler = nullptr;
     EventBus* g_eventBus = nullptr;
+    const int32_t TEST_TWENTY_MS = 20000;
 }
 
 void EventbusTest::SetUpTestCase(void)
@@ -70,6 +72,7 @@ void EventbusTest::SetUp()
 
 void EventbusTest::TearDown()
 {
+    usleep(TEST_TWENTY_MS);
     if (g_obj != nullptr) {
         delete g_obj;
         g_obj = nullptr;
