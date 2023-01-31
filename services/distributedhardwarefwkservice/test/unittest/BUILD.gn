@@ -25,6 +25,7 @@ group("test") {
     "common/distributedhardwarestub:distributed_hardware_stub_test",
     "common/hidumphelper/enabledcompsdump:enabled_comps_dump_test",
     "common/hidumphelper/hidumphelper:hidump_helper_test",
+    "common/ipc:publisher_listener_proxy_test",
     "common/localhardwaremanager/localhardwaremanager:local_hardware_manager_test",
     "common/localhardwaremanager/pluginlistenerimpl:plugin_listener_impl_test",
     "common/lowlatency/lowlatency:low_latency_test",
