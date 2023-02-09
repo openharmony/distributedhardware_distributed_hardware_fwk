@@ -26,15 +26,9 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace DistributedHardware {
-void LocalHardwareManagerTest::SetUpTestCase(void)
-{
-    ComponentLoader::GetInstance().Init();
-}
+void LocalHardwareManagerTest::SetUpTestCase(void) {}
 
-void LocalHardwareManagerTest::TearDownTestCase(void)
-{
-    ComponentLoader::GetInstance().UnInit();
-}
+void LocalHardwareManagerTest::TearDownTestCase(void) {}
 
 void LocalHardwareManagerTest::SetUp() {}
 
