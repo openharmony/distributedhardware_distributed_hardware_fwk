@@ -85,6 +85,8 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
                 DHLOGE("systemAbilityMgr UnLoadSystemAbility failed, ret: %d", ret);
             }
             DHLOGI("systemAbilityMgr UnLoadSystemAbility success");
+        } else {
+            DHLOGE("systemAbilityMgr is nullptr.");
         }
     }
 
