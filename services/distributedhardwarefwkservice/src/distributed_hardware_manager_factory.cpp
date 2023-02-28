@@ -83,8 +83,9 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
             int32_t ret = systemAbilityMgr->UnloadSystemAbility(DISTRIBUTED_HARDWARE_SA_ID);
             if (ret != DH_FWK_SUCCESS) {
                 DHLOGE("systemAbilityMgr UnLoadSystemAbility failed, ret: %d", ret);
+            } else {
+                DHLOGI("systemAbilityMgr UnLoadSystemAbility success");
             }
-            DHLOGI("systemAbilityMgr UnLoadSystemAbility success");
         } else {
             DHLOGE("systemAbilityMgr is nullptr.");
         }
