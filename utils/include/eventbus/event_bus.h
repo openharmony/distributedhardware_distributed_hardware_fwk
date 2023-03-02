@@ -47,7 +47,6 @@ enum POSTMODE : uint32_t {
 };
 
 constexpr const char *START_EVENT = "StartEvent";
-constexpr const char *START_EVENT_WITH_NAME = "StartEventWithName";
 
 class EventBus final {
 public:
@@ -251,10 +250,7 @@ private:
 
     void StartEventWithName(const std::string &threadName)
     {
-        int32_t ret = pthread_setname_np(pthread_self(), START_EVENT_WITH_NAME);
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGE("StartEventWithName setname failed.");
-        }
+		prctl(PR_SET_NAME, threadName.c_str());
         auto busRunner = AppExecFwk::EventRunner::Create(false);
         {
             std::lock_guard<std::mutex> lock(eventMutex_);
