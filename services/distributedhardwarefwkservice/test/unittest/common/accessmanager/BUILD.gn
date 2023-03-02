@@ -65,6 +65,7 @@ ohos_unittest("AccessManagerTest") {
   external_deps = [
     "c_utils:utils",
     "init:libbegetutil",
+    "samgr:samgr_proxy",
   ]
 }
 

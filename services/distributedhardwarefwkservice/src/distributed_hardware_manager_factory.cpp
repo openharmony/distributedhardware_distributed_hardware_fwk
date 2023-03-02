@@ -33,6 +33,8 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -76,7 +78,18 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
         HiSysEventWriteMsg(DHFWK_EXIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
             "dhfwk sa exit end.");
 
-        _Exit(0);
+        auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        if (systemAbilityMgr == nullptr) {
+            DHLOGE("systemAbilityMgr is null");
+            return;
+        }
+        int32_t ret = systemAbilityMgr->UnloadSystemAbility(DISTRIBUTED_HARDWARE_SA_ID);
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("systemAbilityMgr UnLoadSystemAbility failed, ret: %d", ret);
+            return;
+        }
+        DHLOGI("systemAbilityMgr UnLoadSystemAbility success");
+        return;
     }
 
     DHLOGI("After uninit, DM report devices online, reinit");
