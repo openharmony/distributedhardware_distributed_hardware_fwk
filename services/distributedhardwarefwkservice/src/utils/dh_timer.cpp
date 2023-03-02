@@ -15,6 +15,8 @@
 
 #include "dh_timer.h"
 
+#include <pthread.h>
+
 #include "anonymous_string.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -23,6 +25,9 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DHTimer"
+
+constexpr const char *START_EVENT_RUN = "StartEventRun";
+
 DHTimer::DHTimer(std::string timerId, int32_t delayTimeMs) : timerId_(timerId), delayTimeMs_(delayTimeMs)
 {
     DHLOGI("DHTimer ctor!");
@@ -65,6 +70,10 @@ void DHTimer::ReleaseTimer()
 void DHTimer::StartEventRunner()
 {
     DHLOGI("start");
+    int32_t ret = pthread_setname_np(pthread_self(), START_EVENT_RUN);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("StartEventRunner setname failed.");
+    }
     auto busRunner = AppExecFwk::EventRunner::Create(false);
     if (busRunner == nullptr) {
         DHLOGE("busRunner is nullptr!");

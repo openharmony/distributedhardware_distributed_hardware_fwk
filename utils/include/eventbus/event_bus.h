@@ -17,6 +17,7 @@
 #define OHOS_DISTRIBUTED_HARDWARE_EVENT_BUS_H
 
 #include <condition_variable>
+#include <pthread.h>
 #include <memory>
 #include <set>
 #include <sys/prctl.h>
@@ -28,6 +29,8 @@
 
 #include "dh_log.h"
 #include "anonymous_string.h"
+#include "distributed_hardware_errno.h"
+#include "distributed_hardware_log.h"
 #include "event.h"
 #include "eventbus_handler.h"
 #include "event_registration.h"
@@ -42,6 +45,9 @@ enum POSTMODE : uint32_t {
     POST_ASYNC = 0,
     POST_SYNC,
 };
+
+constexpr const char *START_EVENT = "StartEvent";
+constexpr const char *START_EVENT_WITH_NAME = "StartEventWithName";
 
 class EventBus final {
 public:
@@ -230,6 +236,10 @@ private:
 
     void StartEvent()
     {
+        int32_t ret = pthread_setname_np(pthread_self(), START_EVENT);
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("StartEvent setname failed.");
+        }
         auto busRunner = AppExecFwk::EventRunner::Create(false);
         {
             std::lock_guard<std::mutex> lock(eventMutex_);
@@ -241,7 +251,10 @@ private:
 
     void StartEventWithName(const std::string &threadName)
     {
-        prctl(PR_SET_NAME, threadName.c_str());
+        int32_t ret = pthread_setname_np(pthread_self(), START_EVENT_WITH_NAME);
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("StartEventWithName setname failed.");
+        }
         auto busRunner = AppExecFwk::EventRunner::Create(false);
         {
             std::lock_guard<std::mutex> lock(eventMutex_);

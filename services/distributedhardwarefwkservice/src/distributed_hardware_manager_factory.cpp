@@ -17,6 +17,7 @@
 
 #include <cstdlib>
 #include <dlfcn.h>
+#include <pthread.h>
 #include <string>
 #include <thread>
 #include <vector>
@@ -38,6 +39,8 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DistributedHardwareManagerFactory"
+
+constexpr const char *SEND_ONLINE_EVENT = "SendOnLineEvent";
 
 IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
 bool DistributedHardwareManagerFactory::Init()
@@ -99,6 +102,10 @@ bool DistributedHardwareManagerFactory::IsInit()
 int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &networkId, const std::string &uuid,
     uint16_t deviceType)
 {
+    int32_t ret = pthread_setname_np(pthread_self(), SEND_ONLINE_EVENT);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("SendOnLineEvent setname failed.");
+    }
     if (networkId.size() == 0 || networkId.size() > MAX_ID_LEN || uuid.size() == 0 || uuid.size() > MAX_ID_LEN) {
         DHLOGE("NetworkId or uuid is invalid");
         return ERR_DH_FWK_PARA_INVALID;

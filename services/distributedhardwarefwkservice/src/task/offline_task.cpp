@@ -15,6 +15,7 @@
 
 #include "offline_task.h"
 
+#include <pthread.h>
 #include <thread>
 
 #include "anonymous_string.h"
@@ -30,6 +31,8 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "OffLineTask"
+
+constexpr const char *OFFLINE_DO_TASK_INNER = "OffLineDoTaskInner";
 
 OffLineTask::OffLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
     const DHType dhType) : Task(networkId, uuid, dhId, dhType)
@@ -52,6 +55,10 @@ void OffLineTask::DoTask()
 
 void OffLineTask::DoTaskInner()
 {
+    int32_t ret = pthread_setname_np(pthread_self(), OFFLINE_DO_TASK_INNER);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("DoTaskInner setname failed.");
+    }
     DHLOGD("start offline task, id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
     this->SetTaskState(TaskState::RUNNING);
     for (const auto& step : this->GetTaskSteps()) {

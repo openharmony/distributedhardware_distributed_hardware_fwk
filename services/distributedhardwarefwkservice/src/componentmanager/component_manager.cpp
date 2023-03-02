@@ -17,6 +17,7 @@
 
 #include <cinttypes>
 #include <future>
+#include <pthread.h>
 #include <string>
 #include <thread>
 
@@ -57,6 +58,7 @@ namespace {
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
     constexpr int32_t INVALID_SA_ID = -1;
     constexpr int32_t MONITOR_TASK_DELAY_MS = 5 * 1000;
+    constexpr const char *DO_RECOVER = "DoRecover";
     const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
 }
 
@@ -531,6 +533,10 @@ void ComponentManager::Recover(DHType dhType)
 
 void ComponentManager::DoRecover(DHType dhType)
 {
+    int32_t ret = pthread_setname_np(pthread_self(), DO_RECOVER);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("DoRecover setname failed.");
+    }
     // step1: restart sa process
     ReStartSA(dhType);
     // step2: recover distributed hardware virtual driver

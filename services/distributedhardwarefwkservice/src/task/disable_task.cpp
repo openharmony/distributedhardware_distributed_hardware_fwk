@@ -15,6 +15,8 @@
 
 #include "disable_task.h"
 
+#include <pthread.h>
+
 #include "anonymous_string.h"
 #include "capability_utils.h"
 #include "component_manager.h"
@@ -29,6 +31,8 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DisableTask"
+
+constexpr const char *DISABLE_DO_TASK_INNER = "DisableDoTaskInner";
 
 DisableTask::DisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
     const DHType dhType) : Task(networkId, uuid, dhId, dhType)
@@ -50,6 +54,10 @@ void DisableTask::DoTask()
 
 void DisableTask::DoTaskInner()
 {
+    int32_t ret = pthread_setname_np(pthread_self(), DISABLE_DO_TASK_INNER);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("DoTaskInner setname failed.");
+    }
     DHLOGD("id = %s, uuid = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
         GetAnonyString(GetDhId()).c_str());
     SetTaskState(TaskState::RUNNING);

@@ -42,6 +42,8 @@ ohos_shared_library("libdhfwk_sdk") {
     "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
   ]
 
+  innerapi_tags = ["platformsdk"]
+
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"dhfwkkit\"",

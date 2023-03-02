@@ -57,6 +57,18 @@
         "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhardware.cfg",
         "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits:libdhfwk_sdk"
       ],
+      "inner_kits": [
+        {
+          "type": "so",
+          "name": "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits:libdhfwk_sdk",
+          "header": {
+            "header_files": [
+              "distributed_hardware_fwk_kit.h"
+            ],
+            "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits/include"
+          }
+        }
+      ],
       "test": [
         "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/unittest:utils_test",
         "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/unittest:test",

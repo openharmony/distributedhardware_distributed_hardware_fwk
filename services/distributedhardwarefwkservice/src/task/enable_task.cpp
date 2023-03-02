@@ -15,6 +15,8 @@
 
 #include "enable_task.h"
 
+#include <pthread.h>
+
 #include "anonymous_string.h"
 #include "capability_utils.h"
 #include "component_manager.h"
@@ -28,6 +30,8 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "EnableTask"
+
+constexpr const char *ENABLE_DO_TASK_INNER = "EnableDoTaskInner";
 
 EnableTask::EnableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
     const DHType dhType) : Task(networkId, uuid, dhId, dhType)
@@ -49,6 +53,10 @@ void EnableTask::DoTask()
 
 void EnableTask::DoTaskInner()
 {
+    int32_t ret = pthread_setname_np(pthread_self(), ENABLE_DO_TASK_INNER);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("TimerRunning setname failed.");
+    }
     DHLOGD("id = %s, uuid = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
         GetAnonyString(GetDhId()).c_str());
     SetTaskState(TaskState::RUNNING);

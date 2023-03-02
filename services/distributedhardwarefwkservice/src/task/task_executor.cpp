@@ -15,6 +15,7 @@
 
 #include "task_executor.h"
 
+#include <pthread.h>
 #include <thread>
 
 #include "dh_context.h"
@@ -25,6 +26,7 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     const uint32_t MAX_TASK_QUEUE_LENGTH = 256;
+    constexpr const char *TRIGGER_TASK = "TriggerTask";
 }
 IMPLEMENT_SINGLE_INSTANCE(TaskExecutor);
 TaskExecutor::TaskExecutor() : taskThreadFlag_(true)
@@ -79,6 +81,10 @@ std::shared_ptr<Task> TaskExecutor::PopTask()
 
 void TaskExecutor::TriggerTask()
 {
+    int32_t ret = pthread_setname_np(pthread_self(), TRIGGER_TASK);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("TriggerTask setname failed.");
+    }
     while (taskThreadFlag_) {
         std::shared_ptr<Task> task = PopTask();
         if (task == nullptr) {
