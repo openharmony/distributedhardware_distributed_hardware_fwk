@@ -26,7 +26,7 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DHTimer"
 
-constexpr const char *START_EVENT_RUN = "StartEventRun";
+constexpr const char *START_EVENT = "StartEvent";
 
 DHTimer::DHTimer(std::string timerId, int32_t delayTimeMs) : timerId_(timerId), delayTimeMs_(delayTimeMs)
 {
@@ -70,7 +70,7 @@ void DHTimer::ReleaseTimer()
 void DHTimer::StartEventRunner()
 {
     DHLOGI("start");
-    int32_t ret = pthread_setname_np(pthread_self(), START_EVENT_RUN);
+    int32_t ret = pthread_setname_np(pthread_self(), START_EVENT);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("StartEventRunner setname failed.");
     }

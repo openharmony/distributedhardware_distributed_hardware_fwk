@@ -32,7 +32,7 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DisableTask"
 
-constexpr const char *DISABLE_DO_TASK_INNER = "DisableDoTaskInner";
+constexpr const char *DISABLE_TASK_INNER = "DisableTask";
 
 DisableTask::DisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
     const DHType dhType) : Task(networkId, uuid, dhId, dhType)
@@ -54,7 +54,7 @@ void DisableTask::DoTask()
 
 void DisableTask::DoTaskInner()
 {
-    int32_t ret = pthread_setname_np(pthread_self(), DISABLE_DO_TASK_INNER);
+    int32_t ret = pthread_setname_np(pthread_self(), DISABLE_TASK_INNER);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DoTaskInner setname failed.");
     }

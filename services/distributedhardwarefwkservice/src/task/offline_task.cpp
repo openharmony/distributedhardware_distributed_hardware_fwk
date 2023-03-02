@@ -32,7 +32,7 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "OffLineTask"
 
-constexpr const char *OFFLINE_DO_TASK_INNER = "OffLineDoTaskInner";
+constexpr const char *OFFLINE_TASK_INNER = "OffLineTask";
 
 OffLineTask::OffLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
     const DHType dhType) : Task(networkId, uuid, dhId, dhType)
@@ -55,7 +55,7 @@ void OffLineTask::DoTask()
 
 void OffLineTask::DoTaskInner()
 {
-    int32_t ret = pthread_setname_np(pthread_self(), OFFLINE_DO_TASK_INNER);
+    int32_t ret = pthread_setname_np(pthread_self(), OFFLINE_TASK_INNER);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DoTaskInner setname failed.");
     }

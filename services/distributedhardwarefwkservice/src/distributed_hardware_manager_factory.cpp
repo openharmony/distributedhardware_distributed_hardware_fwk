@@ -40,7 +40,7 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DistributedHardwareManagerFactory"
 
-constexpr const char *SEND_ONLINE_EVENT = "SendOnLineEvent";
+constexpr const char *SEND_ONLINE = "SendOnLine";
 
 IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
 bool DistributedHardwareManagerFactory::Init()
@@ -102,7 +102,7 @@ bool DistributedHardwareManagerFactory::IsInit()
 int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &networkId, const std::string &uuid,
     uint16_t deviceType)
 {
-    int32_t ret = pthread_setname_np(pthread_self(), SEND_ONLINE_EVENT);
+    int32_t ret = pthread_setname_np(pthread_self(), SEND_ONLINE);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("SendOnLineEvent setname failed.");
     }
