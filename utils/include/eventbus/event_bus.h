@@ -250,7 +250,7 @@ private:
 
     void StartEventWithName(const std::string &threadName)
     {
-		prctl(PR_SET_NAME, threadName.c_str());
+        prctl(PR_SET_NAME, threadName.c_str());
         auto busRunner = AppExecFwk::EventRunner::Create(false);
         {
             std::lock_guard<std::mutex> lock(eventMutex_);
