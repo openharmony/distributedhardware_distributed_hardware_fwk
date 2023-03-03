@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,10 +15,12 @@
 
 #include "offline_task.h"
 
+#include <pthread.h>
 #include <thread>
 
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
+#include "constants.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -52,6 +54,10 @@ void OffLineTask::DoTask()
 
 void OffLineTask::DoTaskInner()
 {
+    int32_t ret = pthread_setname_np(pthread_self(), OFFLINE_TASK_INNER);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("DoTaskInner setname failed.");
+    }
     DHLOGD("start offline task, id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
     this->SetTaskState(TaskState::RUNNING);
     for (const auto& step : this->GetTaskSteps()) {

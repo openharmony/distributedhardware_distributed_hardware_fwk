@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,9 +15,12 @@
 
 #include "enable_task.h"
 
+#include <pthread.h>
+
 #include "anonymous_string.h"
 #include "capability_utils.h"
 #include "component_manager.h"
+#include "constants.h"
 #include "dh_utils_hitrace.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
@@ -49,6 +52,10 @@ void EnableTask::DoTask()
 
 void EnableTask::DoTaskInner()
 {
+    int32_t ret = pthread_setname_np(pthread_self(), ENABLE_TASK_INNER);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("DoTaskInner setname failed.");
+    }
     DHLOGD("id = %s, uuid = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
         GetAnonyString(GetDhId()).c_str());
     SetTaskState(TaskState::RUNNING);

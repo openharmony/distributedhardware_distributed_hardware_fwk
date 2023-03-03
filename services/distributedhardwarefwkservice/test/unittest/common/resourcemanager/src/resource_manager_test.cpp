@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,7 +42,7 @@ namespace {
 const string DATABASE_DIR = "/data/service/el1/public/database/dtbhardware_manager_service/";
 const string DEV_ID_0 = "bb536a637105409e904d4da83790a4a7";
 const string DEV_ID_1 = "bb536a637105409e904d4da83790a4a8";
-const string DEV_NAME = "Dev1";
+const string TEST_DEV_NAME = "Dev1";
 const string DH_ID_0 = "Camera_0";
 const string DH_ID_1 = "Mic_0";
 const string DH_ID_2 = "Gps_0";
@@ -63,26 +63,26 @@ constexpr uint32_t TEST_SIZE_10 = 10;
 const std::string EMPTY_PREFIX = "";
 
 const shared_ptr<CapabilityInfo> CAP_INFO_0 =
-    make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_1 =
-    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_2 =
-    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_3 =
-    make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, DH_ATTR_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_4 =
-    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_0);
 
 const shared_ptr<CapabilityInfo> CAP_INFO_5 =
-    make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_6 =
-    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_7 =
-    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_8 =
-    make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, DH_ATTR_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_9 =
-    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_1, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_1);
 }
 
 void ResourceManagerTest::SetUpTestCase(void)
@@ -232,7 +232,7 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_008, TestSize.Level0)
 {
     map<CapabilityInfoFilter, string> queryMap0 { { CapabilityInfoFilter::FILTER_DEVICE_ID, DEV_ID_0 } };
     map<CapabilityInfoFilter, string> queryMap1 { { CapabilityInfoFilter::FILTER_DEVICE_ID, DEV_ID_1 } };
-    map<CapabilityInfoFilter, string> queryMap2 { { CapabilityInfoFilter::FILTER_DEVICE_NAME, DEV_NAME } };
+    map<CapabilityInfoFilter, string> queryMap2 { { CapabilityInfoFilter::FILTER_DEVICE_NAME, TEST_DEV_NAME } };
     map<CapabilityInfoFilter, string> queryMap3 { { CapabilityInfoFilter::FILTER_DH_ID, DH_ID_0 } };
     map<CapabilityInfoFilter, string> queryMap4 { { CapabilityInfoFilter::FILTER_DH_ID, DH_ID_1 } };
     map<CapabilityInfoFilter, string> queryMap5 { { CapabilityInfoFilter::FILTER_DH_ID, DH_ID_2 } };
@@ -464,7 +464,7 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_019, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, resource_manager_test_020, TestSize.Level0)
 {
-    CapabilityInfo capaInfo(DH_ID_0, DEV_ID_0, DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0);
+    CapabilityInfo capaInfo(DH_ID_0, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0);
     bool ret = CAP_INFO_1->Compare(capaInfo);
     EXPECT_EQ(false, ret);
 }

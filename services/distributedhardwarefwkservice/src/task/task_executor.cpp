@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,10 @@
 
 #include "task_executor.h"
 
+#include <pthread.h>
 #include <thread>
 
+#include "constants.h"
 #include "dh_context.h"
 #include "distributed_hardware_log.h"
 #include "event_bus.h"
@@ -79,6 +81,10 @@ std::shared_ptr<Task> TaskExecutor::PopTask()
 
 void TaskExecutor::TriggerTask()
 {
+    int32_t ret = pthread_setname_np(pthread_self(), TRIGGER_TASK);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("TriggerTask setname failed.");
+    }
     while (taskThreadFlag_) {
         std::shared_ptr<Task> task = PopTask();
         if (task == nullptr) {

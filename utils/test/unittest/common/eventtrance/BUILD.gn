@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Copyright (c) 2022-2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -30,6 +30,7 @@ config("module_private_config") {
     "//third_party/openssl:libcrypto_shared",
     "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
+    "${common_path}/log/include",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${utils_path}/include/eventtrance",

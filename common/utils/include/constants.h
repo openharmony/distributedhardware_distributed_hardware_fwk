@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -64,6 +64,14 @@ namespace DistributedHardware {
     const std::string DH_COMPONENT_SINK_VER = "version";
     const std::string DH_COMPONENT_DEFAULT_VERSION = "1.0";
     const std::string LOW_LATENCY_ENABLE = "low_latency_enable";
+    constexpr const char *DO_RECOVER = "DoRecover";
+    constexpr const char *SEND_ONLINE = "SendOnLine";
+    constexpr const char *DISABLE_TASK_INNER = "DisableTask";
+    constexpr const char *ENABLE_TASK_INNER = "EnableTask";
+    constexpr const char *OFFLINE_TASK_INNER = "OffLineTask";
+    constexpr const char *TRIGGER_TASK = "TriggerTask";
+    constexpr const char *EVENT_RUN = "EventRun";
+    constexpr const char *START_EVENT = "StartEvent";
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
