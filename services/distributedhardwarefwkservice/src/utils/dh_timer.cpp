@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 #include <pthread.h>
 
 #include "anonymous_string.h"
+#include "constants.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
@@ -25,8 +26,6 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DHTimer"
-
-constexpr const char *START_EVENT = "StartEvent";
 
 DHTimer::DHTimer(std::string timerId, int32_t delayTimeMs) : timerId_(timerId), delayTimeMs_(delayTimeMs)
 {
@@ -70,7 +69,7 @@ void DHTimer::ReleaseTimer()
 void DHTimer::StartEventRunner()
 {
     DHLOGI("start");
-    int32_t ret = pthread_setname_np(pthread_self(), START_EVENT);
+    int32_t ret = pthread_setname_np(pthread_self(), EVENT_RUN);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("StartEventRunner setname failed.");
     }

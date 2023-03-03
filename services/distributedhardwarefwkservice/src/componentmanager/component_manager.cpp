@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,7 +58,6 @@ namespace {
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
     constexpr int32_t INVALID_SA_ID = -1;
     constexpr int32_t MONITOR_TASK_DELAY_MS = 5 * 1000;
-    constexpr const char *DO_RECOVER = "DoRecover";
     const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,7 @@
 
 #include "event_handler.h"
 
+#include "constants.h"
 #include "dh_log.h"
 #include "anonymous_string.h"
 #include "distributed_hardware_errno.h"
@@ -45,8 +46,6 @@ enum POSTMODE : uint32_t {
     POST_ASYNC = 0,
     POST_SYNC,
 };
-
-constexpr const char *START_EVENT = "StartEvent";
 
 class EventBus final {
 public:

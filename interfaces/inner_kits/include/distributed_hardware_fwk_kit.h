@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,11 +39,13 @@ public:
      * @return No return value.
      */
     API_EXPORT DistributedHardwareFwkKit();
+
     /**
      * @brief Destructor.
      * @return No return value.
      */
     API_EXPORT ~DistributedHardwareFwkKit();
+
     /**
      * @brief Register publisher listener.
      * @param topic    Distributed hardware topic.
@@ -51,6 +53,7 @@ public:
      * @return Returns 0 if success.
      */
     API_EXPORT int32_t RegisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener);
+
     /**
      * @brief Unregister publisher listener.
      * @param topic    Distributed hardware topic.
@@ -58,6 +61,7 @@ public:
      * @return Returns 0 if success.
      */
     API_EXPORT int32_t UnregisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener);
+
     /**
      * @brief Publish message.
      * @param topic   Distributed hardware topic.
@@ -65,10 +69,11 @@ public:
      * @return Returns 0 if success.
      */
     API_EXPORT int32_t PublishMessage(const DHTopic topic, const std::string &message);
+
     /**
      * @brief Distributed hardware framework online.
      * @param isOnLine Online or not.
-     * @return Returns 0 if success.
+     * @return No return value.
      */
     void OnDHFWKOnLine(bool isOnLine);
 private:

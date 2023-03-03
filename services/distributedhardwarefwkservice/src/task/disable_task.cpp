@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,7 @@
 #include "anonymous_string.h"
 #include "capability_utils.h"
 #include "component_manager.h"
+#include "constants.h"
 #include "dh_utils_hitrace.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
@@ -31,8 +32,6 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DisableTask"
-
-constexpr const char *DISABLE_TASK_INNER = "DisableTask";
 
 DisableTask::DisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
     const DHType dhType) : Task(networkId, uuid, dhId, dhType)
