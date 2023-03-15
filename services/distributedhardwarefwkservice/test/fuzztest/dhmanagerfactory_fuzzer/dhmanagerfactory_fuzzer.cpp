@@ -28,10 +28,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-namespace {
-    constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
-    constexpr uint32_t SLEEP_TIME_US = 10 * 1000;
-}
 
 void DhManagerFactoryFuzzTest(const uint8_t* data, size_t size)
 {
@@ -39,12 +35,11 @@ void DhManagerFactoryFuzzTest(const uint8_t* data, size_t size)
         return;
     }
 
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    std::string uuid(reinterpret_cast<const char*>(data), size);
-
-    DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(
-        networkId, uuid, TEST_DEV_TYPE_PAD);
-    usleep(SLEEP_TIME_US);
+    DHType dhType = DHType::CAMERA;
+    std::string str(reinterpret_cast<const char*>(data), size);
+    std::unordered_map<DHType, std::string> versionMap;
+    versionMap.insert(std::make_pair(dhType, str));
+    DistributedHardwareManagerFactory::GetInstance().GetComponentVersion(versionMap);
 }
 }
 }
