@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,11 +28,11 @@
 #include "mock_task_factory.h"
 #include "mock_task_utils.h"
 
-#include "task_board.h"
 #define private public
 #include "disable_task.h"
 #include "enable_task.h"
 #include "task.h"
+#include "task_board.h"
 #include "task_executor.h"
 #undef private
 using namespace testing::ext;
@@ -250,6 +250,71 @@ HWTEST_F(TaskTest, task_test_010, TestSize.Level0)
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::UNKNOWN, taskParam, nullptr);
     ASSERT_EQ(nullptr, task);
+}
+
+/**
+ * @tc.name: task_test_011
+ * @tc.desc: Verify the RemoveTaskInner function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(TaskTest, task_test_011, TestSize.Level0)
+{
+    std::string taskId;
+    TaskBoard::GetInstance().RemoveTaskInner(taskId);
+    ASSERT_TRUE(TaskBoard::GetInstance().enabledDevices_.empty());
+}
+
+/**
+ * @tc.name: task_test_012
+ * @tc.desc: Verify the DumpAllTasks function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(TaskTest, task_test_012, TestSize.Level0)
+{
+    std::vector<TaskDump> taskInfos;
+    TaskBoard::GetInstance().DumpAllTasks(taskInfos);
+    ASSERT_TRUE(TaskBoard::GetInstance().enabledDevices_.empty());
+}
+
+/**
+ * @tc.name: task_test_013
+ * @tc.desc: Verify the SaveEnabledDevice function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(TaskTest, task_test_013, TestSize.Level0)
+{
+    std::string enabledDeviceKey;
+    TaskParam taskParam;
+    TaskBoard::GetInstance().SaveEnabledDevice(enabledDeviceKey, taskParam);
+    ASSERT_EQ(false, TaskBoard::GetInstance().enabledDevices_.empty());
+}
+
+/**
+ * @tc.name: task_test_014
+ * @tc.desc: Verify the RemoveEnabledDevice function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(TaskTest, task_test_014, TestSize.Level0)
+{
+    std::string enabledDeviceKey;
+    TaskBoard::GetInstance().RemoveEnabledDevice(enabledDeviceKey);
+    ASSERT_TRUE(TaskBoard::GetInstance().enabledDevices_.empty());
+}
+
+/**
+ * @tc.name: task_test_015
+ * @tc.desc: Verify the GetEnabledDevice function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(TaskTest, task_test_015, TestSize.Level0)
+{
+    auto ret = TaskBoard::GetInstance().GetEnabledDevice();
+    ASSERT_TRUE(ret.empty());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

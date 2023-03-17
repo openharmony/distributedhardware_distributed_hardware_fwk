@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,7 @@
 #include "dh_context.h"
 #include "local_hardware_manager.h"
 #undef private
-
+#include "mock_hardware_handler.h"
 using namespace testing::ext;
 
 namespace OHOS {
@@ -84,6 +84,20 @@ HWTEST_F(LocalHardwareManagerTest, CheckNonExistCapabilityInfo_001, TestSize.Lev
 }
 
 /**
+ * @tc.name: CheckNonExistCapabilityInfo_002
+ * @tc.desc: Verify the CheckNonExistCapabilityInfo function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(LocalHardwareManagerTest, CheckNonExistCapabilityInfo_002, TestSize.Level0)
+{
+    std::vector<DHItem> dhItems;
+    DHType dhType =  DHType::AUDIO;
+    LocalHardwareManager::GetInstance().CheckNonExistCapabilityInfo(dhItems, dhType);
+    EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
+}
+
+/**
  * @tc.name: GetLocalCapabilityMapByPrefix_001
  * @tc.desc: Verify the GetLocalCapabilityMapByPrefix function.
  * @tc.type: FUNC
@@ -105,11 +119,38 @@ HWTEST_F(LocalHardwareManagerTest, GetLocalCapabilityMapByPrefix_001, TestSize.L
  */
 HWTEST_F(LocalHardwareManagerTest, GetLocalCapabilityMapByPrefix_002, TestSize.Level0)
 {
-    uint32_t invalid = 0x09;
-    DHType dhType = static_cast<DHType>(invalid);
+    DHType dhType = DHType::GPS;
     CapabilityInfoMap capabilityInfoMap;
     DHContext::GetInstance().devInfo_.deviceId = "deviceId";
     LocalHardwareManager::GetInstance().GetLocalCapabilityMapByPrefix(dhType, capabilityInfoMap);
+    EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
+}
+
+/**
+ * @tc.name: QueryLocalHardware_001
+ * @tc.desc: Verify the QueryLocalHardware function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(LocalHardwareManagerTest, QueryLocalHardware_001, TestSize.Level0)
+{
+    DHType dhType = DHType::AUDIO;
+    IHardwareHandler *hardwareHandler = new MockHardwareHandler();
+    LocalHardwareManager::GetInstance().QueryLocalHardware(dhType, hardwareHandler);
+    EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
+}
+
+/**
+ * @tc.name: AddLocalCapabilityInfo_001
+ * @tc.desc: Verify the AddLocalCapabilityInfo function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(LocalHardwareManagerTest, AddLocalCapabilityInfo_001, TestSize.Level0)
+{
+    std::vector<DHItem> dhItems;
+    DHType dhType = DHType::AUDIO;
+    LocalHardwareManager::GetInstance().AddLocalCapabilityInfo(dhItems, dhType);
     EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
 }
 } // namespace DistributedHardware
