@@ -46,14 +46,12 @@ ohos_unittest("ComponentLoaderTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
+    "${utils_path}:distributedhardwareutils",
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//third_party/googletest:gtest_main",
-    "${utils_path}:distributedhardwareutils",
   ]
 
-  external_deps = [
-    "hitrace_native:hitrace_meter",
-  ]
+  external_deps = [ "hitrace_native:hitrace_meter" ]
 
   defines = [
     "HI_LOG_ENABLE",
