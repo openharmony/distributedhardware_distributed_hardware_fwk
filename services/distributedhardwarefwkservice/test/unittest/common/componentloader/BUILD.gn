@@ -30,11 +30,10 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${services_path}/distributedhardwarefwkservice/include/componentloader",
     "${services_path}/distributedhardwarefwkservice/include/utils",
-    "${services_path}/distributedhardwarefwkservice/src/componentloader/component_loader.cpp",
+    "${services_path}/distributedhardwarefwkservice/src",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
-    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
+    "${kv_store_path}/interfaces/innerkits/distributeddata/include",
     "//third_party/json/include",
   ]
 }
@@ -50,6 +49,10 @@ ohos_unittest("ComponentLoaderTest") {
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//third_party/googletest:gtest_main",
     "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "hitrace_native:hitrace_meter",
   ]
 
   defines = [

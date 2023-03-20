@@ -16,7 +16,6 @@
 #include "component_loader_test.h"
 #define private public
 #include "component_loader.h"
-#include "foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/src/componentloader/component_loader.cpp"
 #undef private
 #include "distributed_hardware_log.h"
 #include "hitrace_meter.h"
