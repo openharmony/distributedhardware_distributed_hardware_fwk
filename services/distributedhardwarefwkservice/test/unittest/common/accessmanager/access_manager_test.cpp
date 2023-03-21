@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -231,14 +231,26 @@ HWTEST_F(AccessManagerTest, SendOffLineEvent_003, TestSize.Level0)
 }
 
 /**
- * @tc.name: AccessManagerInit
+ * @tc.name: Init_001
  * @tc.desc: Verify the  Init function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(AccessManagerTest, AccessManagerInit, TestSize.Level0)
+HWTEST_F(AccessManagerTest, Init_001, TestSize.Level0)
 {
     EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+}
+
+/**
+ * @tc.name: Init_002
+ * @tc.desc: Verify the  Init function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, Init_002, TestSize.Level0)
+{
+    bool ret = DistributedHardwareManagerFactory::GetInstance().Init();
+    EXPECT_EQ(true, ret);
 }
 
 /**
@@ -399,6 +411,30 @@ HWTEST_F(AccessManagerTest, UnInit_001, TestSize.Level0)
 }
 
 /**
+ * @tc.name: UnInit_002
+ * @tc.desc: Verify the  Init function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, UnInit_002, TestSize.Level0)
+{
+    DistributedHardwareManagerFactory::GetInstance().UnInit();
+    bool ret = DistributedHardwareManagerFactory::GetInstance().IsInit();
+    EXPECT_EQ(false, ret);
+}
+
+/**
+ * @tc.name: RegisterDevStateCallback_001
+ * @tc.desc: Verify the  RegisterDevStateCallback function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, RegisterDevStateCallback_001, TestSize.Level0)
+{
+    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->RegisterDevStateCallback());
+}
+
+/**
  * @tc.name: UnRegisterDevStateCallback_001
  * @tc.desc: Verify the  UnRegisterDevStateCallback function
  * @tc.type: FUNC
@@ -455,6 +491,18 @@ HWTEST_F(AccessManagerTest, GetComponentVersion_001, TestSize.Level0)
     std::unordered_map<DHType, std::string> versionMap;
     int32_t ret = DistributedHardwareManagerFactory::GetInstance().GetComponentVersion(versionMap);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: CheckExitSAOrNot_001
+ * @tc.desc: Verify the  CheckExitSAOrNot function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, CheckExitSAOrNot_001, TestSize.Level0)
+{
+    DistributedHardwareManagerFactory::GetInstance().CheckExitSAOrNot();
+    ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

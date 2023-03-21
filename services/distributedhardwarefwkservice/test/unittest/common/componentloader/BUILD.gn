@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -25,12 +25,15 @@ config("module_private_config") {
     "${utils_path}/include/eventbus",
     "${utils_path}/include/log",
     "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/hidumphelper",
     "${services_path}/distributedhardwarefwkservice/include/versionmanager",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${services_path}/distributedhardwarefwkservice/include/componentloader",
     "${services_path}/distributedhardwarefwkservice/include/utils",
+    "${services_path}/distributedhardwarefwkservice/src",
     "${common_path}/utils/include",
     "${common_path}/log/include",
+    "${kv_store_path}/interfaces/innerkits/distributeddata/include",
     "//third_party/json/include",
   ]
 }
@@ -43,9 +46,12 @@ ohos_unittest("ComponentLoaderTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
+    "${utils_path}:distributedhardwareutils",
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//third_party/googletest:gtest_main",
   ]
+
+  external_deps = [ "hitrace_native:hitrace_meter" ]
 
   defines = [
     "HI_LOG_ENABLE",

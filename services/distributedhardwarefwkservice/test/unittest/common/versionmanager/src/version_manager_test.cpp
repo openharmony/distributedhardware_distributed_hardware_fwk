@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,9 @@
 
 #include "version_manager_test.h"
 
+#define private public
 #include "component_loader.h"
+#undef private
 #include "version_manager.h"
 
 using namespace testing::ext;
@@ -174,6 +176,40 @@ HWTEST_F(VersionManagerTest, version_manager_test_006, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
     ret = VersionManager::GetInstance().GetCompVersion(TEST_DEVICE_ID_1, DHType::CAMERA, cVs1);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: version_manager_test_007
+ * @tc.desc: Verify GetCompVersion function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(VersionManagerTest, version_manager_test_007, TestSize.Level0)
+{
+    DHVersion dhVersion;
+    CompVersion cVs1;
+    CompVersionGetValue(cVs1, TEST_COMPONENT_NAME_1, DHType::CAMERA, TEST_HANDLER_VERSION_1, TEST_SOURCE_VERSION_1,
+        TEST_SINK_VERSION_1);
+    dhVersion.uuid = TEST_DEVICE_ID_1;
+    dhVersion.dhVersion = TEST_DH_VERSION;
+    dhVersion.compVersions.insert(std::make_pair(cVs1.dhType, cVs1));
+    int32_t ret = VersionManager::GetInstance().AddDHVersion(dhVersion.uuid, dhVersion);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    ret = VersionManager::GetInstance().GetCompVersion(TEST_DEVICE_ID_1, DHType::AUDIO, cVs1);
+    EXPECT_EQ(ERR_DH_FWK_TYPE_NOT_EXIST, ret);
+}
+
+/**
+ * @tc.name: version_manager_test_008
+ * @tc.desc: Verify the Init function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(VersionManagerTest, version_manager_test_008, TestSize.Level0)
+{
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
+    int32_t ret = VersionManager::GetInstance().Init();
+    EXPECT_EQ(ERR_DH_FWK_LOADER_GET_LOCAL_VERSION_FAIL, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

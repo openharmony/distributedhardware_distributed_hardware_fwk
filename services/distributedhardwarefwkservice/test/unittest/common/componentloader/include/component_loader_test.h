@@ -17,7 +17,9 @@
 #define OHOS_DISTRIBUTED_HARDWARE_COMPONENT_LOADER_TEST_H
 
 #include <gtest/gtest.h>
-
+#define private public
+#include "componentloader/component_loader.cpp"
+#undef private
 namespace OHOS {
 namespace DistributedHardware {
 class ComponentLoaderTest : public testing::Test {

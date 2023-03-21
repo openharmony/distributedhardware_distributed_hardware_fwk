@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,10 @@
 #define private public
 #include "component_loader.h"
 #undef private
+#include "distributed_hardware_log.h"
+#include "hitrace_meter.h"
+#include "hidump_helper.h"
+#include "kvstore_observer.h"
 #include "nlohmann/json.hpp"
 #include "versionmanager/version_manager.h"
 
@@ -431,6 +435,249 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_027, TestSize.Level0)
     DHType dhType =  DHType::GPS;
     bool ret = ComponentLoader::GetInstance().IsDHTypeExist(dhType);
     EXPECT_EQ(false, ret);
+}
+
+/**
+ * @tc.name: component_loader_test_028
+ * @tc.desc: Verify the GetDHTypeBySrcSaId function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_028, TestSize.Level0)
+{
+    int32_t saId = 4801;
+    DHType dhType = ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId);
+    EXPECT_EQ(dhType, DHType::UNKNOWN);
+}
+
+/**
+ * @tc.name: component_loader_test_029
+ * @tc.desc: Verify the from_json function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_029, TestSize.Level0)
+{
+    CompConfig cfg;
+    nlohmann::json json;
+    json[COMP_NAME] = 4801;
+
+    from_json(json, cfg);
+    EXPECT_EQ(true, cfg.name.empty());
+}
+
+/**
+ * @tc.name: component_loader_test_030
+ * @tc.desc: Verify the from_json function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_030, TestSize.Level0)
+{
+    CompConfig cfg;
+    nlohmann::json json;
+    json[COMP_NAME] = "name";
+    json[COMP_TYPE] = 0x02;
+
+    from_json(json, cfg);
+    EXPECT_NE(DHType::AUDIO, cfg.type);
+}
+
+/**
+ * @tc.name: component_loader_test_031
+ * @tc.desc: Verify the from_json function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_031, TestSize.Level0)
+{
+    CompConfig cfg;
+    nlohmann::json json;
+    json[COMP_NAME] = "name";
+    json[COMP_TYPE] = "DHType::AUDIO";
+    json[COMP_HANDLER_LOC] = 4801;
+
+    from_json(json, cfg);
+    EXPECT_EQ(true, cfg.compHandlerLoc.empty());
+}
+
+/**
+ * @tc.name: component_loader_test_032
+ * @tc.desc: Verify the from_json function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_032, TestSize.Level0)
+{
+    CompConfig cfg;
+    nlohmann::json json;
+    json[COMP_NAME] = "name";
+    json[COMP_TYPE] = "DHType::AUDIO";
+    json[COMP_HANDLER_LOC] = "comp_handler_loc";
+    json[COMP_HANDLER_VERSION] = 4801;
+
+    from_json(json, cfg);
+    EXPECT_EQ(true, cfg.compHandlerVersion.empty());
+}
+
+/**
+ * @tc.name: component_loader_test_033
+ * @tc.desc: Verify the from_json function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_033, TestSize.Level0)
+{
+    CompConfig cfg;
+    nlohmann::json json;
+    json[COMP_NAME] = "name";
+    json[COMP_TYPE] = "DHType::AUDIO";
+    json[COMP_HANDLER_LOC] = "comp_handler_loc";
+    json[COMP_HANDLER_VERSION] = "comp_handler_version";
+    json[COMP_SOURCE_LOC] = 4801;
+
+    from_json(json, cfg);
+    EXPECT_EQ(true, cfg.compSourceLoc.empty());
+}
+
+/**
+ * @tc.name: component_loader_test_034
+ * @tc.desc: Verify the from_json function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_034, TestSize.Level0)
+{
+    CompConfig cfg;
+    nlohmann::json json;
+    json[COMP_NAME] = "name";
+    json[COMP_TYPE] = "DHType::AUDIO";
+    json[COMP_HANDLER_LOC] = "comp_handler_loc";
+    json[COMP_HANDLER_VERSION] = "comp_handler_version";
+    json[COMP_SOURCE_LOC] = "comp_source_loc";
+    json[COMP_SOURCE_VERSION] = 4801;
+
+    from_json(json, cfg);
+    EXPECT_EQ(true, cfg.compSourceVersion.empty());
+}
+
+/**
+ * @tc.name: component_loader_test_035
+ * @tc.desc: Verify the from_json function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_035, TestSize.Level0)
+{
+    CompConfig cfg;
+    nlohmann::json json;
+    json[COMP_NAME] = "name";
+    json[COMP_TYPE] = "DHType::AUDIO";
+    json[COMP_HANDLER_LOC] = "comp_handler_loc";
+    json[COMP_HANDLER_VERSION] = "comp_handler_version";
+    json[COMP_SOURCE_LOC] = "comp_source_loc";
+    json[COMP_SOURCE_VERSION] = "comp_source_version";
+    json[COMP_SOURCE_SA_ID] = "comp_source_sa_id";
+
+    from_json(json, cfg);
+    EXPECT_NE(4801, cfg.compSourceSaId);
+}
+
+/**
+ * @tc.name: component_loader_test_036
+ * @tc.desc: Verify the from_json function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_036, TestSize.Level0)
+{
+    CompConfig cfg;
+    nlohmann::json json;
+    json[COMP_NAME] = "name";
+    json[COMP_TYPE] = "DHType::AUDIO";
+    json[COMP_HANDLER_LOC] = "comp_handler_loc";
+    json[COMP_HANDLER_VERSION] = "comp_handler_version";
+    json[COMP_SOURCE_LOC] = "comp_source_loc";
+    json[COMP_SOURCE_VERSION] = "comp_source_version";
+    json[COMP_SOURCE_SA_ID] = 4801;
+    json[COMP_SINK_LOC] = 4802;
+
+    from_json(json, cfg);
+    EXPECT_EQ(true, cfg.compSinkLoc.empty());
+}
+
+/**
+ * @tc.name: component_loader_test_037
+ * @tc.desc: Verify the from_json function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_037, TestSize.Level0)
+{
+    CompConfig cfg;
+    nlohmann::json json;
+    json[COMP_NAME] = "name";
+    json[COMP_TYPE] = "DHType::AUDIO";
+    json[COMP_HANDLER_LOC] = "comp_handler_loc";
+    json[COMP_HANDLER_VERSION] = "comp_handler_version";
+    json[COMP_SOURCE_LOC] = "comp_source_loc";
+    json[COMP_SOURCE_VERSION] = "comp_source_version";
+    json[COMP_SOURCE_SA_ID] = 4801;
+    json[COMP_SINK_LOC] = "comp_sink_loc";
+    json[COMP_SINK_VERSION] = 4802;
+
+    from_json(json, cfg);
+    EXPECT_EQ(true, cfg.compSinkVersion.empty());
+}
+
+/**
+ * @tc.name: component_loader_test_038
+ * @tc.desc: Verify the from_json function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_038, TestSize.Level0)
+{
+    CompConfig cfg;
+    nlohmann::json json;
+    json[COMP_NAME] = "name";
+    json[COMP_TYPE] = "DHType::AUDIO";
+    json[COMP_HANDLER_LOC] = "comp_handler_loc";
+    json[COMP_HANDLER_VERSION] = "comp_handler_version";
+    json[COMP_SOURCE_LOC] = "comp_source_loc";
+    json[COMP_SOURCE_VERSION] = "comp_source_version";
+    json[COMP_SOURCE_SA_ID] = 4801;
+    json[COMP_SINK_LOC] = "comp_sink_loc";
+    json[COMP_SINK_VERSION] = "comp_sink_version";
+    json[COMP_SINK_SA_ID] = "4802";
+
+    from_json(json, cfg);
+    EXPECT_NE(4802, cfg.compSinkSaId);
+}
+
+/**
+ * @tc.name: component_loader_test_039
+ * @tc.desc: Verify the from_json function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, component_loader_test_039, TestSize.Level0)
+{
+    CompConfig cfg;
+    nlohmann::json json;
+    json[COMP_NAME] = "name";
+    json[COMP_TYPE] = "DHType::AUDIO";
+    json[COMP_HANDLER_LOC] = "comp_handler_loc";
+    json[COMP_HANDLER_VERSION] = "comp_handler_version";
+    json[COMP_SOURCE_LOC] = "comp_source_loc";
+    json[COMP_SOURCE_VERSION] = "comp_source_version";
+    json[COMP_SOURCE_SA_ID] = 4801;
+    json[COMP_SINK_LOC] = "comp_sink_loc";
+    json[COMP_SINK_VERSION] = "comp_sink_version";
+    json[COMP_SINK_SA_ID] = 4802;
+
+    from_json(json, cfg);
+    EXPECT_EQ(4802, cfg.compSinkSaId);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
