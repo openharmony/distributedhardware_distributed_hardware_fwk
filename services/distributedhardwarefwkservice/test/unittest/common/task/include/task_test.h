@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,10 @@
 #define private public
 #include "disable_task.h"
 #include "enable_task.h"
+#include "offline_task.h"
+#include "task.h"
+#include "task_board.h"
+#include "task_executor.h"
 #undef private
 
 namespace OHOS {
