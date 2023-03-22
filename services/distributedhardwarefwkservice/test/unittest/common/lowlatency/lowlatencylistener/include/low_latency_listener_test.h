@@ -34,7 +34,7 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
-    sptr<LowLatencyListener> Listener_ = nullptr;
+    sptr<LowLatencyListener> listener_ = nullptr;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
