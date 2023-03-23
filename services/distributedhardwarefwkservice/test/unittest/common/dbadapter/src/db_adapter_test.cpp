@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -393,7 +393,7 @@ HWTEST_F(DbAdapterTest, SyncCompleted_003, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, CreateManualSyncCount_001, TestSize.Level0)
 {
-    std::string deviceId;
+    std::string deviceId = "deviceId";
     g_dbAdapterPtr->CreateManualSyncCount(deviceId);
     EXPECT_EQ(false, g_dbAdapterPtr->manualSyncCountMap_.empty());
 }
@@ -406,7 +406,8 @@ HWTEST_F(DbAdapterTest, CreateManualSyncCount_001, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, RemoveManualSyncCount_001, TestSize.Level0)
 {
-    std::string deviceId;
+    std::string deviceId = "deviceId";
+    g_dbAdapterPtr->manualSyncCountMap_.insert(std::make_pair(deviceId, 1));
     g_dbAdapterPtr->RemoveManualSyncCount(deviceId);
     EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
 }
@@ -558,5 +559,89 @@ HWTEST_F(DbAdapterTest, RemoveDeviceData_001, TestSize.Level0)
     g_dbAdapterPtr->GetKvStorePtr();
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL, g_dbAdapterPtr->RemoveDeviceData(TEST_DEV_ID_0));
 }
+
+/**
+ * @tc.name: UnInit_001
+ * @tc.desc: Verify the UnInit function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DbAdapterTest, UnInit_001, TestSize.Level0)
+{
+    g_dbAdapterPtr->kvStoragePtr_ = nullptr;
+    g_dbAdapterPtr->UnInit();
+    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+}
+
+/**
+ * @tc.name: PutData_01
+ * @tc.desc: Verify the PutData function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, PutData_01, TestSize.Level0)
+{
+    std::string key;
+    std::string value;
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, g_dbAdapterPtr->PutData(key, value));
+}
+
+/**
+ * @tc.name: PutData_02
+ * @tc.desc: Verify the PutData function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, PutData_02, TestSize.Level0)
+{
+    uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024 +1 ;
+    std::string key = "key";
+    key.resize(MAX_MESSAGE_LEN);
+    std::string value;
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, g_dbAdapterPtr->PutData(key, value));
+}
+
+/**
+ * @tc.name: PutData_03
+ * @tc.desc: Verify the PutData function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, PutData_03, TestSize.Level0)
+{
+    std::string key = "key";
+    std::string value;
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, g_dbAdapterPtr->PutData(key, value));
+}
+
+/**
+ * @tc.name: PutData_04
+ * @tc.desc: Verify the PutData function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, PutData_04, TestSize.Level0)
+{
+    uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024 + 1;
+    std::string key = "key";
+    std::string value;
+    value.resize(MAX_MESSAGE_LEN);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, g_dbAdapterPtr->PutData(key, value));
+}
+
+/**
+ * @tc.name: PutData_05
+ * @tc.desc: Verify the PutData function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSCV
+ */
+HWTEST_F(DbAdapterTest, PutData_05, TestSize.Level0)
+{
+    std::string key = "key";
+    std::string value = "value";
+    g_dbAdapterPtr->kvStoragePtr_ = nullptr;
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL, g_dbAdapterPtr->PutData(key, value));
+}
+
 } // namespace DistributedHardware
 } // namespace OHOS

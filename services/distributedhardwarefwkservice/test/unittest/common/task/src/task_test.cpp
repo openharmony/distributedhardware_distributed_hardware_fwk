@@ -28,13 +28,6 @@
 #include "mock_task_factory.h"
 #include "mock_task_utils.h"
 
-#define private public
-#include "disable_task.h"
-#include "enable_task.h"
-#include "task.h"
-#include "task_board.h"
-#include "task_executor.h"
-#undef private
 using namespace testing::ext;
 
 namespace OHOS {
@@ -261,6 +254,7 @@ HWTEST_F(TaskTest, task_test_010, TestSize.Level0)
 HWTEST_F(TaskTest, task_test_011, TestSize.Level0)
 {
     std::string taskId;
+    TaskBoard::GetInstance().tasks_.clear();
     TaskBoard::GetInstance().RemoveTaskInner(taskId);
     ASSERT_TRUE(TaskBoard::GetInstance().enabledDevices_.empty());
 }
@@ -274,6 +268,8 @@ HWTEST_F(TaskTest, task_test_011, TestSize.Level0)
 HWTEST_F(TaskTest, task_test_012, TestSize.Level0)
 {
     std::vector<TaskDump> taskInfos;
+    std::shared_ptr<Task> childrenTask = std::make_shared<OnLineTask>("networkId", "uuid", "dhId", DHType::AUDIO);
+    TaskBoard::GetInstance().tasks_.insert(std::make_pair("", childrenTask));
     TaskBoard::GetInstance().DumpAllTasks(taskInfos);
     ASSERT_TRUE(TaskBoard::GetInstance().enabledDevices_.empty());
 }
@@ -313,8 +309,104 @@ HWTEST_F(TaskTest, task_test_014, TestSize.Level0)
  */
 HWTEST_F(TaskTest, task_test_015, TestSize.Level0)
 {
+    TaskBoard::GetInstance().enabledDevices_.clear();
     auto ret = TaskBoard::GetInstance().GetEnabledDevice();
     ASSERT_TRUE(ret.empty());
+}
+
+/**
+ * @tc.name: task_test_016
+ * @tc.desc: Verify the DoTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(TaskTest, task_test_016, TestSize.Level0)
+{
+    std::string networkId = "networkId";
+    std::string uuid = "uuid";
+    std::string dhId = "dhId";
+    DHType dhType = DHType::AUDIO;
+    std::shared_ptr<DisableTask> task = std::make_shared<DisableTask>(networkId, uuid, dhId, dhType);
+    task->DoTask();
+    ASSERT_NE(DH_FWK_SUCCESS, task->UnRegisterHardware());
+}
+
+/**
+ * @tc.name: task_test_017
+ * @tc.desc: Verify the DoTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(TaskTest, task_test_017, TestSize.Level0)
+{
+    std::string networkId = "networkId";
+    std::string uuid = "uuid";
+    std::string dhId = "dhId";
+    DHType dhType = DHType::CAMERA;
+    std::shared_ptr<EnableTask> task = std::make_shared<EnableTask>(networkId, uuid, dhId, dhType);
+    task->DoTask();
+    ASSERT_NE(DH_FWK_SUCCESS, task->RegisterHardware());
+}
+
+/**
+ * @tc.name: task_test_018
+ * @tc.desc: Verify the CreateDisableTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(TaskTest, task_test_018, TestSize.Level0)
+{
+    std::string networkId = "networkId";
+    std::string uuid = "uuid";
+    std::string dhId = "dhId";
+    DHType dhType = DHType::CAMERA;
+    std::shared_ptr<OffLineTask> task = std::make_shared<OffLineTask>(networkId, uuid, dhId, dhType);
+    task->CreateDisableTask();
+    ASSERT_TRUE(task->unFinishChildrenTasks_.empty());
+}
+
+/**
+ * @tc.name: task_test_019
+ * @tc.desc: Verify the ClearOffLineInfo function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(TaskTest, task_test_019, TestSize.Level0)
+{
+    std::string networkId = "networkId";
+    std::string uuid = "uuid";
+    std::string dhId = "dhId";
+    DHType dhType = DHType::CAMERA;
+    std::shared_ptr<OffLineTask> task = std::make_shared<OffLineTask>(networkId, uuid, dhId, dhType);
+    task->ClearOffLineInfo();
+    ASSERT_TRUE(task->unFinishChildrenTasks_.empty());
+}
+
+/**
+ * @tc.name: task_test_020
+ * @tc.desc: Verify the AddChildrenTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSKN
+ */
+HWTEST_F(TaskTest, task_test_020, TestSize.Level0)
+{
+    std::shared_ptr<OffLineTask> task = std::make_shared<OffLineTask>("networkId", "uuid", "dhId", DHType::CAMERA);
+    std::shared_ptr<Task> childrenTask = std::make_shared<OnLineTask>("networkId", "uuid", "dhId", DHType::AUDIO);
+    task->AddChildrenTask(childrenTask);
+    ASSERT_EQ(false, task->unFinishChildrenTasks_.empty());
+}
+
+/**
+ * @tc.name: task_test_021
+ * @tc.desc: Verify the TriggerTask function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(TaskTest, task_test_021, TestSize.Level0)
+{
+    TaskExecutor::GetInstance().taskThreadFlag_ = false;
+    TaskExecutor::GetInstance().TriggerTask();
+    ASSERT_EQ(true, TaskExecutor::GetInstance().taskQueue_.empty());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
