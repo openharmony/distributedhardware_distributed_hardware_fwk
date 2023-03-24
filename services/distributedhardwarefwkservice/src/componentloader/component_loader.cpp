@@ -115,7 +115,7 @@ void from_json(const nlohmann::json &json, CompConfig &cfg)
         DHLOGE("COMP_TYPE is invalid");
         return;
     }
-    cfg.type = g_mapDhTypeName[json.at(COMP_TYPE).get<std::string>()];;
+    cfg.type = g_mapDhTypeName[json.at(COMP_TYPE).get<std::string>()];
     if (!IsString(json, COMP_HANDLER_LOC)) {
         DHLOGE("COMP_HANDLER_LOC is invalid");
         return;
