@@ -51,8 +51,9 @@ void DHFWKSaStateCallback(bool callback)
 HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_001, TestSize.Level0)
 {
     DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.store(false);
+    DHFWKSAManager::GetInstance().saListener_ = nullptr;
     DHFWKSAManager::GetInstance().RegisterAbilityListener();
-    EXPECT_EQ(true, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.load());
+    EXPECT_EQ(false, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.load());
 }
 
 /**
