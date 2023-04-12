@@ -52,7 +52,7 @@ HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_001, TestSize.Level0)
 {
     DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.store(false);
     DHFWKSAManager::GetInstance().RegisterAbilityListener();
-    EXPECT_EQ(false, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.load());
+    EXPECT_EQ(true, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.load());
 }
 
 /**

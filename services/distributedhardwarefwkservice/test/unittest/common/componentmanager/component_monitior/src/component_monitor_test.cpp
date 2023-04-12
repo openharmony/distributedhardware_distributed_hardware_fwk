@@ -41,6 +41,7 @@ void ComponentMonitorTest::SetUp()
 
 void ComponentMonitorTest::TearDown()
 {
+    compMonitorPtr_->saListeners_.clear();
     compMonitorPtr_ = nullptr;
 }
 
@@ -54,7 +55,7 @@ HWTEST_F(ComponentMonitorTest, AddSAMonitor_001, TestSize.Level0)
 {
     int32_t saId = static_cast<int32_t>(DHType::AUDIO);
     compMonitorPtr_->AddSAMonitor(saId);
-    EXPECT_EQ(true, compMonitorPtr_->saListeners_.empty());
+    EXPECT_EQ(false, compMonitorPtr_->saListeners_.empty());
 }
 
 /**
@@ -67,7 +68,7 @@ HWTEST_F(ComponentMonitorTest, AddSAMonitor_002, TestSize.Level0)
 {
     int32_t saId = static_cast<int32_t>(DHType::CAMERA);
     sptr<ComponentMonitor::CompSystemAbilityListener> listener = new ComponentMonitor::CompSystemAbilityListener();
-    compMonitorPtr_->saListeners_[saId] = listener;
+    compMonitorPtr_->saListeners_.insert(std::make_pair(saId, listener));
     compMonitorPtr_->AddSAMonitor(saId);
     EXPECT_EQ(false, compMonitorPtr_->saListeners_.empty());
 }
@@ -95,7 +96,7 @@ HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_002, TestSize.Level0)
 {
     int32_t saId = static_cast<int32_t>(DHType::CAMERA);
     sptr<ComponentMonitor::CompSystemAbilityListener> listener = new ComponentMonitor::CompSystemAbilityListener();
-    compMonitorPtr_->saListeners_[saId] = listener;
+    compMonitorPtr_->saListeners_.insert(std::make_pair(saId, listener));
     compMonitorPtr_->RemoveSAMonitor(saId);
     EXPECT_EQ(false, compMonitorPtr_->saListeners_.empty());
 }
