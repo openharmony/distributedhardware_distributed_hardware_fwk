@@ -98,7 +98,7 @@ HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_002, TestSize.Level0)
     sptr<ComponentMonitor::CompSystemAbilityListener> listener = new ComponentMonitor::CompSystemAbilityListener();
     compMonitorPtr_->saListeners_.insert(std::make_pair(saId, listener));
     compMonitorPtr_->RemoveSAMonitor(saId);
-    EXPECT_EQ(false, compMonitorPtr_->saListeners_.empty());
+    EXPECT_EQ(true, compMonitorPtr_->saListeners_.empty());
 }
 
 /**
