@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,6 +51,7 @@ void DHFWKSaStateCallback(bool callback)
 HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_001, TestSize.Level0)
 {
     DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.store(false);
+    DHFWKSAManager::GetInstance().saListener_ = nullptr;
     DHFWKSAManager::GetInstance().RegisterAbilityListener();
     EXPECT_EQ(false, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.load());
 }

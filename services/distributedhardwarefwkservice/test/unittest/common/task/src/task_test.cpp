@@ -322,13 +322,10 @@ HWTEST_F(TaskTest, task_test_015, TestSize.Level0)
  */
 HWTEST_F(TaskTest, task_test_016, TestSize.Level0)
 {
-    std::string networkId = "networkId";
-    std::string uuid = "uuid";
-    std::string dhId = "dhId";
-    DHType dhType = DHType::AUDIO;
-    std::shared_ptr<DisableTask> task = std::make_shared<DisableTask>(networkId, uuid, dhId, dhType);
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, nullptr);
     task->DoTask();
-    ASSERT_NE(DH_FWK_SUCCESS, task->UnRegisterHardware());
+    ASSERT_TRUE(task->childrenTasks_.empty());
 }
 
 /**
@@ -339,13 +336,10 @@ HWTEST_F(TaskTest, task_test_016, TestSize.Level0)
  */
 HWTEST_F(TaskTest, task_test_017, TestSize.Level0)
 {
-    std::string networkId = "networkId";
-    std::string uuid = "uuid";
-    std::string dhId = "dhId";
-    DHType dhType = DHType::CAMERA;
-    std::shared_ptr<EnableTask> task = std::make_shared<EnableTask>(networkId, uuid, dhId, dhType);
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
     task->DoTask();
-    ASSERT_NE(DH_FWK_SUCCESS, task->RegisterHardware());
+    ASSERT_TRUE(task->childrenTasks_.empty());
 }
 
 /**
@@ -356,13 +350,13 @@ HWTEST_F(TaskTest, task_test_017, TestSize.Level0)
  */
 HWTEST_F(TaskTest, task_test_018, TestSize.Level0)
 {
-    std::string networkId = "networkId";
-    std::string uuid = "uuid";
-    std::string dhId = "dhId";
-    DHType dhType = DHType::CAMERA;
-    std::shared_ptr<OffLineTask> task = std::make_shared<OffLineTask>(networkId, uuid, dhId, dhType);
-    task->CreateDisableTask();
-    ASSERT_TRUE(task->unFinishChildrenTasks_.empty());
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);
+    std::vector<TaskStep> taskSteps;
+    taskSteps.push_back(TaskStep::UNREGISTER_OFFLINE_DISTRIBUTED_HARDWARE);
+    task->SetTaskSteps(taskSteps);
+    task->DoTask();
+    ASSERT_TRUE(task->childrenTasks_.empty());
 }
 
 /**
@@ -373,13 +367,13 @@ HWTEST_F(TaskTest, task_test_018, TestSize.Level0)
  */
 HWTEST_F(TaskTest, task_test_019, TestSize.Level0)
 {
-    std::string networkId = "networkId";
-    std::string uuid = "uuid";
-    std::string dhId = "dhId";
-    DHType dhType = DHType::CAMERA;
-    std::shared_ptr<OffLineTask> task = std::make_shared<OffLineTask>(networkId, uuid, dhId, dhType);
-    task->ClearOffLineInfo();
-    ASSERT_TRUE(task->unFinishChildrenTasks_.empty());
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);
+    std::vector<TaskStep> taskSteps;
+    taskSteps.push_back(TaskStep::CLEAR_OFFLINE_INFO);
+    task->SetTaskSteps(taskSteps);
+    task->DoTask();
+    ASSERT_TRUE(task->childrenTasks_.empty());
 }
 
 /**
@@ -390,10 +384,11 @@ HWTEST_F(TaskTest, task_test_019, TestSize.Level0)
  */
 HWTEST_F(TaskTest, task_test_020, TestSize.Level0)
 {
-    std::shared_ptr<OffLineTask> task = std::make_shared<OffLineTask>("networkId", "uuid", "dhId", DHType::CAMERA);
     std::shared_ptr<Task> childrenTask = std::make_shared<OnLineTask>("networkId", "uuid", "dhId", DHType::AUDIO);
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);
     task->AddChildrenTask(childrenTask);
-    ASSERT_EQ(false, task->unFinishChildrenTasks_.empty());
+    ASSERT_TRUE(task->childrenTasks_.empty());
 }
 
 /**
