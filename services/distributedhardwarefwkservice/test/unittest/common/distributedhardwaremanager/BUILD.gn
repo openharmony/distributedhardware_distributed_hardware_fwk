@@ -12,15 +12,13 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/dh_manager_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "//base/notification/eventhandler/interfaces/inner_api",
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
@@ -31,7 +29,6 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/task",
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "//third_party/json/include",
-    "//commonlibrary/c_utils/base/include",
   ]
 }
 
@@ -46,6 +43,11 @@ ohos_unittest("DistributedHardwareManagerTest") {
     "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
   ]
 
   defines = [

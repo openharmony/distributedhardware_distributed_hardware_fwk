@@ -14,8 +14,7 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("TaskFuzzTest") {
@@ -32,7 +31,6 @@ ohos_fuzztest("TaskFuzzTest") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//commonlibrary/c_utils/base/include",
   ]
   cflags = [
     "-g",
@@ -43,6 +41,10 @@ ohos_fuzztest("TaskFuzzTest") {
   sources = [ "task_fuzzer.cpp" ]
 
   deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
+
+  external_deps = [
+    "c_utils:utils",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",

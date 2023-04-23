@@ -12,8 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../../distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/hidump_helper_test"
 
@@ -21,9 +20,7 @@ config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
-    "//base/notification/eventhandler/interfaces/inner_api",
     "//third_party/json/include",
-    "//commonlibrary/c_utils/base/include",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include/hidumphelper",
     "//foundation/distributedhardware/distributed_hardware_fwk/common/utils/include",
@@ -51,6 +48,7 @@ ohos_unittest("HidumpHelperTest") {
 
   external_deps = [
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
   ]

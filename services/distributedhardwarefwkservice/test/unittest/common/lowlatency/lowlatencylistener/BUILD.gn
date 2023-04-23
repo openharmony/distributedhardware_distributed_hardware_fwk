@@ -21,8 +21,6 @@ config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
     "//third_party/json/include",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include/lowlatency",
@@ -52,6 +50,7 @@ ohos_unittest("LowLatencyListenerTest") {
   external_deps = [
     "c_utils:utils",
     "ipc:ipc_core",
+    "safwk:system_ability_fwk",
   ]
 }
 

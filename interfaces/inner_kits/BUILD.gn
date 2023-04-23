@@ -12,13 +12,10 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../distributedhardwarefwk.gni")
 
 ohos_shared_library("libdhfwk_sdk") {
-  include_dirs = [
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
+  include_dirs = [   
     "${innerkits_path}/include",
     "${innerkits_path}/include/ipc",
     "${common_path}/log/include",
@@ -39,7 +36,6 @@ ohos_shared_library("libdhfwk_sdk") {
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
-    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
   ]
 
   defines = [
@@ -52,6 +48,7 @@ ohos_shared_library("libdhfwk_sdk") {
     "c_utils:utils",
     "ipc:ipc_core",
     "samgr:samgr_proxy",
+    "safwk:system_ability_fwk",
   ]
 
   cflags_cc = [ "-DHILOG_ENABLE" ]

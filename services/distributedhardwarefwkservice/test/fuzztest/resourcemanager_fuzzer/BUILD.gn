@@ -14,8 +14,7 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("ResourcemanagerFuzzTest") {
@@ -31,12 +30,7 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//base/notification/eventhandler/interfaces/inner_api",
-    "//commonlibrary/c_utils/base/include",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
-    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "//third_party/json/include",
-    "//utils/system/safwk/native/include",
   ]
   cflags = [
     "-g",
@@ -54,7 +48,12 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [ "c_utils:utils" ]
+  external_deps = [
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "ipc:ipc_single",
+    "kv_store:distributeddata_inner",
+  ]
 }
 
 ###############################################################################

@@ -12,8 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/distributed_hardware_stub_test"
 
@@ -30,8 +29,6 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/task",
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "//third_party/json/include",
-    "//commonlibrary/c_utils/base/include",
-    "//base/notification/eventhandler/interfaces/inner_api",
   ]
 }
 
@@ -56,6 +53,7 @@ ohos_unittest("DistributedHardwareStubTest") {
 
   external_deps = [
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
   ]

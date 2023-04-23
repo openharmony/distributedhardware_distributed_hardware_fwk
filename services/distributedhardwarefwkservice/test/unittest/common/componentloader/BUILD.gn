@@ -12,8 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/component_loader_test"
 

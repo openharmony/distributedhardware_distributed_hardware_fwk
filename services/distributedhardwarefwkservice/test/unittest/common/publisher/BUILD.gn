@@ -35,13 +35,13 @@ ohos_unittest("PublisherItemTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
     "c_utils:utils",
     "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
   ]
 }
 

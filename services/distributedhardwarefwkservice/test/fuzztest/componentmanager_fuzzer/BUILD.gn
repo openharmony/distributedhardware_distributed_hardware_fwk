@@ -14,8 +14,7 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("ComponentmanagerFuzzTest") {
@@ -34,8 +33,6 @@ ohos_fuzztest("ComponentmanagerFuzzTest") {
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "//third_party/json/include",
-    "//commonlibrary/c_utils/base/include",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
   cflags = [
     "-g",
@@ -46,6 +43,11 @@ ohos_fuzztest("ComponentmanagerFuzzTest") {
   sources = [ "componentmanager_fuzzer.cpp" ]
 
   deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
+
+  external_deps = [
+    "c_utils:utils",
+    "ipc:ipc_single",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",

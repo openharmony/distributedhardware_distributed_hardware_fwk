@@ -14,8 +14,7 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("EnabledCompsDumpFuzzTest") {
@@ -23,8 +22,6 @@ ohos_fuzztest("EnabledCompsDumpFuzzTest") {
   fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/enabledcompsdump_fuzzer"
 
   include_dirs = [
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
     "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp/include",
     "//foundation/distributedhardware/device_manager/common/include",
     "${utils_path}/include",
@@ -50,7 +47,11 @@ ohos_fuzztest("EnabledCompsDumpFuzzTest") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [ "init:libbegetutil" ]
+  external_deps = [
+    "init:libbegetutil",
+    "c_utils:utils",
+    "safwk:system_ability_fwk",
+  ]
 }
 
 ###############################################################################

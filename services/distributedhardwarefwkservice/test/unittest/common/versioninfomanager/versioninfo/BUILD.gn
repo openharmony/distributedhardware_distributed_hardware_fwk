@@ -12,8 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../../distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/version_info_test"
 
@@ -30,11 +29,7 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/versionmanager",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//base/notification/eventhandler/interfaces/inner_api",
-    "//commonlibrary/c_utils/base/include",
-    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "//third_party/json/include",
-    "//utils/system/safwk/native/include",
   ]
 }
 
@@ -53,7 +48,9 @@ ohos_unittest("VersionInfoTest") {
 
   external_deps = [
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
   ]
 }
 

@@ -12,16 +12,13 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/resource_manager_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "//base/notification/eventhandler/interfaces/inner_api",
-    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
@@ -31,10 +28,7 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//commonlibrary/c_utils/base/include",
     "//third_party/json/include",
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
   ]
 }
 
@@ -54,7 +48,9 @@ ohos_unittest("ResourceManagerTest") {
 
   external_deps = [
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
   ]
 }
 

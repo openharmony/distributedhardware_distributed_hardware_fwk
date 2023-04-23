@@ -12,16 +12,11 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../distributedhardwarefwk.gni")
 
 ohos_shared_library("distributedhardwareutils") {
   include_dirs = [
-    "//base/hiviewdfx/hisysevent/interfaces/native/innerkits/hisysevent/include",
-    "//base/hiviewdfx/hitrace/interfaces/native/innerkits/include/hitrace_meter",
     "//third_party/json/include",
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
     "${common_path}/log/include",
     "${common_path}/utils/include",
     "include",
@@ -52,6 +47,7 @@ ohos_shared_library("distributedhardwareutils") {
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
+    "safwk:system_ability_fwk",
   ]
 
   subsystem_name = "distributedhardware"

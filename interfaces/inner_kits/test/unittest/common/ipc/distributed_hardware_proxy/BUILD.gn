@@ -12,8 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../../distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/distributed_hardware_proxy_test"
 
@@ -21,8 +20,6 @@ config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${common_path}/utils/include",
@@ -44,7 +41,6 @@ ohos_unittest("DistributedHardwareProxyTest") {
     "${innerkits_path}:libdhfwk_sdk",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
-    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -57,6 +53,8 @@ ohos_unittest("DistributedHardwareProxyTest") {
   external_deps = [
     "c_utils:utils",
     "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
 }
 

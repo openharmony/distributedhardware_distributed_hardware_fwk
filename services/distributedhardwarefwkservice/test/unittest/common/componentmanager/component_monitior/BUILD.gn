@@ -12,18 +12,13 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../../distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/component_monitor_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "//base/notification/eventhandler/interfaces/inner_api",
-    "//commonlibrary/c_utils/base/include",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
-    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "//third_party/json/include",
     "include",
     "${utils_path}/include",
@@ -50,15 +45,16 @@ ohos_unittest("ComponentMonitorTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "ipc:ipc_core",
+    "ipc:ipc_single",
+     "samgr:samgr_proxy",
   ]
 
   defines = [
