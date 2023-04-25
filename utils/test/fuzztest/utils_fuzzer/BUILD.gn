@@ -38,9 +38,7 @@ ohos_fuzztest("UtilsFuzzTest") {
 
   deps = [ "${utils_path}:distributedhardwareutils" ]
 
-  external_deps = [
-    "c_utils:utils",
-  ]
+  external_deps = [ "c_utils:utils" ]
 }
 
 ###############################################################################

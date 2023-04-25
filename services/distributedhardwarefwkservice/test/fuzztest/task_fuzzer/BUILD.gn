@@ -43,9 +43,7 @@ ohos_fuzztest("TaskFuzzTest") {
 
   deps = [ "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
-  external_deps = [
-    "c_utils:utils",
-  ]
+  external_deps = [ "c_utils:utils" ]
 
   defines = [
     "HI_LOG_ENABLE",

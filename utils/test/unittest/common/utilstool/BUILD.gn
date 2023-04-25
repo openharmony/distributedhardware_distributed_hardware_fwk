@@ -41,9 +41,7 @@ ohos_unittest("UtilsToolTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [
-    "c_utils:utils",
-  ]
+  external_deps = [ "c_utils:utils" ]
 }
 
 group("utils_tool_test") {
