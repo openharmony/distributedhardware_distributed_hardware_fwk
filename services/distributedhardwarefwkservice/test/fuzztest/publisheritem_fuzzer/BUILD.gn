@@ -19,8 +19,7 @@ import("../../../../../distributedhardwarefwk.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("PublisherItemFuzzTest") {
   module_out_path = "distributed_hardware_fwk/publisheritem"
-  fuzz_config_file =
-      "${services_path}/distributedhardwarefwkservice/test/fuzztest/publisheritem_fuzzer"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/publisheritem_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
