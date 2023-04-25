@@ -42,8 +42,8 @@ ohos_fuzztest("PublisherFuzzTest") {
 
   deps = [
     "${innerkits_path}:libdhfwk_sdk",
-    "${utils_path}:distributedhardwareutils",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
   ]
 
   defines = [
