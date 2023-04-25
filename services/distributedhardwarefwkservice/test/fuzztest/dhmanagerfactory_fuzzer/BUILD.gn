@@ -48,9 +48,9 @@ ohos_fuzztest("DhManagerFactoryFuzzTest") {
   ]
 
   external_deps = [
-    "init:libbegetutil",
     "c_utils:utils",
     "device_manager:devicemanagersdk",
+    "init:libbegetutil",
     "safwk:system_ability_fwk",
   ]
 }
