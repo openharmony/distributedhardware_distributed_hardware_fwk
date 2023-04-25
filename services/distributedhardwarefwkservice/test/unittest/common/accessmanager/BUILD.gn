@@ -14,7 +14,6 @@
 import("//build/test.gni")
 import("../../../../../../distributedhardwarefwk.gni")
 
-
 module_out_path = "distributed_hardware_fwk/access_manager_test"
 
 config("module_private_config") {
@@ -44,8 +43,8 @@ ohos_unittest("AccessManagerTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${utils_path}:distributedhardwareutils",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
   ]
   defines = [
