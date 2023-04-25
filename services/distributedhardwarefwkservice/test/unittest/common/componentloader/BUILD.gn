@@ -44,8 +44,8 @@ ohos_unittest("ComponentLoaderTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${utils_path}:distributedhardwareutils",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
   ]
 
