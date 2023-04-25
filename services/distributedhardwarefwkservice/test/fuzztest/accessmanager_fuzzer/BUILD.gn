@@ -19,8 +19,7 @@ import("../../../../../distributedhardwarefwk.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("AccessmanagerFuzzTest") {
   module_out_path = "distributed_hardware_fwk/accessmanager"
-  fuzz_config_file =
-      "${services_path}/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
@@ -38,7 +37,9 @@ ohos_fuzztest("AccessmanagerFuzzTest") {
   ]
   sources = [ "accessmanager_fuzzer.cpp" ]
 
-  deps = [ "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",
