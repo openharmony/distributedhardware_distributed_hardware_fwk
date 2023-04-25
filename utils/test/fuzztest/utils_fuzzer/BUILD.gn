@@ -19,7 +19,8 @@ import("../../../../distributedhardwarefwk.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("UtilsFuzzTest") {
   module_out_path = "distributed_hardware_fwk/utils"
-  fuzz_config_file = "${utils_path}/test/fuzztest/utils_fuzzer"
+  fuzz_config_file =
+      "${utils_path}/test/fuzztest/utils_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",

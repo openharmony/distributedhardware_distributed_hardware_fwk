@@ -19,7 +19,8 @@ import("../../../../../distributedhardwarefwk.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("TaskFuzzTest") {
   module_out_path = "distributed_hardware_fwk/task"
-  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/task_fuzzer"
+  fuzz_config_file = 
+      "${services_path}/distributedhardwarefwkservice/test/fuzztest/task_fuzzer"
 
   include_dirs = [
     "include",

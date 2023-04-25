@@ -19,7 +19,8 @@ import("../../../../../distributedhardwarefwk.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("ResourcemanagerFuzzTest") {
   module_out_path = "distributed_hardware_fwk/resourcemanager"
-  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/resourcemanager_fuzzer"
+  fuzz_config_file =
+      "${services_path}/distributedhardwarefwkservice/test/fuzztest/resourcemanager_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",

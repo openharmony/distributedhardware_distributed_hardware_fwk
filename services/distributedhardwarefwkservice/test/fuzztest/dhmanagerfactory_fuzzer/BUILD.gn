@@ -19,7 +19,8 @@ import("../../../../../distributedhardwarefwk.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("DhManagerFactoryFuzzTest") {
   module_out_path = "distributed_hardware_fwk/dhmanagerfactory"
-  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/dhmanagerfactory_fuzzer"
+  fuzz_config_file =
+      "${services_path}/distributedhardwarefwkservice/test/fuzztest/dhmanagerfactory_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
