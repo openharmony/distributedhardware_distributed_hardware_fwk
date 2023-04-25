@@ -54,7 +54,7 @@ ohos_unittest("ComponentMonitorTest") {
     "eventhandler:libeventhandler",
     "ipc:ipc_core",
     "ipc:ipc_single",
-     "samgr:samgr_proxy",
+    "samgr:samgr_proxy",
   ]
 
   defines = [
