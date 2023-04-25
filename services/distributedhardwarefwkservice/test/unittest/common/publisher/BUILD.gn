@@ -12,8 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/publisher_item_test"
 
@@ -22,7 +21,7 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "${services_path}/distributedhardwarefwkservice/include/publisher",
-    "//foundation/distributedhardware/distributed_hardware_fwk/common/utils/include",
+    "${common_path}/utils/include",
   ]
 }
 

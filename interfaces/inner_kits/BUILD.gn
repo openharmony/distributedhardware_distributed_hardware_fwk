@@ -15,7 +15,7 @@ import("//build/ohos.gni")
 import("../../distributedhardwarefwk.gni")
 
 ohos_shared_library("libdhfwk_sdk") {
-  include_dirs = [   
+  include_dirs = [
     "${innerkits_path}/include",
     "${innerkits_path}/include/ipc",
     "${common_path}/log/include",
@@ -47,8 +47,8 @@ ohos_shared_library("libdhfwk_sdk") {
   external_deps = [
     "c_utils:utils",
     "ipc:ipc_core",
-    "samgr:samgr_proxy",
     "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
 
   cflags_cc = [ "-DHILOG_ENABLE" ]

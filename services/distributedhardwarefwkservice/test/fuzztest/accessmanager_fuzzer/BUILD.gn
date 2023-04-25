@@ -19,11 +19,9 @@ import("../../../../../distributedhardwarefwk.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("AccessmanagerFuzzTest") {
   module_out_path = "distributed_hardware_fwk/accessmanager"
-  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer"
 
   include_dirs = [
-    "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp/include",
-    "//foundation/distributedhardware/device_manager/common/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${common_path}/utils/include",
@@ -39,7 +37,7 @@ ohos_fuzztest("AccessmanagerFuzzTest") {
   ]
   sources = [ "accessmanager_fuzzer.cpp" ]
 
-  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
+  deps = [ "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
   defines = [
     "HI_LOG_ENABLE",
@@ -49,6 +47,7 @@ ohos_fuzztest("AccessmanagerFuzzTest") {
 
   external_deps = [
     "c_utils:utils",
+    "device_manager:devicemanagersdk",
     "init:libbegetutil",
     "safwk:system_ability_fwk",
   ]

@@ -19,7 +19,7 @@ import("../../../../../distributedhardwarefwk.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("ComponentloaderFuzzTest") {
   module_out_path = "distributed_hardware_fwk/componentloader"
-  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/componentloader_fuzzer"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/componentloader_fuzzer"
 
   include_dirs = [
     "include",
@@ -43,7 +43,7 @@ ohos_fuzztest("ComponentloaderFuzzTest") {
   ]
   sources = [ "componentloader_fuzzer.cpp" ]
 
-  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
+  deps = [ "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
   defines = [
     "HI_LOG_ENABLE",

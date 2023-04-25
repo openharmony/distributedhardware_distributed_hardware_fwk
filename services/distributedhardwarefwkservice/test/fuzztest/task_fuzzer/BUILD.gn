@@ -19,7 +19,7 @@ import("../../../../../distributedhardwarefwk.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("TaskFuzzTest") {
   module_out_path = "distributed_hardware_fwk/task"
-  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/task_fuzzer"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/task_fuzzer"
 
   include_dirs = [
     "include",
@@ -40,7 +40,7 @@ ohos_fuzztest("TaskFuzzTest") {
   ]
   sources = [ "task_fuzzer.cpp" ]
 
-  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
+  deps = [ "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
   external_deps = [
     "c_utils:utils",

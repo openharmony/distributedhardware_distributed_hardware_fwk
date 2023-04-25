@@ -12,8 +12,8 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+
+import("../../../../../../../distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/local_hardware_manager_test"
 
@@ -48,7 +48,7 @@ ohos_unittest("LocalHardwareManagerTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//third_party/googletest:gtest_main",
   ]
 

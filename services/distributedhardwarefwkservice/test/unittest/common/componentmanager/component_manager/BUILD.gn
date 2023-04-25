@@ -45,8 +45,8 @@ ohos_unittest("ComponentManagerTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]

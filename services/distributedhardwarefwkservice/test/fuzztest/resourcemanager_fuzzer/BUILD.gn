@@ -40,7 +40,7 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
   ]
   sources = [ "resourcemanager_fuzzer.cpp" ]
 
-  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
+  deps = [ "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
 
   defines = [
     "HI_LOG_ENABLE",

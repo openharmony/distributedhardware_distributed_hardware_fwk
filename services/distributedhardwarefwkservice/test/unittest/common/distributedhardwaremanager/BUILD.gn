@@ -40,7 +40,7 @@ ohos_unittest("DistributedHardwareManagerTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]

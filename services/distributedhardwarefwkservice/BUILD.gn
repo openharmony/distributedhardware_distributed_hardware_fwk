@@ -23,8 +23,6 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "${common_path}/utils/include",
     "${utils_path}/include/log",
     "${utils_path}/include",
-    "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp/include",
-    "//foundation/distributedhardware/device_manager/common/include",
     "//third_party/json/include",
     "include/componentloader",
     "include/versionmanager",
@@ -38,7 +36,6 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "include/ipc",
     "${utils_path}/include/eventbus",
     "include/lowlatency",
-    "//foundation/resourceschedule/resource_schedule_service/ressched/interfaces/innerkits/ressched_client/include",
   ]
 
   sources = [
@@ -84,8 +81,6 @@ ohos_shared_library("distributedhardwarefwksvr") {
 
   deps = [
     "${utils_path}:distributedhardwareutils",
-    "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp:devicemanagersdk",
-    "//foundation/resourceschedule/resource_schedule_service/ressched/interfaces/innerkits/ressched_client:ressched_client",
   ]
 
   defines = [
@@ -100,12 +95,14 @@ ohos_shared_library("distributedhardwarefwksvr") {
 
   external_deps = [
     "c_utils:utils",
+    "device_manager:devicemanagersdk",
     "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
     "init:libbegetutil",
     "ipc:ipc_core",
     "kv_store:distributeddata_inner",
+    "resource_schedule_service:ressched_client",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]

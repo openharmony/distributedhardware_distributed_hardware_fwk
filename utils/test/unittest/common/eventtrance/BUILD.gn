@@ -19,10 +19,10 @@ module_out_path = "distributed_hardware_fwk/event_trance_test"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils/include",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils/include/log",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils/include/eventbus",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/unittest/common/eventtrance",
+    "${utils_path}/include",
+    "${utils_path}/include/log",
+    "${utils_path}/include/eventbus",
+    "${utils_path}/test/unittest/common/eventtrance",
     "//third_party/json/include",
     "//third_party/openssl:libcrypto_shared",
     "${common_path}/log/include",
@@ -42,7 +42,7 @@ ohos_unittest("EventTranceTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
+    "${utils_path}:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
   ]
 
