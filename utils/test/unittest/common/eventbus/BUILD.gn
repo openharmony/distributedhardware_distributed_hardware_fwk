@@ -42,8 +42,8 @@ ohos_unittest("EventBusTest") {
   ]
 
   external_deps = [
-    "eventhandler:libeventhandler",
     "c_utils:utils",
+    "eventhandler:libeventhandler",
   ]
 }
 
