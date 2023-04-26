@@ -13,7 +13,8 @@
 
 import("//build/test.gni")
 
-import("../../../../../../../distributedhardwarefwk.gni")
+import(
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 module_out_path = "distributed_hardware_fwk/local_hardware_manager_test"
 
