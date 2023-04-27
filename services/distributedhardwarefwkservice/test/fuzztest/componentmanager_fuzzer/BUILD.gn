@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Copyright (c) 2022 - 2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -20,7 +20,7 @@ import(
 ##############################fuzztest##########################################
 ohos_fuzztest("ComponentmanagerFuzzTest") {
   module_out_path = "distributed_hardware_fwk/componentmanager"
-  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/componentmanager_fuzzer"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/componentmanager_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
@@ -34,8 +34,6 @@ ohos_fuzztest("ComponentmanagerFuzzTest") {
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "//third_party/json/include",
-    "//commonlibrary/c_utils/base/include",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
   cflags = [
     "-g",
@@ -45,7 +43,14 @@ ohos_fuzztest("ComponentmanagerFuzzTest") {
   ]
   sources = [ "componentmanager_fuzzer.cpp" ]
 
-  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "ipc:ipc_single",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",

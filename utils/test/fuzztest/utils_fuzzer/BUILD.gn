@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021 - 2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -20,13 +20,12 @@ import(
 ##############################fuzztest##########################################
 ohos_fuzztest("UtilsFuzzTest") {
   module_out_path = "distributed_hardware_fwk/utils"
-  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/fuzztest/utils_fuzzer"
+  fuzz_config_file = "${utils_path}/test/fuzztest/utils_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${common_path}/utils/include",
-    "//commonlibrary/c_utils/base/include",
     "//third_party/json/include",
   ]
   cflags = [
@@ -37,7 +36,9 @@ ohos_fuzztest("UtilsFuzzTest") {
   ]
   sources = [ "utils_fuzzer.cpp" ]
 
-  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils" ]
+  deps = [ "${utils_path}:distributedhardwareutils" ]
+
+  external_deps = [ "c_utils:utils" ]
 }
 
 ###############################################################################

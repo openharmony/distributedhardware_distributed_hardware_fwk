@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Copyright (c) 2022 - 2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -20,13 +20,9 @@ import(
 ##############################fuzztest##########################################
 ohos_fuzztest("DhManagerFactoryFuzzTest") {
   module_out_path = "distributed_hardware_fwk/dhmanagerfactory"
-  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/dhmanagerfactory_fuzzer"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/dhmanagerfactory_fuzzer"
 
   include_dirs = [
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
-    "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp/include",
-    "//foundation/distributedhardware/device_manager/common/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${common_path}/utils/include",
@@ -42,7 +38,9 @@ ohos_fuzztest("DhManagerFactoryFuzzTest") {
   ]
   sources = [ "dhmanagerfactory_fuzzer.cpp" ]
 
-  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",
@@ -50,7 +48,12 @@ ohos_fuzztest("DhManagerFactoryFuzzTest") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [ "init:libbegetutil" ]
+  external_deps = [
+    "c_utils:utils",
+    "device_manager:devicemanagersdk",
+    "init:libbegetutil",
+    "safwk:system_ability_fwk",
+  ]
 }
 
 ###############################################################################

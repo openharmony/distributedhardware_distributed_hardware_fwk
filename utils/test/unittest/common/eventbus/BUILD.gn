@@ -26,7 +26,6 @@ config("module_private_config") {
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${utils_path}/include/eventbus",
-    "//commonlibrary/c_utils/base/include",
   ]
 }
 
@@ -39,11 +38,14 @@ ohos_unittest("EventBusTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
+    "${utils_path}:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [ "eventhandler:libeventhandler" ]
+  external_deps = [
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+  ]
 }
 
 group("event_bus_test") {

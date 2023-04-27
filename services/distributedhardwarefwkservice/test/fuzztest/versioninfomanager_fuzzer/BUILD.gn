@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Copyright (c) 2022 - 2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -20,11 +20,9 @@ import(
 ##############################fuzztest##########################################
 ohos_fuzztest("VersioninfoManagerFuzzTest") {
   module_out_path = "distributed_hardware_fwk/versioninfomanager"
-  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/versioninfomanager_fuzzer"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/versioninfomanager_fuzzer"
 
   include_dirs = [
-    "//base/notification/eventhandler/interfaces/inner_api",
-    "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${utils_path}/include/eventbus",
@@ -34,8 +32,6 @@ ohos_fuzztest("VersioninfoManagerFuzzTest") {
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "//third_party/json/include",
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
   ]
   cflags = [
     "-g",
@@ -45,7 +41,9 @@ ohos_fuzztest("VersioninfoManagerFuzzTest") {
   ]
   sources = [ "versioninfomanager_fuzzer.cpp" ]
 
-  deps = [ "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",
@@ -53,7 +51,11 @@ ohos_fuzztest("VersioninfoManagerFuzzTest") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [ "c_utils:utils" ]
+  external_deps = [
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "kv_store:distributeddata_inner",
+  ]
 }
 
 ###############################################################################

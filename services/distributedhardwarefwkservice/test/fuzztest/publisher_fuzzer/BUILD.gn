@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Copyright (c) 2022 - 2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -20,14 +20,9 @@ import(
 ##############################fuzztest##########################################
 ohos_fuzztest("PublisherFuzzTest") {
   module_out_path = "distributed_hardware_fwk/publisher"
-  fuzz_config_file = "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest/publisher_fuzzer"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/publisher_fuzzer"
 
   include_dirs = [
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
-    "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp/include",
-    "//foundation/distributedhardware/device_manager/common/include",
-    "//utils/system/safwk/native/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${common_path}/utils/include",
@@ -48,10 +43,8 @@ ohos_fuzztest("PublisherFuzzTest") {
 
   deps = [
     "${innerkits_path}:libdhfwk_sdk",
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
-    "//foundation/distributedhardware/device_manager/interfaces/inner_kits/native_cpp:devicemanagersdk",
-    "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
   ]
 
   defines = [
@@ -62,6 +55,7 @@ ohos_fuzztest("PublisherFuzzTest") {
 
   external_deps = [
     "c_utils:utils",
+    "device_manager:devicemanagersdk",
     "eventhandler:libeventhandler",
     "init:libbegetutil",
     "ipc:ipc_core",
