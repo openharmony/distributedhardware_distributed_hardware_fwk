@@ -1,7 +1,7 @@
 {
   "name": "@ohos/distributed_hardware_fwk",
   "description": "distributed hardware framework",
-  "version": "3.1",
+  "version": "4.0",
   "author": {},
   "repository": "https://gitee.com/openharmony/distributed_hardware_fwk",
   "license": "Apache License 2.0",
@@ -21,8 +21,8 @@
     "adapted_system_type": [
       "standard"
     ],
-    "rom": "128K",
-    "ram": "6M",
+    "rom": "128KB",
+    "ram": "6144KB",
     "hisysevent_config": [
       "//foundation/distributedhardware/distributed_hardware_fwk/hisysevent.yaml"
     ],
