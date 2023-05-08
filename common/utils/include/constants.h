@@ -37,8 +37,6 @@ namespace DistributedHardware {
     constexpr uint32_t MAX_SWITCH_SIZE = 256;
     const std::string LOW_LATENCY_KEY = "identity";
     const std::u16string DHMS_STUB_INTERFACE_TOKEN = u"ohos.distributedhardware.accessToken";
-    const std::string COMPONENTSLOAD_PROFILE_PATH =
-        R"(/vendor/etc/distributedhardware/distributed_hardware_components_cfg.json)";
     const std::string APP_ID = "dtbhardware_manager_service";
     const std::string GLOBAL_CAPABILITY_ID = "global_capability_info";
     const std::string GLOBAL_VERSION_ID = "global_version_info";
@@ -72,6 +70,8 @@ namespace DistributedHardware {
     constexpr const char *TRIGGER_TASK = "TriggerTask";
     constexpr const char *EVENT_RUN = "EventRun";
     constexpr const char *START_EVENT = "StartEvent";
+    constexpr const char *COMPONENTSLOAD_PROFILE_PATH =
+        R"(etc/distributedhardware/distributed_hardware_components_cfg.json)";
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

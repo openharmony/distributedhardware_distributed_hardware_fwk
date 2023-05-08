@@ -94,6 +94,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
 
   external_deps = [
     "c_utils:utils",
+    "config_policy:configpolicy_util",
     "device_manager:devicemanagersdk",
     "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",
