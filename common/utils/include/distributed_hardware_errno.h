@@ -77,6 +77,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_LOADER_CONFIG_JSON_INVALID = -10601;
     constexpr int32_t ERR_DH_FWK_LOADER_GET_LOCAL_VERSION_FAIL = -10602;
     constexpr int32_t ERR_DH_FWK_LOADER_DLCLOSE_FAIL = -10603;
+    constexpr int32_t ERR_DH_FWK_LOADER_PROFILE_PATH_IS_NULL = -10604;
 
     /* Task errno, range: [-10700, -10799] */
     constexpr int32_t ERR_DH_FWK_TASK_TIMEOUT = -10700;

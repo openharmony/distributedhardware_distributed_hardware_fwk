@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,7 @@
 #include <fstream>
 #include <string>
 
+#include "config_policy_utils.h"
 #include "nlohmann/json.hpp"
 
 #include "constants.h"
@@ -349,7 +350,14 @@ int32_t ComponentLoader::ParseConfig()
     std::map<DHType, CompConfig> dhtypeMap;
     int32_t ret;
     DHLOGI("ParseConfig start");
-    std::string jsonStr = Readfile(COMPONENTSLOAD_PROFILE_PATH);
+    char buf[MAX_PATH_LEN] = {0};
+    char *profilePath = GetOneCfgFile(COMPONENTSLOAD_PROFILE_PATH, buf, MAX_PATH_LEN);
+    if (profilePath == nullptr) {
+        DHLOGE("profilePath is null!");
+        return ERR_DH_FWK_LOADER_PROFILE_PATH_IS_NULL;
+    }
+    std::string componentProfilePath(profilePath);
+    std::string jsonStr = Readfile(componentProfilePath);
     if (jsonStr.length() == 0 || jsonStr.size() > MAX_MESSAGE_LEN) {
         DHLOGE("ConfigJson size is invalid!");
         return ERR_DH_FWK_LOADER_CONFIG_JSON_INVALID;
