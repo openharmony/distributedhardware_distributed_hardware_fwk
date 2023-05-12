@@ -130,7 +130,7 @@ void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
     DHLOGI("start, networkId = %s, deviceName = %s, deviceTypeId = %d", GetAnonyString(deviceInfo.deviceId).c_str(),
         GetAnonyString(deviceInfo.deviceName).c_str(), deviceInfo.deviceTypeId);
 
-    auto networkId = std::string(deviceInfo.deviceId); // deviceId of DM actually is networkId
+    auto networkId = std::string(deviceInfo.networkId);
     if (networkId.size() == 0 || networkId.size() > MAX_ID_LEN) {
         DHLOGE("NetworkId is invalid!");
         return;
@@ -157,7 +157,7 @@ void AccessManager::OnDeviceReady(const DmDeviceInfo &deviceInfo)
     DHLOGI("start, networkId = %s, deviceName = %s, deviceTypeId = %d", GetAnonyString(deviceInfo.deviceId).c_str(),
         GetAnonyString(deviceInfo.deviceName).c_str(), deviceInfo.deviceTypeId);
 
-    auto networkId = std::string(deviceInfo.deviceId);
+    auto networkId = std::string(deviceInfo.networkId);
     if (networkId.size() == 0 || networkId.size() > MAX_ID_LEN) {
         DHLOGE("NetworkId is invalid!");
         return;
@@ -188,7 +188,7 @@ void AccessManager::SendTrustedDeviceOnline()
         return;
     }
     for (const auto &deviceInfo : deviceList) {
-        const auto networkId = std::string(deviceInfo.deviceId);
+        const auto networkId = std::string(deviceInfo.networkId);
         const auto uuid = GetUUIDBySoftBus(networkId);
         DHLOGI("Send trusted device online, networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(),
             GetAnonyString(uuid).c_str());
