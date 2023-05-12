@@ -96,7 +96,7 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
     DHLOGI("After uninit, DM report devices online, reinit");
     Init();
     for (const auto &deviceInfo : deviceList) {
-        const auto networkId = std::string(deviceInfo.deviceId);
+        const auto networkId = std::string(deviceInfo.networkId);
         const auto uuid = GetUUIDBySoftBus(networkId);
         DHLOGI("Send trusted device online, networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(),
             GetAnonyString(uuid).c_str());
