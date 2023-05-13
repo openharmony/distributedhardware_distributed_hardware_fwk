@@ -12,3 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#ifndef OHOS_DHARDWARE_IPC_INTERFACE_CODE_H
+#define OHOS_DHARDWARE_IPC_INTERFACE_CODE_H
+
+#include <cstdint>
+
+/* SAID: 4801 */
+namespace OHOS {
+namespace DistributedHardware {
+    enum class DHMsgInterfaceCode : uint32_t {
+        REG_PUBLISHER_LISTNER = 1,
+        UNREG_PUBLISHER_LISTENER = 2,
+        PUBLISH_MESSAGE = 3
+    };
+
+    enum class PubListenerMsgInterfaceCode : uint32_t {
+        ON_MESSAGE,
+    };
+} // namespace DistributedHardware
+} // namespace OHOS
+#endif
