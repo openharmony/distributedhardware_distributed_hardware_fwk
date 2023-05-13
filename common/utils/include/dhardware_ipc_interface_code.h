@@ -21,15 +21,15 @@
 /* SAID: 4801 */
 namespace OHOS {
 namespace DistributedHardware {
-    enum class DHMsgInterfaceCode : uint32_t {
-        REG_PUBLISHER_LISTNER = 1,
-        UNREG_PUBLISHER_LISTENER = 2,
-        PUBLISH_MESSAGE = 3
-    };
+enum class DHMsgInterfaceCode : uint32_t {
+    REG_PUBLISHER_LISTNER = 1,
+    UNREG_PUBLISHER_LISTENER = 2,
+    PUBLISH_MESSAGE = 3
+};
 
-    enum class PubListenerMsgInterfaceCode : uint32_t {
-        ON_MESSAGE,
-    };
+enum class PubListenerMsgInterfaceCode : uint32_t {
+    ON_MESSAGE,
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
