@@ -14,6 +14,7 @@
  */
 
 #include "constants.h"
+#include "dhardware_ipc_interface_code.h"
 #include "distributed_hardware_log.h"
 #include "publisher_listener_proxy.h"
 
@@ -62,7 +63,7 @@ void PublisherListenerProxy::OnMessage(const DHTopic topic, const std::string& m
         return;
     }
     int32_t ret = remote->SendRequest(
-        static_cast<int32_t>(IPublisherListener::Message::ON_MESSAGE), data, reply, option);
+        static_cast<uint32_t>(PubListenerMsgInterfaceCode::ON_MESSAGE), data, reply, option);
     if (ret != 0) {
         DHLOGE("PublisherListenerProxy send requeset failed, ret: %d", ret);
         return;

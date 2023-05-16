@@ -35,12 +35,6 @@ public:
     virtual int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) = 0;
     virtual int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) = 0;
     virtual int32_t PublishMessage(const DHTopic topic, const std::string &msg) = 0;
-public:
-    enum class Message : uint32_t {
-        REG_PUBLISHER_LISTNER = 1,
-        UNREG_PUBLISHER_LISTENER = 2,
-        PUBLISH_MESSAGE = 3
-    };
 };
 } // namespace DistributedHardware
 } // namespace OHOS
