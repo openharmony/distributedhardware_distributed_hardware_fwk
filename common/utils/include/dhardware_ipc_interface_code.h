@@ -26,10 +26,6 @@ enum class DHMsgInterfaceCode : uint32_t {
     UNREG_PUBLISHER_LISTENER = 2,
     PUBLISH_MESSAGE = 3
 };
-
-enum class PubListenerMsgInterfaceCode : uint32_t {
-    ON_MESSAGE,
-};
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

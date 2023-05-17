@@ -16,7 +16,6 @@
 #include "publisher_listener_stub.h"
 
 #include "constants.h"
-#include "dhardware_ipc_interface_code.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
@@ -37,9 +36,9 @@ int32_t PublisherListenerStub::OnRemoteRequest(
         DHLOGE("PublisherListenerStub read valid token failed");
         return ERR_INVALID_DATA;
     }
-    PubListenerMsgInterfaceCode msgCode = static_cast<PubListenerMsgInterfaceCode>(code);
+    IPublisherListener::Message msgCode = static_cast<IPublisherListener::Message>(code);
     switch (msgCode) {
-        case PubListenerMsgInterfaceCode::ON_MESSAGE: {
+        case IPublisherListener::Message::ON_MESSAGE: {
             DHTopic topic = static_cast<DHTopic>(data.ReadUint32());
             if (topic < DHTopic::TOPIC_MIN || topic > DHTopic::TOPIC_MAX) {
                 DHLOGE("Topic is invalid!");

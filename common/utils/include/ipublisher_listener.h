@@ -43,6 +43,11 @@ enum class DHTopic : uint32_t {
 class IPublisherListener : public IRemoteBroker {
 public:
     virtual void OnMessage(const DHTopic topic, const std::string& message) = 0;
+
+    enum class Message : uint32_t {
+        ON_MESSAGE,
+    };
+
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.DistributedHardware.DistributedHardwareFwk.IPublisherListener");
 };
 } // namespace DistributedHardware
