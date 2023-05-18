@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,7 +62,7 @@ void PublisherListenerProxy::OnMessage(const DHTopic topic, const std::string& m
         return;
     }
     int32_t ret = remote->SendRequest(
-        static_cast<int32_t>(IPublisherListener::Message::ON_MESSAGE), data, reply, option);
+        static_cast<uint32_t>(IPublisherListener::Message::ON_MESSAGE), data, reply, option);
     if (ret != 0) {
         DHLOGE("PublisherListenerProxy send requeset failed, ret: %d", ret);
         return;

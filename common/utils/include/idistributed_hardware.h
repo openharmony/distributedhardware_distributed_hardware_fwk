@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,12 +35,6 @@ public:
     virtual int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) = 0;
     virtual int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) = 0;
     virtual int32_t PublishMessage(const DHTopic topic, const std::string &msg) = 0;
-public:
-    enum class Message : uint32_t {
-        REG_PUBLISHER_LISTNER = 1,
-        UNREG_PUBLISHER_LISTENER = 2,
-        PUBLISH_MESSAGE = 3
-    };
 };
 } // namespace DistributedHardware
 } // namespace OHOS

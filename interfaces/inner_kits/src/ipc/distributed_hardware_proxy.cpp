@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@
 
 #include "anonymous_string.h"
 #include "constants.h"
+#include "dhardware_ipc_interface_code.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "nlohmann/json.hpp"
@@ -67,7 +68,7 @@ int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic,
         DHLOGE("DistributedHardwareProxy write listener failed");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
     }
-    int32_t ret = remote->SendRequest((uint32_t)IDistributedHardware::Message::REG_PUBLISHER_LISTNER,
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::REG_PUBLISHER_LISTNER),
         data, reply, option);
     if (ret != NO_ERROR) {
         DHLOGE("Send Request failed, ret: %d", ret);
@@ -116,7 +117,7 @@ int32_t DistributedHardwareProxy::UnregisterPublisherListener(const DHTopic topi
         DHLOGE("DistributedHardwareProxy write listener failed");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
     }
-    int32_t ret = remote->SendRequest((uint32_t)IDistributedHardware::Message::UNREG_PUBLISHER_LISTENER,
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_PUBLISHER_LISTENER),
         data, reply, option);
     if (ret != NO_ERROR) {
         DHLOGE("Send Request failed, ret: %d", ret);
@@ -163,7 +164,7 @@ int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std:
         DHLOGE("DistributedHardwareProxy write listener failed");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
     }
-    int32_t ret = remote->SendRequest((uint32_t)IDistributedHardware::Message::PUBLISH_MESSAGE,
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::PUBLISH_MESSAGE),
         data, reply, option);
     if (ret != NO_ERROR) {
         DHLOGE("Send Request failed, ret: %d", ret);

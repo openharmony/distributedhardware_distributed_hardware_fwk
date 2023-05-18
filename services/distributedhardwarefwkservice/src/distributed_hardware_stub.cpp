@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,9 +21,10 @@
 
 #include "anonymous_string.h"
 #include "constants.h"
-#include "publisher_listener_proxy.h"
+#include "dhardware_ipc_interface_code.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "publisher_listener_proxy.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -35,13 +36,13 @@ int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &d
         return ERR_INVALID_DATA;
     }
     switch (code) {
-        case (uint32_t)IDistributedHardware::Message::REG_PUBLISHER_LISTNER: {
+        case static_cast<uint32_t>(DHMsgInterfaceCode::REG_PUBLISHER_LISTNER): {
             return RegisterPublisherListenerInner(data, reply);
         }
-        case (uint32_t)IDistributedHardware::Message::UNREG_PUBLISHER_LISTENER: {
+        case static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_PUBLISHER_LISTENER): {
             return UnregisterPublisherListenerInner(data, reply);
         }
-        case (uint32_t)IDistributedHardware::Message::PUBLISH_MESSAGE: {
+        case static_cast<uint32_t>(DHMsgInterfaceCode::PUBLISH_MESSAGE): {
             return PublishMessageInner(data, reply);
         }
         default:
