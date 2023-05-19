@@ -40,7 +40,8 @@ void CapabilityInfoManagerFuzzTest(const uint8_t* data, size_t size)
     deleteds.push_back(del);
     std::string deviceId(reinterpret_cast<const char*>(data), size);
 
-    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), deviceId, true);
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds),
+        deviceId, true);
     CapabilityInfoManager::GetInstance()->OnChange(changeIn);
 }
 }
