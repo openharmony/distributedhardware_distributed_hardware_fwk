@@ -19,7 +19,7 @@ import(
 
 ##############################fuzztest##########################################
 ohos_fuzztest("AccessManagerOfflineFuzzTest") {
-  module_out_path = "distributed_hardware_fwk/accessmanager"
+  module_out_path = "distributed_hardware_fwk/accessmanageroffline"
   fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer/accessmanager_offline_fuzzer"
 
   include_dirs = [
