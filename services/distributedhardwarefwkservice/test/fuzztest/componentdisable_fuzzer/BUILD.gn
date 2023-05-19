@@ -14,8 +14,7 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("ComponentDisableFuzzTest") {
@@ -29,6 +28,7 @@ ohos_fuzztest("ComponentDisableFuzzTest") {
     "${common_path}/log/include",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include/componentdisable",
+    "${services_path}/distributedhardwarefwkservice/include/componentmanager",
   ]
   cflags = [
     "-g",
