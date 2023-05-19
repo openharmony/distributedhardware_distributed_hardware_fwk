@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+# Copyright (c) 2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -18,17 +18,17 @@ import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("AccessmanagerFuzzTest") {
-  module_out_path = "distributed_hardware_fwk/accessmanager"
-  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer"
+ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
+  module_out_path = "distributed_hardware_fwk/capabilityinfomanager"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanager_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
+    "${utils_path}/include/eventbus",
     "${utils_path}/include/log",
-    "${common_path}/utils/include",
     "${common_path}/log/include",
-    "${services_path}/distributedhardwarefwkservice/include",
-    "${services_path}/distributedhardwarefwkservice/include/accessmanager",
+    "${common_path}/utils/include",
+    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
   ]
   cflags = [
     "-g",
@@ -36,7 +36,7 @@ ohos_fuzztest("AccessmanagerFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "accessmanager_fuzzer.cpp" ]
+  sources = [ "capabilityinfomanager_fuzzer.cpp" ]
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
@@ -44,7 +44,7 @@ ohos_fuzztest("AccessmanagerFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"AccessmanagerFuzzTest\"",
+    "DH_LOG_TAG=\"CapabilityInfoManagerFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
@@ -52,6 +52,7 @@ ohos_fuzztest("AccessmanagerFuzzTest") {
     "c_utils:utils",
     "device_manager:devicemanagersdk",
     "init:libbegetutil",
+    "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
   ]
 }
@@ -60,6 +61,6 @@ ohos_fuzztest("AccessmanagerFuzzTest") {
 group("fuzztest") {
   testonly = true
 
-  deps = [ ":AccessmanagerFuzzTest" ]
+  deps = [ ":CapabilityInfoManagerFuzzTest" ]
 }
 ###############################################################################
