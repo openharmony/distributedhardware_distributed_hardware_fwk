@@ -14,12 +14,13 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import("../../../../../../distributedhardwarefwk.gni")
+import(
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("AccessManagerReadyFuzzTest") {
-  module_out_path = "distributed_hardware_fwk/accessmanagerready"
-  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer/accessmanager_ready_fuzzer"
+ohos_fuzztest("AccessmanagerFuzzTest") {
+  module_out_path = "distributed_hardware_fwk/accessmanager"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/accessmanager_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
@@ -35,7 +36,7 @@ ohos_fuzztest("AccessManagerReadyFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "accessmanager_ready_fuzzer.cpp" ]
+  sources = [ "accessmanager_fuzzer.cpp" ]
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
@@ -43,7 +44,7 @@ ohos_fuzztest("AccessManagerReadyFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"AccessManagerReadyFuzzTest\"",
+    "DH_LOG_TAG=\"AccessmanagerFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
@@ -59,6 +60,6 @@ ohos_fuzztest("AccessManagerReadyFuzzTest") {
 group("fuzztest") {
   testonly = true
 
-  deps = [ ":AccessManagerReadyFuzzTest" ]
+  deps = [ ":AccessmanagerFuzzTest" ]
 }
 ###############################################################################

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "accessmanager_ready_fuzzer.h"
+#include "accessmanager_fuzzer.h"
 
 #include <algorithm>
 #include <chrono>
@@ -33,7 +33,7 @@ namespace {
     constexpr uint32_t SLEEP_TIME_US = 10 * 1000;
 }
 
-void AccessManagerReadyFuzzTest(const uint8_t* data, size_t size)
+void AccessManagerFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size <= sizeof(DmDeviceInfo))) {
         return;
@@ -41,7 +41,7 @@ void AccessManagerReadyFuzzTest(const uint8_t* data, size_t size)
 
     AccessManager::GetInstance()->Init();
     DmDeviceInfo deviceInfo;
-    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, (reinterpret_cast<const char *>(data)), size);
+    int32_t ret = memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, (reinterpret_cast<const char *>(data)), size);
     if (ret != EOK) {
         return;
     }
@@ -56,7 +56,7 @@ void AccessManagerReadyFuzzTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DistributedHardware::AccessManagerReadyFuzzTest(data, size);
+    OHOS::DistributedHardware::AccessManagerFuzzTest(data, size);
     return 0;
 }
 
