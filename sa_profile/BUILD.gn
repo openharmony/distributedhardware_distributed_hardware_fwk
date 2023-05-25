@@ -14,7 +14,7 @@
 import("//build/ohos.gni")
 
 ohos_sa_profile("dhfwk_sa_profile") {
-  sources = [ "4801.xml" ]
+  sources = [ "4801.json" ]
 
   part_name = "distributed_hardware_fwk"
 }
