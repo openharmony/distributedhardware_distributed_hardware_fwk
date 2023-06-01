@@ -26,7 +26,7 @@ namespace DistributedHardware {
 /**
  * @brief AV receiver engine callback interface.
  *
- * AV receiver engine callback is used to receive the engine state change events, 
+ * AV receiver engine callback is used to receive the engine state change events,
  * message notification and avaliable buffer data.
  *
  * @since 1.0
