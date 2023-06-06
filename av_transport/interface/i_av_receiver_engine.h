@@ -68,13 +68,6 @@ public:
     virtual int32_t Stop() = 0;
 
     /**
-     * @brief Pull video or audio data from the receiver engine.
-     * @param buffer  video or audio buffer data.
-     * @return Returns DH_AVT_SUCCESS(0) if successful, otherwise returns other error code.
-     */
-    virtual int32_t PullData(std::shared_ptr<AVTransBuffer> &buffer) = 0;
-
-    /**
      * @brief Set parameter to the receiver engine.
      * @param tag    parameter key.
      * @param value  parameter value.
@@ -88,6 +81,15 @@ public:
      * @return Returns DH_AVT_SUCCESS(0) if successful, otherwise returns other error code.
      */
     virtual int32_t SendMessage(const std::shared_ptr<AVTransMessage> &message) = 0;
+
+    /**
+     * @brief Create control channel for the receiver engine.
+     * @param dstDevIds    ids of the target devices.
+     * @param attribution  channel attributes.
+     * @return Returns DH_AVT_SUCCESS(0) if successful, otherwise returns other error code.
+     */
+    virtual int32_t CreateControlChannel(const std::vector<std::string> &dstDevIds,
+        const ChannelAttribute &attribution) = 0;
 
     /**
      * @brief Register interface callback to the receiver engine.

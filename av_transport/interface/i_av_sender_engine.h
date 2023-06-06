@@ -96,7 +96,7 @@ public:
      * @param attribution  channel attributes.
      * @return Returns DH_AVT_SUCCESS(0) if successful, otherwise returns other error code.
      */
-    virtual int32_t CreateSenderChannel(const std::vector<std::string> &dstDevIds,
+    virtual int32_t CreateControlChannel(const std::vector<std::string> &dstDevIds,
         const ChannelAttribute &attribution) = 0;
 
     /**
