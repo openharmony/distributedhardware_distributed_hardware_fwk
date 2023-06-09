@@ -49,13 +49,13 @@ public:
     int32_t SendStreamData(const std::string &sessName, const std::string &peerDevId, const StreamData *data,
         const StreamData *ext);
 
-    int32_t RegisterChannelListener(const std::string &sessName, const std::string &peerDevId, 
+    int32_t RegisterChannelListener(const std::string &sessName, const std::string &peerDevId,
         ISoftbusChannelListener *listener);
     int32_t UnRegisterChannelListener(const std::string &sessName, const std::string &peerDevId);
 
-    int32_t StartDeviceTimeSync(const std::string &ownerName, const std::string &sessName, 
+    int32_t StartDeviceTimeSync(const std::string &ownerName, const std::string &sessName,
         const std::string &peerDevId);
-    int32_t StopDeviceTimeSync(const std::string &ownerName, const std::string &sessName, 
+    int32_t StopDeviceTimeSync(const std::string &ownerName, const std::string &sessName,
         const std::string &peerDevId);
 
     void SendChannelEvent(ISoftbusChannelListener *listener, const AVTransEvent &event);
