@@ -13,7 +13,7 @@
 
 import("//build/ohos.gni")
 import(
-     "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
+     "${distributedhardwarefwk_path}/av_transport/distributed_av_transport.gni")
 
 ohos_shared_library("histreamer_plugin_AVTransDaudioInput") {
   include_dirs = [
@@ -25,12 +25,10 @@ ohos_shared_library("histreamer_plugin_AVTransDaudioInput") {
     "${histreamer_path}/foundation/utils",
     "${histreamer_path}/plugin/core",
     "${plugin_path}/interface",
-    "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
-    "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiorenderer/include",
     "//third_party/json/include",
   ]
 
-  sources = [ 
+  sources = [
     "daudio_input_plugin.cpp",
     "${common_path}/src/av_trans_buffer.cpp",
     "${common_path}/src/av_trans_log.cpp",

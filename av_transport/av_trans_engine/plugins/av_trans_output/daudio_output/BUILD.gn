@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+# Copyright (c) 2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,9 +14,9 @@
 
 import("//build/ohos.gni")
 import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
+    "${distributedhardwarefwk_path}/av_transport/distributed_av_transport.gni")
 
-ohos_shared_library("histreamer_plugin_AVTransDsoftbusOutputAudio") {
+ohos_shared_library("histreamer_plugin_AVTransDaudioOutput") {
   include_dirs = [
     "${common_path}/include",
     "${histreamer_path}/foundation/osal/thread",
@@ -43,7 +43,7 @@ ohos_shared_library("histreamer_plugin_AVTransDsoftbusOutputAudio") {
     "${histreamer_path}/plugin:histreamer_plugin_core",
     "${histreamer_path}/plugin:histreamer_plugin_intf",
     "${histreamer_path}/foundation:histreamer_foundation",
-    "//third_party/ffmpeg::libohosffmpeg",
+    "//third_party/ffmpeg:libohosffmpeg",
   ]
 
   defines = [

@@ -23,7 +23,6 @@
 #include <queue>
 
 #include "av_trans_buffer.h"
-#include "av_trans_codes.h"
 #include "av_trans_constants.h"
 #include "av_trans_log.h"
 #include "av_trans_meta.h"
@@ -35,7 +34,7 @@
 #include "nlohmann/json.hpp"
 #include "plugin_manager.h"
 #include "plugin_types.h"
-#include "/plugin/plugins/ffmpeg_adapter/utils/ffmpeg_utils.h"
+#include "plugin/plugins/ffmpeg_adapter/utils/ffmpeg_utils.h"
 
 namespace OHOS {
 namespace DistributedHardware {
