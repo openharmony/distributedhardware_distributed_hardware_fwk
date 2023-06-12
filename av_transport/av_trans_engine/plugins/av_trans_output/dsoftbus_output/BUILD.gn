@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import("//build/ohos.gni")
 import(
     "${distributedhardwarefwk_path}/av_transport/distributed_av_transport.gni")
@@ -30,18 +29,18 @@ ohos_shared_library("histreamer_plugin_AVTransDsoftbusOutput") {
   ]
 
   sources = [
-    "dsoftbus_output_plugin.cpp",
-    "${common_path}/src/av_trans_log.cpp",
-    "${common_path}/src/av_trans_utils.cpp",
     "${common_path}/src/av_trans_buffer.cpp",
+    "${common_path}/src/av_trans_log.cpp",
     "${common_path}/src/av_trans_meta.cpp",
+    "${common_path}/src/av_trans_utils.cpp",
     "${common_path}/src/softbus_channel_adapter.cpp",
+    "dsoftbus_output_plugin.cpp",
   ]
 
   deps = [
+    "${histreamer_path}/foundation:histreamer_foundation",
     "${histreamer_path}/plugin:histreamer_plugin_core",
     "${histreamer_path}/plugin:histreamer_plugin_intf",
-    "${histreamer_path}/foundation:histreamer_foundation",
   ]
 
   defines = [
@@ -50,9 +49,7 @@ ohos_shared_library("histreamer_plugin_AVTransDsoftbusOutput") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [
-    "dsoftbus:softbus_client",
-  ]
+  external_deps = [ "dsoftbus:softbus_client" ]
 
   relative_install_dir = "media/histreamer_plugins"
 

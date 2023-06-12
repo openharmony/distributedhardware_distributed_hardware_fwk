@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import("//build/ohos.gni")
 import(
     "${distributedhardwarefwk_path}/av_transport/distributed_av_transport.gni")
@@ -31,18 +30,18 @@ ohos_shared_library("histreamer_plugin_AVTransDaudioOutput") {
   ]
 
   sources = [
-    "daudio_output_plugin.cpp",
-    "${common_path}/src/av_trans_log.cpp",
-    "${common_path}/src/av_trans_utils.cpp",
     "${common_path}/src/av_trans_buffer.cpp",
+    "${common_path}/src/av_trans_log.cpp",
     "${common_path}/src/av_trans_meta.cpp",
+    "${common_path}/src/av_trans_utils.cpp",
     "${histreamer_path}/plugin/plugins/ffmpeg_adapter/utils/ffmpeg_utils.cpp",
+    "daudio_output_plugin.cpp",
   ]
 
   deps = [
+    "${histreamer_path}/foundation:histreamer_foundation",
     "${histreamer_path}/plugin:histreamer_plugin_core",
     "${histreamer_path}/plugin:histreamer_plugin_intf",
-    "${histreamer_path}/foundation:histreamer_foundation",
     "//third_party/ffmpeg:libohosffmpeg",
   ]
 
