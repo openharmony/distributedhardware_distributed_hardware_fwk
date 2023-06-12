@@ -71,7 +71,7 @@ namespace DistributedHardware {
     constexpr const char *EVENT_RUN = "EventRun";
     constexpr const char *START_EVENT = "StartEvent";
     constexpr const char *COMPONENTSLOAD_PROFILE_PATH =
-        R"(etc/distributedhardware/distributed_hardware_components_cfg.json)";
+        "etc/distributedhardware/distributed_hardware_components_cfg.json";
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
