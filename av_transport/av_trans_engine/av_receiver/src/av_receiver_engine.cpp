@@ -115,7 +115,8 @@ int32_t AVReceiverEngine::InitControlCenter()
     return DH_AVT_SUCCESS;
 }
 
-int32_t AVReceiverEngine::CreateControlChannel(const std::vector<std::string> &dstDevIds, const ChannelAttribute &attribution)
+int32_t AVReceiverEngine::CreateControlChannel(const std::vector<std::string> &dstDevIds,
+    const ChannelAttribute &attribution)
 {
     (void)attribution;
     DHLOGI("CreateControlChannel enter.");
