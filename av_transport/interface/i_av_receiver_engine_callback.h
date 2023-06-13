@@ -55,11 +55,11 @@ public:
     virtual int32_t OnMessageReceived(const std::shared_ptr<AVTransMessage> &message) = 0;
 
     /**
-     * @brief Report the avaliable buffer data to the distributed service.
+     * @brief Report the available buffer data to the distributed service.
      * @param buffer  buffer data.
      * @return Returns DH_AVT_SUCCESS(0) if successful, otherwise returns other error code.
      */
-    virtual int32_t OnDataAvaliable(const std::shared_ptr<AVTransBuffer> &buffer) = 0;
+    virtual int32_t OnDataAvailable(const std::shared_ptr<AVTransBuffer> &buffer) = 0;
 };
 } // DistributedHardware
 } // OHOS

@@ -44,7 +44,7 @@ AVSenderEngineProvider::~AVSenderEngineProvider()
 std::shared_ptr<IAVSenderEngine> AVSenderEngineProvider::CreateAVSenderEngine()
 {
     DHLOGI("CreateAVSenderEngine enter.");
-    auto sender = std::shared_ptr<AVSenderEngine>(new (std::nothrow) AVSenderEngine(ownerName_));
+    auto sender = std::make_shared<AVSenderEngine>(ownerName_);
     if (sender && sender->Initialize() == DH_AVT_SUCCESS) {
         {
             std::lock_guard<std::mutex> lock(listMutex_);
