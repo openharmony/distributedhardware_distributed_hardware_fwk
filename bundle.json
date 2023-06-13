@@ -7,7 +7,7 @@
   "license": "Apache License 2.0",
   "publishAs": "code-segment",
   "segment": {
-    "destPath": "foundation/distributedhardware/distributed_hardware_fwk/"
+    "destPath": "foundation/distributedhardware/distributed_hardware_fwk"
   },
   "dirs": {},
   "scripts": {},
