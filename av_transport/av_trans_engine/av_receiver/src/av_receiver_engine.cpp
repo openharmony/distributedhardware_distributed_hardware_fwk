@@ -88,7 +88,7 @@ int32_t AVReceiverEngine::InitPipeline()
         ret = pipeline_->AddFilters({avInput_.get(), audioDecoder_.get(), avOutput_.get()});
         if (ret == ErrorCode::SUCCESS) {
             ret = pipeline_->LinkFilters({avInput_.get(), audioDecoder_.get(), avOutput_.get()});
-        } 
+        }
     } else {
         DHLOGI("unsupport ownerName:%s", ownerName_.c_str());
         return ERR_DH_AVT_INVALID_PARAM_VALUE;
@@ -105,10 +105,12 @@ int32_t AVReceiverEngine::InitControlCenter()
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CTRL_CENTER_INIT_FAIL, "init av trans control center failed");
 
     ctlCenCallback_ = new (std::nothrow) AVTransControlCenterCallback();
-    TRUE_RETURN_V_MSG_E(ctlCenCallback_ == nullptr, ERR_DH_AVT_REGISTER_CALLBACK_FAIL, "new control center callback failed");
+    TRUE_RETURN_V_MSG_E(ctlCenCallback_ == nullptr, ERR_DH_AVT_REGISTER_CALLBACK_FAIL,
+        "new control center callback failed");
 
     ret = AVTransControlCenterKit::GetInstance().RegisterCtlCenterCallback(engineId_, ctlCenCallback_);
-    TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_REGISTER_CALLBACK_FAIL, "register control center callback failed");
+    TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_REGISTER_CALLBACK_FAIL,
+        "register control center callback failed");
 
     return DH_AVT_SUCCESS;
 }
@@ -137,23 +139,27 @@ int32_t AVReceiverEngine::PreparePipeline(const std::string &configParam)
 {
     DHLOGI("PreparePipeline enter.");
 
-    bool isErrState = (GetCurrentState() != StateId::INITIALIZED);
+    StateId currentState = GetCurrentState();
+    bool isErrState = ((currentState() != StateId::INITIALIZED) && (currentState() != StateId::CH_CREATED));
     TRUE_RETURN_V_MSG_E(isErrState, ERR_DH_AVT_PREPARE_FAILED,
-        "current state=%" PRId32 " is invalid.", GetCurrentState());
+        "current state=%" PRId32 " is invalid.", currentState);
 
     TRUE_RETURN_V_MSG_E((avInput_ == nullptr) || (avOutput_ == nullptr), ERR_DH_AVT_PREPARE_FAILED,
         "av input or output filter is null");
 
-    ErrorCode ret = avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::SRC_INPUT_TYPE), TransName2SoftbusInputType(ownerName_));
+    ErrorCode ret = avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::SRC_INPUT_TYPE),
+        TransName2SoftbusInputType(ownerName_));
     TRUE_RETURN_V(ret != ErrorCode::SUCCESS, ERR_DH_AVT_SET_PARAM_FAILED);
 
     ret = avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_TYPE), TransName2MediaType(ownerName_));
     TRUE_RETURN_V(ret != ErrorCode::SUCCESS, ERR_DH_AVT_SET_PARAM_FAILED);
 
-    ret = avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_BIT_STREAM_FORMAT), VideoBitStreamFormat::ANNEXB);
+    ret = avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_BIT_STREAM_FORMAT),
+        VideoBitStreamFormat::ANNEXB);
     TRUE_RETURN_V(ret != ErrorCode::SUCCESS, ERR_DH_AVT_SET_PARAM_FAILED);
 
-    ret = avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_DESCRIPTION), BuildChannelDescription(ownerName_, peerDevId_));
+    ret = avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_DESCRIPTION),
+        BuildChannelDescription(ownerName_, peerDevId_));
     TRUE_RETURN_V(ret != ErrorCode::SUCCESS, ERR_DH_AVT_SET_PARAM_FAILED);
 
     ret = avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::SRC_INPUT_TYPE), TransName2InputType(ownerName_));
@@ -161,6 +167,7 @@ int32_t AVReceiverEngine::PreparePipeline(const std::string &configParam)
 
     ret = pipeline_->Prepare();
     TRUE_RETURN_V(ret != ErrorCode::SUCCESS, ERR_DH_AVT_PREPARE_FAILED);
+
     SetCurrentState(StateId::CH_CREATED);
     return DH_AVT_SUCCESS;
 }
@@ -170,7 +177,8 @@ int32_t AVReceiverEngine::Start()
     DHLOGI("Start enter.");
 
     bool isErrState = (GetCurrentState() != StateId::CH_CREATED);
-    TRUE_RETURN_V_MSG_E(isErrState, ERR_DH_AVT_START_FAILED, "current state=%" PRId32 " is invalid.", GetCurrentState());
+    TRUE_RETURN_V_MSG_E(isErrState, ERR_DH_AVT_START_FAILED, "current state=%" PRId32 " is invalid.",
+        GetCurrentState());
 
     ErrorCode ret = pipeline_->Start();
     TRUE_RETURN_V(ret != ErrorCode::SUCCESS, ERR_DH_AVT_START_FAILED);
@@ -212,9 +220,6 @@ int32_t AVReceiverEngine::SetParameter(AVTransTag tag, const std::string &value)
         case AVTransTag::VIDEO_HEIGHT: {
             avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_HEIGHT), std::atoi(value.c_str()));
             DHLOGI("SetParameter VIDEO_HEIGHT success, video height = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::VIDEO_PIXEL_FORMAT: {
             break;
         }
         case AVTransTag::VIDEO_FRAME_RATE: {
@@ -341,6 +346,24 @@ void AVReceiverEngine::OnChannelEvent(const AVTransEvent &event)
     TRUE_RETURN(receiverCallback_ == nullptr, "receiver callback is nullptr.");
 
     switch (event.type) {
+        case EventType::EVENT_CHANNEL_OPENED: {
+            senderCallback_->OnReceiverEvent(event);
+            receiverCallback_(StateId::CH_CREATED);
+            break;
+        }
+        case EventType::EVENT_CHANNEL_OPEN_FAIL: {
+            senderCallback_->OnReceiverEvent(event);
+            receiverCallback_(StateId::INITIALIZED);
+            break;
+        }
+        case EventType::EVENT_CHANNEL_CLOSED: {
+            StateId currentState = GetCurrentState();
+            if ((currentState != StateId::IDLE) && (currentState != StateId::INITIALIZED)) {
+                receiverCallback_->OnReceiverEvent(event);
+            }
+            SetCurrentState(StateId::INITIALIZED);
+            break;
+        }
         case EventType::EVENT_DATA_RECEIVED: {
             auto avMessage = std::make_shared<AVTransMessage>();
             TRUE_RETURN(!avMessage->UnmarshalMessage(event.content), "unmarshal message failed");

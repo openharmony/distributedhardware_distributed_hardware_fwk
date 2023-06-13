@@ -310,9 +310,10 @@ int32_t AVSenderEngine::PreparePipeline(const std::string &configParam)
 {
     DHLOGI("PreparePipeline enter.");
 
-    bool isErrState = (GetCurrentState() != StateId::CH_CREATED);
+    StateId currentState = GetCurrentState();
+    bool isErrState = ((currentState() != StateId::INITIALIZED) && (currentState() != StateId::CH_CREATED));
     TRUE_RETURN_V_MSG_E(isErrState, ERR_DH_AVT_PREPARE_FAILED,
-        "current state=%" PRId32 " is invalid.", GetCurrentState());
+        "current state=%" PRId32 " is invalid.", currentState);
 
     TRUE_RETURN_V_MSG_E((avInput_ == nullptr) || (avOutput_ == nullptr), ERR_DH_AVT_PREPARE_FAILED,
         "av input or output filter is null");
@@ -344,6 +345,8 @@ int32_t AVSenderEngine::PreparePipeline(const std::string &configParam)
 
     ret = pipeline_->Prepare();
     TRUE_RETURN_V_MSG_E(ret != ErrorCode::SUCCESS, ERR_DH_AVT_PREPARE_FAILED, "pipeline prepare failed");
+
+    SetCurrentState(StateId::CH_CREATED);
     return DH_AVT_SUCCESS;
 }
 

@@ -47,7 +47,7 @@ AVReceiverEngineProvider::~AVReceiverEngineProvider()
 std::shared_ptr<IAVReceiverEngine> AVReceiverEngineProvider::CreateAVReceiverEngine(const std::string &peerDevId)
 {
     DHLOGI("CreateAVReceiverEngine enter.");
-    auto receiver = std::shared_ptr<AVReceiverEngine>(new (std::nothrow) AVReceiverEngine(ownerName_, peerDevId));
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName_, peerDevId);
     if (receiver && receiver->Initialize() == DH_AVT_SUCCESS) {
         {
             std::lock_guard<std::mutex> lock(listMutex_);
