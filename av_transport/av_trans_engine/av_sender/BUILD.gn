@@ -1,0 +1,105 @@
+# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import(
+    "${distributedhardwarefwk_path}/av_transport/distributed_av_transport.gni")
+
+ohos_shared_library("distributed_av_sender") {
+  include_dirs = [
+    "${drivers_disaplay_path}/interfaces/include",
+    "${media_standard_path}/interfaces/inner_api/native",
+    "//third_party/json/include",
+
+    "${common_path}/include",
+    "${engine_path}",
+    "${engine_path}/av_sender/include",
+    "${engine_path}/av_receiver/include",
+    "${interface_path}",
+    "${dh_fwk_utils_path}/include",
+    "${control_center_path}/inner_kits/include",
+    "${control_center_path}/inner_kits/include/ipc",
+
+    "${histreamer_path}/include",
+    "${histreamer_path}/include/foundation",
+    "${histreamer_path}/include/pipeline",
+    "${histreamer_path}/include/pipeline/core",
+    "${histreamer_path}/include/pipeline/factory",
+    "${histreamer_path}/include/pipeline/filters",
+    "${histreamer_path}/include/pipeline/filters/codec/audio_encoder",
+    "${histreamer_path}/include/pipeline/filters/codec/video_encoder",
+    "${histreamer_path}/include/pipeline/filters/source/av_transport_input",
+    "${histreamer_path}/include/pipeline/filters/sink/av_transport_output",
+    "${histreamer_path}/include/plugin",
+    "${histreamer_path}/include/plugin/common",
+    "${histreamer_path}/include/scene/standard",
+  ]
+
+  sources = [
+    "${common_path}/src/av_trans_buffer.cpp",
+    "${common_path}/src/av_trans_log.cpp",
+    "${common_path}/src/av_trans_message.cpp",
+    "${common_path}/src/av_trans_meta.cpp",
+    "${common_path}/src/av_trans_utils.cpp",
+    "${common_path}/src/softbus_channel_adapter.cpp",
+    "${engine_path}/av_sender/src/av_sender_engine.cpp",
+    "${engine_path}/av_sender/src/av_sender_engine_provider.cpp",
+  ]
+
+  deps = [
+    "${control_center_path}/inner_kits:avtranscenter_sdk",
+    "${histreamer_path}/pipeline:histreamer_pipeline",
+    "${histreamer_path}/pipeline:histreamer_pipeline_base",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"distributed_av_transport_sender\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  defines += [
+    "MEDIA_OHOS",
+    "RECORDER_SUPPORT",
+    "VIDEO_SUPPORT",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "graphic_standard:libgraphic_utils",
+    "graphic_standard:surface",
+    "hisysevent_native:libhisysevent",
+    "hitrace_native:hitrace_meter",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+
+  remove_configs = [
+    "//build/config/compiler:no_rtti",
+    "//build/config/compiler:no_exceptions",
+  ]
+  cflags = [
+    "-O2",
+    "-fPIC",
+    "-Wall",
+    "-frtti",
+    "-fexceptions",
+  ]
+  cflags_cc = cflags
+
+  part_name = "distributed_hardware_fwk"
+  subsystem_name = "distributedhardware"
+}
