@@ -1,0 +1,62 @@
+# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import(
+    "${distributedhardwarefwk_path}/av_transport/distributed_av_transport.gni")
+
+ohos_shared_library("histreamer_plugin_AVTransDscreenInput") {
+  include_dirs = [
+    "${common_path}/include",
+    "${plugin_path}/interface",
+    "${histreamer_path}/include/pipeline/core",
+    "${histreamer_path}/include/plugin/interface",
+    "${histreamer_path}/include/plugin/common",
+    "${histreamer_path}/plugin/core",
+    "${histreamer_path}/include/foundation/osal/thread",
+    "${histreamer_path}/foundation/utils",
+    "//third_party/json/include",
+  ]
+
+  sources = [
+    "${common_path}/src/av_trans_buffer.cpp",
+    "${common_path}/src/av_trans_log.cpp",
+    "${common_path}/src/av_trans_meta.cpp",
+    "${common_path}/src/av_trans_utils.cpp",
+    "dscreen_input_plugin.cpp",
+  ]
+
+  deps = [
+    "${histreamer_path}/foundation:histreamer_foundation",
+    "${histreamer_path}/plugin:histreamer_plugin_core",
+    "${histreamer_path}/plugin:histreamer_plugin_intf",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"dscreen_input_plugin\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "samgr:samgr_proxy",
+  ]
+
+  relative_install_dir = "media/histreamer_plugins"
+
+  subsystem_name = "distributedhardware"
+  part_name = "distributed_hardware_fwk"
+}

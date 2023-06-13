@@ -1,0 +1,58 @@
+# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import(
+    "${distributedhardwarefwk_path}/av_transport/distributed_av_transport.gni")
+
+ohos_shared_library("histreamer_plugin_AVTransDaudioOutput") {
+  include_dirs = [
+    "${common_path}/include",
+    "${histreamer_path}/foundation/osal/thread",
+    "${histreamer_path}/include/pipeline/core",
+    "${histreamer_path}/include/plugin/common",
+    "${histreamer_path}/include/plugin/interface",
+    "${histreamer_path}/foundation/utils",
+    "${histreamer_path}/plugin/core",
+    "${plugin_path}/interface",
+    "//third_party/json/include",
+    "//third_party/ffmpeg",
+  ]
+
+  sources = [
+    "${common_path}/src/av_trans_buffer.cpp",
+    "${common_path}/src/av_trans_log.cpp",
+    "${common_path}/src/av_trans_meta.cpp",
+    "${common_path}/src/av_trans_utils.cpp",
+    "${histreamer_path}/plugin/plugins/ffmpeg_adapter/utils/ffmpeg_utils.cpp",
+    "daudio_output_plugin.cpp",
+  ]
+
+  deps = [
+    "${histreamer_path}/foundation:histreamer_foundation",
+    "${histreamer_path}/plugin:histreamer_plugin_core",
+    "${histreamer_path}/plugin:histreamer_plugin_intf",
+    "//third_party/ffmpeg:libohosffmpeg",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"daudio_output_plugin\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  relative_install_dir = "media/histreamer_plugins"
+
+  subsystem_name = "distributedhardware"
+  part_name = "distributed_hardware_fwk"
+}
