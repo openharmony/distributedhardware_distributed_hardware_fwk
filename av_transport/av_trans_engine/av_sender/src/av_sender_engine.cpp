@@ -211,19 +211,30 @@ int32_t AVSenderEngine::SetParameter(AVTransTag tag, const std::string &value)
             break;
         }
         case AVTransTag::VIDEO_CODEC_TYPE: {
-            Plugin::Meta encoderMeta;
-            encoderMeta.Set<Plugin::Tag::MIME>(MEDIA_MIME_VIDEO_H264);
-            encoderMeta.Set<Plugin::Tag::VIDEO_H264_PROFILE>(Plugin::VideoH264Profile::BASELINE);
-            encoderMeta.Set<Plugin::Tag::VIDEO_H264_LEVEL>(VIDEO_H264_LEVEL);
-            videoEncoder_->SetVideoEncoder(0, std::make_shared<Plugin::Meta>(encoderMeta));
-            DHLOGI("SetParameter VIDEO_CODEC_TYPE = H264 success");
+            if (value == MIME_VIDEO_H264) {
+                Plugin::Meta encoderMeta;
+                encoderMeta.Set<Plugin::Tag::MIME>(MEDIA_MIME_VIDEO_H264);
+                encoderMeta.Set<Plugin::Tag::VIDEO_H264_PROFILE>(Plugin::VideoH264Profile::BASELINE);
+                encoderMeta.Set<Plugin::Tag::VIDEO_H264_LEVEL>(VIDEO_H264_LEVEL);
+                videoEncoder_->SetVideoEncoder(0, std::make_shared<Plugin::Meta>(encoderMeta));
+                avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), MEDIA_MIME_VIDEO_H264);
+                DHLOGI("SetParameter VIDEO_CODEC_TYPE = H264 success");
+            } else if (value == MIME_VIDEO_H265) {
+                Plugin::Meta encoderMeta;
+                encoderMeta.Set<Plugin::Tag::MIME>(MEDIA_MIME_VIDEO_H265);
+                videoEncoder_->SetVideoEncoder(0, std::make_shared<Plugin::Meta>(encoderMeta));
+                avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), MEDIA_MIME_VIDEO_H265);
+                DHLOGI("SetParameter VIDEO_CODEC_TYPE = H265 success");
+            } else {
+                DHLOGE("SetParameter VIDEO_CODEC_TYPE failed, input value invalid.");
+            }
             break;
         }
         case AVTransTag::AUDIO_CODEC_TYPE: {
             Plugin::Meta encoderMeta;
             encoderMeta.Set<Plugin::Tag::MIME>(MEDIA_MIME_AUDIO_AAC);
             encoderMeta.Set<Plugin::Tag::AUDIO_AAC_PROFILE>(Plugin::AudioAacProfile::LC);
-            videoEncoder_->SetAudioEncoder(0, std::make_shared<Plugin::Meta>(encoderMeta));
+            audioEncoder_->SetAudioEncoder(0, std::make_shared<Plugin::Meta>(encoderMeta));
             DHLOGI("SetParameter AUDIO_CODEC_TYPE = ACC success");
             break;
         }
