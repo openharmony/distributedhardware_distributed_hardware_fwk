@@ -109,7 +109,7 @@ Status DaudioOutputPlugin::Prepare()
         DHLOGE("Not found AUDIO_CHANNEL_LAYOUT");
         return Status::ERROR_UNKNOWN;
     }
-    uint32_t channelsLayout = Plugin::AnyCast<int>(channelsLayoutValue);  
+    uint32_t channelsLayout = Plugin::AnyCast<int>(channelsLayoutValue); 
     DHLOGI("channels = %d, sampleRate = %d, channelLayout = %d.", channels, sampleRate, channelsLayout);
     resample = std::make_shared<Ffmpeg::Resample>();
     state_ = State::PREPARED;
