@@ -46,6 +46,7 @@ using json = nlohmann::json;
 using AVDataCallback = std::function<void(std::shared_ptr<Buffer>)>;
 
 class DsoftbusOutputPlugin : public AvTransOutputPlugin,
+                             public ISoftbusChannelListener,
                              public std::enable_shared_from_this<DsoftbusOutputPlugin> {
 public:
     explicit DsoftbusOutputPlugin(std::string name);
