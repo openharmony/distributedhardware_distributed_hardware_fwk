@@ -351,12 +351,13 @@ int32_t ComponentLoader::ParseConfig()
     int32_t ret;
     DHLOGI("ParseConfig start");
     char buf[MAX_PATH_LEN] = {0};
+    char path[PATH_MAX + 1] = {0x00};
     char *profilePath = GetOneCfgFile(COMPONENTSLOAD_PROFILE_PATH, buf, MAX_PATH_LEN);
-    if (profilePath == nullptr) {
-        DHLOGE("profilePath is null!");
+    if (strlen(profilePath) == 0 || strlen(profilePath) > PATH_MAX || realpath(profilePath, path) == nullptr) {
+        DHLOGE("File connicailization failed.");
         return ERR_DH_FWK_LOADER_PROFILE_PATH_IS_NULL;
     }
-    std::string componentProfilePath(profilePath);
+    std::string componentProfilePath(path);
     std::string jsonStr = Readfile(componentProfilePath);
     if (jsonStr.length() == 0 || jsonStr.size() > MAX_MESSAGE_LEN) {
         DHLOGE("ConfigJson size is invalid!");
