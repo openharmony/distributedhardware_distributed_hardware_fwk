@@ -15,10 +15,13 @@
 
 #include "daudio_output_plugin.h"
 
+#include "foundation/utils/constants.h"
+#include "plugin/common/plugin_caps_builder.h"
+
 namespace OHOS {
 namespace DistributedHardware {
 
-std::shared_ptr<DHPlugin> DaudioOutputPluginCreator(const std::string& name)
+std::shared_ptr<AvTransOutputPlugin> DaudioOutputPluginCreator(const std::string& name)
 {
     return std::make_shared<DaudioOutputPlugin>(name);
 }
@@ -26,21 +29,29 @@ std::shared_ptr<DHPlugin> DaudioOutputPluginCreator(const std::string& name)
 Status DaudioOutputRegister(const std::shared_ptr<Register> &reg)
 {
     DHLOGI("DaudioOutputRegister enter.");
-
-    DHPluginDef definition;
+    AvTransOutputPluginDef definition;
     definition.name = "AVTransDaudioOutputPlugin";
     definition.description = "Send audio playback and frame rate control.";
     definition.rank = 100;
-    definition.protocol.emplace_back(ProtocolType::STREAM);
-    definition.inputType = SrcInputType::AUD_ES;
     definition.creator = DaudioOutputPluginCreator;
+    definition.pluginType = PluginType::AVTRANS_OUTPUT;
+
+    CapabilityBuilder capBuilder;
+    capBuilder.SetMime(OHOS::Media::MEDIA_MIME_AUDIO_RAW);
+    DiscreteCapability<uint32_t> valuesSampleRate = {8000, 11025, 12000, 16000,
+        22050, 24000, 32000, 44100, 48000, 64000, 96000};
+    capBuilder.SetAudioSampleRateList(valuesSampleRate);
+    DiscreteCapability<AudioSampleFormat> valuesSampleFormat = {AudioSampleFormat::F32P}
+    capBuilder.SetAudioSampleFormatList(valuesSampleFormat);
+    definition.inCaps.push_back(capBuilder.Build());
+
     return reg->AddPlugin(definition);
 }
 
 PLUGIN_DEFINITION(AVTranseDaudioOutput, LicenseType::APACHE_V2, DaudioOutputRegister, [] {});
 
 DaudioOutputPlugin::DaudioOutputPlugin(std::string name)
-    : DHPlugin(std::move(name))
+    : AvTransOutputPlugin(std::move(name))
 {
     DHLOGI("DaudioOutputPlugin ctor.");
 }
@@ -52,7 +63,7 @@ DaudioOutputPlugin::~DaudioOutputPlugin()
 
 Status DaudioOutputPlugin::Init()
 {
-    DHLOGI("DaudioOutputPlugin enter.");
+    DHLOGI("Init.");
     OSAL::ScopedLock lock(operationMutes_);
     state_ = State::INITIALIZED;
     return Status::OK;
@@ -60,7 +71,7 @@ Status DaudioOutputPlugin::Init()
 
 Status DaudioOutputPlugin::Deinit()
 {
-    DHLOGI("Deinit DaudioOutputPlugin.");
+    DHLOGI("Deinit.");
     return Reset();
 }
 
@@ -76,6 +87,42 @@ Status DaudioOutputPlugin::Prepare()
         sendPlayTask_ = std::make_shared<OHOS::Media::OSAL::Task>("sendPlayTask_");
         sendPlayTask_->RegisterHandler([this] { HandleData(); });
     }
+
+    ValueType channelsValue;
+    Status ret = GetParameter(Tag::AUDIO_CHANNELS, channelsValue);
+    if (ret != Status::OK)
+    {
+        DHLOGE("Not found AUDIO_CHANNELS");
+        return Status::ERROR_UNKNOWN;
+    }
+    uint32_t channels = Plugin::AnyCast<int>(channelsValue);
+
+    ValueType sampleRateValue;
+    ret = GetParameter(Tag::AUDIO_SAMPLE_RATE, sampleRateValue);
+    if (ret != Status::OK)
+    {
+        DHLOGE("Not found AUDIO_SAMPLE_RATE");
+        return Status::ERROR_UNKNOWN;
+    }
+    uint32_t sampleRate = Plugin::AnyCast<int>(sampleRateValue);
+
+    ValueType channelsLayoutValue;
+    ret = GetParameter(Tag::AUDIO_CHANNELS, channelsLayoutValue);
+    if (ret != Status::OK)
+    {
+        DHLOGE("Not found AUDIO_CHANNELS");
+        return Status::ERROR_UNKNOWN;
+    }
+    uint32_t channelsLayout = Plugin::AnyCast<int>(channelsLayoutValue);
+    if (channelsLayout == 1) {
+        channelsLayout = AV_CH_LAYOUT_MONO;
+    } else if (channelsLayout == 2) {
+        channelsLayout = AV_CH_LAYOUT_STEREO;
+    }
+    
+    DHLOGI("channels = %d, sampleRate = %d, channelLayout = %d.", channels, sampleRate, channelsLayout);
+
+    resample = std::make_shared<Ffmpeg::Resample>();
     state_ = State::PREPARED;
     return Status::OK;
 }
@@ -205,7 +252,7 @@ void DaudioOutputPlugin::HandleData()
             DHLOGE("Data is null");
             continue;
         }
-        //dataCallback_->OnDataCallback(buffer);
+        datacallback_(buffer);
     }
 }
 
@@ -214,14 +261,12 @@ void DaudioOutputPlugin::DataQueueClear(std::queue<std::shared_ptr<Buffer>> &q) 
     swap(empty, q);
 }
 
-//待补充
 Status DaudioOutputPlugin::StartOutputQueue()
 {
     DHLOGI("StartOutputQueue enter.");
     return Status::OK;
 }
 
-//待补充帧率控制算法
 Status DaudioOutputPlugin::ControlFrameRate(const int64_t timestamp)
 {
     DHLOGI("ControlFrameRate enter.");

@@ -64,7 +64,6 @@ private:
     std::map<Tag, ValueType> tagMap_;
     OSAL::Mutex operationMutes_ {};
 };
-
 } // namespace DistributedHardware
 } // namespace OHOS
 

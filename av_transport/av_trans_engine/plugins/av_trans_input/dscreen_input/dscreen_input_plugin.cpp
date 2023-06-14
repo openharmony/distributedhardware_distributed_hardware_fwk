@@ -33,10 +33,9 @@ Status DscreenInputRegister(const std::shared_ptr<Register> &reg)
     definition.name = "AVTransDscreenInputPlugin";
     definition.description = "Video transport from dsrceen service";
     definition.rank = 100;
-    definition.protocol.emplace_back(ProtocolType::STREAM);
-    definition.inputType = SrcInputType::D_SCREEN;
     definition.pluginType = PluginType::AVTRANS_INPUT;
     definition.creator = DscreenInputPluginCreator;
+
     Capability outCap(Media::MEDIA_MIME_VIDEO_RAW);
     outCap.AppendDiscreteKeys<VideoPixelFormat>(
         Capability::Key::VIDEO_PIXEL_FORMAT, {VideoPixelFormat::RGBA});
@@ -59,14 +58,14 @@ DscreenInputPlugin::~DscreenInputPlugin()
 
 Status DscreenInputPlugin::Init()
 {
-    DHLOGI("Init DscreenInputPlugin.");
+    DHLOGI("Init.");
     frameNumber_.store(0);
     return Status::OK;
 }
 
 Status DscreenInputPlugin::Deinit()
 {
-    DHLOGI("Deinit DscreenInputPlugin.");
+    DHLOGI("Deinit.");
     return Reset();
 }
 
@@ -111,39 +110,13 @@ Status DscreenInputPlugin::PushData(const std::string& inPort, std::shared_ptr<B
         DHLOGE("bufferMeta is nullptr or empty.");
         return Status::ERROR_NULL_POINTER;
     }
-    auto avTransMeta = ReinterpretCastPointer<AVTransVideoBufferMeta>(bufferMeta);
-    if (avTransMeta == nullptr) {
-        DHLOGE("avTransMeta is nullptr or empty.");
-        return Status::ERROR_NULL_POINTER;
-    }
-    AddFrameInfo(avTransMeta);
-    buffer->SetBufferMeta(avTransMeta);
-    DHLOGI("AddFrameInfo buffer pts: %d, frameNumber: %d, dataType: %u, bufferLen: %d.",
-        avTransMeta->pts_, avTransMeta->frameNum_, avTransMeta->dataType_, buffer->GetMemory()->GetSize());
-    return Status::OK;
-}
 
-void DscreenInputPlugin::AddFrameInfo(std::shared_ptr<AVTransVideoBufferMeta> &bufferMeta)
-{
     ++frameNumber_;
-    bufferMeta->pts_ = GetCurrentTime();
-    bufferMeta->frameNum_ = frameNumber_.load();
-    bufferMeta->dataType_ = GetValueFromParams(Tag::MEDIA_DESCRIPTION, AVT_PARAM_BUFFERMETA_DATATYPE);
-}
-
-BufferDataType DscreenInputPlugin::GetValueFromParams(Tag tag, std::string keyWord)
-{
-    auto iter = paramsMap_.find(tag);
-    if (iter == paramsMap_.end()) {
-        DHLOGE("Tag not found.");
-        return BufferDataType::UNKNOW;
-    }
-    json paramsJson = json::parse(Media::Plugin::AnyCast<std::string>(paramsMap_[tag]), nullptr, false);
-    if (paramsJson.is_discarded() || !IsUInt32(paramsJson, keyWord)) {
-        DHLOGE("The paramsJson is invalid.");
-        return BufferDataType::UNKNOW;
-    }
-    return static_cast<BufferDataType>(paramsJson[keyWord]);
+    buffer->pts = GetCurrentTime();
+    bufferMeta->SetMeta(Tag::USER_FRAME_NUMBER, frameNumber_.load());
+    DHLOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.", buffer->pts, 
+        buffer->GetMemory()->GetSize(), Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta()));
+    return Status::OK;
 }
 
 Status DscreenInputPlugin::SetCallback(Callback *cb)

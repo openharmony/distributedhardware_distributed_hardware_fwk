@@ -15,36 +15,41 @@
 
 #include "daudio_input_plugin.h"
 
+#include "foundation/utils/constants.h"
+#include "plugin/common/plugin_caps_builder.h"
+
 namespace OHOS {
 namespace DistributedHardware {
 
-std::shared_ptr<DHPlugin> DaudioInputPluginCreator(const std::string& name)
+std::shared_ptr<AvTransInputPlugin> DaudioInputPluginCreator(const std::string& name)
 {
     return std::make_shared<DaudioInputPlugin>(name);
 }
 
 Status DaudioInputRegister(const std::shared_ptr<Register>& reg)
 {
-    DHLOGI("DaudioInputRegister enter.");
-    DHPluginDef definition;
+    DHLOGI("DaudioInputPlugin enter.");
+    AvTransInputPluginDef definition;
     definition.name = "AVTransDaudioInputPlugin";
     definition.description = "Audio transport from daudio service";
     definition.rank = 100;
-    definition.protocol.emplace_back(ProtocolType::STREAM);
-    definition.inputType = SrcInputType::AUD_ES;
     definition.creator = DaudioInputPluginCreator;
-    definition.pluginType = PluginType::DH;
-    // Capability outCaps(MEDIA_MIME_AUDIO_RAW);
-    // outCaps.AppendDiscreteKeys<AudioSampleFormat>(
-    //     Capability::Key::AUDIO_SAMPLE_FORMAT, {OHOS::AudioStandard::AudioSampleFormat::SAMPLE_S16LE});
-    // definition.outCaps.push_back(outCaps);
+    definition.pluginType = PluginType::AVTRANS_INPUT;
+
+    CapabilityBuilder capBuilder;
+    capBuilder.SetMime(OHOS::Media::MEDIA_MIME_AUDIO_RAW);
+    DiscreteCapability<uint32_t> values = {8000, 11025, 12000, 16000,
+        22050, 24000, 32000, 44100, 48000, 64000, 96000};
+    capBuilder.SetAudioSampleRateList(values);
+    definition.outCaps.push_back(capBuilder.Build());
+
     return reg->AddPlugin(definition);
 }
 
 PLUGIN_DEFINITION(AVTransDaudioInput, LicenseType::APACHE_V2, DaudioInputRegister, [] {});
 
 DaudioInputPlugin::DaudioInputPlugin(std::string name)
-    : DHPlugin(std::move(name))
+    : AvTransInputPlugin(std::move(name))
 {
     DHLOGI("DaudioInputPlugin ctor.");
 }
@@ -116,37 +121,13 @@ Status DaudioInputPlugin::PushData(const std::string &inPort, std::shared_ptr<Pl
         return Status::ERROR_INVALID_PARAMETER;
     }
 
-    auto avTransMeta = ReinterpretCastPointer<AVTransAudioBufferMeta>(bufferMeta);
-    TRUE_RETURN_V(avTransMeta == nullptr, Status::ERROR_NULL_POINTER);
-    AddFrameInfo(avTransMeta);
-    buffer->SetBufferMeta(avTransMeta);
-    DHLOGI("AddFrameInfo buffer pts: %d, frameNumber: %d, dataType: %u, bufferLen: %d.",
-        avTransMeta->pts_, avTransMeta->frameNum_, avTransMeta->dataType_, buffer->GetMemory()->GetSize());
-    return Status::OK;
-}
-
-void DaudioInputPlugin::AddFrameInfo(std::shared_ptr<AVTransAudioBufferMeta>& bufferMeta)
-{
-    DHLOGI("AddFrameInfo enter.");
     ++frameNumber_;
-    bufferMeta->frameNum_ = frameNumber_.load();
-    bufferMeta->pts_ = GetCurrentTime();
-    bufferMeta->dataType_ = GetValueFromParams(Tag::MEDIA_DESCRIPTION, AVT_PARAM_BUFFERMETA_DATATYPE);
-}
-
-BufferDataType DaudioInputPlugin::GetValueFromParams(Tag tag, std::string keyWord)
-{
-    auto iter = tagMap_.find(tag);
-    if (iter == tagMap_.end()) {
-        DHLOGE("Tag not found.");
-        return BufferDataType::UNKNOW;
-    }
-    json paramsJson = json::parse(Media::Plugin::AnyCast<std::string>(tagMap_[tag]), nullptr, false);
-    if (paramsJson.is_discarded() || !IsUInt32(paramsJson, keyWord)) {
-        DHLOGE("The paramsJson is invalid.");
-        return BufferDataType::UNKNOW;
-    }
-    return static_cast<BufferDataType>(paramsJson[keyWord]);
+    buffer->pts = GetCurrentTime();
+    bufferMeta->SetMeta(Tag::USER_FRAME_PTS, buffer->pts);
+    bufferMeta->SetMeta(Tag::USER_FRAME_NUMBER, frameNumber_.load());
+    DHLOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.", buffer->pts,
+        buffer->GetMemory()->GetSize(), Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta()));
+    return Status::OK;
 }
 
 Status DaudioInputPlugin::SetCallback(Callback *cb)

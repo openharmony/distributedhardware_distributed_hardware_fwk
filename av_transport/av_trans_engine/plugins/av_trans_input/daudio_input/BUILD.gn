@@ -25,8 +25,6 @@ ohos_shared_library("histreamer_plugin_AVTransDaudioInput") {
     "${histreamer_path}/foundation/utils",
     "${histreamer_path}/plugin/core",
     "${plugin_path}/interface",
-    "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiocommon/include",
-    "//foundation/multimedia/audio_framework/interfaces/inner_api/native/audiorenderer/include",
     "//third_party/json/include",
   ]
 
