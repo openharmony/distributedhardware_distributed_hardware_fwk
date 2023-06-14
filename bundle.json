@@ -7,7 +7,7 @@
   "license": "Apache License 2.0",
   "publishAs": "code-segment",
   "segment": {
-    "destPath": "foundation/distributedhardware/distributed_hardware_fwk/"
+    "destPath": "foundation/distributedhardware/distributed_hardware_fwk"
   },
   "dirs": {},
   "scripts": {},
@@ -42,11 +42,16 @@
         "common",
         "hisysevent_native",
         "ability_runtime",
-        "device_manager"
+        "device_manager",
+        "config_policy",
+        "init",
+        "kv_store",
+        "resource_schedule_service"
       ],
       "third_party": [
         "json",
-        "googletest"
+        "googletest",
+        "openssl"
       ]
     },
     "build": {
