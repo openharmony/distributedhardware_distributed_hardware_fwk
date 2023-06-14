@@ -27,6 +27,7 @@
 #include "av_trans_log.h"
 #include "av_trans_meta.h"
 #include "av_trans_types.h"
+#include "avtrans_input_plugin.h"
 #include "foundation/osal/thread/task.h"
 #include "plugin_types.h"
 #include "plugin_manager.h"
@@ -36,6 +37,26 @@ namespace DistributedHardware {
 
 using namespace Media::Plugin;
 using AVDataCallback = std::function<void(std::shared_ptr<Buffer>)>;
+
+class DscreenInputPlugin : public AvTransInputPlugin {
+public:
+    explicit DscreenInputPlugin(std::string name);
+    ~DscreenInputPlugin();
+
+    Status Init() override;
+    Status Deinit() override;
+    Status Reset() override;
+    Status GetParameter(Tag tag, ValueType &value) override;
+    Status SetParameter(Tag tag, const ValueType &value) override;
+    Status PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset) override;
+    Status SetCallback(Callback *cb) override;
+    Status SetDataCallback(AVDataCallback callback) override;
+
+private:
+    std::atomic<uint32_t> frameNumber_;
+    Media::OSAL::Mutex operationMutes_ {};
+    std::map<Tag, ValueType> paramsMap_;
+};
 
 } // namespace DistributedHardware
 } // namespace OHOS
