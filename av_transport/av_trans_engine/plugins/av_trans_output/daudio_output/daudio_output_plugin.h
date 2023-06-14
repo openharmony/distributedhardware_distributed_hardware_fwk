@@ -80,8 +80,7 @@ private:
     State state_ {State::CREATED};
     Callback *eventcallback_ = nullptr;
     AVDataCallback datacallback_ = nullptr;
-    std::shared_ptr<Ffmpeg::Resample> resample_ {nullptr}
-
+    std::shared_ptr<Ffmpeg::Resample> resample_ {nullptr};
 };
 } // namespace DistributedHardware
 } // namespace OHOS

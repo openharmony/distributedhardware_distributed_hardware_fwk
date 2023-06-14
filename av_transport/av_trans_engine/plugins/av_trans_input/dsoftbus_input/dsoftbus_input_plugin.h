@@ -66,13 +66,13 @@ public:
     Status SetDataCallback(AVDataCallback callback) override;
 
     // interface from ISoftbusChannelListener
-    void OnChannelEvent(const AVTransEvent &event) = 0;
-    void OnStreamReceived(const StreamData *data, const StreamData *ext) = 0;
+    void OnChannelEvent(const AVTransEvent &event) override;
+    void OnStreamReceived(const StreamData *data, const StreamData *ext) override;
 
 private:
     void HandleData();
     void DataEnqueue(std::shared_ptr<Buffer> &buffer);
-    void GetJsonMeta(const std::shared_ptr<Buffer> &buffer, const json &resMsg);
+    void SetBufferMeta(const std::shared_ptr<Buffer> &buffer, const json &resMsg);
     void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &queue);
 
 private:

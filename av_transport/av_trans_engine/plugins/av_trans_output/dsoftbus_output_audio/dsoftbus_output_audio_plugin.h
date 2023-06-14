@@ -46,12 +46,12 @@ using namespace Media::Plugin;
 using json = nlohmann::json;
 using AVDataCallback = std::function<void(std::shared_ptr<Buffer>)>;
 
-class DsoftbusOutputPlugin : public AvTransOutputPlugin,
+class DsoftbusOutputAudioPlugin : public AvTransOutputPlugin,
                              public ISoftbusChannelListener,
-                             public std::enable_shared_from_this<DsoftbusOutputPlugin> {
+                             public std::enable_shared_from_this<DsoftbusOutputAudioPlugin> {
 public:
-    explicit DsoftbusOutputPlugin(std::string name);
-    ~DsoftbusOutputPlugin();
+    explicit DsoftbusOutputAudioPlugin(std::string name);
+    ~DsoftbusOutputAudioPlugin();
 
     Status Init() override;
     Status Deinit() override;
@@ -64,8 +64,10 @@ public:
     Status PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset) override;
     Status SetCallback(Callback *cb) override;
     Status SetDataCallback(AVDataCallback callback) override;
-    Status OnSoftbusChannelOpened(int32_t sessionId, int32_t result);
-    void OnSoftbusChannelClosed(int32_t sessionId);
+
+    // interface from ISoftbusChannelListener
+    void OnChannelEvent(const AVTransEvent &event) override;
+    void OnStreamReceived(const StreamData *data, const StreamData *ext) override;
 
 private:
     Status OpenSoftbusChannel();
@@ -76,6 +78,7 @@ private:
 
 private:
     std::string ownerName_;
+    std::string sessionName_;
     std::string peerDevId_;
     std::condition_variable dataCond_;
     std::mutex dataQueueMtx_;
@@ -85,6 +88,8 @@ private:
     std::map<Tag, ValueType> paramsMap_;
     State state_ {State::CREATED};
     Callback* eventsCb_ = nullptr;
+    uint32_t sampleRate_ {0};
+    uint32_t channels_ {0};
 };
 } // namespace DistributedHardware
 } // namespace OHOS

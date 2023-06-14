@@ -32,7 +32,6 @@ Status DscreenInputRegister(const std::shared_ptr<Register> &reg)
     AvTransInputPluginDef definition;
     definition.name = "AVTransDscreenInputPlugin";
     definition.description = "Video transport from dsrceen service";
-    definition.rank = 100;
     definition.pluginType = PluginType::AVTRANS_INPUT;
     definition.creator = DscreenInputPluginCreator;
 
@@ -114,8 +113,9 @@ Status DscreenInputPlugin::PushData(const std::string& inPort, std::shared_ptr<B
     ++frameNumber_;
     buffer->pts = GetCurrentTime();
     bufferMeta->SetMeta(Tag::USER_FRAME_NUMBER, frameNumber_.load());
-    DHLOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.", buffer->pts, 
-        buffer->GetMemory()->GetSize(), Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta()));
+    DHLOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.",
+        buffer->pts, buffer->GetMemory()->GetSize(),
+        Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER)));
     return Status::OK;
 }
 

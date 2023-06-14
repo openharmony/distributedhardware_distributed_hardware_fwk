@@ -41,6 +41,9 @@ namespace DistributedHardware {
 using namespace OHOS::Media;
 using namespace OHOS::Media::Plugin;
 
+using json = nlohmann::json;
+using AVDataCallback = std::function<void(std::shared_ptr<Plugin::Buffer>)>;
+
 class DscreenOutputPlugin : public Media::Plugin::AvTransOutputPlugin {
 public:
     explicit DscreenOutputPlugin(std::string name);

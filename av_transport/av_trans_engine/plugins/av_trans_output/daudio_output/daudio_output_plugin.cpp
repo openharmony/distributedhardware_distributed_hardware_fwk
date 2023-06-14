@@ -32,7 +32,6 @@ Status DaudioOutputRegister(const std::shared_ptr<Register> &reg)
     AvTransOutputPluginDef definition;
     definition.name = "AVTransDaudioOutputPlugin";
     definition.description = "Send audio playback and frame rate control.";
-    definition.rank = 100;
     definition.creator = DaudioOutputPluginCreator;
     definition.pluginType = PluginType::AVTRANS_OUTPUT;
 
@@ -41,14 +40,14 @@ Status DaudioOutputRegister(const std::shared_ptr<Register> &reg)
     DiscreteCapability<uint32_t> valuesSampleRate = {8000, 11025, 12000, 16000,
         22050, 24000, 32000, 44100, 48000, 64000, 96000};
     capBuilder.SetAudioSampleRateList(valuesSampleRate);
-    DiscreteCapability<AudioSampleFormat> valuesSampleFormat = {AudioSampleFormat::F32P}
+    DiscreteCapability<AudioSampleFormat> valuesSampleFormat = {AudioSampleFormat::F32P};
     capBuilder.SetAudioSampleFormatList(valuesSampleFormat);
     definition.inCaps.push_back(capBuilder.Build());
 
     return reg->AddPlugin(definition);
 }
 
-PLUGIN_DEFINITION(AVTranseDaudioOutput, LicenseType::APACHE_V2, DaudioOutputRegister, [] {});
+PLUGIN_DEFINITION(AVTransDaudioOutput, LicenseType::APACHE_V2, DaudioOutputRegister, [] {});
 
 DaudioOutputPlugin::DaudioOutputPlugin(std::string name)
     : AvTransOutputPlugin(std::move(name))
@@ -90,8 +89,7 @@ Status DaudioOutputPlugin::Prepare()
 
     ValueType channelsValue;
     Status ret = GetParameter(Tag::AUDIO_CHANNELS, channelsValue);
-    if (ret != Status::OK)
-    {
+    if (ret != Status::OK) {
         DHLOGE("Not found AUDIO_CHANNELS");
         return Status::ERROR_UNKNOWN;
     }
@@ -99,18 +97,16 @@ Status DaudioOutputPlugin::Prepare()
 
     ValueType sampleRateValue;
     ret = GetParameter(Tag::AUDIO_SAMPLE_RATE, sampleRateValue);
-    if (ret != Status::OK)
-    {
+    if (ret != Status::OK) {
         DHLOGE("Not found AUDIO_SAMPLE_RATE");
         return Status::ERROR_UNKNOWN;
     }
     uint32_t sampleRate = Plugin::AnyCast<int>(sampleRateValue);
 
     ValueType channelsLayoutValue;
-    ret = GetParameter(Tag::AUDIO_CHANNELS, channelsLayoutValue);
-    if (ret != Status::OK)
-    {
-        DHLOGE("Not found AUDIO_CHANNELS");
+    ret = GetParameter(Tag::AUDIO_CHANNEL_LAYOUT, channelsLayoutValue);
+    if (ret != Status::OK) {
+        DHLOGE("Not found AUDIO_CHANNEL_LAYOUT");
         return Status::ERROR_UNKNOWN;
     }
     uint32_t channelsLayout = Plugin::AnyCast<int>(channelsLayoutValue);
@@ -134,7 +130,7 @@ Status DaudioOutputPlugin::Reset()
     eventcallback_ = nullptr;
     if (sendPlayTask_) {
         sendPlayTask_->Stop();
-        sendPlayTask_.reset(); 
+        sendPlayTask_.reset();
     }
     paramsMap_.clear();
     DataQueueClear(outputBuffer_);
@@ -145,13 +141,10 @@ Status DaudioOutputPlugin::Reset()
 Status DaudioOutputPlugin::GetParameter(Tag tag, ValueType &value)
 {
     DHLOGI("GetParameter enter.");
-    {
-        Media::OSAL::ScopedLock lock(operationMutes_);
-        auto iter = paramsMap_.find(tag);
-        if (iter != paramsMap_.end()) {
-            value = iter->second;
-            return Status::OK;
-        }
+    auto iter = paramsMap_.find(tag);
+    if (iter != paramsMap_.end()) {
+        value = iter->second;
+        return Status::OK;
     }
     return Status::ERROR_NOT_EXISTED;
 }
@@ -186,7 +179,7 @@ Status DaudioOutputPlugin::Stop()
         DHLOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
-    sendPlayTask_->Stop();
+    sendPlayTask_->Pause();
     DataQueueClear(outputBuffer_);
     state_ = State::PREPARED;
     return Status::OK;
@@ -217,7 +210,8 @@ Status DaudioOutputPlugin::SetDataCallback(AVDataCallback callback)
     return Status::OK;
 }
 
-Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
+Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer,
+    int32_t offset)
 {
     DHLOGI("PushData enter.");
     OSAL::ScopedLock lock(operationMutes_);
@@ -256,7 +250,8 @@ void DaudioOutputPlugin::HandleData()
     }
 }
 
-void DaudioOutputPlugin::DataQueueClear(std::queue<std::shared_ptr<Buffer>> &q) {
+void DaudioOutputPlugin::DataQueueClear(std::queue<std::shared_ptr<Buffer>> &q)
+{
     std::queue<std::shared_ptr<Buffer>> empty;
     swap(empty, q);
 }

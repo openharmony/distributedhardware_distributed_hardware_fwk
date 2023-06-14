@@ -45,12 +45,12 @@ using namespace Media::Plugin;
 using json = nlohmann::json;
 using AVDataCallback = std::function<void(std::shared_ptr<Buffer>)>;
 
-class DsoftbusInputPlugin : public AvTransInputPlugin,
+class DsoftbusInputAudioPlugin : public AvTransInputPlugin,
                             public ISoftbusChannelListener,
-                            public std::enable_shared_from_this<DsoftbusInputPlugin> {
+                            public std::enable_shared_from_this<DsoftbusInputAudioPlugin> {
 public:
-    explicit DsoftbusInputPlugin(std::string name);
-    ~DsoftbusInputPlugin();
+    explicit DsoftbusInputAudioPlugin(std::string name);
+    ~DsoftbusInputAudioPlugin();
     
     Status Init() override;
     Status Deinit() override;
@@ -65,13 +65,13 @@ public:
     Status SetDataCallback(AVDataCallback callback) override;
 
     // interface from ISoftbusChannelListener
-    void OnChannelEvent(const AVTransEvent &event) = 0;
-    void OnStreamReceived(const StreamData *data, const StreamData *ext) = 0;
+    void OnChannelEvent(const AVTransEvent &event) override;
+    void OnStreamReceived(const StreamData *data, const StreamData *ext) override;
 
 private:
     void HandleData();
     void DataEnqueue(std::shared_ptr<Buffer> &buffer);
-    void GetJsonMeta(const std::shared_ptr<Buffer> &buffer, const json &resMsg);
+    std::shared_ptr<Buffer> CreateBuffer(uint32_t metaType, const StreamData *data, const json &resMsg);
     void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &queue);
 
 private:

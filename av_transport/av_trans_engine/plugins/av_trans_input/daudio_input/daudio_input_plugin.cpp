@@ -32,7 +32,6 @@ Status DaudioInputRegister(const std::shared_ptr<Register>& reg)
     AvTransInputPluginDef definition;
     definition.name = "AVTransDaudioInputPlugin";
     definition.description = "Audio transport from daudio service";
-    definition.rank = 100;
     definition.creator = DaudioInputPluginCreator;
     definition.pluginType = PluginType::AVTRANS_INPUT;
 
@@ -125,8 +124,9 @@ Status DaudioInputPlugin::PushData(const std::string &inPort, std::shared_ptr<Pl
     buffer->pts = GetCurrentTime();
     bufferMeta->SetMeta(Tag::USER_FRAME_PTS, buffer->pts);
     bufferMeta->SetMeta(Tag::USER_FRAME_NUMBER, frameNumber_.load());
-    DHLOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.", buffer->pts,
-        buffer->GetMemory()->GetSize(), Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta()));
+    DHLOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.",
+        buffer->pts, buffer->GetMemory()->GetSize(),
+        Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER)));
     return Status::OK;
 }
 
