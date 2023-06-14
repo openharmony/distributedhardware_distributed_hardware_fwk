@@ -100,14 +100,23 @@ enum struct AVTransTag : uint32_t {
     PRE_TIMESTAMP,
     CUR_TIMESTAMP,
     ENGINE_READY,
-    AV_SYNC_GROUP_INFO,
+    START_AV_SYNC,
+    STOP_AV_SYNC,
     TIME_SYNC_RESULT,
     SHARED_MEMORY_FD,
 
     /* -------------------- d_audio tag -------------------- */
     AUDIO_CHANNELS = SECTION_D_AUDIO_START + 1,
     AUDIO_SAMPLE_RATE,
+    AUDIO_CODEC_TYPE,
+    AUDIO_CHANNEL_MASK,
     AUDIO_SAMPLE_FORMAT,
+    AUDIO_FRAME_SIZE,
+    AUDIO_STREAM_USAGE,
+    AUDIO_RENDER_FLAGS,
+    AUDIO_CONTENT_TYPE,
+    AUDIO_CHANNEL_LAYOUT,
+    AUDIO_BIT_RATE,
 
     /* -------------------- d_video tag -------------------- */
     VIDEO_WIDTH = SECTION_D_VIDEO_START + 1,
@@ -130,7 +139,8 @@ enum struct EventType : uint32_t {
     EVENT_REMOTE_ERROR = 8,
     EVENT_DATA_RECEIVED = 9,
     EVENT_TIME_SYNC_RESULT = 10,
-    EVENT_NOTIFY_STREAM_INFO = 11,
+    EVENT_ADD_STREAM = 11,
+    EVENT_REMOVE_STREAM = 12,
 };
 
 struct AVTransEvent {

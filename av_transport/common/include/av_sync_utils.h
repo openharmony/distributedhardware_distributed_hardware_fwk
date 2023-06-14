@@ -43,7 +43,7 @@ struct AVSyncClockUnit {
  * @param name    name for the shared memory.
  * @return shared memory struct, include fd, size and name.
  */
-AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name);
+AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t size);
 
 /**
  * @brief close shared memory space.
@@ -67,9 +67,26 @@ int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUni
  */
 int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUnit &clockUnit);
 
+/**
+ * @brief write frame number and pts into the shared memory space.
+ * @param memory       shared memory
+ * @param frameNum     the frame number
+ * @param timestamp    the pts
+ * @return Returns DH_AVT_SUCCESS(0) if successful, otherwise returns other error code.
+ */
+int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frameNum, int64_t timestamp);
+
+/**
+ * @brief read frame number and pts from the shared memory space.
+ * @param memory       shared memory
+ * @param frameNum     the frame number
+ * @param timestamp    the pts
+ * @return Returns DH_AVT_SUCCESS(0) if successful, otherwise returns other error code.
+ */
+int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &frameNum, int64_t &timestamp);
+
 bool IsInValidSharedMemory(const AVTransSharedMemory &memory);
 bool IsInValidClockUnit(const AVSyncClockUnit &clockUnit);
-bool IsInValidUnitIndex(const AVSyncClockUnit &clockUnit);
 
 uint32_t U8ToU32(const uint8_t *ptr);
 uint64_t U8ToU64(const uint8_t *ptr);
