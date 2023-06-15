@@ -39,6 +39,7 @@ using AVBuffer = OHOS::Media::Plugin::Buffer;
 constexpr int32_t MS_ONE_SECOND = 1000;
 
 SrcInputType TransName2InputType(const std::string &ownerName);
+SrcInputType TransName2SoftbusInputType(const std::string &ownerName);
 MediaType TransName2MediaType(const std::string &ownerName);
 
 std::shared_ptr<AVBuffer> TransBuffer2HiSBuffer(const std::shared_ptr<AVTransBuffer> &transBuffer);
@@ -57,6 +58,8 @@ bool IsInt64(const nlohmann::json &jsonObj, const std::string &key);
 bool IsString(const nlohmann::json &jsonObj, const std::string &key);
 
 int64_t GetCurrentTime();
+
+void GenerateAdtsHeader(unsigned char* adtsHeader, int packetLen, int profile, int sampleRate, int channels);
 
 template<typename T, typename U>
 inline std::shared_ptr<T> ReinterpretCastPointer(const std::shared_ptr<U> &ptr) noexcept
