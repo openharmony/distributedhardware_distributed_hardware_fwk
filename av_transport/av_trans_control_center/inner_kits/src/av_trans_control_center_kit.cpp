@@ -89,7 +89,8 @@ int32_t AVTransControlCenterKit::Notify(int32_t engineId, const AVTransEvent &ev
     return ret;
 }
 
-int32_t AVTransControlCenterKit::RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback)
+int32_t AVTransControlCenterKit::RegisterCtlCenterCallback(int32_t engineId,
+    const sptr<IAVTransControlCenterCallback> &callback)
 {
     DHLOGI("Register av control center callback enter.");
 

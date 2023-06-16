@@ -49,7 +49,6 @@ public:
 private:
     void HandleChannelEvent(const AVTransEvent &event);
     void HandleDataReceived(const std::string &content);
-    void HandleTimeSyncResult(const std::string &result);
     bool IsInvalidEngineId(int32_t engineId);
 
 private:

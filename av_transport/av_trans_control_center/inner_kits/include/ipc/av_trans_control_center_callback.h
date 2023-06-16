@@ -32,8 +32,8 @@ public:
     int32_t SetSharedMemory(const AVTransSharedMemory &memory) override;
     int32_t Notify(const AVTransEvent &event) override;
 
-    void SetSenderEngine(const shared_ptr<IAVSenderEngine> &sender);
-    void SetReceiverEngine(const shared_ptr<IAVReceiverEngine> &receiver);
+    void SetSenderEngine(const std::shared_ptr<IAVSenderEngine> &sender);
+    void SetReceiverEngine(const std::shared_ptr<IAVReceiverEngine> &receiver);
 
 private:
     std::weak_ptr<IAVSenderEngine> senderEngine_;

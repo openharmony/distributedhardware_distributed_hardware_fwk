@@ -161,7 +161,8 @@ int32_t AVTransControlCenterProxy::Notify(int32_t engineId, const AVTransEvent& 
     return reply.ReadInt32();
 }
 
-int32_t AVTransControlCenterProxy::RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback)
+int32_t AVTransControlCenterProxy::RegisterCtlCenterCallback(int32_t engineId,
+    const sptr<IAVTransControlCenterCallback> &callback)
 {
     TRUE_RETURN_V_MSG_E((callback == nullptr), ERR_DH_AVT_INVALID_PARAM_VALUE, "av control center callback is null");
 

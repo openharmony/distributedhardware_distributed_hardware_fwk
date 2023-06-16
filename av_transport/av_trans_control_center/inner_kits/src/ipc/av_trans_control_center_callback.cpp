@@ -23,7 +23,8 @@ namespace DistributedHardware {
 int32_t AVTransControlCenterCallback::SetParameter(AVTransTag tag, const std::string &value)
 {
     DHLOGW("AVTransControlCenterCallback::SetParameter enter.");
-    if ((tag == AVTransTag::START_AV_SYNC) || (tag == AVTransTag::STOP_AV_SYNC) || (tag == AVTransTag::TIME_SYNC_RESULT)) {
+    if ((tag == AVTransTag::START_AV_SYNC) || (tag == AVTransTag::STOP_AV_SYNC) ||
+        (tag == AVTransTag::TIME_SYNC_RESULT)) {
         std::shared_ptr<IAVReceiverEngine> rcvEngine = receiverEngine_.lock();
         TRUE_RETURN_V_MSG_E(rcvEngine == nullptr, ERR_DH_AVT_NULL_POINTER, "receiver engine is nullptr.");
         rcvEngine->SetParameter(tag, value);
@@ -35,7 +36,7 @@ int32_t AVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemory 
 {
     DHLOGW("AVTransControlCenterCallback::SetSharedMemory enter.");
 
-    std::shared_ptr<IAVReceiverEngine> sendEngine = senderEngine_.lock();
+    std::shared_ptr<IAVSenderEngine> sendEngine = senderEngine_.lock();
     if (sendEngine != nullptr) {
         sendEngine->SetParameter(AVTransTag::SHARED_MEMORY_FD, MarshalSharedMemory(memory));
     }
@@ -54,13 +55,13 @@ int32_t AVTransControlCenterCallback::Notify(const AVTransEvent& event)
     return DH_AVT_SUCCESS;
 }
 
-void AVTransControlCenterCallback::SetSenderEngine(const shared_ptr<IAVSenderEngine> &sender)
+void AVTransControlCenterCallback::SetSenderEngine(const std::shared_ptr<IAVSenderEngine> &sender)
 {
     TRUE_RETURN(sender == nullptr, "input sender engine is nullptr.");
     senderEngine_ = sender;
 }
 
-void AVTransControlCenterCallback::SetReceiverEngine(const shared_ptr<IAVReceiverEngine> &receiver)
+void AVTransControlCenterCallback::SetReceiverEngine(const std::shared_ptr<IAVReceiverEngine> &receiver)
 {
     TRUE_RETURN(receiver == nullptr, "input receiver engine is nullptr.");
     receiverEngine_ = receiver;

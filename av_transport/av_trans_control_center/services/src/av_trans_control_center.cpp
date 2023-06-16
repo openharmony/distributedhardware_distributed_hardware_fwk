@@ -27,7 +27,7 @@ AVTransControlCenter::AVTransControlCenter()
     DHLOGI("AVTransControlCenter ctor.");
     transRole_ = TransRole::UNKNOWN;
     rootEngineId_.store(BASE_ENGINE_ID);
-    syncManager_ = std::make_shared<AVSyncManager>;
+    syncManager_ = std::make_shared<AVSyncManager>();
 }
 
 AVTransControlCenter::~AVTransControlCenter()
@@ -113,7 +113,8 @@ int32_t AVTransControlCenter::Release(int32_t engineId)
             }
         }
         if (IsDevIdUsedByOthers) {
-            DHLOGI("Control channel is still being used by other engine, peerDevId=%s.", GetAnonyString(peerDevId).c_str());
+            DHLOGI("Control channel is still being used by other engine, peerDevId=%s.",
+                GetAnonyString(peerDevId).c_str());
             return DH_AVT_SUCCESS;
         }
     }
@@ -122,10 +123,11 @@ int32_t AVTransControlCenter::Release(int32_t engineId)
         std::lock_guard<std::mutex> lock(devIdMutex_);
         auto iter = std::find(connectedDevIds_.begin(), connectedDevIds_.end(), peerDevId);
         if (iter == connectedDevIds_.end()) {
-            DHLOGE("Control channel has not been opened successfully for peerDevId=%s.", GetAnonyString(peerDevId).c_str());
+            DHLOGE("Control channel has not been opened successfully for peerDevId=%s.",
+                GetAnonyString(peerDevId).c_str());
             return DH_AVT_SUCCESS;
         } else {
-            connectedDevIds_.erase(peerDevId);
+            connectedDevIds_.erase(iter);
         }
     }
 
@@ -154,12 +156,12 @@ int32_t AVTransControlCenter::CreateControlChannel(int32_t engineId, const std::
     {
         std::lock_guard<std::mutex> lock(devIdMutex_);
         auto iter = std::find(connectedDevIds_.begin(), connectedDevIds_.end(), peerDevId);
-        if (iter == connectedDevIds_.end()) {
+        if (iter != connectedDevIds_.end()) {
             {
                 std::lock_guard<std::mutex> lock(engineIdMutex_);
                 engine2DevIdMap_.insert(std::make_pair(engineId, peerDevId));
             }
-            DHLOGE("AV control center channel has already created for peerDevId=%s.", GetAnonyString(peerDevId).c_str());
+            DHLOGE("AV control center channel has already created, peerDevId=%s.", GetAnonyString(peerDevId).c_str());
             return ERR_DH_AVT_CHANNEL_ALREADY_OPENED;
         }
     }
@@ -195,12 +197,13 @@ int32_t AVTransControlCenter::Notify(int32_t engineId, const AVTransEvent& event
             break;
         }
         default:
-           DHLOGE("Unsupported event type."); 
+            DHLOGE("Unsupported event type.");
     }
     return DH_AVT_SUCCESS;
 }
 
-int32_t AVTransControlCenter::RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback)
+int32_t AVTransControlCenter::RegisterCtlCenterCallback(int32_t engineId,
+    const sptr<IAVTransControlCenterCallback> &callback)
 {
     if (IsInvalidEngineId(engineId)) {
         DHLOGE("Invalid input engine id = %d", engineId);

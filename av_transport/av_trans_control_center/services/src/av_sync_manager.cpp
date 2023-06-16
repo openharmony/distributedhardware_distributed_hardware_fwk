@@ -78,7 +78,8 @@ void AVSyncManager::EnableSenderAVSync()
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         for (auto item : streamInfoList_) {
-            auto avMessage = std::make_shared<AVTransMessage>((uint32_t)AVTransTag::START_AV_SYNC, syncGroupInfo.dump(), item.peerDevId);
+            auto avMessage = std::make_shared<AVTransMessage>((uint32_t)AVTransTag::START_AV_SYNC,
+                syncGroupInfo.dump(), item.peerDevId);
             AVTransControlCenter::GetInstance().SendMessage(avMessage);
         }
     }
@@ -115,7 +116,7 @@ void AVSyncManager::HandleAvSyncMessage(const std::shared_ptr<AVTransMessage> &m
 void AVSyncManager::EnableReceiverAVSync(const std::string &groupInfo)
 {
     size_t size = (sizeof(uint32_t) + sizeof(int64_t)) * MAX_CLOCK_UNIT_COUNT;
-    sinkMemory_ = CreateAVTransSharedMemory("sizeSharedMemory", size);
+    sinkMemory_ = CreateAVTransSharedMemory("sinkSharedMemory", size);
 
     AVTransControlCenter::GetInstance().SetParam2Engines(sinkMemory_);
     AVTransControlCenter::GetInstance().SetParam2Engines(AVTransTag::START_AV_SYNC, groupInfo);
