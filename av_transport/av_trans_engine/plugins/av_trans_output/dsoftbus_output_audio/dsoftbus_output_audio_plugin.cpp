@@ -302,8 +302,21 @@ void DsoftbusOutputAudioPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffe
     DHLOGI("jsonStr->bufLen %zu, jsonStR: %s", jsonStr.length(), jsonStr.c_str());
 
     auto bufferData = buffer->GetMemory();
-    StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*(bufferData->GetReadOnlyData())),
-        bufferData->GetSize()};
+    DHLOGI("bufferData->bufLen %zu", bufferData->GetSize());
+
+    const int32_t headLength = 7;
+    unsigned char adtsHeader[headLength] = {0};
+    int packetLen = output->GetMemory()->GetSize() + headLength;
+    GenerateAdtsHeader(adtsHeader, packetLen, 1, sampleRate_, channels_);
+
+    auto newHisBuffer = std::make_shared<Plugin::Buffer>();
+    newHisBuffer->AllocMemory(nullptr, packetLen);
+    auto bufferMemory = newHisBuffer->GetMemory();
+    bufferMemory->Write(adtsHeader, headLength, 0);
+    bufferMemory->Write(bufferData->GetReadOnluData(), bufferData->GetSize(), headLength);
+
+    StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*(bufferMemory->GetReadOnlyData())),
+        bufferMemory->GetSize()};
     StreamData ext = {const_cast<char *>(jsonStr.c_str()), jsonStr.length()};
     StreamFrameInfo frameInfo = {0};
 
