@@ -71,8 +71,8 @@ public:
 private:
     void HandleData();
     void DataEnqueue(std::shared_ptr<Buffer> &buffer);
-    std::shared_ptr<Buffer> CreateBuffer(uint32_t metaType, const StreamData *data, const json &resMsg);
     void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &queue);
+    std::shared_ptr<Buffer> CreateBuffer(uint32_t metaType, const StreamData *data, const json &resMsg);
 
 private:
     std::string ownerName_;
@@ -90,5 +90,4 @@ private:
 };
 }
 }
-
 #endif // OHOS_AV_TRANS_ENGINE_PLUGINS_OUTPUT_DSOFTBUS_H

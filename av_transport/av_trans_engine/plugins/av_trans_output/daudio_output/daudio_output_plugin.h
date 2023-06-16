@@ -68,6 +68,7 @@ private:
     Status ControlFrameRate(const int64_t timestamp);
     void HandleData();
     void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &q);
+    void RampleInit(uint32_t channels, uint32_t sampleRate, uint32_t channelLayout);
 
 private:
     std::condition_variable dataCond_;

@@ -32,6 +32,7 @@ Status DscreenInputRegister(const std::shared_ptr<Register> &reg)
     AvTransInputPluginDef definition;
     definition.name = "AVTransDscreenInputPlugin";
     definition.description = "Video transport from dsrceen service";
+    definition.rank = PLUGIN_RANK;
     definition.pluginType = PluginType::AVTRANS_INPUT;
     definition.creator = DscreenInputPluginCreator;
 

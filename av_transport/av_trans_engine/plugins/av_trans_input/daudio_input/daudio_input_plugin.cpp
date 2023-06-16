@@ -32,6 +32,7 @@ Status DaudioInputRegister(const std::shared_ptr<Register>& reg)
     AvTransInputPluginDef definition;
     definition.name = "AVTransDaudioInputPlugin";
     definition.description = "Audio transport from daudio service";
+    definition.rank = PLUGIN_RANK;
     definition.creator = DaudioInputPluginCreator;
     definition.pluginType = PluginType::AVTRANS_INPUT;
 
