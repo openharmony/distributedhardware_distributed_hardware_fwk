@@ -28,7 +28,6 @@ std::shared_ptr<AvTransInputPlugin> DaudioInputPluginCreator(const std::string& 
 
 Status DaudioInputRegister(const std::shared_ptr<Register>& reg)
 {
-    DHLOGI("DaudioInputPlugin enter.");
     AvTransInputPluginDef definition;
     definition.name = "AVTransDaudioInputPlugin";
     definition.description = "Audio transport from daudio service";

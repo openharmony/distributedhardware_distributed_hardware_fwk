@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "dsoftbus_output_plugin.h"
+#include "dsoftbus_output_audio_plugin.h"
 
 #include "foundation/utils/constants.h"
 #include "plugin/common/plugin_caps_builder.h"
@@ -29,18 +29,18 @@ Status DsoftbusOutputAudioRegister(const std::shared_ptr<Register> &reg)
 {
     AvTransOutputAudioPluginDef definition;
     definition.name = "AVTransDsoftbusOutputAudioPlugin";
-    definition.description = "Video transport from dsoftbus";
+    definition.description = "Audio transport to dsoftbus";
     definition.rank = PLUGIN_RANK;
-    definition.pluginType = PluginType::AVTRANS_INPUT;
-    definition.creator = DsoftbusInputPluginCreator;
+    definition.pluginType = PluginType::AVTRANS_OUTPUT;
+    definition.creator = DsoftbusOutputPluginCreator;
 
     CapabilityBuilder capBuilder;
-    capBuilder.SetMime(Media::MEDIA_MIME_AUDIO_AAC);
+    capBuilder.SetMime(OHOS::Media::MEDIA_MIME_AUDIO_AAC);
     DiscreteCapability<uint32_t> valuesSampleRate = {8000, 11025, 12000, 16000,
         22050, 24000, 32000, 44100, 48000, 64000, 96000};
     capBuilder.SetAudioSampleRateList(valuesSampleRate);
-    DiscreteCapability<uint32_t> valuesSampleFormat = {AudioSampleFormat::S16};
-    capBuilder.SetAudioSampleRateList(valuesSampleFormat);
+    DiscreteCapability<AudioSampleFormat> valuesSampleFormat = {AudioSampleFormat::S16};
+    capBuilder.SetAudioSampleFormatList(valuesSampleFormat);
     definition.inCaps.push_back(capBuilder.Build());
 
     return reg->AddPlugin(definition);
@@ -82,7 +82,7 @@ Status DsoftbusOutputAudioPlugin::Prepare()
         return Status::ERROR_WRONG_STATE;
     }
 
-    sessionName_ = ownerName_ + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX;
+    sessionName_ = ownerName_ + "_" + SENDER_DATA_SESSION_NAME_SUFFIX;
     int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(ownerName_, sessionName_);
     if (ret != DH_AVT_SUCCESS) {
         DHLOGE("Create Session Server failed ret: %d.", ret);
@@ -93,6 +93,18 @@ Status DsoftbusOutputAudioPlugin::Prepare()
         bufferPopTask_ = std::make_shared<Media::OSAL::Task>("audioBufferQueuePopThread");
         bufferPopTask_->RegisterHandler([this] { FeedChannelData(); });
     }
+
+    ValueType channelsValue;
+    TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_CHANNELS, channelsValue) != Status::OK,
+        Status::ERROR_UNKNOWN, "Not found AUDIO_CHANNELS");
+    channel_ = Plugin::AnyCast<int>(channelsValue);
+
+    ValueType sampleRateValue;
+    TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_SAMPLE_RATE, sampleRateValue) != Status::OK,
+        Status::ERROR_UNKNOWN, "Not found AUDIO_SAMPLE_RATE");
+    sampleRate_ = Plugin::AnyCast<int>(sampleRateValue);
+    DHLOGI("channels = %d, sampleRate = %d.", channels, sampleRate);
+
     state_ = State::PREPARED;
     return Status::OK;
 }
@@ -108,6 +120,7 @@ Status DsoftbusOutputAudioPlugin::Reset()
     }
     DataQueueClear(dataQueue_);
     eventsCb_ = nullptr;
+    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(ownerName_, sessionName_);
     state_ = State::INITIALIZED;
     return Status::OK;
 }
@@ -149,7 +162,7 @@ Status DsoftbusOutputAudioPlugin::Stop()
 Status DsoftbusOutputAudioPlugin::GetParameter(Tag tag, ValueType &value)
 {
     auto res = paramsMap_.find(tag);
-    if (res == paramsMap_.end()) {
+    if (res != paramsMap_.end()) {
         value = res->second;
         return Status::OK;
     }
@@ -185,7 +198,7 @@ Status DsoftbusOutputAudioPlugin::OpenSoftbusChannel()
         DHLOGE("Register channel listener failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
-    std::string peerSessName_ = ownerName_ + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
+    std::string peerSessName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
     ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName_, peerDevId_);
     if (ret != DH_AVT_SUCCESS) {
         DHLOGE("Open softbus channel failed ret: %d.", ret);
@@ -196,44 +209,41 @@ Status DsoftbusOutputAudioPlugin::OpenSoftbusChannel()
 
 void DsoftbusOutputAudioPlugin::CloseSoftbusChannel()
 {
-    int32_t ret = SoftbusChannelAdapter::GetInstance().CloseDataChannel(sessionName_, peerDevId_);
+    int32_t ret = SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     if (ret != DH_AVT_SUCCESS) {
         DHLOGE("Close softbus channle failed ret: %s.", ret);
     }
 }
 
-void DsoftbusOutputAudioPlugin::OnSoftbusChannelClosed(int32_t sessionId)
-{
-    DHLOGI("Session is closed, sessionId: %d.", sessionId);
-    if (eventsCb_ != nullptr) {
-        eventsCb_->OnEvent({PluginEventType::EVENT_CHANNEL_CLOSED});
-    }
-    SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
-}
-
 void DsoftbusOutputAudioPlugin::OnChannelEvent(const AVTransEvent &event)
 {
-    DHLOGI("OnChannelEvent enter, enent type: %d", event.type);
+    DHLOGI("OnChannelEvent enter, event type: %d", event.type);
     if (eventsCb_ == nullptr) {
         DHLOGE("OnChannelEvent failed, event callback is nullptr.");
         return;
     }
     switch (event.type) {
         case EventType::EVENT_CHANNEL_OPENED: {
-            eventsCb_->OnEvent(PluginEventType::EVENT_CHANNEL_OPENED);
+            eventsCb_->OnEvent({PluginEventType::EVENT_CHANNEL_OPENED});
             break;
         }
         case EventType::EVENT_CHANNEL_OPEN_FAIL: {
-            eventsCb_->OnEvent(PluginEventType::EVENT_CHANNEL_OPEN_FAIL);
+            eventsCb_->OnEvent({PluginEventType::EVENT_CHANNEL_OPEN_FAIL});
             break;
         }
         case EventType::EVENT_CHANNEL_CLOSED: {
-            eventsCb_->OnEvent(PluginEventType::EVENT_CHANNEL_CLOSED);
+            eventsCb_->OnEvent({PluginEventType::EVENT_CHANNEL_CLOSED});
             break;
         }
         default:
             DHLOGE("Unsupported event type.");
     }
+}
+
+void DsoftbusOutputAudioPlugin::OnStreamReceived(const StreamData *data, const StreamData *ext)
+{
+    (void)data;
+    (void)ext;
 }
 
 Status DsoftbusOutputAudioPlugin::PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
@@ -281,7 +291,7 @@ void DsoftbusOutputAudioPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffe
     auto bufferMeta = buffer->GetBufferMeta();
     BufferMetaType metaType = bufferMeta->GetType();
     jsonObj[AVT_DATA_META_TYPE] = metaType;
-    if (metaType != BufferMetaType::VIDEO) {
+    if (metaType != BufferMetaType::AUDIO) {
         DHLOGE("metaType is wrong");
         return;
     }
@@ -289,14 +299,14 @@ void DsoftbusOutputAudioPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffe
     if (!buffer->GetBufferMeta()->IsExist(Tag::USER_FRAME_NUMBER)) {
         hisAMeta->frameNum_ = DEFAULT_FRAME_NUMBER;
     } else {
-        hisAMeta->frameNum_ = Plugin::AnyCats<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER));
+        hisAMeta->frameNum_ = Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER));
     }
     if (!buffer->GetBufferMeta()->IsExist(Tag::USER_FRAME_PTS)) {
         hisAMeta->pts_ = DEFAULT_PTS;
     } else {
-        hisAMeta->pts_ = Plugin::AnyCats<int64_t>buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_PTS);
+        hisAMeta->pts_ = Plugin::AnyCast<int64_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_PTS));
     }
-    jsonObj[AVT_DATA_PARAM] = hisAMeta->MarshalVideoMeta();
+    jsonObj[AVT_DATA_PARAM] = hisAMeta->MarshalAudioMeta();
 
     std::string jsonStr = jsonObj.dump();
     DHLOGI("jsonStr->bufLen %zu, jsonStR: %s", jsonStr.length(), jsonStr.c_str());
@@ -306,19 +316,18 @@ void DsoftbusOutputAudioPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffe
 
     const int32_t headLength = 7;
     unsigned char adtsHeader[headLength] = {0};
-    int packetLen = output->GetMemory()->GetSize() + headLength;
+    int packetLen = bufferData->GetSize() + headLength;
     GenerateAdtsHeader(adtsHeader, packetLen, 1, sampleRate_, channels_);
 
     auto newHisBuffer = std::make_shared<Plugin::Buffer>();
     newHisBuffer->AllocMemory(nullptr, packetLen);
     auto bufferMemory = newHisBuffer->GetMemory();
     bufferMemory->Write(adtsHeader, headLength, 0);
-    bufferMemory->Write(bufferData->GetReadOnluData(), bufferData->GetSize(), headLength);
+    bufferMemory->Write(bufferData->GetReadOnlyData(), bufferData->GetSize(), headLength);
 
-    StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*(bufferMemory->GetReadOnlyData())),
+    StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*>(bufferMemory->GetReadOnlyData())),
         bufferMemory->GetSize()};
     StreamData ext = {const_cast<char *>(jsonStr.c_str()), jsonStr.length()};
-    StreamFrameInfo frameInfo = {0};
 
     int32_t ret = SoftbusChannelAdapter::GetInstance().SendStreamData(sessionName_, peerDevId_, &data, &ext);
     if (ret != DH_AVT_SUCCESS) {

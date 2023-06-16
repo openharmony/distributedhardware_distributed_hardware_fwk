@@ -76,7 +76,7 @@ Status DaudioOutputPlugin::Deinit()
 
 void DaudioOutputPlugin::RampleInit(uint32_t channels, uint32_t sampleRate, uint32_t channelLayout)
 {
-    resample = std::make_shard<Ffmpeg::Resample>();
+    resample_ = std::make_shared<Ffmpeg::Resample>();
     Ffmpeg::ResamplePara resamplePara {
         channels, // channels_
         sampleRate, // sampleRate_
@@ -137,6 +137,9 @@ Status DaudioOutputPlugin::Reset()
     if (sendPlayTask_) {
         sendPlayTask_->Stop();
         sendPlayTask_.reset();
+    }
+    if (resample_) {
+        resample_.reset();
     }
     paramsMap_.clear();
     DataQueueClear(outputBuffer_);
@@ -220,10 +223,10 @@ Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<P
     uint32_t frameNumber = 1;
     int64_t pts = 2;
     if (buffer->GetBufferMeta()->IsExist(Tag::USER_FRAME_NUMBER)) {
-        frameNumber = Plugin::AnyCats<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER));
+        frameNumber = Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER));
     }
     if (buffer->GetBufferMeta()->IsExist(Tag::USER_FRAME_PTS)) {
-        pts = Plugin::AnyCats<int64_t>buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_PTS);
+        pts = Plugin::AnyCast<int64_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_PTS));
     }
     DHLOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", pts, buffer->GetMemory()->GetSize(), frameNumber);
 
@@ -238,7 +241,8 @@ Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<P
 
     auto finalBufferMeta = buffer->GetBufferMeta()->Clone();
     auto mem = buffer->GetMemory();
-    auto destBuffer = mem->GetReadOnlyData();
+    auto srcBuffer = mem->GetReadOnlyData();
+    auto destBuffer = const_cast<uint8_t*>(srcBuffer);
     auto srcLength = mem->GetSize();
     auto destLength = srcLength;
     if (resample_) {
@@ -246,9 +250,9 @@ Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<P
             DHLOGE("Resample convert failed.");
         }
     }
-    auto finalBuffer = Buffer::CreateDafaultBuffer(BufferMetaType::AUDIO, destLength);
+    auto finalBuffer = Buffer::CreateDefaultBuffer(BufferMetaType::AUDIO, destLength);
     auto bufData = finalBuffer->GetMemory();
-    auto writeSize = bufData->write(reinterpret_cast<const uint_8 *>(destBuffer), destLength, 0);
+    auto writeSize = bufData->Write(reinterpret_cast<const uint8_t *>(destBuffer), destLength, 0);
     if (static_cast<ssize_t>(writeSize) != destLength) {
         DHLOGE("Write buffer data failed.");
         return Status::ERROR_NULL_POINTER;

@@ -85,7 +85,7 @@ Status DsoftbusInputPlugin::Prepare()
         return Status::ERROR_WRONG_STATE;
     }
 
-    sessionName_ = ownerName_ + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
+    sessionName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
     int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(ownerName_, sessionName_);
     if (ret != DH_AVT_SUCCESS) {
         DHLOGE("Create Session Server failed ret: %d.", ret);
@@ -193,22 +193,22 @@ Status DsoftbusInputPlugin::SetDataCallback(AVDataCallback callback)
 
 void DsoftbusInputPlugin::OnChannelEvent(const AVTransEvent &event)
 {
-    DHLOGI("OnChannelEvent enter, enent type: %d", event.type);
+    DHLOGI("OnChannelEvent enter, event type: %d", event.type);
     if (eventsCb_ == nullptr) {
         DHLOGE("OnChannelEvent failed, event callback is nullptr.");
         return;
     }
     switch (event.type) {
         case EventType::EVENT_CHANNEL_OPENED: {
-            eventsCb_->OnEvent(PluginEventType::EVENT_CHANNEL_OPENED);
+            eventsCb_->OnEvent({PluginEventType::EVENT_CHANNEL_OPENED});
             break;
         }
         case EventType::EVENT_CHANNEL_OPEN_FAIL: {
-            eventsCb_->OnEvent(PluginEventType::EVENT_CHANNEL_OPEN_FAIL);
+            eventsCb_->OnEvent({PluginEventType::EVENT_CHANNEL_OPEN_FAIL});
             break;
         }
         case EventType::EVENT_CHANNEL_CLOSED: {
-            eventsCb_->OnEvent(PluginEventType::EVENT_CHANNEL_CLOSED);
+            eventsCb_->OnEvent({PluginEventType::EVENT_CHANNEL_CLOSED});
             break;
         }
         default:
@@ -216,9 +216,9 @@ void DsoftbusInputPlugin::OnChannelEvent(const AVTransEvent &event)
     }
 }
 
-void DsoftbusInputPlugin::OnStreamDataReceived(const StreamData *data, const StreamData *ext)
+void DsoftbusInputPlugin::OnStreamReceived(const StreamData *data, const StreamData *ext)
 {
-    std::string message(reinterpret_cast<const char *>(ext), ext->bufLen);
+    std::string message(reinterpret_cast<const char *>(ext->buf), ext->bufLen);
     DHLOGI("Receive message : %s", message.c_str());
 
     json resMsg = json::parse(message, nullptr, false);
@@ -231,7 +231,8 @@ void DsoftbusInputPlugin::OnStreamDataReceived(const StreamData *data, const Str
     DataEnqueue(buffer);
 }
 
-std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType, const StreamData *data, const json &resMsg)
+std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
+    const StreamData *data, const json &resMsg)
 {
     auto buffer = Buffer::CreateDefaultBuffer(static_cast<BufferMetaType>(metaType), data->bufLen);
     auto bufData = buffer->GetMemory();

@@ -31,10 +31,10 @@ Status DsoftbusOutputRegister(const std::shared_ptr<Register> &reg)
     for (int i = 0; i < capNum; i++) {
         AvTransOutputPluginDef definition;
         definition.name = "AVTransDsoftbusOutputPlugin_H264";
-        definition.description = "Video transport from dsoftbus";
+        definition.description = "Video transport to dsoftbus";
         definition.rank = PLUGIN_RANK;
-        definition.pluginType = PluginType::AVTRANS_INPUT;
-        definition.creator = DsoftbusInputPluginCreator;
+        definition.pluginType = PluginType::AVTRANS_OUTPUT;
+        definition.creator = DsoftbusOutputPluginCreator;
 
         CapabilityBuilder capBuilder;
         capBuilder.SetMime(Media::MEDIA_MIME_VIDEO_H264);
@@ -84,7 +84,7 @@ Status DsoftbusOutputPlugin::Prepare()
         return Status::ERROR_WRONG_STATE;
     }
 
-    sessionName_ = ownerName_ + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX;
+    sessionName_ = ownerName_ + "_" + SENDER_DATA_SESSION_NAME_SUFFIX;
     int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(ownerName_, sessionName_);
     if (ret != DH_AVT_SUCCESS) {
         DHLOGE("Create Session Server failed ret: %d.", ret);
@@ -110,6 +110,7 @@ Status DsoftbusOutputPlugin::Reset()
     }
     DataQueueClear(dataQueue_);
     eventsCb_ = nullptr;
+    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(ownerName_, sessionName_);
     state_ = State::INITIALIZED;
     return Status::OK;
 }
@@ -187,7 +188,7 @@ Status DsoftbusOutputPlugin::OpenSoftbusChannel()
         DHLOGE("Register channel listener failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
-    std::string peerSessName_ = ownerName_ + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
+    std::string peerSessName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
     ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName_, peerDevId_);
     if (ret != DH_AVT_SUCCESS) {
         DHLOGE("Open softbus channel failed ret: %d.", ret);
@@ -198,44 +199,41 @@ Status DsoftbusOutputPlugin::OpenSoftbusChannel()
 
 void DsoftbusOutputPlugin::CloseSoftbusChannel()
 {
-    int32_t ret = SoftbusChannelAdapter::GetInstance().CloseDataChannel(sessionName_, peerDevId_);
+    int32_t ret = SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     if (ret != DH_AVT_SUCCESS) {
         DHLOGE("Close softbus channle failed ret: %s.", ret);
     }
 }
 
-void DsoftbusOutputPlugin::OnSoftbusChannelClosed(int32_t sessionId)
-{
-    DHLOGI("Session is closed, sessionId: %d.", sessionId);
-    if (eventsCb_ != nullptr) {
-        eventsCb_->OnEvent({PluginEventType::EVENT_CHANNEL_CLOSED});
-    }
-    SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
-}
-
 void DsoftbusOutputPlugin::OnChannelEvent(const AVTransEvent &event)
 {
-    DHLOGI("OnChannelEvent enter, enent type: %d", event.type);
+    DHLOGI("OnChannelEvent enter, event type: %d", event.type);
     if (eventsCb_ == nullptr) {
         DHLOGE("OnChannelEvent failed, event callback is nullptr.");
         return;
     }
     switch (event.type) {
         case EventType::EVENT_CHANNEL_OPENED: {
-            eventsCb_->OnEvent(PluginEventType::EVENT_CHANNEL_OPENED);
+            eventsCb_->OnEvent({PluginEventType::EVENT_CHANNEL_OPENED});
             break;
         }
         case EventType::EVENT_CHANNEL_OPEN_FAIL: {
-            eventsCb_->OnEvent(PluginEventType::EVENT_CHANNEL_OPEN_FAIL);
+            eventsCb_->OnEvent({PluginEventType::EVENT_CHANNEL_OPEN_FAIL});
             break;
         }
         case EventType::EVENT_CHANNEL_CLOSED: {
-            eventsCb_->OnEvent(PluginEventType::EVENT_CHANNEL_CLOSED);
+            eventsCb_->OnEvent({PluginEventType::EVENT_CHANNEL_CLOSED});
             break;
         }
         default:
             DHLOGE("Unsupported event type.");
     }
+}
+
+void DsoftbusOutputPlugin::OnStreamReceived(const StreamData *data, const StreamData *ext)
+{
+    (void)data;
+    (void)ext;
 }
 
 Status DsoftbusOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
@@ -298,7 +296,7 @@ void DsoftbusOutputPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffer)
     DHLOGI("jsonStr->bufLen %zu, jsonStR: %s", jsonStr.length(), jsonStr.c_str());
 
     auto bufferData = buffer->GetMemory();
-    StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*(bufferData->GetReadOnlyData())),
+    StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*>(bufferData->GetReadOnlyData())),
         bufferData->GetSize()};
     StreamData ext = {const_cast<char *>(jsonStr.c_str()), jsonStr.length()};
     StreamFrameInfo frameInfo = {0};
