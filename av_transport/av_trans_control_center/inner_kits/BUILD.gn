@@ -12,8 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
+import("//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
 
 ohos_shared_library("avtranscenter_sdk") {
   include_dirs = [
