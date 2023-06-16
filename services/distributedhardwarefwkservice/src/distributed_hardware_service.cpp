@@ -23,6 +23,7 @@
 #include "system_ability_definition.h"
 
 #include "access_manager.h"
+#include "av_trans_control_center.h"
 #include "dh_utils_hisysevent.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -109,10 +110,35 @@ int32_t DistributedHardwareService::PublishMessage(const DHTopic topic, const st
     return DH_FWK_SUCCESS;
 }
 
+int32_t DistributedHardwareService::Initialize(const TransRole &transRole, int32_t &engineId)
+{
+    return AVTransControlCenter::GetInstance().Initialize(transRole, engineId);
+}
+
+int32_t DistributedHardwareService::Release(int32_t engineId)
+{
+    return AVTransControlCenter::GetInstance().Release(engineId);
+}
+
+int32_t DistributedHardwareService::CreateControlChannel(int32_t engineId, const std::string &peerDevId)
+{
+    return AVTransControlCenter::GetInstance().CreateControlChannel(engineId, peerDevId);
+}
+
+int32_t DistributedHardwareService::Notify(int32_t engineId, const AVTransEvent &event)
+{
+    return AVTransControlCenter::GetInstance().Notify(engineId, event);
+}
+
+int32_t DistributedHardwareService::RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback)
+{
+    return AVTransControlCenter::GetInstance().RegisterCtlCenterCallback(engineId, callback);
+}
+
 int DistributedHardwareService::Dump(int32_t fd, const std::vector<std::u16string>& args)
 {
     DHLOGI("DistributedHardwareService  Dump.");
-    
+
     std::vector<std::string> argsStr {};
     for (auto item : args) {
         argsStr.emplace_back(Str16ToStr8(item));

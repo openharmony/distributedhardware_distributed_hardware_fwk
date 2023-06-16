@@ -24,7 +24,12 @@ namespace DistributedHardware {
 enum class DHMsgInterfaceCode : uint32_t {
     REG_PUBLISHER_LISTNER = 1,
     UNREG_PUBLISHER_LISTENER = 2,
-    PUBLISH_MESSAGE = 3
+    PUBLISH_MESSAGE = 3,
+    INIT_CTL_CEN = 4,
+    RELEASE_CTL_CEN = 5,
+    CREATE_CTL_CEN_CHANNEL = 6,
+    NOTIFY_AV_EVENT = 7,
+    REGISTER_CTL_CEN_CALLBACK = 8
 };
 } // namespace DistributedHardware
 } // namespace OHOS

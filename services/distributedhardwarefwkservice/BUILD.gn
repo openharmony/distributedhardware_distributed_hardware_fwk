@@ -20,6 +20,10 @@ ohos_shared_library("distributedhardwarefwksvr") {
   include_dirs = [
     "include",
     "include/accessmanager",
+    "${av_trans_ctl_center_svc_path}/include",
+    "${av_trans_ctl_center_svc_path}/include/ipc",
+    "${av_trans_path}/common/include",
+    "${av_trans_path}/interface",
     "${common_path}/log/include",
     "${common_path}/utils/include",
     "${utils_path}/include/log",
@@ -78,6 +82,11 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/utils/dh_context.cpp",
     "src/utils/dh_timer.cpp",
     "src/versionmanager/version_manager.cpp",
+    "${av_trans_ctl_center_svc_path}/src/av_sync_manager.cpp",
+    "${av_trans_ctl_center_svc_path}/src/av_trans_control_center.cpp",
+    "${av_trans_ctl_center_svc_path}/src/ipc/av_trans_control_center_callback_proxy.cpp",
+    "${av_trans_path}/common/src/av_sync_utils.cpp",
+    "${av_trans_path}/common/src/softbus_channel_adapter.cpp",
   ]
 
   deps = [ "${utils_path}:distributedhardwareutils" ]
@@ -96,9 +105,11 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "c_utils:utils",
     "config_policy:configpolicy_util",
     "device_manager:devicemanagersdk",
+    "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
+    "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
     "ipc:ipc_core",
     "kv_store:distributeddata_inner",

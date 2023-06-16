@@ -45,6 +45,21 @@ int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &d
         case static_cast<uint32_t>(DHMsgInterfaceCode::PUBLISH_MESSAGE): {
             return PublishMessageInner(data, reply);
         }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::INIT_CTL_CEN): {
+            return InitializeInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::RELEASE_CTL_CEN): {
+            return ReleaseInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::CREATE_CTL_CEN_CHANNEL): {
+            return CreateControlChannelInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_AV_EVENT): {
+            return NotifyInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::REGISTER_CTL_CEN_CALLBACK): {
+            return RegisterControlCenterCallbackInner(data, reply);
+        }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
@@ -109,6 +124,76 @@ int32_t DistributedHardwareStub::PublishMessageInner(MessageParcel &data, Messag
     DHLOGI("Publish message, topic: %" PRIu32, (uint32_t)topic);
     PublishMessage(topic, message);
     reply.WriteInt32(DH_FWK_SUCCESS);
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::InitializeInner(MessageParcel &data, MessageParcel &reply)
+{
+	TransRole transRole = (TransRole)(data.ReadUint32());
+    int32_t engineId = 0;
+    int32_t ret = Initialize(transRole, engineId);
+    if (!reply.WriteInt32(engineId)) {
+        DHLOGE("Write engine id failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::ReleaseInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t engineId = data.ReadInt32();
+    int32_t ret = Release(engineId);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::CreateControlChannelInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t engineId = data.ReadInt32();
+    std::string peerDevId = data.ReadString();
+    int32_t ret = CreateControlChannel(engineId, peerDevId);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::NotifyInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t engineId = data.ReadInt32();
+    uint32_t type = data.ReadUint32();
+    std::string content = data.ReadString();
+    std::string peerDevId = data.ReadString();
+    int32_t ret = Notify(engineId, AVTransEvent{ (EventType)type, content, peerDevId });
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::RegisterControlCenterCallbackInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t engineId = data.ReadInt32();
+    sptr<IAVTransControlCenterCallback> callback = iface_cast<IAVTransControlCenterCallback>(data.ReadRemoteObject());
+    if (callback == nullptr) {
+        DHLOGE("Input av control center callback is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    int32_t ret = RegisterCtlCenterCallback(engineId, callback);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
     return DH_FWK_SUCCESS;
 }
 

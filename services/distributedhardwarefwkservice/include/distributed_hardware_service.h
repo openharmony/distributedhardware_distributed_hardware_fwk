@@ -39,6 +39,12 @@ public:
     int32_t PublishMessage(const DHTopic topic, const std::string &msg) override;
     int Dump(int32_t fd, const std::vector<std::u16string>& args) override;
 
+    int32_t Initialize(const TransRole &transRole, int32_t &engineId) override;
+    int32_t Release(int32_t engineId) override;
+    int32_t CreateControlChannel(const std::string &peerDevId) override;
+    int32_t Notify(const AVTransEvent &event) override;
+    int32_t RegisterCtlCenterCallback(const sptr<IAVTransControlCenterCallback> &callback) override;
+
 protected:
     void OnStart() override;
     void OnStop() override;
