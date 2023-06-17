@@ -17,6 +17,7 @@ import(
 
 ohos_shared_library("libdhfwk_sdk") {
   include_dirs = [
+    "${av_trans_path}/common/include",
     "${innerkits_path}/include",
     "${innerkits_path}/include/ipc",
     "${common_path}/log/include",

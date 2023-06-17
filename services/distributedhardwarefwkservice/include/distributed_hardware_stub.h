@@ -30,6 +30,13 @@ private:
     int32_t RegisterPublisherListenerInner(MessageParcel &data, MessageParcel &reply);
     int32_t UnregisterPublisherListenerInner(MessageParcel &data, MessageParcel &reply);
     int32_t PublishMessageInner(MessageParcel &data, MessageParcel &reply);
+
+    int32_t InitializeInner(MessageParcel &data, MessageParcel &reply);
+    int32_t ReleaseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t CreateControlChannelInner(MessageParcel &data, MessageParcel &reply);
+    int32_t NotifyInner(MessageParcel &data, MessageParcel &reply);
+    int32_t RegisterControlCenterCallbackInner(MessageParcel &data, MessageParcel &reply);
+
     bool ValidTopic(uint32_t topic);
 };
 } // namespace DistributedHardware

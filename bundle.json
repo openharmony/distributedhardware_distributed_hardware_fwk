@@ -46,7 +46,8 @@
         "config_policy",
         "init",
         "kv_store",
-        "resource_schedule_service"
+        "resource_schedule_service",
+        "multimedia_histreamer"
       ],
       "third_party": [
         "json",

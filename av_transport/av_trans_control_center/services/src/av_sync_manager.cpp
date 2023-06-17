@@ -79,7 +79,7 @@ void AVSyncManager::EnableSenderAVSync()
         std::lock_guard<std::mutex> lock(listMutex_);
         for (auto item : streamInfoList_) {
             auto avMessage = std::make_shared<AVTransMessage>((uint32_t)AVTransTag::START_AV_SYNC,
-                syncGroupInfo.dump(), item.peerDevId);
+                syncGroupInfo, item.peerDevId);
             AVTransControlCenter::GetInstance().SendMessage(avMessage);
         }
     }
