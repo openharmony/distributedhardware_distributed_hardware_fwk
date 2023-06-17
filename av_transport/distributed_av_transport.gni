@@ -11,7 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-distributedhardwarefwk_path = "//foundation/distributedhardware/distributed_hardware_fwk"
+distributedhardwarefwk_path =
+    "//foundation/distributedhardware/distributed_hardware_fwk"
 
 distributed_av_transport_path = "${distributedhardwarefwk_path}/av_transport"
 
