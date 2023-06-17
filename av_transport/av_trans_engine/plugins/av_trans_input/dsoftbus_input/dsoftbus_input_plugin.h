@@ -72,8 +72,8 @@ public:
 private:
     void HandleData();
     void DataEnqueue(std::shared_ptr<Buffer> &buffer);
-    void SetBufferMeta(const std::shared_ptr<Buffer> &buffer, const json &resMsg);
     void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &queue);
+    std::shared_ptr<Buffer> CreateBuffer(uint32_t metaType, const StreamData *data, const json &resMsg);
 
 private:
     std::string ownerName_;

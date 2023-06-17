@@ -53,6 +53,7 @@ ohos_shared_library("histreamer_plugin_AVTransDsoftbusOutput") {
 
   relative_install_dir = "media/histreamer_plugins"
 
-  subsystem_name = "distributedhardware"
-  part_name = "distributed_hardware_fwk"
+  subsystem_name = "multimedia"
+
+  part_name = "histreamer"
 }

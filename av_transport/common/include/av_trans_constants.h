@@ -29,6 +29,7 @@ const int32_t INVALID_ENGINE_ID = -1;
 const int32_t INVALID_SESSION_ID = -1;
 const int32_t SESSION_WAIT_SECONDS = 5;
 const int32_t INTERCERT_STRING_LENGTH = 20;
+const int32_t PLUGIN_RANK = 100;
 
 const uint32_t VIDEO_H264_LEVEL = 32;
 const uint32_t MAX_DEVICE_ID_LEN = 100;
@@ -36,6 +37,11 @@ const uint32_t MAX_SESSION_NAME_LEN = 100;
 const uint32_t MAX_MESSAGES_LEN = 40 * 1024 * 1024;
 const uint32_t DSOFTBUS_INPUT_MAX_RECV_EXT_LEN = 104857600;
 const uint32_t DSOFTBUS_INPUT_MAX_RECV_DATA_LEN = 104857600;
+const uint32_t DEFAULT_FRAME_NUMBER = 100;
+const uint32_t AUDIO_CHANNEL_LAYOUT_MONO = 1;
+const uint32_t AUDIO_CHANNEL_LAYOUT_STEREO = 2;
+
+const int64_t DEFAULT_PTS = 100;
 
 const std::string EMPTY_STRING = "";
 const std::string DH_LOG_TITLE_TAG = "DH_AV_TRANS";

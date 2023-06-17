@@ -50,7 +50,7 @@ ohos_shared_library("histreamer_plugin_AVTransDaudioInput") {
 
   relative_install_dir = "media/histreamer_plugins"
 
-  subsystem_name = "distributedhardware"
+  subsystem_name = "multimedia"
 
-  part_name = "distributed_hardware_fwk"
+  part_name = "histreamer"
 }

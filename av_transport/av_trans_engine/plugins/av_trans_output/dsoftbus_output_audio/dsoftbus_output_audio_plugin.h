@@ -71,7 +71,7 @@ public:
 
 private:
     Status OpenSoftbusChannel();
-    Status SendDataToSoftbus(std::shared_ptr<Buffer> &buffer);
+    void SendDataToSoftbus(std::shared_ptr<Buffer> &buffer);
     void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &queue);
     void CloseSoftbusChannel();
     void FeedChannelData();

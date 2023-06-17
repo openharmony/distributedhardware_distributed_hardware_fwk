@@ -21,7 +21,6 @@
 #include <memory>
 #include <mutex>
 
-#include "audio_renderer.h"
 #include "av_trans_buffer.h"
 #include "av_trans_constants.h"
 #include "av_trans_log.h"
