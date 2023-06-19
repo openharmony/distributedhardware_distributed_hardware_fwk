@@ -28,7 +28,7 @@ std::shared_ptr<AvTransInputPlugin> DaudioInputPluginCreator(const std::string& 
 
 Status DaudioInputRegister(const std::shared_ptr<Register>& reg)
 {
-    AVTRANS_LOGI("DaudioInputPlugin enter.");
+    DHLOGI("DaudioInputPlugin enter.");
     AvTransInputPluginDef definition;
     definition.name = "AVTransDaudioInputPlugin";
     definition.description = "Audio transport from daudio service";
@@ -50,30 +50,30 @@ PLUGIN_DEFINITION(AVTransDaudioInput, LicenseType::APACHE_V2, DaudioInputRegiste
 DaudioInputPlugin::DaudioInputPlugin(std::string name)
     : AvTransInputPlugin(std::move(name))
 {
-    AVTRANS_LOGI("DaudioInputPlugin ctor.");
+    DHLOGI("DaudioInputPlugin ctor.");
 }
 
 DaudioInputPlugin::~DaudioInputPlugin()
 {
-    AVTRANS_LOGI("DaudioInputPlugin dtor.");
+    DHLOGI("DaudioInputPlugin dtor.");
 }
 
 Status DaudioInputPlugin::Init()
 {
-    AVTRANS_LOGI("Init enter.");
+    DHLOGI("Init enter.");
     frameNumber_.store(0);
     return Status::OK;
 }
 
 Status DaudioInputPlugin::Deinit()
 {
-    AVTRANS_LOGI("Deinit enter.");
+    DHLOGI("Deinit enter.");
     return Reset();
 }
 
 Status DaudioInputPlugin::Reset()
 {
-    AVTRANS_LOGI("Reset enter.");
+    DHLOGI("Reset enter.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     tagMap_.clear();
     frameNumber_.store(0);
@@ -82,7 +82,7 @@ Status DaudioInputPlugin::Reset()
 
 Status DaudioInputPlugin::GetParameter(Tag tag, ValueType &value)
 {
-    AVTRANS_LOGI("GetParameter enter.");
+    DHLOGI("GetParameter enter.");
     {
         Media::OSAL::ScopedLock lock(operationMutes_);
         auto iter = tagMap_.find(tag);
@@ -96,7 +96,7 @@ Status DaudioInputPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DaudioInputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
-    AVTRANS_LOGI("SetParameter enter.");
+    DHLOGI("SetParameter enter.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     tagMap_.insert(std::make_pair(tag, value));
     return Status::OK;
@@ -104,19 +104,19 @@ Status DaudioInputPlugin::SetParameter(Tag tag, const ValueType &value)
 
 Status DaudioInputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
-    AVTRANS_LOGI("PushData enter.");
+    DHLOGI("PushData enter.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     TRUE_RETURN_V(buffer == nullptr, Status::ERROR_NULL_POINTER);
 
     if (buffer->IsEmpty()) {
-        AVTRANS_LOGE("bufferData is Empty.");
+        DHLOGE("bufferData is Empty.");
         return Status::ERROR_INVALID_PARAMETER;
     }
 
     auto bufferMeta = buffer->GetBufferMeta();
     TRUE_RETURN_V(bufferMeta == nullptr, Status::ERROR_NULL_POINTER);
     if (bufferMeta->GetType() != BufferMetaType::AUDIO) {
-        AVTRANS_LOGE("bufferMeta is wrong.");
+        DHLOGE("bufferMeta is wrong.");
         return Status::ERROR_INVALID_PARAMETER;
     }
 
@@ -124,7 +124,7 @@ Status DaudioInputPlugin::PushData(const std::string &inPort, std::shared_ptr<Pl
     buffer->pts = GetCurrentTime();
     bufferMeta->SetMeta(Tag::USER_FRAME_PTS, buffer->pts);
     bufferMeta->SetMeta(Tag::USER_FRAME_NUMBER, frameNumber_.load());
-    AVTRANS_LOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.",
+    DHLOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.",
         buffer->pts, buffer->GetMemory()->GetSize(),
         Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER)));
     return Status::OK;
@@ -132,14 +132,14 @@ Status DaudioInputPlugin::PushData(const std::string &inPort, std::shared_ptr<Pl
 
 Status DaudioInputPlugin::SetCallback(Callback *cb)
 {
-    AVTRANS_LOGI("SetCallback enter.");
+    DHLOGI("SetCallback enter.");
     (void)cb;
     return Status::OK;
 }
 
 Status DaudioInputPlugin::SetDataCallback(AVDataCallback callback)
 {
-    AVTRANS_LOGI("SetDataCallback enter.");
+    DHLOGI("SetDataCallback enter.");
     (void)callback;
     return Status::OK;
 }

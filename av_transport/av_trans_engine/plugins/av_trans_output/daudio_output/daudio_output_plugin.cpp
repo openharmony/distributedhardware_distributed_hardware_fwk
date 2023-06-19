@@ -28,7 +28,7 @@ std::shared_ptr<AvTransOutputPlugin> DaudioOutputPluginCreator(const std::string
 
 Status DaudioOutputRegister(const std::shared_ptr<Register> &reg)
 {
-    AVTRANS_LOGI("DaudioOutputRegister enter.");
+    DHLOGI("DaudioOutputRegister enter.");
     AvTransOutputPluginDef definition;
     definition.name = "AVTransDaudioOutputPlugin";
     definition.description = "Send audio playback and frame rate control.";
@@ -52,17 +52,17 @@ PLUGIN_DEFINITION(AVTransDaudioOutput, LicenseType::APACHE_V2, DaudioOutputRegis
 DaudioOutputPlugin::DaudioOutputPlugin(std::string name)
     : AvTransOutputPlugin(std::move(name))
 {
-    AVTRANS_LOGI("DaudioOutputPlugin ctor.");
+    DHLOGI("DaudioOutputPlugin ctor.");
 }
 
 DaudioOutputPlugin::~DaudioOutputPlugin()
 {
-    AVTRANS_LOGI("DaudioOutputPlugin dtor.");
+    DHLOGI("DaudioOutputPlugin dtor.");
 }
 
 Status DaudioOutputPlugin::Init()
 {
-    AVTRANS_LOGI("Init.");
+    DHLOGI("Init.");
     OSAL::ScopedLock lock(operationMutes_);
     state_ = State::INITIALIZED;
     return Status::OK;
@@ -70,16 +70,16 @@ Status DaudioOutputPlugin::Init()
 
 Status DaudioOutputPlugin::Deinit()
 {
-    AVTRANS_LOGI("Deinit.");
+    DHLOGI("Deinit.");
     return Reset();
 }
 
 Status DaudioOutputPlugin::Prepare()
 {
-    AVTRANS_LOGI("Prepare enter");
+    DHLOGI("Prepare enter");
     OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::INITIALIZED) {
-        AVTRANS_LOGE("The state is wrong.");
+        DHLOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     if (sendPlayTask_ == nullptr) {
@@ -90,7 +90,7 @@ Status DaudioOutputPlugin::Prepare()
     ValueType channelsValue;
     Status ret = GetParameter(Tag::AUDIO_CHANNELS, channelsValue);
     if (ret != Status::OK) {
-        AVTRANS_LOGE("Not found AUDIO_CHANNELS");
+        DHLOGE("Not found AUDIO_CHANNELS");
         return Status::ERROR_UNKNOWN;
     }
     uint32_t channels = Plugin::AnyCast<int>(channelsValue);
@@ -98,7 +98,7 @@ Status DaudioOutputPlugin::Prepare()
     ValueType sampleRateValue;
     ret = GetParameter(Tag::AUDIO_SAMPLE_RATE, sampleRateValue);
     if (ret != Status::OK) {
-        AVTRANS_LOGE("Not found AUDIO_SAMPLE_RATE");
+        DHLOGE("Not found AUDIO_SAMPLE_RATE");
         return Status::ERROR_UNKNOWN;
     }
     uint32_t sampleRate = Plugin::AnyCast<int>(sampleRateValue);
@@ -106,11 +106,11 @@ Status DaudioOutputPlugin::Prepare()
     ValueType channelsLayoutValue;
     ret = GetParameter(Tag::AUDIO_CHANNEL_LAYOUT, channelsLayoutValue);
     if (ret != Status::OK) {
-        AVTRANS_LOGE("Not found AUDIO_CHANNEL_LAYOUT");
+        DHLOGE("Not found AUDIO_CHANNEL_LAYOUT");
         return Status::ERROR_UNKNOWN;
     }
     uint32_t channelsLayout = Plugin::AnyCast<int>(channelsLayoutValue);
-    AVTRANS_LOGI("channels = %d, sampleRate = %d, channelLayout = %d.", channels, sampleRate, channelsLayout);
+    DHLOGI("channels = %d, sampleRate = %d, channelLayout = %d.", channels, sampleRate, channelsLayout);
     resample = std::make_shared<Ffmpeg::Resample>();
     state_ = State::PREPARED;
     return Status::OK;
@@ -118,7 +118,7 @@ Status DaudioOutputPlugin::Prepare()
 
 Status DaudioOutputPlugin::Reset()
 {
-    AVTRANS_LOGI("Reset enter");
+    DHLOGI("Reset enter");
     OSAL::ScopedLock lock(operationMutes_);
     eventcallback_ = nullptr;
     if (sendPlayTask_) {
@@ -133,7 +133,7 @@ Status DaudioOutputPlugin::Reset()
 
 Status DaudioOutputPlugin::GetParameter(Tag tag, ValueType &value)
 {
-    AVTRANS_LOGI("GetParameter enter.");
+    DHLOGI("GetParameter enter.");
     auto iter = paramsMap_.find(tag);
     if (iter != paramsMap_.end()) {
         value = iter->second;
@@ -144,7 +144,7 @@ Status DaudioOutputPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DaudioOutputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
-    AVTRANS_LOGI("SetParameter enter.");
+    DHLOGI("SetParameter enter.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     paramsMap_.insert(std::make_pair(tag, value));
     return Status::OK;
@@ -152,10 +152,10 @@ Status DaudioOutputPlugin::SetParameter(Tag tag, const ValueType &value)
 
 Status DaudioOutputPlugin::Start()
 {
-    AVTRANS_LOGI("Start enter");
+    DHLOGI("Start enter");
     OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::PREPARED) {
-        AVTRANS_LOGE("The state is wrong.");
+        DHLOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     DataQueueClear(outputBuffer_);
@@ -166,10 +166,10 @@ Status DaudioOutputPlugin::Start()
 
 Status DaudioOutputPlugin::Stop()
 {
-    AVTRANS_LOGI("Stop enter");
+    DHLOGI("Stop enter");
     OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::RUNNING) {
-        AVTRANS_LOGE("The state is wrong.");
+        DHLOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     sendPlayTask_->Pause();
@@ -180,10 +180,10 @@ Status DaudioOutputPlugin::Stop()
 
 Status DaudioOutputPlugin::SetCallback(Callback *cb)
 {
-    AVTRANS_LOGI("SetCallBack enter");
+    DHLOGI("SetCallBack enter");
     OSAL::ScopedLock lock(operationMutes_);
     if (cb == nullptr) {
-        AVTRANS_LOGE("SetCallBack failed, cb is nullptr.");
+        DHLOGE("SetCallBack failed, cb is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
     eventcallback_ = cb;
@@ -192,28 +192,28 @@ Status DaudioOutputPlugin::SetCallback(Callback *cb)
 
 Status DaudioOutputPlugin::SetDataCallback(AVDataCallback callback)
 {
-    AVTRANS_LOGI("SetDataCallback enter.");
+    DHLOGI("SetDataCallback enter.");
     OSAL::ScopedLock lock(operationMutes_);
     if (callback == nullptr) {
-        AVTRANS_LOGE("SetCallBack failed, callback is nullptr.");
+        DHLOGE("SetCallBack failed, callback is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
     datacallback_ = callback;
-    AVTRANS_LOGI("SetDataCallback success.");
+    DHLOGI("SetDataCallback success.");
     return Status::OK;
 }
 
 Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer,
     int32_t offset)
 {
-    AVTRANS_LOGI("PushData enter.");
+    DHLOGI("PushData enter.");
     OSAL::ScopedLock lock(operationMutes_);
     if (buffer == nullptr || buffer->IsEmpty()) {
-        AVTRANS_LOGE("AVBuffer is nullptr.");
+        DHLOGE("AVBuffer is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
     while (outputBuffer_.size() >= DATA_QUEUE_MAX_SIZE) {
-        AVTRANS_LOGE("outputBuffer_ queue overflow.");
+        DHLOGE("outputBuffer_ queue overflow.");
         outputBuffer_.pop();
     }
     outputBuffer_.push(buffer);
@@ -229,14 +229,14 @@ void DaudioOutputPlugin::HandleData()
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
             dataCond_.wait(lock, [this]() { return !outputBuffer_.empty(); });
             if (outputBuffer_.empty()) {
-                AVTRANS_LOGD("Data queue is empty.");
+                DHLOGD("Data queue is empty.");
                 continue;
             }
             buffer = outputBuffer_.front();
             outputBuffer_.pop();
         }
         if (buffer == nullptr) {
-            AVTRANS_LOGE("Data is null");
+            DHLOGE("Data is null");
             continue;
         }
         datacallback_(buffer);
@@ -251,13 +251,13 @@ void DaudioOutputPlugin::DataQueueClear(std::queue<std::shared_ptr<Buffer>> &q)
 
 Status DaudioOutputPlugin::StartOutputQueue()
 {
-    AVTRANS_LOGI("StartOutputQueue enter.");
+    DHLOGI("StartOutputQueue enter.");
     return Status::OK;
 }
 
 Status DaudioOutputPlugin::ControlFrameRate(const int64_t timestamp)
 {
-    AVTRANS_LOGI("ControlFrameRate enter.");
+    DHLOGI("ControlFrameRate enter.");
     return Status::OK;
 }
 } // namespace DistributedHardware
