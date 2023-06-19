@@ -83,6 +83,10 @@ public:
 
     uint32_t frameNum_ {0};
 
+    int64_t extPts_ {0};
+
+    uint32_t extFrameNum_ {0};
+
     VideoPixelFormat format_ {VideoPixelFormat::UNKNOWN};
 
     BufferDataType dataType_ {BufferDataType::VIDEO_STREAM};

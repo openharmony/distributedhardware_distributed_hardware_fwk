@@ -23,6 +23,8 @@ namespace DistributedHardware {
 const std::string META_DATA_TYPE = "meta_data_type";
 const std::string META_TIMESTAMP = "meta_timestamp";
 const std::string META_FRAME_NUMBER = "meta_frame_number";
+const std::string META_EXT_TIMESTAMP = "meta_ext_timestamp";
+const std::string META_EXT_FRAME_NUMBER = "meta_ext_frame_number";
 
 std::shared_ptr<OHOS::Media::Plugin::BufferMeta> AVTransAudioBufferMeta::Clone()
 {
@@ -73,6 +75,8 @@ std::shared_ptr<OHOS::Media::Plugin::BufferMeta> AVTransVideoBufferMeta::Clone()
     bufferMeta->format_ = format_;
     bufferMeta->dataType_ = dataType_;
     bufferMeta->frameNum_ = frameNum_;
+    bufferMeta->extPts_ = extPts_;
+    bufferMeta->extFrameNum_ = extFrameNum_;
     bufferMeta->Update(*this);
     return bufferMeta;
 }
@@ -83,6 +87,8 @@ std::string AVTransVideoBufferMeta::MarshalVideoMeta()
     metaJson[META_DATA_TYPE] = dataType_;
     metaJson[META_TIMESTAMP] = pts_;
     metaJson[META_FRAME_NUMBER] = frameNum_;
+    metaJson[META_EXT_TIMESTAMP] = extPts_;
+    metaJson[META_EXT_FRAME_NUMBER] = extFrameNum_;
     return metaJson.dump();
 }
 
@@ -93,12 +99,15 @@ bool AVTransVideoBufferMeta::UnmarshalVideoMeta(const std::string& jsonStr)
         return false;
     }
     if (!IsUInt32(metaJson, META_DATA_TYPE) || !IsInt64(metaJson, META_TIMESTAMP) ||
-        !IsUInt32(metaJson, META_FRAME_NUMBER)) {
+        !IsUInt32(metaJson, META_FRAME_NUMBER) || !IsInt64(metaJson, META_EXT_TIMESTAMP) ||
+        !IsUInt32(metaJson, META_EXT_FRAME_NUMBER)) {
         return false;
     }
     dataType_ = metaJson[META_DATA_TYPE].get<BufferDataType>();
     pts_ = metaJson[META_TIMESTAMP].get<int64_t>();
     frameNum_ = metaJson[META_FRAME_NUMBER].get<uint32_t>();
+    extPts_ = metaJson[META_EXT_TIMESTAMP].get<int64_t>();
+    extFrameNum_ = metaJson[META_EXT_FRAME_NUMBER].get<uint32_t>();
     return true;
 }
 } // namespace DistributedHardware

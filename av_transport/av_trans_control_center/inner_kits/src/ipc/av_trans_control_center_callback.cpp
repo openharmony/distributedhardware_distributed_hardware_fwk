@@ -22,7 +22,7 @@ namespace OHOS {
 namespace DistributedHardware {
 int32_t AVTransControlCenterCallback::SetParameter(AVTransTag tag, const std::string &value)
 {
-    DHLOGW("AVTransControlCenterCallback::SetParameter enter.");
+    AVTRANS_LOGW("AVTransControlCenterCallback::SetParameter enter.");
     if ((tag == AVTransTag::START_AV_SYNC) || (tag == AVTransTag::STOP_AV_SYNC) ||
         (tag == AVTransTag::TIME_SYNC_RESULT)) {
         std::shared_ptr<IAVReceiverEngine> rcvEngine = receiverEngine_.lock();
@@ -34,7 +34,7 @@ int32_t AVTransControlCenterCallback::SetParameter(AVTransTag tag, const std::st
 
 int32_t AVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemory &memory)
 {
-    DHLOGW("AVTransControlCenterCallback::SetSharedMemory enter.");
+    AVTRANS_LOGW("AVTransControlCenterCallback::SetSharedMemory enter.");
 
     std::shared_ptr<IAVSenderEngine> sendEngine = senderEngine_.lock();
     if (sendEngine != nullptr) {
@@ -51,7 +51,7 @@ int32_t AVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemory 
 
 int32_t AVTransControlCenterCallback::Notify(const AVTransEvent& event)
 {
-    DHLOGW("AVTransControlCenterCallback::Notify enter.");
+    AVTRANS_LOGW("AVTransControlCenterCallback::Notify enter.");
     return DH_AVT_SUCCESS;
 }
 

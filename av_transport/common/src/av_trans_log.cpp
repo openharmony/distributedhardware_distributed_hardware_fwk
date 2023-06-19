@@ -28,7 +28,7 @@ namespace DistributedHardware {
 const std::string DAVTRANS_LOG_TITLE_TAG = "DAVTRANS";
 constexpr int32_t LOG_MAX_LEN = 4096;
 
-static void DHLogOut(DHLogLevel logLevel, const char *logBuf)
+static void AVTransLogOut(DHLogLevel logLevel, const char *logBuf)
 {
 #ifdef HI_LOG_ENABLE
     LogLevel hiLogLevel = LOG_INFO;
@@ -69,7 +69,7 @@ static void DHLogOut(DHLogLevel logLevel, const char *logBuf)
 #endif
 }
 
-void DHLog(DHLogLevel logLevel, const char *fmt, ...)
+void AVTransLog(DHLogLevel logLevel, const char *fmt, ...)
 {
     char logBuf[LOG_MAX_LEN] = {0};
     va_list arg;
@@ -79,10 +79,10 @@ void DHLog(DHLogLevel logLevel, const char *fmt, ...)
     int32_t ret = vsprintf_s(logBuf, sizeof(logBuf), fmt, arg);
     va_end(arg);
     if (ret < 0) {
-        DHLogOut(logLevel, "DH log length error.");
+        AVTransLogOut(logLevel, "AVTrans log length error.");
         return;
     }
-    DHLogOut(logLevel, logBuf);
+    AVTransLogOut(logLevel, logBuf);
 }
 
 std::string GetAnonyString(const std::string &value)

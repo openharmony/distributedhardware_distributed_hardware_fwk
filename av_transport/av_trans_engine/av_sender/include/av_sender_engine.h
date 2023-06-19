@@ -50,7 +50,7 @@ class AVSenderEngine : public IAVSenderEngine,
                        public OHOS::Media::Pipeline::EventReceiver,
                        public std::enable_shared_from_this<AVSenderEngine> {
 public:
-    AVSenderEngine(const std::string &ownerName);
+    AVSenderEngine(const std::string &ownerName, const std::string &peerDevId);
     ~AVSenderEngine() override;
     AVSenderEngine(const AVSenderEngine &other) = delete;
     AVSenderEngine& operator=(const AVSenderEngine &other) = delete;

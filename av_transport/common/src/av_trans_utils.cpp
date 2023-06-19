@@ -32,38 +32,6 @@ using TransBufferMeta = OHOS::DistributedHardware::BufferMeta;
 const std::string KEY_OWNER_NAME = "ownerName";
 const std::string KEY_PEER_DEVID = "peerDevId";
 
-SrcInputType TransName2InputType(const std::string &ownerName)
-{
-    const static std::pair<std::string, SrcInputType> mapArray[] = {
-        {OWNER_NAME_D_MIC, SrcInputType::D_MIC},
-        {OWNER_NAME_D_CAMERA, SrcInputType::D_CAMERA},
-        {OWNER_NAME_D_SCREEN, SrcInputType::D_SCREEN},
-        {OWNER_NAME_D_SPEAKER, SrcInputType::D_SPEAKER},
-    };
-    for (const auto& item : mapArray) {
-        if (item.first == ownerName) {
-            return item.second;
-        }
-    }
-    return SrcInputType::UNKNOWN;
-}
-
-SrcInputType TransName2SoftbusInputType(const std::string &ownerName)
-{
-    const static std::pair<std::string, SrcInputType> mapArray[] = {
-        {OWNER_NAME_D_MIC, SrcInputType::D_SOFTBUS_AUDIO},
-        {OWNER_NAME_D_CAMERA, SrcInputType::D_SOFTBUS_VIDEO},
-        {OWNER_NAME_D_SCREEN, SrcInputType::D_SOFTBUS_VIDEO},
-        {OWNER_NAME_D_SPEAKER, SrcInputType::D_SOFTBUS_AUDIO},
-    };
-    for (const auto& item : mapArray) {
-        if (item.first == ownerName) {
-            return item.second;
-        }
-    }
-    return SrcInputType::UNKNOWN;
-}
-
 OHOS::Media::Plugin::MediaType TransName2MediaType(const std::string &ownerName)
 {
     const static std::pair<std::string, OHOS::Media::Plugin::MediaType> mapArray[] = {
@@ -71,6 +39,7 @@ OHOS::Media::Plugin::MediaType TransName2MediaType(const std::string &ownerName)
         {OWNER_NAME_D_CAMERA, OHOS::Media::Plugin::MediaType::VIDEO},
         {OWNER_NAME_D_SCREEN, OHOS::Media::Plugin::MediaType::VIDEO},
         {OWNER_NAME_D_SPEAKER, OHOS::Media::Plugin::MediaType::AUDIO},
+        {OWNER_NAME_D_AUDIO, OHOS::Media::Plugin::MediaType::AUDIO},
     };
     for (const auto& item : mapArray) {
         if (item.first == ownerName) {
@@ -217,7 +186,7 @@ EventType CastEventType(Plugin::PluginEventType type)
         case Plugin::PluginEventType::EVENT_CHANNEL_CLOSED:
             return EventType::EVENT_CHANNEL_CLOSED;
         default:
-            DHLOGE("unsupport plugin event type.");
+            AVTRANS_LOGE("unsupport plugin event type.");
     }
     return EventType::EVENT_ENGINE_ERROR;
 }
@@ -225,12 +194,12 @@ EventType CastEventType(Plugin::PluginEventType type)
 void DumpBufferToFile(std::string fileName, uint8_t *buffer, int32_t bufSize)
 {
     if (fileName.empty()) {
-        DHLOGE("input fileName is empty.");
+        AVTRANS_LOGE("input fileName is empty.");
         return;
     }
     std::ofstream ofs(fileName, std::ios::binary | std::ios::out | std::ios::app);
     if (!ofs.is_open()) {
-        DHLOGE("open file failed.");
+        AVTRANS_LOGE("open file failed.");
         return;
     }
     ofs.write((const char*)(buffer), bufSize);
@@ -241,7 +210,7 @@ bool IsUInt32(const nlohmann::json &jsonObj, const std::string &key)
 {
     bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT32_MAX;
     if (!res) {
-        DHLOGE("the key %s in jsonObj is invalid.", key.c_str());
+        AVTRANS_LOGE("the key %s in jsonObj is invalid.", key.c_str());
     }
     return res;
 }
@@ -251,7 +220,7 @@ bool IsInt64(const nlohmann::json &jsonObj, const std::string &key)
     bool res = jsonObj.contains(key) && jsonObj[key].is_number_integer() && INT64_MIN <= jsonObj[key] &&
         jsonObj[key] <= INT64_MAX;
     if (!res) {
-        DHLOGE("the key %s in jsonObj is invalid.", key.c_str());
+        AVTRANS_LOGE("the key %s in jsonObj is invalid.", key.c_str());
     }
     return res;
 }
@@ -260,7 +229,7 @@ bool IsString(const nlohmann::json &jsonObj, const std::string &key)
 {
     bool res = jsonObj.contains(key) && jsonObj[key].is_string() && jsonObj[key].size() <= MAX_MESSAGES_LEN;
     if (!res) {
-        DHLOGE("the key %s in jsonObj is invalid.", key.c_str());
+        AVTRANS_LOGE("the key %s in jsonObj is invalid.", key.c_str());
     }
     return res;
 }

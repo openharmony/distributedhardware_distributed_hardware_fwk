@@ -28,7 +28,7 @@ public:
     AVSenderEngineProvider(const std::string ownerName);
     ~AVSenderEngineProvider() override;
 
-    std::shared_ptr<IAVSenderEngine> CreateAVSenderEngine() override;
+    std::shared_ptr<IAVSenderEngine> CreateAVSenderEngine(const std::string &peerDevId) override;
     std::vector<std::shared_ptr<IAVSenderEngine>> GetAVSenderEngineList() override;
     int32_t RegisterProviderCallback(const std::shared_ptr<IAVEngineProviderCallback> &callback) override;
 

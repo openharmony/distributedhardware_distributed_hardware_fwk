@@ -30,7 +30,7 @@ int32_t AVTransControlCenterCallbackProxy::SetParameter(AVTransTag tag, const st
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        DHLOGE("remote service is null");
+        AVTRANS_LOGE("remote service is null");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
 
@@ -39,21 +39,21 @@ int32_t AVTransControlCenterCallbackProxy::SetParameter(AVTransTag tag, const st
     MessageOption option;
 
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        DHLOGE("WriteInterfaceToken fail!");
+        AVTRANS_LOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
     }
     if (!data.WriteUint32((uint32_t)tag)) {
-        DHLOGE("Write tag failed");
+        AVTRANS_LOGE("Write tag failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     if (!data.WriteString(value)) {
-        DHLOGE("Write value failed");
+        AVTRANS_LOGE("Write value failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     int32_t ret = remote->SendRequest((uint32_t)IAVTransControlCenterCallback::Message::SET_PARAMETER,
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %d", ret);
+        AVTRANS_LOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
@@ -64,7 +64,7 @@ int32_t AVTransControlCenterCallbackProxy::SetSharedMemory(const AVTransSharedMe
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        DHLOGE("remote service is null");
+        AVTRANS_LOGE("remote service is null");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
 
@@ -73,25 +73,25 @@ int32_t AVTransControlCenterCallbackProxy::SetSharedMemory(const AVTransSharedMe
     MessageOption option;
 
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        DHLOGE("WriteInterfaceToken fail!");
+        AVTRANS_LOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
     }
     if (!data.WriteFileDescriptor(memory.fd)) {
-        DHLOGE("Write memory fd failed");
+        AVTRANS_LOGE("Write memory fd failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     if (!data.WriteInt32(memory.size)) {
-        DHLOGE("Write memory size failed");
+        AVTRANS_LOGE("Write memory size failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     if (!data.WriteString(memory.name)) {
-        DHLOGE("Write memory name failed");
+        AVTRANS_LOGE("Write memory name failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     int32_t ret = remote->SendRequest((uint32_t)IAVTransControlCenterCallback::Message::SET_SHARED_MEMORY,
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %d", ret);
+        AVTRANS_LOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
@@ -102,7 +102,7 @@ int32_t AVTransControlCenterCallbackProxy::Notify(const AVTransEvent& event)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        DHLOGE("remote service is null");
+        AVTRANS_LOGE("remote service is null");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
 
@@ -111,25 +111,25 @@ int32_t AVTransControlCenterCallbackProxy::Notify(const AVTransEvent& event)
     MessageOption option;
 
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        DHLOGE("WriteInterfaceToken fail!");
+        AVTRANS_LOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
     }
     if (!data.WriteUint32((uint32_t)event.type)) {
-        DHLOGE("Write event type failed");
+        AVTRANS_LOGE("Write event type failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     if (!data.WriteString(event.content)) {
-        DHLOGE("Write event content failed");
+        AVTRANS_LOGE("Write event content failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     if (!data.WriteString(event.peerDevId)) {
-        DHLOGE("Write event peerDevId failed");
+        AVTRANS_LOGE("Write event peerDevId failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     int32_t ret = remote->SendRequest((uint32_t)IAVTransControlCenterCallback::Message::NOTIFY_AV_EVENT,
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %d", ret);
+        AVTRANS_LOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 

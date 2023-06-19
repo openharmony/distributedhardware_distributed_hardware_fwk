@@ -62,7 +62,6 @@ public:
     int32_t Start() override;
     int32_t Stop() override;
     int32_t Release() override;
-    int32_t PullData(std::shared_ptr<AVTransBuffer> &buffer) override;
     int32_t SetParameter(AVTransTag tag, const std::string &value) override;
     int32_t SendMessage(const std::shared_ptr<AVTransMessage> &message) override;
     int32_t CreateControlChannel(const std::vector<std::string> &dstDevIds,

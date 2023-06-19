@@ -88,6 +88,9 @@ int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &fra
 bool IsInValidSharedMemory(const AVTransSharedMemory &memory);
 bool IsInValidClockUnit(const AVSyncClockUnit &clockUnit);
 
+std::string MarshalSharedMemory(const AVTransSharedMemory &memory);
+AVTransSharedMemory UnmarshalSharedMemory(const std::string &jsonStr);
+
 uint32_t U8ToU32(const uint8_t *ptr);
 uint64_t U8ToU64(const uint8_t *ptr);
 void U32ToU8(uint8_t *ptr, uint32_t value);

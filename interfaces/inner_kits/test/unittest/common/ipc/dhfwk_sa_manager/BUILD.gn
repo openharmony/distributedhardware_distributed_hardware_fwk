@@ -20,6 +20,7 @@ module_out_path = "distributed_hardware_fwk/dhfwk_sa_manager_test"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
+    "${av_trans_path}/common/include",
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",

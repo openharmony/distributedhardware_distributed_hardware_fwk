@@ -45,10 +45,12 @@ public:
 
     /**
      * @brief Create an av sender engine.
+     * @param peerDevId  id of the remote target device.
      * @return Returns a IAVSenderEngine shared pointer if successful, otherwise returns null pointer.
      */
-    virtual std::shared_ptr<IAVSenderEngine> CreateAVSenderEngine()
+    virtual std::shared_ptr<IAVSenderEngine> CreateAVSenderEngine(const std::string &peerDevId)
     {
+        (void)peerDevId;
         return nullptr;
     }
 
