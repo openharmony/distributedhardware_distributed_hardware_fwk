@@ -156,7 +156,8 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName,
 
 int32_t SoftbusChannelAdapter::CloseSoftbusChannel(const std::string& sessName, const std::string &peerDevId)
 {
-    AVTRANS_LOGI("Close softbus channel for sessName:%s, peerDevId:%s.", sessName.c_str(), GetAnonyString(peerDevId).c_str());
+    AVTRANS_LOGI("Close softbus channel for sessName:%s, peerDevId:%s.", sessName.c_str(),
+        GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessName is empty.");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
 
@@ -190,7 +191,8 @@ int32_t SoftbusChannelAdapter::SendBytesData(const std::string& sessName, const 
 int32_t SoftbusChannelAdapter::SendStreamData(const std::string& sessName, const std::string &peerDevId,
     const StreamData *data, const StreamData *ext)
 {
-    AVTRANS_LOGI("Send stream data for sessName:%s, peerDevId:%s.", sessName.c_str(), GetAnonyString(peerDevId).c_str());
+    AVTRANS_LOGI("Send stream data for sessName:%s, peerDevId:%s.", sessName.c_str(),
+        GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessName is empty.");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
     TRUE_RETURN_V_MSG_E(data == nullptr, ERR_DH_AVT_INVALID_PARAM, "input data is nullptr.");
@@ -401,8 +403,8 @@ void SoftbusChannelAdapter::OnSoftbusTimeSyncResult(const TimeSyncResultInfo *in
     int32_t millisecond = info->result.millisecond;
     int32_t microsecond = info->result.microsecond;
     TimeSyncAccuracy accuracy  = info->result.accuracy;
-    AVTRANS_LOGI("Time sync success, flag:%" PRId32", millisecond:%" PRId32", microsecond:%" PRId32", accuracy:%" PRId32,
-        info->flag, millisecond, microsecond, accuracy);
+    AVTRANS_LOGI("Time sync success, flag:%" PRId32", millisecond:%" PRId32 ", microsecond:%" PRId32
+        ", accuracy:%" PRId32, info->flag, millisecond, microsecond, accuracy);
 
     std::string targetDevId(info->target.targetNetworkId);
     std::string masterDevId(info->target.masterNetworkId);

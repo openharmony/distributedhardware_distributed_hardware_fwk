@@ -141,7 +141,8 @@ int32_t AVTransControlCenter::Release(int32_t engineId)
 
 int32_t AVTransControlCenter::CreateControlChannel(int32_t engineId, const std::string &peerDevId)
 {
-    AVTRANS_LOGI("Create control center channel for engineId=%d, peerDevId=%s.", engineId, GetAnonyString(peerDevId).c_str());
+    AVTRANS_LOGI("Create control center channel for engineId=%d, peerDevId=%s.", engineId,
+        GetAnonyString(peerDevId).c_str());
 
     if (IsInvalidEngineId(engineId)) {
         AVTRANS_LOGE("Invalid input engine id = %d", engineId);
@@ -161,7 +162,8 @@ int32_t AVTransControlCenter::CreateControlChannel(int32_t engineId, const std::
                 std::lock_guard<std::mutex> lock(engineIdMutex_);
                 engine2DevIdMap_.insert(std::make_pair(engineId, peerDevId));
             }
-            AVTRANS_LOGE("AV control center channel has already created, peerDevId=%s.", GetAnonyString(peerDevId).c_str());
+            AVTRANS_LOGE("AV control center channel has already created, peerDevId=%s.",
+                GetAnonyString(peerDevId).c_str());
             return ERR_DH_AVT_CHANNEL_ALREADY_OPENED;
         }
     }

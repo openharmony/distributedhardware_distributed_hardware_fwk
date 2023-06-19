@@ -337,7 +337,8 @@ int32_t AVSenderEngine::PreparePipeline(const std::string &configParam)
         "av input or output filter is null");
 
     // First: config av input filter
-    ErrorCode ret = avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_TYPE), TransName2MediaType(ownerName_));
+    ErrorCode ret = avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_TYPE),
+        TransName2MediaType(ownerName_));
     TRUE_RETURN_V_MSG_E(ret != ErrorCode::SUCCESS, ERR_DH_AVT_SET_PARAM_FAILED, "set media_type failed");
 
     ret = avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_BIT_STREAM_FORMAT),

@@ -53,13 +53,15 @@ AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t si
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
     (void)memset_s(base, size, INVALID_VALUE_FALG, size);
 
-    AVTRANS_LOGI("create av trans shared memory success, name=%s, size=%" PRId32 ", fd=%" PRId32, name.c_str(), size, fd);
+    AVTRANS_LOGI("create av trans shared memory success, name=%s, size=%" PRId32 ", fd=%" PRId32,
+        name.c_str(), size, fd);
     return AVTransSharedMemory{fd, size, name};
 }
 
 void CloseAVTransSharedMemory(const AVTransSharedMemory &memory) noexcept
 {
-    AVTRANS_LOGI("close shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32, memory.name.c_str(), memory.size, memory.fd);
+    AVTRANS_LOGI("close shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32, memory.name.c_str(),
+        memory.size, memory.fd);
     if (IsInValidSharedMemory(memory)) {
         AVTRANS_LOGE("invalid input shared memory");
         return;
@@ -181,7 +183,7 @@ int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frame
     U32ToU8(base, frameNum);
     U64ToU8(base + sizeof(uint32_t), timestamp);
 
-    AVTRANS_LOGI("write frameNum=%" PRId32 ", timestamp=%lld to shared memory success.", frameNum, (long long)timestamp);
+    AVTRANS_LOGI("write frameNum=%" PRId32 ", timestamp=%lld to shared memory success", frameNum, (long long)timestamp);
     return DH_AVT_SUCCESS;
 }
 
@@ -206,7 +208,8 @@ int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &fra
     timestamp = U8ToU64(base + sizeof(uint32_t));
     TRUE_RETURN_V_MSG_E(frameNum <= 0, ERR_DH_AVT_MASTER_NOT_READY, "master queue not ready, frameNum is null.");
 
-    AVTRANS_LOGI("read frameNum=%" PRId32 ", timestamp=%lld from shared memory success.", frameNum, (long long)timestamp);
+    AVTRANS_LOGI("read frameNum=%" PRId32 ", timestamp=%lld from shared memory success.", frameNum,
+        (long long)timestamp);
     return DH_AVT_SUCCESS;
 }
 
