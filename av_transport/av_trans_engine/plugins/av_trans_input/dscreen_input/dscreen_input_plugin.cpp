@@ -48,30 +48,30 @@ PLUGIN_DEFINITION(AVTransDscreenInput, LicenseType::APACHE_V2, DscreenInputRegis
 DscreenInputPlugin::DscreenInputPlugin(std::string name)
     : AvTransInputPlugin(std::move(name))
 {
-    DHLOGI("ctor.");
+    AVTRANS_LOGI("ctor.");
 }
 
 DscreenInputPlugin::~DscreenInputPlugin()
 {
-    DHLOGI("dtor.");
+    AVTRANS_LOGI("dtor.");
 }
 
 Status DscreenInputPlugin::Init()
 {
-    DHLOGI("Init.");
+    AVTRANS_LOGI("Init.");
     frameNumber_.store(0);
     return Status::OK;
 }
 
 Status DscreenInputPlugin::Deinit()
 {
-    DHLOGI("Deinit.");
+    AVTRANS_LOGI("Deinit.");
     return Reset();
 }
 
 Status DscreenInputPlugin::Reset()
 {
-    DHLOGI("Reset");
+    AVTRANS_LOGI("Reset");
     Media::OSAL::ScopedLock lock(operationMutes_);
     paramsMap_.clear();
     frameNumber_.store(0);
@@ -98,23 +98,23 @@ Status DscreenInputPlugin::SetParameter(Tag tag, const ValueType &value)
 
 Status DscreenInputPlugin::PushData(const std::string& inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
 {
-    DHLOGI("PushData.");
+    AVTRANS_LOGI("PushData.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (!buffer || buffer->IsEmpty()) {
-        DHLOGE("buffer is nullptr or empty.");
+        AVTRANS_LOGE("buffer is nullptr or empty.");
         return Status::ERROR_NULL_POINTER;
     }
 
     auto bufferMeta = buffer->GetBufferMeta();
     if (!bufferMeta || bufferMeta->GetType() != BufferMetaType::VIDEO) {
-        DHLOGE("bufferMeta is nullptr or empty.");
+        AVTRANS_LOGE("bufferMeta is nullptr or empty.");
         return Status::ERROR_NULL_POINTER;
     }
 
     ++frameNumber_;
     buffer->pts = GetCurrentTime();
     bufferMeta->SetMeta(Tag::USER_FRAME_NUMBER, frameNumber_.load());
-    DHLOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.",
+    AVTRANS_LOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.",
         buffer->pts, buffer->GetMemory()->GetSize(),
         Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER)));
     return Status::OK;
@@ -122,13 +122,13 @@ Status DscreenInputPlugin::PushData(const std::string& inPort, std::shared_ptr<B
 
 Status DscreenInputPlugin::SetCallback(Callback *cb)
 {
-    DHLOGI("SetCallBack.");
+    AVTRANS_LOGI("SetCallBack.");
     return Status::OK;
 }
 
 Status DscreenInputPlugin::SetDataCallback(AVDataCallback callback)
 {
-    DHLOGI("SetDataCallback.");
+    AVTRANS_LOGI("SetDataCallback.");
     return Status::OK;
 }
 

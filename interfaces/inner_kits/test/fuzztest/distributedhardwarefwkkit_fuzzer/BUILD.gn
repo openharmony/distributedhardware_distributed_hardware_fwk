@@ -24,6 +24,7 @@ ohos_fuzztest("DistributedHardwareFwkKitFuzzTest") {
       "${innerkits_path}/test/fuzztest/distributedhardwarefwkkit_fuzzer"
 
   include_dirs = [
+    "${av_trans_path}/common/include",
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",

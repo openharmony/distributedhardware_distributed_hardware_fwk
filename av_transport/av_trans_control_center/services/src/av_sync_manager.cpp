@@ -25,12 +25,12 @@ namespace OHOS {
 namespace DistributedHardware {
 AVSyncManager::AVSyncManager()
 {
-    DHLOGI("AVSyncManager ctor.");
+    AVTRANS_LOGI("AVSyncManager ctor.");
 }
 
 AVSyncManager::~AVSyncManager()
 {
-    DHLOGI("AVSyncManager dctor.");
+    AVTRANS_LOGI("AVSyncManager dctor.");
     streamInfoList_.clear();
     CloseAVTransSharedMemory(sourceMemory_);
     CloseAVTransSharedMemory(sinkMemory_);
@@ -38,13 +38,13 @@ AVSyncManager::~AVSyncManager()
 
 void AVSyncManager::AddStreamInfo(const AVStreamInfo &stream)
 {
-    DHLOGI("add new stream info: sceneType=%s, peerDevId=%s", stream.sceneType.c_str(), stream.peerDevId.c_str());
+    AVTRANS_LOGI("add new stream info: sceneType=%s, peerDevId=%s", stream.sceneType.c_str(), stream.peerDevId.c_str());
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         streamInfoList_.push_back(stream);
 
         if (streamInfoList_.size() < AV_SYNC_STREAM_COUNT) {
-            DHLOGI("No need enable sender av sync, stream info list size=%zu", streamInfoList_.size());
+            AVTRANS_LOGI("No need enable sender av sync, stream info list size=%zu", streamInfoList_.size());
             return;
         }
     }
@@ -53,7 +53,7 @@ void AVSyncManager::AddStreamInfo(const AVStreamInfo &stream)
 
 void AVSyncManager::RemoveStreamInfo(const AVStreamInfo &stream)
 {
-    DHLOGI("remove stream info: sceneType=%s, peerDevId=%s", stream.sceneType.c_str(), stream.peerDevId.c_str());
+    AVTRANS_LOGI("remove stream info: sceneType=%s, peerDevId=%s", stream.sceneType.c_str(), stream.peerDevId.c_str());
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         for (auto iter = streamInfoList_.begin(); iter != streamInfoList_.end();) {
@@ -71,15 +71,15 @@ void AVSyncManager::EnableSenderAVSync()
 {
     std::string syncGroupInfo;
     if (!MergeGroupInfo(syncGroupInfo)) {
-        DHLOGI("No need start av sync.");
+        AVTRANS_LOGI("No need start av sync.");
         return;
     }
-    DHLOGI("merged av sync group info=%s", syncGroupInfo.c_str());
+    AVTRANS_LOGI("merged av sync group info=%s", syncGroupInfo.c_str());
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         for (auto item : streamInfoList_) {
             auto avMessage = std::make_shared<AVTransMessage>((uint32_t)AVTransTag::START_AV_SYNC,
-                syncGroupInfo.dump(), item.peerDevId);
+                syncGroupInfo, item.peerDevId);
             AVTransControlCenter::GetInstance().SendMessage(avMessage);
         }
     }
@@ -93,7 +93,7 @@ void AVSyncManager::DisableSenderAVSync()
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         if (streamInfoList_.size() >= AV_SYNC_STREAM_COUNT) {
-            DHLOGI("Cannot disable sender av sync, stream info list size=%zu", streamInfoList_.size());
+            AVTRANS_LOGI("Cannot disable sender av sync, stream info list size=%zu", streamInfoList_.size());
             return;
         }
         for (auto item : streamInfoList_) {
@@ -138,13 +138,13 @@ bool AVSyncManager::MergeGroupInfo(std::string &syncGroupInfo)
         }
     }
     if (sceneTypeSet.size() < AV_SYNC_STREAM_COUNT) {
-        DHLOGI("Can not merge av sync group info, because scene type count less than threshold.");
+        AVTRANS_LOGI("Can not merge av sync group info, because scene type count less than threshold.");
         return false;
     }
 
     if ((sceneTypeSet.find(SCENE_TYPE_D_MIC) != sceneTypeSet.end()) &&
         (sceneTypeSet.find(SCENE_TYPE_D_SPEAKER) != sceneTypeSet.end())) {
-        DHLOGI("Can not merge av sync group info, because scene type are conflicting.");
+        AVTRANS_LOGI("Can not merge av sync group info, because scene type are conflicting.");
         return false;
     }
 
@@ -153,7 +153,7 @@ bool AVSyncManager::MergeGroupInfo(std::string &syncGroupInfo)
     bool sink2Source = (sceneTypeSet.find(SCENE_TYPE_D_CAMERA_STR) != sceneTypeSet.end()) &&
         (sceneTypeSet.find(SCENE_TYPE_D_MIC) != sceneTypeSet.end());
     if (!source2Sink && !sink2Source) {
-        DHLOGI("Can not merge av sync group info, because scene type do not meet conditions.");
+        AVTRANS_LOGI("Can not merge av sync group info, because scene type do not meet conditions.");
         return false;
     }
 

@@ -28,18 +28,18 @@ typedef enum {
     DH_LOG_ERROR,
 } DHLogLevel;
 
-void DHLog(DHLogLevel logLevel, const char *fmt, ...);
+void AVTransLog(DHLogLevel logLevel, const char *fmt, ...);
 
-#define DHLOGD(fmt, ...) DHLog(DH_LOG_DEBUG, \
+#define AVTRANS_LOGD(fmt, ...) AVTransLog(DH_LOG_DEBUG, \
     (std::string("[") + DH_LOG_TAG + "][" + __FUNCTION__ + "]:" + fmt).c_str(), ##__VA_ARGS__)
 
-#define DHLOGI(fmt, ...) DHLog(DH_LOG_INFO, \
+#define AVTRANS_LOGI(fmt, ...) AVTransLog(DH_LOG_INFO, \
     (std::string("[") + DH_LOG_TAG + "][" + __FUNCTION__ + "]:" + fmt).c_str(), ##__VA_ARGS__)
 
-#define DHLOGW(fmt, ...) DHLog(DH_LOG_WARN, \
+#define AVTRANS_LOGW(fmt, ...) AVTransLog(DH_LOG_WARN, \
     (std::string("[") + DH_LOG_TAG + "][" + __FUNCTION__ + "]:" + fmt).c_str(), ##__VA_ARGS__)
 
-#define DHLOGE(fmt, ...) DHLog(DH_LOG_ERROR, \
+#define AVTRANS_LOGE(fmt, ...) AVTransLog(DH_LOG_ERROR, \
     (std::string("[") + DH_LOG_TAG + "][" + __FUNCTION__ + "]:" + fmt).c_str(), ##__VA_ARGS__)
 
 std::string GetAnonyString(const std::string &value);
@@ -50,7 +50,7 @@ std::string GetAnonyInt32(const int32_t value);
     do {                                                                                                      \
         bool retCode = (exec);                                                                                \
         if (retCode) {                                                                                        \
-            DHLOGE(fmt, ##args);                                                                              \
+            AVTRANS_LOGE(fmt, ##args);                                                                        \
             return;                                                                                           \
         }                                                                                                     \
     } while (0)
@@ -61,7 +61,7 @@ std::string GetAnonyInt32(const int32_t value);
     do {                                                                                                      \
         bool retCode = (exec);                                                                                \
         if (retCode) {                                                                                        \
-            DHLOGE("TRUE_RETURN_V " #exec);                                                                   \
+            AVTRANS_LOGE("TRUE_RETURN_V " #exec);                                                             \
             return ret;                                                                                       \
         }                                                                                                     \
     } while (0)
@@ -72,7 +72,7 @@ std::string GetAnonyInt32(const int32_t value);
     do {                                                                                                      \
         bool retCode = (exec);                                                                                \
         if (retCode) {                                                                                        \
-            DHLOGE(fmt, ##args);                                                                              \
+            AVTRANS_LOGE(fmt, ##args);                                                                        \
             return ret;                                                                                       \
         }                                                                                                     \
     } while (0)
@@ -83,7 +83,7 @@ std::string GetAnonyInt32(const int32_t value);
     do {                                                                                                      \
         bool retCode = (exec);                                                                                \
         if (retCode) {                                                                                        \
-            DHLOGE(fmt, ##args);                                                                              \
+            AVTRANS_LOGE(fmt, ##args);                                                                        \
         }                                                                                                     \
     } while (0)
 #endif

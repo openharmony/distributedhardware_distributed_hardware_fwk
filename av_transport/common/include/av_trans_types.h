@@ -25,6 +25,7 @@ const std::string OWNER_NAME_D_MIC = "ohos.dhardware.dmic";
 const std::string OWNER_NAME_D_CAMERA = "ohos.dhardware.dcamera";
 const std::string OWNER_NAME_D_SCREEN = "ohos.dhardware.dscreen";
 const std::string OWNER_NAME_D_SPEAKER = "ohos.dhardware.dspeaker";
+const std::string OWNER_NAME_D_AUDIO = "ohos.dhardware.daudio";
 
 const std::string SCENE_TYPE_D_MIC = "dmic_stream";
 const std::string SCENE_TYPE_D_SCREEN = "dscreen_stream";
@@ -32,9 +33,9 @@ const std::string SCENE_TYPE_D_SPEAKER = "dspeaker_stream";
 const std::string SCENE_TYPE_D_CAMERA_STR = "dcamera_stream";
 const std::string SCENE_TYPE_D_CAMERA_PIC = "dcamera_picture";
 
-const std::string MINE_VIDEO_RAW = "video/raw";
-const std::string MINE_VIDEO_H264 = "video/avc";
-const std::string MINE_VIDEO_H265 = "video/hevc";
+const std::string MIME_VIDEO_RAW = "video/raw";
+const std::string MIME_VIDEO_H264 = "video/avc";
+const std::string MIME_VIDEO_H265 = "video/hevc";
 
 const std::string VIDEO_FORMAT_NV12 = "nv12";
 const std::string VIDEO_FORMAT_NV21 = "nv21";

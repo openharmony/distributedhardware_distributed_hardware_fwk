@@ -33,7 +33,7 @@ int32_t AVTransControlCenterCallbackStub::OnRemoteRequest(uint32_t code,
 {
     (void)option;
     if (data.ReadInterfaceToken() != GetDescriptor()) {
-        DHLOGE("Read valid token failed");
+        AVTRANS_LOGE("Read valid token failed");
         return ERR_INVALID_DATA;
     }
     switch (code) {
@@ -62,7 +62,7 @@ int32_t AVTransControlCenterCallbackStub::SetParameterInner(MessageParcel &data,
     std::string tagValue = data.ReadString();
     int32_t ret = SetParameter((AVTransTag)transTag, tagValue);
     if (!reply.WriteInt32(ret)) {
-        DHLOGE("Write ret code failed");
+        AVTRANS_LOGE("Write ret code failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     return NO_ERROR;
@@ -75,7 +75,7 @@ int32_t AVTransControlCenterCallbackStub::SetSharedMemoryInner(MessageParcel &da
     std::string name = data.ReadString();
     int32_t ret = SetSharedMemory(AVTransSharedMemory{ fd, size, name });
     if (!reply.WriteInt32(ret)) {
-        DHLOGE("Write ret code failed");
+        AVTRANS_LOGE("Write ret code failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     return NO_ERROR;
@@ -88,7 +88,7 @@ int32_t AVTransControlCenterCallbackStub::NotifyInner(MessageParcel &data, Messa
     std::string peerDevId = data.ReadString();
     int32_t ret = Notify(AVTransEvent{(EventType)type, content, peerDevId});
     if (!reply.WriteInt32(ret)) {
-        DHLOGE("Write ret code failed");
+        AVTRANS_LOGE("Write ret code failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     return NO_ERROR;

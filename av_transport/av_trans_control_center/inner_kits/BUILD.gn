@@ -26,7 +26,7 @@ ohos_shared_library("avtranscenter_sdk") {
   ]
 
   sources = [
-    "${common_path}/src/av_trans_log.cpp",
+    "${common_path}/src/av_sync_utils.cpp",
     "${common_path}/src/av_trans_log.cpp",
     "src/av_trans_control_center_kit.cpp",
     "src/ipc/av_trans_control_center_callback.cpp",

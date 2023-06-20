@@ -19,7 +19,9 @@
 #include <securec.h>
 #include <unistd.h>
 #include "ashmem.h"
+#include "nlohmann/json.hpp"
 
+#include "av_trans_constants.h"
 #include "av_trans_errno.h"
 #include "av_trans_log.h"
 
@@ -29,21 +31,21 @@ AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t si
 {
     int32_t fd = AshmemCreate(name.c_str(), size);
     if (fd <= 0) {
-        DHLOGE("create av trans shared memory failed, name=%s, fd=%" PRId32, name.c_str(), fd);
+        AVTRANS_LOGE("create av trans shared memory failed, name=%s, fd=%" PRId32, name.c_str(), fd);
         return AVTransSharedMemory{0, 0, name};
     }
 
     unsigned int prot = PROT_READ | PROT_WRITE;
     int result = AshmemSetProt(fd, static_cast<int>(prot));
     if (result < 0) {
-        DHLOGE("AshmemSetProt failed, name=%s, fd=%" PRId32, name.c_str(), fd);
+        AVTRANS_LOGE("AshmemSetProt failed, name=%s, fd=%" PRId32, name.c_str(), fd);
         (void)::close(fd);
         return AVTransSharedMemory{0, 0, name};
     }
 
     void *addr = ::mmap(nullptr, size, static_cast<int>(prot), MAP_SHARED, fd, 0);
     if (addr == MAP_FAILED) {
-        DHLOGE("shared memory mmap failed, name=%s, fd=%" PRId32, name.c_str(), fd);
+        AVTRANS_LOGE("shared memory mmap failed, name=%s, fd=%" PRId32, name.c_str(), fd);
         (void)::close(fd);
         return AVTransSharedMemory{0, 0, name};
     }
@@ -51,15 +53,17 @@ AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t si
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
     (void)memset_s(base, size, INVALID_VALUE_FALG, size);
 
-    DHLOGI("create av trans shared memory success, name=%s, size=%" PRId32 ", fd=%" PRId32, name.c_str(), size, fd);
+    AVTRANS_LOGI("create av trans shared memory success, name=%s, size=%" PRId32 ", fd=%" PRId32,
+        name.c_str(), size, fd);
     return AVTransSharedMemory{fd, size, name};
 }
 
 void CloseAVTransSharedMemory(const AVTransSharedMemory &memory) noexcept
 {
-    DHLOGI("close shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32, memory.name.c_str(), memory.size, memory.fd);
+    AVTRANS_LOGI("close shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32, memory.name.c_str(),
+        memory.size, memory.fd);
     if (IsInValidSharedMemory(memory)) {
-        DHLOGE("invalid input shared memory");
+        AVTRANS_LOGE("invalid input shared memory");
         return;
     }
     if (memory.fd > 0) {
@@ -69,18 +73,18 @@ void CloseAVTransSharedMemory(const AVTransSharedMemory &memory) noexcept
 
 int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUnit &clockUnit)
 {
-    DHLOGI("write clock unit to shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
+    AVTRANS_LOGI("write clock unit to shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
-    DHLOGI("clock unit index=%" PRId32 ", frameNum=%" PRId32 ", timestamp=%lld", clockUnit.index,
+    AVTRANS_LOGI("clock unit index=%" PRId32 ", frameNum=%" PRId32 ", timestamp=%lld", clockUnit.index,
         clockUnit.frameNum, (long long)clockUnit.timestamp);
     TRUE_RETURN_V_MSG_E(IsInValidClockUnit(clockUnit), ERR_DH_AVT_INVALID_PARAM, "invalid input clock unit");
 
     int size = AshmemGetSize(memory.fd);
     TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %" PRId32, size);
 
-    unsigned int prot = PROT_READ | PROT_WRITE;
+    unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
 
@@ -97,22 +101,25 @@ int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUni
     if (clockUnit.index == MAX_CLOCK_UNIT_COUNT) {
         clockUnit.index = 0;
     }
+
+    AVTRANS_LOGI("write clock unit frameNum=%" PRId32 ", timestamp=%lld to shared memory success",
+        clockUnit.frameNum, (long long)(clockUnit.timestamp));
     return DH_AVT_SUCCESS;
 }
 
 int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUnit &clockUnit)
 {
-    DHLOGI("read clock unit from shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
+    AVTRANS_LOGI("read clock unit from shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
-    DHLOGI("clock unit index=%" PRId32 ", frameNum=%" PRId32, clockUnit.index, clockUnit.frameNum);
+    AVTRANS_LOGI("clock unit index=%" PRId32 ", frameNum=%" PRId32, clockUnit.index, clockUnit.frameNum);
     TRUE_RETURN_V_MSG_E((clockUnit.frameNum <= 0), ERR_DH_AVT_INVALID_PARAM, "invalid input frame number");
 
     int size = AshmemGetSize(memory.fd);
     TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %" PRId32, size);
 
-    unsigned int prot = PROT_READ;
+    unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
 
@@ -124,25 +131,39 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
     TRUE_RETURN_V_MSG_E(firstUnit == 0, ERR_DH_AVT_MASTER_NOT_READY, "master queue not ready, clock is null.");
 
     uint32_t index = 0;
+    int64_t closestTime = 0;
+    uint32_t closestNum = 0;
     size_t unitSize = sizeof(uint32_t) + sizeof(int64_t);
     while (index < MAX_CLOCK_UNIT_COUNT) {
         uint32_t frameNum = U8ToU32(base + (index * unitSize));
+        int64_t timestamp = U8ToU64(base + (index * unitSize) + sizeof(uint32_t));
         if (frameNum == clockUnit.frameNum) {
-            clockUnit.timestamp = U8ToU64(base + (index * unitSize) + sizeof(uint32_t));
-            DHLOGI("read clock unit from shared memory success, frameNum=%" PRId32 ", timestamp=%lld",
+            clockUnit.timestamp = timestamp;
+            AVTRANS_LOGI("read clock unit from shared memory success, frameNum=%" PRId32 ", timestamp=%lld",
                 clockUnit.frameNum, (long long)clockUnit.timestamp);
             return DH_AVT_SUCCESS;
+        }
+        if ((frameNum < clockUnit.frameNum) && (frameNum > closestNum)) {
+            closestNum = frameNum;
+            closestTime = timestamp;
         }
         index++;
     }
 
-    DHLOGE("read clock unit from shared memory failed for frameNum=%" PRId32, clockUnit.frameNum);
+    if (closestNum > 0) {
+        clockUnit.timestamp = closestTime;
+        AVTRANS_LOGI("cannot found timestamp for frameNum=%" PRId32 ", use the closest frameNum=%" PRId32
+            " and timestamp=%lld instead.", clockUnit.frameNum, closestNum, (long long)clockUnit.timestamp);
+        return DH_AVT_SUCCESS;
+    }
+
+    AVTRANS_LOGE("read clock unit from shared memory failed for frameNum=%" PRId32, clockUnit.frameNum);
     return ERR_DH_AVT_SHARED_MEMORY_FAILED;
 }
 
 int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frameNum, int64_t timestamp)
 {
-    DHLOGI("write frame number to shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
+    AVTRANS_LOGI("write frame info to shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
@@ -151,7 +172,7 @@ int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frame
     int size = AshmemGetSize(memory.fd);
     TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %" PRId32, size);
 
-    unsigned int prot = PROT_READ | PROT_WRITE;
+    unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
 
@@ -162,20 +183,20 @@ int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frame
     U32ToU8(base, frameNum);
     U64ToU8(base + sizeof(uint32_t), timestamp);
 
-    DHLOGI("write frameNum=%" PRId32 ", timestamp=%lld to shared memory success.", frameNum, (long long)timestamp);
+    AVTRANS_LOGI("write frameNum=%" PRId32 ", timestamp=%lld to shared memory success", frameNum, (long long)timestamp);
     return DH_AVT_SUCCESS;
 }
 
 int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &frameNum, int64_t &timestamp)
 {
-    DHLOGI("read frame number and pts from shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
+    AVTRANS_LOGI("read frame info from shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
     int size = AshmemGetSize(memory.fd);
     TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %" PRId32, size);
 
-    unsigned int prot = PROT_READ;
+    unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
 
@@ -187,7 +208,8 @@ int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &fra
     timestamp = U8ToU64(base + sizeof(uint32_t));
     TRUE_RETURN_V_MSG_E(frameNum <= 0, ERR_DH_AVT_MASTER_NOT_READY, "master queue not ready, frameNum is null.");
 
-    DHLOGI("read frameNum=%" PRId32 ", timestamp=%lld from shared memory success.", frameNum, (long long)timestamp);
+    AVTRANS_LOGI("read frameNum=%" PRId32 ", timestamp=%lld from shared memory success.", frameNum,
+        (long long)timestamp);
     return DH_AVT_SUCCESS;
 }
 
@@ -200,6 +222,41 @@ bool IsInValidClockUnit(const AVSyncClockUnit &clockUnit)
 {
     return (clockUnit.index < 0) || (clockUnit.index >= MAX_CLOCK_UNIT_COUNT) || (clockUnit.frameNum <= 0)
         || (clockUnit.timestamp <= 0);
+}
+
+std::string MarshalSharedMemory(const AVTransSharedMemory &memory)
+{
+    nlohmann::json memoryJson;
+
+    memoryJson[KEY_SHARED_MEM_FD] = memory.fd;
+    memoryJson[KEY_SHARED_MEM_SIZE] = memory.size;
+    memoryJson[KEY_SHARED_MEM_NAME] = memory.name;
+
+    return memoryJson.dump();
+}
+
+AVTransSharedMemory UnmarshalSharedMemory(const std::string &jsonStr)
+{
+    nlohmann::json paramJson = nlohmann::json::parse(jsonStr, nullptr, false);
+    if (paramJson.is_discarded()) {
+        return AVTransSharedMemory{0, 0, ""};
+    }
+
+    if (!paramJson.contains(KEY_SHARED_MEM_FD) || !paramJson.contains(KEY_SHARED_MEM_SIZE) ||
+        !paramJson.contains(KEY_SHARED_MEM_NAME)) {
+        return AVTransSharedMemory{0, 0, ""};
+    }
+
+    if (!paramJson[KEY_SHARED_MEM_FD].is_number_integer() || !paramJson[KEY_SHARED_MEM_SIZE].is_number_integer() ||
+        !paramJson[KEY_SHARED_MEM_NAME].is_string()) {
+        return AVTransSharedMemory{0, 0, ""};
+    }
+
+    int32_t fd = paramJson[KEY_SHARED_MEM_FD].get<int32_t>();
+    int32_t size = paramJson[KEY_SHARED_MEM_SIZE].get<int32_t>();
+    std::string name = paramJson[KEY_SHARED_MEM_NAME].get<std::string>();
+
+    return AVTransSharedMemory{ fd, size, name };
 }
 
 void U32ToU8(uint8_t *ptr, uint32_t value)

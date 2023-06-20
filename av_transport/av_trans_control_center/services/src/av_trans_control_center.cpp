@@ -24,7 +24,7 @@ IMPLEMENT_SINGLE_INSTANCE(AVTransControlCenter);
 
 AVTransControlCenter::AVTransControlCenter()
 {
-    DHLOGI("AVTransControlCenter ctor.");
+    AVTRANS_LOGI("AVTransControlCenter ctor.");
     transRole_ = TransRole::UNKNOWN;
     rootEngineId_.store(BASE_ENGINE_ID);
     syncManager_ = std::make_shared<AVSyncManager>();
@@ -32,7 +32,7 @@ AVTransControlCenter::AVTransControlCenter()
 
 AVTransControlCenter::~AVTransControlCenter()
 {
-    DHLOGI("AVTransControlCenter dtor.");
+    AVTRANS_LOGI("AVTransControlCenter dtor.");
     SoftbusChannelAdapter::GetInstance().RemoveChannelServer(DH_FWK_OWNER_NAME, sessionName_);
 
     sessionName_ = "";
@@ -45,13 +45,13 @@ AVTransControlCenter::~AVTransControlCenter()
 int32_t AVTransControlCenter::Initialize(const TransRole &transRole, int32_t &engineId)
 {
     if ((transRole != TransRole::AV_SENDER) && (transRole != TransRole::AV_RECEIVER)) {
-        DHLOGE("Invalid trans role=%d", transRole);
+        AVTRANS_LOGE("Invalid trans role=%d", transRole);
         engineId = INVALID_ENGINE_ID;
         return ERR_DH_AVT_INVALID_PARAM_VALUE;
     }
 
     if (initialized_.load()) {
-        DHLOGI("AV control center already initialized.");
+        AVTRANS_LOGI("AV control center already initialized.");
         engineId = rootEngineId_.load();
         rootEngineId_++;
         return DH_AVT_SUCCESS;
@@ -61,14 +61,14 @@ int32_t AVTransControlCenter::Initialize(const TransRole &transRole, int32_t &en
         AV_SYNC_RECEIVER_CONTROL_SESSION_NAME;
     int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(DH_FWK_OWNER_NAME, sessionName_);
     if (ret != DH_AVT_SUCCESS) {
-        DHLOGE("Create contro center session server failed, ret=%d", ret);
+        AVTRANS_LOGE("Create contro center session server failed, ret=%d", ret);
         engineId = INVALID_ENGINE_ID;
         return ret;
     }
 
     ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, AV_TRANS_SPECIAL_DEVICE_ID, this);
     if (ret != DH_AVT_SUCCESS) {
-        DHLOGE("Register av control center channel callback failed, ret=%d", ret);
+        AVTRANS_LOGE("Register av control center channel callback failed, ret=%d", ret);
         engineId = INVALID_ENGINE_ID;
         return ret;
     }
@@ -83,10 +83,10 @@ int32_t AVTransControlCenter::Initialize(const TransRole &transRole, int32_t &en
 
 int32_t AVTransControlCenter::Release(int32_t engineId)
 {
-    DHLOGI("Release control center channel for engineId=%d.", engineId);
+    AVTRANS_LOGI("Release control center channel for engineId=%d.", engineId);
 
     if (IsInvalidEngineId(engineId)) {
-        DHLOGE("Invalid input engine id = %d", engineId);
+        AVTRANS_LOGE("Invalid input engine id = %d", engineId);
         return ERR_DH_AVT_INVALID_PARAM_VALUE;
     }
 
@@ -99,7 +99,7 @@ int32_t AVTransControlCenter::Release(int32_t engineId)
     {
         std::lock_guard<std::mutex> lock(engineIdMutex_);
         if (engine2DevIdMap_.find(engineId) == engine2DevIdMap_.end()) {
-            DHLOGE("Input engine id is not exist, engineId = %d", engineId);
+            AVTRANS_LOGE("Input engine id is not exist, engineId = %d", engineId);
             return DH_AVT_SUCCESS;
         }
         peerDevId = engine2DevIdMap_[engineId];
@@ -113,7 +113,7 @@ int32_t AVTransControlCenter::Release(int32_t engineId)
             }
         }
         if (IsDevIdUsedByOthers) {
-            DHLOGI("Control channel is still being used by other engine, peerDevId=%s.",
+            AVTRANS_LOGI("Control channel is still being used by other engine, peerDevId=%s.",
                 GetAnonyString(peerDevId).c_str());
             return DH_AVT_SUCCESS;
         }
@@ -123,7 +123,7 @@ int32_t AVTransControlCenter::Release(int32_t engineId)
         std::lock_guard<std::mutex> lock(devIdMutex_);
         auto iter = std::find(connectedDevIds_.begin(), connectedDevIds_.end(), peerDevId);
         if (iter == connectedDevIds_.end()) {
-            DHLOGE("Control channel has not been opened successfully for peerDevId=%s.",
+            AVTRANS_LOGE("Control channel has not been opened successfully for peerDevId=%s.",
                 GetAnonyString(peerDevId).c_str());
             return DH_AVT_SUCCESS;
         } else {
@@ -141,15 +141,16 @@ int32_t AVTransControlCenter::Release(int32_t engineId)
 
 int32_t AVTransControlCenter::CreateControlChannel(int32_t engineId, const std::string &peerDevId)
 {
-    DHLOGI("Create control center channel for engineId=%d, peerDevId=%s.", engineId, GetAnonyString(peerDevId).c_str());
+    AVTRANS_LOGI("Create control center channel for engineId=%d, peerDevId=%s.", engineId,
+        GetAnonyString(peerDevId).c_str());
 
     if (IsInvalidEngineId(engineId)) {
-        DHLOGE("Invalid input engine id = %d", engineId);
+        AVTRANS_LOGE("Invalid input engine id = %d", engineId);
         return ERR_DH_AVT_INVALID_PARAM_VALUE;
     }
 
     if (!initialized_.load()) {
-        DHLOGE("AV control center has not been initialized.");
+        AVTRANS_LOGE("AV control center has not been initialized.");
         return ERR_DH_AVT_CREATE_CHANNEL_FAILED;
     }
 
@@ -161,7 +162,8 @@ int32_t AVTransControlCenter::CreateControlChannel(int32_t engineId, const std::
                 std::lock_guard<std::mutex> lock(engineIdMutex_);
                 engine2DevIdMap_.insert(std::make_pair(engineId, peerDevId));
             }
-            DHLOGE("AV control center channel has already created, peerDevId=%s.", GetAnonyString(peerDevId).c_str());
+            AVTRANS_LOGE("AV control center channel has already created, peerDevId=%s.",
+                GetAnonyString(peerDevId).c_str());
             return ERR_DH_AVT_CHANNEL_ALREADY_OPENED;
         }
     }
@@ -170,7 +172,7 @@ int32_t AVTransControlCenter::CreateControlChannel(int32_t engineId, const std::
         AV_SYNC_SENDER_CONTROL_SESSION_NAME;
     int32_t ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName, peerDevId);
     if (ret != DH_AVT_SUCCESS) {
-        DHLOGE("Create av control center channel failed, ret=%d", ret);
+        AVTRANS_LOGE("Create av control center channel failed, ret=%d", ret);
         return ret;
     }
 
@@ -183,7 +185,7 @@ int32_t AVTransControlCenter::CreateControlChannel(int32_t engineId, const std::
 int32_t AVTransControlCenter::Notify(int32_t engineId, const AVTransEvent& event)
 {
     if (IsInvalidEngineId(engineId)) {
-        DHLOGE("Invalid input engine id = %d", engineId);
+        AVTRANS_LOGE("Invalid input engine id = %d", engineId);
         return ERR_DH_AVT_INVALID_PARAM_VALUE;
     }
 
@@ -197,7 +199,7 @@ int32_t AVTransControlCenter::Notify(int32_t engineId, const AVTransEvent& event
             break;
         }
         default:
-            DHLOGE("Unsupported event type.");
+            AVTRANS_LOGE("Unsupported event type.");
     }
     return DH_AVT_SUCCESS;
 }
@@ -206,12 +208,12 @@ int32_t AVTransControlCenter::RegisterCtlCenterCallback(int32_t engineId,
     const sptr<IAVTransControlCenterCallback> &callback)
 {
     if (IsInvalidEngineId(engineId)) {
-        DHLOGE("Invalid input engine id = %d", engineId);
+        AVTRANS_LOGE("Invalid input engine id = %d", engineId);
         return ERR_DH_AVT_INVALID_PARAM_VALUE;
     }
 
     if (callback == nullptr) {
-        DHLOGE("Input callback is nullptr.");
+        AVTRANS_LOGE("Input callback is nullptr.");
         return ERR_DH_AVT_INVALID_PARAM_VALUE;
     }
 
@@ -223,9 +225,9 @@ int32_t AVTransControlCenter::RegisterCtlCenterCallback(int32_t engineId,
 
 int32_t AVTransControlCenter::SendMessage(const std::shared_ptr<AVTransMessage> &message)
 {
-    DHLOGI("SendMessage enter.");
+    AVTRANS_LOGI("SendMessage enter.");
     if (message == nullptr) {
-        DHLOGE("Input message is nullptr.");
+        AVTRANS_LOGE("Input message is nullptr.");
         return ERR_DH_AVT_INVALID_PARAM;
     }
     std::string msgData = message->MarshalMessage();
@@ -254,7 +256,7 @@ void AVTransControlCenter::SetParam2Engines(const AVTransSharedMemory &memory)
 
 void AVTransControlCenter::OnChannelEvent(const AVTransEvent &event)
 {
-    DHLOGI("OnChannelEvent enter. event type:%d", event.type);
+    AVTRANS_LOGI("OnChannelEvent enter. event type:%d", event.type);
     switch (event.type) {
         case EventType::EVENT_CHANNEL_OPENED:
         case EventType::EVENT_CHANNEL_CLOSED:
@@ -271,19 +273,19 @@ void AVTransControlCenter::OnChannelEvent(const AVTransEvent &event)
             break;
         }
         default:
-            DHLOGE("Unsupported event type.");
+            AVTRANS_LOGE("Unsupported event type.");
     }
 }
 
 void AVTransControlCenter::HandleChannelEvent(const AVTransEvent &event)
 {
     if (event.type == EventType::EVENT_CHANNEL_CLOSED) {
-        DHLOGI("Control channel has been closed.");
+        AVTRANS_LOGI("Control channel has been closed.");
         return;
     }
 
     if (event.type == EventType::EVENT_CHANNEL_OPEN_FAIL) {
-        DHLOGE("Open control channel failed for peerDevId=%s.", GetAnonyString(event.peerDevId).c_str());
+        AVTRANS_LOGE("Open control channel failed for peerDevId=%s.", GetAnonyString(event.peerDevId).c_str());
         return;
     }
 
@@ -300,10 +302,10 @@ void AVTransControlCenter::HandleDataReceived(const std::string &content)
 {
     auto avMessage = std::make_shared<AVTransMessage>();
     if (!avMessage->UnmarshalMessage(content)) {
-        DHLOGE("unmarshal event content to av message failed");
+        AVTRANS_LOGE("unmarshal event content to av message failed");
         return;
     }
-    DHLOGI("Handle data received, av message type = %d", avMessage->type_);
+    AVTRANS_LOGI("Handle data received, av message type = %d", avMessage->type_);
     if ((avMessage->type_ == (uint32_t)AVTransTag::START_AV_SYNC) ||
         (avMessage->type_ == (uint32_t)AVTransTag::STOP_AV_SYNC)) {
         syncManager_->HandleAvSyncMessage(avMessage);

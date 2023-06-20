@@ -178,5 +178,40 @@ int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std:
 
     return ret;
 }
+
+int32_t DistributedHardwareProxy::Initialize(const TransRole &transRole, int32_t &engineId)
+{
+    (void)transRole;
+    (void)engineId;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxy::Release(int32_t engineId)
+{
+    (void)engineId;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxy::CreateControlChannel(int32_t engineId, const std::string &peerDevId)
+{
+    (void)engineId;
+    (void)peerDevId;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxy::Notify(int32_t engineId, const AVTransEvent &event)
+{
+    (void)engineId;
+    (void)event;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxy::RegisterCtlCenterCallback(int32_t engineId,
+    const sptr<IAVTransControlCenterCallback> &callback)
+{
+    (void)engineId;
+    (void)callback;
+    return DH_FWK_SUCCESS;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

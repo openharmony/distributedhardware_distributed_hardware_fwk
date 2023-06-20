@@ -21,7 +21,7 @@ namespace OHOS {
 namespace DistributedHardware {
 AVSenderEngineProvider::AVSenderEngineProvider(const std::string ownerName) : ownerName_(ownerName)
 {
-    DHLOGI("AVSenderEngineProvider ctor.");
+    AVTRANS_LOGI("AVSenderEngineProvider ctor.");
     sessionName_ = ownerName + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX;
     SoftbusChannelAdapter::GetInstance().CreateChannelServer(ownerName, sessionName_);
     SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, AV_TRANS_SPECIAL_DEVICE_ID, this);
@@ -29,7 +29,7 @@ AVSenderEngineProvider::AVSenderEngineProvider(const std::string ownerName) : ow
 
 AVSenderEngineProvider::~AVSenderEngineProvider()
 {
-    DHLOGI("AVSenderEngineProvider dctor.");
+    AVTRANS_LOGI("AVSenderEngineProvider dctor.");
     std::lock_guard<std::mutex> lock(listMutex_);
     for (auto &sender : senderEngineList_) {
         sender->Release();
@@ -41,10 +41,10 @@ AVSenderEngineProvider::~AVSenderEngineProvider()
     providerCallback_ = nullptr;
 }
 
-std::shared_ptr<IAVSenderEngine> AVSenderEngineProvider::CreateAVSenderEngine()
+std::shared_ptr<IAVSenderEngine> AVSenderEngineProvider::CreateAVSenderEngine(const std::string &peerDevId)
 {
-    DHLOGI("CreateAVSenderEngine enter.");
-    auto sender = std::make_shared<AVSenderEngine>(ownerName_);
+    AVTRANS_LOGI("CreateAVSenderEngine enter.");
+    auto sender = std::make_shared<AVSenderEngine>(ownerName_, peerDevId);
     if (sender && sender->Initialize() == DH_AVT_SUCCESS) {
         {
             std::lock_guard<std::mutex> lock(listMutex_);
@@ -52,7 +52,7 @@ std::shared_ptr<IAVSenderEngine> AVSenderEngineProvider::CreateAVSenderEngine()
         }
         return sender;
     }
-    DHLOGE("create sender failed or sender init failed.");
+    AVTRANS_LOGE("create sender failed or sender init failed.");
     return nullptr;
 }
 
@@ -70,9 +70,12 @@ int32_t AVSenderEngineProvider::RegisterProviderCallback(const std::shared_ptr<I
 
 void AVSenderEngineProvider::OnChannelEvent(const AVTransEvent &event)
 {
-    if ((providerCallback_ != nullptr) &&
-        ((event.type == EventType::EVENT_CHANNEL_OPENED) || (event.type == EventType::EVENT_CHANNEL_CLOSED))) {
-        DHLOGI("on receiver channel event. event type:%" PRId32, event.type);
+    if (providerCallback_ == nullptr) {
+        AVTRANS_LOGE("providerCallback is null, distributed service may not register callback.");
+        return;
+    }
+    if ((event.type == EventType::EVENT_CHANNEL_OPENED) || (event.type == EventType::EVENT_CHANNEL_CLOSED)) {
+        AVTRANS_LOGI("on receiver channel event. event type:%" PRId32, event.type);
         providerCallback_->OnProviderEvent(event);
     }
 }
