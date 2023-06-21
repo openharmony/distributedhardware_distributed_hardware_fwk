@@ -242,12 +242,13 @@ void DscreenOutputPlugin::ReadMasterClockFromMemory(const std::shared_ptr<Plugin
 
     int64_t audioPts = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::MEDIA_START_TIME));
     uint32_t audioFrmNum = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::AUDIO_SAMPLE_PER_FRAME));
-    AVTRANS_LOGI("get audioFrmNum=%" PRId32 ", audioPts=%lld from output buffer meta success.", audioFrmNum, (long long)audioPts);
+    AVTRANS_LOGI("get audioFrmNum=%" PRId32 ", audioPts=%lld from output buffer meta success.", audioFrmNum,
+        (long long)audioPts);
 
     AVSyncClockUnit clockUnit = AVSyncClockUnit{ 0, audioFrmNum, 0 };
     int32_t ret = ReadClockUnitFromMemory(sharedMemory_, clockUnit);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGI("read master clock from shared memory failed.");
+        AVTRANS_LOGE("read master clock from shared memory failed.");
     }
 }
 
