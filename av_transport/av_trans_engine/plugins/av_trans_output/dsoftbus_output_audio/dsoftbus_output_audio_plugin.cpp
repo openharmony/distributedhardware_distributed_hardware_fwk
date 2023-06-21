@@ -27,12 +27,12 @@ std::shared_ptr<AvTransOutputPlugin> DsoftbusOutputAudioPluginCreator(const std:
 
 Status DsoftbusOutputAudioRegister(const std::shared_ptr<Register> &reg)
 {
-    AvTransOutputAudioPluginDef definition;
+    AvTransOutputPluginDef definition;
     definition.name = "AVTransDsoftbusOutputAudioPlugin";
     definition.description = "Audio transport to dsoftbus";
     definition.rank = PLUGIN_RANK;
     definition.pluginType = PluginType::AVTRANS_OUTPUT;
-    definition.creator = DsoftbusOutputPluginCreator;
+    definition.creator = DsoftbusOutputAudioPluginCreator;
 
     CapabilityBuilder capBuilder;
     capBuilder.SetMime(OHOS::Media::MEDIA_MIME_AUDIO_AAC);
@@ -97,13 +97,13 @@ Status DsoftbusOutputAudioPlugin::Prepare()
     ValueType channelsValue;
     TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_CHANNELS, channelsValue) != Status::OK,
         Status::ERROR_UNKNOWN, "Not found AUDIO_CHANNELS");
-    channel_ = Plugin::AnyCast<int>(channelsValue);
+    channels_ = Plugin::AnyCast<int>(channelsValue);
 
     ValueType sampleRateValue;
     TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_SAMPLE_RATE, sampleRateValue) != Status::OK,
         Status::ERROR_UNKNOWN, "Not found AUDIO_SAMPLE_RATE");
     sampleRate_ = Plugin::AnyCast<int>(sampleRateValue);
-    DHLOGI("channels = %d, sampleRate = %d.", channels, sampleRate);
+    DHLOGI("channels_ = %d, sampleRate_ = %d.", channels_, sampleRate_);
 
     state_ = State::PREPARED;
     return Status::OK;

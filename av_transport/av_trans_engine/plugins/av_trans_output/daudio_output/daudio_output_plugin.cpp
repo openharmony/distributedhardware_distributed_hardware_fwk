@@ -52,17 +52,17 @@ PLUGIN_DEFINITION(AVTransDaudioOutput, LicenseType::APACHE_V2, DaudioOutputRegis
 DaudioOutputPlugin::DaudioOutputPlugin(std::string name)
     : AvTransOutputPlugin(std::move(name))
 {
-    DHLOGI("ctor.");
+    AVTRANS_LOGI("ctor.");
 }
 
 DaudioOutputPlugin::~DaudioOutputPlugin()
 {
-    DHLOGI("dtor.");
+    AVTRANS_LOGI("dtor.");
 }
 
 Status DaudioOutputPlugin::Init()
 {
-    DHLOGI("Init.");
+    AVTRANS_LOGI("Init.");
     OSAL::ScopedLock lock(operationMutes_);
     state_ = State::INITIALIZED;
     return Status::OK;
@@ -70,7 +70,7 @@ Status DaudioOutputPlugin::Init()
 
 Status DaudioOutputPlugin::Deinit()
 {
-    DHLOGI("Deinit.");
+    AVTRANS_LOGI("Deinit.");
     return Reset();
 }
 
@@ -87,16 +87,16 @@ void DaudioOutputPlugin::RampleInit(uint32_t channels, uint32_t sampleRate, uint
         AV_SAMPLE_FMT_S16,
     };
     if (resample_->Init(resamplePara) != Status::OK) {
-        DHLOGE("Resample init error");
+        AVTRANS_LOGE("Resample init error");
     }
 }
 
 Status DaudioOutputPlugin::Prepare()
 {
-    DHLOGI("Prepare");
+    AVTRANS_LOGI("Prepare");
     OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::INITIALIZED) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     if (sendPlayTask_ == nullptr) {
@@ -123,7 +123,7 @@ Status DaudioOutputPlugin::Prepare()
     } else if (channelsLayout == AUDIO_CHANNEL_LAYOUT_STEREO) {
         channelsLayout = AV_CH_LAYOUT_STEREO;
     }
-    DHLOGI("channels = %d, sampleRate = %d, channelLayout = %d.", channels, sampleRate, channelsLayout);
+    AVTRANS_LOGI("channels = %d, sampleRate = %d, channelLayout = %d.", channels, sampleRate, channelsLayout);
     RampleInit(channels, sampleRate, channelsLayout);
     state_ = State::PREPARED;
     return Status::OK;
@@ -131,7 +131,7 @@ Status DaudioOutputPlugin::Prepare()
 
 Status DaudioOutputPlugin::Reset()
 {
-    DHLOGI("Reset enter");
+    AVTRANS_LOGI("Reset enter");
     OSAL::ScopedLock lock(operationMutes_);
     eventcallback_ = nullptr;
     if (sendPlayTask_) {
@@ -141,6 +141,7 @@ Status DaudioOutputPlugin::Reset()
     if (resample_) {
         resample_.reset();
     }
+    smIndex_ = 0;
     paramsMap_.clear();
     DataQueueClear(outputBuffer_);
     state_ = State::INITIALIZED;
@@ -161,15 +162,21 @@ Status DaudioOutputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
     Media::OSAL::ScopedLock lock(operationMutes_);
     paramsMap_.insert(std::make_pair(tag, value));
+    if (tag == Plugin::Tag::USER_SHARED_MEMORY_FD) {
+        sharedMemory_ = UnmarshalSharedMemory(Media::Plugin::AnyCast<std::string>(value));
+    }
+    if (tag == Plugin::Tag::USER_AV_SYNC_GROUP_INFO) {
+        std::string groupInfo = Media::Plugin::AnyCast<std::string>(value);
+    }
     return Status::OK;
 }
 
 Status DaudioOutputPlugin::Start()
 {
-    DHLOGI("Start enter");
+    AVTRANS_LOGI("Start enter");
     OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::PREPARED) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     DataQueueClear(outputBuffer_);
@@ -180,10 +187,10 @@ Status DaudioOutputPlugin::Start()
 
 Status DaudioOutputPlugin::Stop()
 {
-    DHLOGI("Stop enter");
+    AVTRANS_LOGI("Stop enter");
     OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::RUNNING) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     sendPlayTask_->Pause();
@@ -196,11 +203,11 @@ Status DaudioOutputPlugin::SetCallback(Callback *cb)
 {
     OSAL::ScopedLock lock(operationMutes_);
     if (cb == nullptr) {
-        DHLOGE("SetCallBack failed, cb is nullptr.");
+        AVTRANS_LOGE("SetCallBack failed, cb is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
     eventcallback_ = cb;
-    DHLOGI("SetCallback success.");
+    AVTRANS_LOGI("SetCallback success.");
     return Status::OK;
 }
 
@@ -208,17 +215,17 @@ Status DaudioOutputPlugin::SetDataCallback(AVDataCallback callback)
 {
     OSAL::ScopedLock lock(operationMutes_);
     if (callback == nullptr) {
-        DHLOGE("SetCallBack failed, callback is nullptr.");
+        AVTRANS_LOGE("SetCallBack failed, callback is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
     datacallback_ = callback;
-    DHLOGI("SetDataCallback success.");
+    AVTRANS_LOGI("SetDataCallback success.");
     return Status::OK;
 }
 
 Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
-    DHLOGI("PushData enter.");
+    AVTRANS_LOGI("PushData enter.");
     OSAL::ScopedLock lock(operationMutes_);
     uint32_t frameNumber = 1;
     int64_t pts = 2;
@@ -228,14 +235,14 @@ Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<P
     if (buffer->GetBufferMeta()->IsExist(Tag::USER_FRAME_PTS)) {
         pts = Plugin::AnyCast<int64_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_PTS));
     }
-    DHLOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", pts, buffer->GetMemory()->GetSize(), frameNumber);
+    AVTRANS_LOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", pts, buffer->GetMemory()->GetSize(), frameNumber);
 
     if (buffer == nullptr || buffer->IsEmpty()) {
-        DHLOGE("AVBuffer is nullptr.");
+        AVTRANS_LOGE("AVBuffer is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
     while (outputBuffer_.size() >= DATA_QUEUE_MAX_SIZE) {
-        DHLOGE("outputBuffer_ queue overflow.");
+        AVTRANS_LOGE("outputBuffer_ queue overflow.");
         outputBuffer_.pop();
     }
 
@@ -247,14 +254,14 @@ Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<P
     auto destLength = srcLength;
     if (resample_) {
         if (resample_->Convert(srcBuffer, srcLength, destBuffer, destLength) != Status::OK) {
-            DHLOGE("Resample convert failed.");
+            AVTRANS_LOGE("Resample convert failed.");
         }
     }
     auto finalBuffer = Buffer::CreateDefaultBuffer(BufferMetaType::AUDIO, destLength);
     auto bufData = finalBuffer->GetMemory();
     auto writeSize = bufData->Write(reinterpret_cast<const uint8_t *>(destBuffer), destLength, 0);
     if (static_cast<ssize_t>(writeSize) != destLength) {
-        DHLOGE("Write buffer data failed.");
+        AVTRANS_LOGE("Write buffer data failed.");
         return Status::ERROR_NULL_POINTER;
     }
     finalBuffer->UpdateBufferMeta(*finalBufferMeta);
@@ -272,17 +279,42 @@ void DaudioOutputPlugin::HandleData()
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
             dataCond_.wait(lock, [this]() { return !outputBuffer_.empty(); });
             if (outputBuffer_.empty()) {
-                DHLOGD("Data queue is empty.");
+                AVTRANS_LOGD("Data queue is empty.");
                 continue;
             }
             buffer = outputBuffer_.front();
             outputBuffer_.pop();
         }
         if (buffer == nullptr) {
-            DHLOGE("Data is null");
+            AVTRANS_LOGE("Data is null");
             continue;
         }
         datacallback_(buffer);
+    }
+}
+
+void DaudioOutputPlugin::WriteMasterClockToMemory(const std::shared_ptr<Plugin::Buffer> &buffer)
+{
+    if ((buffer == nullptr) || (buffer->GetBufferMeta() == nullptr)) {
+        AVTRANS_LOGE("output buffer or buffer meta is nullptr.");
+        return;
+    }
+
+    if (!buffer->GetBufferMeta()->IsExist(Tag::USER_FRAME_NUMBER)) {
+        AVTRANS_LOGE("the output buffer meta does not contains tag user_frame_number.");
+        return;
+    }
+
+    if ((sharedMemory_.fd <= 0) || (sharedMemory_.size <= 0) || sharedMemory_.name.empty()) {
+        AVTRANS_LOGE("invalid master clock shared memory info.");
+        return;
+    }
+
+    uint32_t frameNum = Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER));
+    AVSyncClockUnit clockUnit = AVSyncClockUnit{ smIndex_, frameNum, GetCurrentTime() };
+    int32_t ret = WriteClockUnitToMemory(sharedMemory_, clockUnit);
+    if (ret == DH_AVT_SUCCESS) {
+        smIndex_ = clockUnit.index;
     }
 }
 
@@ -294,13 +326,13 @@ void DaudioOutputPlugin::DataQueueClear(std::queue<std::shared_ptr<Buffer>> &q)
 
 Status DaudioOutputPlugin::StartOutputQueue()
 {
-    DHLOGI("StartOutputQueue enter.");
+    AVTRANS_LOGI("StartOutputQueue enter.");
     return Status::OK;
 }
 
 Status DaudioOutputPlugin::ControlFrameRate(const int64_t timestamp)
 {
-    DHLOGI("ControlFrameRate enter.");
+    AVTRANS_LOGI("ControlFrameRate enter.");
     return Status::OK;
 }
 } // namespace DistributedHardware

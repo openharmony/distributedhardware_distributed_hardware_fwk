@@ -13,7 +13,7 @@
 
 import("//build/ohos.gni")
 import(
-    "${distributedhardwarefwk_path}/av_transport/distributed_av_transport.gni")
+    "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
 
 ohos_shared_library("histreamer_plugin_AVTransDscreenOutput") {
   include_dirs = [
@@ -29,6 +29,7 @@ ohos_shared_library("histreamer_plugin_AVTransDscreenOutput") {
   ]
 
   sources = [
+    "${common_path}/src/av_sync_utils.cpp",
     "${common_path}/src/av_trans_buffer.cpp",
     "${common_path}/src/av_trans_log.cpp",
     "${common_path}/src/av_trans_meta.cpp",
