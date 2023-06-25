@@ -127,11 +127,12 @@ std::string HiStreamerQueryTool::QueryHiStreamerPluginInfo(HISTREAM_PLUGIN_TYPE 
             break;
         }
         default:
-            return "";
+            break;
     }
 
     std::string result(res, len);
     free(res);
+    res = nullptr;
     return result;
 }
 }
