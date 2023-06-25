@@ -109,8 +109,7 @@ std::string HiStreamerQueryTool::QueryHiStreamerPluginInfo(HISTREAM_PLUGIN_TYPE 
         DHLOGE("Malloc memory failed");
         return "";
     }
-    switch (type)
-    {
+    switch (type) {
         case HISTREAM_PLUGIN_TYPE::AUDIO_ENCODER: {
             len = queryAudioEncoderFunc(res);
             break;

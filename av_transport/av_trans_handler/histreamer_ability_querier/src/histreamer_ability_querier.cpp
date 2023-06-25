@@ -557,7 +557,8 @@ std::vector<VideoDecoderIn> ParseVideoDecoderIn(CapabilitySet &inCaps)
         AVTRANS_LOGD("VideoDecoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         VideoDecoderIn in;
         in.mime = cap.mime;
-        in.vd_bit_stream_fmt = AnyCast<std::vector<VideoBitStreamFormat>>(cap.keys[CapabilityID::VIDEO_BIT_STREAM_FORMAT]);
+        in.vd_bit_stream_fmt =
+            AnyCast<std::vector<VideoBitStreamFormat>>(cap.keys[CapabilityID::VIDEO_BIT_STREAM_FORMAT]);
         ins.push_back(in);
     }
 
