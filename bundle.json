@@ -61,7 +61,8 @@
         "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
         "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhfwk_sa_profile",
         "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhardware.cfg",
-        "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits:libdhfwk_sdk"
+        "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits:libdhfwk_sdk",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_handler/histreamer_ability_querier:histreamer_ability_querier"
       ],
       "inner_kits": [
         {
@@ -72,6 +73,21 @@
               "distributed_hardware_fwk_kit.h"
             ],
             "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits/include"
+          }
+        },
+        {
+          "type": "so",
+          "name": "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
+          "header": {
+            "header_files": [
+              "anonymous_string.h",
+              "dh_utils_hisysevent.h",
+              "dh_utils_hitrace.h",
+              "dh_utils_tool.h",
+              "histreamer_ability_parser.h",
+              "histreamer_query_tool.h"
+            ],
+            "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/utils/include"
           }
         }
       ],

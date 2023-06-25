@@ -30,6 +30,8 @@ ohos_shared_library("distributedhardwareutils") {
     "src/dh_utils_hisysevent.cpp",
     "src/dh_utils_hitrace.cpp",
     "src/dh_utils_tool.cpp",
+    "src/histreamer_ability_parser.cpp",
+    "src/histreamer_query_tool.cpp",
     "src/log/dh_log.cpp",
   ]
 
