@@ -36,7 +36,7 @@ using CapabilityID = OHOS::Media::Plugin::Capability::Key;
 namespace OHOS {
 namespace DistributedHardware {
 
-const uint32_t MAX_MESSAGES_LEN = 4 * 1024 * 1024;
+const uint32_t MAX_MESSAGES_LEN = 1 * 1024 * 1024;
 static const std::string NAME = "name";
 static const std::string INS = "ins";
 static const std::string OUTS = "outs";
@@ -99,12 +99,11 @@ std::vector<AudioEncoderIn> ParseAudioEncoderIn(CapabilitySet &inCaps)
 {
     std::vector<AudioEncoderIn> ins;
     for (auto &cap : inCaps) {
+        AVTRANS_LOGD("AudioEncoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         AudioEncoderIn in;
         in.mime = cap.mime;
         in.sample_rate = AnyCast<std::vector<uint32_t>>(cap.keys[CapabilityID::AUDIO_SAMPLE_RATE]);
         ins.push_back(in);
-
-        AVTRANS_LOGI("AudioEncoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
     }
 
     return ins;
@@ -114,12 +113,11 @@ std::vector<AudioEncoderOut> ParseAudioEncoderOut(CapabilitySet &outCaps)
 {
     std::vector<AudioEncoderOut> outs;
     for (auto &cap : outCaps) {
+        AVTRANS_LOGD("AudioEncoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         AudioEncoderOut out;
         out.mime = cap.mime;
         out.ad_mpeg_ver = AnyCast<uint32_t>(cap.keys[CapabilityID::AUDIO_MPEG_VERSION]);
         outs.push_back(out);
-
-        AVTRANS_LOGI("AudioEncoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
     }
 
     return outs;
@@ -260,12 +258,11 @@ std::vector<AudioDecoderIn> ParseAudioDecoderIn(CapabilitySet &inCaps)
 {
     std::vector<AudioDecoderIn> ins;
     for (auto &cap : inCaps) {
+        AVTRANS_LOGD("AudioDecoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         AudioDecoderIn in;
         in.mime = cap.mime;
         in.channel_layout = AnyCast<std::vector<AudioChannelLayout>>(cap.keys[CapabilityID::AUDIO_CHANNEL_LAYOUT]);
         ins.push_back(in);
-
-        AVTRANS_LOGI("AudioDecoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
     }
 
     return ins;
@@ -275,12 +272,11 @@ std::vector<AudioDecoderOut> ParseAudioDecoderOut(CapabilitySet &outCaps)
 {
     std::vector<AudioDecoderOut> outs;
     for (auto &cap : outCaps) {
+        AVTRANS_LOGD("AudioDecoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         AudioDecoderOut out;
         out.mime = cap.mime;
         out.sample_fmt = AnyCast<std::vector<AudioSampleFormat>>(cap.keys[CapabilityID::AUDIO_SAMPLE_FORMAT]);
         outs.push_back(out);
-
-        AVTRANS_LOGI("AudioDecoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
     }
 
     return outs;
@@ -418,12 +414,11 @@ std::vector<VideoEncoderIn> ParseVideoEncoderIn(CapabilitySet &inCaps)
 {
     std::vector<VideoEncoderIn> ins;
     for (auto &cap : inCaps) {
+        AVTRANS_LOGD("VideoEncoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         VideoEncoderIn in;
         in.mime = cap.mime;
         in.pixel_fmt = AnyCast<std::vector<VideoPixelFormat>>(cap.keys[CapabilityID::VIDEO_PIXEL_FORMAT]);
         ins.push_back(in);
-
-        AVTRANS_LOGI("VideoEncoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
     }
 
     return ins;
@@ -433,11 +428,10 @@ std::vector<VideoEncoderOut> ParseVideoEncoderOut(CapabilitySet &outCaps)
 {
     std::vector<VideoEncoderOut> outs;
     for (auto &cap : outCaps) {
+        AVTRANS_LOGD("VideoEncoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         VideoEncoderOut out;
         out.mime = cap.mime;
         outs.push_back(out);
-
-        AVTRANS_LOGI("VideoEncoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
     }
 
     return outs;
@@ -560,12 +554,11 @@ std::vector<VideoDecoderIn> ParseVideoDecoderIn(CapabilitySet &inCaps)
 {
     std::vector<VideoDecoderIn> ins;
     for (auto &cap : inCaps) {
+        AVTRANS_LOGD("VideoDecoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         VideoDecoderIn in;
         in.mime = cap.mime;
         in.vd_bit_stream_fmt = AnyCast<std::vector<VideoBitStreamFormat>>(cap.keys[CapabilityID::VIDEO_BIT_STREAM_FORMAT]);
         ins.push_back(in);
-
-        AVTRANS_LOGI("VideoDecoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
     }
 
     return ins;
@@ -575,12 +568,11 @@ std::vector<VideoDecoderOut> ParseVideoDecoderOut(CapabilitySet &outCaps)
 {
     std::vector<VideoDecoderOut> outs;
     for (auto &cap : outCaps) {
+        AVTRANS_LOGD("VideoDecoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         VideoDecoderOut out;
         out.mime = cap.mime;
         out.pixel_fmt = AnyCast<std::vector<VideoPixelFormat>>(cap.keys[CapabilityID::VIDEO_PIXEL_FORMAT]);
         outs.push_back(out);
-
-        AVTRANS_LOGI("VideoDecoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
     }
 
     return outs;
