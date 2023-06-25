@@ -38,8 +38,8 @@ public:
 class SoftbusChannelAdapter {
     DECLARE_SINGLE_INSTANCE_BASE(SoftbusChannelAdapter);
 public:
-    int32_t CreateChannelServer(const std::string &ownerName, const std::string &sessName);
-    int32_t RemoveChannelServer(const std::string &ownerName, const std::string &sessName);
+    int32_t CreateChannelServer(const std::string &pkgName, const std::string &sessName);
+    int32_t RemoveChannelServer(const std::string &pkgName, const std::string &sessName);
 
     int32_t OpenSoftbusChannel(const std::string &mySessName, const std::string &peerSessName,
         const std::string &peerDevId);
@@ -53,9 +53,9 @@ public:
         ISoftbusChannelListener *listener);
     int32_t UnRegisterChannelListener(const std::string &sessName, const std::string &peerDevId);
 
-    int32_t StartDeviceTimeSync(const std::string &ownerName, const std::string &sessName,
+    int32_t StartDeviceTimeSync(const std::string &pkgName, const std::string &sessName,
         const std::string &peerDevId);
-    int32_t StopDeviceTimeSync(const std::string &ownerName, const std::string &sessName,
+    int32_t StopDeviceTimeSync(const std::string &pkgName, const std::string &sessName,
         const std::string &peerDevId);
 
     void SendChannelEvent(ISoftbusChannelListener *listener, const AVTransEvent &event);

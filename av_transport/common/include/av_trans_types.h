@@ -21,17 +21,21 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-const std::string OWNER_NAME_D_MIC = "ohos.dhardware.dmic";
 const std::string OWNER_NAME_D_CAMERA = "ohos.dhardware.dcamera";
 const std::string OWNER_NAME_D_SCREEN = "ohos.dhardware.dscreen";
-const std::string OWNER_NAME_D_SPEAKER = "ohos.dhardware.dspeaker";
-const std::string OWNER_NAME_D_AUDIO = "ohos.dhardware.daudio";
+const std::string OWNER_NAME_D_MIC = "ohos.dhardware.daudio.dmic";
+const std::string OWNER_NAME_D_SPEAKER = "ohos.dhardware.daudio.dspeaker";
 
 const std::string SCENE_TYPE_D_MIC = "dmic_stream";
 const std::string SCENE_TYPE_D_SCREEN = "dscreen_stream";
 const std::string SCENE_TYPE_D_SPEAKER = "dspeaker_stream";
 const std::string SCENE_TYPE_D_CAMERA_STR = "dcamera_stream";
 const std::string SCENE_TYPE_D_CAMERA_PIC = "dcamera_picture";
+
+const std::string PKG_NAME_DH_FWK = "ohos.dhardware";
+const std::string PKG_NAME_D_AUDIO = "ohos.dhardware.daudio";
+const std::string PKG_NAME_D_CAMERA = "ohos.dhardware.dcamera";
+const std::string PKG_NAME_D_SCREEN = "ohos.dhardware.dscreen";
 
 const std::string MIME_VIDEO_RAW = "video/raw";
 const std::string MIME_VIDEO_H264 = "video/avc";

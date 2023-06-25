@@ -61,7 +61,14 @@
         "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice:distributedhardwarefwksvr",
         "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhfwk_sa_profile",
         "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhardware.cfg",
-        "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits:libdhfwk_sdk"
+        "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits:libdhfwk_sdk",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_control_center/inner_kits:avtranscenter_sdk",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/av_sender:distributed_av_sender",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/av_receiver:distributed_av_receiver",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/plugins/av_trans_input/dscreen_input:histreamer_plugin_AVTransDscreenInput",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/plugins/av_trans_input/dsoftbus_input:histreamer_plugin_AVTransDsoftbusInput",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/plugins/av_trans_output/dscreen_output:histreamer_plugin_AVTransDscreenOutput",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/plugins/av_trans_output/dsoftbus_output:histreamer_plugin_AVTransDsoftbusOutput"
       ],
       "inner_kits": [
         {

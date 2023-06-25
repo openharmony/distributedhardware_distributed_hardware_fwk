@@ -23,7 +23,7 @@ AVReceiverEngineProvider::AVReceiverEngineProvider(const std::string &ownerName)
 {
     AVTRANS_LOGI("AVReceiverEngineProvider ctor.");
     sessionName_ = ownerName + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
-    SoftbusChannelAdapter::GetInstance().CreateChannelServer(ownerName, sessionName_);
+    SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName), sessionName_);
     SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, AV_TRANS_SPECIAL_DEVICE_ID, this);
 }
 
@@ -36,7 +36,7 @@ AVReceiverEngineProvider::~AVReceiverEngineProvider()
             receiver->Release();
         }
     }
-    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(ownerName_, sessionName_);
+    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(TransName2PkgName(ownerName_), sessionName_);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, AV_TRANS_SPECIAL_DEVICE_ID);
     ownerName_ = "";
     sessionName_ = "";

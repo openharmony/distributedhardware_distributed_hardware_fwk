@@ -82,7 +82,7 @@ Status DsoftbusInputAudioPlugin::Prepare()
     }
 
     sessionName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
-    int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(ownerName_, sessionName_);
+    int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName_), sessionName_);
     if (ret != DH_AVT_SUCCESS) {
         DHLOGE("Create Session Server failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
@@ -113,7 +113,7 @@ Status DsoftbusInputAudioPlugin::Reset()
         bufferPopTask_.reset();
     }
     DataQueueClear(dataQueue_);
-    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(ownerName_, sessionName_);
+    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(TransName2PkgName(ownerName_), sessionName_);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
     state_ = State::INITIALIZED;
     return Status::OK;
