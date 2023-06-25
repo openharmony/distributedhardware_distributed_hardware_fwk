@@ -298,7 +298,7 @@ int32_t AVReceiverEngine::SetParameter(AVTransTag tag, const std::string &value)
         }
         case AVTransTag::SHARED_MEMORY_FD: {
             avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::USER_SHARED_MEMORY_FD), value);
-            AVTRANS_LOGI("SetParameter USER_SHARED_MEMORY_FD success, shared memory info = %s", value.c_str());
+            AVTRANS_LOGI("SetParameter SHARED_MEMORY_FD success, shared memory info = %s", value.c_str());
             break;
         }
         case AVTransTag::ENGINE_READY: {
