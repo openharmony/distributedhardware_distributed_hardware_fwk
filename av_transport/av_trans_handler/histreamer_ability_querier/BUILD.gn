@@ -23,6 +23,7 @@ ohos_shared_library("histreamer_ability_querier") {
     "${histreamer_path}/include",
     "${histreamer_path}/include/plugin",
     "${histreamer_path}/include/plugin/common",
+    "${histreamer_path}/include/plugin/core",
     "${histreamer_path}/include/pipeline/core",
     "${histreamer_path}/plugin/core",
     "${histreamer_path}/pipeline/filters/common",
