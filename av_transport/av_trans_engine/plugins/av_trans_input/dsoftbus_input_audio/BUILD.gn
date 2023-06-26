@@ -13,7 +13,7 @@
 
 import("//build/ohos.gni")
 import(
-    "${distributedhardwarefwk_path}/av_transport/distributed_av_transport.gni")
+    "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
 
 ohos_shared_library("histreamer_plugin_AVTransDsoftbusInputAudio") {
   include_dirs = [

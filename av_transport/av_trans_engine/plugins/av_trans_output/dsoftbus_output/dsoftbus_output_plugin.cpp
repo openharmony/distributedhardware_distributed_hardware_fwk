@@ -53,17 +53,17 @@ PLUGIN_DEFINITION(AVTransDsoftbusOutput, LicenseType::APACHE_V2, DsoftbusOutputR
 DsoftbusOutputPlugin::DsoftbusOutputPlugin(std::string name)
     : AvTransOutputPlugin(std::move(name))
 {
-    DHLOGI("ctor.");
+    AVTRANS_LOGI("ctor.");
 }
 
 DsoftbusOutputPlugin::~DsoftbusOutputPlugin()
 {
-    DHLOGI("dtor.");
+    AVTRANS_LOGI("dtor.");
 }
 
 Status DsoftbusOutputPlugin::Init()
 {
-    DHLOGI("Init Dsoftbus Output Plugin.");
+    AVTRANS_LOGI("Init Dsoftbus Output Plugin.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     state_ = State::INITIALIZED;
     return Status::OK;
@@ -71,23 +71,23 @@ Status DsoftbusOutputPlugin::Init()
 
 Status DsoftbusOutputPlugin::Deinit()
 {
-    DHLOGI("Deinit Dsoftbus Output Plugin.");
+    AVTRANS_LOGI("Deinit Dsoftbus Output Plugin.");
     return Reset();
 }
 
 Status DsoftbusOutputPlugin::Prepare()
 {
-    DHLOGI("Prepare");
+    AVTRANS_LOGI("Prepare");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::INITIALIZED) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
 
     sessionName_ = ownerName_ + "_" + SENDER_DATA_SESSION_NAME_SUFFIX;
     int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName_), sessionName_);
     if (ret != DH_AVT_SUCCESS) {
-        DHLOGE("Create Session Server failed ret: %d.", ret);
+        AVTRANS_LOGE("Create Session Server failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
 
@@ -101,7 +101,7 @@ Status DsoftbusOutputPlugin::Prepare()
 
 Status DsoftbusOutputPlugin::Reset()
 {
-    DHLOGI("Reset");
+    AVTRANS_LOGI("Reset");
     Media::OSAL::ScopedLock lock(operationMutes_);
     paramsMap_.clear();
     if (bufferPopTask_) {
@@ -117,15 +117,15 @@ Status DsoftbusOutputPlugin::Reset()
 
 Status DsoftbusOutputPlugin::Start()
 {
-    DHLOGI("Dsoftbus Output Plugin start.");
+    AVTRANS_LOGI("Dsoftbus Output Plugin start.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::PREPARED) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     Status ret = OpenSoftbusChannel();
     if (ret != Status::OK) {
-        DHLOGE("OpenSoftbusSession failed.");
+        AVTRANS_LOGE("OpenSoftbusSession failed.");
         return Status::ERROR_INVALID_OPERATION;
     }
     DataQueueClear(dataQueue_);
@@ -136,9 +136,9 @@ Status DsoftbusOutputPlugin::Start()
 
 Status DsoftbusOutputPlugin::Stop()
 {
-    DHLOGI("Dsoftbus Output Plugin stop.");
+    AVTRANS_LOGI("Dsoftbus Output Plugin stop.");
     if (state_ != State::RUNNING) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
 
@@ -173,11 +173,11 @@ Status DsoftbusOutputPlugin::SetCallback(Callback *cb)
 {
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (cb == nullptr) {
-        DHLOGE("SetCallback failed, cb is nullptr.");
+        AVTRANS_LOGE("SetCallback failed, cb is nullptr.");
         return Status::ERROR_INVALID_OPERATION;
     }
     eventsCb_ = cb;
-    DHLOGI("SetCallback success");
+    AVTRANS_LOGI("SetCallback success");
     return Status::OK;
 }
 
@@ -185,13 +185,13 @@ Status DsoftbusOutputPlugin::OpenSoftbusChannel()
 {
     int32_t ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
     if (ret != DH_AVT_SUCCESS) {
-        DHLOGE("Register channel listener failed ret: %d.", ret);
+        AVTRANS_LOGE("Register channel listener failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
     std::string peerSessName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
     ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName_, peerDevId_);
     if (ret != DH_AVT_SUCCESS) {
-        DHLOGE("Open softbus channel failed ret: %d.", ret);
+        AVTRANS_LOGE("Open softbus channel failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
     return Status::OK;
@@ -201,15 +201,15 @@ void DsoftbusOutputPlugin::CloseSoftbusChannel()
 {
     int32_t ret = SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     if (ret != DH_AVT_SUCCESS) {
-        DHLOGE("Close softbus channle failed ret: %s.", ret);
+        AVTRANS_LOGE("Close softbus channle failed ret: %s.", ret);
     }
 }
 
 void DsoftbusOutputPlugin::OnChannelEvent(const AVTransEvent &event)
 {
-    DHLOGI("OnChannelEvent enter, event type: %d", event.type);
+    AVTRANS_LOGI("OnChannelEvent enter, event type: %d", event.type);
     if (eventsCb_ == nullptr) {
-        DHLOGE("OnChannelEvent failed, event callback is nullptr.");
+        AVTRANS_LOGE("OnChannelEvent failed, event callback is nullptr.");
         return;
     }
     switch (event.type) {
@@ -226,7 +226,7 @@ void DsoftbusOutputPlugin::OnChannelEvent(const AVTransEvent &event)
             break;
         }
         default:
-            DHLOGE("Unsupported event type.");
+            AVTRANS_LOGE("Unsupported event type.");
     }
 }
 
@@ -238,14 +238,14 @@ void DsoftbusOutputPlugin::OnStreamReceived(const StreamData *data, const Stream
 
 Status DsoftbusOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
 {
-    DHLOGI("Push Buffer to output plugin.");
+    AVTRANS_LOGI("Push Buffer to output plugin.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (buffer == nullptr || buffer->IsEmpty()) {
-        DHLOGE("Buffer is nullptr.");
+        AVTRANS_LOGE("Buffer is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
     while (dataQueue_.size() >= DATA_QUEUE_MAX_SIZE) {
-        DHLOGE("Data queue overflow.");
+        AVTRANS_LOGE("Data queue overflow.");
         dataQueue_.pop();
     }
     dataQueue_.push(buffer);
@@ -261,14 +261,14 @@ void DsoftbusOutputPlugin::FeedChannelData()
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
             dataCond_.wait(lock, [this]() { return !dataQueue_.empty(); });
             if (dataQueue_.empty()) {
-                DHLOGD("Data queue is empty.");
+                AVTRANS_LOGD("Data queue is empty.");
                 continue;
             }
             buffer = dataQueue_.front();
             dataQueue_.pop();
         }
         if (buffer == nullptr) {
-            DHLOGE("Data is null");
+            AVTRANS_LOGE("Data is null");
             continue;
         }
         SendDataToSoftbus(buffer);
@@ -282,28 +282,33 @@ void DsoftbusOutputPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffer)
     BufferMetaType metaType = bufferMeta->GetType();
     jsonObj[AVT_DATA_META_TYPE] = metaType;
     if (metaType != BufferMetaType::VIDEO) {
-        DHLOGE("metaType is wrong");
+        AVTRANS_LOGE("metaType is wrong");
         return;
     }
     auto hisAMeta = std::make_shared<AVTransVideoBufferMeta>();
     hisAMeta->frameNum_ = Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER));
     hisAMeta->pts_ = buffer->pts;
-    DHLOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", hisAMeta->pts_, buffer->GetMemory()->GetSize(),
+    AVTRANS_LOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", hisAMeta->pts_, buffer->GetMemory()->GetSize(),
         hisAMeta->frameNum_);
+    if (bufferMeta->IsExist(Tag::MEDIA_START_TIME)) {
+        hisAMeta->extPts_ = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::MEDIA_START_TIME));
+    }
+    if (bufferMeta->IsExist(Tag::AUDIO_SAMPLE_PER_FRAME)) {
+        hisAMeta->extFrameNum_ = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::AUDIO_SAMPLE_PER_FRAME));
+    }
     jsonObj[AVT_DATA_PARAM] = hisAMeta->MarshalVideoMeta();
 
     std::string jsonStr = jsonObj.dump();
-    DHLOGI("jsonStr->bufLen %zu, jsonStR: %s", jsonStr.length(), jsonStr.c_str());
+    AVTRANS_LOGI("jsonStr->bufLen %zu, jsonStR: %s", jsonStr.length(), jsonStr.c_str());
 
     auto bufferData = buffer->GetMemory();
     StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*>(bufferData->GetReadOnlyData())),
         bufferData->GetSize()};
     StreamData ext = {const_cast<char *>(jsonStr.c_str()), jsonStr.length()};
-    StreamFrameInfo frameInfo = {0};
 
     int32_t ret = SoftbusChannelAdapter::GetInstance().SendStreamData(sessionName_, peerDevId_, &data, &ext);
     if (ret != DH_AVT_SUCCESS) {
-        DHLOGE("Send data to softbus failed.");
+        AVTRANS_LOGE("Send data to softbus failed.");
     }
 }
 
@@ -315,7 +320,7 @@ void DsoftbusOutputPlugin::DataQueueClear(std::queue<std::shared_ptr<Buffer>> &q
 
 Status DsoftbusOutputPlugin::SetDataCallback(AVDataCallback callback)
 {
-    DHLOGI("SetDataCallback");
+    AVTRANS_LOGI("SetDataCallback");
     return Status::OK;
 }
 }

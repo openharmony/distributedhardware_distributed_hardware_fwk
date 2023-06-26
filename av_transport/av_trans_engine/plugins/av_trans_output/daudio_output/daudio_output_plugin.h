@@ -22,8 +22,10 @@
 #include <mutex>
 #include <queue>
 
+#include "av_sync_utils.h"
 #include "av_trans_buffer.h"
 #include "av_trans_constants.h"
+#include "av_trans_errno.h"
 #include "av_trans_log.h"
 #include "av_trans_meta.h"
 #include "av_trans_types.h"
@@ -69,6 +71,7 @@ private:
     void HandleData();
     void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &q);
     void RampleInit(uint32_t channels, uint32_t sampleRate, uint32_t channelLayout);
+    void WriteMasterClockToMemory(const std::shared_ptr<Plugin::Buffer> &buffer);
 
 private:
     std::condition_variable dataCond_;
@@ -82,6 +85,8 @@ private:
     Callback *eventcallback_ = nullptr;
     AVDataCallback datacallback_ = nullptr;
     std::shared_ptr<Ffmpeg::Resample> resample_ {nullptr};
+    uint32_t smIndex_ = 0;
+    AVTransSharedMemory sharedMemory_ = AVTransSharedMemory{ 0, 0, "" };
 };
 } // namespace DistributedHardware
 } // namespace OHOS

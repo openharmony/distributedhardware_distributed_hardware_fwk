@@ -45,17 +45,17 @@ PLUGIN_DEFINITION(AVTransDscreenOutput, LicenseType::APACHE_V2, DscreenOutputReg
 DscreenOutputPlugin::DscreenOutputPlugin(std::string name)
     : AvTransOutputPlugin(std::move(name))
 {
-    DHLOGI("ctor.");
+    AVTRANS_LOGI("ctor.");
 }
 
 DscreenOutputPlugin::~DscreenOutputPlugin()
 {
-    DHLOGI("dtor.");
+    AVTRANS_LOGI("dtor.");
 }
 
 Status DscreenOutputPlugin::Init()
 {
-    DHLOGI("Init.");
+    AVTRANS_LOGI("Init.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     state_ = State::INITIALIZED;
     return Status::OK;
@@ -63,16 +63,16 @@ Status DscreenOutputPlugin::Init()
 
 Status DscreenOutputPlugin::Deinit()
 {
-    DHLOGI("Deinit.");
+    AVTRANS_LOGI("Deinit.");
     return Reset();
 }
 
 Status DscreenOutputPlugin::Prepare()
 {
-    DHLOGI("Prepare");
+    AVTRANS_LOGI("Prepare");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::INITIALIZED) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     if (!sendDisplayTask_) {
@@ -85,7 +85,7 @@ Status DscreenOutputPlugin::Prepare()
 
 Status DscreenOutputPlugin::Reset()
 {
-    DHLOGI("Reset");
+    AVTRANS_LOGI("Reset");
     Media::OSAL::ScopedLock lock(operationMutes_);
     eventsCb_ = nullptr;
     if (sendDisplayTask_) {
@@ -113,15 +113,26 @@ Status DscreenOutputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
     Media::OSAL::ScopedLock lock(operationMutes_);
     paramsMap_.insert(std::make_pair(tag, value));
+    if (tag == Plugin::Tag::USER_SHARED_MEMORY_FD) {
+        sharedMemory_ = UnmarshalSharedMemory(Media::Plugin::AnyCast<std::string>(value));
+    }
+    if (tag == Plugin::Tag::USER_AV_SYNC_GROUP_INFO) {
+        std::string groupInfo = Media::Plugin::AnyCast<std::string>(value);
+        AVTRANS_LOGE("SetParameter USER_AV_SYNC_GROUP_INFO success. groupInfo=%s", groupInfo.c_str());
+    }
+    if (tag == Plugin::Tag::USER_TIME_SYNC_RESULT) {
+        std::string timeSync = Media::Plugin::AnyCast<std::string>(value);
+        AVTRANS_LOGE("SetParameter USER_TIME_SYNC_RESULT success. timeSync=%s", timeSync.c_str());
+    }
     return Status::OK;
 }
 
 Status DscreenOutputPlugin::Start()
 {
-    DHLOGI("Start");
+    AVTRANS_LOGI("Start");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::PREPARED) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     sendDisplayTask_->Start();
@@ -132,10 +143,10 @@ Status DscreenOutputPlugin::Start()
 
 Status DscreenOutputPlugin::Stop()
 {
-    DHLOGI("Stop");
+    AVTRANS_LOGI("Stop");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::RUNNING) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     sendDisplayTask_->Stop();
@@ -148,11 +159,11 @@ Status DscreenOutputPlugin::SetCallback(Callback *cb)
 {
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (cb == nullptr) {
-        DHLOGE("SetCallback failed, cb is nullptr.");
+        AVTRANS_LOGE("SetCallback failed, cb is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
     eventsCb_ = cb;
-    DHLOGI("SetCallback success.");
+    AVTRANS_LOGI("SetCallback success.");
     return Status::OK;
 }
 
@@ -160,27 +171,27 @@ Status DscreenOutputPlugin::SetDataCallback(AVDataCallback callback)
 {
     Media::OSAL::ScopedLock lock(operationMutes_);
     dataCb_ = callback;
-    DHLOGI("SetDataCallback success.");
+    AVTRANS_LOGI("SetDataCallback success.");
     return Status::OK;
 }
 
 Status DscreenOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
 {
-    DHLOGI("Queue Output AVBuffer.");
+    AVTRANS_LOGI("Queue Output AVBuffer.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     uint32_t frameNumber = 1;
     if (buffer->GetBufferMeta()->IsExist(Tag::USER_FRAME_NUMBER)) {
         frameNumber = Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER));
     }
-    DHLOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", buffer->pts, buffer->GetMemory()->GetSize(),
+    AVTRANS_LOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", buffer->pts, buffer->GetMemory()->GetSize(),
         frameNumber);
 
     if (buffer == nullptr || buffer->IsEmpty()) {
-        DHLOGE("AVBuffer is nullptr.");
+        AVTRANS_LOGE("AVBuffer is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
     while (outputBuffer_.size() >= DATA_QUEUE_MAX_SIZE) {
-        DHLOGE("outputBuffer_ queue overflow.");
+        AVTRANS_LOGE("outputBuffer_ queue overflow.");
         outputBuffer_.pop();
     }
     outputBuffer_.push(buffer);
@@ -196,17 +207,48 @@ void DscreenOutputPlugin::HandleData()
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
             dataCond_.wait(lock, [this]() { return !outputBuffer_.empty(); });
             if (outputBuffer_.empty()) {
-                DHLOGD("Data queue is empty.");
+                AVTRANS_LOGD("Data queue is empty.");
                 continue;
             }
             buffer = outputBuffer_.front();
             outputBuffer_.pop();
         }
         if (buffer == nullptr) {
-            DHLOGE("Data is null");
+            AVTRANS_LOGE("Data is null");
             continue;
         }
         dataCb_(buffer);
+        ReadMasterClockFromMemory(buffer);
+    }
+}
+
+void DscreenOutputPlugin::ReadMasterClockFromMemory(const std::shared_ptr<Plugin::Buffer> &buffer)
+{
+    if ((buffer == nullptr) || (buffer->GetBufferMeta() == nullptr)) {
+        AVTRANS_LOGE("output buffer or buffer meta is nullptr.");
+        return;
+    }
+
+    if ((sharedMemory_.fd <= 0) || (sharedMemory_.size <= 0) || sharedMemory_.name.empty()) {
+        AVTRANS_LOGE("invalid master clock shared memory info.");
+        return;
+    }
+
+    auto bufferMeta = buffer->GetBufferMeta();
+    if (!bufferMeta->IsExist(Tag::MEDIA_START_TIME) || !bufferMeta->IsExist(Tag::AUDIO_SAMPLE_PER_FRAME)) {
+        AVTRANS_LOGE("the output buffer meta does not contains extPts and extFrameNum , ignore.");
+        return;
+    }
+
+    int64_t audioPts = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::MEDIA_START_TIME));
+    uint32_t audioFrmNum = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::AUDIO_SAMPLE_PER_FRAME));
+    AVTRANS_LOGI("get audioFrmNum=%" PRId32 ", audioPts=%lld from output buffer meta success.", audioFrmNum,
+        (long long)audioPts);
+
+    AVSyncClockUnit clockUnit = AVSyncClockUnit{ 0, audioFrmNum, 0 };
+    int32_t ret = ReadClockUnitFromMemory(sharedMemory_, clockUnit);
+    if (ret != DH_AVT_SUCCESS) {
+        AVTRANS_LOGE("read master clock from shared memory failed.");
     }
 }
 
@@ -218,13 +260,13 @@ void DscreenOutputPlugin::DataQueueClear(std::queue<std::shared_ptr<Buffer>> &qu
 
 Status DscreenOutputPlugin::StartOutputQueue()
 {
-    DHLOGI("StartOutputQueue.");
+    AVTRANS_LOGI("StartOutputQueue.");
     return Status::OK;
 }
 
 Status DscreenOutputPlugin::ControlFrameRate(const int64_t timestamp)
 {
-    DHLOGI("ControlFrameRate.");
+    AVTRANS_LOGI("ControlFrameRate.");
     return Status::OK;
 }
 }

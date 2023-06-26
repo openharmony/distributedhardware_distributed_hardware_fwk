@@ -28,7 +28,7 @@ std::shared_ptr<AvTransInputPlugin> DsoftbusInputAudioPluginCreator(const std::s
 
 Status DsoftbusInputAudioRegister(const std::shared_ptr<Register> &reg)
 {
-    AvTransInputAudioPluginDef definition;
+    AvTransInputPluginDef definition;
     definition.name = "AVTransDsoftbusInputAudioPlugin";
     definition.description = "Audio transport from dsoftbus";
     definition.rank = PLUGIN_RANK;
@@ -50,17 +50,17 @@ PLUGIN_DEFINITION(AVTransDsoftbusInputAudio, LicenseType::APACHE_V2, DsoftbusInp
 DsoftbusInputAudioPlugin::DsoftbusInputAudioPlugin(std::string name)
     : AvTransInputPlugin(std::move(name))
 {
-    DHLOGI("ctor");
+    AVTRANS_LOGI("ctor");
 }
 
 DsoftbusInputAudioPlugin::~DsoftbusInputAudioPlugin()
 {
-    DHLOGI("dtor");
+    AVTRANS_LOGI("dtor");
 }
 
 Status DsoftbusInputAudioPlugin::Init()
 {
-    DHLOGI("Init");
+    AVTRANS_LOGI("Init");
     Media::OSAL::ScopedLock lock(operationMutes_);
     state_ = State::INITIALIZED;
     return Status::OK;
@@ -68,28 +68,28 @@ Status DsoftbusInputAudioPlugin::Init()
 
 Status DsoftbusInputAudioPlugin::Deinit()
 {
-    DHLOGI("Deinit");
+    AVTRANS_LOGI("Deinit");
     return Reset();
 }
 
 Status DsoftbusInputAudioPlugin::Prepare()
 {
-    DHLOGI("Prepare");
+    AVTRANS_LOGI("Prepare");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::INITIALIZED) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
 
     sessionName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
     int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName_), sessionName_);
     if (ret != DH_AVT_SUCCESS) {
-        DHLOGE("Create Session Server failed ret: %d.", ret);
+        AVTRANS_LOGE("Create Session Server failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
     ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
     if (ret != DH_AVT_SUCCESS) {
-        DHLOGE("Register channel listener failed ret: %d.", ret);
+        AVTRANS_LOGE("Register channel listener failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
 
@@ -103,7 +103,7 @@ Status DsoftbusInputAudioPlugin::Prepare()
 
 Status DsoftbusInputAudioPlugin::Reset()
 {
-    DHLOGI("Reset");
+    AVTRANS_LOGI("Reset");
     Media::OSAL::ScopedLock lock(operationMutes_);
     eventsCb_ = nullptr;
     dataCb_ = nullptr;
@@ -121,10 +121,10 @@ Status DsoftbusInputAudioPlugin::Reset()
 
 Status DsoftbusInputAudioPlugin::Start()
 {
-    DHLOGI("Start");
+    AVTRANS_LOGI("Start");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::PREPARED) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     DataQueueClear(dataQueue_);
@@ -135,10 +135,10 @@ Status DsoftbusInputAudioPlugin::Start()
 
 Status DsoftbusInputAudioPlugin::Stop()
 {
-    DHLOGI("Stop");
+    AVTRANS_LOGI("Stop");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (state_ != State::RUNNING) {
-        DHLOGE("The state is wrong.");
+        AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     bufferPopTask_->Pause();
@@ -171,11 +171,11 @@ Status DsoftbusInputAudioPlugin::SetCallback(Callback *cb)
 {
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (cb == nullptr) {
-        DHLOGE("SetCallBack failed, callback is nullptr.");
+        AVTRANS_LOGE("SetCallBack failed, callback is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
     eventsCb_ = cb;
-    DHLOGI("SetCallBack success.");
+    AVTRANS_LOGI("SetCallBack success.");
     return Status::OK;
 }
 
@@ -183,15 +183,15 @@ Status DsoftbusInputAudioPlugin::SetDataCallback(AVDataCallback callback)
 {
     Media::OSAL::ScopedLock lock(operationMutes_);
     dataCb_ = callback;
-    DHLOGI("SetDataCallback success.");
+    AVTRANS_LOGI("SetDataCallback success.");
     return Status::OK;
 }
 
 void DsoftbusInputAudioPlugin::OnChannelEvent(const AVTransEvent &event)
 {
-    DHLOGI("OnChannelEvent enter, event type: %d", event.type);
+    AVTRANS_LOGI("OnChannelEvent enter, event type: %d", event.type);
     if (eventsCb_ == nullptr) {
-        DHLOGE("OnChannelEvent failed, event callback is nullptr.");
+        AVTRANS_LOGE("OnChannelEvent failed, event callback is nullptr.");
         return;
     }
     switch (event.type) {
@@ -208,20 +208,20 @@ void DsoftbusInputAudioPlugin::OnChannelEvent(const AVTransEvent &event)
             break;
         }
         default:
-            DHLOGE("Unsupported event type.");
+            AVTRANS_LOGE("Unsupported event type.");
     }
 }
 
 void DsoftbusInputAudioPlugin::OnStreamReceived(const StreamData *data, const StreamData *ext)
 {
     std::string message(reinterpret_cast<const char *>(ext->buf), ext->bufLen);
-    DHLOGI("Receive message : %s", message.c_str());
+    AVTRANS_LOGI("Receive message : %s", message.c_str());
 
     json resMsg = json::parse(message, nullptr, false);
     TRUE_RETURN(resMsg.is_discarded(), "The resMsg parse failed");
     TRUE_RETURN(!IsUInt32(resMsg, AVT_DATA_META_TYPE), "invalid data type");
     uint32_t metaType = resMsg[AVT_DATA_META_TYPE];
-    DHLOGI("The resMsg datatype: %u.", metaType);
+    AVTRANS_LOGI("The resMsg datatype: %u.", metaType);
 
     auto buffer = CreateBuffer(metaType, data, resMsg);
     DataEnqueue(buffer);
@@ -235,7 +235,7 @@ std::shared_ptr<Buffer> DsoftbusInputAudioPlugin::CreateBuffer(uint32_t metaType
 
     auto writeSize = bufData->Write(reinterpret_cast<const uint8_t *>(data->buf), data->bufLen, 0);
     if (static_cast<ssize_t>(writeSize) != data->bufLen) {
-        DHLOGE("write buffer data failed.");
+        AVTRANS_LOGE("write buffer data failed.");
         return buffer;
     }
 
@@ -244,7 +244,7 @@ std::shared_ptr<Buffer> DsoftbusInputAudioPlugin::CreateBuffer(uint32_t metaType
     buffer->pts = meta->pts_;
     buffer->GetBufferMeta()->SetMeta(Tag::USER_FRAME_PTS, meta->pts_);
     buffer->GetBufferMeta()->SetMeta(Tag::USER_FRAME_NUMBER, meta->frameNum_);
-    DHLOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", buffer->pts, buffer->GetMemory()->GetSize(),
+    AVTRANS_LOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", buffer->pts, buffer->GetMemory()->GetSize(),
         meta->frameNum_);
     return buffer;
 }
@@ -252,7 +252,7 @@ std::shared_ptr<Buffer> DsoftbusInputAudioPlugin::CreateBuffer(uint32_t metaType
 void DsoftbusInputAudioPlugin::DataEnqueue(std::shared_ptr<Buffer> &buffer)
 {
     while (dataQueue_.size() >= DATA_QUEUE_MAX_SIZE) {
-        DHLOGE("Data queue overflow.");
+        AVTRANS_LOGE("Data queue overflow.");
         dataQueue_.pop();
     }
     dataQueue_.push(buffer);
@@ -267,14 +267,14 @@ void DsoftbusInputAudioPlugin::HandleData()
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
             dataCond_.wait(lock, [this]() { return !dataQueue_.empty(); });
             if (dataQueue_.empty()) {
-                DHLOGD("Data queue is empty.");
+                AVTRANS_LOGD("Data queue is empty.");
                 continue;
             }
             buffer = dataQueue_.front();
             dataQueue_.pop();
         }
         if (buffer == nullptr) {
-            DHLOGE("Data is null");
+            AVTRANS_LOGE("Data is null");
             continue;
         }
         dataCb_(buffer);
@@ -290,7 +290,7 @@ void DsoftbusInputAudioPlugin::DataQueueClear(std::queue<std::shared_ptr<Buffer>
 Status DsoftbusInputAudioPlugin::PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
 {
     (void) buffer;
-    DHLOGI("Push Data");
+    AVTRANS_LOGI("Push Data");
     return Status::OK;
 }
 }

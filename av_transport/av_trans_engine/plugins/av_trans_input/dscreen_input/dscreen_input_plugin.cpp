@@ -93,6 +93,9 @@ Status DscreenInputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
     Media::OSAL::ScopedLock lock(operationMutes_);
     paramsMap_.insert(std::pair<Tag, ValueType>(tag, value));
+    if (tag == Plugin::Tag::USER_SHARED_MEMORY_FD) {
+        sharedMemory_ = UnmarshalSharedMemory(Media::Plugin::AnyCast<std::string>(value));
+    }
     return Status::OK;
 }
 
@@ -112,11 +115,21 @@ Status DscreenInputPlugin::PushData(const std::string& inPort, std::shared_ptr<B
     }
 
     ++frameNumber_;
-    buffer->pts = GetCurrentTime();
     bufferMeta->SetMeta(Tag::USER_FRAME_NUMBER, frameNumber_.load());
     AVTRANS_LOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.",
         buffer->pts, buffer->GetMemory()->GetSize(),
         Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER)));
+
+    if ((sharedMemory_.fd > 0) && (sharedMemory_.size > 0) && !sharedMemory_.name.empty()) {
+        int64_t audioTimestamp = 0;
+        uint32_t audioFrameNum = 0;
+        int32_t ret = ReadFrameInfoFromMemory(sharedMemory_, audioFrameNum, audioTimestamp);
+        if (ret == DH_AVT_SUCCESS) {
+            bufferMeta->SetMeta(Tag::MEDIA_START_TIME, audioTimestamp);
+            bufferMeta->SetMeta(Tag::AUDIO_SAMPLE_PER_FRAME, audioFrameNum);
+        }
+    }
+
     return Status::OK;
 }
 

@@ -21,6 +21,7 @@
 #include <memory>
 #include <mutex>
 
+#include "av_sync_utils.h"
 #include "av_trans_buffer.h"
 #include "av_trans_constants.h"
 #include "av_trans_log.h"
@@ -62,6 +63,7 @@ private:
     std::atomic<uint32_t> frameNumber_;
     std::map<Tag, ValueType> tagMap_;
     OSAL::Mutex operationMutes_ {};
+    AVTransSharedMemory sharedMemory_ = AVTransSharedMemory{ 0, 0, "" };
 };
 } // namespace DistributedHardware
 } // namespace OHOS

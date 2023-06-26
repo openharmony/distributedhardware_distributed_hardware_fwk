@@ -22,6 +22,7 @@
 #include <queue>
 #include <condition_variable>
 
+#include "av_sync_utils.h"
 #include "av_trans_buffer.h"
 #include "av_trans_errno.h"
 #include "av_trans_constants.h"
@@ -66,6 +67,7 @@ private:
     Status ControlFrameRate(const int64_t timestamp);
     void HandleData();
     void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &queue);
+    void ReadMasterClockFromMemory(const std::shared_ptr<Plugin::Buffer> &buffer);
 
 private:
     std::shared_ptr<OSAL::Task> sendDisplayTask_;
@@ -77,6 +79,7 @@ private:
     Callback *eventsCb_ = nullptr;
     AVDataCallback dataCb_;
     std::condition_variable dataCond_;
+    AVTransSharedMemory sharedMemory_ = AVTransSharedMemory{ 0, 0, "" };
 };
 } // namespace DistributedHardware
 } // namespace OHOS
