@@ -101,6 +101,6 @@ ohos_shared_library("distributed_av_receiver") {
   ]
   cflags_cc = cflags
 
-  part_name = "distributed_hardware_fwk"
-  subsystem_name = "distributedhardware"
+  part_name = "histreamer"
+  subsystem_name = "multimedia"
 }

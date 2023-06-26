@@ -83,8 +83,7 @@ int32_t AVSenderEngine::InitPipeline()
         if (ret == ErrorCode::SUCCESS) {
             ret = pipeline_->LinkFilters({avInput_.get(), videoEncoder_.get(), avOutput_.get()});
         }
-    } else if ((ownerName_ == OWNER_NAME_D_MIC) || (ownerName_ == OWNER_NAME_D_SPEAKER) ||
-        (ownerName_ == OWNER_NAME_D_AUDIO)) {
+    } else if ((ownerName_ == OWNER_NAME_D_MIC) || (ownerName_ == OWNER_NAME_D_SPEAKER)) {
         ret = pipeline_->AddFilters({avInput_.get(), audioEncoder_.get(), avOutput_.get()});
         if (ret == ErrorCode::SUCCESS) {
             ret = pipeline_->LinkFilters({avInput_.get(), audioEncoder_.get(), avOutput_.get()});
@@ -383,7 +382,9 @@ void AVSenderEngine::NotifyStreamChange(EventType type)
     AVTRANS_LOGI("NotifyStreamChange enter, change type=%" PRId32, type);
 
     std::string sceneType = "";
-    if (ownerName_ == OWNER_NAME_D_AUDIO) {
+    if (ownerName_ == OWNER_NAME_D_MIC) {
+        sceneType = SCENE_TYPE_D_MIC;
+    } else if (ownerName_ == OWNER_NAME_D_SPEAKER) {
         sceneType = SCENE_TYPE_D_SPEAKER;
     } else if (ownerName_ == OWNER_NAME_D_SCREEN) {
         sceneType = SCENE_TYPE_D_SCREEN;

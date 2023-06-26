@@ -38,6 +38,7 @@ using namespace OHOS::Media::Plugin;
 using AVBuffer = OHOS::Media::Plugin::Buffer;
 constexpr int32_t MS_ONE_SECOND = 1000;
 
+std::string TransName2PkgName(const std::string &ownerName);
 MediaType TransName2MediaType(const std::string &ownerName);
 
 std::shared_ptr<AVBuffer> TransBuffer2HiSBuffer(const std::shared_ptr<AVTransBuffer> &transBuffer);

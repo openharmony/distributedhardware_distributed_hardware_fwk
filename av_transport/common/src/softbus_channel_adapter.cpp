@@ -73,18 +73,18 @@ SoftbusChannelAdapter::~SoftbusChannelAdapter()
     devId2SessIdMap_.clear();
 }
 
-int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& ownerName, const std::string &sessName)
+int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, const std::string &sessName)
 {
     AVTRANS_LOGI("Create session server for sessionName:%s.", sessName.c_str());
-    TRUE_RETURN_V_MSG_E(ownerName.empty(), ERR_DH_AVT_INVALID_PARAM, "input ownerName is empty.");
+    TRUE_RETURN_V_MSG_E(pkgName.empty(), ERR_DH_AVT_INVALID_PARAM, "input pkgName is empty.");
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessionName is empty.");
 
     std::lock_guard<std::mutex> setLock(name2IdMtx_);
     if (sessionNameSet_.find(sessName) == sessionNameSet_.end()) {
-        int32_t ret = CreateSessionServer(ownerName.c_str(), sessName.c_str(), &sessListener_);
+        int32_t ret = CreateSessionServer(pkgName.c_str(), sessName.c_str(), &sessListener_);
         TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CREATE_CHANNEL_FAILED, "create session server failed");
     } else {
-        AVTRANS_LOGE("Session already create for name:%s", sessName.c_str());
+        AVTRANS_LOGE("Session has already created for name:%s", sessName.c_str());
     }
     sessionNameSet_.insert(sessName);
 
@@ -92,10 +92,10 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& ownerName,
     return DH_AVT_SUCCESS;
 }
 
-int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& ownerName, const std::string &sessName)
+int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, const std::string &sessName)
 {
     AVTRANS_LOGI("Remove session server for sessionName:%s.", sessName.c_str());
-    TRUE_RETURN_V_MSG_E(ownerName.empty(), ERR_DH_AVT_INVALID_PARAM, "input ownerName is empty.");
+    TRUE_RETURN_V_MSG_E(pkgName.empty(), ERR_DH_AVT_INVALID_PARAM, "input pkgName is empty.");
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessionName is empty.");
 
     std::lock_guard<std::mutex> setLock(name2IdMtx_);
@@ -103,7 +103,7 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& ownerName,
         AVTRANS_LOGE("Can not found session name:%s", sessName.c_str());
         return ERR_DH_AVT_INVALID_PARAM_VALUE;
     }
-    RemoveSessionServer(ownerName.c_str(), sessName.c_str());
+    RemoveSessionServer(pkgName.c_str(), sessName.c_str());
     sessionNameSet_.erase(sessName);
 
     AVTRANS_LOGI("Remove session server success for sessionName:%s.", sessName.c_str());
@@ -121,7 +121,7 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName,
 
     int dataType = TYPE_BYTES;
     int streamType = INVALID;
-    if (mySessName.find(SENDER_DATA_SESSION_NAME_SUFFIX) != std::string::npos) {
+    if (mySessName.find("avtrans.data") != std::string::npos) {
         dataType = TYPE_STREAM;
         streamType = COMMON_VIDEO_STREAM;
     }
@@ -234,14 +234,14 @@ int32_t SoftbusChannelAdapter::UnRegisterChannelListener(const std::string& sess
     return DH_AVT_SUCCESS;
 }
 
-int32_t SoftbusChannelAdapter::StartDeviceTimeSync(const std::string &ownerName, const std::string& sessName,
+int32_t SoftbusChannelAdapter::StartDeviceTimeSync(const std::string &pkgName, const std::string& sessName,
     const std::string &peerDevId)
 {
     AVTRANS_LOGI("Start device time sync for peerDeviceId:%s.", GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
 
     ITimeSyncCb timeSyncCbk = {.onTimeSyncResult = onTimeSyncResult};
-    int32_t ret = StartTimeSync(ownerName.c_str(), peerDevId.c_str(), TimeSyncAccuracy::SUPER_HIGH_ACCURACY,
+    int32_t ret = StartTimeSync(pkgName.c_str(), peerDevId.c_str(), TimeSyncAccuracy::SUPER_HIGH_ACCURACY,
         TimeSyncPeriod::SHORT_PERIOD, &timeSyncCbk);
     if (ret != 0) {
         AVTRANS_LOGE("StartTimeSync failed ret:%" PRId32, ret);
@@ -254,13 +254,13 @@ int32_t SoftbusChannelAdapter::StartDeviceTimeSync(const std::string &ownerName,
     return DH_AVT_SUCCESS;
 }
 
-int32_t SoftbusChannelAdapter::StopDeviceTimeSync(const std::string &ownerName, const std::string& sessName,
+int32_t SoftbusChannelAdapter::StopDeviceTimeSync(const std::string &pkgName, const std::string& sessName,
     const std::string &peerDevId)
 {
     AVTRANS_LOGI("Stop device time sync for peerDeviceId:%s.", GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
 
-    int32_t ret = StopTimeSync(ownerName.c_str(), peerDevId.c_str());
+    int32_t ret = StopTimeSync(pkgName.c_str(), peerDevId.c_str());
     if (ret != 0) {
         AVTRANS_LOGE("StopTimeSync failed ret:%" PRId32, ret);
         return ERR_DH_AVT_TIME_SYNC_FAILED;

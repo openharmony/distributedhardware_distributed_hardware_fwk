@@ -49,7 +49,6 @@ const std::string SENDER_CONTROL_SESSION_NAME_SUFFIX = "sender.avtrans.control";
 const std::string RECEIVER_CONTROL_SESSION_NAME_SUFFIX = "receiver.avtrans.control";
 const std::string SENDER_DATA_SESSION_NAME_SUFFIX = "sender.avtrans.data";
 const std::string RECEIVER_DATA_SESSION_NAME_SUFFIX = "receiver.avtrans.data";
-const std::string DH_FWK_OWNER_NAME = "ohos.dhardware";
 const std::string AV_SYNC_SENDER_CONTROL_SESSION_NAME = "ohos.dhardware.av.sync.sender.control";
 const std::string AV_SYNC_RECEIVER_CONTROL_SESSION_NAME = "ohos.dhardware.av.sync.receiver.control";
 

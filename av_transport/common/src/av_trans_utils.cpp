@@ -32,6 +32,22 @@ using TransBufferMeta = OHOS::DistributedHardware::BufferMeta;
 const std::string KEY_OWNER_NAME = "ownerName";
 const std::string KEY_PEER_DEVID = "peerDevId";
 
+std::string TransName2PkgName(const std::string &ownerName)
+{
+    const static std::pair<std::string, std::string> mapArray[] = {
+        {OWNER_NAME_D_MIC, PKG_NAME_D_AUDIO},
+        {OWNER_NAME_D_CAMERA, PKG_NAME_D_CAMERA},
+        {OWNER_NAME_D_SCREEN, PKG_NAME_D_SCREEN},
+        {OWNER_NAME_D_SPEAKER, PKG_NAME_D_AUDIO},
+    };
+    for (const auto& item : mapArray) {
+        if (item.first == ownerName) {
+            return item.second;
+        }
+    }
+    return EMPTY_STRING;
+}
+
 OHOS::Media::Plugin::MediaType TransName2MediaType(const std::string &ownerName)
 {
     const static std::pair<std::string, OHOS::Media::Plugin::MediaType> mapArray[] = {
@@ -39,7 +55,6 @@ OHOS::Media::Plugin::MediaType TransName2MediaType(const std::string &ownerName)
         {OWNER_NAME_D_CAMERA, OHOS::Media::Plugin::MediaType::VIDEO},
         {OWNER_NAME_D_SCREEN, OHOS::Media::Plugin::MediaType::VIDEO},
         {OWNER_NAME_D_SPEAKER, OHOS::Media::Plugin::MediaType::AUDIO},
-        {OWNER_NAME_D_AUDIO, OHOS::Media::Plugin::MediaType::AUDIO},
     };
     for (const auto& item : mapArray) {
         if (item.first == ownerName) {

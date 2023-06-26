@@ -33,7 +33,7 @@ AVTransControlCenter::AVTransControlCenter()
 AVTransControlCenter::~AVTransControlCenter()
 {
     AVTRANS_LOGI("AVTransControlCenter dtor.");
-    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(DH_FWK_OWNER_NAME, sessionName_);
+    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(PKG_NAME_DH_FWK, sessionName_);
 
     sessionName_ = "";
     initialized_ = false;
@@ -59,7 +59,7 @@ int32_t AVTransControlCenter::Initialize(const TransRole &transRole, int32_t &en
 
     sessionName_ = (transRole == TransRole::AV_SENDER) ? AV_SYNC_SENDER_CONTROL_SESSION_NAME :
         AV_SYNC_RECEIVER_CONTROL_SESSION_NAME;
-    int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(DH_FWK_OWNER_NAME, sessionName_);
+    int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(PKG_NAME_DH_FWK, sessionName_);
     if (ret != DH_AVT_SUCCESS) {
         AVTRANS_LOGE("Create contro center session server failed, ret=%d", ret);
         engineId = INVALID_ENGINE_ID;
@@ -131,7 +131,7 @@ int32_t AVTransControlCenter::Release(int32_t engineId)
         }
     }
 
-    SoftbusChannelAdapter::GetInstance().StopDeviceTimeSync(DH_FWK_OWNER_NAME, sessionName_, peerDevId);
+    SoftbusChannelAdapter::GetInstance().StopDeviceTimeSync(PKG_NAME_DH_FWK, sessionName_, peerDevId);
     SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, AV_TRANS_SPECIAL_DEVICE_ID);
@@ -291,7 +291,7 @@ void AVTransControlCenter::HandleChannelEvent(const AVTransEvent &event)
 
     if (event.type == EventType::EVENT_CHANNEL_OPENED) {
         if (transRole_ == TransRole::AV_RECEIVER) {
-            SoftbusChannelAdapter::GetInstance().StartDeviceTimeSync(DH_FWK_OWNER_NAME, sessionName_, event.peerDevId);
+            SoftbusChannelAdapter::GetInstance().StartDeviceTimeSync(PKG_NAME_DH_FWK, sessionName_, event.peerDevId);
         }
         std::lock_guard<std::mutex> lock(devIdMutex_);
         connectedDevIds_.push_back(event.peerDevId);
