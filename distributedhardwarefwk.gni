@@ -27,6 +27,8 @@ av_trans_path = "${distributedhardwarefwk_path}/av_transport"
 av_trans_ctl_center_svc_path =
     "${av_trans_path}/av_trans_control_center/services"
 
+histreamer_path = "//foundation/multimedia/histreamer/engine"
+
 build_flags = [ "-Werror" ]
 
 declare_args() {

@@ -127,6 +127,12 @@ DeviceInfo GetLocalDeviceInfo()
     return devInfo;
 }
 
+bool IsUInt8(const nlohmann::json& jsonObj, const std::string& key)
+{
+    bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT8_MAX;
+    return res;
+}
+
 bool IsUInt16(const nlohmann::json& jsonObj, const std::string& key)
 {
     bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT16_MAX;
