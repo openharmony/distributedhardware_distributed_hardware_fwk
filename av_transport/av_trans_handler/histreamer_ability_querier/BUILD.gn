@@ -15,19 +15,21 @@ import("//build/ohos.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
 
+config("handler_external_config") {
+  include_dirs = [
+    "${common_path}/include",
+    "${engine_path}/av_sender/include",
+    "${engine_path}/av_receiver/include",
+    "${interface_path}",
+  ]
+}
+
 ohos_shared_library("histreamer_ability_querier") {
+  public_configs = [ ":handler_external_config" ]
+
   include_dirs = [
     "include",
     "//third_party/json/include",
-    "${histreamer_path}",
-    "${histreamer_path}/include",
-    "${histreamer_path}/include/plugin",
-    "${histreamer_path}/include/plugin/common",
-    "${histreamer_path}/include/plugin/core",
-    "${histreamer_path}/include/pipeline/core",
-    "${histreamer_path}/plugin/core",
-    "${histreamer_path}/pipeline/filters/common",
-    "${histreamer_path}/scene/standard",
     "${media_standard_path}/interfaces/inner_api/native",
     "${common_path}/include",
   ]
@@ -37,19 +39,19 @@ ohos_shared_library("histreamer_ability_querier") {
     "src/histreamer_ability_querier.cpp",
   ]
 
-  deps = [
-    "${histreamer_path}/pipeline:histreamer_base",
-    "${histreamer_path}/plugin:histreamer_plugin_base",
-    "${histreamer_path}/plugin:histreamer_plugin_core",
-  ]
-
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"distributed_av_transport\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
-  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+  external_deps = [
+    "histreamer:histreamer_base",
+    "histreamer:histreamer_codec_filters",
+    "histreamer:histreamer_ffmpeg_convert",
+    "histreamer:histreamer_plugin_base",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
 
   cflags = [
     "-O2",
@@ -68,8 +70,8 @@ ohos_shared_library("histreamer_ability_querier") {
     "//build/config/compiler:no_exceptions",
   ]
 
-  subsystem_name = "multimedia"
-  part_name = "histreamer"
+  part_name = "distributed_hardware_fwk"
+  subsystem_name = "distributedhardware"
 }
 
 ohos_rust_shared_ffi("histreamer_ability_querier_core") {

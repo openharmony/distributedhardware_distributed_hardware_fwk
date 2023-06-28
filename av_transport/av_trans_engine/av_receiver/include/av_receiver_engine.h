@@ -27,6 +27,8 @@
 #include "softbus_channel_adapter.h"
 #include "av_trans_control_center_kit.h"
 #include "av_trans_control_center_callback.h"
+#include "av_transport_input_filter.h"
+#include "av_transport_output_filter.h"
 
 // follwing head files depends on histreamer
 #include "error_code.h"
@@ -36,9 +38,6 @@
 #include "pipeline_core.h"
 #include "audio_decoder_filter.h"
 #include "video_decoder_filter.h"
-#include "av_transport_input_filter.h"
-#include "av_transport_output_filter.h"
-#include "async_mode.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -106,8 +105,8 @@ private:
     std::shared_ptr<IAVReceiverEngineCallback> receiverCallback_ = nullptr;
     std::shared_ptr<OHOS::Media::Pipeline::PipelineCore> pipeline_ = nullptr;
 
-    std::shared_ptr<OHOS::Media::Pipeline::AVInputFilter> avInput_;
-    std::shared_ptr<OHOS::Media::Pipeline::AVOutputFilter> avOutput_;
+    std::shared_ptr<AVInputFilter> avInput_;
+    std::shared_ptr<AVOutputFilter> avOutput_;
     std::shared_ptr<OHOS::Media::Pipeline::AudioDecoderFilter> audioDecoder_;
     std::shared_ptr<OHOS::Media::Pipeline::VideoDecoderFilter> videoDecoder_;
 };

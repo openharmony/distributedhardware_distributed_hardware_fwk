@@ -47,7 +47,9 @@
         "init",
         "kv_store",
         "resource_schedule_service",
-        "multimedia_histreamer"
+        "multimedia_histreamer",
+        "graphic_standard",
+        "histreamer"
       ],
       "third_party": [
         "json",
@@ -62,6 +64,9 @@
         "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhfwk_sa_profile",
         "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhardware.cfg",
         "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits:libdhfwk_sdk",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_control_center/inner_kits:avtranscenter_sdk",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/av_sender:distributed_av_sender",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/av_receiver:distributed_av_receiver",
         "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_handler/histreamer_ability_querier:histreamer_ability_querier"
       ],
       "inner_kits": [
@@ -73,6 +78,22 @@
               "distributed_hardware_fwk_kit.h"
             ],
             "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits/include"
+          }
+        },
+        {
+          "type": "so",
+          "name": "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/av_sender:distributed_av_sender",
+          "header": {
+            "header_files": [],
+            "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/av_transport"
+          }
+        },
+        {
+          "type": "so",
+          "name": "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/av_receiver:distributed_av_receiver",
+          "header": {
+            "header_files": [],
+            "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/av_transport"
           }
         },
         {

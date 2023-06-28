@@ -21,7 +21,7 @@
 #include <securec.h>
 #include "plugin_caps.h"
 #include "plugin_manager.h"
-#include "plugin_utils.h"
+#include "pipeline/filters/common/plugin_utils.h"
 
 #include "av_trans_log.h"
 

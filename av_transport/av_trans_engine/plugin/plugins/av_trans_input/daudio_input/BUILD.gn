@@ -15,42 +15,29 @@ import("//build/ohos.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
 
-ohos_shared_library("avtranscenter_sdk") {
+ohos_source_set("plugin_AVTransDaudioInput") {
   include_dirs = [
-    "include",
-    "include/ipc",
-    "${interface_path}",
     "${common_path}/include",
-    "${dh_fwk_utils_path}/include",
+    "${plugin_path}/interface",
     "//third_party/json/include",
   ]
 
-  sources = [
-    "${common_path}/src/av_sync_utils.cpp",
-    "${common_path}/src/av_trans_log.cpp",
-    "src/av_trans_control_center_kit.cpp",
-    "src/ipc/av_trans_control_center_callback.cpp",
-    "src/ipc/av_trans_control_center_callback_stub.cpp",
-    "src/ipc/av_trans_control_center_proxy.cpp",
+  sources = [ "daudio_input_plugin.cpp" ]
+
+  external_deps = [
+    "histreamer:histreamer_base",
+    "histreamer:histreamer_codec_filters",
+    "histreamer:histreamer_ffmpeg_convert",
+    "histreamer:histreamer_plugin_base",
   ]
 
-  deps = [ "${dh_fwk_services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr" ]
+  public_configs = [ "${plugin_path}/plugins:avtrans_cflags" ]
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"avtranscenter_sdk\"",
+    "DH_LOG_TAG=\"daudio_input_plugin\"",
     "LOG_DOMAIN=0xD004100",
   ]
-
-  external_deps = [
-    "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
-  ]
-
-  subsystem_name = "distributedhardware"
-
   part_name = "distributed_hardware_fwk"
+  subsystem_name = "distributedhardware"
 }

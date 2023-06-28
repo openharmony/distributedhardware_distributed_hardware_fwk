@@ -18,6 +18,8 @@ distributed_av_transport_path = "${distributedhardwarefwk_path}/av_transport"
 
 histreamer_path = "//foundation/multimedia/histreamer/engine"
 
+dsoftbus_path = "//foundation/communication/dsoftbus"
+
 media_standard_path = "//foundation/multimedia/player_framework"
 
 drivers_disaplay_path = "//drivers/peripheral/display"
@@ -32,10 +34,12 @@ handler_path = "${distributed_av_transport_path}/av_trans_handler"
 
 control_center_path = "${distributed_av_transport_path}/av_trans_control_center"
 
+filters_path = "${distributed_av_transport_path}/av_trans_engine/filters"
+
 dh_fwk_utils_path = "${distributedhardwarefwk_path}/common/utils"
 
 dh_fwk_services_path = "${distributedhardwarefwk_path}/services"
 
-plugin_path = "${engine_path}/plugins"
+plugin_path = "${engine_path}/plugin"
 
 build_flags = [ "-Werror" ]
