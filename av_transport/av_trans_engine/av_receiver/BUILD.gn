@@ -15,35 +15,31 @@ import("//build/ohos.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
 
+config("sender_external_config") {
+  include_dirs = [
+    "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/common/include",
+    "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/av_sender/include",
+    "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/av_receiver/include",
+    "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/interface",
+  ]
+}
+
 ohos_shared_library("distributed_av_receiver") {
   include_dirs = [
     "${drivers_disaplay_path}/interfaces/include",
     "${media_standard_path}/interfaces/inner_api/native",
     "//third_party/json/include",
-
     "${common_path}/include",
     "${engine_path}",
     "${engine_path}/av_sender/include",
     "${engine_path}/av_receiver/include",
     "${interface_path}",
     "${dh_fwk_utils_path}/include",
+    "${dh_fwk_utils_path}/include",
     "${control_center_path}/inner_kits/include",
     "${control_center_path}/inner_kits/include/ipc",
-
-    "${histreamer_path}/include",
-    "${histreamer_path}/include/foundation",
-    "${histreamer_path}/include/pipeline",
-    "${histreamer_path}/include/pipeline/core",
-    "${histreamer_path}/include/pipeline/factory",
-    "${histreamer_path}/include/pipeline/filters",
-    "${histreamer_path}/include/pipeline/filters/codec/audio_decoder",
-    "${histreamer_path}/include/pipeline/filters/codec/video_decoder",
-    "${histreamer_path}/include/pipeline/filters/source/av_transport_input",
-    "${histreamer_path}/include/pipeline/filters/sink/av_transport_output",
-    "${histreamer_path}/include/plugin",
-    "${histreamer_path}/include/plugin/common",
-    "${histreamer_path}/include/scene/standard",
-    "${histreamer_path}/pipeline/filters/codec",
+    "${filters_path}/av_transport_input",
+    "${filters_path}/av_transport_output",
   ]
 
   sources = [
@@ -59,8 +55,8 @@ ohos_shared_library("distributed_av_receiver") {
 
   deps = [
     "${control_center_path}/inner_kits:avtranscenter_sdk",
-    "${histreamer_path}/pipeline:histreamer_pipeline",
-    "${histreamer_path}/pipeline:histreamer_pipeline_base",
+    "${filters_path}:avtrans_input_filter",
+    "${filters_path}:avtrans_output_filter",
   ]
 
   defines = [
@@ -80,6 +76,10 @@ ohos_shared_library("distributed_av_receiver") {
     "dsoftbus:softbus_client",
     "graphic_standard:libgraphic_utils",
     "graphic_standard:surface",
+    "histreamer:histreamer_base",
+    "histreamer:histreamer_codec_filters",
+    "histreamer:histreamer_ffmpeg_convert",
+    "histreamer:histreamer_plugin_base",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
@@ -101,6 +101,6 @@ ohos_shared_library("distributed_av_receiver") {
   ]
   cflags_cc = cflags
 
-  part_name = "histreamer"
-  subsystem_name = "multimedia"
+  part_name = "distributed_hardware_fwk"
+  subsystem_name = "distributedhardware"
 }

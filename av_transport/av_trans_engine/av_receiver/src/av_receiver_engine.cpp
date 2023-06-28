@@ -68,12 +68,10 @@ int32_t AVReceiverEngine::InitPipeline()
     avOutput_ = FilterFactory::Instance().CreateFilterWithType<AVOutputFilter>(AVOUTPUT_NAME, "avoutput");
     TRUE_RETURN_V_MSG_E(avOutput_ == nullptr, ERR_DH_AVT_NULL_POINTER, "create av output filter failed");
 
-    std::shared_ptr<OHOS::Media::Pipeline::CodecMode> vCodecMode = std::make_shared<AsyncMode>("videoDec");
-    videoDecoder_ = std::make_shared<VideoDecoderFilter>(VDECODER_NAME, vCodecMode);
+    videoDecoder_ = FilterFactory::Instance().CreateFilterWithType<VideoDecoderFilter>(VDECODER_NAME, "videoDec");
     TRUE_RETURN_V_MSG_E(videoDecoder_ == nullptr, ERR_DH_AVT_NULL_POINTER, "create av video decoder filter failed");
-    
-    std::shared_ptr<OHOS::Media::Pipeline::CodecMode> aCodecMode = std::make_shared<AsyncMode>("audioDec");
-    audioDecoder_ = std::make_shared<AudioDecoderFilter>(ADECODER_NAME, aCodecMode);
+
+    audioDecoder_ = FilterFactory::Instance().CreateFilterWithType<AudioDecoderFilter>(ADECODER_NAME, "audioDec");
     TRUE_RETURN_V_MSG_E(audioDecoder_ == nullptr, ERR_DH_AVT_NULL_POINTER, "create av audio decoder filter failed");
 
     ErrorCode ret;

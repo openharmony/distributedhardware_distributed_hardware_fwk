@@ -18,7 +18,6 @@
 
 #include <memory>
 #include <string>
-#include "nocopyable.h"
 
 namespace OHOS {
 namespace DistributedHardware {
