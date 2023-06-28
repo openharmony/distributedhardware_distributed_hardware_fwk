@@ -353,6 +353,10 @@ int32_t ComponentLoader::ParseConfig()
     char buf[MAX_PATH_LEN] = {0};
     char path[PATH_MAX + 1] = {0x00};
     char *profilePath = GetOneCfgFile(COMPONENTSLOAD_PROFILE_PATH, buf, MAX_PATH_LEN);
+    if (profilePath == nullptr) {
+        DHLOGE("profilePath is null.");
+        return ERR_DH_FWK_LOADER_PROFILE_PATH_IS_NULL;
+    }
     if (strlen(profilePath) == 0 || strlen(profilePath) > PATH_MAX || realpath(profilePath, path) == nullptr) {
         DHLOGE("File connicailization failed.");
         return ERR_DH_FWK_LOADER_PROFILE_PATH_IS_NULL;
