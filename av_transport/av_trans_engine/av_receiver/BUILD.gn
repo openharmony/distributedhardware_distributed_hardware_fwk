@@ -15,7 +15,7 @@ import("//build/ohos.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
 
-config("sender_external_config") {
+config("receiver_external_config") {
   include_dirs = [
     "${common_path}/include",
     "${engine_path}/av_sender/include",
@@ -25,6 +25,8 @@ config("sender_external_config") {
 }
 
 ohos_shared_library("distributed_av_receiver") {
+  public_configs = [ ":receiver_external_config" ]
+
   include_dirs = [
     "${drivers_disaplay_path}/interfaces/include",
     "${media_standard_path}/interfaces/inner_api/native",
