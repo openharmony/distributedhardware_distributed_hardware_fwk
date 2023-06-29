@@ -77,8 +77,8 @@ int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUni
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
-    AVTRANS_LOGI("clock unit index=%" PRId32 ", frameNum=%" PRId32 ", timestamp=%lld", clockUnit.index,
-        clockUnit.frameNum, (long long)clockUnit.timestamp);
+    AVTRANS_LOGI("clock unit index=%" PRId32 ", frameNum=%" PRId32 ", cts=%lld", clockUnit.index,
+        clockUnit.frameNum, (long long)clockUnit.cts);
     TRUE_RETURN_V_MSG_E(IsInValidClockUnit(clockUnit), ERR_DH_AVT_INVALID_PARAM, "invalid input clock unit");
 
     int size = AshmemGetSize(memory.fd);
@@ -94,7 +94,7 @@ int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUni
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
     size_t fOffset = (sizeof(uint32_t) + sizeof(int64_t)) * clockUnit.index;
     size_t tOffset = fOffset + sizeof(uint32_t);
-    U64ToU8(base + tOffset, clockUnit.timestamp);
+    U64ToU8(base + tOffset, clockUnit.cts);
     U32ToU8(base + fOffset, clockUnit.frameNum);
 
     clockUnit.index ++;
@@ -102,8 +102,8 @@ int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUni
         clockUnit.index = 0;
     }
 
-    AVTRANS_LOGI("write clock unit frameNum=%" PRId32 ", timestamp=%lld to shared memory success",
-        clockUnit.frameNum, (long long)(clockUnit.timestamp));
+    AVTRANS_LOGI("write clock unit frameNum=%" PRId32 ", cts=%lld to shared memory success",
+        clockUnit.frameNum, (long long)(clockUnit.cts));
     return DH_AVT_SUCCESS;
 }
 
@@ -136,24 +136,24 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
     size_t unitSize = sizeof(uint32_t) + sizeof(int64_t);
     while (index < MAX_CLOCK_UNIT_COUNT) {
         uint32_t frameNum = U8ToU32(base + (index * unitSize));
-        int64_t timestamp = U8ToU64(base + (index * unitSize) + sizeof(uint32_t));
+        int64_t cts = U8ToU64(base + (index * unitSize) + sizeof(uint32_t));
         if (frameNum == clockUnit.frameNum) {
-            clockUnit.timestamp = timestamp;
-            AVTRANS_LOGI("read clock unit from shared memory success, frameNum=%" PRId32 ", timestamp=%lld",
-                clockUnit.frameNum, (long long)clockUnit.timestamp);
+            clockUnit.cts = cts;
+            AVTRANS_LOGI("read clock unit from shared memory success, frameNum=%" PRId32 ", cts=%lld",
+                clockUnit.frameNum, (long long)clockUnit.cts);
             return DH_AVT_SUCCESS;
         }
         if ((frameNum < clockUnit.frameNum) && (frameNum > closestNum)) {
             closestNum = frameNum;
-            closestTime = timestamp;
+            closestTime = cts;
         }
         index++;
     }
 
     if (closestNum > 0) {
-        clockUnit.timestamp = closestTime;
-        AVTRANS_LOGI("cannot found timestamp for frameNum=%" PRId32 ", use the closest frameNum=%" PRId32
-            " and timestamp=%lld instead.", clockUnit.frameNum, closestNum, (long long)clockUnit.timestamp);
+        clockUnit.cts = closestTime;
+        AVTRANS_LOGI("cannot found cts for frameNum=%" PRId32 ", use the closest frameNum=%" PRId32
+            " and cts=%lld instead.", clockUnit.frameNum, closestNum, (long long)clockUnit.cts);
         return DH_AVT_SUCCESS;
     }
 
@@ -221,7 +221,7 @@ bool IsInValidSharedMemory(const AVTransSharedMemory &memory)
 bool IsInValidClockUnit(const AVSyncClockUnit &clockUnit)
 {
     return (clockUnit.index < 0) || (clockUnit.index >= MAX_CLOCK_UNIT_COUNT) || (clockUnit.frameNum <= 0)
-        || (clockUnit.timestamp <= 0);
+        || (clockUnit.cts <= 0);
 }
 
 std::string MarshalSharedMemory(const AVTransSharedMemory &memory)

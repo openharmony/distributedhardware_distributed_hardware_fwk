@@ -42,4 +42,6 @@ dh_fwk_services_path = "${distributedhardwarefwk_path}/services"
 
 plugin_path = "${engine_path}/plugin"
 
+output_controller_path = "${plugin_path}/plugins/av_trans_output/output_control"
+
 build_flags = [ "-Werror" ]

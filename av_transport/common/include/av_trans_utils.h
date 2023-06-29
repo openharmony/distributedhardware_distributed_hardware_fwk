@@ -36,8 +36,9 @@ namespace DistributedHardware {
 using namespace OHOS::Media;
 using namespace OHOS::Media::Plugin;
 using AVBuffer = OHOS::Media::Plugin::Buffer;
-constexpr int32_t MS_ONE_SECOND = 1000;
-
+const int64_t NS_ONE_US = 1000;
+const int64_t NS_ONE_MS = 1000000;
+const int64_t NS_ONE_S = 1000000000;
 std::string TransName2PkgName(const std::string &ownerName);
 MediaType TransName2MediaType(const std::string &ownerName);
 
