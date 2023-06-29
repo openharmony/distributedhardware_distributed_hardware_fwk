@@ -131,6 +131,7 @@ int32_t AVSenderEngine::CreateControlChannel(const std::vector<std::string> &dst
 
     std::string peerSessName = ownerName_ + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
     ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName, peerDevId_);
+    TRUE_RETURN_V(ret == ERR_DH_AVT_SESSION_HAS_OPENED, ERR_DH_AVT_CHANNEL_ALREADY_CREATED);
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CREATE_CHANNEL_FAILED,
         "create control channel failed");
 
@@ -429,7 +430,7 @@ void AVSenderEngine::OnChannelEvent(const AVTransEvent &event)
         }
         case EventType::EVENT_DATA_RECEIVED: {
             auto avMessage = std::make_shared<AVTransMessage>();
-            TRUE_RETURN(!avMessage->UnmarshalMessage(event.content), "unmarshal message failed");
+            TRUE_RETURN(!avMessage->UnmarshalMessage(event.content, event.peerDevId), "unmarshal message failed");
             senderCallback_->OnMessageReceived(avMessage);
             break;
         }

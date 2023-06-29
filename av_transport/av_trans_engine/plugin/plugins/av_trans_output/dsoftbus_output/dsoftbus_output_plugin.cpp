@@ -195,7 +195,7 @@ Status DsoftbusOutputPlugin::OpenSoftbusChannel()
     }
     std::string peerSessName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
     ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName_, peerDevId_);
-    if (ret != DH_AVT_SUCCESS) {
+    if ((ret != DH_AVT_SUCCESS) && (ret != ERR_DH_AVT_SESSION_HAS_OPENED)) {
         AVTRANS_LOGE("Open softbus channel failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }

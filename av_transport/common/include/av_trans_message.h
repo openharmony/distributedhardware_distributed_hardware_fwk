@@ -29,7 +29,7 @@ public:
     ~AVTransMessage();
 
     std::string MarshalMessage();
-    bool UnmarshalMessage(const std::string &jsonStr);
+    bool UnmarshalMessage(const std::string &jsonStr, const std::string &peerDevId);
 
 private:
     bool IsUInt32(const nlohmann::json &msgJson, const std::string &key);

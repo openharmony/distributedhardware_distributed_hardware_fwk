@@ -123,16 +123,15 @@ void Convert2HiSBufferMeta(std::shared_ptr<AVTransBuffer> transBuffer, std::shar
         auto hisAMeta = std::make_shared<AVTransAudioBufferMeta>();
 
         std::string value;
-        TRUE_RETURN(!transMeta->GetMetaItem(AVTransTag::BUFFER_DATA_TYPE, value), "get BUFFER_DATA_TYPE meta failed");
+        transMeta->GetMetaItem(AVTransTag::BUFFER_DATA_TYPE, value);
         uint32_t dataType = std::atoi(value.c_str());
         hisAMeta->dataType_ = (BufferDataType)dataType;
 
-        TRUE_RETURN(!transMeta->GetMetaItem(AVTransTag::AUDIO_SAMPLE_FORMAT, value),
-            "get AUDIO_SAMPLE_FORMAT meta failed");
+        transMeta->GetMetaItem(AVTransTag::AUDIO_SAMPLE_FORMAT, value);
         uint32_t format = std::atoi(value.c_str());
         hisAMeta->format_ = (AudioSampleFormat)format;
 
-        TRUE_RETURN(!transMeta->GetMetaItem(AVTransTag::AUDIO_SAMPLE_RATE, value), "get AUDIO_SAMPLE_RATE meta failed");
+        transMeta->GetMetaItem(AVTransTag::AUDIO_SAMPLE_RATE, value);
         hisAMeta->sampleRate_ = std::atoi(value.c_str());
     
         hisBuffer->UpdateBufferMeta(*hisAMeta);
@@ -140,22 +139,21 @@ void Convert2HiSBufferMeta(std::shared_ptr<AVTransBuffer> transBuffer, std::shar
         auto hisVMeta = std::make_shared<AVTransVideoBufferMeta>();
 
         std::string value;
-        TRUE_RETURN(!transMeta->GetMetaItem(AVTransTag::BUFFER_DATA_TYPE, value), "get BUFFER_DATA_TYPE meta failed");
+        transMeta->GetMetaItem(AVTransTag::BUFFER_DATA_TYPE, value);
         uint32_t dataType = std::atoi(value.c_str());
         hisVMeta->dataType_ = (BufferDataType)dataType;
 
-        TRUE_RETURN(!transMeta->GetMetaItem(AVTransTag::VIDEO_PIXEL_FORMAT, value),
-            "get VIDEO_PIXEL_FORMAT meta failed");
+        transMeta->GetMetaItem(AVTransTag::VIDEO_PIXEL_FORMAT, value);
         uint32_t format = std::atoi(value.c_str());
         hisVMeta->format_ = (VideoPixelFormat)format;
 
-        TRUE_RETURN(!transMeta->GetMetaItem(AVTransTag::VIDEO_WIDTH, value), "get VIDEO_WIDTH meta failed");
+        transMeta->GetMetaItem(AVTransTag::VIDEO_WIDTH, value);
         hisVMeta->width_ = std::atoi(value.c_str());
 
-        TRUE_RETURN(!transMeta->GetMetaItem(AVTransTag::VIDEO_HEIGHT, value), "get VIDEO_HEIGHT meta failed");
+        transMeta->GetMetaItem(AVTransTag::VIDEO_HEIGHT, value);
         hisVMeta->height_ = std::atoi(value.c_str());
 
-        TRUE_RETURN(!transMeta->GetMetaItem(AVTransTag::PRE_TIMESTAMP, value), "get PRE_TIMESTAMP meta failed");
+        TRUE_LOG_MSG(!transMeta->GetMetaItem(AVTransTag::PRE_TIMESTAMP, value), "get PRE_TIMESTAMP meta failed");
         hisVMeta->pts_ = std::stoll(value.c_str());
 
         hisBuffer->pts = std::stoll(value.c_str());

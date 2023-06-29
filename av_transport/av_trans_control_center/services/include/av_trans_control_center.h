@@ -48,7 +48,7 @@ public:
 
 private:
     void HandleChannelEvent(const AVTransEvent &event);
-    void HandleDataReceived(const std::string &content);
+    void HandleDataReceived(const std::string &content, const std::string &peerDevId);
     bool IsInvalidEngineId(int32_t engineId);
 
 private:
