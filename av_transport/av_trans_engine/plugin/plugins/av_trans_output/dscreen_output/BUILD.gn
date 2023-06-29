@@ -18,13 +18,21 @@ import(
 ohos_source_set("plugin_AVTransDscreenOutput") {
   include_dirs = [
     "${common_path}/include",
+    "${output_controller_path}/include",
     "${plugin_path}/interface",
     "//third_party/json/include",
   ]
 
-  sources = [ "dscreen_output_plugin.cpp" ]
+  sources = [
+    "${output_controller_path}/src/output_controller.cpp",
+    "${output_controller_path}/src/output_controller_listener.cpp",
+    "${output_controller_path}/src/time_statistician.cpp",
+    "dscreen_output_controller.cpp",
+    "dscreen_output_plugin.cpp",
+  ]
 
   external_deps = [
+    "eventhandler:libeventhandler",
     "histreamer:histreamer_base",
     "histreamer:histreamer_codec_filters",
     "histreamer:histreamer_ffmpeg_convert",

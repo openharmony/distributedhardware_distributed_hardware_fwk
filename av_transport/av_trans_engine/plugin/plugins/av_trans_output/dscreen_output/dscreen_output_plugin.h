@@ -22,7 +22,6 @@
 #include <queue>
 #include <condition_variable>
 
-#include "av_sync_utils.h"
 #include "av_trans_buffer.h"
 #include "av_trans_errno.h"
 #include "av_trans_constants.h"
@@ -35,6 +34,9 @@
 #include "nlohmann/json.hpp"
 #include "plugin_manager.h"
 #include "plugin_types.h"
+#include "dscreen_output_controller.h"
+#include "output_controller_listener.h"
+#include "controllable_output.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -45,7 +47,8 @@ using namespace OHOS::Media::Plugin;
 using json = nlohmann::json;
 using AVDataCallback = std::function<void(std::shared_ptr<Plugin::Buffer>)>;
 
-class DscreenOutputPlugin : public AvTransOutputPlugin {
+class DscreenOutputPlugin : public AvTransOutputPlugin, public ControllableOutput,
+    public std::enable_shared_from_this<DscreenOutputPlugin> {
 public:
     explicit DscreenOutputPlugin(std::string name);
     ~DscreenOutputPlugin();
@@ -61,27 +64,20 @@ public:
     Status PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset) override;
     Status SetCallback(Callback *cb) override;
     Status SetDataCallback(AVDataCallback callback) override;
+    void OnOutPut(const std::shared_ptr<Plugin::Buffer>& data) override;
 
 private:
-    Status StartOutputQueue();
-    Status ControlFrameRate(const int64_t timestamp);
-    void HandleData();
-    void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &queue);
-    void ReadMasterClockFromMemory(const std::shared_ptr<Plugin::Buffer> &buffer);
+    void InitOutputController();
 
 private:
-    std::shared_ptr<OSAL::Task> sendDisplayTask_;
-    std::queue<std::shared_ptr<Plugin::Buffer>> outputBuffer_;
-    std::mutex dataQueueMtx_;
     Media::OSAL::Mutex operationMutes_ {};
     State state_ {State::CREATED};
-    std::map<Tag, ValueType> paramsMap_;
     Callback *eventsCb_ = nullptr;
     AVDataCallback dataCb_;
     std::condition_variable dataCond_;
-    AVTransSharedMemory sharedMemory_ = AVTransSharedMemory{ 0, 0, "" };
+    std::unique_ptr<DScreenOutputController> controller_ = nullptr;
+    std::shared_ptr<OutputControllerListener> controllerListener_ = nullptr;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-
 #endif // OHOS_AV_TRANS_ENGINE_PLUGINS_OUTPUT_DSCREEN_H

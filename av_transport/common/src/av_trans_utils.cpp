@@ -249,11 +249,9 @@ bool IsString(const nlohmann::json &jsonObj, const std::string &key)
 
 int64_t GetCurrentTime()
 {
-    struct timeval tv {
-        0
-    };
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec * MS_ONE_SECOND + tv.tv_usec / MS_ONE_SECOND;
+    struct timespec time = { 0, 0 };
+    clock_gettime(CLOCK_MONOTONIC, &time);
+    return time.tv_sec * NS_ONE_S + time.tv_nsec;
 }
 
 void GenerateAdtsHeader(unsigned char* adtsHeader, int packetLen, int profile, int sampleRate, int channels)

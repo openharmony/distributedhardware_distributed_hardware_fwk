@@ -34,7 +34,7 @@ struct AVTransSharedMemory {
 struct AVSyncClockUnit {
     uint32_t index;
     uint32_t frameNum;
-    int64_t timestamp;
+    int64_t cts;
 };
 
 /**
