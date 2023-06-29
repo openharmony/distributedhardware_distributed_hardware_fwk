@@ -119,6 +119,12 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName,
     TRUE_RETURN_V_MSG_E(peerSessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerSessName is empty.");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
 
+    int32_t existSessId = GetSessIdBySessName(mySessName, peerDevId);
+    if (existSessId > 0) {
+        AVTRANS_LOGI("Softbus channel already opened, sessionId:%" PRId32, existSessId);
+        return ERR_DH_AVT_SESSION_HAS_OPENED;
+    }
+
     int dataType = TYPE_BYTES;
     int streamType = INVALID;
     if (mySessName.find("avtrans.data") != std::string::npos) {
@@ -144,7 +150,7 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName,
     int32_t sessionId = OpenSession(mySessName.c_str(), peerSessName.c_str(), peerDevId.c_str(), "0", &attr);
     if (sessionId < 0) {
         AVTRANS_LOGE("Open softbus session failed for sessionId:%" PRId32, sessionId);
-        return ERR_DH_AVT_CHANNEL_ERROR;
+        return ERR_DH_AVT_SESSION_ERROR;
     }
     {
         std::lock_guard<std::mutex> lock(idMapMutex_);

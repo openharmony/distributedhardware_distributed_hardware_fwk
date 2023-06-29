@@ -45,18 +45,18 @@ std::string AVTransMessage::MarshalMessage()
     return msgJson.dump();
 }
 
-bool AVTransMessage::UnmarshalMessage(const std::string& jsonStr)
+bool AVTransMessage::UnmarshalMessage(const std::string& jsonStr, const std::string &peerDevId)
 {
     nlohmann::json msgJson = nlohmann::json::parse(jsonStr, nullptr, false);
     if (msgJson.is_discarded()) {
         return false;
     }
-    if (!IsUInt32(msgJson, KEY_TYPE) || !IsString(msgJson, KEY_CONTENT) || !IsString(msgJson, KEY_DST_DEVID)) {
+    if (!IsUInt32(msgJson, KEY_TYPE) || !IsString(msgJson, KEY_CONTENT)) {
         return false;
     }
     type_ = msgJson[KEY_TYPE].get<uint32_t>();
     content_ = msgJson[KEY_CONTENT].get<std::string>();
-    dstDevId_ = msgJson[KEY_DST_DEVID].get<std::string>();
+    dstDevId_ = peerDevId;
     return true;
 }
 

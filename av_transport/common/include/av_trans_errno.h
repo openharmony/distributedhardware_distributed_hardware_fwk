@@ -35,8 +35,9 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_AVT_PULL_DATA_FAILED = -80008;
     constexpr int32_t ERR_DH_AVT_SEND_MESSAGE_FAILED = -80009;
     constexpr int32_t ERR_DH_AVT_CREATE_CHANNEL_FAILED = -80010;
-    constexpr int32_t ERR_DH_AVT_UNIMPLEMENTED = -80011;
-    constexpr int32_t ERR_DH_AVT_COMMON_FAILED = -80012;
+    constexpr int32_t ERR_DH_AVT_CHANNEL_ALREADY_CREATED = -80011;
+    constexpr int32_t ERR_DH_AVT_UNIMPLEMENTED = -80012;
+    constexpr int32_t ERR_DH_AVT_COMMON_FAILED = -80013;
 
     /* Here's internal errno, range: [-81000; -89999] */
     constexpr int32_t ERR_DH_AVT_INVALID_PARAM_VALUE = -81000;
@@ -50,7 +51,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_AVT_PERMISSION_DENIED = -81008;
     constexpr int32_t ERR_DH_AVT_NO_NOTIFY = -81009;
     constexpr int32_t ERR_DH_AVT_NULL_POINTER = -81010;
-    constexpr int32_t ERR_DH_AVT_CHANNEL_ERROR = -81011;
+    constexpr int32_t ERR_DH_AVT_SESSION_ERROR = -81011;
     constexpr int32_t ERR_DH_AVT_SEND_DATA_FAILED = -81012;
     constexpr int32_t ERR_DH_AVT_PREPARE_FAILED = -81013;
     constexpr int32_t ERR_DH_AVT_SET_PARAM_FAILED = -81014;
@@ -65,7 +66,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_AVT_CTRL_CENTER_KIT_NULL = -80022;
     constexpr int32_t ERR_DH_AVT_SHARED_MEMORY_FAILED = -80023;
     constexpr int32_t ERR_DH_AVT_MASTER_NOT_READY = -80024;
-    constexpr int32_t ERR_DH_AVT_CHANNEL_ALREADY_OPENED = -80025;
+    constexpr int32_t ERR_DH_AVT_SESSION_HAS_OPENED = -80025;
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_AV_TRANSPORT_ERRNO_H

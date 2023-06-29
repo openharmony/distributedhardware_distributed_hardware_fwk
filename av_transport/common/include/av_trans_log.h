@@ -61,7 +61,6 @@ std::string GetAnonyInt32(const int32_t value);
     do {                                                                                                      \
         bool retCode = (exec);                                                                                \
         if (retCode) {                                                                                        \
-            AVTRANS_LOGE("TRUE_RETURN_V " #exec);                                                             \
             return ret;                                                                                       \
         }                                                                                                     \
     } while (0)
