@@ -22,6 +22,7 @@ config("module_private_config") {
   include_dirs = [
     "${av_trans_path}/common/include",
     "include",
+    "${innerkits_path}/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${utils_path}/include/eventbus",
