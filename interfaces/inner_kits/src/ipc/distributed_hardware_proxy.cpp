@@ -15,6 +15,7 @@
 
 #include "distributed_hardware_proxy.h"
 
+#include <cinttypes>
 #include <unordered_set>
 
 #include "anonymous_string.h"
@@ -177,6 +178,43 @@ int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std:
     }
 
     return ret;
+}
+
+std::string DistributedHardwareProxy::QueryLocalSysSpec(QueryLocalSysSpecType spec)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null");
+        return "";
+    }
+    if (spec < QueryLocalSysSpecType::MIN || spec > QueryLocalSysSpecType::MAX) {
+        DHLOGE("Sys spec type is invalid!");
+        return "";
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return "";
+    }
+    if (!data.WriteUint32((uint32_t)spec)) {
+        DHLOGE("DistributedHardwareProxy write local sys spec failed");
+        return "";
+    }
+
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::QUERY_LOCAL_SYS_SPEC),
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %d", ret);
+        return "";
+    }
+
+    std::string specStr = reply.ReadString();
+    DHLOGI("Query local sys spec %" PRIu32 ", get: %s", (uint32_t)spec, specStr.c_str());
+    return specStr;
 }
 
 int32_t DistributedHardwareProxy::Initialize(const TransRole &transRole, int32_t &engineId)

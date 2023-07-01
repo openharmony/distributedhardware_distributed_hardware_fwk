@@ -35,6 +35,7 @@ public:
     int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
     int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
     int32_t PublishMessage(const DHTopic topic, const std::string &msg) override;
+    std::string QueryLocalSysSpec(QueryLocalSysSpecType spec) override;
 
     int32_t Initialize(const TransRole &transRole, int32_t &engineId) override;
     int32_t Release(int32_t engineId) override;

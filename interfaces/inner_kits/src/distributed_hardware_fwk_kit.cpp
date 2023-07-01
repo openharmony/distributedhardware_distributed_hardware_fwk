@@ -140,5 +140,26 @@ void DistributedHardwareFwkKit::OnDHFWKOnLine(bool isOnLine)
         }
     }
 }
+
+bool DistributedHardwareFwkKit::IsQueryLocalSysSpecTypeValid(QueryLocalSysSpecType spec)
+{
+    return spec > QueryLocalSysSpecType::MIN && spec < QueryLocalSysSpecType::MAX;
+}
+
+std::string DistributedHardwareFwkKit::QueryLocalSysSpec(enum QueryLocalSysSpecType spec)
+{
+    DHLOGI("Query Local Sys Spec, %d", (uint32_t)spec);
+    if (!IsQueryLocalSysSpecTypeValid(spec)) {
+        DHLOGE("Topic invalid, topic: %" PRIu32, (uint32_t)spec);
+        return "";
+    }
+
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online, can not publish message");
+        return "";
+    }
+
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->QueryLocalSysSpec(spec);
+}
 } // DistributedHardware
 } // OHOS

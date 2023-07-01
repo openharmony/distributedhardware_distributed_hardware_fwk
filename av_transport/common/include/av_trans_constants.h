@@ -21,7 +21,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-const int32_t LOG_MAX_LEN = 4096;
+const int32_t AV_LOG_MAX_LEN = 4096;
 const int32_t LINK_TYPE_MAX = 4;
 const int32_t BASE_ENGINE_ID = 1000;
 const int32_t DEVICE_ID_LENGTH = 65;
@@ -44,7 +44,6 @@ const uint32_t AUDIO_CHANNEL_LAYOUT_STEREO = 2;
 const int64_t DEFAULT_PTS = 100;
 
 const std::string EMPTY_STRING = "";
-const std::string DH_LOG_TITLE_TAG = "DH_AV_TRANS";
 const std::string SENDER_CONTROL_SESSION_NAME_SUFFIX = "sender.avtrans.control";
 const std::string RECEIVER_CONTROL_SESSION_NAME_SUFFIX = "receiver.avtrans.control";
 const std::string SENDER_DATA_SESSION_NAME_SUFFIX = "sender.avtrans.data";

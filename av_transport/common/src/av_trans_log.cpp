@@ -26,7 +26,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 const std::string DAVTRANS_LOG_TITLE_TAG = "DAVTRANS";
-constexpr int32_t LOG_MAX_LEN = 4096;
+constexpr int32_t AV_LOG_MAX_LEN = 4096;
 
 static void AVTransLogOut(DHLogLevel logLevel, const char *logBuf)
 {
@@ -71,7 +71,7 @@ static void AVTransLogOut(DHLogLevel logLevel, const char *logBuf)
 
 void AVTransLog(DHLogLevel logLevel, const char *fmt, ...)
 {
-    char logBuf[LOG_MAX_LEN] = {0};
+    char logBuf[AV_LOG_MAX_LEN] = {0};
     va_list arg;
 
     (void)memset_s(&arg, sizeof(va_list), 0, sizeof(va_list));

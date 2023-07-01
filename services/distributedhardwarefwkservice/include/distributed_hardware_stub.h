@@ -30,6 +30,7 @@ private:
     int32_t RegisterPublisherListenerInner(MessageParcel &data, MessageParcel &reply);
     int32_t UnregisterPublisherListenerInner(MessageParcel &data, MessageParcel &reply);
     int32_t PublishMessageInner(MessageParcel &data, MessageParcel &reply);
+    int32_t QueryLocalSysSpecInner(MessageParcel &data, MessageParcel &reply);
 
     int32_t InitializeInner(MessageParcel &data, MessageParcel &reply);
     int32_t ReleaseInner(MessageParcel &data, MessageParcel &reply);
@@ -38,6 +39,7 @@ private:
     int32_t RegisterControlCenterCallbackInner(MessageParcel &data, MessageParcel &reply);
 
     bool ValidTopic(uint32_t topic);
+    bool ValidQueryLocalSpec(uint32_t spec);
 };
 } // namespace DistributedHardware
 } // namespace OHOS

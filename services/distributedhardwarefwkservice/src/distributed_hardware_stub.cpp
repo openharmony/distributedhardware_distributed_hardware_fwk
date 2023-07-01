@@ -60,6 +60,9 @@ int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &d
         case static_cast<uint32_t>(DHMsgInterfaceCode::REGISTER_CTL_CEN_CALLBACK): {
             return RegisterControlCenterCallbackInner(data, reply);
         }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::QUERY_LOCAL_SYS_SPEC): {
+            return QueryLocalSysSpecInner(data, reply);
+        }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
@@ -124,6 +127,23 @@ int32_t DistributedHardwareStub::PublishMessageInner(MessageParcel &data, Messag
     DHLOGI("Publish message, topic: %" PRIu32, (uint32_t)topic);
     PublishMessage(topic, message);
     reply.WriteInt32(DH_FWK_SUCCESS);
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::QueryLocalSysSpecInner(MessageParcel &data, MessageParcel &reply)
+{
+    uint32_t specInt = data.ReadUint32();
+    if (!ValidQueryLocalSpec(specInt)) {
+        DHLOGE("Spec invalid: %" PRIu32, specInt);
+        reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    QueryLocalSysSpecType spec = (QueryLocalSysSpecType)specInt;
+    DHLOGI("Query Local Sys Spec: %" PRIu32, (uint32_t)spec);
+    std::string res = QueryLocalSysSpec(spec);
+    DHLOGI("Get Local spec: %s", res.c_str());
+    reply.WriteString(res);
     return DH_FWK_SUCCESS;
 }
 
@@ -200,6 +220,14 @@ int32_t DistributedHardwareStub::RegisterControlCenterCallbackInner(MessageParce
 bool DistributedHardwareStub::ValidTopic(uint32_t topic)
 {
     if (topic <= (uint32_t)DHTopic::TOPIC_MIN || topic >= (uint32_t)DHTopic::TOPIC_MAX) {
+        return false;
+    }
+    return true;
+}
+
+bool DistributedHardwareStub::ValidQueryLocalSpec(uint32_t spec)
+{
+    if (spec <= (uint32_t)QueryLocalSysSpecType::MIN || spec >= (uint32_t)QueryLocalSysSpecType::MAX) {
         return false;
     }
     return true;

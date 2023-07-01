@@ -35,11 +35,6 @@ static const std::string AUDIO_CHANNEL_LAYOUT = "channel_layout";
 static const std::string VIDEO_PIXEL_FMT = "pixel_fmt";
 static const std::string VIDEO_BIT_STREAM_FMT = "vd_bit_stream_fmt";
 
-static const std::string AUDIO_ENCODERS = "audioEncoders";
-static const std::string AUDIO_DECODERS = "audioDecoders";
-static const std::string VIDEO_ENCODERS = "videoEncoders";
-static const std::string VIDEO_DECODERS = "videoDecoders";
-
 void FromJson(const nlohmann::json &jsonObject, AudioEncoderIn &audioEncoderIn)
 {
     if (!IsString(jsonObject, MIME)) {
@@ -318,5 +313,13 @@ void FromJson(const std::string &key, const nlohmann::json &jsonObject, std::vec
         objs.push_back(obj);
     }
 }
+template
+void FromJson<AudioEncoder>(const std::string &key, const nlohmann::json &jsonObject, std::vector<AudioEncoder> &objs);
+template
+void FromJson<AudioDecoder>(const std::string &key, const nlohmann::json &jsonObject, std::vector<AudioDecoder> &objs);
+template
+void FromJson<VideoEncoder>(const std::string &key, const nlohmann::json &jsonObject, std::vector<VideoEncoder> &objs);
+template
+void FromJson<VideoDecoder>(const std::string &key, const nlohmann::json &jsonObject, std::vector<VideoDecoder> &objs);
 }
 }
