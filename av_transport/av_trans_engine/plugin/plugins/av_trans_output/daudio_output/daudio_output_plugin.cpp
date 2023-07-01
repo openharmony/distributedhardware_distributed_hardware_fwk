@@ -262,7 +262,7 @@ Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<P
     auto finalBuffer = Buffer::CreateDefaultBuffer(BufferMetaType::AUDIO, destLength);
     auto bufData = finalBuffer->GetMemory();
     auto writeSize = bufData->Write(reinterpret_cast<const uint8_t *>(destBuffer), destLength, 0);
-    if (static_cast<ssize_t>(writeSize) != destLength) {
+    if (writeSize != destLength) {
         AVTRANS_LOGE("Write buffer data failed.");
         return Status::ERROR_NULL_POINTER;
     }
