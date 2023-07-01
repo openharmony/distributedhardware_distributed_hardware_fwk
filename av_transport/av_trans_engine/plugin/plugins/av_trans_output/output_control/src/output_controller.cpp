@@ -266,22 +266,24 @@ int32_t OutputController::ControlOutput(const std::shared_ptr<Plugin::Buffer>& d
 void OutputController::CheckSyncInfo(const std::shared_ptr<Plugin::Buffer>& data)
 {
     auto bufferMeta = data->GetBufferMeta();
-    if (GetControlMode() == ControlMode::SYNC &&
-        (!bufferMeta->IsExist(Tag::AUDIO_SAMPLE_PER_FRAME) || (!bufferMeta->IsExist(Tag::MEDIA_START_TIME)))) {
+    bool isAFrameNumberExsit = bufferMeta->IsExist(Tag::AUDIO_SAMPLE_PER_FRAME);
+    bool isAPtsExsit = bufferMeta->IsExist(Tag::MEDIA_START_TIME);
+    if (GetControlMode() == ControlMode::SYNC && (!isAFrameNumberExsit || !isAPtsExsit)) {
         ClearQueue(dataQueue_);
         sleepCon_.notify_one();
         clockCon_.notify_one();
         SetControlMode(ControlMode::SMOOTH);
-        AVTRANS_LOGI("Stop sync and start smooth.");
+        AVTRANS_LOGI("Stop sync and start smooth, aFrameNumberExsit: %d, aPtsExsit: %d",
+            isAFrameNumberExsit, isAPtsExsit);
         return;
     }
-    if (GetControlMode() == ControlMode::SMOOTH &&
-        bufferMeta->IsExist(Tag::AUDIO_SAMPLE_PER_FRAME) && !bufferMeta->IsExist(Tag::MEDIA_START_TIME)) {
+    if (GetControlMode() == ControlMode::SMOOTH && isAFrameNumberExsit && isAPtsExsit) {
         ClearQueue(dataQueue_);
         sleepCon_.notify_one();
         clockCon_.notify_one();
         SetControlMode(ControlMode::SYNC);
-        AVTRANS_LOGI("Stop smooth and start sync.");
+        AVTRANS_LOGI("Stop smooth and start sync, aFrameNumberExsit: %d, aPtsExsit: %d",
+            isAFrameNumberExsit, isAPtsExsit);
     }
 }
 
