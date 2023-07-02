@@ -214,5 +214,11 @@ int32_t AVTransControlCenterProxy::PublishMessage(const DHTopic topic, const std
 {
     return DH_AVT_SUCCESS;
 }
+
+std::string AVTransControlCenterProxy::QueryLocalSysSpec(QueryLocalSysSpecType spec)
+{
+    (void)spec;
+    return "";
+}
 } // namespace DistributedHardware
 } // namespace OHOS

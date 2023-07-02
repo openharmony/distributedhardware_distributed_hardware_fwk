@@ -75,7 +75,8 @@
           "name": "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits:libdhfwk_sdk",
           "header": {
             "header_files": [
-              "distributed_hardware_fwk_kit.h"
+              "distributed_hardware_fwk_kit.h",
+              "distributed_hardware_fwk_kit_paras.h"
             ],
             "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits/include"
           }

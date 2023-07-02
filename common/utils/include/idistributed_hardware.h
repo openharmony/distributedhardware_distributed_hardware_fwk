@@ -23,6 +23,7 @@
 #include "iremote_broker.h"
 #include "device_type.h"
 
+#include "distributed_hardware_fwk_kit_paras.h"
 #include "iav_trans_control_center_callback.h"
 #include "ipublisher_listener.h"
 
@@ -36,6 +37,7 @@ public:
     virtual int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) = 0;
     virtual int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) = 0;
     virtual int32_t PublishMessage(const DHTopic topic, const std::string &msg) = 0;
+    virtual std::string QueryLocalSysSpec(QueryLocalSysSpecType spec) = 0;
 
     virtual int32_t Initialize(const TransRole &transRole, int32_t &engineId) = 0;
     virtual int32_t Release(int32_t engineId) = 0;

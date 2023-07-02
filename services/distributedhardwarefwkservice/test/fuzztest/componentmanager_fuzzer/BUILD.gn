@@ -24,6 +24,7 @@ ohos_fuzztest("ComponentmanagerFuzzTest") {
 
   include_dirs = [
     "${av_trans_path}/common/include",
+    "${innerkits_path}/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${services_path}/distributedhardwarefwkservice/include",

@@ -19,6 +19,8 @@
 #include "system_ability.h"
 #include "ipc_object_stub.h"
 
+#include "distributed_hardware_fwk_kit.h"
+#include "distributed_hardware_fwk_kit_paras.h"
 #include "distributed_hardware_stub.h"
 #include "single_instance.h"
 
@@ -37,6 +39,7 @@ public:
     int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
     int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
     int32_t PublishMessage(const DHTopic topic, const std::string &msg) override;
+    std::string QueryLocalSysSpec(const QueryLocalSysSpecType spec) override;
     int Dump(int32_t fd, const std::vector<std::u16string>& args) override;
 
     int32_t Initialize(const TransRole &transRole, int32_t &engineId) override;
@@ -51,6 +54,7 @@ protected:
 
 private:
     bool Init();
+    std::string QueryDhSysSpec(const std::string &targetKey, std::string &attrs);
 
 private:
     bool registerToService_ = false;

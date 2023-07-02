@@ -23,6 +23,7 @@
 #include <set>
 #include "refbase.h"
 
+#include "distributed_hardware_fwk_kit_paras.h"
 #include "ipublisher_listener.h"
 #include "idistributed_hardware.h"
 
@@ -76,6 +77,14 @@ public:
      * @return No return value.
      */
     void OnDHFWKOnLine(bool isOnLine);
+
+    /**
+     * @brief Query Local system specifications
+     *
+     * @param spec specification type
+     * @return API_EXPORT specification in string format
+     */
+    API_EXPORT std::string QueryLocalSysSpec(QueryLocalSysSpecType spec);
 private:
     /**
      * @brief Determine whether the topic is valid.
@@ -83,6 +92,13 @@ private:
      * @return Returns true if success.
      */
     bool IsDHTopicValid(DHTopic topic);
+
+    /**
+     * @brief Determine whether the QueryLocalSysSpecType is valid.
+     * @param topic Query Local Sys Spec Type.
+     * @return Returns true if success.
+     */
+    bool IsQueryLocalSysSpecTypeValid(QueryLocalSysSpecType spec);
 
 private:
     std::mutex listenerMutex_;

@@ -15,16 +15,23 @@
 
 #include "distributed_hardware_service.h"
 
+#include <cinttypes>
+
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "ipc_types.h"
 #include "iservice_registry.h"
+#include "nlohmann/json.hpp"
 #include "string_ex.h"
 #include "system_ability_definition.h"
 
 #include "access_manager.h"
 #include "av_trans_control_center.h"
+#include "capability_info_manager.h"
+#include "dh_context.h"
+#include "dh_utils_tool.h"
 #include "dh_utils_hisysevent.h"
+#include "distributed_hardware_fwk_kit_paras.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager_factory.h"
@@ -108,6 +115,71 @@ int32_t DistributedHardwareService::PublishMessage(const DHTopic topic, const st
 {
     Publisher::GetInstance().PublishMessage(topic, msg);
     return DH_FWK_SUCCESS;
+}
+
+std::string DistributedHardwareService::QueryLocalSysSpec(const QueryLocalSysSpecType spec)
+{
+    DeviceInfo localDevInfo = DHContext::GetInstance().GetDeviceInfo();
+    std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
+    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(localDevInfo.deviceId, resInfos);
+    DHType targetDhType = DHType::UNKNOWN;
+    std::string targetKey = "";
+    switch (spec) {
+        case QueryLocalSysSpecType::HISTREAMER_AUDIO_ENCODER:
+            targetKey = KEY_HISTREAMER_AUDIO_ENCODER;
+            targetDhType = DHType::AUDIO;
+            break;
+        case QueryLocalSysSpecType::HISTREAMER_AUDIO_DECODER:
+            targetKey = KEY_HISTREAMER_AUDIO_DECODER;
+            targetDhType = DHType::AUDIO;
+            break;
+        case QueryLocalSysSpecType::HISTREAMER_VIDEO_ENCODER:
+            targetKey = KEY_HISTREAMER_VIDEO_ENCODER;
+            targetDhType = DHType::SCREEN;
+            break;
+        case QueryLocalSysSpecType::HISTREAMER_VIDEO_DECODER:
+            targetKey = KEY_HISTREAMER_VIDEO_DECODER;
+            targetDhType = DHType::SCREEN;
+            break;
+        default:
+            break;
+    }
+
+    DHLOGE("QueryLocalSysSpec targetKey: %s, targetDhType: %" PRIu32, targetKey.c_str(), (uint32_t)targetDhType);
+    if (targetDhType == DHType::UNKNOWN) {
+        DHLOGE("Can not find matched dhtype");
+        return "";
+    }
+
+    std::string attrs = "";
+    for (const auto &cap : resInfos) {
+        if (cap->GetDHType() != targetDhType) {
+            continue;
+        }
+        attrs = cap->GetDHAttrs();
+        break;
+    }
+    if (attrs.empty()) {
+        DHLOGE("Can not find dh attrs");
+        return "";
+    }
+
+    return QueryDhSysSpec(targetKey, attrs);
+}
+
+std::string DistributedHardwareService::QueryDhSysSpec(const std::string &targetKey, std::string &attrs)
+{
+    nlohmann::json attrJson = nlohmann::json::parse(attrs, nullptr, false);
+    if (attrJson.is_discarded()) {
+        DHLOGE("attrs json is invalid, attrs: %s", attrs.c_str());
+        return "";
+    }
+
+    if (!IsString(attrJson, targetKey)) {
+        DHLOGE("Attrs Json not contains key: %s", targetKey.c_str());
+        return "";
+    }
+    return attrJson.at(targetKey).get<std::string>();
 }
 
 int32_t DistributedHardwareService::Initialize(const TransRole &transRole, int32_t &engineId)

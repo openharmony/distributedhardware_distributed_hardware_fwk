@@ -29,7 +29,8 @@ enum class DHMsgInterfaceCode : uint32_t {
     RELEASE_CTL_CEN = 5,
     CREATE_CTL_CEN_CHANNEL = 6,
     NOTIFY_AV_EVENT = 7,
-    REGISTER_CTL_CEN_CALLBACK = 8
+    REGISTER_CTL_CEN_CALLBACK = 8,
+    QUERY_LOCAL_SYS_SPEC = 9,
 };
 } // namespace DistributedHardware
 } // namespace OHOS

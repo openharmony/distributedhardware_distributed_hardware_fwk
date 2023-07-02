@@ -22,6 +22,10 @@
 
 #include "nlohmann/json.hpp"
 
+#ifndef API_EXPORT
+#define API_EXPORT __attribute__((visibility("default")))
+#endif
+
 namespace OHOS {
 namespace DistributedHardware {
 
@@ -248,6 +252,11 @@ enum struct VideoBitStreamFormat : uint32_t {
     ANNEXB, // H264, H265 bit stream format
 };
 
+static const std::string AUDIO_ENCODERS = "audioEncoders";
+static const std::string AUDIO_DECODERS = "audioDecoders";
+static const std::string VIDEO_ENCODERS = "videoEncoders";
+static const std::string VIDEO_DECODERS = "videoDecoders";
+
 /******************* AudioEncoder Begin *****************/
 struct AudioEncoderIn {
     std::string mime;
@@ -337,7 +346,7 @@ void FromJson(const nlohmann::json &jsonObject, VideoDecoderOut &videoDecoderOut
 void FromJson(const nlohmann::json &jsonObject, VideoDecoder &videoDecoder);
 /******************* VideoDecoder End *******************/
 template<typename T>
-void FromJson(const std::string &key, const nlohmann::json &jsonObject, std::vector<T> &objs);
+API_EXPORT void FromJson(const std::string &key, const nlohmann::json &jsonObject, std::vector<T> &objs);
 }
 }
 #endif

@@ -18,6 +18,7 @@ import(
 config("sender_external_config") {
   include_dirs = [
     "${common_path}/include",
+    "${distributedhardwarefwk_path}/interfaces/inner_kits/include",
     "${engine_path}/av_sender/include",
     "${engine_path}/av_receiver/include",
     "${interface_path}",
