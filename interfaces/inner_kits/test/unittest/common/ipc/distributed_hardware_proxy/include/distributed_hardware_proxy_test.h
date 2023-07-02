@@ -67,6 +67,12 @@ public:
         return DH_FWK_SUCCESS;
     }
 
+    std::string QueryLocalSysSpec(QueryLocalSysSpecType spec)
+    {
+        (void)spec;
+        return 0;
+    }
+
     int32_t Initialize(const TransRole &transRole, int32_t &engineId)
     {
         (void)transRole;

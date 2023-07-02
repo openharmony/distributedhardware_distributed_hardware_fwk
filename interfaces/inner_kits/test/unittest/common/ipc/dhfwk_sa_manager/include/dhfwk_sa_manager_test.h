@@ -66,6 +66,12 @@ int32_t PublishMessage(const DHTopic topic, const std::string &msg)
     return DH_FWK_SUCCESS;
 }
 
+std::string QueryLocalSysSpec(QueryLocalSysSpecType spec)
+{
+    (void)spec;
+    return 0;
+}
+
 int32_t Initialize(const TransRole &transRole, int32_t &engineId)
 {
     (void)transRole;
