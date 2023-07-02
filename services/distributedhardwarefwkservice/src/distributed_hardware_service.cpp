@@ -124,8 +124,7 @@ std::string DistributedHardwareService::QueryLocalSysSpec(const QueryLocalSysSpe
     CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(localDevInfo.deviceId, resInfos);
     DHType targetDhType = DHType::UNKNOWN;
     std::string targetKey = "";
-    switch (spec)
-    {
+    switch (spec) {
         case QueryLocalSysSpecType::HISTREAMER_AUDIO_ENCODER:
             targetKey = KEY_HISTREAMER_AUDIO_ENCODER;
             targetDhType = DHType::AUDIO;

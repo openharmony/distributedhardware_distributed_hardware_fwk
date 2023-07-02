@@ -19,6 +19,7 @@
 #include <gtest/gtest.h>
 
 #include "distributed_hardware_errno.h"
+#include "distributed_hardware_fwk_kit_paras.h"
 #define private public
 #include "distributed_hardware_stub.h"
 #undef private
@@ -55,6 +56,12 @@ int32_t PublishMessage(const DHTopic topic, const std::string &msg)
     (void)topic;
     (void)msg;
     return DH_FWK_SUCCESS;
+}
+
+std::string QueryLocalSysSpec(QueryLocalSysSpecType spec)
+{
+    (void)spec;
+    return "";
 }
 
 int32_t Initialize(const TransRole &transRole, int32_t &engineId)
