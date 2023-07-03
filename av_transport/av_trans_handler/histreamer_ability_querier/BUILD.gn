@@ -46,11 +46,11 @@ ohos_shared_library("histreamer_ability_querier") {
   ]
 
   external_deps = [
+    "hilog:libhilog",
     "histreamer:histreamer_base",
     "histreamer:histreamer_codec_filters",
     "histreamer:histreamer_ffmpeg_convert",
     "histreamer:histreamer_plugin_base",
-    "hiviewdfx_hilog_native:libhilog",
   ]
 
   cflags = [

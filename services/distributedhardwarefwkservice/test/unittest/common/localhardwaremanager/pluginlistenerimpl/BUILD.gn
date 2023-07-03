@@ -53,7 +53,7 @@ ohos_unittest("PluginListenerImplTest") {
 
   external_deps = [
     "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
+    "hisysevent:libhisysevent",
     "kv_store:distributeddata_inner",
   ]
 

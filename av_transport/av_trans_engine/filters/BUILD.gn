@@ -28,11 +28,11 @@ ohos_source_set("avtrans_input_filter") {
   ]
 
   external_deps = [
+    "hilog:libhilog",
     "histreamer:histreamer_base",
     "histreamer:histreamer_codec_filters",
     "histreamer:histreamer_ffmpeg_convert",
     "histreamer:histreamer_plugin_base",
-    "hiviewdfx_hilog_native:libhilog",
   ]
 
   public_deps = [
@@ -75,11 +75,11 @@ ohos_source_set("avtrans_output_filter") {
   ]
 
   external_deps = [
+    "hilog:libhilog",
     "histreamer:histreamer_base",
     "histreamer:histreamer_codec_filters",
     "histreamer:histreamer_ffmpeg_convert",
     "histreamer:histreamer_plugin_base",
-    "hiviewdfx_hilog_native:libhilog",
   ]
 
   public_deps = [

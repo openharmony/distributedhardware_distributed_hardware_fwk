@@ -49,8 +49,8 @@ ohos_unittest("EventTranceTest") {
 
   external_deps = [
     "c_utils:utils",
-    "hisysevent_native:libhisysevent",
-    "hitrace_native:hitrace_meter",
+    "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
     "safwk:system_ability_fwk",
   ]
 }

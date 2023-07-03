@@ -55,7 +55,7 @@ ohos_unittest("LocalHardwareManagerTest") {
 
   external_deps = [
     "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
+    "hisysevent:libhisysevent",
     "kv_store:distributeddata_inner",
   ]
 
