@@ -47,9 +47,9 @@ ohos_shared_library("distributedhardwareutils") {
   external_deps = [
     "c_utils:utils",
     "dsoftbus:softbus_client",
-    "hisysevent_native:libhisysevent",
-    "hitrace_native:hitrace_meter",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:libhilog",
+    "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
     "safwk:system_ability_fwk",
   ]
 
