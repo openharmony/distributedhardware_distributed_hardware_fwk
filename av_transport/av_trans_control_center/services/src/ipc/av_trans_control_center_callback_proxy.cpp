@@ -26,6 +26,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AVTransControlCenterCallbackProxy"
+
 int32_t AVTransControlCenterCallbackProxy::SetParameter(AVTransTag tag, const std::string& value)
 {
     sptr<IRemoteObject> remote = Remote();
@@ -36,7 +39,7 @@ int32_t AVTransControlCenterCallbackProxy::SetParameter(AVTransTag tag, const st
 
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option；
 
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         AVTRANS_LOGE("WriteInterfaceToken fail!");

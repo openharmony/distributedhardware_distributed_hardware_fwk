@@ -36,8 +36,9 @@ private:
     constexpr static int32_t SMOOTH_BUFFER_TIME = 0 * NS_ONE_MS;
     constexpr static uint32_t AVER_INTERVAL_DIFF_THRE = 2 * NS_ONE_MS;
     constexpr static uint32_t PUSH_ONCE_DIFF_THRE = 10 * NS_ONE_MS;
-    constexpr static uint32_t WAIT_CLOCK_THRE = 185 * NS_ONE_MS;
-    constexpr static uint32_t TRACK_CLOCK_THRE = 90 * NS_ONE_MS;
+    constexpr static uint32_t TIMESTAMP_ONCE_DIFF_THRE = 3 * NS_ONE_MS;
+    constexpr static uint32_t WAIT_CLOCK_THRE = 125 * NS_ONE_MS;
+    constexpr static uint32_t TRACK_CLOCK_THRE = 45 * NS_ONE_MS;
     constexpr static int64_t SLEEP_THRE = 1000 * NS_ONE_MS;
 };
 } // namespace DistributedHardware

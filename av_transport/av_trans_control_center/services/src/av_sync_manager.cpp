@@ -23,6 +23,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AVSyncManager"
+
 AVSyncManager::AVSyncManager()
 {
     AVTRANS_LOGI("AVSyncManager ctor.");
@@ -38,7 +41,8 @@ AVSyncManager::~AVSyncManager()
 
 void AVSyncManager::AddStreamInfo(const AVStreamInfo &stream)
 {
-    AVTRANS_LOGI("add new stream info: sceneType=%s, peerDevId=%s", stream.sceneType.c_str(), stream.peerDevId.c_str());
+    AVTRANS_LOGI("add new stream info: sceneType=%s, peerDevId=%s", stream.sceneType.c_str(),
+        GetAnonyString(stream.peerDevId).c_str());
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         streamInfoList_.push_back(stream);
@@ -53,12 +57,13 @@ void AVSyncManager::AddStreamInfo(const AVStreamInfo &stream)
 
 void AVSyncManager::RemoveStreamInfo(const AVStreamInfo &stream)
 {
-    AVTRANS_LOGI("remove stream info: sceneType=%s, peerDevId=%s", stream.sceneType.c_str(), stream.peerDevId.c_str());
+    AVTRANS_LOGI("remove stream info: sceneType=%s, peerDevId=%s", stream.sceneType.c_str(),
+        GetAnonyString(stream.peerDevId).c_str());
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         for (auto iter = streamInfoList_.begin(); iter != streamInfoList_.end();) {
             if (((*iter).sceneType == stream.sceneType) && ((*iter).peerDevId == stream.peerDevId)) {
-                streamInfoList_.erase(iter);
+                iter = streamInfoList_.erase(iter);
             } else {
                 iter++;
             }
@@ -77,7 +82,7 @@ void AVSyncManager::EnableSenderAVSync()
     AVTRANS_LOGI("merged av sync group info=%s", syncGroupInfo.c_str());
     {
         std::lock_guard<std::mutex> lock(listMutex_);
-        for (auto item : streamInfoList_) {
+        for (const auto &item : streamInfoList_) {
             auto avMessage = std::make_shared<AVTransMessage>((uint32_t)AVTransTag::START_AV_SYNC,
                 syncGroupInfo, item.peerDevId);
             AVTransControlCenter::GetInstance().SendMessage(avMessage);
@@ -96,7 +101,7 @@ void AVSyncManager::DisableSenderAVSync()
             AVTRANS_LOGI("Cannot disable sender av sync, stream info list size=%zu", streamInfoList_.size());
             return;
         }
-        for (auto item : streamInfoList_) {
+        for (const auto &item : streamInfoList_) {
             auto avMessage = std::make_shared<AVTransMessage>((uint32_t)AVTransTag::STOP_AV_SYNC, "", item.peerDevId);
             AVTransControlCenter::GetInstance().SendMessage(avMessage);
         }
@@ -133,7 +138,7 @@ bool AVSyncManager::MergeGroupInfo(std::string &syncGroupInfo)
     std::set<std::string> sceneTypeSet;
     {
         std::lock_guard<std::mutex> lock(listMutex_);
-        for (auto item : streamInfoList_) {
+        for (const auto &item : streamInfoList_) {
             sceneTypeSet.insert(item.sceneType);
         }
     }
@@ -158,7 +163,7 @@ bool AVSyncManager::MergeGroupInfo(std::string &syncGroupInfo)
     }
 
     std::set<std::string> groupInfoSet;
-    for (auto item : streamInfoList_) {
+    for (const auto &item : streamInfoList_) {
         if ((item.sceneType == SCENE_TYPE_D_MIC) || (item.sceneType == SCENE_TYPE_D_SPEAKER)) {
             nlohmann::json masterStr;
             masterStr[KEY_SCENE_TYPE] = item.sceneType;

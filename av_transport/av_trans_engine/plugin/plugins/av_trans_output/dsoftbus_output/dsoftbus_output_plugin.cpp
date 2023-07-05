@@ -27,7 +27,6 @@ std::vector<GenericPluginDef> CreateDsoftbusOutputPluginDef()
     int32_t capNum = 2;
     std::vector<GenericPluginDef> definitionList;
     for (int i = 0; i < capNum; i++) {
-        AVTRANS_LOGI("DsoftbusOutputPlugin_H264 registered.");
         GenericPluginDef definition;
         definition.name = "AVTransDsoftbusOutputPlugin_H264";
         definition.pkgName = "AVTransDsoftbusOutputPlugin";
@@ -43,7 +42,6 @@ std::vector<GenericPluginDef> CreateDsoftbusOutputPluginDef()
         CapabilityBuilder capBuilder;
         capBuilder.SetMime(Media::MEDIA_MIME_VIDEO_H264);
         if (i == 1) {
-            AVTRANS_LOGI("DsoftbusOutputPlugin_H265 registered.");
             definition.name = "AVTransDsoftbusOutputPlugin_H265";
             capBuilder.SetMime(Media::MEDIA_MIME_VIDEO_H265);
         }
@@ -116,6 +114,7 @@ Status DsoftbusOutputPlugin::Reset()
     DataQueueClear(dataQueue_);
     eventsCb_ = nullptr;
     SoftbusChannelAdapter::GetInstance().RemoveChannelServer(TransName2PkgName(ownerName_), sessionName_);
+    SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
     state_ = State::INITIALIZED;
     return Status::OK;
 }
@@ -146,18 +145,17 @@ Status DsoftbusOutputPlugin::Stop()
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
-
-    bufferPopTask_->Pause();
+    state_ = State::PREPARED;
+    bufferPopTask_->Stop();
     DataQueueClear(dataQueue_);
     CloseSoftbusChannel();
-    state_ = State::PREPARED;
     return Status::OK;
 }
 
 Status DsoftbusOutputPlugin::GetParameter(Tag tag, ValueType &value)
 {
     auto res = paramsMap_.find(tag);
-    if (res == paramsMap_.end()) {
+    if (res != paramsMap_.end()) {
         value = res->second;
         return Status::OK;
     }
@@ -243,7 +241,6 @@ void DsoftbusOutputPlugin::OnStreamReceived(const StreamData *data, const Stream
 
 Status DsoftbusOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
 {
-    AVTRANS_LOGI("Push Buffer to output plugin.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (buffer == nullptr || buffer->IsEmpty()) {
         AVTRANS_LOGE("Buffer is nullptr.");
@@ -264,9 +261,12 @@ void DsoftbusOutputPlugin::FeedChannelData()
         std::shared_ptr<Buffer> buffer;
         {
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
-            dataCond_.wait(lock, [this]() { return !dataQueue_.empty(); });
+            dataCond_.wait_for(lock, std::chrono::milliseconds(PLUGIN_TASK_WAIT_TIME),
+                [this]() { return !dataQueue_.empty(); });
+            if (state_ != State::RUNNING) {
+                return;
+            }
             if (dataQueue_.empty()) {
-                AVTRANS_LOGD("Data queue is empty.");
                 continue;
             }
             buffer = dataQueue_.front();

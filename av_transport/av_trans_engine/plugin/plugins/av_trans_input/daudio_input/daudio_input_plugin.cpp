@@ -25,7 +25,6 @@ namespace DistributedHardware {
 
 GenericPluginDef CreateDaudioInputPluginDef()
 {
-    AVTRANS_LOGI("DaudioInputPlugin registered.");
     GenericPluginDef definition;
     definition.name = "AVTransDaudioInputPlugin";
     definition.pkgName = "AVTransDaudioInputPlugin";
@@ -84,7 +83,6 @@ Status DaudioInputPlugin::Reset()
 
 Status DaudioInputPlugin::GetParameter(Tag tag, ValueType &value)
 {
-    AVTRANS_LOGI("GetParameter enter.");
     {
         Media::OSAL::ScopedLock lock(operationMutes_);
         auto iter = tagMap_.find(tag);
@@ -98,7 +96,6 @@ Status DaudioInputPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DaudioInputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
-    AVTRANS_LOGI("SetParameter enter.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     tagMap_.insert(std::make_pair(tag, value));
     if (tag == Plugin::Tag::USER_SHARED_MEMORY_FD) {
@@ -109,7 +106,6 @@ Status DaudioInputPlugin::SetParameter(Tag tag, const ValueType &value)
 
 Status DaudioInputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
-    AVTRANS_LOGI("PushData enter.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     TRUE_RETURN_V(buffer == nullptr, Status::ERROR_NULL_POINTER);
 
@@ -129,7 +125,7 @@ Status DaudioInputPlugin::PushData(const std::string &inPort, std::shared_ptr<Pl
     buffer->pts = GetCurrentTime();
     bufferMeta->SetMeta(Tag::USER_FRAME_PTS, buffer->pts);
     bufferMeta->SetMeta(Tag::USER_FRAME_NUMBER, frameNumber_.load());
-    AVTRANS_LOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.",
+    AVTRANS_LOGI("Push audio buffer pts: %ld, bufferLen: %d, indexNumber: %zu.",
         buffer->pts, buffer->GetMemory()->GetSize(),
         Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER)));
 
@@ -142,14 +138,12 @@ Status DaudioInputPlugin::PushData(const std::string &inPort, std::shared_ptr<Pl
 
 Status DaudioInputPlugin::SetCallback(Callback *cb)
 {
-    AVTRANS_LOGI("SetCallback enter.");
     (void)cb;
     return Status::OK;
 }
 
 Status DaudioInputPlugin::SetDataCallback(AVDataCallback callback)
 {
-    AVTRANS_LOGI("SetDataCallback enter.");
     (void)callback;
     return Status::OK;
 }

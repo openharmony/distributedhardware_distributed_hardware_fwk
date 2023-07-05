@@ -64,7 +64,7 @@ ohos_shared_library("distributed_av_receiver") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"distributed_av_transport_receiver\"",
+    "DH_LOG_TAG=\"av_tran_receiver\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
@@ -79,13 +79,13 @@ ohos_shared_library("distributed_av_receiver") {
     "dsoftbus:softbus_client",
     "graphic_standard:libgraphic_utils",
     "graphic_standard:surface",
-    "hilog:libhilog",
     "histreamer:histreamer_base",
     "histreamer:histreamer_codec_filters",
     "histreamer:histreamer_ffmpeg_convert",
     "histreamer:histreamer_plugin_base",
-    "hisysevent:libhisysevent",
-    "hitrace:hitrace_meter",
+    "hisysevent_native:libhisysevent",
+    "hitrac_native:hitrace_meter",
+    "hilog:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",

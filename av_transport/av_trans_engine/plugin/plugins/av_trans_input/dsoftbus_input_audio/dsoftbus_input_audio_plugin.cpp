@@ -26,7 +26,6 @@ namespace DistributedHardware {
 
 GenericPluginDef CreateDsoftbusInputAudioPluginDef()
 {
-    AVTRANS_LOGI("DsoftbusInputAudioPlugin registered.");
     GenericPluginDef definition;
     definition.name = "AVTransDsoftbusInputAudioPlugin";
     definition.pkgName = "AVTransDsoftbusInputAudioPlugin";
@@ -144,16 +143,16 @@ Status DsoftbusInputAudioPlugin::Stop()
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
-    bufferPopTask_->Pause();
-    DataQueueClear(dataQueue_);
     state_ = State::PREPARED;
+    bufferPopTask_->Stop();
+    DataQueueClear(dataQueue_);
     return Status::OK;
 }
 
 Status DsoftbusInputAudioPlugin::GetParameter(Tag tag, ValueType &value)
 {
     auto res = paramsMap_.find(tag);
-    if (res == paramsMap_.end()) {
+    if (res != paramsMap_.end()) {
         value = res->second;
         return Status::OK;
     }
@@ -224,7 +223,6 @@ void DsoftbusInputAudioPlugin::OnStreamReceived(const StreamData *data, const St
     TRUE_RETURN(resMsg.is_discarded(), "The resMsg parse failed");
     TRUE_RETURN(!IsUInt32(resMsg, AVT_DATA_META_TYPE), "invalid data type");
     uint32_t metaType = resMsg[AVT_DATA_META_TYPE];
-    AVTRANS_LOGI("The resMsg datatype: %u.", metaType);
 
     auto buffer = CreateBuffer(metaType, data, resMsg);
     DataEnqueue(buffer);
@@ -268,9 +266,12 @@ void DsoftbusInputAudioPlugin::HandleData()
         std::shared_ptr<Buffer> buffer;
         {
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
-            dataCond_.wait(lock, [this]() { return !dataQueue_.empty(); });
+            dataCond_.wait_for(lock, std::chrono::milliseconds(PLUGIN_TASK_WAIT_TIME),
+                [this]() { return !dataQueue_.empty(); });
+            if (state_ != State::RUNNING) {
+                return;
+            }
             if (dataQueue_.empty()) {
-                AVTRANS_LOGD("Data queue is empty.");
                 continue;
             }
             buffer = dataQueue_.front();
