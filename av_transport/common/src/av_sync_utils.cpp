@@ -148,7 +148,7 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
         }
         index++;
     }
-    AVTRANS_LOGI("read clock unit from shared memory successm, frameNum=%" PRId32 ", pts =%lld"
+    AVTRANS_LOGI("read clock unit from shared memory success, frameNum=%" PRId32 ", pts =%lld",
         clockUnit.frameNum, (long long)clockUnit.pts);
     return DH_AVT_SUCCESS;
 }

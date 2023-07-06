@@ -104,7 +104,7 @@ std::string HiStreamerQueryTool::QueryHiStreamerPluginInfo(HISTREAM_PLUGIN_TYPE 
     }
 
     int32_t len = 0;
-    char* res = (char*)malloc(MAX_MESSAGES_LEN);
+    char* res = reinterpret_cast<char *>(malloc(MAX_MESSAGES_LEN));
     if (res == nullptr) {
         DHLOGE("Malloc memory failed");
         return "";

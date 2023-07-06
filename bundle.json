@@ -36,7 +36,6 @@
         "samgr",
         "ipc",
         "safwk",
-        "hilog",
         "hisysevent",
         "device_manager",
         "config_policy",

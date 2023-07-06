@@ -306,7 +306,7 @@ void ToJson(nlohmann::json &jsonObject, const AudioDecoderIn &audioDecoderIn)
 {
     jsonObject[MIME] = audioDecoderIn.mime;
     nlohmann::json channelLayoutJson;
-    for (auto layout : audioDecoderIn.channel_layout) {
+    for (auto &layout : audioDecoderIn.channel_layout) {
         channelLayoutJson.push_back((uint64_t)layout);
     }
     jsonObject[AUDIO_CHANNEL_LAYOUT] = channelLayoutJson;
@@ -334,7 +334,7 @@ void ToJson(nlohmann::json &jsonObject, const AudioDecoderOut &audioDecoderOut)
 {
     jsonObject[MIME] = audioDecoderOut.mime;
     nlohmann::json sampleFormatsJson;
-    for (auto sampleFormat : audioDecoderOut.sample_fmt) {
+    for (auto &sampleFormat : audioDecoderOut.sample_fmt) {
         sampleFormatsJson.push_back((uint8_t)sampleFormat);
     }
     jsonObject[AUDIO_SAMPLE_FORMAT] = sampleFormatsJson;
@@ -461,7 +461,7 @@ void ToJson(nlohmann::json &jsonObject, const VideoEncoderIn &videoEncoderIn)
 {
     jsonObject[MIME] = videoEncoderIn.mime;
     nlohmann::json pixelFmtJson;
-    for (auto fmt : videoEncoderIn.pixel_fmt) {
+    for (auto &fmt : videoEncoderIn.pixel_fmt) {
         pixelFmtJson.push_back((uint32_t)fmt);
     }
     jsonObject[VIDEO_PIXEL_FMT] = pixelFmtJson;
@@ -603,7 +603,7 @@ void ToJson(nlohmann::json &jsonObject, const VideoDecoderIn &videoDecoderIn)
 {
     jsonObject[MIME] = videoDecoderIn.mime;
     nlohmann::json fmtJson;
-    for (auto fmt : videoDecoderIn.vd_bit_stream_fmt) {
+    for (auto &fmt : videoDecoderIn.vd_bit_stream_fmt) {
         fmtJson.push_back((uint32_t)fmt);
     }
     jsonObject[VIDEO_BIT_STREAM_FMT] = fmtJson;
@@ -630,7 +630,7 @@ void ToJson(nlohmann::json &jsonObject, const VideoDecoderOut &videoDecoderOut)
 {
     jsonObject[MIME] = videoDecoderOut.mime;
     nlohmann::json fmtJson;
-    for (auto fmt : videoDecoderOut.pixel_fmt) {
+    for (auto &fmt : videoDecoderOut.pixel_fmt) {
         fmtJson.push_back((uint32_t)fmt);
     }
     jsonObject[VIDEO_PIXEL_FMT] = fmtJson;
