@@ -168,7 +168,7 @@ Status DaudioOutputPlugin::SetParameter(Tag tag, const ValueType &value)
     }
     if (tag == Plugin::Tag::USER_AV_SYNC_GROUP_INFO) {
         std::string groupInfo = Media::Plugin::AnyCast<std::string>(value);
-        AVTRANS_LOGI("Set USER_AV_SYNC_GROUP_INFO parameter done, group info = %s." GetAnonyString(groupInfo).c_str());
+        AVTRANS_LOGI("Set USER_AV_SYNC_GROUP_INFO parameter done, group info = %s.", GetAnonyString(groupInfo).c_str());
     }
     return Status::OK;
 }
@@ -227,19 +227,19 @@ Status DaudioOutputPlugin::SetDataCallback(AVDataCallback callback)
 
 Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
-    if (buffer == nullptr || buffer->IsEmpty() || buffer->GetBufferMeta() == nullptr) {
-        AVTRANS_LOGE("input buffer is nullptr, pushd data failed.");
+    if (buffer == nullptr || buffer->IsEmpty() || (buffer->GetBufferMeta() == nullptr)) {
+        AVTRANS_LOGE("input buffer is nullptr, push data failed.");
         return Status::ERROR_NULL_POINTER;
     }
 
     auto bufferMeta = buffer->GetBufferMeta();
     if (bufferMeta->IsExist(Tag::USER_FRAME_NUMBER) && bufferMeta->IsExist(Tag::USER_FRAME_PTS)) {
         int64_t pts = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::USER_FRAME_PTS));
-        uint32_t frameNumber = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER));
-        AVTRANS_LOGI("Push audo buffer, bufferLen: %zu, frameNum: %d, pts: %ld", buffer->GetMemory()->GetSize(),
-            frameNumber, pts);
+        uint32_t frameNum = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER));
+        AVTRANS_LOGI("Push audio buffer, bufferLen: %zu, frameNum: %d, pts: %ld", buffer->GetMemory()->GetSize(),
+            frameNum, pts);
     } else {
-        AVTRANS_LOGI("Push audo buffer, bufferLen: %zu, not contains metadata.", buffer->GetMemory()->GetSize());
+        AVTRANS_LOGI("Push audio buffer, bufferLen: %zu, not contains metadata.", buffer->GetMemory()->GetSize());
     }
 
     OSAL::ScopedLock lock(operationMutes_);

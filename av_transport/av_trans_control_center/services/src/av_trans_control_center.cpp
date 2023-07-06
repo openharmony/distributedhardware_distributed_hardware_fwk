@@ -280,8 +280,8 @@ void AVTransControlCenter::HandleChannelEvent(const AVTransEvent &event)
     }
 
     if (event.type == EventType::EVENT_CHANNEL_OPENED) {
-        sessionName = event.content;
-        if (sessionName == AV_SYNC_RECEIVER_CONTROL_SESSION_NAME) {
+        sessionName_ = event.content;
+        if (sessionName_ == AV_SYNC_RECEIVER_CONTROL_SESSION_NAME) {
             SoftbusChannelAdapter::GetInstance().StartDeviceTimeSync(PKG_NAME_DH_FWK, sessionName_, event.peerDevId);
         }
         std::lock_guard<std::mutex> lock(devIdMutex_);

@@ -262,7 +262,7 @@ int32_t OutputController::ControlOutput(const std::shared_ptr<Plugin::Buffer>& d
             [this] { return (GetControlStatus() != ControlStatus::START); });
     }
     RecordTime(enterTime_, timeStamp);
-    return OUTPUT_FRAME;isAPtsExist
+    return OUTPUT_FRAME;
 }
 
 void OutputController::CheckSyncInfo(const std::shared_ptr<Plugin::Buffer>& data)
@@ -275,7 +275,7 @@ void OutputController::CheckSyncInfo(const std::shared_ptr<Plugin::Buffer>& data
         sleepCon_.notify_one();
         clockCon_.notify_one();
         SetControlMode(ControlMode::SMOOTH);
-        AVTRANS_LOGI("Stop sync and start smooth, aFrameNumberExsit: %d, aPtsExsit: %d.",
+        AVTRANS_LOGI("Stop sync and start smooth, aFrameNumberExist: %d, aPtsExist: %d.",
             isAFrameNumberExist, isAPtsExist);
         return;
     }
@@ -284,7 +284,7 @@ void OutputController::CheckSyncInfo(const std::shared_ptr<Plugin::Buffer>& data
         sleepCon_.notify_one();
         clockCon_.notify_one();
         SetControlMode(ControlMode::SYNC);
-        AVTRANS_LOGI("Stop smooth and start sync, aFrameNumberExsit: %d, aPtsExsit: %d.",
+        AVTRANS_LOGI("Stop smooth and start sync, aFrameNumberExist: %d, aPtsExist: %d.",
             isAFrameNumberExist, isAPtsExist);
     }
 }
@@ -507,6 +507,7 @@ void OutputController::HandleSyncTime(const std::shared_ptr<Plugin::Buffer>& dat
     AVTRANS_LOGD("Sync vTimeStamp: %lld, vFrameNumber: %" PRIu32 " vcts: %lld, aTimeStamp: %lld, " +
         "aFrameNumber: %" PRIu32 " acts: %lld, ctsDiff: %lld, offset: %lld", vTimeStamp, vFrameNumber,
         vcts, aTimeStamp, aFrameNumber, acts, ctsDiff, offset);
+    const int64_t append = (trackClockThre_ + waitClockThre_) / 2;
     if (offset > waitClockThre_) {
         sleep_ += offset - waitClockThre_ + append;
         AVTRANS_LOGD("Sync offset %lld is over than wait thre %lld, adjust sleep to %lld.",

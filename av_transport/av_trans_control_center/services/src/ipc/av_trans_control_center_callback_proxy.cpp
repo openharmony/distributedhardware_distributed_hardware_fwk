@@ -39,7 +39,7 @@ int32_t AVTransControlCenterCallbackProxy::SetParameter(AVTransTag tag, const st
 
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option；
+    MessageOption option;
 
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         AVTRANS_LOGE("WriteInterfaceToken fail!");

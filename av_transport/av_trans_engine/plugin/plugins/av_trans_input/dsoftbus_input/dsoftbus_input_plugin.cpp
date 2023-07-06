@@ -158,7 +158,7 @@ Status DsoftbusInputPlugin::Stop()
 Status DsoftbusInputPlugin::GetParameter(Tag tag, ValueType &value)
 {
     auto res = paramsMap_.find(tag);
-    if (res == paramsMap_.end()) {
+    if (res != paramsMap_.end()) {
         value = res->second;
         return Status::OK;
     }
@@ -234,7 +234,6 @@ void DsoftbusInputPlugin::OnStreamReceived(const StreamData *data, const StreamD
     if (buffer != nullptr) {
         DataEnqueue(buffer);
     }
-
 }
 
 std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
@@ -258,7 +257,7 @@ std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
     buffer->GetBufferMeta()->SetMeta(Tag::USER_FRAME_NUMBER, meta->frameNum_);
     if ((meta->extFrameNum_ > 0) && (meta->extPts_ > 0)) {
         buffer->GetBufferMeta()->SetMeta(Tag::MEDIA_START_TIME, meta->extPts_);
-        buffer->GetBufferMeta()->SetMeta(Tag::AUDIO_SMAPLE_PER_FRAME, meta->extFrameNum_);
+        buffer->GetBufferMeta()->SetMeta(Tag::AUDIO_SAMPLE_PER_FRAME, meta->extFrameNum_);
     }
     AVTRANS_LOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", buffer->pts, buffer->GetMemory()->GetSize(),
         meta->frameNum_);

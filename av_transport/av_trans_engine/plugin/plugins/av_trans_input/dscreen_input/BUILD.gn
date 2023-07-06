@@ -35,7 +35,7 @@ ohos_source_set("plugin_AVTransDscreenInput") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"dscreen_input_video_plugin\"",
+    "DH_LOG_TAG=\"dscreen_input_plugin\"",
     "LOG_DOMAIN=0xD004100",
   ]
   part_name = "distributed_hardware_fwk"

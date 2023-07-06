@@ -313,7 +313,7 @@ void DsoftbusOutputAudioPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffe
 
     auto bufferData = buffer->GetMemory();
     std::string jsonStr = jsonObj.dump();
-    AVTRANS_LOGI("buffer data len = %zu, ext data = %s", bufferData->GetSize(),
+    AVTRANS_LOGI("buffer data len = %zu, ext data len = %zu, ext data = %s", bufferData->GetSize(),
         jsonStr.length(), jsonStr.c_str());
 
     StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*>(bufferData->GetReadOnlyData())),

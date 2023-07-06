@@ -30,6 +30,7 @@ const int32_t INVALID_SESSION_ID = -1;
 const int32_t SESSION_WAIT_SECONDS = 5;
 const int32_t INTERCERT_STRING_LENGTH = 20;
 const int32_t PLUGIN_RANK = 100;
+const int32_t PLUGIN_TASK_WAIT_TIME = 20;
 
 const uint32_t VIDEO_H264_LEVEL = 32;
 const uint32_t MAX_DEVICE_ID_LEN = 100;
@@ -60,8 +61,7 @@ const std::string VDECODER_NAME = "builtin.player.videodecoder";
 
 const std::string AVT_DATA_META_TYPE = "avtrans_data_meta_type";
 const std::string AVT_DATA_PARAM = "avtrans_data_param";
-const std::string AVT_PARAM_BUFFERMETA_DATATYPE = "avtrans_param_buffermeta_datatype";
-const std::string AV_TRANS_SPECIAL_DEVICE_ID = "av_trans_special_device_id";
+const std::string AV_TRANS_SPECIAL_DEVICE_ID = "av.trans.special.device.id";
 
 const std::string KEY_MY_DEV_ID = "myDevId";
 const std::string KEY_SCENE_TYPE = "sceneType";

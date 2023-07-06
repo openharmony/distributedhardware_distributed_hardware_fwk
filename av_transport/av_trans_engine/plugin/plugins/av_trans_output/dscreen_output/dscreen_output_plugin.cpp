@@ -177,7 +177,7 @@ Status DscreenOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<
 void DscreenOutputPlugin::OnOutPut(const std::shared_ptr<Plugin::Buffer>& data)
 {
     auto bufferMeta = data->GetBufferMeta();
-    uint32_t vFrameNumber = DEFAULT_FRAME_NUMBER;
+    uint32_t vFrameNumber = DEFAULT_INVALID_FRAME_NUM;
     if (bufferMeta->IsExist(Tag::USER_FRAME_NUMBER)) {
         vFrameNumber = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER));
     }

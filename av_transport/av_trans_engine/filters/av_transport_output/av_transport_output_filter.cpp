@@ -35,7 +35,7 @@ AVOutputFilter::AVOutputFilter(const std::string& name) : FilterBase(name), plug
 
 AVOutputFilter::~AVOutputFilter()
 {
-    AVTRANS_LOGI("dtor called");}
+    AVTRANS_LOGI("dtor called");
 }
 
 std::vector<WorkMode> AVOutputFilter::GetWorkModes()
@@ -45,7 +45,6 @@ std::vector<WorkMode> AVOutputFilter::GetWorkModes()
 
 ErrorCode AVOutputFilter::SetParameter(int32_t key, const Any& value)
 {
-    AVTRANS_LOGI("SetParameter key %d", key);
     Tag tag;
     if (!TranslateIntoParameter(key, tag)) {
         AVTRANS_LOGE("This key is invalid!");

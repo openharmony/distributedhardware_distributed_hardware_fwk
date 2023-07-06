@@ -50,7 +50,7 @@ void Convert2TransBufferMeta(std::shared_ptr<AVBuffer> hisBuffer, std::shared_pt
 std::string BuildChannelDescription(const std::string &ownerName, const std::string &peerDevId);
 void ParseChannelDescription(const std::string &descJsonStr, std::string &ownerName, std::string &peerDevId);
 
-EventType CastEventType(Plugin::PluginEventType type);
+EventType CastEventType(Plugin::PluginEventType type, bool isAbnormal);
 void DumpBufferToFile(std::string fileName, uint8_t *buffer, int32_t bufSize);
 
 bool IsUInt32(const nlohmann::json &jsonObj, const std::string &key);

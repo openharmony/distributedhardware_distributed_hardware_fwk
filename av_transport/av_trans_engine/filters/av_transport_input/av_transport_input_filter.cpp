@@ -522,10 +522,12 @@ ErrorCode AVInputFilter::PushData(const std::string& inPort, const AVBufferPtr& 
         AVTRANS_LOGE("buffer or plugin is nullptr!");
         return ErrorCode::ERROR_NULL_POINTER;
     }
+
     if (TranslatePluginStatus(plugin_->PushData(inPort, buffer, offset)) != ErrorCode::SUCCESS) {
         AVTRANS_LOGE("PushData to plugin fail!");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
     }
+
     if (outPorts_.size() == 0 || outPorts_[0] == nullptr) {
         AVTRANS_LOGE("outPorts is empty or invalid!");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;

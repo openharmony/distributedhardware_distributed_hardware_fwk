@@ -23,7 +23,7 @@ namespace OHOS {
 namespace DistributedHardware {
 constexpr uint8_t INVALID_VALUE_FALG = 0;
 constexpr uint32_t MAX_CLOCK_UNIT_COUNT = 50;
-constexpr int32_t DEFAULT_INVALID_FRAME_NUM = -1;
+constexpr uint32_t DEFAULT_INVALID_FRAME_NUM = 0;
 
 struct AVTransSharedMemory {
     int32_t fd;
@@ -34,7 +34,7 @@ struct AVTransSharedMemory {
 struct AVSyncClockUnit {
     uint32_t index;
     uint32_t frameNum;
-    int64_t cts;
+    int64_t pts;
 };
 
 /**

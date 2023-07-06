@@ -189,7 +189,7 @@ void Convert2TransBufferMeta(std::shared_ptr<AVBuffer> hisBuffer, std::shared_pt
     }
 }
 
-EventType CastEventType(Plugin::PluginEventType type)
+EventType CastEventType(Plugin::PluginEventType type, bool isAbnormal)
 {
     switch (type) {
         case Plugin::PluginEventType::EVENT_CHANNEL_OPENED:
@@ -197,7 +197,7 @@ EventType CastEventType(Plugin::PluginEventType type)
         case Plugin::PluginEventType::EVENT_CHANNEL_OPEN_FAIL:
             return EventType::EVENT_START_FAIL;
         case Plugin::PluginEventType::EVENT_CHANNEL_CLOSED:
-            return EventType::EVENT_CHANNEL_CLOSED;
+            return isAbnormal ? EventType::EVENT_ENGINE_ERROR : EventType::EVENT_STOP_SUCCESS;
         default:
             AVTRANS_LOGE("unsupport plugin event type.");
     }

@@ -410,7 +410,7 @@ void AVReceiverEngine::OnEvent(const OHOS::Media::Event &event)
         case OHOS::Media::EventType::EVENT_PLUGIN_EVENT: {
             Plugin::PluginEvent plugEvt = Plugin::AnyCast<Plugin::PluginEvent>(event.param);
             bool isPlaying = (GetCurrentState() == StateId::PLAYING);
-            receiverCallback_->OnReceiverEvent(AVTransEvent{ CastEventType(plugEvt.type, isPlaying), "", peerDevId_ });
+            receiverCallback_->OnReceiverEvent(AVTransEvent{CastEventType(plugEvt.type, isPlaying), "", peerDevId_ });
             break;
         }
         default:
