@@ -26,7 +26,6 @@ using json = nlohmann::json;
 
 GenericPluginDef CreateDscreenInputPluginDef()
 {
-    AVTRANS_LOGI("DscreenInputPlugin registered.");
     GenericPluginDef definition;
     definition.name = "AVTransDscreenInputPlugin";
     definition.pkgName = "AVTransDscreenInputPlugin";
@@ -85,7 +84,7 @@ Status DscreenInputPlugin::GetParameter(Tag tag, ValueType &value)
 {
     Media::OSAL::ScopedLock lock(operationMutes_);
     auto res = paramsMap_.find(tag);
-    if (res == paramsMap_.end()) {
+    if (res != paramsMap_.end()) {
         value = res->second;
         return Status::OK;
     }
@@ -104,7 +103,6 @@ Status DscreenInputPlugin::SetParameter(Tag tag, const ValueType &value)
 
 Status DscreenInputPlugin::PushData(const std::string& inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
 {
-    AVTRANS_LOGI("PushData.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (!buffer || buffer->IsEmpty()) {
         AVTRANS_LOGE("buffer is nullptr or empty.");
@@ -119,7 +117,7 @@ Status DscreenInputPlugin::PushData(const std::string& inPort, std::shared_ptr<B
 
     ++frameNumber_;
     bufferMeta->SetMeta(Tag::USER_FRAME_NUMBER, frameNumber_.load());
-    AVTRANS_LOGI("AddFrameInfo buffer pts: %ld, bufferLen: %d, frameNumber: %zu.",
+    AVTRANS_LOGI("Push video buffer pts: %ld, bufferLen: %d, frameNumber: %zu.",
         buffer->pts, buffer->GetMemory()->GetSize(),
         Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER)));
 
@@ -127,7 +125,7 @@ Status DscreenInputPlugin::PushData(const std::string& inPort, std::shared_ptr<B
         int64_t audioTimestamp = 0;
         uint32_t audioFrameNum = 0;
         int32_t ret = ReadFrameInfoFromMemory(sharedMemory_, audioFrameNum, audioTimestamp);
-        if (ret == DH_AVT_SUCCESS) {
+        if ((ret == DH_AVT_SUCCESS) && (audioFrameNum > 0) && (audioTimestamp > 0)) {
             bufferMeta->SetMeta(Tag::MEDIA_START_TIME, audioTimestamp);
             bufferMeta->SetMeta(Tag::AUDIO_SAMPLE_PER_FRAME, audioFrameNum);
         }

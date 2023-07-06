@@ -24,6 +24,7 @@ void DScreenOutputController::PrepareSmooth()
     SetDynamicBalanceThre(DYNAMIC_BALANCE_THRE);
     SetAverIntervalDiffThre(AVER_INTERVAL_DIFF_THRE);
     SetPushOnceDiffThre(PUSH_ONCE_DIFF_THRE);
+    SetTimeStampOnceDiffThre(TIMESTAMP_ONCE_DIFF_THRE);
     SetAdjustSleepFactor(ADJUST_SLEEP_FACTOR);
     SetWaitClockFactor(WAIT_CLOCK_FACTOR);
     SetTrackClockFactor(TRACK_CLOCK_FACTOR);

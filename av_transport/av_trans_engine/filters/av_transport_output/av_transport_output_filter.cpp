@@ -23,6 +23,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AVOutputFilter"
 
 static AutoRegisterFilter<AVOutputFilter> g_registerFilterHelper("builtin.avtransport.avoutput");
 
@@ -34,10 +36,6 @@ AVOutputFilter::AVOutputFilter(const std::string& name) : FilterBase(name), plug
 AVOutputFilter::~AVOutputFilter()
 {
     AVTRANS_LOGI("dtor called");
-    OSAL::ScopedLock lock(outputFilterMutex_);
-    if (plugin_ != nullptr) {
-        plugin_->Deinit();
-    }
 }
 
 std::vector<WorkMode> AVOutputFilter::GetWorkModes()
@@ -47,11 +45,13 @@ std::vector<WorkMode> AVOutputFilter::GetWorkModes()
 
 ErrorCode AVOutputFilter::SetParameter(int32_t key, const Any& value)
 {
-    AVTRANS_LOGI("SetParameter key %d", key);
     Tag tag;
     if (!TranslateIntoParameter(key, tag)) {
         AVTRANS_LOGE("This key is invalid!");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
+    }
+    if (plugin_ != nullptr) {
+        plugin_->SetParameter(static_cast<Plugin::Tag>(key), value);
     }
     {
         OSAL::ScopedLock lock(outputFilterMutex_);
@@ -147,6 +147,8 @@ ErrorCode AVOutputFilter::Stop()
         AVTRANS_LOGE("The plugin stop fail!");
         return ErrorCode::ERROR_INVALID_OPERATION;
     }
+    plugin_->Deinit();
+    plugin_ = nullptr;
     state_ = FilterState::READY;
     return ErrorCode::SUCCESS;
 }

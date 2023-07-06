@@ -34,12 +34,13 @@ void OutputController::PushData(std::shared_ptr<Plugin::Buffer>& data)
     {
         std::lock_guard<std::mutex> lock(queueMutex_);
         if (dataQueue_.size() > QUEUE_MAX_SIZE) {
-            AVTRANS_LOGE("DataQueue is greater than QUEUE_MAX_SIZE %zu", QUEUE_MAX_SIZE);
+            AVTRANS_LOGE("DataQueue is greater than QUEUE_MAX_SIZE %zu.", QUEUE_MAX_SIZE);
             dataQueue_.pop();
         }
         CheckSyncInfo(data);
         data->GetBufferMeta()->SetMeta(Tag::USER_PUSH_DATA_TIME, pushTime);
         dataQueue_.push(data);
+        AVTRANS_LOGD("Push Data, dataQueue size is %zu.", dataQueue_.size());
     }
     if (GetControlMode() == ControlMode::SYNC) {
         clockCon_.notify_one();
@@ -49,7 +50,7 @@ void OutputController::PushData(std::shared_ptr<Plugin::Buffer>& data)
 
 OutputController::ControlStatus OutputController::StartControl()
 {
-    TRUE_RETURN_V_MSG_E((GetControlStatus() == ControlStatus::START), ControlStatus::STARTED,
+    TRUE_RETURN_V_MSG_D((GetControlStatus() == ControlStatus::START), ControlStatus::STARTED,
         "Control status is started.");
     SetControlStatus(ControlStatus::START);
     if (!handlerThread_) {
@@ -81,7 +82,7 @@ void OutputController::PrepareControl()
 
 OutputController::ControlStatus OutputController::StopControl()
 {
-    TRUE_RETURN_V_MSG_E((GetControlStatus() == ControlStatus::STOP), ControlStatus::STOPPED,
+    TRUE_RETURN_V_MSG_D((GetControlStatus() == ControlStatus::STOP), ControlStatus::STOPPED,
         "Control status is stopped.");
     SetControlStatus(ControlStatus::STOP);
     ClearQueue(dataQueue_);
@@ -91,7 +92,7 @@ OutputController::ControlStatus OutputController::StopControl()
 
 OutputController::ControlStatus OutputController::ReleaseControl()
 {
-    TRUE_RETURN_V_MSG_E((GetControlStatus() == ControlStatus::RELEASE), ControlStatus::RELEASED,
+    TRUE_RETURN_V_MSG_D((GetControlStatus() == ControlStatus::RELEASE), ControlStatus::RELEASED,
         "Control status is released.");
     SetControlStatus(ControlStatus::RELEASE);
     statistician_ = nullptr;
@@ -192,6 +193,7 @@ void OutputController::PrepareSmooth()
     SetDynamicBalanceThre(0);
     SetAverIntervalDiffThre(0);
     SetPushOnceDiffThre(0);
+    SetTimeStampOnceDiffThre(0);
 }
 
 void OutputController::LooperHandle()
@@ -230,7 +232,7 @@ int32_t OutputController::ControlOutput(const std::shared_ptr<Plugin::Buffer>& d
 {
     enterTime_ = GetCurrentTime();
     int64_t timeStamp = data->pts;
-    TRUE_RETURN_V_MSG_E((timeStamp == INVALID_TIMESTAMP || !CheckIsAllowControl()), OUTPUT_FRAME,
+    TRUE_RETURN_V_MSG_D((timeStamp == INVALID_TIMESTAMP || !CheckIsAllowControl()), OUTPUT_FRAME,
         "Direct output.");
     if (CheckIsClockInvalid(data) || !CheckIsProcessInDynamicBalance(data)) {
         CalProcessTime(data);
@@ -251,7 +253,7 @@ int32_t OutputController::ControlOutput(const std::shared_ptr<Plugin::Buffer>& d
     delta_ += delta;
     sleep_ = interval - elapse;
     AVTRANS_LOGD("Control frame pts: %lld, interval: %lld, elapse: %lld, render: %lld, delta: %lld," +
-        "delat count: %lld, sleep: %lld.", timeStamp, interval, elapse, render, delta, delta_, sleep_);
+        " delat count: %lld, sleep: %lld.", timeStamp, interval, elapse, render, delta, delta_, sleep_);
     AdjustSleepTime(interval);
     SyncClock(interval, data);
     {
@@ -266,24 +268,24 @@ int32_t OutputController::ControlOutput(const std::shared_ptr<Plugin::Buffer>& d
 void OutputController::CheckSyncInfo(const std::shared_ptr<Plugin::Buffer>& data)
 {
     auto bufferMeta = data->GetBufferMeta();
-    bool isAFrameNumberExsit = bufferMeta->IsExist(Tag::AUDIO_SAMPLE_PER_FRAME);
-    bool isAPtsExsit = bufferMeta->IsExist(Tag::MEDIA_START_TIME);
-    if (GetControlMode() == ControlMode::SYNC && (!isAFrameNumberExsit || !isAPtsExsit)) {
+    bool isAFrameNumberExist = bufferMeta->IsExist(Tag::AUDIO_SAMPLE_PER_FRAME);
+    bool isAPtsExist = bufferMeta->IsExist(Tag::MEDIA_START_TIME);
+    if (GetControlMode() == ControlMode::SYNC && (!isAFrameNumberExist || !isAPtsExist)) {
         ClearQueue(dataQueue_);
         sleepCon_.notify_one();
         clockCon_.notify_one();
         SetControlMode(ControlMode::SMOOTH);
-        AVTRANS_LOGI("Stop sync and start smooth, aFrameNumberExsit: %d, aPtsExsit: %d",
-            isAFrameNumberExsit, isAPtsExsit);
+        AVTRANS_LOGI("Stop sync and start smooth, aFrameNumberExist: %d, aPtsExist: %d.",
+            isAFrameNumberExist, isAPtsExist);
         return;
     }
-    if (GetControlMode() == ControlMode::SMOOTH && isAFrameNumberExsit && isAPtsExsit) {
+    if (GetControlMode() == ControlMode::SMOOTH && isAFrameNumberExist && isAPtsExist) {
         ClearQueue(dataQueue_);
         sleepCon_.notify_one();
         clockCon_.notify_one();
         SetControlMode(ControlMode::SYNC);
-        AVTRANS_LOGI("Stop smooth and start sync, aFrameNumberExsit: %d, aPtsExsit: %d",
-            isAFrameNumberExsit, isAPtsExsit);
+        AVTRANS_LOGI("Stop smooth and start sync, aFrameNumberExist: %d, aPtsExist: %d.",
+            isAFrameNumberExist, isAPtsExist);
     }
 }
 
@@ -345,13 +347,17 @@ int32_t OutputController::AcquireSyncClockTime(const std::shared_ptr<Plugin::Buf
     sharedMem.size = sharedMem_.size;
     sharedMem.name = sharedMem_.name;
     AVSyncClockUnit clockUnit;
+    clockUnit.pts = INVALID_TIMESTAMP;
     auto bufferMeta = data->GetBufferMeta();
     clockUnit.frameNum = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::AUDIO_SAMPLE_PER_FRAME));
     int32_t ret = ReadClockUnitFromMemory(sharedMem, clockUnit);
     if (ret == DH_AVT_SUCCESS) {
-        clockUnit_.cts = clockUnit.cts;
-        SetClockTime(clockUnit_.cts);
-        AVTRANS_LOGD("Acquire sync clock success, cts: %lld.", clockUnit_.cts);
+        TRUE_RETURN_V_MSG_D((clockUnit.pts == INVALID_TIMESTAMP), ERR_DH_AVT_SHARED_MEMORY_FAILED,
+            "Read invalid clock.");
+        clockUnit_.pts = clockUnit.pts;
+        clockUnit_.frameNum = clockUnit.frameNum;
+        SetClockTime(clockUnit_.pts);
+        AVTRANS_LOGD("Acquire sync clock success, pts: %lld.", clockUnit_.pts);
     }
     return ret;
 }
@@ -375,17 +381,15 @@ bool OutputController::WaitRereadClockFailed(const std::shared_ptr<Plugin::Buffe
             }
         }
         int32_t ret = AcquireSyncClockTime(data);
-        if (ret == DH_AVT_SUCCESS) {
-            AVTRANS_LOGD("Wait reread clock success.");
-            return false;
-        }
+        TRUE_RETURN_V_MSG_D((ret == DH_AVT_SUCCESS || GetControlMode() == ControlMode::SMOOTH), false,
+            "Wait reread clock success.");
     }
     return true;
 }
 
 bool OutputController::CheckIsProcessInDynamicBalance(const std::shared_ptr<Plugin::Buffer>& data)
 {
-    TRUE_RETURN_V_MSG_E((GetControlMode() == ControlMode::SYNC || GetProcessDynamicBalanceState()), true,
+    TRUE_RETURN_V_MSG_D((GetControlMode() == ControlMode::SYNC || GetProcessDynamicBalanceState()), true,
         "Process in dynamic balance.");
     if (CheckIsProcessInDynamicBalanceOnce(data)) {
         dynamicBalanceCount_++;
@@ -404,12 +408,15 @@ bool OutputController::CheckIsProcessInDynamicBalanceOnce(const std::shared_ptr<
 {
     TRUE_RETURN_V_MSG_E((!statistician_), false, "Statistician is nullptr.");
     int64_t pushInterval = statistician_->GetPushInterval();
+    int64_t timeStampInterval = statistician_->GetTimeStampInterval();
     int64_t averPushInterval = statistician_->GetAverPushInterval();
     int64_t averTimeStamapInterval = statistician_->GetAverTimeStampInterval();
     int64_t averIntervalDiff = averPushInterval - averTimeStamapInterval;
     int64_t pushOnceDiff = pushInterval - averPushInterval;
+    int64_t timeStampOnceDiff = timeStampInterval - averTimeStamapInterval;
     return (averPushInterval != 0) && (averTimeStamapInterval != 0) &&
-        (llabs(averIntervalDiff) < averIntervalDiffThre_) && (llabs(pushOnceDiff) < pushOnceDiffThre_);
+        (llabs(averIntervalDiff) < averIntervalDiffThre_) && (llabs(pushOnceDiff) < pushOnceDiffThre_)
+        && (llabs(timeStampOnceDiff) < timeStampOnceDiffThre_);
 }
 
 bool OutputController::CheckIsBaselineInit()
@@ -472,7 +479,8 @@ void OutputController::HandleSmoothTime(const int64_t timeStampInterval, const s
 {
     TRUE_RETURN((timeStampInterval == INVALID_INTERVAL), "Interverl is Invalid.");
     int64_t vTimeStamp = data->pts;
-    int64_t offset = vTimeStamp - timeStampBaseline_ - sleep_ - (GetClockTime() - clockBaseline_);
+    int64_t vcts = (sleep_ > 0) ? (vTimeStamp - sleep_) : vTimeStamp;
+    int64_t offset = vcts - timeStampBaseline_ - (GetClockTime() - clockBaseline_);
     int64_t averTimeStampInterval = statistician_->GetAverTimeStampInterval();
     int64_t waitClockThre = averTimeStampInterval * waitClockFactor_;
     int64_t trackClockThre = averTimeStampInterval * trackClockFactor_;
@@ -490,24 +498,24 @@ void OutputController::HandleSyncTime(const std::shared_ptr<Plugin::Buffer>& dat
     auto bufferMeta = data->GetBufferMeta();
     int64_t vTimeStamp = data->pts;
     uint32_t vFrameNumber = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER));
-    int64_t vcts = (sleep_ > 0) ? (enterTime_ + sleep_) : enterTime_;
-    int64_t aTimeStamp = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::MEDIA_START_TIME));
-    uint32_t aFrameNumber = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::AUDIO_SAMPLE_PER_FRAME));
+    int64_t vcts = (sleep_ > 0) ? (vTimeStamp - sleep_) : vTimeStamp;
+    int64_t aTimeStamp = clockUnit_.pts;
+    uint32_t aFrameNumber = clockUnit_.frameNum;
     int64_t acts = GetClockTime();
     int64_t ctsDiff = vcts - acts;
-    int64_t offset = vcts - (v1_ + a1_ - (vTimeStamp - aTimeStamp)) - acts + (v2_ - a2_) - GetDevClockDiff();
+    int64_t offset = (vcts - vFront_ - vBack_) - (acts - aFront_ - aBack_) - GetDevClockDiff();
     AVTRANS_LOGD("Sync vTimeStamp: %lld, vFrameNumber: %" PRIu32 " vcts: %lld, aTimeStamp: %lld, " +
         "aFrameNumber: %" PRIu32 " acts: %lld, ctsDiff: %lld, offset: %lld", vTimeStamp, vFrameNumber,
         vcts, aTimeStamp, aFrameNumber, acts, ctsDiff, offset);
-    if (offset < -waitClockThre_) {
-        const int64_t append = (trackClockThre_ + waitClockThre_) / 2;
-        sleep_ = (-waitClockThre_ - offset) + append;
+    const int64_t append = (trackClockThre_ + waitClockThre_) / 2;
+    if (offset > waitClockThre_) {
+        sleep_ += offset - waitClockThre_ + append;
         AVTRANS_LOGD("Sync offset %lld is over than wait thre %lld, adjust sleep to %lld.",
-            offset, -waitClockThre_, sleep_);
-    } else if (offset > trackClockThre_) {
-        sleep_ = 0;
+            offset, waitClockThre_, sleep_);
+    } else if (offset < -trackClockThre_) {
+        sleep_ += offset - trackClockThre_ - append;
         AVTRANS_LOGD("Sync offset %lld is over than track thre %lld, adjust sleep to %lld.",
-            offset, trackClockThre_, sleep_);
+            offset, -trackClockThre_, sleep_);
     }
 }
 
@@ -519,7 +527,7 @@ void OutputController::HandleControlResult(const std::shared_ptr<Plugin::Buffer>
             TRUE_RETURN((ret == HANDLE_FAILED), "Handle result OUTPUT_FRAME failed.");
             {
                 std::lock_guard<std::mutex> lock(queueMutex_);
-                if (data == dataQueue_.front() && !dataQueue_.empty()) {
+                if (!dataQueue_.empty() && data == dataQueue_.front()) {
                     dataQueue_.pop();
                 }
             }
@@ -528,7 +536,7 @@ void OutputController::HandleControlResult(const std::shared_ptr<Plugin::Buffer>
         case DROP_FRAME: {
             {
                 std::lock_guard<std::mutex> lock(queueMutex_);
-                if (data == dataQueue_.front() && !dataQueue_.empty()) {
+                if (!dataQueue_.empty() && data == dataQueue_.front()) {
                     dataQueue_.pop();
                 }
             }
@@ -645,6 +653,11 @@ void OutputController::SetDynamicBalanceThre(const uint8_t thre)
 void OutputController::SetPushOnceDiffThre(const uint32_t thre)
 {
     pushOnceDiffThre_ = thre;
+}
+
+void OutputController::SetTimeStampOnceDiffThre(const uint32_t thre)
+{
+    timeStampOnceDiffThre_ = thre;
 }
 
 void OutputController::SetAdjustSleepFactor(const float factor)

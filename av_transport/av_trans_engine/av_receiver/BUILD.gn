@@ -64,7 +64,7 @@ ohos_shared_library("distributed_av_receiver") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"distributed_av_transport_receiver\"",
+    "DH_LOG_TAG=\"av_trans_receiver\"",
     "LOG_DOMAIN=0xD004100",
   ]
 

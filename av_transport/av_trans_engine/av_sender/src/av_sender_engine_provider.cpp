@@ -19,6 +19,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AVSenderEngineProvider"
+
 AVSenderEngineProvider::AVSenderEngineProvider(const std::string ownerName) : ownerName_(ownerName)
 {
     AVTRANS_LOGI("AVSenderEngineProvider ctor.");
@@ -71,7 +74,6 @@ int32_t AVSenderEngineProvider::RegisterProviderCallback(const std::shared_ptr<I
 void AVSenderEngineProvider::OnChannelEvent(const AVTransEvent &event)
 {
     if (providerCallback_ == nullptr) {
-        AVTRANS_LOGE("providerCallback is null, distributed service may not register callback.");
         return;
     }
     if ((event.type == EventType::EVENT_CHANNEL_OPENED) || (event.type == EventType::EVENT_CHANNEL_CLOSED)) {

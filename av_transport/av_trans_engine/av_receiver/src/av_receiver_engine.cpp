@@ -20,6 +20,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AVReceiverEngine"
+
 AVReceiverEngine::AVReceiverEngine(const std::string &ownerName, const std::string &peerDevId)
     : ownerName_(ownerName), peerDevId_(peerDevId)
 {
@@ -83,9 +86,9 @@ int32_t AVReceiverEngine::InitPipeline()
             ret = pipeline_->LinkFilters({avInput_.get(), videoDecoder_.get(), avOutput_.get()});
         }
     } else if ((ownerName_ == OWNER_NAME_D_MIC) || (ownerName_ == OWNER_NAME_D_SPEAKER)) {
-        ret = pipeline_->AddFilters({avInput_.get(), audioDecoder_.get(), avOutput_.get()});
+        ret = pipeline_->AddFilters({avInput_.get(), avOutput_.get()});
         if (ret == ErrorCode::SUCCESS) {
-            ret = pipeline_->LinkFilters({avInput_.get(), audioDecoder_.get(), avOutput_.get()});
+            ret = pipeline_->LinkFilters({avInput_.get(), avOutput_.get()});
         }
     } else {
         AVTRANS_LOGI("unsupport ownerName:%s", ownerName_.c_str());
@@ -186,7 +189,7 @@ int32_t AVReceiverEngine::Start()
 int32_t AVReceiverEngine::Stop()
 {
     AVTRANS_LOGI("Stop enter.");
-    ErrorCode ret = pipeline_->Pause();
+    ErrorCode ret = pipeline_->Stop();
     TRUE_RETURN_V(ret != ErrorCode::SUCCESS, ERR_DH_AVT_STOP_FAILED);
     SetCurrentState(StateId::STOPPED);
     return DH_AVT_SUCCESS;
@@ -201,13 +204,18 @@ int32_t AVReceiverEngine::Release()
     SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
     initialized_ = false;
+    pipeline_ = nullptr;
+    avInput_ = nullptr;
+    avOutput_ = nullptr;
+    audioDecoder_ = nullptr;
+    videoDecoder_ = nullptr;
+    ctlCenCallback_ = nullptr;
     SetCurrentState(StateId::IDLE);
     return DH_AVT_SUCCESS;
 }
 
 int32_t AVReceiverEngine::SetParameter(AVTransTag tag, const std::string &value)
 {
-    AVTRANS_LOGI("SetParameter enter. tag:%" PRId32, tag);
     switch (tag) {
         case AVTransTag::VIDEO_WIDTH: {
             avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_WIDTH), std::atoi(value.c_str()));
@@ -313,7 +321,6 @@ int32_t AVReceiverEngine::SetParameter(AVTransTag tag, const std::string &value)
 
 int32_t AVReceiverEngine::SendMessage(const std::shared_ptr<AVTransMessage> &message)
 {
-    AVTRANS_LOGI("SendMessage enter.");
     TRUE_RETURN_V_MSG_E(message == nullptr, ERR_DH_AVT_INVALID_PARAM, "input message is nullptr.");
     std::string msgData = message->MarshalMessage();
     return SoftbusChannelAdapter::GetInstance().SendBytesData(sessionName_, message->dstDevId_, msgData);
@@ -332,8 +339,6 @@ int32_t AVReceiverEngine::RegisterReceiverCallback(const std::shared_ptr<IAVRece
 
 int32_t AVReceiverEngine::HandleOutputBuffer(std::shared_ptr<AVBuffer> &hisBuffer)
 {
-    AVTRANS_LOGI("HandleOutputBuffer enter.");
-
     StateId currentState = GetCurrentState();
     bool isErrState = (currentState != StateId::STARTED) && (currentState != StateId::PLAYING);
     TRUE_RETURN_V_MSG_E(isErrState, ERR_DH_AVT_OUTPUT_DATA_FAILED,
@@ -403,8 +408,9 @@ void AVReceiverEngine::OnEvent(const OHOS::Media::Event &event)
             break;
         }
         case OHOS::Media::EventType::EVENT_PLUGIN_EVENT: {
-            Plugin::PluginEvent pluginEvent = Plugin::AnyCast<Plugin::PluginEvent>(event.param);
-            receiverCallback_->OnReceiverEvent(AVTransEvent{ CastEventType(pluginEvent.type), "", peerDevId_ });
+            Plugin::PluginEvent plugEvt = Plugin::AnyCast<Plugin::PluginEvent>(event.param);
+            bool isPlaying = (GetCurrentState() == StateId::PLAYING);
+            receiverCallback_->OnReceiverEvent(AVTransEvent{CastEventType(plugEvt.type, isPlaying), "", peerDevId_});
             break;
         }
         default:

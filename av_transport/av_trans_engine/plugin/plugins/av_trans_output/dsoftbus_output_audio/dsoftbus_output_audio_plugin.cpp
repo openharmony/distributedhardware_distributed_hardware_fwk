@@ -24,7 +24,6 @@ namespace DistributedHardware {
 
 GenericPluginDef CreateDsoftbusOutputAudioPluginDef()
 {
-    AVTRANS_LOGI("DsoftbusOutputAudioPlugin registered.");
     GenericPluginDef definition;
     definition.name = "AVTransDsoftbusOutputAudioPlugin";
     definition.pkgName = "AVTransDsoftbusOutputAudioPlugin";
@@ -90,6 +89,11 @@ Status DsoftbusOutputAudioPlugin::Prepare()
         AVTRANS_LOGE("Create Session Server failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
+    ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
+    if (ret != DH_AVT_SUCCESS) {
+        AVTRANS_LOGE("Register channel listener failed ret: %d.", ret);
+        return Status::ERROR_INVALID_OPERATION;
+    }
 
     if (!bufferPopTask_) {
         bufferPopTask_ = std::make_shared<Media::OSAL::Task>("audioBufferQueuePopThread");
@@ -123,6 +127,7 @@ Status DsoftbusOutputAudioPlugin::Reset()
     DataQueueClear(dataQueue_);
     eventsCb_ = nullptr;
     SoftbusChannelAdapter::GetInstance().RemoveChannelServer(TransName2PkgName(ownerName_), sessionName_);
+    SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
     state_ = State::INITIALIZED;
     return Status::OK;
 }
@@ -153,11 +158,10 @@ Status DsoftbusOutputAudioPlugin::Stop()
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
-
-    bufferPopTask_->Pause();
+    state_ = State::PREPARED;
+    bufferPopTask_->Stop();
     DataQueueClear(dataQueue_);
     CloseSoftbusChannel();
-    state_ = State::PREPARED;
     return Status::OK;
 }
 
@@ -195,13 +199,8 @@ Status DsoftbusOutputAudioPlugin::SetCallback(Callback *cb)
 
 Status DsoftbusOutputAudioPlugin::OpenSoftbusChannel()
 {
-    int32_t ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
-    if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Register channel listener failed ret: %d.", ret);
-        return Status::ERROR_INVALID_OPERATION;
-    }
     std::string peerSessName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
-    ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName_, peerDevId_);
+    int32_t ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName_, peerDevId_);
     if ((ret != DH_AVT_SUCCESS) && (ret != ERR_DH_AVT_SESSION_HAS_OPENED)) {
         AVTRANS_LOGE("Open softbus channel failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
@@ -250,7 +249,6 @@ void DsoftbusOutputAudioPlugin::OnStreamReceived(const StreamData *data, const S
 
 Status DsoftbusOutputAudioPlugin::PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
 {
-    AVTRANS_LOGI("Push Buffer to output plugin.");
     Media::OSAL::ScopedLock lock(operationMutes_);
     if (buffer == nullptr || buffer->IsEmpty()) {
         AVTRANS_LOGE("Buffer is nullptr.");
@@ -271,9 +269,12 @@ void DsoftbusOutputAudioPlugin::FeedChannelData()
         std::shared_ptr<Buffer> buffer;
         {
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
-            dataCond_.wait(lock, [this]() { return !dataQueue_.empty(); });
+            dataCond_.wait_for(lock, std::chrono::milliseconds(PLUGIN_TASK_WAIT_TIME),
+                [this]() { return !dataQueue_.empty(); });
+            if (state_ != State::RUNNING) {
+                return;
+            }
             if (dataQueue_.empty()) {
-                AVTRANS_LOGD("Data queue is empty.");
                 continue;
             }
             buffer = dataQueue_.front();
@@ -310,25 +311,13 @@ void DsoftbusOutputAudioPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffe
     }
     jsonObj[AVT_DATA_PARAM] = hisAMeta->MarshalAudioMeta();
 
-    std::string jsonStr = jsonObj.dump();
-    AVTRANS_LOGI("jsonStr->bufLen %zu, jsonStR: %s", jsonStr.length(), jsonStr.c_str());
-
     auto bufferData = buffer->GetMemory();
-    AVTRANS_LOGI("bufferData->bufLen %zu", bufferData->GetSize());
+    std::string jsonStr = jsonObj.dump();
+    AVTRANS_LOGI("buffer data len = %zu, ext data len = %zu, ext data = %s", bufferData->GetSize(),
+        jsonStr.length(), jsonStr.c_str());
 
-    const int32_t headLength = 7;
-    unsigned char adtsHeader[headLength] = {0};
-    int packetLen = bufferData->GetSize() + headLength;
-    GenerateAdtsHeader(adtsHeader, packetLen, 1, sampleRate_, channels_);
-
-    auto newHisBuffer = std::make_shared<Plugin::Buffer>();
-    newHisBuffer->AllocMemory(nullptr, packetLen);
-    auto bufferMemory = newHisBuffer->GetMemory();
-    bufferMemory->Write(adtsHeader, headLength, 0);
-    bufferMemory->Write(bufferData->GetReadOnlyData(), bufferData->GetSize(), headLength);
-
-    StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*>(bufferMemory->GetReadOnlyData())),
-        bufferMemory->GetSize()};
+    StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*>(bufferData->GetReadOnlyData())),
+        bufferData->GetSize()};
     StreamData ext = {const_cast<char *>(jsonStr.c_str()), jsonStr.length()};
 
     int32_t ret = SoftbusChannelAdapter::GetInstance().SendStreamData(sessionName_, peerDevId_, &data, &ext);

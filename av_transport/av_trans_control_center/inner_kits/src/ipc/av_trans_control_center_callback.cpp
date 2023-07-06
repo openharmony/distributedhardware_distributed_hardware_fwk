@@ -22,7 +22,6 @@ namespace OHOS {
 namespace DistributedHardware {
 int32_t AVTransControlCenterCallback::SetParameter(AVTransTag tag, const std::string &value)
 {
-    AVTRANS_LOGW("AVTransControlCenterCallback::SetParameter enter.");
     if ((tag == AVTransTag::START_AV_SYNC) || (tag == AVTransTag::STOP_AV_SYNC) ||
         (tag == AVTransTag::TIME_SYNC_RESULT)) {
         std::shared_ptr<IAVReceiverEngine> rcvEngine = receiverEngine_.lock();

@@ -83,6 +83,7 @@ public:
     void SetAverIntervalDiffThre(const uint32_t thre);
     void SetDynamicBalanceThre(const uint8_t thre);
     void SetPushOnceDiffThre(const uint32_t thre);
+    void SetTimeStampOnceDiffThre(const uint32_t thre);
     void SetAdjustSleepFactor(const float factor);
     void SetWaitClockFactor(const float factor);
     void SetTrackClockFactor(const float factor);
@@ -158,7 +159,7 @@ private:
     std::atomic<bool> isTimeInit_ = false;
     std::atomic<bool> isAllowControl_ = true;
 
-    const uint32_t QUEUE_MAX_SIZE = 30;
+    const uint32_t QUEUE_MAX_SIZE = 100;
     const int64_t WAIT_REREAD_TIME = 5 * NS_ONE_MS;
     int64_t waitClockThre_ = 0;
     int64_t trackClockThre_ = 0;
@@ -169,6 +170,7 @@ private:
     uint8_t dynamicBalanceCount_ = 0;
     uint32_t averIntervalDiffThre_ = 0;
     uint32_t pushOnceDiffThre_ = 0;
+    uint32_t timeStampOnceDiffThre_ = 0;
     uint32_t bufferTime_ = 0;
     int64_t enterTime_ = 0;
     int64_t lastEnterTime_ = 0;
@@ -183,10 +185,10 @@ private:
     AVTransSharedMemory sharedMem_ = { 0, 0, "" };
     AVSyncClockUnit clockUnit_ = { 0, 0, 0 };
     std::atomic<int32_t> devClockDiff_ = 0;
-    int64_t a1_ = 0;
-    int64_t v1_ = 0;
-    int64_t a2_ = 0;
-    int64_t v2_ = 0;
+    int64_t aFront_ = 0;
+    int64_t aBack_ = 150 * NS_ONE_MS;
+    int64_t vFront_ = 0;
+    int64_t vBack_ = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

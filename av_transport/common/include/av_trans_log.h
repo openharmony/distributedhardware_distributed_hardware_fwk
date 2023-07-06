@@ -77,6 +77,17 @@ std::string GetAnonyInt32(const int32_t value);
     } while (0)
 #endif
 
+#ifndef TRUE_RETURN_V_MSG_D
+#define TRUE_RETURN_V_MSG_D(exec, ret, fmt, args...)                                                          \
+    do {                                                                                                      \
+        bool retCode = (exec);                                                                                \
+        if (retCode) {                                                                                        \
+            AVTRANS_LOGD(fmt, ##args);                                                                        \
+            return ret;                                                                                       \
+        }                                                                                                     \
+    } while (0)
+#endif
+
 #ifndef TRUE_LOG_MSG
 #define TRUE_LOG_MSG(exec, fmt, args...)                                                                      \
     do {                                                                                                      \

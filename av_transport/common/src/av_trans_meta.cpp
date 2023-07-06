@@ -98,16 +98,21 @@ bool AVTransVideoBufferMeta::UnmarshalVideoMeta(const std::string& jsonStr)
     if (metaJson.is_discarded()) {
         return false;
     }
-    if (!IsUInt32(metaJson, META_DATA_TYPE) || !IsInt64(metaJson, META_TIMESTAMP) ||
-        !IsUInt32(metaJson, META_FRAME_NUMBER) || !IsInt64(metaJson, META_EXT_TIMESTAMP) ||
-        !IsUInt32(metaJson, META_EXT_FRAME_NUMBER)) {
-        return false;
+    if (IsUInt32(metaJson, META_DATA_TYPE)) {
+        dataType_ = metaJson[META_DATA_TYPE].get<BufferDataType>();
     }
-    dataType_ = metaJson[META_DATA_TYPE].get<BufferDataType>();
-    pts_ = metaJson[META_TIMESTAMP].get<int64_t>();
-    frameNum_ = metaJson[META_FRAME_NUMBER].get<uint32_t>();
-    extPts_ = metaJson[META_EXT_TIMESTAMP].get<int64_t>();
-    extFrameNum_ = metaJson[META_EXT_FRAME_NUMBER].get<uint32_t>();
+    if (IsInt64(metaJson, META_TIMESTAMP)) {
+        pts_ = metaJson[META_TIMESTAMP].get<int64_t>();
+    }
+    if (IsUInt32(metaJson, META_FRAME_NUMBER)) {
+        frameNum_ = metaJson[META_FRAME_NUMBER].get<uint32_t>();
+    }
+    if (IsInt64(metaJson, META_EXT_TIMESTAMP)) {
+        extPts_ = metaJson[META_EXT_TIMESTAMP].get<int64_t>();
+    }
+    if (IsUInt32(metaJson, META_EXT_FRAME_NUMBER)) {
+        extFrameNum_ = metaJson[META_EXT_FRAME_NUMBER].get<uint32_t>();
+    }
     return true;
 }
 } // namespace DistributedHardware

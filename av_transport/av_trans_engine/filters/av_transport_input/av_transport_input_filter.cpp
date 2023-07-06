@@ -23,6 +23,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AVInputFilter"
 
 static AutoRegisterFilter<AVInputFilter> g_registerFilterHelper("builtin.avtransport.avinput");
 
@@ -34,10 +36,6 @@ AVInputFilter::AVInputFilter(const std::string& name) : FilterBase(name), plugin
 AVInputFilter::~AVInputFilter()
 {
     AVTRANS_LOGI("dtor called");
-    OSAL::ScopedLock lock(inputFilterMutex_);
-    if (plugin_ != nullptr) {
-        plugin_->Deinit();
-    }
 }
 
 std::vector<WorkMode> AVInputFilter::GetWorkModes()
@@ -51,6 +49,9 @@ ErrorCode AVInputFilter::SetParameter(int32_t key, const Any& value)
     if (!TranslateIntoParameter(key, tag)) {
         AVTRANS_LOGE("This key is invalid!");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
+    }
+    if (plugin_ != nullptr) {
+        plugin_->SetParameter(static_cast<Plugin::Tag>(key), value);
     }
     {
         OSAL::ScopedLock lock(inputFilterMutex_);
@@ -140,6 +141,8 @@ ErrorCode AVInputFilter::Stop()
         AVTRANS_LOGE("The plugin stop fail!");
         return ErrorCode::ERROR_INVALID_OPERATION;
     }
+    plugin_->Deinit();
+    plugin_ = nullptr;
     state_ = FilterState::READY;
     return ErrorCode::SUCCESS;
 }
@@ -519,17 +522,16 @@ ErrorCode AVInputFilter::PushData(const std::string& inPort, const AVBufferPtr& 
         AVTRANS_LOGE("buffer or plugin is nullptr!");
         return ErrorCode::ERROR_NULL_POINTER;
     }
-    AVTRANS_LOGI("PushData to plugin");
+
     if (TranslatePluginStatus(plugin_->PushData(inPort, buffer, offset)) != ErrorCode::SUCCESS) {
         AVTRANS_LOGE("PushData to plugin fail!");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
     }
-    AVTRANS_LOGI("PushData from plugin");
+
     if (outPorts_.size() == 0 || outPorts_[0] == nullptr) {
         AVTRANS_LOGE("outPorts is empty or invalid!");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
     }
-    AVTRANS_LOGI("PushData to next filter plugin!");
     outPorts_[0]->PushData(buffer, 0);
     return ErrorCode::SUCCESS;
 }

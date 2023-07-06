@@ -106,24 +106,22 @@ int32_t AVTransControlCenterKit::RegisterCtlCenterCallback(int32_t engineId,
 sptr<IDistributedHardware> AVTransControlCenterKit::GetAVTransCtlCenterProxy()
 {
     std::lock_guard<std::mutex> lock(proxyMutex_);
-    if (ctlCenterProxy_ == nullptr) {
-        sptr<ISystemAbilityManager> saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        if (saMgr == nullptr) {
-            AVTRANS_LOGE("Get System Ability Manager failed");
-            return nullptr;
-        }
-        AVTRANS_LOGI("Try get AVTransControlCenter sa");
-        sptr<IRemoteObject> remoteObject = saMgr->CheckSystemAbility(DISTRIBUTED_HARDWARE_SA_ID);
-        if (remoteObject == nullptr) {
-            AVTRANS_LOGE("Get AVTransControlCenter proxy return null");
-            return nullptr;
-        }
+    sptr<ISystemAbilityManager> saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (saMgr == nullptr) {
+        AVTRANS_LOGE("Get System Ability Manager failed");
+        return nullptr;
+    }
+    AVTRANS_LOGI("Try get AVTransControlCenter sa");
+    sptr<IRemoteObject> remoteObject = saMgr->CheckSystemAbility(DISTRIBUTED_HARDWARE_SA_ID);
+    if (remoteObject == nullptr) {
+        AVTRANS_LOGE("Get AVTransControlCenter proxy return null");
+        return nullptr;
+    }
 
-        ctlCenterProxy_ = iface_cast<IDistributedHardware>(remoteObject);
-        if (!ctlCenterProxy_ || !ctlCenterProxy_->AsObject()) {
-            AVTRANS_LOGE("Failed to Get AVTransControlCenter Proxy");
-            return nullptr;
-        }
+    ctlCenterProxy_ = iface_cast<IDistributedHardware>(remoteObject);
+    if (!ctlCenterProxy_ || !ctlCenterProxy_->AsObject()) {
+        AVTRANS_LOGE("Failed to Get AVTransControlCenter Proxy");
+        return nullptr;
     }
     return ctlCenterProxy_;
 }

@@ -25,6 +25,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "SoftbusChannelAdapter"
+
 IMPLEMENT_SINGLE_INSTANCE(SoftbusChannelAdapter);
 
 static int32_t OnSessionOpened(int32_t sessionId, int32_t result)
@@ -48,14 +51,13 @@ static void OnStreamReceived(int32_t sessionId, const StreamData *data, const St
     SoftbusChannelAdapter::GetInstance().OnSoftbusStreamReceived(sessionId, data, ext, frameInfo);
 }
 
-static void onTimeSyncResult(const TimeSyncResultInfo *info, int32_t result)
+static void onDevTimeSyncResult(const TimeSyncResultInfo *info, int32_t result)
 {
     SoftbusChannelAdapter::GetInstance().OnSoftbusTimeSyncResult(info, result);
 }
 
 SoftbusChannelAdapter::SoftbusChannelAdapter()
 {
-    AVTRANS_LOGI("SoftbusChannelAdapter ctor.");
     sessListener_.OnSessionOpened = OnSessionOpened;
     sessListener_.OnSessionClosed = OnSessionClosed;
     sessListener_.OnBytesReceived = OnBytesReceived;
@@ -66,7 +68,6 @@ SoftbusChannelAdapter::SoftbusChannelAdapter()
 
 SoftbusChannelAdapter::~SoftbusChannelAdapter()
 {
-    AVTRANS_LOGI("~SoftbusChannelAdapter dctor.");
     listenerMap_.clear();
     sessionNameSet_.clear();
     timeSyncSessNames_.clear();
@@ -197,8 +198,6 @@ int32_t SoftbusChannelAdapter::SendBytesData(const std::string& sessName, const 
 int32_t SoftbusChannelAdapter::SendStreamData(const std::string& sessName, const std::string &peerDevId,
     const StreamData *data, const StreamData *ext)
 {
-    AVTRANS_LOGI("Send stream data for sessName:%s, peerDevId:%s.", sessName.c_str(),
-        GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessName is empty.");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
     TRUE_RETURN_V_MSG_E(data == nullptr, ERR_DH_AVT_INVALID_PARAM, "input data is nullptr.");
@@ -230,7 +229,8 @@ int32_t SoftbusChannelAdapter::RegisterChannelListener(const std::string& sessNa
 
 int32_t SoftbusChannelAdapter::UnRegisterChannelListener(const std::string& sessName, const std::string &peerDevId)
 {
-    AVTRANS_LOGI("Unregister channel listener for peerDeviceId:%s.", GetAnonyString(peerDevId).c_str());
+    AVTRANS_LOGI("Unregister channel listener for sessName:%s, peerDevId:%s.",
+        sessName.c_str(), GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessName is empty.");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
 
@@ -246,7 +246,7 @@ int32_t SoftbusChannelAdapter::StartDeviceTimeSync(const std::string &pkgName, c
     AVTRANS_LOGI("Start device time sync for peerDeviceId:%s.", GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
 
-    ITimeSyncCb timeSyncCbk = {.onTimeSyncResult = onTimeSyncResult};
+    ITimeSyncCb timeSyncCbk = {.onTimeSyncResult = onDevTimeSyncResult};
     int32_t ret = StartTimeSync(pkgName.c_str(), peerDevId.c_str(), TimeSyncAccuracy::SUPER_HIGH_ACCURACY,
         TimeSyncPeriod::SHORT_PERIOD, &timeSyncCbk);
     if (ret != 0) {
@@ -318,7 +318,7 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(int32_t sessionId, int32_t
     std::string sessName(sessNameChar);
 
     EventType type = (result == 0) ? EventType::EVENT_CHANNEL_OPENED : EventType::EVENT_CHANNEL_OPEN_FAIL;
-    AVTransEvent event = {type, "", peerDevId};
+    AVTransEvent event = {type, sessName, peerDevId};
 
     {
         std::lock_guard<std::mutex> lock(listenerMtx_);
@@ -346,16 +346,20 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(int32_t sessionId, int32_t
 void SoftbusChannelAdapter::OnSoftbusChannelClosed(int32_t sessionId)
 {
     AVTRANS_LOGI("On softbus channel closed, sessionId:%" PRId32, sessionId);
-    AVTransEvent event = {EventType::EVENT_CHANNEL_CLOSED, "", ""};
+
+    std::string peerDevId = GetPeerDevIdBySessId(sessionId);
+    AVTransEvent event = {EventType::EVENT_CHANNEL_CLOSED, "", peerDevId};
 
     std::lock_guard<std::mutex> lock(idMapMutex_);
     for (auto it = devId2SessIdMap_.begin(); it != devId2SessIdMap_.end();) {
         if (it->second == sessionId) {
+            event.content = GetOwnerFromSessName(it->first);
             std::lock_guard<std::mutex> lock(listenerMtx_);
             std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, listenerMap_[it->first], event).detach();
             devId2SessIdMap_.erase(it++);
+        } else {
+            it++;
         }
-        it++;
     }
 }
 
@@ -386,7 +390,6 @@ void SoftbusChannelAdapter::OnSoftbusStreamReceived(int32_t sessionId, const Str
     const StreamData *ext, const StreamFrameInfo *frameInfo)
 {
     (void)frameInfo;
-    AVTRANS_LOGI("On softbus channel stream received, sessionId:%" PRId32, sessionId);
     TRUE_RETURN(data == nullptr, "input data is nullptr.");
     TRUE_RETURN(ext == nullptr, "input ext data is nullptr.");
 
@@ -422,6 +425,34 @@ void SoftbusChannelAdapter::OnSoftbusTimeSyncResult(const TimeSyncResultInfo *in
             listener->OnChannelEvent({EventType::EVENT_TIME_SYNC_RESULT, std::to_string(millisecond), targetDevId});
         }
     }
+}
+
+std::string SoftbusChannelAdapter::GetPeerDevIdBySessId(int32_t sessionId)
+{
+    std::lock_guard<std::mutex> lock(idMapMutex_);
+    for (auto it = devId2SessIdMap_.begin(); it != devId2SessIdMap_.end(); it++) {
+        if (it->second != sessionId) {
+            continue;
+        }
+        std::string::size_type position = (it->first).find_last_of("_");
+        if (position == std::string::npos) {
+            continue;
+        }
+        std::string peerDevId = (it->first).substr(position + 1);
+        if (peerDevId != AV_TRANS_SPECIAL_DEVICE_ID) {
+            return peerDevId;
+        }
+    }
+    return EMPTY_STRING;
+}
+
+std::string SoftbusChannelAdapter::GetOwnerFromSessName(const std::string &sessName)
+{
+    std::string::size_type position = sessName.find_first_of("_");
+    if (position != std::string::npos) {
+        return sessName.substr(0, position);
+    }
+    return EMPTY_STRING;
 }
 
 void SoftbusChannelAdapter::SendChannelEvent(ISoftbusChannelListener *listener, const AVTransEvent &event)

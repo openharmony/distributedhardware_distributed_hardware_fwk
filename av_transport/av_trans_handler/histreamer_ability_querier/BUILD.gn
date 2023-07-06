@@ -41,7 +41,7 @@ ohos_shared_library("histreamer_ability_querier") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"distributed_av_transport\"",
+    "DH_LOG_TAG=\"av_trans_handler\"",
     "LOG_DOMAIN=0xD004100",
   ]
 

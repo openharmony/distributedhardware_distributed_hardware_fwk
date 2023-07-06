@@ -73,6 +73,8 @@ private:
 
     std::string GetSessionNameById(int32_t sessionId);
     int32_t GetSessIdBySessName(const std::string &sessName, const std::string &peerDevId);
+    std::string GetPeerDevIdBySessId(int32_t sessionId);
+    std::string GetOwnerFromSessName(const std::string &sessName);
 
 private:
     std::mutex name2IdMtx_;

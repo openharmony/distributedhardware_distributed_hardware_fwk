@@ -29,7 +29,6 @@ std::vector<GenericPluginDef> CreateDsoftbusInputPluginDef()
     int32_t capNum = 2;
     std::vector<GenericPluginDef> definitionList;
     for (int i = 0; i < capNum; i++) {
-        AVTRANS_LOGI("DsoftbusInputPlugin_H264 registered.");
         GenericPluginDef definition;
         definition.name = "AVTransDsoftbusInputPlugin_H264";
         definition.pkgName = "AVTransDsoftbusInputPlugin";
@@ -45,7 +44,6 @@ std::vector<GenericPluginDef> CreateDsoftbusInputPluginDef()
         CapabilityBuilder capBuilder;
         capBuilder.SetMime(Media::MEDIA_MIME_VIDEO_H264);
         if (i == 1) {
-            AVTRANS_LOGI("DsoftbusInputPlugin_H265 registered.");
             definition.name = "AVTransDsoftbusInputPlugin_H265";
             capBuilder.SetMime(Media::MEDIA_MIME_VIDEO_H265);
         }
@@ -151,16 +149,16 @@ Status DsoftbusInputPlugin::Stop()
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
-    bufferPopTask_->Pause();
-    DataQueueClear(dataQueue_);
     state_ = State::PREPARED;
+    bufferPopTask_->Stop();
+    DataQueueClear(dataQueue_);
     return Status::OK;
 }
 
 Status DsoftbusInputPlugin::GetParameter(Tag tag, ValueType &value)
 {
     auto res = paramsMap_.find(tag);
-    if (res == paramsMap_.end()) {
+    if (res != paramsMap_.end()) {
         value = res->second;
         return Status::OK;
     }
@@ -231,10 +229,11 @@ void DsoftbusInputPlugin::OnStreamReceived(const StreamData *data, const StreamD
     TRUE_RETURN(resMsg.is_discarded(), "The resMsg parse failed");
     TRUE_RETURN(!IsUInt32(resMsg, AVT_DATA_META_TYPE), "invalid data type");
     uint32_t metaType = resMsg[AVT_DATA_META_TYPE];
-    AVTRANS_LOGI("The resMsg datatype: %u.", metaType);
 
     auto buffer = CreateBuffer(metaType, data, resMsg);
-    DataEnqueue(buffer);
+    if (buffer != nullptr) {
+        DataEnqueue(buffer);
+    }
 }
 
 std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
@@ -250,9 +249,16 @@ std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
     }
 
     auto meta = std::make_shared<AVTransVideoBufferMeta>();
-    meta->UnmarshalVideoMeta(resMsg[AVT_DATA_PARAM]);
+    if (!meta->UnmarshalVideoMeta(resMsg[AVT_DATA_PARAM])) {
+        AVTRANS_LOGE("Unmarshal video buffer eta failed.");
+        return nullptr;
+    }
     buffer->pts = meta->pts_;
     buffer->GetBufferMeta()->SetMeta(Tag::USER_FRAME_NUMBER, meta->frameNum_);
+    if ((meta->extFrameNum_ > 0) && (meta->extPts_ > 0)) {
+        buffer->GetBufferMeta()->SetMeta(Tag::MEDIA_START_TIME, meta->extPts_);
+        buffer->GetBufferMeta()->SetMeta(Tag::AUDIO_SAMPLE_PER_FRAME, meta->extFrameNum_);
+    }
     AVTRANS_LOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", buffer->pts, buffer->GetMemory()->GetSize(),
         meta->frameNum_);
     return buffer;
@@ -274,9 +280,12 @@ void DsoftbusInputPlugin::HandleData()
         std::shared_ptr<Buffer> buffer;
         {
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
-            dataCond_.wait(lock, [this]() { return !dataQueue_.empty(); });
+            dataCond_.wait_for(lock, std::chrono::milliseconds(PLUGIN_TASK_WAIT_TIME),
+                [this]() { return !dataQueue_.empty(); });
+            if (state_ != State::RUNNING) {
+                return;
+            }
             if (dataQueue_.empty()) {
-                AVTRANS_LOGD("Data queue is empty.");
                 continue;
             }
             buffer = dataQueue_.front();

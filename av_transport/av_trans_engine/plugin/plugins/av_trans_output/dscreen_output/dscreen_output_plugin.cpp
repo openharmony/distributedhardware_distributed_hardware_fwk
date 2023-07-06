@@ -24,7 +24,6 @@ namespace DistributedHardware {
 
 GenericPluginDef CreateDscreenOutputPluginDef()
 {
-    AVTRANS_LOGI("DscreenOutputPlugin registered.");
     GenericPluginDef definition;
     definition.name = "AVTransDscreenOutputPlugin";
     definition.pkgName = "AVTransDscreenOutputPlugin";
@@ -165,7 +164,6 @@ Status DscreenOutputPlugin::SetDataCallback(AVDataCallback callback)
 
 Status DscreenOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
-    AVTRANS_LOGI("Queue Output AVBuffer.");
     {
         Media::OSAL::ScopedLock lock(operationMutes_);
         TRUE_RETURN_V_MSG_E((buffer == nullptr || buffer->IsEmpty()), Status::ERROR_NULL_POINTER,
@@ -178,7 +176,12 @@ Status DscreenOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<
 
 void DscreenOutputPlugin::OnOutPut(const std::shared_ptr<Plugin::Buffer>& data)
 {
-    AVTRANS_LOGD("OnOutPut");
+    auto bufferMeta = data->GetBufferMeta();
+    uint32_t vFrameNumber = DEFAULT_INVALID_FRAME_NUM;
+    if (bufferMeta->IsExist(Tag::USER_FRAME_NUMBER)) {
+        vFrameNumber = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER));
+    }
+    AVTRANS_LOGD("OnOutPut vFrameNumber: %zu.", vFrameNumber);
     dataCb_(data);
 }
 

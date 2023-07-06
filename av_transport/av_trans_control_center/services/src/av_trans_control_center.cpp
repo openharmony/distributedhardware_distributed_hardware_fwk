@@ -20,6 +20,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "AVTransControlCenter"
+
 IMPLEMENT_SINGLE_INSTANCE(AVTransControlCenter);
 
 AVTransControlCenter::AVTransControlCenter()
@@ -33,7 +36,8 @@ AVTransControlCenter::AVTransControlCenter()
 AVTransControlCenter::~AVTransControlCenter()
 {
     AVTRANS_LOGI("AVTransControlCenter dtor.");
-    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(PKG_NAME_DH_FWK, sessionName_);
+    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(PKG_NAME_DH_FWK, AV_SYNC_SENDER_CONTROL_SESSION_NAME);
+    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(PKG_NAME_DH_FWK, AV_SYNC_RECEIVER_CONTROL_SESSION_NAME);
 
     sessionName_ = "";
     initialized_ = false;
@@ -57,12 +61,20 @@ int32_t AVTransControlCenter::Initialize(const TransRole &transRole, int32_t &en
         return DH_AVT_SUCCESS;
     }
 
-    sessionName_ = (transRole == TransRole::AV_SENDER) ? AV_SYNC_SENDER_CONTROL_SESSION_NAME :
-        AV_SYNC_RECEIVER_CONTROL_SESSION_NAME;
-    int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(PKG_NAME_DH_FWK, sessionName_);
+    int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(PKG_NAME_DH_FWK,
+        AV_SYNC_SENDER_CONTROL_SESSION_NAME);
     TRUE_RETURN_V_MSG_E((ret != DH_AVT_SUCCESS), ret, "Create contro center session server failed, ret=%d", ret);
 
-    ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, AV_TRANS_SPECIAL_DEVICE_ID, this);
+    ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(PKG_NAME_DH_FWK,
+        AV_SYNC_RECEIVER_CONTROL_SESSION_NAME);
+    TRUE_RETURN_V_MSG_E((ret != DH_AVT_SUCCESS), ret, "Create contro center session server failed, ret=%d", ret);
+
+    ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(AV_SYNC_SENDER_CONTROL_SESSION_NAME,
+        AV_TRANS_SPECIAL_DEVICE_ID, this);
+    TRUE_RETURN_V_MSG_E((ret != DH_AVT_SUCCESS), ret, "Register control center channel callback failed, ret=%d", ret);
+
+    ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(AV_SYNC_RECEIVER_CONTROL_SESSION_NAME,
+        AV_TRANS_SPECIAL_DEVICE_ID, this);
     TRUE_RETURN_V_MSG_E((ret != DH_AVT_SUCCESS), ret, "Register control center channel callback failed, ret=%d", ret);
 
     initialized_ = true;
@@ -122,8 +134,10 @@ int32_t AVTransControlCenter::Release(int32_t engineId)
 
     SoftbusChannelAdapter::GetInstance().StopDeviceTimeSync(PKG_NAME_DH_FWK, sessionName_, peerDevId);
     SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId);
-    SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId);
-    SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, AV_TRANS_SPECIAL_DEVICE_ID);
+    SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(AV_SYNC_SENDER_CONTROL_SESSION_NAME,
+        AV_TRANS_SPECIAL_DEVICE_ID);
+    SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(AV_SYNC_RECEIVER_CONTROL_SESSION_NAME,
+        AV_TRANS_SPECIAL_DEVICE_ID);
 
     return DH_AVT_SUCCESS;
 }
@@ -153,9 +167,8 @@ int32_t AVTransControlCenter::CreateControlChannel(int32_t engineId, const std::
         }
     }
 
-    std::string peerSessName = (transRole_ == TransRole::AV_SENDER) ? AV_SYNC_RECEIVER_CONTROL_SESSION_NAME :
-        AV_SYNC_SENDER_CONTROL_SESSION_NAME;
-    int32_t ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName, peerDevId);
+    int32_t ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(AV_SYNC_SENDER_CONTROL_SESSION_NAME,
+        AV_SYNC_RECEIVER_CONTROL_SESSION_NAME, peerDevId);
     TRUE_RETURN_V_MSG_E(((ret != DH_AVT_SUCCESS) && (ret != ERR_DH_AVT_SESSION_HAS_OPENED)), ret,
         "Create av control center channel failed, ret=%d", ret);
 
@@ -267,7 +280,8 @@ void AVTransControlCenter::HandleChannelEvent(const AVTransEvent &event)
     }
 
     if (event.type == EventType::EVENT_CHANNEL_OPENED) {
-        if (transRole_ == TransRole::AV_RECEIVER) {
+        sessionName_ = event.content;
+        if (sessionName_ == AV_SYNC_RECEIVER_CONTROL_SESSION_NAME) {
             SoftbusChannelAdapter::GetInstance().StartDeviceTimeSync(PKG_NAME_DH_FWK, sessionName_, event.peerDevId);
         }
         std::lock_guard<std::mutex> lock(devIdMutex_);

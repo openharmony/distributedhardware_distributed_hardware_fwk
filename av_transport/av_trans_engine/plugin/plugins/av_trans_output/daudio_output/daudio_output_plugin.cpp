@@ -25,7 +25,6 @@ namespace DistributedHardware {
 
 GenericPluginDef CreateDaudioOutputPluginDef()
 {
-    AVTRANS_LOGI("DaudioOutputPlugin registered.");
     GenericPluginDef definition;
     definition.name = "AVTransDaudioOutputPlugin";
     definition.pkgName = "AVTransDaudioOutputPlugin";
@@ -169,6 +168,7 @@ Status DaudioOutputPlugin::SetParameter(Tag tag, const ValueType &value)
     }
     if (tag == Plugin::Tag::USER_AV_SYNC_GROUP_INFO) {
         std::string groupInfo = Media::Plugin::AnyCast<std::string>(value);
+        AVTRANS_LOGI("Set USER_AV_SYNC_GROUP_INFO parameter done, group info = %s.", GetAnonyString(groupInfo).c_str());
     }
     return Status::OK;
 }
@@ -195,9 +195,9 @@ Status DaudioOutputPlugin::Stop()
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
-    sendPlayTask_->Pause();
-    DataQueueClear(outputBuffer_);
     state_ = State::PREPARED;
+    sendPlayTask_->Stop();
+    DataQueueClear(outputBuffer_);
     return Status::OK;
 }
 
@@ -227,48 +227,27 @@ Status DaudioOutputPlugin::SetDataCallback(AVDataCallback callback)
 
 Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
-    AVTRANS_LOGI("PushData enter.");
-    OSAL::ScopedLock lock(operationMutes_);
-    uint32_t frameNumber = 1;
-    int64_t pts = 2;
-    if (buffer->GetBufferMeta()->IsExist(Tag::USER_FRAME_NUMBER)) {
-        frameNumber = Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER));
-    }
-    if (buffer->GetBufferMeta()->IsExist(Tag::USER_FRAME_PTS)) {
-        pts = Plugin::AnyCast<int64_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_PTS));
-    }
-    AVTRANS_LOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", pts, buffer->GetMemory()->GetSize(), frameNumber);
-
-    if (buffer == nullptr || buffer->IsEmpty()) {
-        AVTRANS_LOGE("AVBuffer is nullptr.");
+    if (buffer == nullptr || buffer->IsEmpty() || (buffer->GetBufferMeta() == nullptr)) {
+        AVTRANS_LOGE("input buffer is nullptr, push data failed.");
         return Status::ERROR_NULL_POINTER;
     }
+
+    auto bufferMeta = buffer->GetBufferMeta();
+    if (bufferMeta->IsExist(Tag::USER_FRAME_NUMBER) && bufferMeta->IsExist(Tag::USER_FRAME_PTS)) {
+        int64_t pts = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::USER_FRAME_PTS));
+        uint32_t frameNum = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER));
+        AVTRANS_LOGI("Push audio buffer, bufferLen: %zu, frameNum: %d, pts: %ld", buffer->GetMemory()->GetSize(),
+            frameNum, pts);
+    } else {
+        AVTRANS_LOGI("Push audio buffer, bufferLen: %zu, not contains metadata.", buffer->GetMemory()->GetSize());
+    }
+
+    OSAL::ScopedLock lock(operationMutes_);
     while (outputBuffer_.size() >= DATA_QUEUE_MAX_SIZE) {
         AVTRANS_LOGE("outputBuffer_ queue overflow.");
         outputBuffer_.pop();
     }
-
-    auto finalBufferMeta = buffer->GetBufferMeta()->Clone();
-    auto mem = buffer->GetMemory();
-    auto srcBuffer = mem->GetReadOnlyData();
-    auto destBuffer = const_cast<uint8_t*>(srcBuffer);
-    auto srcLength = mem->GetSize();
-    auto destLength = srcLength;
-    if (resample_) {
-        if (resample_->Convert(srcBuffer, srcLength, destBuffer, destLength) != Status::OK) {
-            AVTRANS_LOGE("Resample convert failed.");
-        }
-    }
-    auto finalBuffer = Buffer::CreateDefaultBuffer(BufferMetaType::AUDIO, destLength);
-    auto bufData = finalBuffer->GetMemory();
-    auto writeSize = bufData->Write(reinterpret_cast<const uint8_t *>(destBuffer), destLength, 0);
-    if (writeSize != destLength) {
-        AVTRANS_LOGE("Write buffer data failed.");
-        return Status::ERROR_NULL_POINTER;
-    }
-    finalBuffer->UpdateBufferMeta(*finalBufferMeta);
-    outputBuffer_.push(finalBuffer);
-
+    outputBuffer_.push(buffer);
     dataCond_.notify_all();
     return Status::OK;
 }
@@ -279,9 +258,12 @@ void DaudioOutputPlugin::HandleData()
         std::shared_ptr<Plugin::Buffer> buffer;
         {
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
-            dataCond_.wait(lock, [this]() { return !outputBuffer_.empty(); });
+            dataCond_.wait_for(lock, std::chrono::milliseconds(PLUGIN_TASK_WAIT_TIME),
+                [this]() { return !outputBuffer_.empty(); });
+            if (state_ != State::RUNNING) {
+                return;
+            }
             if (outputBuffer_.empty()) {
-                AVTRANS_LOGD("Data queue is empty.");
                 continue;
             }
             buffer = outputBuffer_.front();
@@ -292,6 +274,7 @@ void DaudioOutputPlugin::HandleData()
             continue;
         }
         datacallback_(buffer);
+        WriteMasterClockToMemory(buffer);
     }
 }
 
@@ -307,13 +290,19 @@ void DaudioOutputPlugin::WriteMasterClockToMemory(const std::shared_ptr<Plugin::
         return;
     }
 
+    if (!buffer->GetBufferMeta()->IsExist(Tag::USER_FRAME_PTS)) {
+        AVTRANS_LOGE("the output buffer meta does not contains tag USER_FRAME_PTS.");
+        return;
+    }
+
     if ((sharedMemory_.fd <= 0) || (sharedMemory_.size <= 0) || sharedMemory_.name.empty()) {
         AVTRANS_LOGE("invalid master clock shared memory info.");
         return;
     }
 
     uint32_t frameNum = Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER));
-    AVSyncClockUnit clockUnit = AVSyncClockUnit{ smIndex_, frameNum, GetCurrentTime() };
+    int64_t pts = Plugin::AnyCast<int64_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_PTS));
+    AVSyncClockUnit clockUnit = AVSyncClockUnit{ smIndex_, frameNum, pts };
     int32_t ret = WriteClockUnitToMemory(sharedMemory_, clockUnit);
     if (ret == DH_AVT_SUCCESS) {
         smIndex_ = clockUnit.index;
