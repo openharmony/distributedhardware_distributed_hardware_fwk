@@ -72,8 +72,8 @@ ohos_shared_library("distributed_av_sender") {
   external_deps = [
     "c_utils:utils",
     "dsoftbus:softbus_client",
-    "graphic_standard:libgraphic_utils",
-    "graphic_standard:surface",
+    "graphic_2d:libgraphic_utils",
+    "graphic_2d:surface",
     "hilog:libhilog",
     "histreamer:histreamer_base",
     "histreamer:histreamer_codec_filters",
