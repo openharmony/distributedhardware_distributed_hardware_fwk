@@ -55,7 +55,7 @@ void TimeStatistician::CalAverPushInterval(const int64_t pushTime)
     }
     pushIndex_++;
     pushIntervalSum_ += pushInterval_;
-    averPushInterval_ = pushIntervalSum_ / pushIndex_;
+    averPushInterval_ = pushIntervalSum_ / static_cast<int32_t>(pushIndex_);
     lastPushTime_ = pushTime_;
     AVTRANS_LOGD("Statistic pushInterval: %lld, pushIndex: %" PRIu32 ", averPushInterval: %lld",
         pushInterval_, pushIndex_, averPushInterval_);

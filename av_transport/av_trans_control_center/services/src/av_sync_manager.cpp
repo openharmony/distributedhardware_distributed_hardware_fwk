@@ -29,6 +29,8 @@ namespace DistributedHardware {
 AVSyncManager::AVSyncManager()
 {
     AVTRANS_LOGI("AVSyncManager ctor.");
+    sourceMemory_ = { 0, 0, "" };
+    sinkMemory_ = { 0, 0, "" };
 }
 
 AVSyncManager::~AVSyncManager()
