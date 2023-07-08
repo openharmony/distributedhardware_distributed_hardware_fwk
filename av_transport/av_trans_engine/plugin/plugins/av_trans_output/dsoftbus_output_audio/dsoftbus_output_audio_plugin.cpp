@@ -103,12 +103,12 @@ Status DsoftbusOutputAudioPlugin::Prepare()
     ValueType channelsValue;
     TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_CHANNELS, channelsValue) != Status::OK,
         Status::ERROR_UNKNOWN, "Not found AUDIO_CHANNELS");
-    channels_ = Plugin::AnyCast<int>(channelsValue);
+    channels_ = static_cast<uint32_t>(Plugin::AnyCast<int>(channelsValue));
 
     ValueType sampleRateValue;
     TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_SAMPLE_RATE, sampleRateValue) != Status::OK,
         Status::ERROR_UNKNOWN, "Not found AUDIO_SAMPLE_RATE");
-    sampleRate_ = Plugin::AnyCast<int>(sampleRateValue);
+    sampleRate_ = static_cast<uint32_t>(Plugin::AnyCast<int>(sampleRateValue));
     AVTRANS_LOGI("channels_ = %d, sampleRate_ = %d.", channels_, sampleRate_);
 
     state_ = State::PREPARED;

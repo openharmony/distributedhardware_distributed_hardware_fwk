@@ -140,7 +140,7 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
     size_t unitSize = sizeof(uint32_t) + sizeof(int64_t);
     while (index < MAX_CLOCK_UNIT_COUNT) {
         uint32_t frameNum = U8ToU32(base + (index * unitSize));
-        int64_t pts = U8ToU64(base + (index * unitSize) + sizeof(uint32_t));
+        int64_t pts = static_cast<int64_t>(U8ToU64(base + (index * unitSize) + sizeof(uint32_t)));
         if (pts > latestPts) {
             latestPts = pts;
             clockUnit.pts = pts;
@@ -148,7 +148,7 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
         }
         index++;
     }
-    AVTRANS_LOGI("read clock unit from shared memory success, frameNum=%" PRId32 ", pts =%lld",
+    AVTRANS_LOGI("read clock unit from shared memory success, frameNum=%" PRId32 ", pts=%lld",
         clockUnit.frameNum, (long long)clockUnit.pts);
     return DH_AVT_SUCCESS;
 }
@@ -197,7 +197,7 @@ int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &fra
 
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
     frameNum = U8ToU32(base);
-    timestamp = U8ToU64(base + sizeof(uint32_t));
+    timestamp = static_cast<int64_t>(U8ToU64(base + sizeof(uint32_t)));
     TRUE_RETURN_V_MSG_E(frameNum <= 0, ERR_DH_AVT_MASTER_NOT_READY, "master queue not ready, frameNum is null.");
 
     AVTRANS_LOGI("read frameNum=%" PRId32 ", timestamp=%lld from shared memory success.", frameNum,

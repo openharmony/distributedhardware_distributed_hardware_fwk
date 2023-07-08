@@ -108,17 +108,17 @@ Status DaudioOutputPlugin::Prepare()
     ValueType channelsValue;
     TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_CHANNELS, channelsValue) != Status::OK,
         Status::ERROR_UNKNOWN, "Not found AUDIO_CHANNELS");
-    uint32_t channels = Plugin::AnyCast<int>(channelsValue);
+    uint32_t channels = static_cast<uint32_t>(Plugin::AnyCast<int>(channelsValue));
 
     ValueType sampleRateValue;
     TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_SAMPLE_RATE, sampleRateValue) != Status::OK,
         Status::ERROR_UNKNOWN, "Not found AUDIO_SAMPLE_RATE");
-    uint32_t sampleRate = Plugin::AnyCast<int>(sampleRateValue);
+    uint32_t sampleRate = static_cast<uint32_t>(Plugin::AnyCast<int>(sampleRateValue));
 
     ValueType channelsLayoutValue;
     TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_CHANNEL_LAYOUT, channelsLayoutValue) != Status::OK,
         Status::ERROR_UNKNOWN, "Not found AUDIO_CHANNEL_LAYOUT");
-    uint32_t channelsLayout = Plugin::AnyCast<int>(channelsLayoutValue);
+    uint32_t channelsLayout = static_cast<uint32_t>(Plugin::AnyCast<int>(channelsLayoutValue));
     if (channelsLayout == AUDIO_CHANNEL_LAYOUT_MONO) {
         channelsLayout = AV_CH_LAYOUT_MONO;
     } else if (channelsLayout == AUDIO_CHANNEL_LAYOUT_STEREO) {

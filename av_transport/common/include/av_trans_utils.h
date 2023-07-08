@@ -59,7 +59,8 @@ bool IsString(const nlohmann::json &jsonObj, const std::string &key);
 
 int64_t GetCurrentTime();
 
-void GenerateAdtsHeader(unsigned char* adtsHeader, int packetLen, int profile, int sampleRate, int channels);
+void GenerateAdtsHeader(unsigned char* adtsHeader, uint32_t packetLen, uint32_t profile, uint32_t sampleRate,
+    uint32_t channels);
 
 template<typename T, typename U>
 inline std::shared_ptr<T> ReinterpretCastPointer(const std::shared_ptr<U> &ptr) noexcept

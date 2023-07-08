@@ -254,7 +254,8 @@ int64_t GetCurrentTime()
     return time.tv_sec * NS_ONE_S + time.tv_nsec;
 }
 
-void GenerateAdtsHeader(unsigned char* adtsHeader, int packetLen, int profile, int sampleRate, int channels)
+void GenerateAdtsHeader(unsigned char* adtsHeader, uint32_t packetLen, uint32_t profile, uint32_t sampleRate,
+    uint32_t channels)
 {
     static std::map<int, int> mapSampleRateToFreIndex {
         {96000, 0},

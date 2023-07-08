@@ -25,6 +25,7 @@ const std::string KEY_DST_DEVID = "dstDevId";
 
 AVTransMessage::AVTransMessage()
 {
+    type_ = 0;
 }
 
 AVTransMessage::AVTransMessage(uint32_t type, std::string content, std::string dstDevId)
