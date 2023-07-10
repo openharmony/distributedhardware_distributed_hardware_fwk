@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "accessmanager_offline_fuzzer.h"
+#include "accessmanageroffline_fuzzer.h"
 
 #include <algorithm>
 #include <chrono>

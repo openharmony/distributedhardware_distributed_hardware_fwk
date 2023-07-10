@@ -16,7 +16,7 @@ group("fuzztest") {
 
   deps = [
     "accessmanager_fuzzer:fuzztest",
-    "accessmanager_offline_fuzzer:fuzztest",
+    "accessmanageroffline_fuzzer:fuzztest",
     "capabilityinfomanager_fuzzer:fuzztest",
     "componentdisable_fuzzer:fuzztest",
     "componentenable_fuzzer:fuzztest",
