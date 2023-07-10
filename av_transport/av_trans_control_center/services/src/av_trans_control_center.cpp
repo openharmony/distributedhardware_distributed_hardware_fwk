@@ -46,7 +46,7 @@ AVTransControlCenter::~AVTransControlCenter()
     rootEngineId_.store(BASE_ENGINE_ID);
 }
 
-int32_t AVTransControlCenter::Initialize(const TransRole &transRole, int32_t &engineId)
+int32_t AVTransControlCenter::InitializeAVCenter(const TransRole &transRole, int32_t &engineId)
 {
     engineId = INVALID_ENGINE_ID;
     if ((transRole != TransRole::AV_SENDER) && (transRole != TransRole::AV_RECEIVER)) {
@@ -85,9 +85,9 @@ int32_t AVTransControlCenter::Initialize(const TransRole &transRole, int32_t &en
     return DH_AVT_SUCCESS;
 }
 
-int32_t AVTransControlCenter::Release(int32_t engineId)
+int32_t AVTransControlCenter::ReleaseAVCenter(int32_t engineId)
 {
-    AVTRANS_LOGI("Release control center channel for engineId=%d.", engineId);
+    AVTRANS_LOGI("Release av control center channel for engineId=%d.", engineId);
     TRUE_RETURN_V_MSG_E(IsInvalidEngineId(engineId), ERR_DH_AVT_INVALID_PARAM_VALUE,
         "Invalid input engine id = %d", engineId);
 
@@ -178,7 +178,7 @@ int32_t AVTransControlCenter::CreateControlChannel(int32_t engineId, const std::
     return DH_AVT_SUCCESS;
 }
 
-int32_t AVTransControlCenter::Notify(int32_t engineId, const AVTransEvent& event)
+int32_t AVTransControlCenter::NotifyAVCenter(int32_t engineId, const AVTransEvent& event)
 {
     TRUE_RETURN_V_MSG_E(IsInvalidEngineId(engineId), ERR_DH_AVT_INVALID_PARAM_VALUE,
         "Invalid input engine id = %d", engineId);

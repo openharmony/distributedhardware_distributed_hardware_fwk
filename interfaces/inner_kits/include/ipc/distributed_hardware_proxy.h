@@ -38,10 +38,10 @@ public:
     int32_t PublishMessage(const DHTopic topic, const std::string &msg) override;
     std::string QueryLocalSysSpec(QueryLocalSysSpecType spec) override;
 
-    int32_t Initialize(const TransRole &transRole, int32_t &engineId) override;
-    int32_t Release(int32_t engineId) override;
+    int32_t InitializeAVCenter(const TransRole &transRole, int32_t &engineId) override;
+    int32_t ReleaseAVCenter(int32_t engineId) override;
     int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId) override;
-    int32_t Notify(int32_t engineId, const AVTransEvent &event) override;
+    int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event) override;
     int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback) override;
 
 private:

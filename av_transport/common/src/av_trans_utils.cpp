@@ -221,30 +221,18 @@ void DumpBufferToFile(std::string fileName, uint8_t *buffer, int32_t bufSize)
 
 bool IsUInt32(const nlohmann::json &jsonObj, const std::string &key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT32_MAX;
-    if (!res) {
-        AVTRANS_LOGE("the key %s in jsonObj is invalid.", key.c_str());
-    }
-    return res;
+    return jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT32_MAX;
 }
 
 bool IsInt64(const nlohmann::json &jsonObj, const std::string &key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_number_integer() && INT64_MIN <= jsonObj[key] &&
+    return jsonObj.contains(key) && jsonObj[key].is_number_integer() && INT64_MIN <= jsonObj[key] &&
         jsonObj[key] <= INT64_MAX;
-    if (!res) {
-        AVTRANS_LOGE("the key %s in jsonObj is invalid.", key.c_str());
-    }
-    return res;
 }
 
 bool IsString(const nlohmann::json &jsonObj, const std::string &key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_string() && jsonObj[key].size() <= MAX_MESSAGES_LEN;
-    if (!res) {
-        AVTRANS_LOGE("the key %s in jsonObj is invalid.", key.c_str());
-    }
-    return res;
+    return jsonObj.contains(key) && jsonObj[key].is_string() && jsonObj[key].size() <= MAX_MESSAGES_LEN;
 }
 
 int64_t GetCurrentTime()

@@ -35,6 +35,7 @@ AVSenderEngine::~AVSenderEngine()
     AVTRANS_LOGI("AVSenderEngine dctor.");
     Release();
 
+    dhfwkKit_ = nullptr;
     pipeline_ = nullptr;
     avInput_ = nullptr;
     avOutput_ = nullptr;
@@ -103,7 +104,8 @@ int32_t AVSenderEngine::InitPipeline()
 
 int32_t AVSenderEngine::InitControlCenter()
 {
-    int32_t ret = AVTransControlCenterKit::GetInstance().Initialize(TransRole::AV_SENDER, engineId_);
+    dhfwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
+    int32_t ret = dhfwkKit_->InitializeAVCenter(TransRole::AV_SENDER, engineId_);
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CTRL_CENTER_INIT_FAIL, "init av trans control center failed");
 
     ctlCenCallback_ = new (std::nothrow) AVTransControlCenterCallback();
@@ -113,7 +115,7 @@ int32_t AVSenderEngine::InitControlCenter()
     std::shared_ptr<IAVSenderEngine> engine = std::shared_ptr<AVSenderEngine>(shared_from_this());
     ctlCenCallback_->SetSenderEngine(engine);
 
-    ret = AVTransControlCenterKit::GetInstance().RegisterCtlCenterCallback(engineId_, ctlCenCallback_);
+    ret = dhfwkKit_->RegisterCtlCenterCallback(engineId_, ctlCenCallback_);
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_REGISTER_CALLBACK_FAIL,
         "register control center callback failed");
 
@@ -153,9 +155,11 @@ int32_t AVSenderEngine::Start()
     ErrorCode errCode = pipeline_->Start();
     TRUE_RETURN_V_MSG_E(errCode != ErrorCode::SUCCESS, ERR_DH_AVT_START_FAILED, "start pipeline failed");
 
-    int32_t ret = AVTransControlCenterKit::GetInstance().CreateControlChannel(engineId_, peerDevId_);
-    TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CREATE_CHANNEL_FAILED,
-        "create av control center channel failed");
+    if (dhfwkKit_ != nullptr) {
+        int32_t ret = dhfwkKit_->CreateControlChannel(engineId_, peerDevId_);
+        TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CREATE_CHANNEL_FAILED,
+            "create av control center channel failed");
+    }
 
     SetCurrentState(StateId::STARTED);
     AVTRANS_LOGI("Start sender engine success.");
@@ -176,13 +180,17 @@ int32_t AVSenderEngine::Stop()
 int32_t AVSenderEngine::Release()
 {
     AVTRANS_LOGI("Release sender engine enter.");
-    AVTransControlCenterKit::GetInstance().Release(engineId_);
-    pipeline_->Stop();
-
+    if (pipeline_ != nullptr) {
+        pipeline_->Stop();
+    }
+    if (dhfwkKit_ != nullptr) {
+        dhfwkKit_->ReleaseAVCenter(engineId_);
+    }
     SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
     initialized_ = false;
     pipeline_ = nullptr;
+    dhfwkKit_ = nullptr;
     avInput_ = nullptr;
     avOutput_ = nullptr;
     audioEncoder_ = nullptr;
@@ -406,8 +414,8 @@ void AVSenderEngine::NotifyStreamChange(EventType type)
         return;
     }
 
-    AVTransEvent event = { type, sceneType, peerDevId_ };
-    AVTransControlCenterKit::GetInstance().Notify(engineId_, event);
+    TRUE_RETURN(dhfwkKit_ == nullptr, "dh fwk kit is nullptr.");
+    dhfwkKit_->NotifyAVCenter(engineId_, { type, sceneType, peerDevId_ });
 }
 
 void AVSenderEngine::OnChannelEvent(const AVTransEvent &event)

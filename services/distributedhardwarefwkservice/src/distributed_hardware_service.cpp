@@ -182,14 +182,14 @@ std::string DistributedHardwareService::QueryDhSysSpec(const std::string &target
     return attrJson.at(targetKey).get<std::string>();
 }
 
-int32_t DistributedHardwareService::Initialize(const TransRole &transRole, int32_t &engineId)
+int32_t DistributedHardwareService::InitializeAVCenter(const TransRole &transRole, int32_t &engineId)
 {
-    return AVTransControlCenter::GetInstance().Initialize(transRole, engineId);
+    return AVTransControlCenter::GetInstance().InitializeAVCenter(transRole, engineId);
 }
 
-int32_t DistributedHardwareService::Release(int32_t engineId)
+int32_t DistributedHardwareService::ReleaseAVCenter(int32_t engineId)
 {
-    return AVTransControlCenter::GetInstance().Release(engineId);
+    return AVTransControlCenter::GetInstance().ReleaseAVCenter(engineId);
 }
 
 int32_t DistributedHardwareService::CreateControlChannel(int32_t engineId, const std::string &peerDevId)
@@ -197,9 +197,9 @@ int32_t DistributedHardwareService::CreateControlChannel(int32_t engineId, const
     return AVTransControlCenter::GetInstance().CreateControlChannel(engineId, peerDevId);
 }
 
-int32_t DistributedHardwareService::Notify(int32_t engineId, const AVTransEvent &event)
+int32_t DistributedHardwareService::NotifyAVCenter(int32_t engineId, const AVTransEvent &event)
 {
-    return AVTransControlCenter::GetInstance().Notify(engineId, event);
+    return AVTransControlCenter::GetInstance().NotifyAVCenter(engineId, event);
 }
 
 int32_t DistributedHardwareService::RegisterCtlCenterCallback(int32_t engineId,

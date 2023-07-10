@@ -25,7 +25,7 @@
 #include "av_trans_utils.h"
 #include "i_av_sender_engine.h"
 #include "softbus_channel_adapter.h"
-#include "av_trans_control_center_kit.h"
+#include "distributed_hardware_fwk_kit.h"
 #include "av_trans_control_center_callback.h"
 #include "av_transport_input_filter.h"
 #include "av_transport_output_filter.h"
@@ -103,6 +103,7 @@ private:
     std::atomic<StateId> currentState_ = StateId::IDLE;
 
     sptr<AVTransControlCenterCallback> ctlCenCallback_ = nullptr;
+    std::shared_ptr<DistributedHardwareFwkKit> dhfwkKit_ = nullptr;
     std::shared_ptr<IAVSenderEngineCallback> senderCallback_ = nullptr;
     std::shared_ptr<OHOS::Media::Pipeline::PipelineCore> pipeline_ = nullptr;
 

@@ -35,6 +35,7 @@ AVReceiverEngine::~AVReceiverEngine()
     AVTRANS_LOGI("AVReceiverEngine dctor.");
     Release();
 
+    dhfwkKit_ = nullptr;
     pipeline_ = nullptr;
     avInput_ = nullptr;
     avOutput_ = nullptr;
@@ -102,7 +103,8 @@ int32_t AVReceiverEngine::InitPipeline()
 
 int32_t AVReceiverEngine::InitControlCenter()
 {
-    int32_t ret = AVTransControlCenterKit::GetInstance().Initialize(TransRole::AV_RECEIVER, engineId_);
+    dhfwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
+    int32_t ret = dhfwkKit_->InitializeAVCenter(TransRole::AV_RECEIVER, engineId_);
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CTRL_CENTER_INIT_FAIL, "init av trans control center failed");
 
     ctlCenCallback_ = new (std::nothrow) AVTransControlCenterCallback();
@@ -112,7 +114,7 @@ int32_t AVReceiverEngine::InitControlCenter()
     std::shared_ptr<IAVReceiverEngine> engine = std::shared_ptr<AVReceiverEngine>(shared_from_this());
     ctlCenCallback_->SetReceiverEngine(engine);
 
-    ret = AVTransControlCenterKit::GetInstance().RegisterCtlCenterCallback(engineId_, ctlCenCallback_);
+    ret = dhfwkKit_->RegisterCtlCenterCallback(engineId_, ctlCenCallback_);
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_REGISTER_CALLBACK_FAIL,
         "register control center callback failed");
 
@@ -199,12 +201,17 @@ int32_t AVReceiverEngine::Release()
 {
     AVTRANS_LOGI("Release enter.");
     TRUE_RETURN_V(GetCurrentState() == StateId::IDLE, DH_AVT_SUCCESS);
-    AVTransControlCenterKit::GetInstance().Release(engineId_);
-    pipeline_->Stop();
+    if (pipeline_ != nullptr) {
+        pipeline_->Stop();
+    }
+    if (dhfwkKit_ != nullptr) {
+        dhfwkKit_->ReleaseAVCenter(engineId_);
+    }
     SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
     initialized_ = false;
     pipeline_ = nullptr;
+    dhfwkKit_ = nullptr;
     avInput_ = nullptr;
     avOutput_ = nullptr;
     audioDecoder_ = nullptr;

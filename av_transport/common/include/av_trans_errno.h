@@ -63,7 +63,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL = -80019;
     constexpr int32_t ERR_DH_AVT_CTRL_CENTER_INIT_FAIL = -80020;
     constexpr int32_t ERR_DH_AVT_REGISTER_CALLBACK_FAIL = -80021;
-    constexpr int32_t ERR_DH_AVT_CTRL_CENTER_KIT_NULL = -80022;
+    constexpr int32_t ERR_DH_AVT_FWK_INNER_KIT_NULL = -80022;
     constexpr int32_t ERR_DH_AVT_SHARED_MEMORY_FAILED = -80023;
     constexpr int32_t ERR_DH_AVT_MASTER_NOT_READY = -80024;
     constexpr int32_t ERR_DH_AVT_SESSION_HAS_OPENED = -80025;

@@ -31,10 +31,10 @@ public:
     AVTransControlCenter();
     virtual ~AVTransControlCenter();
 
-    int32_t Initialize(const TransRole &transRole, int32_t &engineId);
-    int32_t Release(int32_t engineId);
+    int32_t InitializeAVCenter(const TransRole &transRole, int32_t &engineId);
+    int32_t ReleaseAVCenter(int32_t engineId);
     int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId);
-    int32_t Notify(int32_t engineId, const AVTransEvent &event);
+    int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event);
     int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback);
 
     // interfaces from ISoftbusChannelListener

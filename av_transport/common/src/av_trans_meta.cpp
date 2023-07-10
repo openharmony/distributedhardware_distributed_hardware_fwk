@@ -87,8 +87,12 @@ std::string AVTransVideoBufferMeta::MarshalVideoMeta()
     metaJson[META_DATA_TYPE] = dataType_;
     metaJson[META_TIMESTAMP] = pts_;
     metaJson[META_FRAME_NUMBER] = frameNum_;
-    metaJson[META_EXT_TIMESTAMP] = extPts_;
-    metaJson[META_EXT_FRAME_NUMBER] = extFrameNum_;
+    if (extPts_ > 0) {
+        metaJson[META_EXT_TIMESTAMP] = extPts_;
+    }
+    if (extFrameNum_ > 0) {
+        metaJson[META_EXT_FRAME_NUMBER] = extFrameNum_;
+    }
     return metaJson.dump();
 }
 

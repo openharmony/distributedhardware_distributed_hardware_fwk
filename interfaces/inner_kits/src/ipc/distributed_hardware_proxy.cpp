@@ -218,7 +218,7 @@ std::string DistributedHardwareProxy::QueryLocalSysSpec(QueryLocalSysSpecType sp
     return specStr;
 }
 
-int32_t DistributedHardwareProxy::Initialize(const TransRole &transRole, int32_t &engineId)
+int32_t DistributedHardwareProxy::InitializeAVCenter(const TransRole &transRole, int32_t &engineId)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
@@ -248,7 +248,7 @@ int32_t DistributedHardwareProxy::Initialize(const TransRole &transRole, int32_t
     return reply.ReadInt32();
 }
 
-int32_t DistributedHardwareProxy::Release(int32_t engineId)
+int32_t DistributedHardwareProxy::ReleaseAVCenter(int32_t engineId)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
@@ -311,7 +311,7 @@ int32_t DistributedHardwareProxy::CreateControlChannel(int32_t engineId, const s
     return reply.ReadInt32();
 }
 
-int32_t DistributedHardwareProxy::Notify(int32_t engineId, const AVTransEvent &event)
+int32_t DistributedHardwareProxy::NotifyAVCenter(int32_t engineId, const AVTransEvent &event)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {

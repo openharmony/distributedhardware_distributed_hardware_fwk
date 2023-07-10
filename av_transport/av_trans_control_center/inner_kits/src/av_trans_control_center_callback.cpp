@@ -16,7 +16,7 @@
 #include "av_trans_control_center_callback.h"
 
 #include "av_trans_errno.h"
-#include "av_trans_log.h"
+#include "distributed_hardware_log.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -25,15 +25,16 @@ int32_t AVTransControlCenterCallback::SetParameter(AVTransTag tag, const std::st
     if ((tag == AVTransTag::START_AV_SYNC) || (tag == AVTransTag::STOP_AV_SYNC) ||
         (tag == AVTransTag::TIME_SYNC_RESULT)) {
         std::shared_ptr<IAVReceiverEngine> rcvEngine = receiverEngine_.lock();
-        TRUE_RETURN_V_MSG_E(rcvEngine == nullptr, ERR_DH_AVT_NULL_POINTER, "receiver engine is nullptr.");
-        rcvEngine->SetParameter(tag, value);
+        if (rcvEngine != nullptr) {
+            rcvEngine->SetParameter(tag, value);
+        }
     }
     return DH_AVT_SUCCESS;
 }
 
 int32_t AVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemory &memory)
 {
-    AVTRANS_LOGW("AVTransControlCenterCallback::SetSharedMemory enter.");
+    DHLOGW("AVTransControlCenterCallback::SetSharedMemory enter.");
 
     std::shared_ptr<IAVSenderEngine> sendEngine = senderEngine_.lock();
     if (sendEngine != nullptr) {
@@ -50,20 +51,22 @@ int32_t AVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemory 
 
 int32_t AVTransControlCenterCallback::Notify(const AVTransEvent& event)
 {
-    AVTRANS_LOGW("AVTransControlCenterCallback::Notify enter.");
+    DHLOGW("AVTransControlCenterCallback::Notify enter.");
     return DH_AVT_SUCCESS;
 }
 
 void AVTransControlCenterCallback::SetSenderEngine(const std::shared_ptr<IAVSenderEngine> &sender)
 {
-    TRUE_RETURN(sender == nullptr, "input sender engine is nullptr.");
-    senderEngine_ = sender;
+    if (sender != nullptr) {
+        senderEngine_ = sender;
+    }
 }
 
 void AVTransControlCenterCallback::SetReceiverEngine(const std::shared_ptr<IAVReceiverEngine> &receiver)
 {
-    TRUE_RETURN(receiver == nullptr, "input receiver engine is nullptr.");
-    receiverEngine_ = receiver;
+    if (receiver != nullptr) {
+        receiverEngine_ = receiver;
+    }
 }
 }
 }

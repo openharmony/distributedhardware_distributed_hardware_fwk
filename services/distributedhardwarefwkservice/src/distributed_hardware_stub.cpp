@@ -151,7 +151,7 @@ int32_t DistributedHardwareStub::InitializeInner(MessageParcel &data, MessagePar
 {
     TransRole transRole = (TransRole)(data.ReadUint32());
     int32_t engineId = 0;
-    int32_t ret = Initialize(transRole, engineId);
+    int32_t ret = InitializeAVCenter(transRole, engineId);
     if (!reply.WriteInt32(engineId)) {
         DHLOGE("Write engine id failed");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
@@ -166,7 +166,7 @@ int32_t DistributedHardwareStub::InitializeInner(MessageParcel &data, MessagePar
 int32_t DistributedHardwareStub::ReleaseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t engineId = data.ReadInt32();
-    int32_t ret = Release(engineId);
+    int32_t ret = ReleaseAVCenter(engineId);
     if (!reply.WriteInt32(ret)) {
         DHLOGE("Write ret code failed");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
@@ -192,7 +192,7 @@ int32_t DistributedHardwareStub::NotifyInner(MessageParcel &data, MessageParcel 
     uint32_t type = data.ReadUint32();
     std::string content = data.ReadString();
     std::string peerDevId = data.ReadString();
-    int32_t ret = Notify(engineId, AVTransEvent{ (EventType)type, content, peerDevId });
+    int32_t ret = NotifyAVCenter(engineId, AVTransEvent{ (EventType)type, content, peerDevId });
     if (!reply.WriteInt32(ret)) {
         DHLOGE("Write ret code failed");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
