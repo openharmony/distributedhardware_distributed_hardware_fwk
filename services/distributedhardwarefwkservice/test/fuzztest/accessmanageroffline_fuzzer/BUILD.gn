@@ -19,7 +19,7 @@ import("../../../../../distributedhardwarefwk.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("AccessManagerOfflineFuzzTest") {
   module_out_path = "distributed_hardware_fwk/accessmanageroffline"
-  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/accessmanager_offline_fuzzer"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/accessmanageroffline_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
@@ -35,7 +35,7 @@ ohos_fuzztest("AccessManagerOfflineFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "accessmanager_offline_fuzzer.cpp" ]
+  sources = [ "accessmanageroffline_fuzzer.cpp" ]
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
