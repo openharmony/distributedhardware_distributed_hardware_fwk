@@ -305,6 +305,7 @@ int32_t AVReceiverEngine::SetParameter(AVTransTag tag, const std::string &value)
             AVTRANS_LOGI("SetParameter USER_TIME_SYNC_RESULT success, time sync result = %s", value.c_str());
             break;
         }
+        case AVTransTag::STOP_AV_SYNC:
         case AVTransTag::START_AV_SYNC: {
             avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::USER_AV_SYNC_GROUP_INFO), value);
             AVTRANS_LOGI("SetParameter START_AV_SYNC success, av sync group info = %s", value.c_str());

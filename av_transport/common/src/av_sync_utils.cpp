@@ -129,7 +129,12 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
 
     void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
-    TRUE_RETURN_V_MSG_E(addr == MAP_FAILED, ERR_DH_AVT_SHARED_MEMORY_FAILED, "shared memory mmap failed");
+    if (addr == MAP_FAILED) {
+        free(addr);
+        addr = nullptr;
+        AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
+        return ERR_DH_AVT_SHARED_MEMORY_FAILED;
+    }
 
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
     uint32_t firstUnit = U8ToU32(base);
@@ -169,7 +174,12 @@ int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frame
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
 
     void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
-    TRUE_RETURN_V_MSG_E(addr == MAP_FAILED, ERR_DH_AVT_SHARED_MEMORY_FAILED, "shared memory mmap failed");
+    if (addr == MAP_FAILED) {
+        free(addr);
+        addr = nullptr;
+        AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
+        return ERR_DH_AVT_SHARED_MEMORY_FAILED;
+    }
 
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
     U32ToU8(base, frameNum);
@@ -193,7 +203,12 @@ int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &fra
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
 
     void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
-    TRUE_RETURN_V_MSG_E(addr == MAP_FAILED, ERR_DH_AVT_SHARED_MEMORY_FAILED, "shared memory mmap failed");
+    if (addr == MAP_FAILED) {
+        free(addr);
+        addr = nullptr;
+        AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
+        return ERR_DH_AVT_SHARED_MEMORY_FAILED;
+    }
 
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
     frameNum = U8ToU32(base);

@@ -93,11 +93,11 @@ std::shared_ptr<AVBuffer> TransBuffer2HiSBuffer(const std::shared_ptr<AVTransBuf
     if ((transBuffer == nullptr) || transBuffer->IsEmpty()) {
         return nullptr;
     }
+
+    auto data = transBuffer->GetBufferData();
     auto hisBuffer = std::make_shared<AVBuffer>();
-    for (uint32_t index = 0; index < transBuffer->GetDataCount(); index++) {
-        auto data = transBuffer->GetBufferData(index);
-        hisBuffer->WrapMemory(data->GetAddress(), data->GetCapacity(), data->GetSize());
-    }
+    hisBuffer->WrapMemory(data->GetAddress(), data->GetCapacity(), data->GetSize());
+
     Convert2HiSBufferMeta(transBuffer, hisBuffer);
     return hisBuffer;
 }
@@ -107,11 +107,11 @@ std::shared_ptr<AVTransBuffer> HiSBuffer2TransBuffer(const std::shared_ptr<AVBuf
     if ((hisBuffer == nullptr) || hisBuffer->IsEmpty()) {
         return nullptr;
     }
+
+    auto memory = hisBuffer->GetMemory(index);
     auto transBuffer = std::make_shared<AVTransBuffer>();
-    for (uint32_t index = 0; index < hisBuffer->GetMemoryCount(); index++) {
-        auto memory = hisBuffer->GetMemory(index);
-        transBuffer->WrapBufferData(memory->GetReadOnlyData(), memory->GetCapacity(), memory->GetSize());
-    }
+    transBuffer->WrapBufferData(memory->GetReadOnlyData(), memory->GetCapacity(), memory->GetSize());
+
     Convert2TransBufferMeta(hisBuffer, transBuffer);
     return transBuffer;
 }
