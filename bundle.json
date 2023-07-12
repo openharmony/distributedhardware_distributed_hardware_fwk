@@ -42,7 +42,7 @@
         "init",
         "kv_store",
         "resource_schedule_service",
-        "graphic_standard",
+        "graphic_2d",
         "histreamer"
       ],
       "third_party": [
