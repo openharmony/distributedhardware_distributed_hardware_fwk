@@ -108,7 +108,7 @@ std::shared_ptr<AVTransBuffer> HiSBuffer2TransBuffer(const std::shared_ptr<AVBuf
         return nullptr;
     }
 
-    auto memory = hisBuffer->GetMemory(index);
+    auto memory = hisBuffer->GetMemory();
     auto transBuffer = std::make_shared<AVTransBuffer>();
     transBuffer->WrapBufferData(memory->GetReadOnlyData(), memory->GetCapacity(), memory->GetSize());
 
