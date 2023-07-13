@@ -95,6 +95,10 @@ std::shared_ptr<AVBuffer> TransBuffer2HiSBuffer(const std::shared_ptr<AVTransBuf
     }
 
     auto data = transBuffer->GetBufferData();
+    if (data == nullptr) {
+        return nullptr;
+    }
+
     auto hisBuffer = std::make_shared<AVBuffer>();
     hisBuffer->WrapMemory(data->GetAddress(), data->GetCapacity(), data->GetSize());
 
@@ -109,6 +113,10 @@ std::shared_ptr<AVTransBuffer> HiSBuffer2TransBuffer(const std::shared_ptr<AVBuf
     }
 
     auto memory = hisBuffer->GetMemory();
+    if (memory == nullptr) {
+        return nullptr;
+    }
+
     auto transBuffer = std::make_shared<AVTransBuffer>();
     transBuffer->WrapBufferData(memory->GetReadOnlyData(), memory->GetCapacity(), memory->GetSize());
 
