@@ -46,16 +46,16 @@ int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &d
             return PublishMessageInner(data, reply);
         }
         case static_cast<uint32_t>(DHMsgInterfaceCode::INIT_CTL_CEN): {
-            return InitializeInner(data, reply);
+            return InitializeAVCenterInner(data, reply);
         }
         case static_cast<uint32_t>(DHMsgInterfaceCode::RELEASE_CTL_CEN): {
-            return ReleaseInner(data, reply);
+            return ReleaseAVCenterInner(data, reply);
         }
         case static_cast<uint32_t>(DHMsgInterfaceCode::CREATE_CTL_CEN_CHANNEL): {
             return CreateControlChannelInner(data, reply);
         }
         case static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_AV_EVENT): {
-            return NotifyInner(data, reply);
+            return NotifyAVCenterInner(data, reply);
         }
         case static_cast<uint32_t>(DHMsgInterfaceCode::REGISTER_CTL_CEN_CALLBACK): {
             return RegisterControlCenterCallbackInner(data, reply);
@@ -147,7 +147,7 @@ int32_t DistributedHardwareStub::QueryLocalSysSpecInner(MessageParcel &data, Mes
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareStub::InitializeInner(MessageParcel &data, MessageParcel &reply)
+int32_t DistributedHardwareStub::InitializeAVCenterInner(MessageParcel &data, MessageParcel &reply)
 {
     TransRole transRole = (TransRole)(data.ReadUint32());
     int32_t engineId = 0;
@@ -163,7 +163,7 @@ int32_t DistributedHardwareStub::InitializeInner(MessageParcel &data, MessagePar
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareStub::ReleaseInner(MessageParcel &data, MessageParcel &reply)
+int32_t DistributedHardwareStub::ReleaseAVCenterInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t engineId = data.ReadInt32();
     int32_t ret = ReleaseAVCenter(engineId);
@@ -186,7 +186,7 @@ int32_t DistributedHardwareStub::CreateControlChannelInner(MessageParcel &data, 
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareStub::NotifyInner(MessageParcel &data, MessageParcel &reply)
+int32_t DistributedHardwareStub::NotifyAVCenterInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t engineId = data.ReadInt32();
     uint32_t type = data.ReadUint32();
