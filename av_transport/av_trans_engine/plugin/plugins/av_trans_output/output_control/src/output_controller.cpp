@@ -481,6 +481,7 @@ void OutputController::SyncClock(const int64_t interval, const std::shared_ptr<P
 void OutputController::HandleSmoothTime(const int64_t timeStampInterval, const std::shared_ptr<Plugin::Buffer>& data)
 {
     TRUE_RETURN((timeStampInterval == INVALID_INTERVAL), "Interverl is Invalid.");
+    TRUE_RETURN((statistician_ == nullptr), "Statistician is nullptr.");
     int64_t vTimeStamp = data->pts;
     int64_t vcts = (sleep_ > 0) ? (vTimeStamp - sleep_) : vTimeStamp;
     int64_t offset = vcts - timeStampBaseline_ - (GetClockTime() - clockBaseline_);
