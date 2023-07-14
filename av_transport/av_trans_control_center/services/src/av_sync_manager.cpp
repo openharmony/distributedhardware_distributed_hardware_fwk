@@ -81,7 +81,7 @@ void AVSyncManager::EnableSenderAVSync()
         AVTRANS_LOGI("No need start av sync.");
         return;
     }
-    AVTRANS_LOGI("merged av sync group info=%s", syncGroupInfo.c_str());
+    AVTRANS_LOGI("merged av sync group info=%s", GetAnonyString(syncGroupInfo).c_str());
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         for (const auto &item : streamInfoList_) {
@@ -109,6 +109,7 @@ void AVSyncManager::DisableSenderAVSync()
         }
     }
     CloseAVTransSharedMemory(sourceMemory_);
+    AVTransControlCenter::GetInstance().SetParam2Engines(AVTransSharedMemory{0, 0, "sourceSharedMemory"});
 }
 
 void AVSyncManager::HandleAvSyncMessage(const std::shared_ptr<AVTransMessage> &message)
@@ -131,8 +132,10 @@ void AVSyncManager::EnableReceiverAVSync(const std::string &groupInfo)
 
 void AVSyncManager::DisableReceiverAVSync(const std::string &groupInfo)
 {
+    (void)groupInfo;
     CloseAVTransSharedMemory(sinkMemory_);
-    AVTransControlCenter::GetInstance().SetParam2Engines(AVTransTag::STOP_AV_SYNC, groupInfo);
+    AVTransControlCenter::GetInstance().SetParam2Engines(AVTransTag::STOP_AV_SYNC, "");
+    AVTransControlCenter::GetInstance().SetParam2Engines(AVTransSharedMemory{0, 0, "sinkSharedMemory"});
 }
 
 bool AVSyncManager::MergeGroupInfo(std::string &syncGroupInfo)

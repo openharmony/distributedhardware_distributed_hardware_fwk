@@ -17,7 +17,9 @@ import(
 
 ohos_shared_library("libdhfwk_sdk") {
   include_dirs = [
+    "${av_center_kits_path}/include",
     "${av_trans_path}/common/include",
+    "${av_trans_path}/interface",
     "${innerkits_path}/include",
     "${innerkits_path}/include/ipc",
     "${common_path}/log/include",
@@ -29,6 +31,8 @@ ohos_shared_library("libdhfwk_sdk") {
   ]
 
   sources = [
+    "${av_center_kits_path}/src/av_trans_control_center_callback.cpp",
+    "${av_center_kits_path}/src/av_trans_control_center_callback_stub.cpp",
     "${innerkits_path}/src/distributed_hardware_fwk_kit.cpp",
     "${innerkits_path}/src/ipc/dhfwk_sa_manager.cpp",
     "${innerkits_path}/src/ipc/distributed_hardware_proxy.cpp",

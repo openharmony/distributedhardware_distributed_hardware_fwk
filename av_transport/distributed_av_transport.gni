@@ -40,6 +40,8 @@ dh_fwk_utils_path = "${distributedhardwarefwk_path}/common/utils"
 
 dh_fwk_services_path = "${distributedhardwarefwk_path}/services"
 
+dh_fwk_sdk_path = "${distributedhardwarefwk_path}/interfaces/inner_kits"
+
 plugin_path = "${engine_path}/plugin"
 
 output_controller_path = "${plugin_path}/plugins/av_trans_output/output_control"

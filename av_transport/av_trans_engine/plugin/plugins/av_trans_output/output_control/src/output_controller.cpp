@@ -342,6 +342,9 @@ bool OutputController::CheckIsClockInvalid(const std::shared_ptr<Plugin::Buffer>
 
 int32_t OutputController::AcquireSyncClockTime(const std::shared_ptr<Plugin::Buffer>& data)
 {
+    TRUE_RETURN_V_MSG_E((sharedMem_.fd <= 0) || (sharedMem_.size <= 0) || sharedMem_.name.empty(),
+        ERR_DH_AVT_SHARED_MEMORY_FAILED, "sharedMem is invalid.");
+
     AVTransSharedMemory sharedMem;
     sharedMem.fd = sharedMem_.fd;
     sharedMem.size = sharedMem_.size;

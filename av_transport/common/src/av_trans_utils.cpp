@@ -93,11 +93,15 @@ std::shared_ptr<AVBuffer> TransBuffer2HiSBuffer(const std::shared_ptr<AVTransBuf
     if ((transBuffer == nullptr) || transBuffer->IsEmpty()) {
         return nullptr;
     }
-    auto hisBuffer = std::make_shared<AVBuffer>();
-    for (uint32_t index = 0; index < transBuffer->GetDataCount(); index++) {
-        auto data = transBuffer->GetBufferData(index);
-        hisBuffer->WrapMemory(data->GetAddress(), data->GetCapacity(), data->GetSize());
+
+    auto data = transBuffer->GetBufferData();
+    if (data == nullptr) {
+        return nullptr;
     }
+
+    auto hisBuffer = std::make_shared<AVBuffer>();
+    hisBuffer->WrapMemory(data->GetAddress(), data->GetCapacity(), data->GetSize());
+
     Convert2HiSBufferMeta(transBuffer, hisBuffer);
     return hisBuffer;
 }
@@ -107,11 +111,15 @@ std::shared_ptr<AVTransBuffer> HiSBuffer2TransBuffer(const std::shared_ptr<AVBuf
     if ((hisBuffer == nullptr) || hisBuffer->IsEmpty()) {
         return nullptr;
     }
-    auto transBuffer = std::make_shared<AVTransBuffer>();
-    for (uint32_t index = 0; index < hisBuffer->GetMemoryCount(); index++) {
-        auto memory = hisBuffer->GetMemory(index);
-        transBuffer->WrapBufferData(memory->GetReadOnlyData(), memory->GetCapacity(), memory->GetSize());
+
+    auto memory = hisBuffer->GetMemory();
+    if (memory == nullptr) {
+        return nullptr;
     }
+
+    auto transBuffer = std::make_shared<AVTransBuffer>();
+    transBuffer->WrapBufferData(memory->GetReadOnlyData(), memory->GetCapacity(), memory->GetSize());
+
     Convert2TransBufferMeta(hisBuffer, transBuffer);
     return transBuffer;
 }
@@ -221,30 +229,18 @@ void DumpBufferToFile(std::string fileName, uint8_t *buffer, int32_t bufSize)
 
 bool IsUInt32(const nlohmann::json &jsonObj, const std::string &key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT32_MAX;
-    if (!res) {
-        AVTRANS_LOGE("the key %s in jsonObj is invalid.", key.c_str());
-    }
-    return res;
+    return jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT32_MAX;
 }
 
 bool IsInt64(const nlohmann::json &jsonObj, const std::string &key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_number_integer() && INT64_MIN <= jsonObj[key] &&
+    return jsonObj.contains(key) && jsonObj[key].is_number_integer() && INT64_MIN <= jsonObj[key] &&
         jsonObj[key] <= INT64_MAX;
-    if (!res) {
-        AVTRANS_LOGE("the key %s in jsonObj is invalid.", key.c_str());
-    }
-    return res;
 }
 
 bool IsString(const nlohmann::json &jsonObj, const std::string &key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_string() && jsonObj[key].size() <= MAX_MESSAGES_LEN;
-    if (!res) {
-        AVTRANS_LOGE("the key %s in jsonObj is invalid.", key.c_str());
-    }
-    return res;
+    return jsonObj.contains(key) && jsonObj[key].is_string() && jsonObj[key].size() <= MAX_MESSAGES_LEN;
 }
 
 int64_t GetCurrentTime()

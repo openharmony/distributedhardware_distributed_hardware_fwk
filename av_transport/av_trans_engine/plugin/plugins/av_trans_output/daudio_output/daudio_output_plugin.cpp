@@ -280,6 +280,10 @@ void DaudioOutputPlugin::HandleData()
 
 void DaudioOutputPlugin::WriteMasterClockToMemory(const std::shared_ptr<Plugin::Buffer> &buffer)
 {
+    if ((sharedMemory_.fd <= 0) || (sharedMemory_.size <= 0) || sharedMemory_.name.empty()) {
+        return;
+    }
+
     if ((buffer == nullptr) || (buffer->GetBufferMeta() == nullptr)) {
         AVTRANS_LOGE("output buffer or buffer meta is nullptr.");
         return;
@@ -292,11 +296,6 @@ void DaudioOutputPlugin::WriteMasterClockToMemory(const std::shared_ptr<Plugin::
 
     if (!buffer->GetBufferMeta()->IsExist(Tag::USER_FRAME_PTS)) {
         AVTRANS_LOGE("the output buffer meta does not contains tag USER_FRAME_PTS.");
-        return;
-    }
-
-    if ((sharedMemory_.fd <= 0) || (sharedMemory_.size <= 0) || sharedMemory_.name.empty()) {
-        AVTRANS_LOGE("invalid master clock shared memory info.");
         return;
     }
 

@@ -17,6 +17,7 @@
 
 #include <cinttypes>
 
+#include "anonymous_string.h"
 #include "constants.h"
 #include "dhfwk_sa_manager.h"
 #include "distributed_hardware_errno.h"
@@ -160,6 +161,68 @@ std::string DistributedHardwareFwkKit::QueryLocalSysSpec(enum QueryLocalSysSpecT
     }
 
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->QueryLocalSysSpec(spec);
+}
+
+int32_t DistributedHardwareFwkKit::InitializeAVCenter(const TransRole &transRole, int32_t &engineId)
+{
+    DHLOGI("Initialize av control center, transRole: %" PRIu32, (uint32_t)transRole);
+
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not initializeA av control center");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->InitializeAVCenter(transRole, engineId);
+}
+
+int32_t DistributedHardwareFwkKit::ReleaseAVCenter(int32_t engineId)
+{
+    DHLOGI("Release av control center, engineId: %" PRId32, engineId);
+
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not release av control center");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->ReleaseAVCenter(engineId);
+}
+
+int32_t DistributedHardwareFwkKit::CreateControlChannel(int32_t engineId, const std::string &peerDevId)
+{
+    DHLOGI("Create av control center channel, engineId: %" PRId32 ", peerDevId=%s.", engineId,
+        GetAnonyString(peerDevId).c_str());
+
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not create av control center channel");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->CreateControlChannel(engineId, peerDevId);
+}
+
+int32_t DistributedHardwareFwkKit::NotifyAVCenter(int32_t engineId, const AVTransEvent &event)
+{
+    DHLOGI("Notify av control center, engineId: %" PRId32 ", event type=%" PRId32, engineId, event.type);
+
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not notity av control center event.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->NotifyAVCenter(engineId, event);
+}
+
+int32_t DistributedHardwareFwkKit::RegisterCtlCenterCallback(int32_t engineId,
+    const sptr<IAVTransControlCenterCallback> &callback)
+{
+    DHLOGI("Register av control center callback. engineId: %" PRId32, engineId);
+
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterCtlCenterCallback(engineId, callback);
 }
 } // DistributedHardware
 } // OHOS

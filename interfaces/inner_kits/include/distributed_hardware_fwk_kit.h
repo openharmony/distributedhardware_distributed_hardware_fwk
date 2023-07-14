@@ -82,9 +82,54 @@ public:
      * @brief Query Local system specifications
      *
      * @param spec specification type
-     * @return API_EXPORT specification in string format
+     * @return specification in string format
      */
     API_EXPORT std::string QueryLocalSysSpec(QueryLocalSysSpecType spec);
+
+    /**
+     * @brief Initialize distributed av control center
+     *
+     * @param transRole transport role, eg. sender or receiver
+     * @param engineId  transport engine id
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t InitializeAVCenter(const TransRole &transRole, int32_t &engineId);
+
+    /**
+     * @brief Release distributed av control center
+     *
+     * @param engineId  transport engine id
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t ReleaseAVCenter(int32_t engineId);
+
+    /**
+     * @brief Create control channel betweent the local and the remote av control center
+     *
+     * @param engineId  transport engine id
+     * @param peerDevId the peer device id
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId);
+
+    /**
+     * @brief Notify event from transport engine to av control center
+     *
+     * @param engineId  transport engine id
+     * @param event the event content
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event);
+
+    /**
+     * @brief Register av control center callback.
+     *
+     * @param engineId  transport engine id
+     * @param callback av control center callback.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback);
+
 private:
     /**
      * @brief Determine whether the topic is valid.

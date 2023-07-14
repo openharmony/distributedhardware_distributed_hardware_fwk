@@ -18,7 +18,7 @@ import(
 config("sender_external_config") {
   include_dirs = [
     "${common_path}/include",
-    "${distributedhardwarefwk_path}/interfaces/inner_kits/include",
+    "${dh_fwk_sdk_path}/include",
     "${engine_path}/av_sender/include",
     "${engine_path}/av_receiver/include",
     "${interface_path}",
@@ -41,6 +41,7 @@ ohos_shared_library("distributed_av_sender") {
   ]
 
   sources = [
+    "${common_path}/src/av_sync_utils.cpp",
     "${common_path}/src/av_trans_buffer.cpp",
     "${common_path}/src/av_trans_log.cpp",
     "${common_path}/src/av_trans_message.cpp",
@@ -52,7 +53,7 @@ ohos_shared_library("distributed_av_sender") {
   ]
 
   deps = [
-    "${control_center_path}/inner_kits:avtranscenter_sdk",
+    "${dh_fwk_sdk_path}:libdhfwk_sdk",
     "${filters_path}:avtrans_input_filter",
     "${filters_path}:avtrans_output_filter",
   ]

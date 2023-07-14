@@ -32,10 +32,10 @@ private:
     int32_t PublishMessageInner(MessageParcel &data, MessageParcel &reply);
     int32_t QueryLocalSysSpecInner(MessageParcel &data, MessageParcel &reply);
 
-    int32_t InitializeInner(MessageParcel &data, MessageParcel &reply);
-    int32_t ReleaseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t InitializeAVCenterInner(MessageParcel &data, MessageParcel &reply);
+    int32_t ReleaseAVCenterInner(MessageParcel &data, MessageParcel &reply);
     int32_t CreateControlChannelInner(MessageParcel &data, MessageParcel &reply);
-    int32_t NotifyInner(MessageParcel &data, MessageParcel &reply);
+    int32_t NotifyAVCenterInner(MessageParcel &data, MessageParcel &reply);
     int32_t RegisterControlCenterCallbackInner(MessageParcel &data, MessageParcel &reply);
 
     bool ValidTopic(uint32_t topic);

@@ -24,8 +24,9 @@ innerkits_path = "${distributedhardwarefwk_path}/interfaces/inner_kits"
 
 av_trans_path = "${distributedhardwarefwk_path}/av_transport"
 
-av_trans_ctl_center_svc_path =
-    "${av_trans_path}/av_trans_control_center/services"
+av_center_svc_path = "${av_trans_path}/av_trans_control_center/services"
+
+av_center_kits_path = "${av_trans_path}/av_trans_control_center/inner_kits"
 
 build_flags = [ "-Werror" ]
 
