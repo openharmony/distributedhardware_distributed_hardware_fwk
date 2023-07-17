@@ -132,11 +132,11 @@ void Convert2HiSBufferMeta(std::shared_ptr<AVTransBuffer> transBuffer, std::shar
 
         std::string value;
         transMeta->GetMetaItem(AVTransTag::BUFFER_DATA_TYPE, value);
-        uint32_t dataType = std::atoi(value.c_str());
+        uint32_t dataType = static_cast<uint32_t>(std::atoi(value.c_str()));
         hisAMeta->dataType_ = (BufferDataType)dataType;
 
         transMeta->GetMetaItem(AVTransTag::AUDIO_SAMPLE_FORMAT, value);
-        uint32_t format = std::atoi(value.c_str());
+        uint32_t format = static_cast<uint32_t>(std::atoi(value.c_str()));
         hisAMeta->format_ = (AudioSampleFormat)format;
 
         transMeta->GetMetaItem(AVTransTag::AUDIO_SAMPLE_RATE, value);
@@ -148,18 +148,18 @@ void Convert2HiSBufferMeta(std::shared_ptr<AVTransBuffer> transBuffer, std::shar
 
         std::string value;
         transMeta->GetMetaItem(AVTransTag::BUFFER_DATA_TYPE, value);
-        uint32_t dataType = std::atoi(value.c_str());
+        uint32_t dataType = static_cast<uint32_t>(std::atoi(value.c_str()));
         hisVMeta->dataType_ = (BufferDataType)dataType;
 
         transMeta->GetMetaItem(AVTransTag::VIDEO_PIXEL_FORMAT, value);
-        uint32_t format = std::atoi(value.c_str());
+        uint32_t format = static_cast<uint32_t>(std::atoi(value.c_str()));
         hisVMeta->format_ = (VideoPixelFormat)format;
 
         transMeta->GetMetaItem(AVTransTag::VIDEO_WIDTH, value);
-        hisVMeta->width_ = std::atoi(value.c_str());
+        hisVMeta->width_ = static_cast<uint32_t>(std::atoi(value.c_str()));
 
         transMeta->GetMetaItem(AVTransTag::VIDEO_HEIGHT, value);
-        hisVMeta->height_ = std::atoi(value.c_str());
+        hisVMeta->height_ = static_cast<uint32_t>(std::atoi(value.c_str()));
 
         TRUE_LOG_MSG(!transMeta->GetMetaItem(AVTransTag::PRE_TIMESTAMP, value), "get PRE_TIMESTAMP meta failed");
         hisVMeta->pts_ = std::stoll(value.c_str());
@@ -268,7 +268,7 @@ void GenerateAdtsHeader(unsigned char* adtsHeader, uint32_t packetLen, uint32_t 
         {7350, 12},
     };
     // profile only support AAC LC: 1
-    int freqIdx = mapSampleRateToFreIndex[sampleRate]; // 48KHz : 3
+    uint32_t freqIdx = mapSampleRateToFreIndex[sampleRate]; // 48KHz : 3
     adtsHeader[0] = (unsigned char) 0xFF;
     adtsHeader[1] = (unsigned char) 0xF9;
     adtsHeader[2] = (unsigned char) (((profile - 1) << 6) + (freqIdx << 2) + (channels >> 2));
