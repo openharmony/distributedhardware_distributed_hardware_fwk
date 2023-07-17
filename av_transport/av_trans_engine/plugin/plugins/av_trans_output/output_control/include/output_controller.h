@@ -90,6 +90,10 @@ public:
     void SetWaitClockThre(const int64_t thre);
     void SetTrackClockThre(const int64_t thre);
     void SetSleepThre(const int64_t thre);
+    void SetVideoFrontTime(const int64_t time);
+    void SetVideoBackTime(const int64_t time);
+    void SetAudioFrontTime(const int64_t time);
+    void SetAudioBackTime(const int64_t time);
 
     Status GetParameter(Tag tag, ValueType& value);
     Status SetParameter(Tag tag, const ValueType& value);
@@ -99,7 +103,7 @@ private:
     ControlStatus GetControlStatus();
     void SetControlMode(ControlMode mode);
     void SetControlStatus(ControlStatus status);
-    
+
     void InitTime(const int64_t enterTime, const int64_t timeStamp);
     void RecordTime(const int64_t enterTime, const int64_t timeStamp);
     void CheckSyncInfo(const std::shared_ptr<Plugin::Buffer>& data);
@@ -126,9 +130,9 @@ private:
     int32_t ControlOutput(const std::shared_ptr<Plugin::Buffer>& data);
     int32_t PostOutputEvent(const std::shared_ptr<Plugin::Buffer>& data);
     void HandleControlResult(const std::shared_ptr<Plugin::Buffer>& data, int32_t result);
-    void AdjustSleepTime(const int64_t interval);
-    void SyncClock(const int64_t timeStampInterval, const std::shared_ptr<Plugin::Buffer>& data);
-    void HandleSmoothTime(const int64_t timeStampInterval, const std::shared_ptr<Plugin::Buffer>& data);
+    void CalSleepTime(const int64_t timeStamp);
+    void SyncClock(const std::shared_ptr<Plugin::Buffer>& data);
+    void HandleSmoothTime(const std::shared_ptr<Plugin::Buffer>& data);
     void HandleSyncTime(const std::shared_ptr<Plugin::Buffer>& data);
 
 protected:
@@ -160,7 +164,8 @@ private:
     std::atomic<bool> isAllowControl_ = true;
 
     const uint32_t QUEUE_MAX_SIZE = 100;
-    const int64_t WAIT_REREAD_TIME = 5 * NS_ONE_MS;
+    const int64_t GREATER_HALF_REREAD_TIME = 5 * NS_ONE_MS;
+    const int64_t LESS_HALF_REREAD_TIME = 3 * GREATER_HALF_REREAD_TIME;
     int64_t waitClockThre_ = 0;
     int64_t trackClockThre_ = 0;
     float adjustSleepFactor_ = 0;
@@ -186,7 +191,7 @@ private:
     AVSyncClockUnit clockUnit_ = { 0, 0, 0 };
     std::atomic<int32_t> devClockDiff_ = 0;
     int64_t aFront_ = 0;
-    int64_t aBack_ = 150 * NS_ONE_MS;
+    int64_t aBack_ = 0;
     int64_t vFront_ = 0;
     int64_t vBack_ = 0;
 };

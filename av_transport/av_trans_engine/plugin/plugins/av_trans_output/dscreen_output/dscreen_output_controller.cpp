@@ -38,6 +38,7 @@ void DScreenOutputController::PrepareSync()
     SetWaitClockThre(WAIT_CLOCK_THRE);
     SetTrackClockThre(TRACK_CLOCK_THRE);
     SetSleepThre(SLEEP_THRE);
+    SetAudioBackTime(AUDIO_BACK_TIME);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

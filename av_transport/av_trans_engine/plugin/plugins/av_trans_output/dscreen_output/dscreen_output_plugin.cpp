@@ -38,7 +38,7 @@ GenericPluginDef CreateDscreenOutputPluginDef()
 
     Capability inCap(Media::MEDIA_MIME_VIDEO_RAW);
     inCap.AppendDiscreteKeys<VideoPixelFormat>(
-        Capability::Key::VIDEO_PIXEL_FORMAT, {VideoPixelFormat::RGBA});
+        Capability::Key::VIDEO_PIXEL_FORMAT, {VideoPixelFormat::NV12});
     definition.inCaps.push_back(inCap);
     return definition;
 }
@@ -174,14 +174,14 @@ Status DscreenOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<
     return Status::OK;
 }
 
-void DscreenOutputPlugin::OnOutPut(const std::shared_ptr<Plugin::Buffer>& data)
+void DscreenOutputPlugin::OnOutput(const std::shared_ptr<Plugin::Buffer>& data)
 {
     auto bufferMeta = data->GetBufferMeta();
     uint32_t vFrameNumber = DEFAULT_INVALID_FRAME_NUM;
     if (bufferMeta->IsExist(Tag::USER_FRAME_NUMBER)) {
         vFrameNumber = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER));
     }
-    AVTRANS_LOGD("OnOutPut vFrameNumber: %zu.", vFrameNumber);
+    AVTRANS_LOGD("OnOutput vFrameNumber: %zu.", vFrameNumber);
     dataCb_(data);
 }
 

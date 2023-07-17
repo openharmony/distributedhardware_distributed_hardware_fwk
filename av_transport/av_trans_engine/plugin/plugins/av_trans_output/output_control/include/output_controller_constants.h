@@ -39,6 +39,7 @@ const std::string OUTPUT_HANDLE_THREAD_NAME = "outputHandle";
 
 const int64_t INVALID_TIMESTAMP = 0;
 const int64_t INVALID_INTERVAL = 0;
+const int64_t FACTOR_DOUBLE = 2;
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_OUTPUT_CONTROLLER_CONSTANTS_H

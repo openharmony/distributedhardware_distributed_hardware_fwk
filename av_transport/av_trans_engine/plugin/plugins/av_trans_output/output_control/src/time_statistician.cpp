@@ -24,7 +24,7 @@ void TimeStatistician::CalProcessTime(const std::shared_ptr<Plugin::Buffer>& dat
         ClearStatistics();
         return;
     }
-    int64_t pushTime  = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::USER_PUSH_DATA_TIME));
+    int64_t pushTime = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::USER_PUSH_DATA_TIME));
     int64_t timeStamp = data->pts;
     CalAverPushInterval(pushTime);
     CalAverTimeStampInterval(timeStamp);
