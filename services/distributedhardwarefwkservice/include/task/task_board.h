@@ -36,7 +36,7 @@ public:
     int32_t WaitForALLTaskFinish();
     void SaveEnabledDevice(const std::string &enabledDeviceKey, const TaskParam &taskParam);
     void RemoveEnabledDevice(const std::string &enabledDeviceKey);
-    const std::unordered_map<std::string, TaskParam>& GetEnabledDevice();
+    const std::unordered_map<std::string, TaskParam> GetEnabledDevice();
 
     void DumpAllTasks(std::vector<TaskDump> &taskInfos);
 

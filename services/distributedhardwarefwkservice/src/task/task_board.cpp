@@ -117,7 +117,7 @@ void TaskBoard::RemoveEnabledDevice(const std::string &enabledDeviceKey)
     enabledDevices_.erase(enabledDeviceKey);
 }
 
-const std::unordered_map<std::string, TaskParam>& TaskBoard::GetEnabledDevice()
+const std::unordered_map<std::string, TaskParam> TaskBoard::GetEnabledDevice()
 {
     std::lock_guard<std::mutex> lock(enabledDevicesMutex_);
     if (enabledDevices_.empty()) {
