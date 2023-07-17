@@ -40,6 +40,7 @@ private:
     constexpr static uint32_t WAIT_CLOCK_THRE = 125 * NS_ONE_MS;
     constexpr static uint32_t TRACK_CLOCK_THRE = 45 * NS_ONE_MS;
     constexpr static int64_t SLEEP_THRE = 1000 * NS_ONE_MS;
+    constexpr static int64_t AUDIO_BACK_TIME = 320 * NS_ONE_MS;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

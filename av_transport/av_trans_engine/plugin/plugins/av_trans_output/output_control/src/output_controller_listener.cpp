@@ -22,7 +22,7 @@ int32_t OutputControllerListener::OnOutput(const std::shared_ptr<Plugin::Buffer>
 {
     std::shared_ptr<ControllableOutput> output = output_.lock();
     TRUE_RETURN_V_MSG_E((!output), NOTIFY_FAILED, "Output is nullptr, notify failed.");
-    output->OnOutPut(data);
+    output->OnOutput(data);
     return NOTIFY_SUCCESS;
 }
 } // namespace DistributedHardware

@@ -166,7 +166,7 @@ Status OutputController::SetParameter(Tag tag, const ValueType& value)
 
 void OutputController::PrepareSync()
 {
-    AVTRANS_LOGI("PrepareSync.");
+    AVTRANS_LOGI("Prepare sync.");
     SetProcessDynamicBalanceState(true);
     SetTimeInitState(false);
     SetBaselineInitState(false);
@@ -176,11 +176,15 @@ void OutputController::PrepareSync()
     SetWaitClockThre(0);
     SetTrackClockThre(0);
     SetSleepThre(0);
+    SetAudioFrontTime(0);
+    SetAudioBackTime(0);
+    SetVideoFrontTime(0);
+    SetVideoBackTime(0);
 }
 
 void OutputController::PrepareSmooth()
 {
-    AVTRANS_LOGI("PrepareSmooth.");
+    AVTRANS_LOGI("Prepare smooth.");
     SetProcessDynamicBalanceState(false);
     SetTimeInitState(false);
     SetBaselineInitState(false);
@@ -246,21 +250,8 @@ int32_t OutputController::ControlOutput(const std::shared_ptr<Plugin::Buffer>& d
     if (!CheckIsBaselineInit()) {
         InitBaseline(timeStamp, GetClockTime());
     }
-    int64_t interval = timeStamp - lastTimeStamp_;
-    int64_t elapse = enterTime_ - leaveTime_;
-    int64_t render = enterTime_ - lastEnterTime_;
-    int64_t delta = render - sleep_ - elapse;
-    delta_ += delta;
-    sleep_ = interval - elapse;
-    AVTRANS_LOGD("Control frame pts: %lld, interval: %lld, elapse: %lld, render: %lld, delta: %lld," +
-        " delat count: %lld, sleep: %lld.", timeStamp, interval, elapse, render, delta, delta_, sleep_);
-    AdjustSleepTime(interval);
-    SyncClock(interval, data);
-    {
-        std::unique_lock<std::mutex> lock(sleepMutex_);
-        sleepCon_.wait_for(lock, std::chrono::nanoseconds(sleep_),
-            [this] { return (GetControlStatus() != ControlStatus::START); });
-    }
+    CalSleepTime(timeStamp);
+    SyncClock(data);
     RecordTime(enterTime_, timeStamp);
     return OUTPUT_FRAME;
 }
@@ -342,9 +333,8 @@ bool OutputController::CheckIsClockInvalid(const std::shared_ptr<Plugin::Buffer>
 
 int32_t OutputController::AcquireSyncClockTime(const std::shared_ptr<Plugin::Buffer>& data)
 {
-    TRUE_RETURN_V_MSG_E((sharedMem_.fd <= 0) || (sharedMem_.size <= 0) || sharedMem_.name.empty(),
-        ERR_DH_AVT_SHARED_MEMORY_FAILED, "sharedMem is invalid.");
-
+    TRUE_RETURN_V_MSG_E(((sharedMem_.fd <= 0) || (sharedMem_.size <= 0) || sharedMem_.name.empty()),
+        ERR_DH_AVT_SHARED_MEMORY_FAILED, "Parameter USER_SHARED_MEMORY_FD info error.");
     AVTransSharedMemory sharedMem;
     sharedMem.fd = sharedMem_.fd;
     sharedMem.size = sharedMem_.size;
@@ -373,13 +363,19 @@ bool OutputController::WaitRereadClockFailed(const std::shared_ptr<Plugin::Buffe
             {
                 AVTRANS_LOGD("Dataqueue size is less than half size, wait notify.");
                 std::unique_lock<std::mutex> lock(clockMutex_);
-                clockCon_.wait(lock);
+                int64_t rereadTime = LESS_HALF_REREAD_TIME;
+                if (statistician_) {
+                    rereadTime = statistician_->GetAverPushInterval() * FACTOR_DOUBLE;
+                }
+                clockCon_.wait_for(lock, std::chrono::nanoseconds(rereadTime),
+                    [this] { return (GetControlStatus() != ControlStatus::START); });
             }
         } else if (GetQueueSize() >= halfQueueSize) {
             {
-                AVTRANS_LOGD("Dataqueue size is greater than half size, scheduled %lld query.", WAIT_REREAD_TIME);
+                AVTRANS_LOGD("Dataqueue size is greater than half size, scheduled %lld query.",
+                    GREATER_HALF_REREAD_TIME);
                 std::unique_lock<std::mutex> lock(clockMutex_);
-                clockCon_.wait_for(lock, std::chrono::nanoseconds(WAIT_REREAD_TIME),
+                clockCon_.wait_for(lock, std::chrono::nanoseconds(GREATER_HALF_REREAD_TIME),
                     [this] { return (GetControlStatus() != ControlStatus::START); });
             }
         }
@@ -401,6 +397,10 @@ bool OutputController::CheckIsProcessInDynamicBalance(const std::shared_ptr<Plug
     }
     if (dynamicBalanceCount_ >= dynamicBalanceThre_) {
         AVTRANS_LOGD("Process meet dynamic balance condition.");
+        {
+            std::lock_guard<std::mutex> lock(queueMutex_);
+            ClearQueue(dataQueue_);
+        }
         SetProcessDynamicBalanceState(true);
         return true;
     }
@@ -422,21 +422,6 @@ bool OutputController::CheckIsProcessInDynamicBalanceOnce(const std::shared_ptr<
         && (llabs(timeStampOnceDiff) < timeStampOnceDiffThre_);
 }
 
-bool OutputController::CheckIsBaselineInit()
-{
-    return GetBaselineInitState();
-}
-
-bool OutputController::CheckIsTimeInit()
-{
-    return GetTimeInitState();
-}
-
-bool OutputController::CheckIsAllowControl()
-{
-    return GetAllowControlState();
-}
-
 void OutputController::InitBaseline(const int64_t timeStampBaseline, const int64_t clockBaseline)
 {
     SetTimeStampBaseline(timeStampBaseline);
@@ -444,8 +429,16 @@ void OutputController::InitBaseline(const int64_t timeStampBaseline, const int64
     SetBaselineInitState(true);
 }
 
-void OutputController::AdjustSleepTime(const int64_t interval)
+void OutputController::CalSleepTime(const int64_t timeStamp)
 {
+    int64_t interval = timeStamp - lastTimeStamp_;
+    int64_t elapse = enterTime_ - leaveTime_;
+    int64_t render = enterTime_ - lastEnterTime_;
+    int64_t delta = render - sleep_ - elapse;
+    delta_ += delta;
+    sleep_ = interval - elapse;
+    AVTRANS_LOGD("Control frame pts: %lld, interval: %lld, elapse: %lld, render: %lld, delta: %lld," +
+        " delat count: %lld, sleep: %lld.", timeStamp, interval, elapse, render, delta, delta_, sleep_);
     TRUE_RETURN((interval == INVALID_INTERVAL), "Interverl is Invalid.");
     const int64_t adjustThre = interval * adjustSleepFactor_;
     if (delta_ > adjustThre && sleep_ > 0) {
@@ -460,10 +453,10 @@ void OutputController::AdjustSleepTime(const int64_t interval)
     }
 }
 
-void OutputController::SyncClock(const int64_t interval, const std::shared_ptr<Plugin::Buffer>& data)
+void OutputController::SyncClock(const std::shared_ptr<Plugin::Buffer>& data)
 {
     if (GetControlMode() == ControlMode::SMOOTH) {
-        HandleSmoothTime(interval, data);
+        HandleSmoothTime(data);
     } else {
         HandleSyncTime(data);
     }
@@ -476,17 +469,25 @@ void OutputController::SyncClock(const int64_t interval, const std::shared_ptr<P
         AVTRANS_LOGD("Sleep less than zero, adjust sleep to zero.");
     }
     AVTRANS_LOGD("After sync clock, sleep is %lld.", sleep_);
+    {
+        std::unique_lock<std::mutex> lock(sleepMutex_);
+        sleepCon_.wait_for(lock, std::chrono::nanoseconds(sleep_),
+            [this] { return (GetControlStatus() != ControlStatus::START); });
+    }
 }
 
-void OutputController::HandleSmoothTime(const int64_t timeStampInterval, const std::shared_ptr<Plugin::Buffer>& data)
+void OutputController::HandleSmoothTime(const std::shared_ptr<Plugin::Buffer>& data)
 {
-    TRUE_RETURN((timeStampInterval == INVALID_INTERVAL), "Interverl is Invalid.");
+    TRUE_RETURN(!statistician_, "Statistician is nullptr.");
+    int64_t interval = statistician_->GetTimeStampInterval();
+    TRUE_RETURN((interval == INVALID_INTERVAL), "Interval is Invalid.");
+    int64_t averTimeStampInterval = statistician_->GetAverTimeStampInterval();
+    TRUE_RETURN((averTimeStampInterval == INVALID_INTERVAL), "AverTimeStampInterval is Invalid.");
+    int64_t waitClockThre = averTimeStampInterval * waitClockFactor_;
+    int64_t trackClockThre = averTimeStampInterval * trackClockFactor_;
     int64_t vTimeStamp = data->pts;
     int64_t vcts = (sleep_ > 0) ? (vTimeStamp - sleep_) : vTimeStamp;
     int64_t offset = vcts - timeStampBaseline_ - (GetClockTime() - clockBaseline_);
-    int64_t averTimeStampInterval = statistician_->GetAverTimeStampInterval();
-    int64_t waitClockThre = averTimeStampInterval * waitClockFactor_;
-    int64_t trackClockThre = averTimeStampInterval * trackClockFactor_;
     AVTRANS_LOGD("Smooth vTimeStamp: %lld, offset: %lld, waitClockThre: %lld, trackClockThre: %lld.",
         vTimeStamp, offset, averTimeStampInterval, waitClockThre, trackClockThre);
     if (offset > waitClockThre || offset < -trackClockThre) {
@@ -571,6 +572,21 @@ int32_t OutputController::NotifyOutput(const std::shared_ptr<Plugin::Buffer>& da
 {
     TRUE_RETURN_V_MSG_E((!listener_), NOTIFY_FAILED, "Listener is nullptr.");
     return listener_->OnOutput(data);
+}
+
+bool OutputController::CheckIsBaselineInit()
+{
+    return GetBaselineInitState();
+}
+
+bool OutputController::CheckIsTimeInit()
+{
+    return GetTimeInitState();
+}
+
+bool OutputController::CheckIsAllowControl()
+{
+    return GetAllowControlState();
 }
 
 void OutputController::RegisterListener(const std::shared_ptr<OutputControllerListener>& listener)
@@ -691,6 +707,26 @@ void OutputController::SetTrackClockThre(const int64_t thre)
 void OutputController::SetSleepThre(const int64_t thre)
 {
     sleepThre_ = thre;
+}
+
+void OutputController::SetVideoFrontTime(const int64_t time)
+{
+    vFront_ = time;
+}
+
+void OutputController::SetVideoBackTime(const int64_t time)
+{
+    vBack_ = time;
+}
+
+void OutputController::SetAudioFrontTime(const int64_t time)
+{
+    aFront_ = time;
+}
+
+void OutputController::SetAudioBackTime(const int64_t time)
+{
+    aBack_ = time;
 }
 
 void OutputController::SetClockTime(const int64_t clockTime)

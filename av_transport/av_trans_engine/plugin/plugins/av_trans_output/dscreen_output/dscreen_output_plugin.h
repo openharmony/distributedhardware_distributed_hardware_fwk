@@ -64,7 +64,7 @@ public:
     Status PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset) override;
     Status SetCallback(Callback *cb) override;
     Status SetDataCallback(AVDataCallback callback) override;
-    void OnOutPut(const std::shared_ptr<Plugin::Buffer>& data) override;
+    void OnOutput(const std::shared_ptr<Plugin::Buffer>& data) override;
 
 private:
     void InitOutputController();

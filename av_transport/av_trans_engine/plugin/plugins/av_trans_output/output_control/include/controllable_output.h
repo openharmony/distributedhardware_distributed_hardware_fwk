@@ -24,7 +24,7 @@ using namespace OHOS::Media::Plugin;
 class ControllableOutput {
 public:
     virtual ~ControllableOutput() = default;
-    virtual void OnOutPut(const std::shared_ptr<Plugin::Buffer>& data) = 0;
+    virtual void OnOutput(const std::shared_ptr<Plugin::Buffer>& data) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
