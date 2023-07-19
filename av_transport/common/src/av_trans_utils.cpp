@@ -140,7 +140,7 @@ void Convert2HiSBufferMeta(std::shared_ptr<AVTransBuffer> transBuffer, std::shar
         hisAMeta->format_ = (AudioSampleFormat)format;
 
         transMeta->GetMetaItem(AVTransTag::AUDIO_SAMPLE_RATE, value);
-        hisAMeta->sampleRate_ = std::atoi(value.c_str());
+        hisAMeta->sampleRate_ = static_cast<uint32_t>(std::atoi(value.c_str()));
     
         hisBuffer->UpdateBufferMeta(*hisAMeta);
     } else {
@@ -253,7 +253,7 @@ int64_t GetCurrentTime()
 void GenerateAdtsHeader(unsigned char* adtsHeader, uint32_t packetLen, uint32_t profile, uint32_t sampleRate,
     uint32_t channels)
 {
-    static std::map<int, int> mapSampleRateToFreIndex {
+    static std::map<int, uint32_t> mapSampleRateToFreIndex {
         {96000, 0},
         {88200, 1},
         {64000, 2},
