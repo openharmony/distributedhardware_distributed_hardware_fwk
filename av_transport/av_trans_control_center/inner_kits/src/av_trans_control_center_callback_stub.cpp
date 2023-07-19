@@ -39,15 +39,12 @@ int32_t AVTransControlCenterCallbackStub::OnRemoteRequest(uint32_t code,
     switch (code) {
         case (uint32_t)IAVTransControlCenterCallback::Message::SET_PARAMETER: {
             return SetParameterInner(data, reply);
-            break;
         }
         case (uint32_t)IAVTransControlCenterCallback::Message::SET_SHARED_MEMORY: {
             return SetSharedMemoryInner(data, reply);
-            break;
         }
         case (uint32_t)IAVTransControlCenterCallback::Message::NOTIFY_AV_EVENT: {
             return NotifyInner(data, reply);
-            break;
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
