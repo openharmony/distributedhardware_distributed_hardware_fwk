@@ -76,7 +76,10 @@ void AccessManagerTest::TearDown()
 
 void AccessManagerTest::SetUpTestCase() {}
 
-void AccessManagerTest::TearDownTestCase() {}
+void AccessManagerTest::TearDownTestCase()
+{
+    _Exit(0);
+}
 
 /**
  * @tc.name: SendOnLineEvent_001
