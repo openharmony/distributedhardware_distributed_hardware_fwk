@@ -36,6 +36,10 @@ public:
     AvTransInput operator=(const AvTransInput &) = delete;
     ~AvTransInput() override = default;
 
+    Status Pause();
+
+    Status Resume();
+
     Status PushData(const std::string& inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset);
 
     Status SetDataCallback(std::function<void(std::shared_ptr<Plugin::Buffer>)> callback);

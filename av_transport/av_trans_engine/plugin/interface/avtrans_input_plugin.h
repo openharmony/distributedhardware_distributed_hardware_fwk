@@ -35,6 +35,10 @@ using namespace OHOS::Media::Plugin;
 struct AvTransInputPlugin : public PluginBase {
 explicit AvTransInputPlugin(std::string name): PluginBase(std::move(name)) {}
 
+virtual OHOS::Media::Plugin::Status Pause() = 0;
+
+virtual OHOS::Media::Plugin::Status Resume() = 0;
+
 virtual OHOS::Media::Plugin::Status PushData(const std::string& inPort, std::shared_ptr<Plugin::Buffer> buffer,
     int32_t offset) = 0;
 

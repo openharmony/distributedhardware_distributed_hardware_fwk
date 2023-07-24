@@ -155,6 +155,18 @@ Status DsoftbusInputPlugin::Stop()
     return Status::OK;
 }
 
+Status DsoftbusInputPlugin::Pause()
+{
+    AVTRANS_LOGD("Pause not supported.");
+    return Status::OK;
+}
+
+Status DsoftbusInputPlugin::Resume()
+{
+    AVTRANS_LOGD("Resume not supported.");
+    return Status::OK;
+}
+
 Status DsoftbusInputPlugin::GetParameter(Tag tag, ValueType &value)
 {
     auto res = paramsMap_.find(tag);

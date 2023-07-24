@@ -151,7 +151,10 @@ ErrorCode AVInputFilter::Pause()
 {
     AVTRANS_LOGI("Pause");
     OSAL::ScopedLock lock(inputFilterMutex_);
-    if (state_ != FilterState::RUNNING) {
+    if (state_ == FilterState::PAUSED) {
+        return ErrorCode::SUCCESS;
+    }
+    if ((state_ != FilterState::READY) && (state_ != FilterState::RUNNING)) {
         AVTRANS_LOGE("The current state is invalid");
         return ErrorCode::ERROR_INVALID_STATE;
     }
@@ -159,9 +162,10 @@ ErrorCode AVInputFilter::Pause()
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_NULL_POINTER;
     }
-    if (TranslatePluginStatus(plugin_->Stop()) != ErrorCode::SUCCESS) {
-        AVTRANS_LOGE("The plugin stop fail!");
-        return ErrorCode::ERROR_INVALID_OPERATION;
+    ErrorCode ret = TranslatePluginStatus(plugin_->Pause());
+    if (ret != ErrorCode::SUCCESS) {
+        AVTRANS_LOGE("The plugin pause fail!");
+        return ret;
     }
     state_ = FilterState::PAUSED;
     return ErrorCode::SUCCESS;
@@ -170,6 +174,17 @@ ErrorCode AVInputFilter::Pause()
 ErrorCode AVInputFilter::Resume()
 {
     AVTRANS_LOGI("Resume");
+    OSAL::ScopedLock lock(inputFilterMutex_);
+    if (plugin_ == nullptr) {
+        AVTRANS_LOGE("plugin is nullptr!");
+        return ErrorCode::ERROR_NULL_POINTER;
+    }
+    ErrorCode ret = TranslatePluginStatus(plugin_->Resume());
+    if (ret != ErrorCode::SUCCESS) {
+        AVTRANS_LOGE("The plugin resume fail!");
+        return ret;
+    }
+    state_ = FilterState::RUNNING;
     return ErrorCode::SUCCESS;
 }
 

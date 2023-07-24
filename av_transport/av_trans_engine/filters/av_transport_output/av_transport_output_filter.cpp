@@ -156,20 +156,6 @@ ErrorCode AVOutputFilter::Stop()
 ErrorCode AVOutputFilter::Pause()
 {
     AVTRANS_LOGI("Pause");
-    OSAL::ScopedLock lock(outputFilterMutex_);
-    if (state_ != FilterState::RUNNING) {
-        AVTRANS_LOGE("The current state is invalid");
-        return ErrorCode::ERROR_INVALID_STATE;
-    }
-    if (plugin_ == nullptr) {
-        AVTRANS_LOGE("plugin is nullptr!");
-        return ErrorCode::ERROR_NULL_POINTER;
-    }
-    if (TranslatePluginStatus(plugin_->Stop()) != ErrorCode::SUCCESS) {
-        AVTRANS_LOGE("The plugin stop fail!");
-        return ErrorCode::ERROR_INVALID_OPERATION;
-    }
-    state_ = FilterState::PAUSED;
     return ErrorCode::SUCCESS;
 }
 

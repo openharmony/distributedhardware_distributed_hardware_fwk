@@ -38,6 +38,8 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_AVT_CHANNEL_ALREADY_CREATED = -80011;
     constexpr int32_t ERR_DH_AVT_UNIMPLEMENTED = -80012;
     constexpr int32_t ERR_DH_AVT_COMMON_FAILED = -80013;
+    constexpr int32_t ERR_DH_AVT_PAUSE_FAILED = -80014;
+    constexpr int32_t ERR_DH_AVT_RESUME_FAILED = -80015;
 
     /* Here's internal errno, range: [-81000; -89999] */
     constexpr int32_t ERR_DH_AVT_INVALID_PARAM_VALUE = -81000;

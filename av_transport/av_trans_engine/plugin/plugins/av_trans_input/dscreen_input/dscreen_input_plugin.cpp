@@ -80,6 +80,18 @@ Status DscreenInputPlugin::Reset()
     return Status::OK;
 }
 
+Status DscreenInputPlugin::Pause()
+{
+    AVTRANS_LOGD("Pause not supported.");
+    return Status::OK;
+}
+
+Status DscreenInputPlugin::Resume()
+{
+    AVTRANS_LOGD("Resume not supported.");
+    return Status::OK;
+}
+
 Status DscreenInputPlugin::GetParameter(Tag tag, ValueType &value)
 {
     Media::OSAL::ScopedLock lock(operationMutes_);
