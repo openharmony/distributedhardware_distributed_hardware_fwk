@@ -84,6 +84,13 @@ int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frame
  */
 int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &frameNum, int64_t &timestamp);
 
+/**
+ * @brief reset the shared memory value to all zeros.
+ * @param memory       shared memory
+ * @return Returns DH_AVT_SUCCESS(0) if successful, otherwise returns other error code.
+ */
+int32_t ResetSharedMemory(const AVTransSharedMemory &memory);
+
 bool IsInValidSharedMemory(const AVTransSharedMemory &memory);
 bool IsInValidClockUnit(const AVSyncClockUnit &clockUnit);
 

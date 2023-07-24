@@ -220,6 +220,32 @@ int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &fra
     return DH_AVT_SUCCESS;
 }
 
+int32_t ResetSharedMemory(const AVTransSharedMemory &memory)
+{
+    AVTRANS_LOGI("reset shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32, memory.name.c_str(),
+        memory.size, memory.fd);
+    TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
+
+    int size = AshmemGetSize(memory.fd);
+    TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %" PRId32, size);
+
+    unsigned int prot = PROT_WRITE;
+    int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
+    TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
+
+    void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
+    if (addr == MAP_FAILED) {
+        free(addr);
+        addr = nullptr;
+        AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
+        return ERR_DH_AVT_SHARED_MEMORY_FAILED;
+    }
+    (void)memset_s(reinterpret_cast<uint8_t*>(addr), size, INVALID_VALUE_FALG, size);
+
+    AVTRANS_LOGI("reset shared memory success.");
+    return DH_AVT_SUCCESS;
+}
+
 bool IsInValidSharedMemory(const AVTransSharedMemory &memory)
 {
     return (memory.fd <= 0) || (memory.size <= 0) || memory.name.empty();

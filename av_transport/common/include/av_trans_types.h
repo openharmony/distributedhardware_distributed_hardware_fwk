@@ -105,6 +105,8 @@ enum struct AVTransTag : uint32_t {
     PRE_TIMESTAMP,
     CUR_TIMESTAMP,
     ENGINE_READY,
+    ENGINE_PAUSE,
+    ENGINE_RESUME,
     START_AV_SYNC,
     STOP_AV_SYNC,
     TIME_SYNC_RESULT,

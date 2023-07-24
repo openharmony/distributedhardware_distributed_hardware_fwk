@@ -81,6 +81,22 @@ Status DaudioInputPlugin::Reset()
     return Status::OK;
 }
 
+Status DaudioInputPlugin::Pause()
+{
+    AVTRANS_LOGI("Pause enter.");
+    Media::OSAL::ScopedLock lock(operationMutes_);
+    if ((sharedMemory_.fd > 0) && (sharedMemory_.size > 0) && !sharedMemory_.name.empty()) {
+        ResetSharedMemory(sharedMemory_);
+    }
+    return Status::OK;
+}
+
+Status DaudioInputPlugin::Resume()
+{
+    AVTRANS_LOGI("Resume enter.");
+    return Status::OK;
+}
+
 Status DaudioInputPlugin::GetParameter(Tag tag, ValueType &value)
 {
     {
