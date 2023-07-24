@@ -23,6 +23,16 @@ namespace DistributedHardware {
 AvTransInput::AvTransInput(uint32_t pkgVer, uint32_t apiVer, std::shared_ptr<AvTransInputPlugin> plugin)
     : Base(pkgVer, apiVer, plugin), AvTransInputPlugin_(std::move(plugin)) {}
 
+Status AvTransInput::Pause()
+{
+    return AvTransInputPlugin_->Pause();
+}
+
+Status AvTransInput::Resume()
+{
+    return AvTransInputPlugin_->Resume();
+}
+
 Status AvTransInput::PushData(const std::string& inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
     return AvTransInputPlugin_->PushData(inPort, buffer, offset);

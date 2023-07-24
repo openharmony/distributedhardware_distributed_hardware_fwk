@@ -312,15 +312,15 @@ int32_t AVSenderEngine::SetParameter(AVTransTag tag, const std::string &value)
             break;
         }
         case AVTransTag::ENGINE_PAUSE: {
-            TRUE_RETURN_V_MSG_E(pipeline_ == nullptr, ERR_DH_AVT_PAUSE_FAILED, "pipeline is null, need initialize first.");
+            TRUE_RETURN_V_MSG_E(pipeline_ == nullptr, ERR_DH_AVT_PAUSE_FAILED, "pipeline is null, need init first.");
             ErrorCode ret = pipeline_->Pause();
-            TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_PAUSE_FAILED, "pipeline pause failed");
+            TRUE_RETURN_V_MSG_E(ret != ErrorCode::SUCCESS, ERR_DH_AVT_PAUSE_FAILED, "pipeline pause failed");
             break;
         }
         case AVTransTag::ENGINE_RESUME: {
-            TRUE_RETURN_V_MSG_E(pipeline_ == nullptr, ERR_DH_AVT_RESUME_FAILED, "pipeline is null, need initialize first.");
+            TRUE_RETURN_V_MSG_E(pipeline_ == nullptr, ERR_DH_AVT_RESUME_FAILED, "pipeline is null, need init first.");
             ErrorCode ret = pipeline_->Resume();
-            TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_RESUME_FAILED, "pipeline resume failed");
+            TRUE_RETURN_V_MSG_E(ret != ErrorCode::SUCCESS, ERR_DH_AVT_RESUME_FAILED, "pipeline resume failed");
             break;
         }
         default:
