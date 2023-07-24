@@ -78,7 +78,7 @@ void AccessManagerTest::SetUpTestCase() {}
 
 void AccessManagerTest::TearDownTestCase()
 {
-    _Exit(0);
+    //_Exit(0);
 }
 
 /**
@@ -504,8 +504,8 @@ HWTEST_F(AccessManagerTest, GetComponentVersion_001, TestSize.Level0)
  */
 HWTEST_F(AccessManagerTest, CheckExitSAOrNot_001, TestSize.Level0)
 {
-    DistributedHardwareManagerFactory::GetInstance().CheckExitSAOrNot();
     ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
+    DistributedHardwareManagerFactory::GetInstance().CheckExitSAOrNot();
 }
 } // namespace DistributedHardware
 } // namespace OHOS
