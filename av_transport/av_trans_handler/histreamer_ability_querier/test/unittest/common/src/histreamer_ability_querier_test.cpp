@@ -87,7 +87,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_001, Test
 {
     std::vector<AudioEncoder> audioEncoders = QueryAudioEncoderAbility();
     EXPECT_FALSE(audioEncoders.empty());
-    for(std::vector<AudioEncoder>::size_type i = 0; i < audioEncoders.size(); i++) {
+    for (std::vector<AudioEncoder>::size_type i = 0; i < audioEncoders.size(); i++) {
         auto it = find(AUDIO_ENCODER_WANT.begin(), AUDIO_ENCODER_WANT.end(), audioEncoders[i].name);
         EXPECT_TRUE(it != AUDIO_ENCODER_WANT.end());
     }
@@ -103,7 +103,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_002, Test
 {
     std::vector<AudioDecoder> audioDecoders = QueryAudioDecoderAbility();
     EXPECT_FALSE(audioDecoders.empty());
-    for(std::vector<AudioDecoder>::size_type i = 0; i < audioDecoders.size(); i++) {
+    for (std::vector<AudioDecoder>::size_type i = 0; i < audioDecoders.size(); i++) {
         auto it = find(AUDIO_DECODER_WANT.begin(), AUDIO_DECODER_WANT.end(), audioDecoders[i].name);
         EXPECT_TRUE(it != AUDIO_DECODER_WANT.end());
     }
