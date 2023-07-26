@@ -36,6 +36,8 @@ void HistreamerAbilityQuerierTest::TearDown() {}
 namespace {
 int32_t g_maxMessagesLen = 1 * 1024 * 1024;
 static const std::uint16_t UINT16_ONE = 1;
+static const std::vector<VideoEncoder>::size_type VIDEO_ENCODER_FOUR = 4;
+static const std::vector<VideoDecoder>::size_type VIDEO_DECODER_FOUR = 4;
 
 static const std::string TEST_STR = "test string";
 static const std::string KEY = "key";
@@ -118,7 +120,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_002, Test
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_003, TestSize.Level0)
 {
     std::vector<VideoEncoder> videoEncoders = QueryVideoEncoderAbility();
-    EXPECT_FALSE(videoEncoders.empty() || videoEncoders.size() > VideoEncoder_FOUR);
+    EXPECT_FALSE(videoEncoders.empty() || videoEncoders.size() > VIDEO_ENCODER_FOUR);
     for (std::vector<VideoEncoder>::size_type i = 0; i < videoEncoders.size(); i++) {
         auto it = find(VIDEO_ENCODER_WANT.begin(), VIDEO_ENCODER_WANT.end(), videoEncoders[i].name);
         EXPECT_TRUE(it != VIDEO_ENCODER_WANT.end());
@@ -135,7 +137,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_003, Test
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_004, TestSize.Level0)
 {
     std::vector<VideoDecoder> videoDecoders = QueryVideoDecoderAbility();
-    EXPECT_FALSE(videoDecoders.empty() || videoDecoders.size() > VideoDecoder_FOUR);
+    EXPECT_FALSE(videoDecoders.empty() || videoDecoders.size() > VIDEO_DECODER_FOUR);
     for (std::vector<VideoDecoder>::size_type i = 0; i < videoDecoders.size(); i++) {
         auto it = find(VIDEO_DECODER_WANT.begin(), VIDEO_DECODER_WANT.end(), videoDecoders[i].name);
         EXPECT_TRUE(it != VIDEO_DECODER_WANT.end());
