@@ -107,6 +107,7 @@
         }
       ],
       "test": [
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_handler/histreamer_ability_querier/test/unittest/common:histreamer_ability_querier_test",
         "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/unittest:utils_test",
         "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/unittest:test",
         "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits/test/unittest:kit_test",
