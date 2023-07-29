@@ -223,6 +223,8 @@ int32_t AVReceiverEngine::Release()
 
 int32_t AVReceiverEngine::SetParameter(AVTransTag tag, const std::string &value)
 {
+    bool isFilterNull = (avInput_ == nullptr) || (avOutput_ == nullptr) || (pipeline_ == nullptr);
+    TRUE_RETURN_V_MSG_E(isFilterNull, ERR_DH_AVT_SETUP_FAILED, "filter or pipeline is null, set parameter failed.");
     switch (tag) {
         case AVTransTag::VIDEO_WIDTH: {
             avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_WIDTH), std::atoi(value.c_str()));
