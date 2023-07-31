@@ -86,6 +86,7 @@ private:
     AVDataCallback datacallback_ = nullptr;
     std::shared_ptr<Ffmpeg::Resample> resample_ {nullptr};
     uint32_t smIndex_ = 0;
+    std::mutex sharedMemMtx_;
     AVTransSharedMemory sharedMemory_ = AVTransSharedMemory{ 0, 0, "" };
 };
 } // namespace DistributedHardware

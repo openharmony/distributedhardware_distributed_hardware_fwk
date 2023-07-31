@@ -164,6 +164,7 @@ Status DaudioOutputPlugin::SetParameter(Tag tag, const ValueType &value)
     Media::OSAL::ScopedLock lock(operationMutes_);
     paramsMap_.insert(std::make_pair(tag, value));
     if (tag == Plugin::Tag::USER_SHARED_MEMORY_FD) {
+        std::unique_lock<std::mutex> lock(sharedMemMtx_);
         sharedMemory_ = UnmarshalSharedMemory(Media::Plugin::AnyCast<std::string>(value));
     }
     if (tag == Plugin::Tag::USER_AV_SYNC_GROUP_INFO) {
@@ -280,6 +281,7 @@ void DaudioOutputPlugin::HandleData()
 
 void DaudioOutputPlugin::WriteMasterClockToMemory(const std::shared_ptr<Plugin::Buffer> &buffer)
 {
+    std::unique_lock<std::mutex> lock(sharedMemMtx_);
     if ((sharedMemory_.fd <= 0) || (sharedMemory_.size <= 0) || sharedMemory_.name.empty()) {
         return;
     }
