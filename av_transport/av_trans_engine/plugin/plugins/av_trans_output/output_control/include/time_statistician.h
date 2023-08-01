@@ -37,14 +37,14 @@ public:
     void ClearStatistics();
 
 public:
-    uint32_t pushIndex_ = 0;
+    int32_t pushIndex_ = 0;
     int64_t averPushInterval_ = 0;
     int64_t lastPushTime_ = 0;
     int64_t pushTime_ = 0;
     int64_t pushIntervalSum_ = 0;
     int64_t pushInterval_ = 0;
 
-    uint32_t timeStampIndex_ = 0;
+    int32_t timeStampIndex_ = 0;
     int64_t averTimeStampInterval_ = 0;
     int64_t lastTimeStamp_ = 0;
     int64_t timeStamp_ = 0;
