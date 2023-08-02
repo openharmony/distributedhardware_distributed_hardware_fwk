@@ -1,0 +1,73 @@
+# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import("../../../../../distributed_av_transport.gni")
+
+module_out_path = "distributed_hardware_fwk/dsoftbus_input_audio_plugin_test"
+
+ohos_unittest("DsoftbusInputAudioPluginTest") {
+  module_out_path = module_out_path
+
+  include_dirs = [
+    "${common_path}/include",
+    "${plugin_path}/interface",
+    "${plugin_path}/plugins/av_trans_input/dsoftbus_input_audio",
+    "//third_party/ffmpeg",
+    "//third_party/json/include",
+  ]
+
+  sources = [
+    "${common_path}/src/av_trans_log.cpp",
+    "${common_path}/src/av_trans_meta.cpp",
+    "${common_path}/src/av_trans_utils.cpp",
+    "${common_path}/src/softbus_channel_adapter.cpp",
+    "dsoftbus_input_audio_plugin_test.cpp",
+  ]
+
+  deps = [
+    "${plugin_path}/plugins/av_trans_input/dsoftbus_input_audio:plugin_AVTransDsoftbusInputAudio",
+    "//third_party/googletest:gtest_rtti",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "hilog:libhilog",
+    "histreamer:histreamer_base",
+    "histreamer:histreamer_ffmpeg_convert",
+    "histreamer:histreamer_plugin_base",
+  ]
+
+  cflags = [
+    "-O2",
+    "-fPIC",
+    "-Wall",
+    "-frtti",
+    "-fexceptions",
+    "-Dprivate = public",
+  ]
+
+  cflags_cc = cflags
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"dsoftbus_input_audio_plugin_test\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+group("dsoftbus_input_audio_unittest") {
+  testonly = true
+  deps = [ ":DsoftbusInputAudioPluginTest" ]
+}
