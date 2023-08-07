@@ -499,7 +499,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_022, Test
 
     jsonObject[MIME] = VIDEO_DECODEROUT_MIME;
     FromJson(jsonObject, videoDecoderOut);
-    EXPECT_EQ(VIDEO_DECODERIN_MIME, videoDecoderOut.mime);
+    EXPECT_EQ(VIDEO_DECODEROUT_MIME, videoDecoderOut.mime);
     EXPECT_TRUE(videoDecoderOut.pixel_fmt.empty());
 }
 
