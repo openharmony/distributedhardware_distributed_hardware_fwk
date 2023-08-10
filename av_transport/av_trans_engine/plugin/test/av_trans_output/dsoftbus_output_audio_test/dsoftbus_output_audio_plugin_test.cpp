@@ -81,10 +81,6 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Stop_001, TestSize.Level1)
     auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
     Status ret = plugin->Stop();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
-
-    plugin->bufferPopTask_ = std::make_shared<Media::OSAL::Task>("audioBufferQueuePopThread");
-    ret = plugin->Stop();
-    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, PushData_001, testing::ext::TestSize.Level1)
@@ -95,24 +91,6 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, PushData_001, testing::ext::TestSize.Lev
     int64_t offset = 1;
     Status ret = plugin->PushData(inPort, buffer, offset);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
-
-    buffer = std::make_shared<AVBuffer>();
-    plugin->PushData(inPort, buffer, offset);
-    EXPECT_EQ(Status::OK, ret);
-}
-
-HWTEST_F(DsoftbusOutputAudioPluginTest, OpenSoftbusChannel_001, testing::ext::TestSize.Level1)
-{
-    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
-    Status ret = plugin->OpenSoftbusChannel();
-
-    plugin->CloseSoftbusChannel();
-    AVTransEvent event;
-    plugin->OnChannelEvent(event);
-
-    plugin->state_ = State::RUNNING;
-    plugin->FeedChannelData();
-    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

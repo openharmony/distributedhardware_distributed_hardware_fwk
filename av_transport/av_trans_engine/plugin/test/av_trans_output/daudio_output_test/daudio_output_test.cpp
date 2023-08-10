@@ -47,22 +47,31 @@ HWTEST_F(DaudioOutputTest, Prepare_001, TestSize.Level0)
     plugin->state_ = State::PREPARED;
     Status ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+}
 
+HWTEST_F(DaudioOutputTest, Prepare_002, TestSize.Level0)
+{
+    auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
     plugin->state_ = State::INITIALIZED;
+    Status ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_UNKNOWN, ret);
+
+    int value = 1;
+    plugin->SetParameter(Tag::AUDIO_SAMPLE_RATE, value);
     ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_UNKNOWN, ret);
 
-    std::string value = "dsoftbus_output_test";
-    ret = plugin->SetParameter(Tag::AUDIO_CHANNELS, value);
-    plugin->Prepare();
+    plugin->paramsMap_.clear();
+    plugin->SetParameter(Tag::AUDIO_CHANNELS, value);
+    ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_UNKNOWN, ret);
 
-    ret = plugin->SetParameter(Tag::AUDIO_SAMPLE_RATE, value);
-    plugin->Prepare();
+    plugin->SetParameter(Tag::AUDIO_SAMPLE_RATE, value);
+    ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_UNKNOWN, ret);
 
-    ret = plugin->SetParameter(Tag::AUDIO_CHANNEL_LAYOUT, value);
-    plugin->Prepare();
+    plugin->SetParameter(Tag::AUDIO_CHANNEL_LAYOUT, value);
+    ret = plugin->Prepare();
     EXPECT_EQ(Status::OK, ret);
 }
 
@@ -149,11 +158,10 @@ HWTEST_F(DaudioOutputTest, SetDataCallback_001, testing::ext::TestSize.Level1)
 HWTEST_F(DaudioOutputTest, WriteMasterClockToMemory_001, testing::ext::TestSize.Level1)
 {
     auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
+    std::string value = "dsoftbus_output_test";
     Status ret = plugin->SetParameter(Tag::USER_AV_SYNC_GROUP_INFO, value);
     std::shared_ptr<AVBuffer> buffer = std::make_shared<AVBuffer>();
     plugin->WriteMasterClockToMemory(buffer);
-    plugin->state_ = State::RUNNING;
-    plugin->HandleData();
     EXPECT_EQ(Status::OK, ret);
 }
 

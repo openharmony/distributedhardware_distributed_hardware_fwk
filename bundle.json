@@ -114,7 +114,8 @@
         "//foundation/distributedhardware/distributed_hardware_fwk/utils/test/fuzztest:fuzztest",
         "//foundation/distributedhardware/distributed_hardware_fwk/services/distributedhardwarefwkservice/test/fuzztest:fuzztest",
         "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits/test/fuzztest:fuzztest",
-        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/filters/test:filter_test"
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/filters/test:filter_test",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/plugin/test:plugin_test"
       ]
     }
   }
