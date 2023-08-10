@@ -44,6 +44,10 @@ HWTEST_F(DaudioInputTest, GetParameter_001, TestSize.Level0)
     ValueType val;
     Status ret = plugin->GetParameter(Tag::USER_SHARED_MEMORY_FD, val);
     EXPECT_EQ(Status::OK, ret);
+
+    plugin->tagMap_.clear();
+    ret = plugin->GetParameter(Tag::USER_SHARED_MEMORY_FD, val);
+    EXPECT_EQ(Status::ERROR_NOT_EXISTED, ret);
 }
 
 HWTEST_F(DaudioInputTest, PushData_001, TestSize.Level0)

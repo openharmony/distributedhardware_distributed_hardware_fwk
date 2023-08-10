@@ -29,6 +29,15 @@ void DsoftbusOutputPluginTest::SetUp(void) {}
 
 void DsoftbusOutputPluginTest::TearDown(void) {}
 
+HWTEST_F(DsoftbusOutputPluginTest, Reset_001, TestSize.Level0)
+{
+    auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
+    Status ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+    plugin->bufferPopTask_ = std::make_shared<Media::OSAL::Task>("videoBufferQueuePopThread");
+    ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+}
 
 HWTEST_F(DsoftbusOutputPluginTest, Prepare_001, TestSize.Level0)
 {
@@ -68,11 +77,47 @@ HWTEST_F(DsoftbusOutputPluginTest, Start_001, TestSize.Level1)
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
 }
 
+HWTEST_F(DsoftbusOutputPluginTest, Start_002, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
+    plugin->state_ = State::PREPARED;
+    Status ret = plugin->Start();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+}
+
 HWTEST_F(DsoftbusOutputPluginTest, Stop_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
     Status ret = plugin->Stop();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+}
+
+HWTEST_F(DsoftbusOutputPluginTest, Stop_002, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
+    plugin->state_ = State::RUNNING;
+    Status ret = plugin->Stop();
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DsoftbusOutputPluginTest, OpenSoftbusChannel_001, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
+    Status ret = plugin->OpenSoftbusChannel();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->sessionName_ = "sessionName_test";
+    plugin->peerDevId_ = "peerDevId_test";
+    ret = plugin->OpenSoftbusChannel();
+
+    plugin->CloseSoftbusChannel();
+
+    AVTransEvent event;
+    plugin->OnChannelEvent(event);
+
+    plugin->state_ = State::RUNNING;
+    plugin->FeedChannelData();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
 HWTEST_F(DsoftbusOutputPluginTest, PushData_001, testing::ext::TestSize.Level1)
@@ -83,6 +128,10 @@ HWTEST_F(DsoftbusOutputPluginTest, PushData_001, testing::ext::TestSize.Level1)
     int64_t offset = 1;
     Status ret = plugin->PushData(inPort, buffer, offset);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+
+    buffer = std::make_shared<AVBuffer>();
+    plugin->PushData(inPort, buffer, offset);
+    EXPECT_EQ(Status::OK, ret);
 }
 
 } // namespace DistributedHardware

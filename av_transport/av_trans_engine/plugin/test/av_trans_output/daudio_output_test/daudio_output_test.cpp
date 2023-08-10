@@ -29,12 +29,41 @@ void DaudioOutputTest::SetUp() {}
 
 void DaudioOutputTest::TearDown() {}
 
+HWTEST_F(DaudioOutputTest, Reset_001, TestSize.Level0)
+{
+    auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
+    Status ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+
+    plugin->sendPlayTask_ = std::make_shared<OHOS::Media::OSAL::Task>("sendPlayTask_");
+    plugin->resample_ = std::make_shared<Ffmpeg::Resample>();
+    ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+}
+
 HWTEST_F(DaudioOutputTest, Prepare_001, TestSize.Level0)
 {
     auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
     plugin->state_ = State::PREPARED;
     Status ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+
+    plugin->state_ = State::INITIALIZED;
+    ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_UNKNOWN, ret);
+
+    std::string value = "dsoftbus_output_test";
+    ret = plugin->SetParameter(Tag::AUDIO_CHANNELS, value);
+    plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_UNKNOWN, ret);
+
+    ret = plugin->SetParameter(Tag::AUDIO_SAMPLE_RATE, value);
+    plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_UNKNOWN, ret);
+
+    ret = plugin->SetParameter(Tag::AUDIO_CHANNEL_LAYOUT, value);
+    plugin->Prepare();
+    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(DaudioOutputTest, SetParameter_001, TestSize.Level0)
@@ -42,6 +71,9 @@ HWTEST_F(DaudioOutputTest, SetParameter_001, TestSize.Level0)
     auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
     std::string value = "dsoftbus_output_test";
     Status ret = plugin->SetParameter(Tag::USER_AV_SYNC_GROUP_INFO, value);
+    EXPECT_EQ(Status::OK, ret);
+
+    ret = plugin->SetParameter(Tag::USER_SHARED_MEMORY_FD, value);
     EXPECT_EQ(Status::OK, ret);
 }
 
@@ -104,6 +136,25 @@ HWTEST_F(DaudioOutputTest, PushData_001, testing::ext::TestSize.Level1)
     int64_t offset = 1;
     Status ret = plugin->PushData(inPort, buffer, offset);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+}
+
+HWTEST_F(DaudioOutputTest, SetDataCallback_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
+    AVDataCallback callback = nullptr;
+    Status ret = plugin->SetDataCallback(callback);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+}
+
+HWTEST_F(DaudioOutputTest, WriteMasterClockToMemory_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
+    Status ret = plugin->SetParameter(Tag::USER_AV_SYNC_GROUP_INFO, value);
+    std::shared_ptr<AVBuffer> buffer = std::make_shared<AVBuffer>();
+    plugin->WriteMasterClockToMemory(buffer);
+    plugin->state_ = State::RUNNING;
+    plugin->HandleData();
+    EXPECT_EQ(Status::OK, ret);
 }
 
 } // namespace DistributedHardware
