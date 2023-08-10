@@ -129,7 +129,7 @@ ErrorCode AVInputFilter::Stop()
 {
     AVTRANS_LOGI("Stop");
     OSAL::ScopedLock lock(inputFilterMutex_);
-    if (state_ != FilterState::RUNNING) {
+    if (state_ != FilterState::RUNNING && state_ != FilterState::PAUSED) {
         AVTRANS_LOGE("The current state is invalid");
         return ErrorCode::ERROR_INVALID_STATE;
     }
