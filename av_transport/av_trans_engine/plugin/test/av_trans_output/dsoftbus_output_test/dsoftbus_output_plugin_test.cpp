@@ -29,6 +29,15 @@ void DsoftbusOutputPluginTest::SetUp(void) {}
 
 void DsoftbusOutputPluginTest::TearDown(void) {}
 
+HWTEST_F(DsoftbusOutputPluginTest, Reset_001, TestSize.Level0)
+{
+    auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
+    Status ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+    plugin->bufferPopTask_ = std::make_shared<Media::OSAL::Task>("videoBufferQueuePopThread");
+    ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+}
 
 HWTEST_F(DsoftbusOutputPluginTest, Prepare_001, TestSize.Level0)
 {
@@ -66,6 +75,14 @@ HWTEST_F(DsoftbusOutputPluginTest, Start_001, TestSize.Level1)
     auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
     Status ret = plugin->Start();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+}
+
+HWTEST_F(DsoftbusOutputPluginTest, Start_002, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
+    plugin->state_ = State::PREPARED;
+    Status ret = plugin->Start();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
 HWTEST_F(DsoftbusOutputPluginTest, Stop_001, TestSize.Level1)

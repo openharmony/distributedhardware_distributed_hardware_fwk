@@ -29,6 +29,15 @@ void DscreenOutputTest::SetUp(void) {}
 
 void DscreenOutputTest::TearDown(void) {}
 
+HWTEST_F(DscreenOutputTest, Reset_001, TestSize.Level0)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    Status ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+    plugin->InitOutputController();
+    ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+}
 
 HWTEST_F(DscreenOutputTest, Prepare_001, TestSize.Level0)
 {

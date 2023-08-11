@@ -29,6 +29,15 @@ void DsoftbusOutputAudioPluginTest::SetUp(void) {}
 
 void DsoftbusOutputAudioPluginTest::TearDown(void) {}
 
+HWTEST_F(DsoftbusOutputAudioPluginTest, Reset_001, TestSize.Level0)
+{
+    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
+    Status ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+    plugin->bufferPopTask_ = std::make_shared<Media::OSAL::Task>("audioBufferQueuePopThread");
+    ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+}
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, Prepare_001, TestSize.Level0)
 {
@@ -36,6 +45,10 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Prepare_001, TestSize.Level0)
     plugin->state_ = State::PREPARED;
     Status ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+
+    plugin->state_ = State::INITIALIZED;
+    ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, GetParameter_001, TestSize.Level1)
@@ -57,6 +70,10 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Start_001, TestSize.Level1)
     auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
     Status ret = plugin->Start();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+
+    plugin->state_ = State::PREPARED;
+    ret = plugin->Start();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, Stop_001, TestSize.Level1)
@@ -64,6 +81,16 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Stop_001, TestSize.Level1)
     auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
     Status ret = plugin->Stop();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+}
+
+HWTEST_F(DsoftbusOutputAudioPluginTest, PushData_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
+    std::string inPort = "inPort_test";
+    std::shared_ptr<Plugin::Buffer> buffer = nullptr;
+    int64_t offset = 1;
+    Status ret = plugin->PushData(inPort, buffer, offset);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
