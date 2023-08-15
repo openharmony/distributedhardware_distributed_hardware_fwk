@@ -321,12 +321,12 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(int32_t sessionId, int32_t
     AVTransEvent event = {type, sessName, peerDevId};
 
     {
-        std::lock_guard<std::mutex> lock(listenerMtx_);
-        for (auto it = listenerMap_.begin(); it != listenerMap_.end(); it++) {
-            if (((it->first).find(sessName) != std::string::npos) && (it->second != nullptr)) {
-                std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->second, event).detach();
-                {
-                    std::lock_guard<std::mutex> lock(idMapMutex_);
+        std::lock_guard<std::mutex> lock(idMapMutex_);
+        {
+            std::lock_guard<std::mutex> lock(listenerMtx_);
+            for (auto it = listenerMap_.begin(); it != listenerMap_.end(); it++) {
+                if (((it->first).find(sessName) != std::string::npos) && (it->second != nullptr)) {
+                    std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->second, event).detach();
                     devId2SessIdMap_.erase(it->first);
                     devId2SessIdMap_.insert(std::make_pair(it->first, sessionId));
                 }
