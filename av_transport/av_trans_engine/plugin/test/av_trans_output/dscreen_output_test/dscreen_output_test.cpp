@@ -149,5 +149,181 @@ HWTEST_F(DscreenOutputTest, PushData_001, testing::ext::TestSize.Level1)
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 }
 
+HWTEST_F(DscreenOutputTest, PushData_002, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    std::shared_ptr<Plugin::Buffer> data = std::make_shared<AVBuffer>();
+    plugin->controller_->PushData(data);
+
+    plugin->controller_->SetControlStatus(DScreenOutputController::ControlStatus::START);
+    plugin->controller_->PushData(data);
+
+    plugin->controller_->SetControlMode(DScreenOutputController::ControlMode::SYNC);
+    plugin->controller_->PushData(data);
+}
+
+HWTEST_F(DscreenOutputTest, StartControl_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    OutputController::ControlStatus ret = plugin->controller_->StartControl();
+    EXPECT_EQ(OutputController::ControlStatus::START, ret);
+
+    plugin->controller_->SetControlStatus(OutputController::ControlStatus::START);
+    ret = plugin->controller_->StartControl();
+    EXPECT_EQ(OutputController::ControlStatus::STARTED, ret);
+}
+
+HWTEST_F(DscreenOutputTest, StopControl_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    OutputController::ControlStatus ret = plugin->controller_->StopControl();
+    EXPECT_EQ(OutputController::ControlStatus::STOP, ret);
+
+    plugin->controller_->SetControlStatus(OutputController::ControlStatus::STOP);
+    ret = plugin->controller_->StopControl();
+    EXPECT_EQ(OutputController::ControlStatus::STOPPED, ret);
+}
+
+HWTEST_F(DscreenOutputTest, ReleaseControl_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+
+    OutputController::ControlStatus ret = plugin->controller_->ReleaseControl();
+    EXPECT_EQ(OutputController::ControlStatus::RELEASED, ret);
+}
+
+HWTEST_F(DscreenOutputTest, SetParameter_002, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    std::string value = "dscreen_output_test";
+    Status ret = plugin->controller_->SetParameter(Tag::USER_AV_SYNC_GROUP_INFO, value);
+    EXPECT_EQ(Status::OK, ret);
+
+    ret = plugin->controller_->SetParameter(Tag::USER_SHARED_MEMORY_FD, value);
+    EXPECT_EQ(Status::OK, ret);
+
+    ret = plugin->controller_->SetParameter(Tag::USER_TIME_SYNC_RESULT, value);
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DscreenOutputTest, ControlOutput_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    std::shared_ptr<Plugin::Buffer> data = std::make_shared<AVBuffer>();
+    plugin->controller_->SetAllowControlState(false);
+    int32_t ret = plugin->controller_->ControlOutput(data);
+    EXPECT_EQ(OUTPUT_FRAME, ret);
+
+    plugin->controller_->SetAllowControlState(true);
+    data->pts = 100;
+    ret = plugin->controller_->ControlOutput(data);
+    EXPECT_EQ(OUTPUT_FRAME, ret);
+
+    plugin->controller_->CheckSyncInfo(data);
+    plugin->controller_->PrepareControl();
+    plugin->controller_->SetControlMode(OutputController::ControlMode::SYNC);
+    plugin->controller_->CalProcessTime(data);
+}
+
+HWTEST_F(DscreenOutputTest, CheckIsClockInvalid_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    std::shared_ptr<Plugin::Buffer> data;
+    bool ret = plugin->controller_->CheckIsClockInvalid(data);
+    EXPECT_EQ(false, ret);
+
+    plugin->controller_->SetControlMode(OutputController::ControlMode::SYNC);
+    ret = plugin->controller_->CheckIsClockInvalid(data);
+    EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(DscreenOutputTest, AcquireSyncClockTime_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    std::shared_ptr<Plugin::Buffer> data;
+    int32_t ret = plugin->controller_->AcquireSyncClockTime(data);
+    EXPECT_EQ(ERR_DH_AVT_SHARED_MEMORY_FAILED, ret);
+}
+
+HWTEST_F(DscreenOutputTest, WaitRereadClockFailed_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    std::shared_ptr<Plugin::Buffer> data;
+    bool ret = plugin->controller_->WaitRereadClockFailed(data);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DscreenOutputTest, CheckIsProcessInDynamicBalance_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    std::shared_ptr<Plugin::Buffer> data;
+    plugin->controller_->SetControlMode(OutputController::ControlMode::SYNC);
+    bool ret = plugin->controller_->CheckIsProcessInDynamicBalance(data);
+    EXPECT_EQ(true, ret);
+
+    plugin->controller_->SetControlMode(OutputController::ControlMode::SMOOTH);
+    plugin->controller_->SetProcessDynamicBalanceState(false);
+    ret = plugin->controller_->CheckIsProcessInDynamicBalance(data);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DscreenOutputTest, CheckIsProcessInDynamicBalanceOnce_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    std::shared_ptr<Plugin::Buffer> data;
+    bool ret = plugin->controller_->CheckIsProcessInDynamicBalanceOnce(data);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DscreenOutputTest, SyncClock_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    std::shared_ptr<Plugin::Buffer> data = std::make_shared<AVBuffer>();
+    plugin->controller_->SyncClock(data);
+}
+
+HWTEST_F(DscreenOutputTest, PostOutputEvent_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    std::shared_ptr<Plugin::Buffer> data;
+    int32_t ret = plugin->controller_->PostOutputEvent(data);
+    EXPECT_EQ(HANDLE_FAILED, ret);
+}
+
+HWTEST_F(DscreenOutputTest, NotifyOutput_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    plugin->InitOutputController();
+    std::shared_ptr<Plugin::Buffer> data;
+    plugin->controller_->UnregisterListener();
+    int32_t ret = plugin->controller_->NotifyOutput(data);
+    EXPECT_EQ(NOTIFY_FAILED, ret);
+
+    int32_t result = 0;
+    plugin->controller_->HandleControlResult(data, result);
+
+    result = 1;
+    plugin->controller_->HandleControlResult(data, result);
+
+    result = 2;
+    plugin->controller_->HandleControlResult(data, result);
+
+    result = 3;
+    plugin->controller_->HandleControlResult(data, result);
+}
+
 } // namespace DistributedHardware
 } // namespace OHOS
