@@ -35,7 +35,7 @@ namespace {
 
 void AccessManagerOfflineFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size <= sizeof(DmDeviceInfo))) {
+    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
         return;
     }
 
