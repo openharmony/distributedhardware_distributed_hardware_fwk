@@ -43,6 +43,10 @@ HWTEST_F(DsoftbusInputPluginTest, Prepare_002, TestSize.Level1)
     plugin->state_ = State::INITIALIZED;
     Status ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->ownerName_ = "ohos.dhardware.dcamera";
+    ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
 HWTEST_F(DsoftbusInputPluginTest, Start_001, TestSize.Level1)
@@ -107,6 +111,9 @@ HWTEST_F(DsoftbusInputPluginTest, GetParameter_002, TestSize.Level1)
 
     AVTransEvent event;
     plugin->OnChannelEvent(event);
+
+    std::shared_ptr<AVBuffer> buffer = std::make_shared<AVBuffer>();
+    plugin->DataEnqueue(buffer);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
