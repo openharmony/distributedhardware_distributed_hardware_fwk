@@ -16,6 +16,6 @@ group("send_test") {
 
   deps = [
     "av_sender_engine:av_sender_engine_test",
-    "av_sender_engine_provider:av_sender_engine_provider_test"
+    "av_sender_engine_provider:av_sender_engine_provider_test",
   ]
 }
