@@ -57,7 +57,7 @@ int32_t AVSenderEngine::Initialize()
 
     ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_INIT_FAILED, "register sender channel callback failed");
-
+    RegRespFunMap();
     initialized_ = true;
     SetCurrentState(StateId::INITIALIZED);
     return DH_AVT_SUCCESS;
@@ -205,130 +205,182 @@ int32_t AVSenderEngine::SetParameter(AVTransTag tag, const std::string &value)
 {
     bool isFilterNull = (avInput_ == nullptr) || (avOutput_ == nullptr) || (pipeline_ == nullptr);
     TRUE_RETURN_V_MSG_E(isFilterNull, ERR_DH_AVT_SETUP_FAILED, "filter or pipeline is null, set parameter failed.");
-    switch (tag) {
-        case AVTransTag::VIDEO_WIDTH: {
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_WIDTH), std::atoi(value.c_str()));
-            AVTRANS_LOGI("SetParameter VIDEO_WIDTH success, video width = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::VIDEO_HEIGHT: {
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_HEIGHT), std::atoi(value.c_str()));
-            AVTRANS_LOGI("SetParameter VIDEO_HEIGHT success, video height = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::VIDEO_PIXEL_FORMAT: {
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_PIXEL_FORMAT),
-                Plugin::VideoPixelFormat::RGBA);
-            AVTRANS_LOGI("SetParameter VIDEO_PIXEL_FORMAT success, pixel format = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::VIDEO_FRAME_RATE: {
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_FRAME_RATE), std::atoi(value.c_str()));
-            avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_FRAME_RATE), std::atoi(value.c_str()));
-            AVTRANS_LOGI("SetParameter VIDEO_FRAME_RATE success, frame rate = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::AUDIO_BIT_RATE:
-        case AVTransTag::VIDEO_BIT_RATE: {
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_BITRATE), std::atoi(value.c_str()));
-            AVTRANS_LOGI("SetParameter MEDIA_BITRATE success, bit rate = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::VIDEO_CODEC_TYPE: {
-            if (value == MIME_VIDEO_H264) {
-                Plugin::Meta encoderMeta;
-                encoderMeta.Set<Plugin::Tag::MIME>(MEDIA_MIME_VIDEO_H264);
-                encoderMeta.Set<Plugin::Tag::VIDEO_H264_PROFILE>(Plugin::VideoH264Profile::BASELINE);
-                encoderMeta.Set<Plugin::Tag::VIDEO_H264_LEVEL>(VIDEO_H264_LEVEL);
-                videoEncoder_->SetVideoEncoder(0, std::make_shared<Plugin::Meta>(encoderMeta));
-
-                std::string mime = MEDIA_MIME_VIDEO_RAW;
-                avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
-                mime = MEDIA_MIME_VIDEO_H264;
-                avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
-                AVTRANS_LOGI("SetParameter VIDEO_CODEC_TYPE = H264 success");
-            } else if (value == MIME_VIDEO_H265) {
-                Plugin::Meta encoderMeta;
-                encoderMeta.Set<Plugin::Tag::MIME>(MEDIA_MIME_VIDEO_H265);
-                videoEncoder_->SetVideoEncoder(0, std::make_shared<Plugin::Meta>(encoderMeta));
-
-                std::string mime = MEDIA_MIME_VIDEO_RAW;
-                avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
-                mime = MEDIA_MIME_VIDEO_H265;
-                avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
-                AVTRANS_LOGI("SetParameter VIDEO_CODEC_TYPE = H265 success");
-            } else {
-                AVTRANS_LOGE("SetParameter VIDEO_CODEC_TYPE failed, input value invalid.");
-            }
-            break;
-        }
-        case AVTransTag::AUDIO_CODEC_TYPE: {
-            Plugin::Meta encoderMeta;
-            encoderMeta.Set<Plugin::Tag::MIME>(MEDIA_MIME_AUDIO_AAC);
-            encoderMeta.Set<Plugin::Tag::AUDIO_AAC_PROFILE>(Plugin::AudioAacProfile::LC);
-            audioEncoder_->SetAudioEncoder(0, std::make_shared<Plugin::Meta>(encoderMeta));
-
-            std::string mime = MEDIA_MIME_AUDIO_RAW;
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
-            mime = MEDIA_MIME_AUDIO_AAC;
-            avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
-            AVTRANS_LOGI("SetParameter AUDIO_CODEC_TYPE = ACC success");
-            break;
-        }
-        case AVTransTag::AUDIO_CHANNEL_MASK: {
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNELS), std::atoi(value.c_str()));
-            avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNELS), std::atoi(value.c_str()));
-            AVTRANS_LOGI("SetParameter AUDIO_CHANNELS success, audio channels = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::AUDIO_SAMPLE_RATE: {
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_RATE), std::atoi(value.c_str()));
-            avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_RATE), std::atoi(value.c_str()));
-            AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_RATE success, audio sample rate = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::AUDIO_CHANNEL_LAYOUT: {
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNEL_LAYOUT), std::atoi(value.c_str()));
-            avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNEL_LAYOUT), std::atoi(value.c_str()));
-            AVTRANS_LOGI("SetParameter AUDIO_CHANNEL_LAYOUT success, audio channel layout = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::AUDIO_SAMPLE_FORMAT: {
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_FORMAT), std::atoi(value.c_str()));
-            AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_FORMAT success, audio sample format = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::AUDIO_FRAME_SIZE: {
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_PER_FRAME), std::atoi(value.c_str()));
-            AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_PER_FRAME success, audio sample per frame = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::SHARED_MEMORY_FD: {
-            avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::USER_SHARED_MEMORY_FD), value);
-            AVTRANS_LOGI("SetParameter USER_SHARED_MEMORY_FD success, shared memory info = %s", value.c_str());
-            break;
-        }
-        case AVTransTag::ENGINE_READY: {
-            int32_t ret = PreparePipeline(value);
-            TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_SETUP_FAILED, "SetParameter ENGINE_READY failed");
-            break;
-        }
-        case AVTransTag::ENGINE_PAUSE: {
-            TRUE_RETURN_V_MSG_E(pipeline_ == nullptr, ERR_DH_AVT_PAUSE_FAILED, "pipeline is null, need init first.");
-            ErrorCode ret = pipeline_->Pause();
-            TRUE_RETURN_V_MSG_E(ret != ErrorCode::SUCCESS, ERR_DH_AVT_PAUSE_FAILED, "pipeline pause failed");
-            break;
-        }
-        case AVTransTag::ENGINE_RESUME: {
-            TRUE_RETURN_V_MSG_E(pipeline_ == nullptr, ERR_DH_AVT_RESUME_FAILED, "pipeline is null, need init first.");
-            ErrorCode ret = pipeline_->Resume();
-            TRUE_RETURN_V_MSG_E(ret != ErrorCode::SUCCESS, ERR_DH_AVT_RESUME_FAILED, "pipeline resume failed");
-            break;
-        }
-        default:
-            AVTRANS_LOGE("Invalid tag.");
+    auto iter = funcMap_.find(tag);
+    if (iter == funcMap_.end()) {
+        AVTRANS_LOGE("AVTransTag %u is undefined.", tag);
+        return ERR_DH_AVT_INVALID_PARAM;
     }
+    SetParaFunc &func = iter->second;
+    (this->*func)(value);
     return DH_AVT_SUCCESS;
+}
+
+void AVSenderEngine::RegRespFunMap()
+{
+    funcMap_[AVTransTag::VIDEO_WIDTH] = &AVSenderEngine::SetVideoWidth;
+    funcMap_[AVTransTag::VIDEO_HEIGHT] = &AVSenderEngine::SetVideoHeight;
+    funcMap_[AVTransTag::VIDEO_PIXEL_FORMAT] = &AVSenderEngine::SetVideoPixelFormat;
+    funcMap_[AVTransTag::VIDEO_FRAME_RATE] = &AVSenderEngine::SetVideoFrameRate;
+    funcMap_[AVTransTag::AUDIO_BIT_RATE] = &AVSenderEngine::SetAudioBitRate;
+    funcMap_[AVTransTag::VIDEO_BIT_RATE] = &AVSenderEngine::SetVideoBitRate;
+    funcMap_[AVTransTag::VIDEO_CODEC_TYPE] = &AVSenderEngine::SetVideoCodecType;
+    funcMap_[AVTransTag::AUDIO_CODEC_TYPE] = &AVSenderEngine::SetAudioCodecType;
+    funcMap_[AVTransTag::AUDIO_CHANNEL_MASK] = &AVSenderEngine::SetAudioChannelMask;
+    funcMap_[AVTransTag::AUDIO_SAMPLE_RATE] = &AVSenderEngine::SetAudioSampleRate;
+    funcMap_[AVTransTag::AUDIO_CHANNEL_LAYOUT] = &AVSenderEngine::SetAudioChannelLayout;
+    funcMap_[AVTransTag::AUDIO_SAMPLE_FORMAT] = &AVSenderEngine::SetAudioSampleFormat;
+    funcMap_[AVTransTag::AUDIO_FRAME_SIZE] = &AVSenderEngine::SetAudioFrameSize;
+    funcMap_[AVTransTag::SHARED_MEMORY_FD] = &AVSenderEngine::SetSharedMemoryFd;
+    funcMap_[AVTransTag::ENGINE_READY] = &AVSenderEngine::SetEngineReady;
+    funcMap_[AVTransTag::ENGINE_PAUSE] = &AVSenderEngine::SetEnginePause;
+    funcMap_[AVTransTag::ENGINE_RESUME] = &AVSenderEngine::SetEngineResume;
+}
+
+void AVSenderEngine::SetVideoWidth(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_WIDTH), std::atoi(value.c_str()));
+    AVTRANS_LOGI("SetParameter VIDEO_WIDTH success, video width = %s", value.c_str());
+}
+
+void AVSenderEngine::SetVideoHeight(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_HEIGHT), std::atoi(value.c_str()));
+    AVTRANS_LOGI("SetParameter VIDEO_HEIGHT success, video height = %s", value.c_str());
+}
+
+void AVSenderEngine::SetVideoPixelFormat(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_PIXEL_FORMAT), Plugin::VideoPixelFormat::RGBA);
+    AVTRANS_LOGI("SetParameter VIDEO_PIXEL_FORMAT success, pixel format = %s", value.c_str());
+}
+
+void AVSenderEngine::SetVideoFrameRate(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_FRAME_RATE), std::atoi(value.c_str()));
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_FRAME_RATE), std::atoi(value.c_str()));
+    AVTRANS_LOGI("SetParameter VIDEO_FRAME_RATE success, frame rate = %s", value.c_str());
+}
+
+void AVSenderEngine::SetAudioBitRate(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_BITRATE), std::atoi(value.c_str()));
+    AVTRANS_LOGI("SetParameter MEDIA_BITRATE success, bit rate = %s", value.c_str());
+}
+
+void AVSenderEngine::SetVideoBitRate(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_BITRATE), std::atoi(value.c_str()));
+    AVTRANS_LOGI("SetParameter MEDIA_BITRATE success, bit rate = %s", value.c_str());
+}
+
+void AVSenderEngine::SetVideoCodecType(const std::string &value)
+{
+    if (value == MIME_VIDEO_H264) {
+        Plugin::Meta encoderMeta;
+        encoderMeta.Set<Plugin::Tag::MIME>(MEDIA_MIME_VIDEO_H264);
+        encoderMeta.Set<Plugin::Tag::VIDEO_H264_PROFILE>(Plugin::VideoH264Profile::BASELINE);
+        encoderMeta.Set<Plugin::Tag::VIDEO_H264_LEVEL>(VIDEO_H264_LEVEL);
+        videoEncoder_->SetVideoEncoder(0, std::make_shared<Plugin::Meta>(encoderMeta));
+
+        std::string mime = MEDIA_MIME_VIDEO_RAW;
+        avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
+        mime = MEDIA_MIME_VIDEO_H264;
+        avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
+        AVTRANS_LOGI("SetParameter VIDEO_CODEC_TYPE = H264 success");
+    } else if (value == MIME_VIDEO_H265) {
+        Plugin::Meta encoderMeta;
+        encoderMeta.Set<Plugin::Tag::MIME>(MEDIA_MIME_VIDEO_H265);
+        videoEncoder_->SetVideoEncoder(0, std::make_shared<Plugin::Meta>(encoderMeta));
+
+        std::string mime = MEDIA_MIME_VIDEO_RAW;
+        avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
+        mime = MEDIA_MIME_VIDEO_H265;
+        avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
+        AVTRANS_LOGI("SetParameter VIDEO_CODEC_TYPE = H265 success");
+    } else {
+        AVTRANS_LOGE("SetParameter VIDEO_CODEC_TYPE failed, input value invalid.");
+    }
+}
+
+void AVSenderEngine::SetAudioCodecType(const std::string &value)
+{
+    Plugin::Meta encoderMeta;
+    encoderMeta.Set<Plugin::Tag::MIME>(MEDIA_MIME_AUDIO_AAC);
+    encoderMeta.Set<Plugin::Tag::AUDIO_AAC_PROFILE>(Plugin::AudioAacProfile::LC);
+    audioEncoder_->SetAudioEncoder(0, std::make_shared<Plugin::Meta>(encoderMeta));
+
+    std::string mime = MEDIA_MIME_AUDIO_RAW;
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
+    mime = MEDIA_MIME_AUDIO_AAC;
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MIME), mime);
+    AVTRANS_LOGI("SetParameter AUDIO_CODEC_TYPE = ACC success");
+}
+
+void AVSenderEngine::SetAudioChannelMask(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNELS), std::atoi(value.c_str()));
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNELS), std::atoi(value.c_str()));
+    AVTRANS_LOGI("SetParameter AUDIO_CHANNELS success, audio channels = %s", value.c_str());
+}
+
+void AVSenderEngine::SetAudioSampleRate(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_RATE), std::atoi(value.c_str()));
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_RATE), std::atoi(value.c_str()));
+    AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_RATE success, audio sample rate = %s", value.c_str());
+}
+
+void AVSenderEngine::SetAudioChannelLayout(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNEL_LAYOUT), std::atoi(value.c_str()));
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNEL_LAYOUT), std::atoi(value.c_str()));
+    AVTRANS_LOGI("SetParameter AUDIO_CHANNEL_LAYOUT success, audio channel layout = %s", value.c_str());
+}
+
+void AVSenderEngine::SetAudioSampleFormat(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_FORMAT), std::atoi(value.c_str()));
+    AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_FORMAT success, audio sample format = %s", value.c_str());
+}
+
+void AVSenderEngine::SetAudioFrameSize(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_PER_FRAME), std::atoi(value.c_str()));
+    AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_PER_FRAME success, audio sample per frame = %s", value.c_str());
+}
+
+void AVSenderEngine::SetSharedMemoryFd(const std::string &value)
+{
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::USER_SHARED_MEMORY_FD), value);
+    AVTRANS_LOGI("SetParameter USER_SHARED_MEMORY_FD success, shared memory info = %s", value.c_str());
+}
+
+void AVSenderEngine::SetEngineReady(const std::string &value)
+{
+    int32_t ret = PreparePipeline(value);
+    TRUE_LOG_MSG(ret != DH_AVT_SUCCESS, "SetParameter ENGINE_READY failed");
+}
+
+void AVSenderEngine::SetEnginePause(const std::string &value)
+{
+    if (pipeline_ == nullptr) {
+        AVTRANS_LOGE("pipeline is null, need init first.");
+        return;
+    }
+
+    ErrorCode ret = pipeline_->Pause();
+    TRUE_LOG_MSG(ret != ErrorCode::SUCCESS, "pipeline pause failed");
+}
+
+void AVSenderEngine::SetEngineResume(const std::string &value)
+{
+    if (pipeline_ == nullptr) {
+        AVTRANS_LOGE("pipeline is null, need init first.");
+        return;
+    }
+
+    ErrorCode ret = pipeline_->Resume();
+    TRUE_LOG_MSG(ret != ErrorCode::SUCCESS, "pipeline resume failed");
 }
 
 int32_t AVSenderEngine::PushData(const std::shared_ptr<AVTransBuffer> &buffer)
