@@ -12,7 +12,8 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
+import(
+    "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
 
 module_out_path = "distributed_hardware_fwk/av_sender_engine_test"
 
@@ -52,8 +53,8 @@ ohos_unittest("AvSenderEngineTest") {
   cflags_cc = cflags
 
   deps = [
-    "${engine_path}/av_sender:distributed_av_sender",
     "${dh_fwk_sdk_path}:libdhfwk_sdk",
+    "${engine_path}/av_sender:distributed_av_sender",
     "${filters_path}:avtrans_input_filter",
     "${filters_path}:avtrans_output_filter",
     "//third_party/googletest:gtest_rtti",
