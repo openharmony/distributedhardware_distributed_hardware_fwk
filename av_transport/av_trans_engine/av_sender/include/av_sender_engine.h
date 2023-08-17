@@ -80,6 +80,25 @@ private:
     int32_t PreparePipeline(const std::string &configParam);
     void NotifyStreamChange(EventType type);
 
+    void RegRespFunMap();
+    void SetVideoWidth(const std::string &value);
+    void SetVideoHeight(const std::string &value);
+    void SetVideoPixelFormat(const std::string &value);
+    void SetVideoFrameRate(const std::string &value);
+    void SetAudioBitRate(const std::string &value);
+    void SetVideoBitRate(const std::string &value);
+    void SetVideoCodecType(const std::string &value);
+    void SetAudioCodecType(const std::string &value);
+    void SetAudioChannelMask(const std::string &value);
+    void SetAudioSampleRate(const std::string &value);
+    void SetAudioChannelLayout(const std::string &value);
+    void SetAudioSampleFormat(const std::string &value);
+    void SetAudioFrameSize(const std::string &value);
+    void SetSharedMemoryFd(const std::string &value);
+    void SetEngineReady(const std::string &value);
+    void SetEnginePause(const std::string &value);
+    void SetEngineResume(const std::string &value);
+
     StateId GetCurrentState()
     {
         std::lock_guard<std::mutex> lock(stateMutex_);
@@ -111,6 +130,9 @@ private:
     std::shared_ptr<AVOutputFilter> avOutput_ = nullptr;
     std::shared_ptr<OHOS::Media::Pipeline::AudioEncoderFilter> audioEncoder_ = nullptr;
     std::shared_ptr<OHOS::Media::Pipeline::VideoEncoderFilter> videoEncoder_ = nullptr;
+
+    using SetParaFunc = void (AVSenderEngine::*)(const std::string &value);
+    std::map<AVTransTag, SetParaFunc> funcMap_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
