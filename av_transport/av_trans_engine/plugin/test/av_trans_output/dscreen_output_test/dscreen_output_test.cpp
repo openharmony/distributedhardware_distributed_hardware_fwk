@@ -147,11 +147,7 @@ HWTEST_F(DscreenOutputTest, PushData_001, testing::ext::TestSize.Level1)
     int64_t offset = 1;
     Status ret = plugin->PushData(inPort, buffer, offset);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
-}
 
-HWTEST_F(DscreenOutputTest, PushData_002, testing::ext::TestSize.Level1)
-{
-    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
     plugin->InitOutputController();
     std::shared_ptr<Plugin::Buffer> data = std::make_shared<AVBuffer>();
     plugin->controller_->PushData(data);
@@ -286,14 +282,6 @@ HWTEST_F(DscreenOutputTest, CheckIsProcessInDynamicBalanceOnce_001, testing::ext
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(DscreenOutputTest, SyncClock_001, testing::ext::TestSize.Level1)
-{
-    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
-    plugin->InitOutputController();
-    std::shared_ptr<Plugin::Buffer> data = std::make_shared<AVBuffer>();
-    plugin->controller_->SyncClock(data);
-}
-
 HWTEST_F(DscreenOutputTest, PostOutputEvent_001, testing::ext::TestSize.Level1)
 {
     auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
@@ -301,6 +289,9 @@ HWTEST_F(DscreenOutputTest, PostOutputEvent_001, testing::ext::TestSize.Level1)
     std::shared_ptr<Plugin::Buffer> data;
     int32_t ret = plugin->controller_->PostOutputEvent(data);
     EXPECT_EQ(HANDLE_FAILED, ret);
+
+    data = std::make_shared<AVBuffer>();
+    plugin->controller_->SyncClock(data);
 }
 
 HWTEST_F(DscreenOutputTest, NotifyOutput_001, testing::ext::TestSize.Level1)
