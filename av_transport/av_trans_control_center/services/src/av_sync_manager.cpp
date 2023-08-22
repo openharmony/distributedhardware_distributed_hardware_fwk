@@ -188,10 +188,7 @@ bool AVSyncManager::MergeGroupInfo(std::string &syncGroupInfo)
         }
     }
 
-    nlohmann::json jsonStr = {
-        { KEY_MY_DEV_ID, "" },
-        { KEY_GROUP_INFO_ARRAY, groupInfoSet },
-    };
+    nlohmann::json jsonStr = { { KEY_MY_DEV_ID, "" }, { KEY_GROUP_INFO_ARRAY, groupInfoSet }, };
     syncGroupInfo = jsonStr.dump();
     return true;
 }
