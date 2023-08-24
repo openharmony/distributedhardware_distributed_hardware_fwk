@@ -105,58 +105,85 @@ std::vector<DHType> ComponentLoader::GetAllCompTypes()
     return DHTypeALL;
 }
 
-void from_json(const nlohmann::json &json, CompConfig &cfg)
+int32_t ParseComponent(const nlohmann::json &json, CompConfig &cfg)
 {
     if (!IsString(json, COMP_NAME)) {
         DHLOGE("COMP_NAME is invalid");
-        return;
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     cfg.name = json.at(COMP_NAME).get<std::string>();
     if (!IsString(json, COMP_TYPE)) {
         DHLOGE("COMP_TYPE is invalid");
-        return;
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     cfg.type = g_mapDhTypeName[json.at(COMP_TYPE).get<std::string>()];
     if (!IsString(json, COMP_HANDLER_LOC)) {
         DHLOGE("COMP_HANDLER_LOC is invalid");
-        return;
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     cfg.compHandlerLoc = json.at(COMP_HANDLER_LOC).get<std::string>();
     if (!IsString(json, COMP_HANDLER_VERSION)) {
         DHLOGE("COMP_HANDLER_VERSION is invalid");
-        return;
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     cfg.compHandlerVersion = json.at(COMP_HANDLER_VERSION).get<std::string>();
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ParseSource(const nlohmann::json &json, CompConfig &cfg)
+{
     if (!IsString(json, COMP_SOURCE_LOC)) {
         DHLOGE("COMP_SOURCE_LOC is invalid");
-        return;
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     cfg.compSourceLoc = json.at(COMP_SOURCE_LOC).get<std::string>();
     if (!IsString(json, COMP_SOURCE_VERSION)) {
         DHLOGE("COMP_SOURCE_VERSION is invalid");
-        return;
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     cfg.compSourceVersion = json.at(COMP_SOURCE_VERSION).get<std::string>();
     if (!IsInt32(json, COMP_SOURCE_SA_ID)) {
         DHLOGE("COMP_SOURCE_SA_ID is invalid");
-        return;
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     cfg.compSourceSaId = json.at(COMP_SOURCE_SA_ID).get<int32_t>();
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ParseSink(const nlohmann::json &json, CompConfig &cfg)
+{
     if (!IsString(json, COMP_SINK_LOC)) {
         DHLOGE("COMP_SINK_LOC is invalid");
-        return;
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     cfg.compSinkLoc = json.at(COMP_SINK_LOC).get<std::string>();
     if (!IsString(json, COMP_SINK_VERSION)) {
         DHLOGE("COMP_SINK_VERSION is invalid");
-        return;
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     cfg.compSinkVersion = json.at(COMP_SINK_VERSION).get<std::string>();
     if (!IsInt32(json, COMP_SINK_SA_ID)) {
         DHLOGE("COMP_SINK_SA_ID is invalid");
-        return;
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     cfg.compSinkSaId = json.at(COMP_SINK_SA_ID).get<int32_t>();
+    return DH_FWK_SUCCESS;
+}
+
+void from_json(const nlohmann::json &json, CompConfig &cfg)
+{
+    if (ParseComponent(json, cfg) != DH_FWK_SUCCESS) {
+        DHLOGE("ParseComponent is failed");
+        return;
+    }
+    if (ParseSource(json, cfg) != DH_FWK_SUCCESS) {
+        DHLOGE("ParseSource is failed");
+        return;
+    }
+    if (ParseSink(json, cfg) != DH_FWK_SUCCESS) {
+        DHLOGE("ParseSink is failed");
+        return;
+    }
 }
 
 CompVersion ComponentLoader::GetCompVersionFromComConfig(const CompConfig& cCfg)
