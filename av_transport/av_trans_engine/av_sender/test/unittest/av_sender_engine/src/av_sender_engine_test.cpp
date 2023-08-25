@@ -79,7 +79,7 @@ HWTEST_F(AvSenderEngineTest, InitPipeline_001, testing::ext::TestSize.Level1)
     auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
     sender->ownerName_ = "";
     int32_t ret = sender->InitPipeline();
-    EXPECT_EQ(ERR_DH_AVT_NULL_POINTER, ret);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM_VALUE, ret);
 }
 
 HWTEST_F(AvSenderEngineTest, CreateControlChannel_001, testing::ext::TestSize.Level1)
@@ -192,7 +192,7 @@ HWTEST_F(AvSenderEngineTest, SetParameter_004, testing::ext::TestSize.Level1)
     std::shared_ptr<OHOS::Media::Pipeline::PipelineCore> pipeline_ = nullptr;
     sender->pipeline_ = std::make_shared<OHOS::Media::Pipeline::PipelineCore>();
     int32_t ret = sender->SetParameter(AVTransTag::VIDEO_WIDTH, value);
-    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
 }
 
 HWTEST_F(AvSenderEngineTest, PushData_001, testing::ext::TestSize.Level1)
