@@ -79,7 +79,7 @@ HWTEST_F(AvSenderEngineTest, InitPipeline_001, testing::ext::TestSize.Level1)
     auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
     sender->ownerName_ = "";
     int32_t ret = sender->InitPipeline();
-    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM_VALUE, ret);
+    EXPECT_EQ(ERR_DH_AVT_NULL_POINTER, ret);
 }
 
 HWTEST_F(AvSenderEngineTest, CreateControlChannel_001, testing::ext::TestSize.Level1)
