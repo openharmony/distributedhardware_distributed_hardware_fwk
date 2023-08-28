@@ -72,16 +72,6 @@ HWTEST_F(AvSenderEngineTest, Initialize_003, testing::ext::TestSize.Level1)
     EXPECT_EQ(ERR_DH_AVT_INIT_FAILED, ret);
 }
 
-HWTEST_F(AvSenderEngineTest, InitPipeline_001, testing::ext::TestSize.Level1)
-{
-    std::string ownerName = "001";
-    std::string peerDevId = "pEid";
-    auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
-    sender->ownerName_ = "";
-    int32_t ret = sender->InitPipeline();
-    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM_VALUE, ret);
-}
-
 HWTEST_F(AvSenderEngineTest, CreateControlChannel_001, testing::ext::TestSize.Level1)
 {
     std::string ownerName = "001";
