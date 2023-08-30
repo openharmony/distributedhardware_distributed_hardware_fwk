@@ -45,6 +45,7 @@ ohos_unittest("HistreamerAbilityQuerierTest") {
   ]
 
   external_deps = [
+    "bounds_checking_function:libsec_shared",
     "c_utils:utils",
     "histreamer:histreamer_base",
     "histreamer:histreamer_codec_filters",
