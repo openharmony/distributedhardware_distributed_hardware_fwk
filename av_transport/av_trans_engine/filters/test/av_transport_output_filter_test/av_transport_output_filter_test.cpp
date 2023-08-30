@@ -357,7 +357,7 @@ HWTEST_F(AvTransportOutputFilterTest, PushData_002, testing::ext::TestSize.Level
     std::shared_ptr<AVOutputFilter> avOutputTest_ =
         FilterFactory::Instance().CreateFilterWithType<AVOutputFilter>(AVOUTPUT_NAME, FILTERNAME);
     std::string inPort;
-    AVBufferPtr bufferPtr = std::make_shared<AVBuffer>();
+    AVBufferPtr buffer = std::make_shared<AVBuffer>();
     int64_t offset = 0;
     avOutputTest_->plugin_ = PluginManager::Instance().CreateGenericPlugin<AvTransOutput,
         AvTransOutputPlugin>("name");

@@ -41,6 +41,7 @@ ohos_unittest("AvTransportOutputFilterTest") {
     "-frtti",
     "-fexceptions",
     "-Dprivate = public",
+    "-Dprotected = public",
   ]
   cflags_cc = cflags
 
