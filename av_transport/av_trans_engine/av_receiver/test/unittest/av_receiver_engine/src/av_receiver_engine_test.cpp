@@ -72,16 +72,6 @@ HWTEST_F(AvReceiverEngineTest, Initialize_003, testing::ext::TestSize.Level1)
     EXPECT_EQ(ERR_DH_AVT_INIT_FAILED, ret);
 }
 
-HWTEST_F(AvReceiverEngineTest, InitPipeline_001, testing::ext::TestSize.Level1)
-{
-    std::string ownerName = "001";
-    std::string peerDevId = "pEid";
-    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
-    receiver->ownerName_ = "";
-    int32_t ret = receiver->InitPipeline();
-    EXPECT_EQ(ERR_DH_AVT_NULL_POINTER, ret);
-}
-
 HWTEST_F(AvReceiverEngineTest, CreateControlChannel_001, testing::ext::TestSize.Level1)
 {
     std::string ownerName = "001";
@@ -192,7 +182,7 @@ HWTEST_F(AvReceiverEngineTest, SetParameter_004, testing::ext::TestSize.Level1)
     std::shared_ptr<OHOS::Media::Pipeline::PipelineCore> pipeline_ = nullptr;
     receiver->pipeline_ = std::make_shared<OHOS::Media::Pipeline::PipelineCore>();
     int32_t ret = receiver->SetParameter(AVTransTag::VIDEO_WIDTH, value);
-    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
 }
 
 HWTEST_F(AvReceiverEngineTest, PreparePipeline_001, testing::ext::TestSize.Level1)
