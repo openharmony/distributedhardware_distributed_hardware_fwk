@@ -55,7 +55,7 @@ HWTEST_F(AvReceiverEngineProviderTest, GetAVReceiverEngineList_001, testing::ext
     std::string ownerName = "ownerName";
     auto avReceiveProTest_ = std::make_shared<AVReceiverEngineProvider>(ownerName);
     auto avReceiverEngine = avReceiveProTest_->CreateAVReceiverEngine(peerDevId);
-    std::vector<std::shared_ptr<avReceiverEngine>> receiverEngineList = avReceiveProTest_->GetAVReceiverEngineList();
+    std::vector<std::shared_ptr<IAVReceiverEngine>> receiverEngineList = avReceiveProTest_->GetAVReceiverEngineList();
     bool bRet = (receiverEngineList.empty()) ? false : true;
     EXPECT_NE(true, bRet);
 }
