@@ -91,5 +91,5 @@ ohos_unittest("AvReceiverEngineTest") {
 
 group("av_receiver_engine_test") {
   testonly = true
-  deps = [ ":AvReceiverrEngineTest" ]
+  deps = [ ":AvReceiverEngineTest" ]
 }
