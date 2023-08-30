@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-group("receive_test") {
+group("receiver_test") {
   testonly = true
 
   deps = [
