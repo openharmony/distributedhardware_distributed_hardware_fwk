@@ -28,6 +28,7 @@ ohos_source_set("plugin_AVTransDsoftbusInputAudio") {
   sources = [ "dsoftbus_input_audio_plugin.cpp" ]
 
   external_deps = [
+    "bounds_checking_function:libsec_shared",
     "histreamer:histreamer_base",
     "histreamer:histreamer_codec_filters",
     "histreamer:histreamer_ffmpeg_convert",
