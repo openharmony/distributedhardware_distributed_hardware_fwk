@@ -1,0 +1,95 @@
+# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import("../../../../../distributed_av_transport.gni")
+
+module_out_path = "distributed_hardware_fwk/av_receiver_engine_provider_test"
+
+config("module_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "${dh_fwk_utils_path}/include",
+    "${common_path}/include",
+    "${dh_fwk_sdk_path}/include",
+    "${engine_path}/av_receiver/include",
+    "${control_center_path}/inner_kits/include",
+    "${control_center_path}/inner_kits/include/ipc",
+    "${filters_path}/av_transport_input",
+    "${filters_path}/av_transport_output",
+    "${engine_path}/av_receiver/test/unittest/av_receiver_engine_provider/include",
+    "${interface_path}",
+    "${media_standard_path}/interfaces/inner_api/native",
+  ]
+}
+
+ohos_unittest("AvReceiverEngineProviderTest") {
+  module_out_path = module_out_path
+
+  sources = [ "src/av_receiver_engine_provider_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-O2",
+    "-fPIC",
+    "-Wall",
+    "-frtti",
+    "-fexceptions",
+    "-Dprivate = public",
+    "-Dprotected = public",
+  ]
+  cflags_cc = cflags
+
+  deps = [
+    "${dh_fwk_sdk_path}:libdhfwk_sdk",
+    "${engine_path}/av_receiver:distributed_av_receiver",
+    "${filters_path}:avtrans_input_filter",
+    "${filters_path}:avtrans_output_filter",
+    "//third_party/googletest:gtest_rtti",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"AvReceiverEngineProviderTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  defines += [
+    "MEDIA_OHOS",
+    "RECORDER_SUPPORT",
+    "VIDEO_SUPPORT",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "graphic_2d:libgraphic_utils",
+    "graphic_2d:surface",
+    "hilog:libhilog",
+    "histreamer:histreamer_base",
+    "histreamer:histreamer_codec_filters",
+    "histreamer:histreamer_ffmpeg_convert",
+    "histreamer:histreamer_plugin_base",
+    "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+}
+
+group("av_receiver_engine_provider_test") {
+  testonly = true
+  deps = [ ":AvReceiverEngineProviderTest" ]
+}
