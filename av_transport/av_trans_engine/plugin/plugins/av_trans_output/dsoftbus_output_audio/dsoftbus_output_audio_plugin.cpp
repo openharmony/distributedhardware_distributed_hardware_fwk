@@ -258,7 +258,14 @@ Status DsoftbusOutputAudioPlugin::PushData(const std::string &inPort, std::share
         AVTRANS_LOGE("Data queue overflow.");
         dataQueue_.pop();
     }
-    dataQueue_.push(buffer);
+
+    int32_t bufSize = buffer->GetMemory()->GetSize();
+    auto tempBuffer = std::make_shared<Plugin::Buffer>(BufferMetaType::AUDIO);
+    tempBuffer->pts = buffer->pts;
+    tempBuffer->AllocMemory(nullptr, bufSize);
+    tempBuffer->GetMemory()->Write(buffer->GetMemory()->GetReadOnlyData(), bufSize);
+    tempBuffer->UpdateBufferMeta(*(buffer->GetBufferMeta()->Clone()));
+    dataQueue_.push(tempBuffer);
     dataCond_.notify_all();
     return Status::OK;
 }

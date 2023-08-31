@@ -72,6 +72,7 @@ ohos_unittest("AvSenderEngineProviderTest") {
   ]
 
   external_deps = [
+    "bounds_checking_function:libsec_shared",
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "graphic_2d:libgraphic_utils",
