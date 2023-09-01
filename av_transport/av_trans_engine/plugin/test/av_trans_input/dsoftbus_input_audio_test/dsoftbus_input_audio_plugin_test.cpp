@@ -147,8 +147,7 @@ HWTEST_F(DsoftbusInputAudioPluginTest, SetCallback_001, TestSize.Level1)
 HWTEST_F(DsoftbusInputAudioPluginTest, SetDataCallback_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusInputAudioPlugin>(PLUGINNAME);
-    AVDataCallback* eventsCb;
-    Status ret = plugin->SetDataCallback(eventsCb);
+    Status ret = plugin->SetDataCallback(nullptr);
     EXPECT_EQ(Status::OK, ret);
 }
 } // namespace DistributedHardware
