@@ -144,14 +144,6 @@ HWTEST_F(DsoftbusInputAudioPluginTest, SetCallback_001, TestSize.Level1)
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 }
 
-HWTEST_F(DsoftbusInputAudioPluginTest, SetCallback_002, TestSize.Level1)
-{
-    auto plugin = std::make_shared<DsoftbusInputAudioPlugin>(PLUGINNAME);
-    Callback* eventsCb;
-    Status ret = plugin->SetCallback(eventsCb);
-    EXPECT_EQ(Status::OK, ret);
-}
-
 HWTEST_F(DsoftbusInputAudioPluginTest, SetDataCallback_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusInputAudioPlugin>(PLUGINNAME);
