@@ -115,5 +115,34 @@ HWTEST_F(DsoftbusInputPluginTest, GetParameter_002, TestSize.Level1)
     std::shared_ptr<AVBuffer> buffer = std::make_shared<AVBuffer>();
     plugin->DataEnqueue(buffer);
 }
+
+HWTEST_F(DsoftbusInputPluginTest, Pause_001, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusInputPlugin>(PLUGINNAME);
+    Status ret = plugin->Pause();
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DsoftbusInputPluginTest, SetCallback_001, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusInputPlugin>(PLUGINNAME);
+    Status ret = plugin->SetCallback(nullptr);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+}
+
+HWTEST_F(DsoftbusInputPluginTest, Resume_001, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusInputPlugin>(PLUGINNAME);
+    Status ret = plugin->Resume();
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DsoftbusInputPluginTest, SetDataCallback_001, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusInputPlugin>(PLUGINNAME);
+    AVDataCallback dataCb;
+    Status ret = plugin->SetDataCallback(dataCb);
+    EXPECT_EQ(Status::OK, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
