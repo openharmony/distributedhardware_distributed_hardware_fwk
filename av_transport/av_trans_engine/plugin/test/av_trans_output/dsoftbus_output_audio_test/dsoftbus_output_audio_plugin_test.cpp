@@ -92,5 +92,35 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, PushData_001, testing::ext::TestSize.Lev
     Status ret = plugin->PushData(inPort, buffer, offset);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 }
+
+HWTEST_F(DsoftbusOutputAudioPluginTest, SetParameter_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
+    std::string value = "dsoftbus_output_audio_plugin_test";
+    Status ret = plugin->SetParameter(Tag::MEDIA_DESCRIPTION, value);
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DsoftbusOutputAudioPluginTest, SetCallback_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
+    Status ret = plugin->SetCallback(nullptr);
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+}
+
+HWTEST_F(DsoftbusOutputAudioPluginTest, OpenSoftbusChannel_002, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
+    Status ret = plugin->OpenSoftbusChannel();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+}
+
+HWTEST_F(DsoftbusOutputAudioPluginTest, SetDataCallback_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
+    AVDataCallback cbk;
+    Status ret = plugin->SetDataCallback(cbk);
+    EXPECT_EQ(Status::OK, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
