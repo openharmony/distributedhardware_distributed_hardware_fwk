@@ -39,7 +39,6 @@ ohos_unittest("DaudioOutputPluginTest") {
     "-O2",
     "-fPIC",
     "-Wall",
-    "-frtti",
     "-fexceptions",
     "-Dprivate = public",
   ]
@@ -47,7 +46,7 @@ ohos_unittest("DaudioOutputPluginTest") {
 
   deps = [
     "${plugin_path}/plugins/av_trans_output/daudio_output:plugin_AVTransDaudioOutput",
-    "//third_party/googletest:gtest_rtti",
+    "//third_party/googletest:gtest",
   ]
 
   external_deps = [
