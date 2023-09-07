@@ -101,7 +101,6 @@ ohos_shared_library("distributed_av_receiver") {
     "-O2",
     "-fPIC",
     "-Wall",
-    "-frtti",
     "-fexceptions",
   ]
   cflags_cc = cflags
