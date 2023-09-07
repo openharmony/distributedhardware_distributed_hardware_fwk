@@ -29,6 +29,14 @@ void DsoftbusInputAudioPluginTest::SetUp(void) {}
 
 void DsoftbusInputAudioPluginTest::TearDown(void) {}
 
+class DsoftbusInputAudioPluginCallback : public Callback {
+public:
+    void OnEvent(const PluginEvent &event)
+    {
+        (void)event;
+    }
+};
+
 HWTEST_F(DsoftbusInputAudioPluginTest, Prepare_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusInputAudioPlugin>(PLUGINNAME);
@@ -123,6 +131,14 @@ HWTEST_F(DsoftbusInputAudioPluginTest, Reset_001, TestSize.Level1)
     EXPECT_EQ(Status::OK, ret);
 }
 
+HWTEST_F(DsoftbusInputAudioPluginTest, Reset_002, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusInputAudioPlugin>(PLUGINNAME);
+    plugin->bufferPopTask_ = std::make_shared<Media::OSAL::Task>("videoBufferQueuePopThread");
+    Status ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+}
+
 HWTEST_F(DsoftbusInputAudioPluginTest, Pause_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusInputAudioPlugin>(PLUGINNAME);
@@ -148,6 +164,25 @@ HWTEST_F(DsoftbusInputAudioPluginTest, SetDataCallback_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusInputAudioPlugin>(PLUGINNAME);
     Status ret = plugin->SetDataCallback(nullptr);
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DsoftbusInputAudioPluginTest, SetDataCallback_002, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusInputAudioPlugin>(PLUGINNAME);
+    DsoftbusInputAudioPluginCallback cb {};
+    Status ret = plugin->SetCallback(&cb);
+    AVTransEvent event {EventType::EVENT_CHANNEL_OPENED, "", ""};
+    plugin->OnChannelEvent(event);
+
+    AVTransEvent event1 {EventType::EVENT_CHANNEL_OPEN_FAIL, "", ""};
+    plugin->OnChannelEvent(event1);
+
+    AVTransEvent event2 {EventType::EVENT_CHANNEL_CLOSED, "", ""};
+    plugin->OnChannelEvent(event2);
+
+    AVTransEvent event3 {EventType::EVENT_DATA_RECEIVED, "", ""};
+    plugin->OnChannelEvent(event3);
     EXPECT_EQ(Status::OK, ret);
 }
 } // namespace DistributedHardware

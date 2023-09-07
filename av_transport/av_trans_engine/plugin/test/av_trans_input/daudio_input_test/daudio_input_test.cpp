@@ -27,6 +27,25 @@ void DaudioInputTest::SetUp() {}
 
 void DaudioInputTest::TearDown() {}
 
+HWTEST_F(DaudioInputTest, Pause_001, TestSize.Level0)
+{
+    auto plugin = std::make_shared<DaudioInputPlugin>(PLUGINNAME);
+    AVTransSharedMemory sharedMemory1 {1, 0, ""};
+    plugin->sharedMemory_ = sharedMemory1;
+    Status ret = plugin->Pause();
+    EXPECT_EQ(Status::OK, ret);
+
+    AVTransSharedMemory sharedMemory2 { 1, 1, "" };
+    plugin->sharedMemory_ = sharedMemory2;
+    ret = plugin->Pause();
+    EXPECT_EQ(Status::OK, ret);
+
+    AVTransSharedMemory sharedMemory3 { 1, 1, "name" };
+    plugin->sharedMemory_ = sharedMemory3;
+    ret = plugin->Pause();
+    EXPECT_EQ(Status::OK, ret);
+}
+
 HWTEST_F(DaudioInputTest, SetParameter_001, TestSize.Level0)
 {
     auto plugin = std::make_shared<DaudioInputPlugin>(PLUGINNAME);
@@ -58,6 +77,9 @@ HWTEST_F(DaudioInputTest, PushData_001, TestSize.Level0)
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 
     buffer = std::make_shared<AVBuffer>();
+    ret = plugin->PushData("", buffer, 0);
+    EXPECT_EQ(Status::ERROR_INVALID_PARAMETER, ret);
+
     buffer->AllocMemory(nullptr, 10);
     buffer->GetMemory()->Write((uint8_t*)"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 10);
     ret = plugin->PushData("", buffer, 0);
