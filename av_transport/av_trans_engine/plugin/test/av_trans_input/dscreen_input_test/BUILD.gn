@@ -38,7 +38,7 @@ ohos_unittest("DscreenInputTest") {
 
   deps = [
     "${plugin_path}/plugins/av_trans_input/dscreen_input:plugin_AVTransDscreenInput",
-    "//third_party/googletest:gtest",
+    "//third_party/googletest:gtest_rtti",
   ]
 
   external_deps = [
@@ -56,6 +56,7 @@ ohos_unittest("DscreenInputTest") {
     "-O2",
     "-fPIC",
     "-Wall",
+    "-frtti",
     "-fexceptions",
     "-Dprivate = public",
   ]

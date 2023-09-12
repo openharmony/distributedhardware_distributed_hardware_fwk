@@ -47,6 +47,7 @@ ohos_source_set("avtrans_input_filter") {
     "-O2",
     "-fPIC",
     "-Wall",
+    "-frtti",
     "-fexceptions",
     "-Wno-unused-but-set-variable",
     "-Wno-format",
@@ -58,7 +59,6 @@ ohos_source_set("avtrans_input_filter") {
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"av_transport_input_filter\"",
-    "HST_ANY_WITH_NO_RTTI",
     "LOG_DOMAIN=0xD004100",
   ]
 }
@@ -95,6 +95,7 @@ ohos_source_set("avtrans_output_filter") {
     "-O2",
     "-fPIC",
     "-Wall",
+    "-frtti",
     "-fexceptions",
     "-Wno-unused-but-set-variable",
     "-Wno-format",
@@ -106,7 +107,6 @@ ohos_source_set("avtrans_output_filter") {
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"av_transport_output_filter\"",
-    "HST_ANY_WITH_NO_RTTI",
     "LOG_DOMAIN=0xD004100",
   ]
 }

@@ -459,7 +459,7 @@ void AVReceiverEngine::OnEvent(const OHOS::Media::Event &event)
 
     switch (event.type) {
         case OHOS::Media::EventType::EVENT_BUFFER_PROGRESS: {
-            if (Plugin::Any::IsSameTypeWith<std::shared_ptr<AVBuffer>>(event.param)) {
+            if (event.param.SameTypeWith(typeid(std::shared_ptr<AVBuffer>))) {
                 auto hisBuffer = Plugin::AnyCast<std::shared_ptr<AVBuffer>>(event.param);
                 TRUE_RETURN(hisBuffer == nullptr, "hisBuffer is null");
                 HandleOutputBuffer(hisBuffer);
