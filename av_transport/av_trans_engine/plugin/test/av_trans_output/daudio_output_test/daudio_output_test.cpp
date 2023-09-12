@@ -75,6 +75,18 @@ HWTEST_F(DaudioOutputTest, Prepare_002, TestSize.Level0)
     EXPECT_EQ(Status::OK, ret);
 }
 
+HWTEST_F(DaudioOutputTest, Prepare_003, TestSize.Level0)
+{
+    auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
+    plugin->state_ = State::INITIALIZED;
+    std::shared_ptr<OSAL::Task> sendPlayTask_ = nullptr;
+    int value = 1;
+    plugin->SetParameter(Tag::AUDIO_SAMPLE_RATE, value);
+    Status ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_UNKNOWN, ret);
+}
+
+
 HWTEST_F(DaudioOutputTest, SetParameter_001, TestSize.Level0)
 {
     auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
@@ -162,6 +174,35 @@ HWTEST_F(DaudioOutputTest, WriteMasterClockToMemory_001, testing::ext::TestSize.
     Status ret = plugin->SetParameter(Tag::USER_AV_SYNC_GROUP_INFO, value);
     std::shared_ptr<AVBuffer> buffer = std::make_shared<AVBuffer>();
     plugin->WriteMasterClockToMemory(buffer);
+    buffer = nullptr;
+    plugin->WriteMasterClockToMemory(buffer);
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DaudioOutputTest, SetCallback_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
+    Callback *cb = nullptr;
+    Status ret = plugin->SetCallback(cb);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+}
+
+HWTEST_F(DaudioOutputTest, StartOutputQueue_001, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
+    plugin->state_ = State::RUNNING;
+    std::shared_ptr<Plugin::Buffer> buffer = nullptr;
+    std::shared_ptr<OSAL::Task> sendPlayTask_ = nullptr;
+    plugin->Prepare();
+    Status ret = plugin->StartOutputQueue();
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DaudioOutputTest, ControlFrameRate_001, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
+    const int64_t timestamp = 1;
+    Status ret = plugin->ControlFrameRate(timestamp);
     EXPECT_EQ(Status::OK, ret);
 }
 
