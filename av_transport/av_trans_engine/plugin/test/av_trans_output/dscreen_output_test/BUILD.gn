@@ -40,6 +40,7 @@ ohos_unittest("DscreenOutputPluginTest") {
     "-O2",
     "-fPIC",
     "-Wall",
+    "-frtti",
     "-fexceptions",
     "-Dprivate = public",
   ]
@@ -47,7 +48,7 @@ ohos_unittest("DscreenOutputPluginTest") {
 
   deps = [
     "${plugin_path}/plugins/av_trans_output/dscreen_output:plugin_AVTransDscreenOutput",
-    "//third_party/googletest:gtest",
+    "//third_party/googletest:gtest_rtti",
   ]
 
   external_deps = [

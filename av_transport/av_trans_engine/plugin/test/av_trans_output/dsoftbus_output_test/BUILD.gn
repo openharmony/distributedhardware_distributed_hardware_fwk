@@ -39,6 +39,7 @@ ohos_unittest("DsoftbusOutputPluginTest") {
     "-O2",
     "-fPIC",
     "-Wall",
+    "-frtti",
     "-fexceptions",
     "-Dprivate = public",
   ]
@@ -46,7 +47,7 @@ ohos_unittest("DsoftbusOutputPluginTest") {
 
   deps = [
     "${plugin_path}/plugins/av_trans_output/dsoftbus_output:plugin_AVTransDsoftbusOutput",
-    "//third_party/googletest:gtest",
+    "//third_party/googletest:gtest_rtti",
   ]
 
   external_deps = [

@@ -180,7 +180,7 @@ ErrorCode AVOutputFilter::FindPlugin()
     OSAL::ScopedLock lock(outputFilterMutex_);
     std::string mime;
     if (paramsMap_.find(Tag::MIME) == paramsMap_.end() ||
-        !Plugin::Any::IsSameTypeWith<std::string>(paramsMap_[Tag::MIME])) {
+        !paramsMap_[Tag::MIME].SameTypeWith(typeid(std::string))) {
         AVTRANS_LOGE("Must set mime correctly first");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
     }
