@@ -491,21 +491,21 @@ void AVSenderEngine::OnChannelEvent(const AVTransEvent &event)
 
     switch (event.type) {
         case EventType::EVENT_CHANNEL_OPENED: {
-            senderCallback_->OnSenderEvent(event);
             SetCurrentState(StateId::CH_CREATED);
+            senderCallback_->OnSenderEvent(event);
             break;
         }
         case EventType::EVENT_CHANNEL_OPEN_FAIL: {
-            senderCallback_->OnSenderEvent(event);
             SetCurrentState(StateId::INITIALIZED);
+            senderCallback_->OnSenderEvent(event);
             break;
         }
         case EventType::EVENT_CHANNEL_CLOSED: {
             StateId currentState = GetCurrentState();
             if ((currentState != StateId::IDLE) && (currentState != StateId::INITIALIZED)) {
+                SetCurrentState(StateId::INITIALIZED);
                 senderCallback_->OnSenderEvent(event);
             }
-            SetCurrentState(StateId::INITIALIZED);
             break;
         }
         case EventType::EVENT_DATA_RECEIVED: {
