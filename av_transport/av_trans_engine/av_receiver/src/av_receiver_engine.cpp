@@ -418,21 +418,21 @@ void AVReceiverEngine::OnChannelEvent(const AVTransEvent &event)
 
     switch (event.type) {
         case EventType::EVENT_CHANNEL_OPENED: {
-            receiverCallback_->OnReceiverEvent(event);
             SetCurrentState(StateId::CH_CREATED);
+            receiverCallback_->OnReceiverEvent(event);
             break;
         }
         case EventType::EVENT_CHANNEL_OPEN_FAIL: {
-            receiverCallback_->OnReceiverEvent(event);
             SetCurrentState(StateId::INITIALIZED);
+            receiverCallback_->OnReceiverEvent(event);
             break;
         }
         case EventType::EVENT_CHANNEL_CLOSED: {
             StateId currentState = GetCurrentState();
             if ((currentState != StateId::IDLE) && (currentState != StateId::INITIALIZED)) {
+                SetCurrentState(StateId::INITIALIZED);
                 receiverCallback_->OnReceiverEvent(event);
             }
-            SetCurrentState(StateId::INITIALIZED);
             break;
         }
         case EventType::EVENT_DATA_RECEIVED: {
