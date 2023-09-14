@@ -19,7 +19,7 @@ import(
 
 ##############################fuzztest##########################################
 ohos_fuzztest("VersioninfoManagerFuzzTest") {
-  module_out_path = "distributed_hardware_fwk/versioninfomanager"
+  module_out_path = fuzz_test_output_path
   fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/versioninfomanager_fuzzer"
 
   include_dirs = [

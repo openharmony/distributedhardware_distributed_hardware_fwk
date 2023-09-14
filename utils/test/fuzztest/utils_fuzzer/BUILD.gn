@@ -19,7 +19,7 @@ import(
 
 ##############################fuzztest##########################################
 ohos_fuzztest("UtilsFuzzTest") {
-  module_out_path = "distributed_hardware_fwk/utils"
+  module_out_path = fuzz_test_output_path
   fuzz_config_file = "${utils_path}/test/fuzztest/utils_fuzzer"
 
   include_dirs = [
