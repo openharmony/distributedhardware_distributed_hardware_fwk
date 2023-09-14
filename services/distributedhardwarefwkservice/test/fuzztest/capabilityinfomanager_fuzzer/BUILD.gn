@@ -18,7 +18,7 @@ import("../../../../../distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
-  module_out_path = "distributed_hardware_fwk/capabilityinfomanager"
+  module_out_path = fuzz_test_output_path
   fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanager_fuzzer"
 
   include_dirs = [

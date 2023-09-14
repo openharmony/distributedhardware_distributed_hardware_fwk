@@ -28,6 +28,8 @@ av_center_svc_path = "${av_trans_path}/av_trans_control_center/services"
 
 av_center_kits_path = "${av_trans_path}/av_trans_control_center/inner_kits"
 
+fuzz_test_output_path = "distributed_hardware_fwk/distributed_hardware_fwk"
+
 build_flags = [ "-Werror" ]
 
 declare_args() {

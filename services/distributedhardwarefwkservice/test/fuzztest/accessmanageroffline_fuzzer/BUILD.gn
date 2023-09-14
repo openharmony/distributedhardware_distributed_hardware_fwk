@@ -18,7 +18,7 @@ import("../../../../../distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("AccessManagerOfflineFuzzTest") {
-  module_out_path = "distributed_hardware_fwk/accessmanageroffline"
+  module_out_path = fuzz_test_output_path
   fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/accessmanageroffline_fuzzer"
 
   include_dirs = [
