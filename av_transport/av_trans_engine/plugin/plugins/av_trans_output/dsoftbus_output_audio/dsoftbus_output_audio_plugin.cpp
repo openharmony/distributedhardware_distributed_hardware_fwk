@@ -259,7 +259,7 @@ Status DsoftbusOutputAudioPlugin::PushData(const std::string &inPort, std::share
         dataQueue_.pop();
     }
 
-    int32_t bufSize = buffer->GetMemory()->GetSize();
+    int32_t bufSize = static_cast<int32_t>(buffer->GetMemory()->GetSize());
     auto tempBuffer = std::make_shared<Plugin::Buffer>(BufferMetaType::AUDIO);
     tempBuffer->pts = buffer->pts;
     tempBuffer->AllocMemory(nullptr, bufSize);
