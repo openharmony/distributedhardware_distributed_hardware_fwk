@@ -19,9 +19,6 @@ ohos_source_set("plugin_AVTransDsoftbusOutput") {
   include_dirs = [
     "${common_path}/include",
     "${plugin_path}/interface",
-    "${dsoftbus_path}/interfaces/kits/transport",
-    "${dsoftbus_path}/interfaces/kits/bus_center",
-    "${dsoftbus_path}/interfaces/kits/common",
     "//third_party/json/include",
   ]
 
@@ -29,6 +26,7 @@ ohos_source_set("plugin_AVTransDsoftbusOutput") {
 
   external_deps = [
     "bounds_checking_function:libsec_shared",
+    "dsoftbus:softbus_client",
     "histreamer:histreamer_base",
     "histreamer:histreamer_codec_filters",
     "histreamer:histreamer_ffmpeg_convert",

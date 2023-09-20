@@ -18,8 +18,6 @@ distributed_av_transport_path = "${distributedhardwarefwk_path}/av_transport"
 
 histreamer_path = "//foundation/multimedia/histreamer/engine"
 
-dsoftbus_path = "//foundation/communication/dsoftbus"
-
 media_standard_path = "//foundation/multimedia/player_framework"
 
 drivers_disaplay_path = "//drivers/peripheral/display"
