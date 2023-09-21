@@ -47,7 +47,7 @@ HWTEST_F(AvReceiverEngineTest, Initialize_001, testing::ext::TestSize.Level1)
     std::string ownerName = "001";
     std::string peerDevId = "pEid";
     auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
-    receiver->initialized_ = true;
+    receiver->isInitialized_ = true;
     int32_t ret = receiver->Initialize();
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }

@@ -17,33 +17,29 @@
 #define OHOS_AV_SENDER_ENGINE_H
 
 #include "av_trans_buffer.h"
-#include "av_trans_errno.h"
 #include "av_trans_constants.h"
+#include "av_trans_control_center_callback.h"
+#include "av_trans_errno.h"
 #include "av_trans_log.h"
 #include "av_trans_message.h"
 #include "av_trans_types.h"
 #include "av_trans_utils.h"
-#include "i_av_sender_engine.h"
-#include "softbus_channel_adapter.h"
-#include "distributed_hardware_fwk_kit.h"
-#include "av_trans_control_center_callback.h"
 #include "av_transport_input_filter.h"
 #include "av_transport_output_filter.h"
+#include "distributed_hardware_fwk_kit.h"
+#include "event.h"
+#include "i_av_sender_engine.h"
+#include "softbus_channel_adapter.h"
 
 // follwing head files depends on histreamer
+#include "audio_encoder_filter.h"
 #include "error_code.h"
-#include "event.h"
 #include "pipeline/core/filter.h"
 #include "pipeline_core.h"
-#include "audio_encoder_filter.h"
 #include "video_encoder_filter.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-using namespace OHOS::Media;
-using namespace OHOS::Media::Plugin;
-using namespace OHOS::Media::Pipeline;
-using AVBuffer = OHOS::Media::Plugin::Buffer;
 
 class AVSenderEngine : public IAVSenderEngine,
                        public ISoftbusChannelListener,
@@ -118,11 +114,11 @@ private:
     std::string peerDevId_;
 
     std::mutex stateMutex_;
-    std::atomic<bool> initialized_ {false};
+    std::atomic<bool> isInitialized_ = false;
     std::atomic<StateId> currentState_ = StateId::IDLE;
 
     sptr<AVTransControlCenterCallback> ctlCenCallback_ = nullptr;
-    std::shared_ptr<DistributedHardwareFwkKit> dhfwkKit_ = nullptr;
+    std::shared_ptr<DistributedHardwareFwkKit> dhFwkKit_ = nullptr;
     std::shared_ptr<IAVSenderEngineCallback> senderCallback_ = nullptr;
     std::shared_ptr<OHOS::Media::Pipeline::PipelineCore> pipeline_ = nullptr;
 

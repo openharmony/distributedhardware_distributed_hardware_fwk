@@ -47,7 +47,7 @@ HWTEST_F(AvSenderEngineTest, Initialize_001, testing::ext::TestSize.Level1)
     std::string ownerName = "001";
     std::string peerDevId = "pEid";
     auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
-    sender->initialized_ = true;
+    sender->isInitialized_ = true;
     int32_t ret = sender->Initialize();
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }

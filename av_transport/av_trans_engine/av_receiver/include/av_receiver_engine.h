@@ -17,34 +17,30 @@
 #define OHOS_AV_RECEIVER_ENGINE_H
 
 #include "av_trans_buffer.h"
-#include "av_trans_errno.h"
 #include "av_trans_constants.h"
+#include "av_trans_control_center_callback.h"
+#include "av_trans_errno.h"
 #include "av_trans_log.h"
 #include "av_trans_message.h"
 #include "av_trans_types.h"
 #include "av_trans_utils.h"
-#include "i_av_receiver_engine.h"
-#include "softbus_channel_adapter.h"
-#include "distributed_hardware_fwk_kit.h"
-#include "av_trans_control_center_callback.h"
 #include "av_transport_input_filter.h"
 #include "av_transport_output_filter.h"
+#include "distributed_hardware_fwk_kit.h"
+#include "event.h"
+#include "i_av_receiver_engine.h"
+#include "softbus_channel_adapter.h"
 
 // follwing head files depends on histreamer
+#include "audio_decoder_filter.h"
 #include "error_code.h"
-#include "event.h"
 #include "pipeline/core/filter.h"
 #include "plugin_event.h"
 #include "pipeline_core.h"
-#include "audio_decoder_filter.h"
 #include "video_decoder_filter.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-using namespace OHOS::Media;
-using namespace OHOS::Media::Plugin;
-using namespace OHOS::Media::Pipeline;
-using AVBuffer = OHOS::Media::Plugin::Buffer;
 
 class AVReceiverEngine : public IAVReceiverEngine,
                          public ISoftbusChannelListener,
@@ -117,18 +113,18 @@ private:
     std::string sessionName_;
     std::string peerDevId_;
     std::mutex stateMutex_;
-    std::atomic<bool> initialized_ {false};
+    std::atomic<bool> isInitialized_ = false;
     std::atomic<StateId> currentState_ = StateId::IDLE;
 
-    sptr<AVTransControlCenterCallback> ctlCenCallback_ = nullptr;
-    std::shared_ptr<DistributedHardwareFwkKit> dhfwkKit_ = nullptr;
+    sptr<AVTransControlCenterCallback> ctlCtrCallback_ = nullptr;
+    std::shared_ptr<DistributedHardwareFwkKit> dhFwkKit_ = nullptr;
     std::shared_ptr<IAVReceiverEngineCallback> receiverCallback_ = nullptr;
     std::shared_ptr<OHOS::Media::Pipeline::PipelineCore> pipeline_ = nullptr;
 
-    std::shared_ptr<AVInputFilter> avInput_;
-    std::shared_ptr<AVOutputFilter> avOutput_;
-    std::shared_ptr<OHOS::Media::Pipeline::AudioDecoderFilter> audioDecoder_;
-    std::shared_ptr<OHOS::Media::Pipeline::VideoDecoderFilter> videoDecoder_;
+    std::shared_ptr<AVInputFilter> avInput_ = nullptr;
+    std::shared_ptr<AVOutputFilter> avOutput_ = nullptr;
+    std::shared_ptr<OHOS::Media::Pipeline::AudioDecoderFilter> audioDecoder_ = nullptr;
+    std::shared_ptr<OHOS::Media::Pipeline::VideoDecoderFilter> videoDecoder_ = nullptr;
 
     using SetParaFunc = void (AVReceiverEngine::*)(const std::string &value);
     std::map<AVTransTag, SetParaFunc> funcMap_;
