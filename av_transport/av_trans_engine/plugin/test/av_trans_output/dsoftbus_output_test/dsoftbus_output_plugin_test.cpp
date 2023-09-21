@@ -102,5 +102,39 @@ HWTEST_F(DsoftbusOutputPluginTest, PushData_001, testing::ext::TestSize.Level1)
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 }
 
+HWTEST_F(DsoftbusOutputPluginTest, Deinit_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
+    Callback* eventsCb_;
+    eventsCb_ = nullptr;
+    AVTransEvent event;
+    plugin->OnChannelEvent(event);
+    Status ret = plugin->Deinit();
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DsoftbusOutputPluginTest, SetCallback_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
+    Callback *cb = nullptr;
+    AVTransEvent event;
+    event.type = EventType::EVENT_CHANNEL_OPENED;
+    plugin->OnChannelEvent(event);
+    event.type = EventType::EVENT_CHANNEL_OPEN_FAIL;
+    plugin->OnChannelEvent(event);
+    event.type = EventType::EVENT_CHANNEL_CLOSED;
+    plugin->OnChannelEvent(event);
+    Status ret = plugin->SetCallback(cb);
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+}
+
+HWTEST_F(DsoftbusOutputPluginTest, SetDataCallback_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
+    AVDataCallback callback = nullptr;
+    Status ret = plugin->SetDataCallback(callback);
+    EXPECT_EQ(Status::OK, ret);
+}
+
 } // namespace DistributedHardware
 } // namespace OHOS
