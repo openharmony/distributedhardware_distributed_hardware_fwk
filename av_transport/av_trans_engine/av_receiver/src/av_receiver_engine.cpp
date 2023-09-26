@@ -20,6 +20,12 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+
+using namespace OHOS::Media;
+using namespace OHOS::Media::Plugin;
+using namespace OHOS::Media::Pipeline;
+using AVBuffer = OHOS::Media::Plugin::Buffer;
+
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "AVReceiverEngine"
 
@@ -35,18 +41,18 @@ AVReceiverEngine::~AVReceiverEngine()
     AVTRANS_LOGI("AVReceiverEngine dctor.");
     Release();
 
-    dhfwkKit_ = nullptr;
+    dhFwkKit_ = nullptr;
     pipeline_ = nullptr;
     avInput_ = nullptr;
     avOutput_ = nullptr;
     audioDecoder_ = nullptr;
     videoDecoder_ = nullptr;
-    ctlCenCallback_ = nullptr;
+    ctlCtrCallback_ = nullptr;
 }
 
 int32_t AVReceiverEngine::Initialize()
 {
-    TRUE_RETURN_V_MSG_E(initialized_.load(), DH_AVT_SUCCESS, "sender engine has been initialized");
+    TRUE_RETURN_V_MSG_E(isInitialized_.load(), DH_AVT_SUCCESS, "sender engine has been initialized");
 
     int32_t ret = InitPipeline();
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_INIT_FAILED, "init pipeline failed");
@@ -57,7 +63,7 @@ int32_t AVReceiverEngine::Initialize()
     ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_INIT_FAILED, "register receiver channel callback failed");
     RegRespFunMap();
-    initialized_ = true;
+    isInitialized_ = true;
     SetCurrentState(StateId::INITIALIZED);
     return DH_AVT_SUCCESS;
 }
@@ -103,18 +109,18 @@ int32_t AVReceiverEngine::InitPipeline()
 
 int32_t AVReceiverEngine::InitControlCenter()
 {
-    dhfwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
-    int32_t ret = dhfwkKit_->InitializeAVCenter(TransRole::AV_RECEIVER, engineId_);
+    dhFwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
+    int32_t ret = dhFwkKit_->InitializeAVCenter(TransRole::AV_RECEIVER, engineId_);
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CTRL_CENTER_INIT_FAIL, "init av trans control center failed");
 
-    ctlCenCallback_ = new (std::nothrow) AVTransControlCenterCallback();
-    TRUE_RETURN_V_MSG_E(ctlCenCallback_ == nullptr, ERR_DH_AVT_REGISTER_CALLBACK_FAIL,
+    ctlCtrCallback_ = new (std::nothrow) AVTransControlCenterCallback();
+    TRUE_RETURN_V_MSG_E(ctlCtrCallback_ == nullptr, ERR_DH_AVT_REGISTER_CALLBACK_FAIL,
         "new control center callback failed");
 
     std::shared_ptr<IAVReceiverEngine> engine = std::shared_ptr<AVReceiverEngine>(shared_from_this());
-    ctlCenCallback_->SetReceiverEngine(engine);
+    ctlCtrCallback_->SetReceiverEngine(engine);
 
-    ret = dhfwkKit_->RegisterCtlCenterCallback(engineId_, ctlCenCallback_);
+    ret = dhFwkKit_->RegisterCtlCenterCallback(engineId_, ctlCtrCallback_);
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_REGISTER_CALLBACK_FAIL,
         "register control center callback failed");
 
@@ -204,19 +210,19 @@ int32_t AVReceiverEngine::Release()
     if (pipeline_ != nullptr) {
         pipeline_->Stop();
     }
-    if (dhfwkKit_ != nullptr) {
-        dhfwkKit_->ReleaseAVCenter(engineId_);
+    if (dhFwkKit_ != nullptr) {
+        dhFwkKit_->ReleaseAVCenter(engineId_);
     }
     SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
-    initialized_ = false;
+    isInitialized_ = false;
     pipeline_ = nullptr;
-    dhfwkKit_ = nullptr;
+    dhFwkKit_ = nullptr;
     avInput_ = nullptr;
     avOutput_ = nullptr;
     audioDecoder_ = nullptr;
     videoDecoder_ = nullptr;
-    ctlCenCallback_ = nullptr;
+    ctlCtrCallback_ = nullptr;
     SetCurrentState(StateId::IDLE);
     return DH_AVT_SUCCESS;
 }
@@ -258,32 +264,32 @@ void AVReceiverEngine::RegRespFunMap()
 
 void AVReceiverEngine::SetVideoWidth(const std::string &value)
 {
-    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_WIDTH), std::atoi(value.c_str()));
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_WIDTH), std::stoi(value));
     AVTRANS_LOGI("SetParameter VIDEO_WIDTH success, video width = %s", value.c_str());
 }
 
 void AVReceiverEngine::SetVideoHeight(const std::string &value)
 {
-    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_HEIGHT), std::atoi(value.c_str()));
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_HEIGHT), std::stoi(value));
     AVTRANS_LOGI("SetParameter VIDEO_HEIGHT success, video height = %s", value.c_str());
 }
 
 void AVReceiverEngine::SetVideoFrameRate(const std::string &value)
 {
-    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_FRAME_RATE), std::atoi(value.c_str()));
-    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_FRAME_RATE), std::atoi(value.c_str()));
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_FRAME_RATE), std::stoi(value));
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_FRAME_RATE), std::stoi(value));
     AVTRANS_LOGI("SetParameter VIDEO_FRAME_RATE success, frame rate = %s", value.c_str());
 }
 
 void AVReceiverEngine::SetAudioBitRate(const std::string &value)
 {
-    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_BITRATE), std::atoi(value.c_str()));
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_BITRATE), std::stoi(value));
     AVTRANS_LOGI("SetParameter MEDIA_BITRATE success, bit rate = %s", value.c_str());
 }
 
 void AVReceiverEngine::SetVideoBitRate(const std::string &value)
 {
-    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_BITRATE), std::atoi(value.c_str()));
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_BITRATE), std::stoi(value));
     AVTRANS_LOGI("SetParameter MEDIA_BITRATE success, bit rate = %s", value.c_str());
 }
 
@@ -317,34 +323,34 @@ void AVReceiverEngine::SetAudioCodecType(const std::string &value)
 
 void AVReceiverEngine::SetAudioChannelMask(const std::string &value)
 {
-    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNELS), std::atoi(value.c_str()));
-    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNELS), std::atoi(value.c_str()));
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNELS), std::stoi(value));
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNELS), std::stoi(value));
     AVTRANS_LOGI("SetParameter AUDIO_CHANNELS success, audio channels = %s", value.c_str());
 }
 
 void AVReceiverEngine::SetAudioSampleRate(const std::string &value)
 {
-    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_RATE), std::atoi(value.c_str()));
-    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_RATE), std::atoi(value.c_str()));
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_RATE), std::stoi(value));
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_RATE), std::stoi(value));
     AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_RATE success, audio sample rate = %s", value.c_str());
 }
 
 void AVReceiverEngine::SetAudioChannelLayout(const std::string &value)
 {
-    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNEL_LAYOUT), std::atoi(value.c_str()));
-    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNEL_LAYOUT), std::atoi(value.c_str()));
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNEL_LAYOUT), std::stoi(value));
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNEL_LAYOUT), std::stoi(value));
     AVTRANS_LOGI("SetParameter AUDIO_CHANNEL_LAYOUT success, audio channel layout = %s", value.c_str());
 }
 
 void AVReceiverEngine::SetAudioSampleFormat(const std::string &value)
 {
-    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_FORMAT), std::atoi(value.c_str()));
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_FORMAT), std::stoi(value));
     AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_FORMAT success, audio sample format = %s", value.c_str());
 }
 
 void AVReceiverEngine::SetAudioFrameSize(const std::string &value)
 {
-    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_PER_FRAME), std::atoi(value.c_str()));
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_PER_FRAME), std::stoi(value));
     AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_PER_FRAME success, audio sample per frame = %s", value.c_str());
 }
 
