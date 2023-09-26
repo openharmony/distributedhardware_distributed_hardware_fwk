@@ -13,10 +13,12 @@
  * limitations under the License.
  */
 
+#include <iostream>
 #include "av_receiver_engine_test.h"
 
 #include "pipeline/factory/filter_factory.h"
 #include "plugin_video_tags.h"
+#include "distributed_hardware_fwk_kit.h"
 
 using namespace testing::ext;
 using namespace OHOS::DistributedHardware;
@@ -28,6 +30,9 @@ const std::string FILTERNAME = "avreceivererengine";
 
 void AvReceiverEngineTest::SetUp()
 {
+    AutoRegisterFilter<AVOutputFilter> registerOutputFilter(AVOUTPUT_NAME);
+    AutoRegisterFilter<AVInputFilter> registerInputFilter(AVINPUT_NAME);
+    AutoRegisterFilter<OHOS::Media::Pipeline::VideoEncoderFilter> registerEncoderFilter(VENCODER_NAME);
 }
 
 void AvReceiverEngineTest::TearDown()
@@ -48,6 +53,16 @@ HWTEST_F(AvReceiverEngineTest, Initialize_001, testing::ext::TestSize.Level1)
     std::string peerDevId = "pEid";
     auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
     receiver->isInitialized_ = true;
+    std::string value264 = MIME_VIDEO_H264;
+    receiver->videoDecoder_ =
+        FilterFactory::Instance().CreateFilterWithType<VideoDecoderFilter>(VDECODER_NAME, "videodecoder");
+    receiver->avInput_ =
+        FilterFactory::Instance().CreateFilterWithType<AVInputFilter>(AVINPUT_NAME, "avinput");
+    receiver->avOutput_ =
+        FilterFactory::Instance().CreateFilterWithType<AVOutputFilter>(AVOUTPUT_NAME, "avoutput");
+    receiver->SetVideoCodecType(value264);
+    std::string value = MIME_VIDEO_H265;
+    receiver->SetVideoCodecType(value);
     int32_t ret = receiver->Initialize();
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
@@ -70,6 +85,27 @@ HWTEST_F(AvReceiverEngineTest, Initialize_003, testing::ext::TestSize.Level1)
     receiver->sessionName_ = "";
     int32_t ret = receiver->Initialize();
     EXPECT_EQ(ERR_DH_AVT_INIT_FAILED, ret);
+}
+
+HWTEST_F(AvReceiverEngineTest, InitPipeline_001, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+    receiver->pipeline_ = nullptr;
+    receiver->SetEngineReady(ownerName);
+    receiver->pipeline_ = std::make_shared<OHOS::Media::Pipeline::PipelineCore>();
+    receiver->SetEngineReady(ownerName);
+    int32_t ret = receiver->InitPipeline();
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM_VALUE, ret);
+}
+
+HWTEST_F(AvReceiverEngineTest, InitPipeline_002, testing::ext::TestSize.Level1)
+{
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVReceiverEngine>(OWNER_NAME_D_MIC, peerDevId);
+    int32_t ret = receiver->InitPipeline();
+    EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 
 HWTEST_F(AvReceiverEngineTest, CreateControlChannel_001, testing::ext::TestSize.Level1)
@@ -240,6 +276,64 @@ HWTEST_F(AvReceiverEngineTest, SendMessage_001, testing::ext::TestSize.Level1)
     auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
     int32_t ret = receiver->SendMessage(nullptr);
     EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
+}
+
+HWTEST_F(AvReceiverEngineTest, RegisterReceiverCallback_001, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+    receiver->avInput_ = FilterFactory::Instance().CreateFilterWithType<AVInputFilter>(AVINPUT_NAME, "avinput");
+    std::shared_ptr<ReceiverEngineCallback> callback = nullptr;
+    int32_t ret = receiver->RegisterReceiverCallback(callback);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
+}
+
+HWTEST_F(AvReceiverEngineTest, OnChannelEvent_001, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+    receiver->receiverCallback_ = nullptr;
+    AVTransEvent transEvent;
+    transEvent.content = "content";
+    transEvent.type = EventType::EVENT_CHANNEL_OPENED;
+    receiver->OnChannelEvent(transEvent);
+    receiver->receiverCallback_ = std::make_shared<ReceiverEngineCallback>();
+    receiver->OnChannelEvent(transEvent);
+
+    EXPECT_EQ(StateId::CH_CREATED, receiver->currentState_);
+}
+
+HWTEST_F(AvReceiverEngineTest, OnChannelEvent_002, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+    AVTransEvent transEvent;
+    transEvent.content = "content";
+    transEvent.type = EventType::EVENT_CHANNEL_OPEN_FAIL;
+    receiver->receiverCallback_ = std::make_shared<ReceiverEngineCallback>();
+    receiver->OnChannelEvent(transEvent);
+
+    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+}
+
+HWTEST_F(AvReceiverEngineTest, OnChannelEvent_003, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+    AVTransEvent event;
+    event.content = "content";
+    event.type = EventType::EVENT_CHANNEL_CLOSED;
+    receiver->receiverCallback_ = std::make_shared<ReceiverEngineCallback>();
+    receiver->currentState_ = StateId::CH_CREATED;
+    receiver->OnChannelEvent(event);
+
+    event.type = EventType::EVENT_DATA_RECEIVED;
+    receiver->OnChannelEvent(event);
+    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

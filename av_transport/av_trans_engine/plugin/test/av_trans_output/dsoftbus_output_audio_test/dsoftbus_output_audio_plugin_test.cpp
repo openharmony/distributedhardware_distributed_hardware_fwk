@@ -45,8 +45,16 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Prepare_001, TestSize.Level0)
     plugin->state_ = State::PREPARED;
     Status ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+}
 
+HWTEST_F(DsoftbusOutputAudioPluginTest, Prepare_002, TestSize.Level0)
+{
+    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
     plugin->state_ = State::INITIALIZED;
+    Status ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    
+    plugin->ownerName_ = "ohos.dhardware.dcamera";
     ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
@@ -76,11 +84,29 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Start_001, TestSize.Level1)
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
+HWTEST_F(DsoftbusOutputAudioPluginTest, Start_002, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
+    plugin->bufferPopTask_ = std::make_shared<Media::OSAL::Task>("videoBufferQueuePopThread");
+    plugin->state_ = State::PREPARED;
+    Status ret = plugin->Start();
+    EXPECT_EQ(Status::OK, ret);
+}
+
 HWTEST_F(DsoftbusOutputAudioPluginTest, Stop_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
     Status ret = plugin->Stop();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+}
+
+HWTEST_F(DsoftbusOutputAudioPluginTest, Stop_002, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
+    plugin->bufferPopTask_ = std::make_shared<Media::OSAL::Task>("videoBufferQueuePopThread");
+    plugin->state_ = State::RUNNING;
+    Status ret = plugin->Stop();
+    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, PushData_001, testing::ext::TestSize.Level1)
