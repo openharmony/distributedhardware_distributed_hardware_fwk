@@ -35,8 +35,10 @@ public:
 };
 
 struct EnableParam {
-    std::string version;
-    std::string attrs;
+    std::string sourceVersion;
+    std::string sourceAttrs;
+    std::string sinkVersion;
+    std::string sinkAttrs;
 };
 
 class IDistributedHardwareSource {

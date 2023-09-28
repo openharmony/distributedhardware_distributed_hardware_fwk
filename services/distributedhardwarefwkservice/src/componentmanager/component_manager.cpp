@@ -436,45 +436,65 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
             GetAnonyString(dhId).c_str(), ret);
         return ret;
     }
-
-    param.attrs = capability->GetDHAttrs();
+    DeviceInfo sourceDeviceInfo = GetLocalDeviceInfo();
+    std::string sourceNetworkId = DHContext::GetInstance().GetNetworkIdByUUID(sourceDeviceInfo.uuid);
+    std::vector<std::shared_ptr<CapabilityInfo>> sourceCapInfos;
+    std::string sourceDHId;
+    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(sourceDeviceInfo.deviceId, sourceCapInfos);
+    for (const auto &capInfo : sourceCapInfos) {
+        if (dhType == capInfo->GetDHType()) {
+            param.sourceAttrs = capInfo->GetDHAttrs();
+            sourceDHId = capInfo->GetDHId();
+        }
+    }
+    std::string sourceVersion("");
+    ret = GetVersion(sourceNetworkId, sourceDeviceInfo.uuid, dhType, sourceVersion, false);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Get source version failed, uuid = %s, dhId = %s, dhType = %#X,",
+            GetAnonyString(sourceDeviceInfo.uuid).c_str(), GetAnonyString(sourceDHId).c_str(), dhType);
+        return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
+    }
+    param.sourceVersion = sourceVersion;
+    param.sinkAttrs = capability->GetDHAttrs();
     std::string sinkVersion("");
-    ret = GetSinkVersion(networkId, uuid, dhType, sinkVersion);
+    ret = GetVersion(networkId, uuid, dhType, sinkVersion, true);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Get sink version failed, uuid = %s, dhId = %s, dhType = %#X,", GetAnonyString(uuid).c_str(),
             GetAnonyString(dhId).c_str(), dhType);
         return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
     }
-    param.version = sinkVersion;
-    DHLOGI("success. uuid =%s, dhId = %s, version = %s", GetAnonyString(uuid).c_str(),
-        GetAnonyString(dhId).c_str(), param.version.c_str());
+    param.sinkVersion = sinkVersion;
+    DHLOGI("success. dhType = %#X, sink uuid =%s, sink dhId = %s, sinVersion = %s, source uuid =%s, source dhId = %s, "
+        "sourceVersion = %s", dhType, GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(),
+        param.sinkVersion.c_str(), GetAnonyString(sourceDeviceInfo.uuid).c_str(),
+        GetAnonyString(sourceDHId).c_str(), param.sourceVersion.c_str());
 
     return DH_FWK_SUCCESS;
 }
 
-int32_t ComponentManager::GetSinkVersionFromVerMgr(const std::string &uuid, const DHType dhType,
-    std::string &sinkVersion)
+int32_t ComponentManager::GetVersionFromVerMgr(const std::string &uuid, const DHType dhType,
+    std::string &version, bool isSink)
 {
     CompVersion compversion;
     int32_t ret = VersionManager::GetInstance().GetCompVersion(uuid, dhType, compversion);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Get sink version from version Manager failed, uuid =%s, dhType = %#X, errCode = %d",
+        DHLOGE("Get version Manager failed, uuid =%s, dhType = %#X, errCode = %d",
             GetAnonyString(uuid).c_str(), dhType, ret);
         return ret;
     }
-    DHLOGI("Get sink version from version mgr success, sinkVersion = %s, uuid = %s, dhType = %#X",
-        compversion.sinkVersion.c_str(), GetAnonyString(uuid).c_str(), dhType);
-    sinkVersion = compversion.sinkVersion;
+    DHLOGI("Get version mgr success, sinkVersion = %s, sourceVersion = %s,uuid = %s, dhType = %#X",
+        compversion.sinkVersion.c_str(), compversion.sourceVersion.c_str(), GetAnonyString(uuid).c_str(), dhType);
+    version = isSink ? compversion.sinkVersion : compversion.sourceVersion;
     return DH_FWK_SUCCESS;
 }
 
-int32_t ComponentManager::GetSinkVersionFromVerInfoMgr(const std::string &uuid, const DHType dhType,
-    std::string &sinkVersion)
+int32_t ComponentManager::GetVersionFromVerInfoMgr(const std::string &uuid, const DHType dhType,
+    std::string &version, bool isSink)
 {
     VersionInfo versionInfo;
     int32_t ret =  VersionInfoManager::GetInstance()->GetVersionInfoByDeviceId(GetDeviceIdByUUID(uuid), versionInfo);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Get sink version from Version info Manager failed, uuid =%s, dhType = %#X, errCode = %d",
+        DHLOGE("Get Version info Manager failed, uuid =%s, dhType = %#X, errCode = %d",
             GetAnonyString(uuid).c_str(), dhType, ret);
         return ret;
     }
@@ -483,23 +503,23 @@ int32_t ComponentManager::GetSinkVersionFromVerInfoMgr(const std::string &uuid, 
         DHLOGE("can not find component version for dhType = %d", dhType);
         return ERR_DH_FWK_COMPONENT_DHTYPE_NOT_FOUND;
     }
-    DHLOGI("Get SinkVersion from version info mgr success, sinkVersion = %s, uuid = %s, dhType = %#X",
-        iter->second.sinkVersion.c_str(), GetAnonyString(uuid).c_str(), dhType);
+    DHLOGI("Get version info mgr success, sinkVersion = %s, sourceVersion = %s, uuid = %s, dhType = %#X",
+        iter->second.sinkVersion.c_str(), iter->second.sourceVersion.c_str(), GetAnonyString(uuid).c_str(), dhType);
     UpdateVersionCache(uuid, versionInfo);
-    sinkVersion = iter->second.sinkVersion;
+    version = isSink ? iter->second.sinkVersion : iter->second.sourceVersion;
     return DH_FWK_SUCCESS;
 }
 
-int32_t ComponentManager::GetSinkVersion(const std::string &networkId, const std::string &uuid,
-    DHType dhType, std::string &sinkVersion)
+int32_t ComponentManager::GetVersion(const std::string &networkId, const std::string &uuid,
+    DHType dhType, std::string &version, bool isSink)
 {
-    int32_t ret = GetSinkVersionFromVerMgr(uuid, dhType, sinkVersion);
-    if ((ret == DH_FWK_SUCCESS) && (!sinkVersion.empty())) {
+    int32_t ret = GetVersionFromVerMgr(uuid, dhType, version, isSink);
+    if ((ret == DH_FWK_SUCCESS) && (!version.empty())) {
         return DH_FWK_SUCCESS;
     }
 
-    ret = GetSinkVersionFromVerInfoMgr(uuid, dhType, sinkVersion);
-    if ((ret == DH_FWK_SUCCESS) && (!sinkVersion.empty())) {
+    ret = GetVersionFromVerInfoMgr(uuid, dhType, version, isSink);
+    if ((ret == DH_FWK_SUCCESS) && (!version.empty())) {
         return DH_FWK_SUCCESS;
     }
 
