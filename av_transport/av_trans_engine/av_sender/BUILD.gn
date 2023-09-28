@@ -26,6 +26,12 @@ config("sender_external_config") {
 }
 
 ohos_shared_library("distributed_av_sender") {
+  sanitize = {
+    boundary_sanitize = true
+    integer_overflow = true
+    ubsan = true
+  }
+  stack_protector_ret = true
   public_configs = [ ":sender_external_config" ]
 
   include_dirs = [

@@ -26,6 +26,12 @@ config("receiver_external_config") {
 }
 
 ohos_shared_library("distributed_av_receiver") {
+  sanitize = {
+    boundary_sanitize = true
+    integer_overflow = true
+    ubsan = true
+  }
+  stack_protector_ret = true
   public_configs = [ ":receiver_external_config" ]
 
   include_dirs = [
