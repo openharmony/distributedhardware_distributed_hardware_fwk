@@ -60,7 +60,7 @@ public:
     int32_t PushData(const std::shared_ptr<AVTransBuffer> &buffer) override;
     int32_t SendMessage(const std::shared_ptr<AVTransMessage> &message) override;
     int32_t CreateControlChannel(const std::vector<std::string> &dstDevIds,
-    const ChannelAttribute &attribution) override;
+        const ChannelAttribute &attribution) override;
     int32_t RegisterSenderCallback(const std::shared_ptr<IAVSenderEngineCallback> &callback) override;
     bool StartDumpMediaData() override;
     bool StopDumpMediaData() override;

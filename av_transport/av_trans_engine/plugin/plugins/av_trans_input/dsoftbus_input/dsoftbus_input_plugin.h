@@ -97,7 +97,6 @@ private:
     State state_ {State::CREATED};
     Callback* eventsCb_ = nullptr;
     AVDataCallback dataCb_;
-    const std::string SCREEN_FILE_NAME_BEFOREENCODING = "/data/data/dscreen/BeforeEncoding.h265";
 };
 } // namespace DistributedHardware
 } // namespace OHOS

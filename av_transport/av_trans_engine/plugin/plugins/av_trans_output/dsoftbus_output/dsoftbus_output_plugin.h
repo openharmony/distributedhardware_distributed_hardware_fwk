@@ -94,7 +94,6 @@ private:
     std::map<Tag, ValueType> paramsMap_;
     State state_ {State::CREATED};
     Callback* eventsCb_ = nullptr;
-    const std::string SCREEN_FILE_NAME_AFTERCODING = "/data/data/dscreen/AfterCoding.h265";
 };
 } // namespace DistributedHardware
 } // namespace OHOS
