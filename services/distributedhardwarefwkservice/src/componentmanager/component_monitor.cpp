@@ -18,6 +18,7 @@
 #include <cinttypes>
 
 #include "iservice_registry.h"
+#include "service_control.h"
 #include "system_ability_definition.h"
 
 #include "anonymous_string.h"
@@ -29,6 +30,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+
+const int32_t WAIT_SERVICE_STATUS_TIMEOUT = 1;
+
 ComponentMonitor::ComponentMonitor() : saListeners_({})
 {
     DHLOGI("Ctor ComponentMonitor");
@@ -55,6 +59,14 @@ void ComponentMonitor::CompSystemAbilityListener::OnRemoveSystemAbility(int32_t 
         return;
     }
 
+    auto processNameIter = saIdProcessNameMap_.find(saId);
+    if (processNameIter == saIdProcessNameMap_.end()) {
+        DHLOGE("SaId not been find, SaId : %d", saId);
+        return;
+    }
+    ServiceWaitForStatus(((*processNameIter).second).c_str(),
+        ServiceStatus::SERVICE_STOPPED, WAIT_SERVICE_STATUS_TIMEOUT);
+    
     DHLOGI("Try Recover Component, dhType: %" PRIu32, (uint32_t)dhType);
     ComponentManager::GetInstance().Recover(dhType);
 }

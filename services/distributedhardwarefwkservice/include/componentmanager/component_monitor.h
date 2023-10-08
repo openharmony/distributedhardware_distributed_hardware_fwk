@@ -42,6 +42,17 @@ public:
         ~CompSystemAbilityListener() = default;
         void OnAddSystemAbility(int32_t saId, const std::string &deviceId) override;
         void OnRemoveSystemAbility(int32_t saId, const std::string &deviceId) override;
+    private:
+        std::map<int32_t, std::string> saIdProcessNameMap_ {
+            {4803, "dcamera"},
+            {4804, "dcamera"},
+            {4805, "daudio"},
+            {4806, "daudio"},
+            {4807, "dscreen"},
+            {4808, "dscreen"},
+            {4809, "dinput"},
+            {4810, "dinput"},
+        };
     };
 
 private:
