@@ -141,7 +141,7 @@ void Convert2HiSBufferMeta(std::shared_ptr<AVTransBuffer> transBuffer, std::shar
 
         transMeta->GetMetaItem(AVTransTag::AUDIO_SAMPLE_RATE, value);
         hisAMeta->sampleRate_ = static_cast<uint32_t>(std::atoi(value.c_str()));
-    
+
         hisBuffer->UpdateBufferMeta(*hisAMeta);
     } else {
         auto hisVMeta = std::make_shared<AVTransVideoBufferMeta>();

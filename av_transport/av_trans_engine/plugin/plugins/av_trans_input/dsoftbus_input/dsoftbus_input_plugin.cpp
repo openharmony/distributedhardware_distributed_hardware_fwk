@@ -15,6 +15,11 @@
 
 #include "dsoftbus_input_plugin.h"
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fstream>
+
 #include "foundation/utils/constants.h"
 #include "plugin/common/share_memory.h"
 #include "plugin/common/plugin_caps_builder.h"
@@ -70,6 +75,8 @@ Status DsoftbusInputPlugin::Init()
 {
     AVTRANS_LOGI("Init");
     Media::OSAL::ScopedLock lock(operationMutes_);
+    dumpFlag_.store(false);
+    reDumpFlag_.store(false);
     state_ = State::INITIALIZED;
     return Status::OK;
 }
@@ -183,6 +190,12 @@ Status DsoftbusInputPlugin::SetParameter(Tag tag, const ValueType &value)
     if (tag == Tag::MEDIA_DESCRIPTION) {
         ParseChannelDescription(Plugin::AnyCast<std::string>(value), ownerName_, peerDevId_);
     }
+    if (tag == Tag::SECTION_USER_SPECIFIC_START) {
+        dumpFlag_.store(Plugin::AnyCast<bool>(value));
+    }
+    if (tag == Tag::SECTION_VIDEO_SPECIFIC_START) {
+        reDumpFlag_.store(Plugin::AnyCast<bool>(value));
+    }
     paramsMap_.insert(std::pair<Tag, ValueType>(tag, value));
     return Status::OK;
 }
@@ -278,6 +291,17 @@ std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
 
 void DsoftbusInputPlugin::DataEnqueue(std::shared_ptr<Buffer> &buffer)
 {
+    if (GetReDumpFlag() == true) {
+        std::remove(SCREEN_FILE_NAME_BEFOREENCODING.c_str());
+        SetReDumpFlagFalse();
+    }
+    if (GetDumpFlag() == true) {
+        auto bufferData = buffer->GetMemory();
+        DumpBufferToFile(SCREEN_FILE_NAME_BEFOREENCODING,
+            const_cast<uint8_t*>(bufferData->GetReadOnlyData()), bufferData->GetSize());
+    } else {
+        AVTRANS_LOGE("DumpFlag = false.");
+    }
     while (dataQueue_.size() >= DATA_QUEUE_MAX_SIZE) {
         AVTRANS_LOGE("Data queue overflow.");
         dataQueue_.pop();
@@ -322,6 +346,26 @@ Status DsoftbusInputPlugin::PushData(const std::string &inPort, std::shared_ptr<
     (void) buffer;
     AVTRANS_LOGI("Push Data");
     return Status::OK;
+}
+
+bool DsoftbusInputPlugin::GetDumpFlag()
+{
+    return dumpFlag_;
+}
+
+void DsoftbusInputPlugin::SetDumpFlagFalse()
+{
+    dumpFlag_ = false;
+}
+
+bool DsoftbusInputPlugin::GetReDumpFlag()
+{
+    return reDumpFlag_;
+}
+
+void DsoftbusInputPlugin::SetReDumpFlagFalse()
+{
+    reDumpFlag_ = false;
 }
 }
 }

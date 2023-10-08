@@ -513,6 +513,13 @@ ErrorCode AVInputFilter::SetPluginParams()
     if (paramsMap_.find(Tag::MEDIA_DESCRIPTION) != paramsMap_.end()) {
         plugin_->SetParameter(Tag::MEDIA_DESCRIPTION, paramsMap_[Tag::MEDIA_DESCRIPTION]);
     }
+    if (paramsMap_.find(Tag::SECTION_USER_SPECIFIC_START) != paramsMap_.end()) {
+        plugin_->SetParameter(Tag::SECTION_USER_SPECIFIC_START, paramsMap_[Tag::SECTION_USER_SPECIFIC_START]);
+    }
+    if (paramsMap_.find(Tag::SECTION_VIDEO_SPECIFIC_START) != paramsMap_.end()) {
+        plugin_->SetParameter(Tag::SECTION_VIDEO_SPECIFIC_START, paramsMap_[Tag::SECTION_VIDEO_SPECIFIC_START]);
+    }
+
     return ErrorCode::SUCCESS;
 }
 

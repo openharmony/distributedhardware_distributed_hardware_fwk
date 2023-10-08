@@ -318,6 +318,12 @@ ErrorCode AVOutputFilter::SetPluginParams()
     if (paramsMap_.find(Tag::AUDIO_CHANNEL_LAYOUT) != paramsMap_.end()) {
         plugin_->SetParameter(Tag::AUDIO_CHANNEL_LAYOUT, paramsMap_[Tag::AUDIO_CHANNEL_LAYOUT]);
     }
+    if (paramsMap_.find(Tag::SECTION_USER_SPECIFIC_START) != paramsMap_.end()) {
+        plugin_->SetParameter(Tag::SECTION_USER_SPECIFIC_START, paramsMap_[Tag::SECTION_USER_SPECIFIC_START]);
+    }
+    if (paramsMap_.find(Tag::SECTION_VIDEO_SPECIFIC_START) != paramsMap_.end()) {
+        plugin_->SetParameter(Tag::SECTION_VIDEO_SPECIFIC_START, paramsMap_[Tag::SECTION_VIDEO_SPECIFIC_START]);
+    }
     return ErrorCode::SUCCESS;
 }
 

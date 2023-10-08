@@ -17,6 +17,7 @@
 #define OHOS_AV_TRANS_ENGINE_PLUGINS_OUTPUT_DSOFTBUS_H
 
 #include <algorithm>
+#include <atomic>
 #include <condition_variable>
 #include <map>
 #include <memory>
@@ -63,6 +64,10 @@ public:
     Status PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset) override;
     Status SetCallback(Callback *cb) override;
     Status SetDataCallback(AVDataCallback callback) override;
+    bool GetDumpFlag();
+    void SetDumpFlagFalse();
+    bool GetReDumpFlag();
+    void SetReDumpFlagFalse();
 
     // interface from ISoftbusChannelListener
     void OnChannelEvent(const AVTransEvent &event) override;
@@ -76,6 +81,8 @@ private:
     void FeedChannelData();
 
 private:
+    std::atomic<bool> dumpFlag_ ;
+    std::atomic<bool> reDumpFlag_ ;
     std::string ownerName_;
     std::string sessionName_;
     std::string peerDevId_;
@@ -87,6 +94,7 @@ private:
     std::map<Tag, ValueType> paramsMap_;
     State state_ {State::CREATED};
     Callback* eventsCb_ = nullptr;
+    const std::string SCREEN_FILE_NAME_AFTERCODING = "/data/data/dscreen/AfterCoding.h265";
 };
 } // namespace DistributedHardware
 } // namespace OHOS
