@@ -76,7 +76,6 @@ ohos_shared_library("distributed_av_receiver") {
   ]
 
   external_deps = [
-    "histreamer:histreamer_base",
     "histreamer:histreamer_codec_filters",
     "histreamer:histreamer_ffmpeg_convert",
     "histreamer:histreamer_plugin_base",
@@ -89,6 +88,7 @@ ohos_shared_library("distributed_av_receiver") {
     "graphic_2d:libgraphic_utils",
     "graphic_2d:surface",
     "hilog:libhilog",
+    "histreamer:histreamer_base",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_core",
