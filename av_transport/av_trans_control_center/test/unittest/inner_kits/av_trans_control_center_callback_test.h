@@ -91,6 +91,21 @@ public:
         (void) callback;
         return DH_AVT_SUCCESS;
     }
+
+    bool StartDumpMediaData() override
+    {
+        return false;
+    }
+
+    bool StopDumpMediaData() override
+    {
+        return false;
+    }
+
+    bool ReStartDumpMediaData() override
+    {
+        return false;
+    }
 };
 class SenderEngineTest : public IAVSenderEngine {
 public:
@@ -147,6 +162,21 @@ public:
     {
         (void) callback;
         return DH_AVT_SUCCESS;
+    }
+
+    bool StartDumpMediaData() override
+    {
+        return false;
+    }
+
+    bool StopDumpMediaData() override
+    {
+        return false;
+    }
+
+    bool ReStartDumpMediaData() override
+    {
+        return false;
     }
 };
 } // namespace DistributedHardware

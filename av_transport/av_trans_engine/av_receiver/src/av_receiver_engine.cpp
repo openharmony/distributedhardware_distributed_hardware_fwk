@@ -402,6 +402,36 @@ int32_t AVReceiverEngine::RegisterReceiverCallback(const std::shared_ptr<IAVRece
     return DH_AVT_SUCCESS;
 }
 
+bool AVReceiverEngine::StartDumpMediaData()
+{
+    if (avInput_ == nullptr) {
+        AVTRANS_LOGE("avInput_ is nullptr.");
+        return false;
+    }
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::SECTION_USER_SPECIFIC_START), true);
+    return true;
+}
+
+bool AVReceiverEngine::StopDumpMediaData()
+{
+    if (avInput_ == nullptr) {
+        AVTRANS_LOGE("avInput_ is nullptr.");
+        return false;
+    }
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::SECTION_USER_SPECIFIC_START), false);
+    return true;
+}
+
+bool AVReceiverEngine::ReStartDumpMediaData()
+{
+    if (avInput_ == nullptr) {
+        AVTRANS_LOGE("avInput_ is nullptr.");
+        return false;
+    }
+    avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::SECTION_VIDEO_SPECIFIC_START), true);
+    return true;
+}
+
 int32_t AVReceiverEngine::HandleOutputBuffer(std::shared_ptr<AVBuffer> &hisBuffer)
 {
     StateId currentState = GetCurrentState();

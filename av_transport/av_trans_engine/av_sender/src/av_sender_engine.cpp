@@ -464,6 +464,36 @@ int32_t AVSenderEngine::RegisterSenderCallback(const std::shared_ptr<IAVSenderEn
     return DH_AVT_SUCCESS;
 }
 
+bool AVSenderEngine::StartDumpMediaData()
+{
+    if (avOutput_ == nullptr) {
+        AVTRANS_LOGE("avOutput_ is nullptr.");
+        return false;
+    }
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::SECTION_USER_SPECIFIC_START), true);
+    return true;
+}
+
+bool AVSenderEngine::StopDumpMediaData()
+{
+    if (avOutput_ == nullptr) {
+        AVTRANS_LOGE("avOutput_ is nullptr.");
+        return false;
+    }
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::SECTION_USER_SPECIFIC_START), false);
+    return true;
+}
+
+bool AVSenderEngine::ReStartDumpMediaData()
+{
+    if (avOutput_ == nullptr) {
+        AVTRANS_LOGE("avOutput_ is nullptr.");
+        return false;
+    }
+    avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::SECTION_VIDEO_SPECIFIC_START), true);
+    return true;
+}
+
 void AVSenderEngine::NotifyStreamChange(EventType type)
 {
     AVTRANS_LOGI("NotifyStreamChange enter, change type=%" PRId32, type);

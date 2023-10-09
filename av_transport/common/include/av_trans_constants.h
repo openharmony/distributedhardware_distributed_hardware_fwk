@@ -75,6 +75,9 @@ const std::string KEY_SHARED_MEM_FD = "sharedMemoryFd";
 const std::string KEY_SHARED_MEM_SIZE = "sharedMemorySize";
 const std::string KEY_SHARED_MEM_NAME = "sharedMemoryName";
 
+const std::string SCREEN_FILE_NAME_BEFOREENCODING = "/data/data/dscreen/BeforeEncoding.h265";
+const std::string SCREEN_FILE_NAME_AFTERCODING = "/data/data/dscreen/AfterCoding.h265";
+
 const uint8_t DATA_WAIT_SECONDS = 1;
 const size_t DATA_QUEUE_MAX_SIZE = 1000;
 constexpr const char *SEND_CHANNEL_EVENT = "SendChannelEvent";

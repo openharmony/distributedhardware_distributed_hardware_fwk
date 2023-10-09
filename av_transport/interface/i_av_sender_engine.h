@@ -105,6 +105,21 @@ public:
      * @return Returns DH_AVT_SUCCESS(0) if successful, otherwise returns other error code.
      */
     virtual int32_t RegisterSenderCallback(const std::shared_ptr<IAVSenderEngineCallback> &callback) = 0;
+    /**
+     * @brief Send dump signal to the receiver engine.
+     * @return Returns BOOL(0)
+     */
+    virtual bool StartDumpMediaData() = 0;
+    /**
+     * @brief Send dump stop signal to the receiver engine.
+     * @return Returns BOOL(0)
+     */
+    virtual bool StopDumpMediaData() = 0;
+    /**
+     * @brief Send redump signal to the receiver engine.
+     * @return Returns BOOL(0)
+     */
+    virtual bool ReStartDumpMediaData() = 0;
 };
 } // DistributedHardware
 } // OHOS
