@@ -25,12 +25,15 @@ ohos_source_set("plugin_AVTransDsoftbusInput") {
   sources = [ "dsoftbus_input_plugin.cpp" ]
 
   external_deps = [
-    "bounds_checking_function:libsec_shared",
-    "dsoftbus:softbus_client",
-    "histreamer:histreamer_base",
     "histreamer:histreamer_codec_filters",
     "histreamer:histreamer_ffmpeg_convert",
     "histreamer:histreamer_plugin_base",
+  ]
+
+  external_deps += [
+    "bounds_checking_function:libsec_shared",
+    "dsoftbus:softbus_client",
+    "histreamer:histreamer_base",
   ]
 
   public_configs = [ "${plugin_path}/plugins:avtrans_cflags" ]

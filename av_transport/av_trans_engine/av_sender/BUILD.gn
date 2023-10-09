@@ -71,6 +71,12 @@ ohos_shared_library("distributed_av_sender") {
   ]
 
   external_deps = [
+    "histreamer:histreamer_codec_filters",
+    "histreamer:histreamer_ffmpeg_convert",
+    "histreamer:histreamer_plugin_base",
+  ]
+
+  external_deps += [
     "bounds_checking_function:libsec_shared",
     "c_utils:utils",
     "dsoftbus:softbus_client",
@@ -78,9 +84,6 @@ ohos_shared_library("distributed_av_sender") {
     "graphic_2d:surface",
     "hilog:libhilog",
     "histreamer:histreamer_base",
-    "histreamer:histreamer_codec_filters",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_core",
