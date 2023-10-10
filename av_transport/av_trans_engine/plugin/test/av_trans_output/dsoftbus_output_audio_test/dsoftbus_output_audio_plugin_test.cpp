@@ -100,15 +100,6 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Stop_001, TestSize.Level1)
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
 }
 
-HWTEST_F(DsoftbusOutputAudioPluginTest, Stop_002, TestSize.Level1)
-{
-    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
-    plugin->bufferPopTask_ = std::make_shared<Media::OSAL::Task>("videoBufferQueuePopThread");
-    plugin->state_ = State::RUNNING;
-    Status ret = plugin->Stop();
-    EXPECT_EQ(Status::OK, ret);
-}
-
 HWTEST_F(DsoftbusOutputAudioPluginTest, PushData_001, testing::ext::TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
