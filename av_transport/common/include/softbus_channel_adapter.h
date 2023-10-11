@@ -58,7 +58,7 @@ public:
     int32_t StopDeviceTimeSync(const std::string &pkgName, const std::string &sessName,
         const std::string &peerDevId);
 
-    void SendChannelEvent(ISoftbusChannelListener *listener, const AVTransEvent &event);
+    void SendChannelEvent(const std::string &sessName, const AVTransEvent &event);
 
     int32_t OnSoftbusChannelOpened(int32_t sessionId, int32_t result);
     void OnSoftbusChannelClosed(int32_t sessionId);

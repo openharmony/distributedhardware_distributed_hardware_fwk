@@ -222,7 +222,7 @@ int32_t SoftbusChannelAdapter::RegisterChannelListener(const std::string& sessNa
     TRUE_RETURN_V_MSG_E(listener == nullptr, ERR_DH_AVT_INVALID_PARAM, "input callback is nullptr.");
 
     std::lock_guard<std::mutex> lock(listenerMtx_);
-    listenerMap_.insert(std::make_pair(sessName + "_" + peerDevId, listener));
+    listenerMap_[sessName + "_" + peerDevId] = listener;
 
     return DH_AVT_SUCCESS;
 }
@@ -323,10 +323,9 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(int32_t sessionId, int32_t
     {
         std::lock_guard<std::mutex> lock(idMapMutex_);
         {
-            std::lock_guard<std::mutex> lock(listenerMtx_);
             for (auto it = listenerMap_.begin(); it != listenerMap_.end(); it++) {
                 if (((it->first).find(sessName) != std::string::npos) && (it->second != nullptr)) {
-                    std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->second, event).detach();
+                    std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->first, event).detach();
                     devId2SessIdMap_.erase(it->first);
                     devId2SessIdMap_.insert(std::make_pair(it->first, sessionId));
                 }
@@ -354,8 +353,7 @@ void SoftbusChannelAdapter::OnSoftbusChannelClosed(int32_t sessionId)
     for (auto it = devId2SessIdMap_.begin(); it != devId2SessIdMap_.end();) {
         if (it->second == sessionId) {
             event.content = GetOwnerFromSessName(it->first);
-            std::lock_guard<std::mutex> lock(listenerMtx_);
-            std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, listenerMap_[it->first], event).detach();
+            std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->first, event).detach();
             devId2SessIdMap_.erase(it++);
         } else {
             it++;
@@ -380,8 +378,7 @@ void SoftbusChannelAdapter::OnSoftbusBytesReceived(int32_t sessionId, const void
     std::lock_guard<std::mutex> lock(idMapMutex_);
     for (auto it = devId2SessIdMap_.begin(); it != devId2SessIdMap_.end(); it++) {
         if (it->second == sessionId) {
-            std::lock_guard<std::mutex> lock(listenerMtx_);
-            std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, listenerMap_[it->first], event).detach();
+            std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->first, event).detach();
         }
     }
 }
@@ -455,11 +452,16 @@ std::string SoftbusChannelAdapter::GetOwnerFromSessName(const std::string &sessN
     return EMPTY_STRING;
 }
 
-void SoftbusChannelAdapter::SendChannelEvent(ISoftbusChannelListener *listener, const AVTransEvent &event)
+void SoftbusChannelAdapter::SendChannelEvent(const std::string &sessName, const AVTransEvent &event)
 {
     pthread_setname_np(pthread_self(), SEND_CHANNEL_EVENT);
 
-    TRUE_RETURN(listener == nullptr, "input listener is nullptr.");
+    ISoftbusChannelListener *listener = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(listenerMtx_);
+        listener = listenerMap_[sessName];
+        TRUE_RETURN(listener == nullptr, "input listener is nullptr.");
+    }
     listener->OnChannelEvent(event);
 }
 } // namespace DistributedHardware
