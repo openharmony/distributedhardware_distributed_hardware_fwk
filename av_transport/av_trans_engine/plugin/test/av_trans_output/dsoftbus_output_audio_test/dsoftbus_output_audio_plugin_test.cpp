@@ -45,8 +45,16 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Prepare_001, TestSize.Level0)
     plugin->state_ = State::PREPARED;
     Status ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+}
 
+HWTEST_F(DsoftbusOutputAudioPluginTest, Prepare_002, TestSize.Level0)
+{
+    auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
     plugin->state_ = State::INITIALIZED;
+    Status ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    
+    plugin->ownerName_ = "ohos.dhardware.dcamera";
     ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
