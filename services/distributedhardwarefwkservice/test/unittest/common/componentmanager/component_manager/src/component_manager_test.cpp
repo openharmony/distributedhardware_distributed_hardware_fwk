@@ -477,7 +477,7 @@ HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
 
 /**
  * @tc.name: get_sinkversionfromvermgr_test_001
- * @tc.desc: Verify the GetSinkVersionFromVerMgr
+ * @tc.desc: Verify the GetVersionFromVerMgr
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
@@ -497,7 +497,7 @@ HWTEST_F(ComponentManagerTest, get_sinkversion_fromvermgr_test_001, TestSize.Lev
 
     VersionManager::GetInstance().AddDHVersion(UUID_TEST, dhVersion);
     std::string sinkVersion;
-    auto ret = ComponentManager::GetInstance().GetSinkVersionFromVerMgr(UUID_TEST, DHType::CAMERA, sinkVersion);
+    auto ret = ComponentManager::GetInstance().GetVersionFromVerMgr(UUID_TEST, DHType::CAMERA, sinkVersion, true);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
@@ -742,38 +742,38 @@ HWTEST_F(ComponentManagerTest, GetEnableParam_001, TestSize.Level0)
 }
 
 /**
- * @tc.name: GetSinkVersionFromVerMgr_001
- * @tc.desc: Verify the GetSinkVersionFromVerMgr function
+ * @tc.name: GetVersionFromVerMgr_001
+ * @tc.desc: Verify the GetVersionFromVerMgr function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetSinkVersionFromVerMgr_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_001, TestSize.Level0)
 {
     std::string uuid;
     DHType dhType = DHType::CAMERA;
     std::string sinkVersion;
-    int32_t ret = ComponentManager::GetInstance().GetSinkVersionFromVerMgr(uuid, dhType, sinkVersion);
+    int32_t ret = ComponentManager::GetInstance().GetVersionFromVerMgr(uuid, dhType, sinkVersion, true);
     EXPECT_NE(DH_FWK_SUCCESS, ret);
 }
 
 /**
- * @tc.name: GetSinkVersionFromVerInfoMgr_001
- * @tc.desc: Verify the GetSinkVersionFromVerInfoMgr function
+ * @tc.name: GetVersionFromVerInfoMgr_001
+ * @tc.desc: Verify the GetVersionFromVerInfoMgr function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetSinkVersionFromVerInfoMgr_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetVersionFromVerInfoMgr_001, TestSize.Level0)
 {
     std::string uuid;
     DHType dhType = DHType::CAMERA;
     std::string sinkVersion;
-    int32_t ret = ComponentManager::GetInstance().GetSinkVersionFromVerInfoMgr(uuid, dhType, sinkVersion);
+    int32_t ret = ComponentManager::GetInstance().GetVersionFromVerInfoMgr(uuid, dhType, sinkVersion, true);
     EXPECT_NE(DH_FWK_SUCCESS, ret);
 }
 
 /**
  * @tc.name: GetSinkVersion_001
- * @tc.desc: Verify the GetSinkVersion function
+ * @tc.desc: Verify the GetVersion function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
@@ -783,7 +783,7 @@ HWTEST_F(ComponentManagerTest, GetSinkVersion_001, TestSize.Level0)
     std::string uuid;
     DHType dhType = DHType::CAMERA;
     std::string sinkVersion;
-    int32_t ret = ComponentManager::GetInstance().GetSinkVersion(networkId, uuid, dhType, sinkVersion);
+    int32_t ret = ComponentManager::GetInstance().GetVersion(networkId, uuid, dhType, sinkVersion, true);
     EXPECT_NE(DH_FWK_SUCCESS, ret);
 }
 

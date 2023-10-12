@@ -73,12 +73,10 @@ private:
     bool WaitForResult(const Action &action, ActionResult result);
     int32_t GetEnableParam(const std::string &networkId, const std::string &uuid, const std::string &dhId,
         DHType dhType, EnableParam &param);
-    int32_t GetSinkVersionFromVerMgr(const std::string &uuid, const DHType dhType,
-        std::string &sinkVersion);
-    int32_t GetSinkVersionFromVerInfoMgr(const std::string &uuid, const DHType dhType,
-        std::string &sinkVersion);
-    int32_t GetSinkVersion(const std::string &networkId, const std::string &uuid,
-        DHType dhType, std::string &sinkVersion);
+    int32_t GetVersionFromVerMgr(const std::string &uuid, const DHType dhType, std::string &version, bool isSink);
+    int32_t GetVersionFromVerInfoMgr(const std::string &uuid, const DHType dhType, std::string &version, bool isSink);
+    int32_t GetVersion(const std::string &networkId, const std::string &uuid,
+        DHType dhType, std::string &version, bool isSink);
     void UpdateVersionCache(const std::string &uuid, const VersionInfo &versionInfo);
 
     void DoRecover(DHType dhType);
