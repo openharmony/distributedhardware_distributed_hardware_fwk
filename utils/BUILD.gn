@@ -16,6 +16,12 @@ import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 ohos_shared_library("distributedhardwareutils") {
+  sanitize = {
+    boundary_sanitize = true
+    integer_overflow = true
+    ubsan = true
+  }
+  stack_protector_ret = true
   include_dirs = [
     "//third_party/json/include",
     "${common_path}/log/include",
