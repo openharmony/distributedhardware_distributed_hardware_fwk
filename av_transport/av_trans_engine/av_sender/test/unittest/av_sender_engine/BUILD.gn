@@ -44,7 +44,6 @@ ohos_unittest("AvSenderEngineTest") {
     "-O2",
     "-fPIC",
     "-Wall",
-    "-frtti",
     "-fexceptions",
     "-Dprivate = public",
     "-Dprotected = public",
@@ -56,7 +55,7 @@ ohos_unittest("AvSenderEngineTest") {
     "${engine_path}/av_sender:distributed_av_sender",
     "${filters_path}:avtrans_input_filter",
     "${filters_path}:avtrans_output_filter",
-    "//third_party/googletest:gtest_rtti",
+    "//third_party/googletest:gtest",
   ]
 
   defines = [
@@ -69,6 +68,7 @@ ohos_unittest("AvSenderEngineTest") {
     "MEDIA_OHOS",
     "RECORDER_SUPPORT",
     "VIDEO_SUPPORT",
+    "HST_ANY_WITH_NO_RTTI",
   ]
 
   external_deps = [
