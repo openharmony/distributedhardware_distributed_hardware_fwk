@@ -16,12 +16,6 @@ import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 ohos_shared_library("libdhfwk_sdk") {
-  sanitize = {
-    boundary_sanitize = true
-    integer_overflow = true
-    ubsan = true
-  }
-  stack_protector_ret = true
   include_dirs = [
     "${av_center_kits_path}/include",
     "${av_trans_path}/common/include",
