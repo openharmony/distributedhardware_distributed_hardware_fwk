@@ -25,12 +25,6 @@ config("handler_external_config") {
 }
 
 ohos_shared_library("histreamer_ability_querier") {
-  sanitize = {
-    boundary_sanitize = true
-    integer_overflow = true
-    ubsan = true
-  }
-  stack_protector_ret = true
   public_configs = [ ":handler_external_config" ]
 
   include_dirs = [
