@@ -12,11 +12,11 @@
 # limitations under the License.
 
 config("avtrans_cflags") {
+  defines = [ "HST_ANY_WITH_NO_RTTI" ]
   cflags = [
     "-O2",
     "-fPIC",
     "-Wall",
-    "-frtti",
     "-fexceptions",
     "-Wno-unused-but-set-variable",
     "-Wno-format",

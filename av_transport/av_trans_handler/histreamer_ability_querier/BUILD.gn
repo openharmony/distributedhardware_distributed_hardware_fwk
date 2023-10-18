@@ -43,6 +43,7 @@ ohos_shared_library("histreamer_ability_querier") {
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"av_trans_handler\"",
     "LOG_DOMAIN=0xD004100",
+    "HST_ANY_WITH_NO_RTTI",
   ]
 
   external_deps = [
@@ -58,7 +59,6 @@ ohos_shared_library("histreamer_ability_querier") {
     "-O2",
     "-fPIC",
     "-Wall",
-    "-frtti",
     "-fexceptions",
     "-Wno-unused-but-set-variable",
     "-Wno-format",

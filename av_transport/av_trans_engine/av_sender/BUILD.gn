@@ -68,6 +68,7 @@ ohos_shared_library("distributed_av_sender") {
     "MEDIA_OHOS",
     "RECORDER_SUPPORT",
     "VIDEO_SUPPORT",
+    "HST_ANY_WITH_NO_RTTI",
   ]
 
   external_deps = [
@@ -99,7 +100,6 @@ ohos_shared_library("distributed_av_sender") {
     "-O2",
     "-fPIC",
     "-Wall",
-    "-frtti",
     "-fexceptions",
   ]
   cflags_cc = cflags

@@ -38,7 +38,6 @@ ohos_unittest("AvTransportOutputFilterTest") {
     "-O2",
     "-fPIC",
     "-Wall",
-    "-frtti",
     "-fexceptions",
     "-Dprivate = public",
     "-Dprotected = public",
@@ -54,7 +53,7 @@ ohos_unittest("AvTransportOutputFilterTest") {
   deps = [
     "${engine_path}/filters:avtrans_output_filter",
     "${plugin_path}/plugins/av_trans_output/dsoftbus_output_audio:plugin_AVTransDsoftbusOutputAudio",
-    "//third_party/googletest:gtest_rtti",
+    "//third_party/googletest:gtest",
     "//third_party/libevdev:libevdev",
   ]
 

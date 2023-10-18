@@ -38,7 +38,6 @@ ohos_unittest("AvTransportInputFilterTest") {
     "-O2",
     "-fPIC",
     "-Wall",
-    "-frtti",
     "-fexceptions",
     "-Dprivate = public",
     "-Dprotected = public",
@@ -54,7 +53,7 @@ ohos_unittest("AvTransportInputFilterTest") {
   deps = [
     "${engine_path}/filters:avtrans_input_filter",
     "${plugin_path}/plugins/av_trans_input/dsoftbus_input:plugin_AVTransDsoftbusInput",
-    "//third_party/googletest:gtest_rtti",
+    "//third_party/googletest:gtest",
     "//third_party/libevdev:libevdev",
   ]
 

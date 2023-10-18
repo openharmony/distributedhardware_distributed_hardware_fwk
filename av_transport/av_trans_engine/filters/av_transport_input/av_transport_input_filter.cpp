@@ -203,7 +203,7 @@ ErrorCode AVInputFilter::FindPlugin()
     OSAL::ScopedLock lock(inputFilterMutex_);
     std::string mime;
     if (paramsMap_.find(Tag::MIME) == paramsMap_.end() ||
-        !paramsMap_[Tag::MIME].SameTypeWith(typeid(std::string))) {
+        !Plugin::Any::IsSameTypeWith<std::string>(paramsMap_[Tag::MIME])) {
         AVTRANS_LOGE("Must set mime correctly first");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
     }
@@ -320,7 +320,7 @@ ErrorCode AVInputFilter::ConfigMeta(Plugin::Meta& meta)
     AVTRANS_LOGI("ConfigMeta start!");
     OSAL::ScopedLock lock(inputFilterMutex_);
     if (paramsMap_.find(Tag::MEDIA_TYPE) == paramsMap_.end() ||
-        !paramsMap_[Tag::MEDIA_TYPE].SameTypeWith(typeid(Plugin::MediaType))) {
+        !Plugin::Any::IsSameTypeWith<Plugin::MediaType>(paramsMap_[Tag::MEDIA_TYPE])) {
         AVTRANS_LOGE("MEDIA_TYPE in ParamsMap is not exist!");
         return ErrorCode::ERROR_NOT_EXISTED;
     }
@@ -337,37 +337,37 @@ ErrorCode AVInputFilter::ConfigVideoMeta(Plugin::Meta& meta)
 {
     AVTRANS_LOGI("ConfigVideoMeta start!");
     if (paramsMap_.find(Tag::VIDEO_WIDTH) != paramsMap_.end() &&
-        paramsMap_[Tag::VIDEO_WIDTH].SameTypeWith(typeid(int))) {
+        Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::VIDEO_WIDTH])) {
         uint32_t width = static_cast<uint32_t>(Plugin::AnyCast<int>(paramsMap_[Tag::VIDEO_WIDTH]));
         AVTRANS_LOGI("ConfigVideoMeta: VIDEO_WIDTH is %d", width);
         meta.Set<Plugin::Tag::VIDEO_WIDTH>(width);
     }
     if (paramsMap_.find(Tag::VIDEO_HEIGHT) != paramsMap_.end() &&
-        paramsMap_[Tag::VIDEO_HEIGHT].SameTypeWith(typeid(int))) {
+        Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::VIDEO_HEIGHT])) {
         uint32_t height = static_cast<uint32_t>(Plugin::AnyCast<int>(paramsMap_[Tag::VIDEO_HEIGHT]));
         AVTRANS_LOGI("ConfigVideoMeta: VIDEO_HEIGHT is %d", height);
         meta.Set<Plugin::Tag::VIDEO_HEIGHT>(height);
     }
     if (paramsMap_.find(Tag::MEDIA_BITRATE) != paramsMap_.end() &&
-        paramsMap_[Tag::MEDIA_BITRATE].SameTypeWith(typeid(int))) {
+        Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::MEDIA_BITRATE])) {
         int64_t mediaBitRate = Plugin::AnyCast<int>(paramsMap_[Tag::MEDIA_BITRATE]);
         AVTRANS_LOGI("ConfigVideoMeta: MEDIA_BITRATE is %ld", mediaBitRate);
         meta.Set<Plugin::Tag::MEDIA_BITRATE>(mediaBitRate);
     }
     if (paramsMap_.find(Tag::VIDEO_FRAME_RATE) != paramsMap_.end() &&
-        paramsMap_[Tag::VIDEO_FRAME_RATE].SameTypeWith(typeid(int))) {
+        Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::VIDEO_FRAME_RATE])) {
         uint32_t videoFrameRate = static_cast<uint32_t>(Plugin::AnyCast<int>(paramsMap_[Tag::VIDEO_FRAME_RATE]));
         AVTRANS_LOGI("ConfigVideoMeta: VIDEO_FRAME_RATE is %d", videoFrameRate);
         meta.Set<Plugin::Tag::VIDEO_FRAME_RATE>(videoFrameRate);
     }
     if (paramsMap_.find(Tag::VIDEO_BIT_STREAM_FORMAT) != paramsMap_.end() &&
-        paramsMap_[Tag::VIDEO_BIT_STREAM_FORMAT].SameTypeWith(typeid(VideoBitStreamFormat))) {
+        Plugin::Any::IsSameTypeWith<VideoBitStreamFormat>(paramsMap_[Tag::VIDEO_BIT_STREAM_FORMAT])) {
         auto videoBitStreamFormat = Plugin::AnyCast<VideoBitStreamFormat>(paramsMap_[Tag::VIDEO_BIT_STREAM_FORMAT]);
         AVTRANS_LOGI("ConfigVideoMeta: VIDEO_BIT_STREAM_FORMAT is %d", videoBitStreamFormat);
         meta.Set<Plugin::Tag::VIDEO_BIT_STREAM_FORMAT>(std::vector<VideoBitStreamFormat>{videoBitStreamFormat});
     }
     if (paramsMap_.find(Tag::VIDEO_PIXEL_FORMAT) != paramsMap_.end() &&
-        paramsMap_[Tag::VIDEO_PIXEL_FORMAT].SameTypeWith(typeid(VideoPixelFormat))) {
+        Plugin::Any::IsSameTypeWith<VideoPixelFormat>(paramsMap_[Tag::VIDEO_PIXEL_FORMAT])) {
         auto videoPixelFormat = Plugin::AnyCast<VideoPixelFormat>(paramsMap_[Tag::VIDEO_PIXEL_FORMAT]);
         AVTRANS_LOGI("ConfigVideoMeta: VIDEO_PIXEL_FORMAT is %d", videoPixelFormat);
         meta.Set<Plugin::Tag::VIDEO_PIXEL_FORMAT>(videoPixelFormat);
@@ -411,43 +411,43 @@ ErrorCode AVInputFilter::ConfigAudioMeta(Plugin::Meta& meta)
 {
     AVTRANS_LOGI("ConfigAudioMeta start");
     if (paramsMap_.find(Tag::AUDIO_CHANNELS) != paramsMap_.end() &&
-        paramsMap_[Tag::AUDIO_CHANNELS].SameTypeWith(typeid(int))) {
+        Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::AUDIO_CHANNELS])) {
         uint32_t audioChannel = static_cast<uint32_t>(Plugin::AnyCast<int>(paramsMap_[Tag::AUDIO_CHANNELS]));
         AVTRANS_LOGI("ConfigAudioMeta: AUDIO_CHANNELS is %d", audioChannel);
         meta.Set<Plugin::Tag::AUDIO_CHANNELS>(audioChannel);
     }
     if (paramsMap_.find(Tag::AUDIO_SAMPLE_RATE) != paramsMap_.end() &&
-        paramsMap_[Tag::AUDIO_SAMPLE_RATE].SameTypeWith(typeid(int))) {
+        Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::AUDIO_SAMPLE_RATE])) {
         uint32_t sampleRate = static_cast<uint32_t>(Plugin::AnyCast<int>(paramsMap_[Tag::AUDIO_SAMPLE_RATE]));
         AVTRANS_LOGI("ConfigAudioMeta: AUDIO_SAMPLE_RATE is %d", sampleRate);
         meta.Set<Plugin::Tag::AUDIO_SAMPLE_RATE>(sampleRate);
     }
     if (paramsMap_.find(Tag::MEDIA_BITRATE) != paramsMap_.end() &&
-        paramsMap_[Tag::MEDIA_BITRATE].SameTypeWith(typeid(int))) {
+        Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::MEDIA_BITRATE])) {
         int64_t mediaBitRate = Plugin::AnyCast<int>(paramsMap_[Tag::MEDIA_BITRATE]);
         AVTRANS_LOGI("ConfigAudioMeta: MEDIA_BITRATE is %ld", mediaBitRate);
         meta.Set<Plugin::Tag::MEDIA_BITRATE>(mediaBitRate);
     }
     if (paramsMap_.find(Tag::AUDIO_SAMPLE_FORMAT) != paramsMap_.end() &&
-        paramsMap_[Tag::AUDIO_SAMPLE_FORMAT].SameTypeWith(typeid(int))) {
+        Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::AUDIO_SAMPLE_FORMAT])) {
         auto audioSampleFmtPtr = Plugin::AnyCast<int>(paramsMap_[Tag::AUDIO_SAMPLE_FORMAT]);
         AVTRANS_LOGI("ConfigAudioMeta: AUDIO_SAMPLE_FORMAT is %d", audioSampleFmtPtr);
         meta.Set<Plugin::Tag::AUDIO_SAMPLE_FORMAT>(TransAudioSampleFormat(audioSampleFmtPtr));
     }
     if (paramsMap_.find(Tag::AUDIO_CHANNEL_LAYOUT) != paramsMap_.end() &&
-        paramsMap_[Tag::AUDIO_CHANNEL_LAYOUT].SameTypeWith(typeid(int))) {
+        Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::AUDIO_CHANNEL_LAYOUT])) {
         auto layoutPtr = Plugin::AnyCast<int>(paramsMap_[Tag::AUDIO_CHANNEL_LAYOUT]);
         AVTRANS_LOGI("ConfigAudioMeta: AUDIO_CHANNEL_LAYOUT is %d", layoutPtr);
         meta.Set<Plugin::Tag::AUDIO_CHANNEL_LAYOUT>(TransAudioChannelLayout(layoutPtr));
     }
     if (paramsMap_.find(Tag::AUDIO_SAMPLE_PER_FRAME) != paramsMap_.end() &&
-        paramsMap_[Tag::AUDIO_SAMPLE_PER_FRAME].SameTypeWith(typeid(int))) {
+        Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::AUDIO_SAMPLE_PER_FRAME])) {
         uint32_t samplePerFrame = static_cast<uint32_t>(Plugin::AnyCast<int>(paramsMap_[Tag::AUDIO_SAMPLE_PER_FRAME]));
         AVTRANS_LOGI("ConfigAudioMeta: AUDIO_SAMPLE_PER_FRAME is %d", samplePerFrame);
         meta.Set<Plugin::Tag::AUDIO_SAMPLE_PER_FRAME>(samplePerFrame);
     }
     if (paramsMap_.find(Tag::AUDIO_AAC_LEVEL) != paramsMap_.end() &&
-        paramsMap_[Tag::AUDIO_AAC_LEVEL].SameTypeWith(typeid(int))) {
+        Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::AUDIO_AAC_LEVEL])) {
         uint32_t aacLevel = static_cast<uint32_t>(Plugin::AnyCast<int>(paramsMap_[Tag::AUDIO_AAC_LEVEL]));
         AVTRANS_LOGI("ConfigAudioMeta: AUDIO_AAC_LEVEL is %d", aacLevel);
         meta.Set<Plugin::Tag::AUDIO_AAC_LEVEL>(aacLevel);
