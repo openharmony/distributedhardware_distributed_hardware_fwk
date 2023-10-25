@@ -38,10 +38,8 @@ enum class DHTopic : uint32_t {
     TOPIC_LOW_LATENCY = 5,
     // Topic max border, not use for real topic
     TOPIC_MAX = 6,
-    // Topic connect car cabin success
-    TOPIC_CONNECT_SUCCESS = 7,
-    // Topic disconnect car cabin success
-    TOPIC_DISCONNECT_SUCCESS = 8
+    // Topic car cabin is ready
+    TOPIC_CAR_CARBIN_READY = 7
 };
 
 class IPublisherListener : public IRemoteBroker {
