@@ -43,9 +43,7 @@ config("module_private_config") {
 ohos_unittest("ComponentManagerTest") {
   module_out_path = module_out_path
 
-  sources = [
-    "src/component_manager_test.cpp",
-  ]
+  sources = [ "src/component_manager_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
@@ -61,6 +59,7 @@ ohos_unittest("ComponentManagerTest") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
+    "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
