@@ -29,6 +29,14 @@ void DsoftbusOutputAudioPluginTest::SetUp(void) {}
 
 void DsoftbusOutputAudioPluginTest::TearDown(void) {}
 
+class DsoftbusOutPutAudioPluginCallback : public Callback {
+public:
+    void OnEvent(const PluginEvent &event)
+    {
+        (void)event;
+    }
+};
+
 HWTEST_F(DsoftbusOutputAudioPluginTest, Reset_001, TestSize.Level0)
 {
     auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
@@ -53,8 +61,12 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Prepare_002, TestSize.Level0)
     plugin->state_ = State::INITIALIZED;
     Status ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
-    
+
     plugin->ownerName_ = "ohos.dhardware.dcamera";
+    ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->ownerName_ = "";
     ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
@@ -82,6 +94,18 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Start_001, TestSize.Level1)
     plugin->state_ = State::PREPARED;
     ret = plugin->Start();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->sessionName_ = "sessionName";
+    ret = plugin->Start();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->ownerName_ = "ohos.dhardware.dcamera";
+    ret = plugin->Start();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->peerDevId_ = "peerDevId";
+    ret = plugin->Start();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, Stop_001, TestSize.Level1)
@@ -99,6 +123,16 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, PushData_001, testing::ext::TestSize.Lev
     int64_t offset = 1;
     Status ret = plugin->PushData(inPort, buffer, offset);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+
+    buffer = std::make_shared<Plugin::Buffer>(BufferMetaType::AUDIO);
+    ret = plugin->PushData(inPort, buffer, offset);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+
+    size_t bufferSize = 1024;
+    std::vector<uint8_t> buff(bufferSize);
+    auto bufData = buffer->WrapMemory(buff.data(), bufferSize, bufferSize);
+    ret = plugin->PushData(inPort, buffer, offset);
+    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, SetParameter_001, testing::ext::TestSize.Level1)
@@ -114,12 +148,35 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, SetCallback_001, testing::ext::TestSize.
     auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
     Status ret = plugin->SetCallback(nullptr);
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    DsoftbusOutPutAudioPluginCallback cb {};
+    ret = plugin->SetCallback(&cb);
+    AVTransEvent event;
+    event.type = EventType::EVENT_CHANNEL_OPENED;
+    plugin->OnChannelEvent(event);
+    event.type = EventType::EVENT_CHANNEL_OPEN_FAIL;
+    plugin->OnChannelEvent(event);
+    event.type = EventType::EVENT_CHANNEL_CLOSED;
+    plugin->OnChannelEvent(event);
+    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, OpenSoftbusChannel_002, testing::ext::TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
     Status ret = plugin->OpenSoftbusChannel();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->sessionName_ = "sessionName";
+    ret = plugin->OpenSoftbusChannel();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->ownerName_ = "ohos.dhardware.dcamera";
+    ret = plugin->OpenSoftbusChannel();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->peerDevId_ = "peerDevId";
+    ret = plugin->OpenSoftbusChannel();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 

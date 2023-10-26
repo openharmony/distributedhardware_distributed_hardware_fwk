@@ -29,6 +29,14 @@ void DsoftbusOutputPluginTest::SetUp(void) {}
 
 void DsoftbusOutputPluginTest::TearDown(void) {}
 
+class DsoftbusOutPutPluginCallback : public Callback {
+public:
+    void OnEvent(const PluginEvent &event)
+    {
+        (void)event;
+    }
+};
+
 HWTEST_F(DsoftbusOutputPluginTest, Reset_001, TestSize.Level0)
 {
     auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
@@ -53,6 +61,10 @@ HWTEST_F(DsoftbusOutputPluginTest, Prepare_002, TestSize.Level1)
     plugin->state_ = State::INITIALIZED;
     plugin->ownerName_ = "ohos_dhardware.dcamera";
     Status ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->ownerName_ = "";
+    ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
@@ -82,6 +94,14 @@ HWTEST_F(DsoftbusOutputPluginTest, Start_002, TestSize.Level1)
     auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
     plugin->state_ = State::PREPARED;
     Status ret = plugin->Start();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->sessionName_ = "sessionName";
+    ret = plugin->Start();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->peerDevId_ = "peerDevId";
+    ret = plugin->Start();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
@@ -116,7 +136,11 @@ HWTEST_F(DsoftbusOutputPluginTest, Deinit_001, testing::ext::TestSize.Level1)
 HWTEST_F(DsoftbusOutputPluginTest, SetCallback_001, testing::ext::TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
-    Callback *cb = nullptr;
+    Status ret = plugin->SetCallback(nullptr);
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    DsoftbusOutPutPluginCallback cb {};
+    ret = plugin->SetCallback(&cb);
     AVTransEvent event;
     event.type = EventType::EVENT_CHANNEL_OPENED;
     plugin->OnChannelEvent(event);
@@ -124,8 +148,7 @@ HWTEST_F(DsoftbusOutputPluginTest, SetCallback_001, testing::ext::TestSize.Level
     plugin->OnChannelEvent(event);
     event.type = EventType::EVENT_CHANNEL_CLOSED;
     plugin->OnChannelEvent(event);
-    Status ret = plugin->SetCallback(cb);
-    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(DsoftbusOutputPluginTest, SetDataCallback_001, testing::ext::TestSize.Level1)

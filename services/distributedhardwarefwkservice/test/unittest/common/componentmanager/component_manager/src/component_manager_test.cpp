@@ -24,6 +24,7 @@
 
 #include <gmock/gmock.h>
 
+#include "accesstoken_kit.h"
 #include "component_disable.h"
 #include "component_enable.h"
 #include "component_loader.h"
@@ -39,6 +40,10 @@
 #include "distributed_hardware_log.h"
 #include "mock_idistributed_hardware_sink.h"
 #include "mock_idistributed_hardware_source.h"
+#include "nativetoken_kit.h"
+#include "softbus_common.h"
+#include "softbus_bus_center.h"
+#include "token_setproc.h"
 #include "version_info_manager.h"
 #include "version_manager.h"
 
@@ -60,11 +65,8 @@ const std::string DH_ID_TEST = "Camera_0";
 const std::string NETWORK_TEST = "nt36a637105409e904d4da83790a4a8";
 const std::string UUID_TEST = "bb536a637105409e904d4da78290ab1";
 const std::string DH_ATTR_1 = "attr1";
-const std::string DEV_NAME = "Dev1";
+const std::string DEVICE_NAME = "Dev1";
 const std::string DH_ID_1 = "Camera_1";
-const std::shared_ptr<CapabilityInfo> CAP_INFO_1 =
-    std::make_shared<CapabilityInfo>(DH_ID_1, GetDeviceIdByUUID(UUID_TEST), DEV_NAME,
-    TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1);
 }
 
 void ComponentManagerTest::SetUpTestCase(void)
@@ -87,6 +89,23 @@ void ComponentManagerTest::SetUp()
 {
     ComponentManager::GetInstance().compSource_.clear();
     ComponentManager::GetInstance().compSink_.clear();
+    uint64_t tokenId;
+    const char *perms[2];
+    perms[0] = OHOS_PERMISSION_DISTRIBUTED_SOFTBUS_CENTER;
+    perms[1] = OHOS_PERMISSION_DISTRIBUTED_DATASYNC;
+    NativeTokenInfoParams infoInstance = {
+        .dcapsNum = 0,
+        .permsNum = 2,
+        .aclsNum = 0,
+        .dcaps = NULL,
+        .perms = perms,
+        .acls = NULL,
+        .processName = "dsoftbus_service",
+        .aplStr = "system_core",
+    };
+    tokenId = GetAccessTokenId(&infoInstance);
+    SetSelfTokenID(tokenId);
+    OHOS::Security::AccessToken::AccessTokenKit::ReloadNativeTokenInfo();
 }
 
 void ComponentManagerTest::TearDown()
@@ -448,7 +467,17 @@ HWTEST_F(ComponentManagerTest, init_compSink_test_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
 {
-    DHContext::GetInstance().AddOnlineDevice(NETWORK_TEST, UUID_TEST);
+    DeviceInfo devInfo { "", "", "", 0 };
+    auto info = std::make_unique<NodeBasicInfo>();
+    GetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
+    devInfo.uuid = GetUUIDBySoftBus(info->networkId);
+    devInfo.deviceId = GetDeviceIdByUUID(devInfo.uuid);
+
+    DHContext::GetInstance().AddOnlineDevice(info->networkId, devInfo.uuid);
+
+    const std::shared_ptr<CapabilityInfo> CAP_INFO_1 =
+    std::make_shared<CapabilityInfo>(DH_ID_1, devInfo.deviceId, DEVICE_NAME,
+    TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1);
 
     CapabilityInfoManager::GetInstance()->Init();
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos { CAP_INFO_1 };
@@ -462,7 +491,7 @@ HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
         .sinkVersion = VERSION_1
     };
     VersionInfo verInfo1;
-    verInfo1.deviceId = GetDeviceIdByUUID(UUID_TEST);
+    verInfo1.deviceId = devInfo.deviceId;
     verInfo1.dhVersion = VERSION_1;
     verInfo1.compVersions.insert(std::pair<DHType, CompVersion>(compVersions1.dhType, compVersions1));
 
@@ -470,7 +499,7 @@ HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
     VersionInfoManager::GetInstance()->AddVersion(verInfo1);
 
     EnableParam param;
-    auto ret = ComponentManager::GetInstance().GetEnableParam(NETWORK_TEST, UUID_TEST,
+    auto ret = ComponentManager::GetInstance().GetEnableParam(info->networkId, devInfo.uuid,
         DH_ID_1, DHType::CAMERA, param);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
