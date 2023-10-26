@@ -1,0 +1,81 @@
+# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import("../../../../distributed_av_transport.gni")
+
+module_out_path = "distributed_hardware_fwk/avtrans_input_output_unittest"
+
+ohos_unittest("AvTransInputOutputTest") {
+  module_out_path = module_out_path
+
+  include_dirs = [
+    "//third_party/ffmpeg",
+    "//third_party/json/include",
+    "${plugin_path}/core",
+    "${plugin_path}/interface",
+    "${common_path}/include",
+  ]
+
+  sources = [
+    "${common_path}/src/av_sync_utils.cpp",
+    "${common_path}/src/av_trans_log.cpp",
+    "${common_path}/src/av_trans_message.cpp",
+    "${common_path}/src/av_trans_meta.cpp",
+    "${common_path}/src/av_trans_utils.cpp",
+    "${common_path}/src/softbus_channel_adapter.cpp",
+    "avtrans_input_test.cpp",
+    "avtrans_output_test.cpp",
+  ]
+
+  cflags = [
+    "-O2",
+    "-fPIC",
+    "-Wall",
+    "-fexceptions",
+    "-Dprivate = public",
+  ]
+  cflags_cc = cflags
+
+  deps = [
+    "${filters_path}:avtrans_input_filter",
+    "${filters_path}:avtrans_output_filter",
+    "//third_party/googletest:gtest",
+  ]
+
+  external_deps = [
+    "bounds_checking_function:libsec_shared",
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "histreamer:histreamer_base",
+    "histreamer:histreamer_codec_filters",
+    "histreamer:histreamer_ffmpeg_convert",
+    "histreamer:histreamer_plugin_base",
+    "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"avtrans_input_output_test\"",
+    "LOG_DOMAIN=0xD004100",
+    "HST_ANY_WITH_NO_RTTI",
+  ]
+}
+
+group("avtrans_input_output_unittest") {
+  testonly = true
+  deps = [ ":AvTransInputOutputTest" ]
+}

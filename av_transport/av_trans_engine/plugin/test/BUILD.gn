@@ -23,5 +23,6 @@ group("plugin_test") {
     "av_trans_output/dscreen_output_test:dscreen_output_unittest",
     "av_trans_output/dsoftbus_output_audio_test:dsoftbus_output_audio_unittest",
     "av_trans_output/dsoftbus_output_test:dsoftbus_output_unittest",
+    "core:avtrans_input_output_unittest",
   ]
 }
