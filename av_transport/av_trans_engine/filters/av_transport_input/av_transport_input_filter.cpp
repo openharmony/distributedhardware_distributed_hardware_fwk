@@ -554,7 +554,16 @@ ErrorCode AVInputFilter::PushData(const std::string& inPort, const AVBufferPtr& 
         AVTRANS_LOGE("outPorts is empty or invalid!");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
     }
-    outPorts_[0]->PushData(buffer, 0);
+
+    int32_t bufSize = buffer->GetMemory()->GetSize();
+    auto tempBuffer = std::make_shared<AVBuffer>(Plugin::BufferMetaType::VIDEO);
+    tempBuffer->pts = buffer->pts;
+    tempBuffer->flag = buffer->flag;
+    tempBuffer->AllocMemory(nullptr, bufSize);
+    tempBuffer->GetMemory()->Write(buffer->GetMemory()->GetReadOnlyData(), bufSize);
+    tempBuffer->UpdateBufferMeta(*(buffer->GetBufferMeta()->Clone()));
+
+    outPorts_[0]->PushData(tempBuffer, 0);
     return ErrorCode::SUCCESS;
 }
 

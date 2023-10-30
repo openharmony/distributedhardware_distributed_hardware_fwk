@@ -29,6 +29,14 @@ void DscreenOutputTest::SetUp(void) {}
 
 void DscreenOutputTest::TearDown(void) {}
 
+class DscreenOutputPluginCallback : public Callback {
+public:
+    void OnEvent(const PluginEvent &event)
+    {
+        (void)event;
+    }
+};
+
 HWTEST_F(DscreenOutputTest, Reset_001, TestSize.Level0)
 {
     auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
@@ -316,5 +324,23 @@ HWTEST_F(DscreenOutputTest, NotifyOutput_001, testing::ext::TestSize.Level1)
     plugin->controller_->HandleControlResult(data, result);
 }
 
+HWTEST_F(DscreenOutputTest, SetCallback_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    Status ret = plugin->SetCallback(nullptr);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+
+    DscreenOutputPluginCallback cb {};
+    ret = plugin->SetCallback(&cb);
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DscreenOutputTest, SetDataCallback_001, testing::ext::TestSize.Level1)
+{
+    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
+    AVDataCallback cbk;
+    Status ret = plugin->SetDataCallback(cbk);
+    EXPECT_EQ(Status::OK, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

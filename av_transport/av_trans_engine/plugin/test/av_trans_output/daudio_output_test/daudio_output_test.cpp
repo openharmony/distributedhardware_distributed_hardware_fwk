@@ -29,6 +29,14 @@ void DaudioOutputTest::SetUp() {}
 
 void DaudioOutputTest::TearDown() {}
 
+class DaudioOutputPluginCallback : public Callback {
+public:
+    void OnEvent(const PluginEvent &event)
+    {
+        (void)event;
+    }
+};
+
 HWTEST_F(DaudioOutputTest, Reset_001, TestSize.Level0)
 {
     auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
@@ -153,10 +161,19 @@ HWTEST_F(DaudioOutputTest, PushData_001, testing::ext::TestSize.Level1)
 {
     auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
     std::string inPort = "inPort_test";
-    std::shared_ptr<Plugin::Buffer> buffer = nullptr;
     int64_t offset = 1;
-    Status ret = plugin->PushData(inPort, buffer, offset);
+    Status ret = plugin->PushData(inPort, nullptr, offset);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+
+    std::shared_ptr<Plugin::Buffer> buffer = std::make_shared<Plugin::Buffer>(BufferMetaType::AUDIO);
+    ret = plugin->PushData(inPort, buffer, offset);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+
+    size_t bufferSize = 1024;
+    std::vector<uint8_t> buff(bufferSize);
+    auto bufData = buffer->WrapMemory(buff.data(), bufferSize, bufferSize);
+    ret = plugin->PushData(inPort, buffer, offset);
+    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(DaudioOutputTest, SetDataCallback_001, testing::ext::TestSize.Level1)
@@ -182,9 +199,12 @@ HWTEST_F(DaudioOutputTest, WriteMasterClockToMemory_001, testing::ext::TestSize.
 HWTEST_F(DaudioOutputTest, SetCallback_001, testing::ext::TestSize.Level1)
 {
     auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
-    Callback *cb = nullptr;
-    Status ret = plugin->SetCallback(cb);
+    Status ret = plugin->SetCallback(nullptr);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+
+    DaudioOutputPluginCallback cb {};
+    ret = plugin->SetCallback(&cb);
+    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(DaudioOutputTest, StartOutputQueue_001, TestSize.Level1)
