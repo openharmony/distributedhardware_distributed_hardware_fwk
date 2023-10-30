@@ -21,7 +21,7 @@ ohos_shared_library("libdhfwk_sdk") {
     integer_overflow = true
     ubsan = true
   }
-  stack_protector_ret = true
+  branch_protector_ret = "pac_ret"
   include_dirs = [
     "${av_center_kits_path}/include",
     "${av_trans_path}/common/include",
