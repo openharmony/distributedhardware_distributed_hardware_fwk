@@ -452,7 +452,7 @@ std::string SoftbusChannelAdapter::GetOwnerFromSessName(const std::string &sessN
     return EMPTY_STRING;
 }
 
-void SoftbusChannelAdapter::SendChannelEvent(const std::string &sessName, const AVTransEvent &event)
+void SoftbusChannelAdapter::SendChannelEvent(const std::string &sessName, const AVTransEvent event)
 {
     pthread_setname_np(pthread_self(), SEND_CHANNEL_EVENT);
 
