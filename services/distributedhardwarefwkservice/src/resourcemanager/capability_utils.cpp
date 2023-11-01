@@ -27,7 +27,9 @@ namespace DistributedHardware {
 
 int32_t CapabilityUtils::GetCapabilityByValue(const std::string &value, std::shared_ptr<CapabilityInfo> &capPtr)
 {
-    capPtr = std::make_shared<CapabilityInfo>();
+    if (capPtr == nullptr) {
+        capPtr = std::make_shared<CapabilityInfo>();
+    }
     return capPtr->FromJsonString(value);
 }
 

@@ -58,6 +58,10 @@ void MonitorTaskTimer::ExecuteInner()
             TaskExecutor::GetInstance().PushTask(task);
         }
     }
+
+    if (capInfoPtr != nullptr) {
+        capInfoPtr = nullptr;
+    }
 }
 
 void MonitorTaskTimer::HandleStopTimer()
