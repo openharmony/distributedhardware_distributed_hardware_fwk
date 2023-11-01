@@ -57,6 +57,9 @@ void MonitorTaskTimer::ExecuteInner()
             auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, nullptr);
             TaskExecutor::GetInstance().PushTask(task);
         }
+        if (capInfoPtr != nullptr) {
+            capInfoPtr = nullptr;
+        }
     }
 }
 
