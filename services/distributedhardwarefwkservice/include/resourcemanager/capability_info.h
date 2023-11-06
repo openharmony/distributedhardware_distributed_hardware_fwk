@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,12 +34,14 @@ public:
           deviceName_(""),
           deviceType_(0),
           dhType_(DHType::UNKNOWN),
-          dhAttrs_("")
+          dhAttrs_(""),
+          dhSubtype_("")
     {}
 
     CapabilityInfo(std::string dhId, std::string devId, std::string devName, uint16_t devType, DHType dhType,
-                   std::string dhAttrs)
-        : dhId_(dhId), deviceId_(devId), deviceName_(devName), deviceType_(devType), dhType_(dhType), dhAttrs_(dhAttrs)
+                   std::string dhAttrs, std::string dhSubtype)
+        : dhId_(dhId), deviceId_(devId), deviceName_(devName), deviceType_(devType), dhType_(dhType), dhAttrs_(dhAttrs),
+          dhSubtype_(dhSubtype)
     {}
 
     virtual ~CapabilityInfo() {}
@@ -68,6 +70,10 @@ public:
 
     void SetDHAttrs(const std::string &dhAttrs);
 
+    std::string GetDHSubtype() const;
+
+    void SetDHSubtype(const std::string &dhSubtype);
+
     virtual std::string GetKey() const;
     virtual std::string GetAnonymousKey() const;
     virtual int32_t FromJsonString(const std::string &jsonStr);
@@ -81,6 +87,7 @@ private:
     uint16_t deviceType_;
     DHType dhType_;
     std::string dhAttrs_;
+    std::string dhSubtype_;
 };
 
 void ToJson(nlohmann::json &jsonObject, const CapabilityInfo &capability);

@@ -464,10 +464,11 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
         return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
     }
     param.sinkVersion = sinkVersion;
+    param.subtype = capability->GetDHSubtype();
     DHLOGI("success. dhType = %#X, sink uuid =%s, sink dhId = %s, sinVersion = %s, source uuid =%s, source dhId = %s, "
-        "sourceVersion = %s", dhType, GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(),
+        "sourceVersion = %s, subtype = %s", dhType, GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(),
         param.sinkVersion.c_str(), GetAnonyString(sourceDeviceInfo.uuid).c_str(),
-        GetAnonyString(sourceDHId).c_str(), param.sourceVersion.c_str());
+        GetAnonyString(sourceDHId).c_str(), param.sourceVersion.c_str(), param.subtype.c_str());
 
     return DH_FWK_SUCCESS;
 }

@@ -90,6 +90,16 @@ void CapabilityInfo::SetDHAttrs(const std::string &dhAttrs)
     this->dhAttrs_ = dhAttrs;
 }
 
+std::string CapabilityInfo::GetDHSubtype() const
+{
+    return dhSubtype_;
+}
+
+void CapabilityInfo::SetDHSubtype(const std::string &dhSubtype)
+{
+    this->dhSubtype_ = dhSubtype;
+}
+
 std::string CapabilityInfo::GetKey() const
 {
     std::string kvStoreKey;
@@ -153,6 +163,10 @@ bool CapabilityInfo::Compare(const CapabilityInfo& capInfo)
         DHLOGE("dhAttrs is not equal");
         return false;
     }
+    if (strcmp(this->dhSubtype_.c_str(), capInfo.dhSubtype_.c_str()) != 0) {
+        DHLOGE("dhSubtype is not equal");
+        return false;
+    }
     return true;
 }
 
@@ -164,6 +178,7 @@ void ToJson(nlohmann::json &jsonObject, const CapabilityInfo &capability)
     jsonObject[DEV_TYPE] = capability.GetDeviceType();
     jsonObject[DH_TYPE] = capability.GetDHType();
     jsonObject[DH_ATTRS] = capability.GetDHAttrs();
+    jsonObject[DH_SUBTYPE] = capability.GetDHSubtype();
 }
 
 void FromJson(const nlohmann::json &jsonObject, CapabilityInfo &capability)
@@ -198,6 +213,11 @@ void FromJson(const nlohmann::json &jsonObject, CapabilityInfo &capability)
         return;
     }
     capability.SetDHAttrs(jsonObject.at(DH_ATTRS).get<std::string>());
+    if (!IsString(jsonObject, DH_SUBTYPE)) {
+        DHLOGE("DH_SUBTYPE is invalid!");
+        return;
+    }
+    capability.SetDHSubtype(jsonObject.at(DH_SUBTYPE).get<std::string>());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

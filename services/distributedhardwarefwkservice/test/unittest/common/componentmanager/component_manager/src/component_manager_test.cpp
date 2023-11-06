@@ -67,6 +67,7 @@ const std::string UUID_TEST = "bb536a637105409e904d4da78290ab1";
 const std::string DH_ATTR_1 = "attr1";
 const std::string DEVICE_NAME = "Dev1";
 const std::string DH_ID_1 = "Camera_1";
+const std::string DH_SUBTYPE_TEST = "camera";
 }
 
 void ComponentManagerTest::SetUpTestCase(void)
@@ -476,8 +477,8 @@ HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
     DHContext::GetInstance().AddOnlineDevice(info->networkId, devInfo.uuid);
 
     const std::shared_ptr<CapabilityInfo> CAP_INFO_1 =
-    std::make_shared<CapabilityInfo>(DH_ID_1, devInfo.deviceId, DEVICE_NAME,
-    TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1);
+        std::make_shared<CapabilityInfo>(DH_ID_1, devInfo.deviceId, DEVICE_NAME,
+        TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1, DH_SUBTYPE_TEST);
 
     CapabilityInfoManager::GetInstance()->Init();
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos { CAP_INFO_1 };

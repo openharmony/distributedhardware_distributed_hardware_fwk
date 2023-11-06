@@ -50,6 +50,11 @@ const string DH_ID_3 = "Display_0";
 const string DH_ID_4 = "Input_0";
 const string DH_ATTR_0 = "attr0";
 const string DH_ATTR_1 = "attr1";
+const string DH_SUBTYPE_0 = "camera";
+const string DH_SUBTYPE_1 = "mic";
+const string DH_SUBTYPE_2 = "gps";
+const string DH_SUBTYPE_3 = "screen";
+const string DH_SUBTYPE_4 = "input";
 constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
 constexpr uint32_t TEST_DH_TYPE_CAMERA = 0x01;
 constexpr uint32_t TEST_DH_TYPE_MIC = 0x02;
@@ -63,26 +68,36 @@ constexpr uint32_t TEST_SIZE_10 = 10;
 const std::string EMPTY_PREFIX = "";
 
 const shared_ptr<CapabilityInfo> CAP_INFO_0 =
-    make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0,
+    DH_SUBTYPE_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_1 =
-    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_0,
+    DH_SUBTYPE_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_2 =
-    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_0,
+    DH_SUBTYPE_2);
 const shared_ptr<CapabilityInfo> CAP_INFO_3 =
-    make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, DH_ATTR_0,
+    DH_SUBTYPE_3);
 const shared_ptr<CapabilityInfo> CAP_INFO_4 =
-    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_0);
+    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_0,
+    DH_SUBTYPE_4);
 
 const shared_ptr<CapabilityInfo> CAP_INFO_5 =
-    make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_0, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1,
+    DH_SUBTYPE_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_6 =
-    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_1, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::AUDIO, DH_ATTR_1,
+    DH_SUBTYPE_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_7 =
-    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_2, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::GPS, DH_ATTR_1,
+    DH_SUBTYPE_2);
 const shared_ptr<CapabilityInfo> CAP_INFO_8 =
-    make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_3, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::SCREEN, DH_ATTR_1,
+    DH_SUBTYPE_3);
 const shared_ptr<CapabilityInfo> CAP_INFO_9 =
-    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_1);
+    make_shared<CapabilityInfo>(DH_ID_4, DEV_ID_1, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::INPUT, DH_ATTR_1,
+    DH_SUBTYPE_4);
 }
 
 void ResourceManagerTest::SetUpTestCase(void)
@@ -464,7 +479,8 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_019, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, resource_manager_test_020, TestSize.Level0)
 {
-    CapabilityInfo capaInfo(DH_ID_0, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0);
+    CapabilityInfo capaInfo(DH_ID_0, DEV_ID_0, TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA,
+        DH_ATTR_0, DH_SUBTYPE_0);
     bool ret = CAP_INFO_1->Compare(capaInfo);
     EXPECT_EQ(false, ret);
 }
@@ -581,7 +597,7 @@ HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_001, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_002, TestSize.Level0)
 {
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
     CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_ID;
     std::string value;
     bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
@@ -596,7 +612,7 @@ HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_002, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_003, TestSize.Level0)
 {
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
     CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DEVICE_ID;
     std::string value;
     bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
@@ -611,7 +627,7 @@ HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_003, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_004, TestSize.Level0)
 {
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
     CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DEVICE_NAME;
     std::string value;
     bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
@@ -626,7 +642,7 @@ HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_004, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_005, TestSize.Level0)
 {
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
     CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DEVICE_TYPE;
     uint16_t devType = 123;
     std::string value = std::to_string(devType);
@@ -642,7 +658,7 @@ HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_005, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_006, TestSize.Level0)
 {
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
     CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_TYPE;
     DHType dhType = DHType::AUDIO;
     std::string value = std::to_string(static_cast<uint32_t>(dhType));
@@ -658,7 +674,7 @@ HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_006, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_007, TestSize.Level0)
 {
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
     CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_ATTRS;
     std::string value;
     bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
@@ -673,7 +689,7 @@ HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_007, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_008, TestSize.Level0)
 {
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "");
+    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
     uint32_t invalid = 6;
     CapabilityInfoFilter filter = static_cast<CapabilityInfoFilter>(invalid);
     std::string value;
@@ -814,7 +830,8 @@ HWTEST_F(ResourceManagerTest, DumpCapabilityInfos_001, TestSize.Level0)
     uint16_t devType = 0;
     DHType dhType = DHType::GPS;
     std::string dhAttrs;
-    CapabilityInfo info(dhId, devId, devName, devType, dhType, dhAttrs);
+    std::string dhSubtype;
+    CapabilityInfo info(dhId, devId, devName, devType, dhType, dhAttrs, dhSubtype);
     capInfos.push_back(info);
     CapabilityInfoManager::GetInstance()->DumpCapabilityInfos(capInfos);
     EXPECT_EQ(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
@@ -834,7 +851,8 @@ HWTEST_F(ResourceManagerTest, FromJson_001, TestSize.Level0)
     uint16_t devType = 0;
     DHType dhType = DHType::GPS;
     std::string dhAttrs;
-    CapabilityInfo info(dhId, devId, devName, devType, dhType, dhAttrs);
+    std::string dhSubtype;
+    CapabilityInfo info(dhId, devId, devName, devType, dhType, dhAttrs, dhSubtype);
     nlohmann::json jsonObject;
     const std::string DH_ID = "dh_id";
     const std::string DEV_ID = "dev_id";
@@ -842,12 +860,14 @@ HWTEST_F(ResourceManagerTest, FromJson_001, TestSize.Level0)
     const std::string DEV_TYPE = "dev_type";
     const std::string DH_TYPE = "dh_type";
     const std::string DH_ATTRS = "dh_attrs";
+    const std::string DH_SUBTYPE = "dh_subtype";
     jsonObject[DH_ID] = "dh_id";
     jsonObject[DEV_ID] = "dev_id";
     jsonObject[DEV_NAME] = "dev_name";
     jsonObject[DEV_TYPE] = "dev_type";
     jsonObject[DH_TYPE] = "dh_type";
     jsonObject[DH_ATTRS] = "dh_attrs";
+    jsonObject[DH_SUBTYPE] = "dh_subtype";
     CapabilityInfo capability;
     std::string jsonStr = jsonObject.dump();
     EXPECT_EQ(DH_FWK_SUCCESS, info.FromJsonString(jsonStr));
