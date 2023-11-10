@@ -41,7 +41,14 @@ ohos_unittest("DscreenInputTest") {
     "//third_party/googletest:gtest",
   ]
 
-  external_deps = [
+  if (histreamer_compile_part) {
+    external_deps = [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_plugin_base",
+    ]
+  }
+
+  external_deps += [
     "bounds_checking_function:libsec_shared",
     "c_utils:utils",
     "eventhandler:libeventhandler",
@@ -49,13 +56,6 @@ ohos_unittest("DscreenInputTest") {
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
   ]
-
-  if (histreamer_compile_part) {
-    external_deps += [
-      "histreamer:histreamer_base",
-      "histreamer:histreamer_plugin_base",
-    ]
-  }
 
   cflags = [
     "-O2",

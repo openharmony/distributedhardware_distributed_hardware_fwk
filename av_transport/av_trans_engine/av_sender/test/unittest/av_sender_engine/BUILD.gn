@@ -71,7 +71,16 @@ ohos_unittest("AvSenderEngineTest") {
     "HST_ANY_WITH_NO_RTTI",
   ]
 
-  external_deps = [
+  if (histreamer_compile_part) {
+    external_deps = [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_codec_filters",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+    ]
+  }
+
+  external_deps += [
     "bounds_checking_function:libsec_shared",
     "c_utils:utils",
     "dsoftbus:softbus_client",
@@ -84,15 +93,6 @@ ohos_unittest("AvSenderEngineTest") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
-
-  if (histreamer_compile_part) {
-    external_deps += [
-      "histreamer:histreamer_base",
-      "histreamer:histreamer_codec_filters",
-      "histreamer:histreamer_ffmpeg_convert",
-      "histreamer:histreamer_plugin_base",
-    ]
-  }
 }
 
 group("av_sender_engine_test") {

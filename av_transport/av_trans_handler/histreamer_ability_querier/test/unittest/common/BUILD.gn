@@ -44,19 +44,19 @@ ohos_unittest("HistreamerAbilityQuerierTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [
-    "bounds_checking_function:libsec_shared",
-    "c_utils:utils",
-  ]
-
   if (histreamer_compile_part) {
-    external_deps += [
+    external_deps = [
       "histreamer:histreamer_base",
       "histreamer:histreamer_codec_filters",
       "histreamer:histreamer_ffmpeg_convert",
       "histreamer:histreamer_plugin_base",
     ]
   }
+
+  external_deps += [
+    "bounds_checking_function:libsec_shared",
+    "c_utils:utils",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",

@@ -82,7 +82,16 @@ ohos_shared_library("distributed_av_receiver") {
     "HST_ANY_WITH_NO_RTTI",
   ]
 
-  external_deps = [
+  if (histreamer_compile_part) {
+    external_deps = [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_codec_filters",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+    ]
+  }
+
+  external_deps += [
     "bounds_checking_function:libsec_shared",
     "c_utils:utils",
     "dsoftbus:softbus_client",
@@ -95,15 +104,6 @@ ohos_shared_library("distributed_av_receiver") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
-
-  if (histreamer_compile_part) {
-    external_deps += [
-      "histreamer:histreamer_base",
-      "histreamer:histreamer_codec_filters",
-      "histreamer:histreamer_ffmpeg_convert",
-      "histreamer:histreamer_plugin_base",
-    ]
-  }
 
   remove_configs = [
     "//build/config/compiler:no_rtti",

@@ -49,20 +49,20 @@ ohos_unittest("DsoftbusOutputAudioPluginTest") {
     "//third_party/googletest:gtest",
   ]
 
-  external_deps = [
-    "bounds_checking_function:libsec_shared",
-    "c_utils:utils",
-    "dsoftbus:softbus_client",
-    "hilog:libhilog",
-  ]
-
   if (histreamer_compile_part) {
-    external_deps += [
+    external_deps = [
       "histreamer:histreamer_base",
       "histreamer:histreamer_ffmpeg_convert",
       "histreamer:histreamer_plugin_base",
     ]
   }
+
+  external_deps += [
+    "bounds_checking_function:libsec_shared",
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "hilog:libhilog",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",
