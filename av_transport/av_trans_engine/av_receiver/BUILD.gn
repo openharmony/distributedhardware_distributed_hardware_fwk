@@ -102,7 +102,7 @@ ohos_shared_library("distributed_av_receiver") {
       "histreamer:histreamer_codec_filters",
       "histreamer:histreamer_ffmpeg_convert",
       "histreamer:histreamer_plugin_base",
-     ]
+    ]
   }
 
   remove_configs = [

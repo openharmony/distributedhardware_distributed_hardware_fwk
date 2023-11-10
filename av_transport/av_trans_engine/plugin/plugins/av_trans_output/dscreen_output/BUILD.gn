@@ -33,7 +33,7 @@ ohos_source_set("plugin_AVTransDscreenOutput") {
 
   external_deps = [
     "bounds_checking_function:libsec_shared",
-    "dsoftbus:softbus_client",
+    "eventhandler:libeventhandler",
   ]
 
   if (histreamer_compile_part) {
@@ -42,7 +42,7 @@ ohos_source_set("plugin_AVTransDscreenOutput") {
       "histreamer:histreamer_codec_filters",
       "histreamer:histreamer_ffmpeg_convert",
       "histreamer:histreamer_plugin_base",
-     ]
+    ]
   }
 
   public_configs = [ "${plugin_path}/plugins:avtrans_cflags" ]

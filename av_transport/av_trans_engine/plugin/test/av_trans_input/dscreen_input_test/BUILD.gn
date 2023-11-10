@@ -54,7 +54,7 @@ ohos_unittest("DscreenInputTest") {
     external_deps += [
       "histreamer:histreamer_base",
       "histreamer:histreamer_plugin_base",
-     ]
+    ]
   }
 
   cflags = [

@@ -63,7 +63,7 @@ ohos_unittest("DaudioInputPluginTest") {
     external_deps += [
       "histreamer:histreamer_base",
       "histreamer:histreamer_plugin_base",
-     ]
+    ]
   }
 
   defines = [

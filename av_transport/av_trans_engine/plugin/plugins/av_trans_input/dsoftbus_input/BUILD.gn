@@ -35,7 +35,7 @@ ohos_source_set("plugin_AVTransDsoftbusInput") {
       "histreamer:histreamer_codec_filters",
       "histreamer:histreamer_ffmpeg_convert",
       "histreamer:histreamer_plugin_base",
-     ]
+    ]
   }
 
   public_configs = [ "${plugin_path}/plugins:avtrans_cflags" ]

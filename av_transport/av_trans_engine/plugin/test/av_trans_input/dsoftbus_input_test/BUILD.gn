@@ -52,7 +52,7 @@ ohos_unittest("DsoftbusInputPluginTest") {
       "histreamer:histreamer_base",
       "histreamer:histreamer_ffmpeg_convert",
       "histreamer:histreamer_plugin_base",
-     ]
+    ]
   }
 
   cflags = [

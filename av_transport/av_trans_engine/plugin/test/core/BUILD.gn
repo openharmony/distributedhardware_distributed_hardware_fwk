@@ -69,7 +69,7 @@ ohos_unittest("AvTransInputOutputTest") {
       "histreamer:histreamer_codec_filters",
       "histreamer:histreamer_ffmpeg_convert",
       "histreamer:histreamer_plugin_base",
-     ]
+    ]
   }
 
   defines = [

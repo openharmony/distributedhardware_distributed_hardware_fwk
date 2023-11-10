@@ -38,7 +38,7 @@ ohos_source_set("avtrans_input_filter") {
       "histreamer:histreamer_codec_filters",
       "histreamer:histreamer_ffmpeg_convert",
       "histreamer:histreamer_plugin_base",
-     ]
+    ]
   }
 
   public_deps = [
@@ -87,11 +87,11 @@ ohos_source_set("avtrans_output_filter") {
 
   if (histreamer_compile_part) {
     external_deps += [
+      "histreamer:histreamer_base",
       "histreamer:histreamer_codec_filters",
       "histreamer:histreamer_ffmpeg_convert",
       "histreamer:histreamer_plugin_base",
-      "histreamer:histreamer_base",
-     ]
+    ]
   }
 
   public_deps = [

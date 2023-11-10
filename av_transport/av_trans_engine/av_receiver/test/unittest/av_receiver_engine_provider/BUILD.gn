@@ -90,7 +90,7 @@ ohos_unittest("AvReceiverEngineProviderTest") {
       "histreamer:histreamer_codec_filters",
       "histreamer:histreamer_ffmpeg_convert",
       "histreamer:histreamer_plugin_base",
-     ]
+    ]
   }
 }
 
