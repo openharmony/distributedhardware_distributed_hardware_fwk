@@ -35,7 +35,3 @@ build_flags = [ "-Werror" ]
 declare_args() {
   dhardware_low_latency = false
 }
-
-if (!defined(ohos_lite)) {
-  histreamer_compile_part = true
-}
