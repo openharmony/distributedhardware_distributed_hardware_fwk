@@ -54,12 +54,17 @@ ohos_unittest("DaudioOutputPluginTest") {
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
-    "histreamer:histreamer_base",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
   ]
+
+  if (histreamer_compile_part) {
+    external_deps += [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+     ]
+  }
 
   defines = [
     "HI_LOG_ENABLE",

@@ -57,12 +57,17 @@ ohos_unittest("AvTransControlCenterTest") {
   external_deps = [
     "bounds_checking_function:libsec_shared",
     "c_utils:utils",
-    "histreamer:histreamer_base",
-    "histreamer:histreamer_codec_filters",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
     "ipc:ipc_core",
   ]
+
+  if (histreamer_compile_part) {
+    external_deps += [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_codec_filters",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+    ]
+  }
 
   cflags = [
     "-O2",

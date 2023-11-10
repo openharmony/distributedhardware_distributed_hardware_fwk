@@ -45,10 +45,15 @@ ohos_unittest("DsoftbusInputPluginTest") {
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "hilog:libhilog",
-    "histreamer:histreamer_base",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
   ]
+
+  if (histreamer_compile_part) {
+    external_deps += [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+     ]
+  }
 
   cflags = [
     "-O2",

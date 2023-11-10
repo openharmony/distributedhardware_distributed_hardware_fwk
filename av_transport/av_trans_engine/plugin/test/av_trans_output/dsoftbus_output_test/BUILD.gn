@@ -54,10 +54,15 @@ ohos_unittest("DsoftbusOutputPluginTest") {
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "hilog:libhilog",
-    "histreamer:histreamer_base",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
   ]
+
+  if (histreamer_compile_part) {
+    external_deps += [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+     ]
+  }
 
   defines = [
     "HI_LOG_ENABLE",
