@@ -90,10 +90,8 @@ ohos_shared_library("distributed_av_receiver") {
     ]
   }
 
-    if (histreamer_compile_part) {
-    external_deps += [
-      "histreamer:histreamer_base",
-    ]
+  if (histreamer_compile_part) {
+    external_deps += [ "histreamer:histreamer_base" ]
   }
 
   external_deps += [
