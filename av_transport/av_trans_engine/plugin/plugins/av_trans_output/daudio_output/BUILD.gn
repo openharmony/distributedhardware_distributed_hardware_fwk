@@ -25,16 +25,16 @@ ohos_source_set("plugin_AVTransDaudioOutput") {
 
   sources = [ "daudio_output_plugin.cpp" ]
 
-  external_deps = [
-    "histreamer:histreamer_codec_filters",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
-  ]
+  if (histreamer_compile_part) {
+    external_deps = [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_codec_filters",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+    ]
+  }
 
-  external_deps += [
-    "bounds_checking_function:libsec_shared",
-    "histreamer:histreamer_base",
-  ]
+  external_deps += [ "bounds_checking_function:libsec_shared" ]
 
   public_configs = [ "${plugin_path}/plugins:avtrans_cflags" ]
 

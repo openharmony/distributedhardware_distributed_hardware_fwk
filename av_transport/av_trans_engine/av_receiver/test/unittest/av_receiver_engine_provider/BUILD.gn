@@ -71,16 +71,21 @@ ohos_unittest("AvReceiverEngineProviderTest") {
     "VIDEO_SUPPORT",
   ]
 
-  external_deps = [
+  if (histreamer_compile_part) {
+    external_deps = [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_codec_filters",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+    ]
+  }
+
+  external_deps += [
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "graphic_2d:libgraphic_utils",
     "graphic_2d:surface",
     "hilog:libhilog",
-    "histreamer:histreamer_base",
-    "histreamer:histreamer_codec_filters",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_core",

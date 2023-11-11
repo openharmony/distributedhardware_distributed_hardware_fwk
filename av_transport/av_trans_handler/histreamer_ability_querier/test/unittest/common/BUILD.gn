@@ -44,13 +44,18 @@ ohos_unittest("HistreamerAbilityQuerierTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [
+  if (histreamer_compile_part) {
+    external_deps = [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_codec_filters",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+    ]
+  }
+
+  external_deps += [
     "bounds_checking_function:libsec_shared",
     "c_utils:utils",
-    "histreamer:histreamer_base",
-    "histreamer:histreamer_codec_filters",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
   ]
 
   defines = [
