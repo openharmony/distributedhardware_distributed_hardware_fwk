@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,11 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+struct ResourceDesc {
+    std::string subtype;
+    bool sensitiveValue;
+};
+
 namespace {
 struct CompHandler {
     DHType type;
@@ -38,6 +43,7 @@ struct CompHandler {
     void *sinkHandler;
     int32_t sinkSaId;
     void *hardwareHandler;
+    std::vector<ResourceDesc> resourceDesc;
 };
 }
 
@@ -52,6 +58,7 @@ struct CompConfig {
     std::string compSinkLoc;
     std::string compSinkVersion;
     int32_t compSinkSaId;
+    std::vector<ResourceDesc> compResourceDesc;
 };
 
 class ComponentLoader {
@@ -74,6 +81,7 @@ public:
     int32_t GetLocalDHVersion(DHVersion &dhVersion);
     int32_t GetSourceSaId(const DHType dhType);
     DHType GetDHTypeBySrcSaId(const int32_t saId);
+    std::vector<ResourceDesc> GetCompResourceDesc(const DHType dhType);
 
 private:
     void *GetHandler(const std::string &soName);

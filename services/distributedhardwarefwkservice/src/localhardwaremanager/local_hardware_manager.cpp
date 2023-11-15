@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -112,8 +112,8 @@ void LocalHardwareManager::AddLocalCapabilityInfo(const std::vector<DHItem> &dhI
     std::string devName = DHContext::GetInstance().GetDeviceInfo().deviceName;
     uint16_t devType = DHContext::GetInstance().GetDeviceInfo().deviceType;
     for (auto dhItem : dhItems) {
-        std::shared_ptr<CapabilityInfo> dhCapabilityInfo =
-            std::make_shared<CapabilityInfo>(dhItem.dhId, deviceId, devName, devType, dhType, dhItem.attrs);
+        std::shared_ptr<CapabilityInfo> dhCapabilityInfo = std::make_shared<CapabilityInfo>(
+            dhItem.dhId, deviceId, devName, devType, dhType, dhItem.attrs, dhItem.subtype);
         capabilityInfos.push_back(dhCapabilityInfo);
     }
     CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);

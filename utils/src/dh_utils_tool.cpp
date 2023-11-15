@@ -164,5 +164,12 @@ bool IsString(const nlohmann::json& jsonObj, const std::string& key)
         jsonObj[key].size() <= MAX_MESSAGE_LEN;
     return res;
 }
+
+bool IsArray(const nlohmann::json& jsonObj, const std::string& key)
+{
+    bool res = jsonObj.contains(key) && jsonObj[key].is_array() && jsonObj[key].size() > 0 &&
+        jsonObj[key].size() <= MAX_COMP_SIZE;
+    return res;
+}
 } // namespace DistributedHardware
 } // namespace OHOS
