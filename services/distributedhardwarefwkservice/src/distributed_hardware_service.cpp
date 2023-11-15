@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,6 +28,7 @@
 #include "access_manager.h"
 #include "av_trans_control_center.h"
 #include "capability_info_manager.h"
+#include "component_manager.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "dh_utils_hisysevent.h"
@@ -229,6 +230,51 @@ int DistributedHardwareService::Dump(int32_t fd, const std::vector<std::u16strin
     }
 
     return ret;
+}
+
+int32_t DistributedHardwareService::PauseDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    std::map<DHType, IDistributedHardwareSink*> sinkMap = ComponentManager::GetInstance().GetDHSinkInstance();
+    if (sinkMap.find(dhType) == sinkMap.end()) {
+        DHLOGE("PauseDistributedHardware for DHType: %d not init sink handler", (uint32_t)dhType);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    int32_t ret = sinkMap[dhType]->PauseDistributedHardware(networkId);
+    if (ret != 0) {
+        DHLOGE("PauseDistributedHardware for DHType: %d failed, ret: %d", (uint32_t)dhType, ret);
+        return ret;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::ResumeDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    std::map<DHType, IDistributedHardwareSink*> sinkMap = ComponentManager::GetInstance().GetDHSinkInstance();
+    if (sinkMap.find(dhType) == sinkMap.end()) {
+        DHLOGE("ResumeDistributedHardware for DHType: %d not init sink handler", (uint32_t)dhType);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    int32_t ret = sinkMap[dhType]->ResumeDistributedHardware(networkId);
+    if (ret != 0) {
+        DHLOGE("ResumeDistributedHardware for DHType: %d failed, ret: %d", (uint32_t)dhType, ret);
+        return ret;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::StopDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    std::map<DHType, IDistributedHardwareSink*> sinkMap = ComponentManager::GetInstance().GetDHSinkInstance();
+    if (sinkMap.find(dhType) == sinkMap.end()) {
+        DHLOGE("StopDistributedHardware for DHType: %d not init sink handler", (uint32_t)dhType);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    int32_t ret = sinkMap[dhType]->StopDistributedHardware(networkId);
+    if (ret != 0) {
+        DHLOGE("StopDistributedHardware for DHType: %d failed, ret: %d", (uint32_t)dhType, ret);
+        return ret;
+    }
+    return DH_FWK_SUCCESS;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

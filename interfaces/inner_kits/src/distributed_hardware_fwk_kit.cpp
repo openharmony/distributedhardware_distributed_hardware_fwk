@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -223,6 +223,42 @@ int32_t DistributedHardwareFwkKit::RegisterCtlCenterCallback(int32_t engineId,
     }
 
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterCtlCenterCallback(engineId, callback);
+}
+
+int32_t DistributedHardwareFwkKit::PauseDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    DHLOGI("Pause distributed hardware dhType %d, networkId %s", (uint32_t)dhType, networkId.c_str());
+
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->PauseDistributedHardware(dhType, networkId);
+}
+
+int32_t DistributedHardwareFwkKit::ResumeDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    DHLOGI("Resume distributed hardware dhType %d, networkId %s", (uint32_t)dhType, networkId.c_str());
+
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->ResumeDistributedHardware(dhType, networkId);
+}
+
+int32_t DistributedHardwareFwkKit::StopDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    DHLOGI("Stop distributed hardware dhType %d, networkId %s", (uint32_t)dhType, networkId.c_str());
+
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->StopDistributedHardware(dhType, networkId);
 }
 } // DistributedHardware
 } // OHOS

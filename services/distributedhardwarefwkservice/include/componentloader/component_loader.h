@@ -81,7 +81,7 @@ public:
     int32_t GetLocalDHVersion(DHVersion &dhVersion);
     int32_t GetSourceSaId(const DHType dhType);
     DHType GetDHTypeBySrcSaId(const int32_t saId);
-    std::vector<ResourceDesc> GetCompResourceDesc(const DHType dhType);
+    std::map<std::string, bool> GetCompResourceDesc();
 
 private:
     void *GetHandler(const std::string &soName);
@@ -98,6 +98,7 @@ private:
     DHVersion localDHVersion_;
     std::map<DHType, CompHandler> compHandlerMap_;
     std::atomic<bool> isLocalVersionInit_;
+    std::map<std::string, bool> resDescMap_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

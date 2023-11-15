@@ -31,6 +31,9 @@ enum class DHMsgInterfaceCode : uint32_t {
     NOTIFY_AV_EVENT = 7,
     REGISTER_CTL_CEN_CALLBACK = 8,
     QUERY_LOCAL_SYS_SPEC = 9,
+    PAUSE_DISTRIBUTED_HARDWARE = 10,
+    RESUME_DISTRIBUTED_HARDWARE = 11,
+    STOP_DISTRIBUTED_HARDWARE = 12,
 };
 } // namespace DistributedHardware
 } // namespace OHOS
