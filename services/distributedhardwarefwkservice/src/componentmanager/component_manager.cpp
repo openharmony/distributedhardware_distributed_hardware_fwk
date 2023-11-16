@@ -58,7 +58,7 @@ namespace {
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
     constexpr int32_t INVALID_SA_ID = -1;
     constexpr int32_t MONITOR_TASK_DELAY_MS = 5 * 1000;
-    constexpr int32_t UINIT_COMPONENT_TIMEOUT_SECONDS = 2;
+    constexpr int32_t UNINIT_COMPONENT_TIMEOUT_SECONDS = 2;
     const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
 }
 
@@ -282,7 +282,7 @@ bool ComponentManager::WaitForResult(const Action &action, ActionResult actionsR
     DHLOGD("start.");
     auto ret = true;
     for (auto &iter : actionsResult) {
-        std::future_status status = iter.second.wait_for(std::chrono::seconds(UINIT_COMPONENT_TIMEOUT_SECONDS));
+        std::future_status status = iter.second.wait_for(std::chrono::seconds(UNINIT_COMPONENT_TIMEOUT_SECONDS));
         if (status == std::future_status::ready) {
             auto result = iter.second.get();
             DHLOGI("action = %d, compType = %#X, READY, ret = %d.", static_cast<int32_t>(action), iter.first, result);
