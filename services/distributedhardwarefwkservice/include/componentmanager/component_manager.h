@@ -16,6 +16,7 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_COMPONENT_MANAGER_H
 #define OHOS_DISTRIBUTED_HARDWARE_COMPONENT_MANAGER_H
 
+#include <atomic>
 #include <map>
 #include <set>
 #include <unordered_map>
@@ -90,6 +91,8 @@ private:
     std::shared_ptr<ComponentMonitor> compMonitorPtr_ = nullptr;
     sptr<LowLatencyListener> lowLatencyListener_ = nullptr;
     std::shared_ptr<DHTimer> monitorTaskTimer_ = nullptr;
+
+    std::atomic<bool> isUnInitTimeOut_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -58,12 +58,14 @@ namespace {
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
     constexpr int32_t INVALID_SA_ID = -1;
     constexpr int32_t MONITOR_TASK_DELAY_MS = 5 * 1000;
+    constexpr int32_t UNINIT_COMPONENT_TIMEOUT_SECONDS = 2;
     const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
 }
 
 ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
     compMonitorPtr_(std::make_shared<ComponentMonitor>()), lowLatencyListener_(new(std::nothrow) LowLatencyListener),
-    monitorTaskTimer_(std::make_shared<MonitorTaskTimer>(MONITOR_TASK_TIMER_ID, MONITOR_TASK_DELAY_MS))
+    monitorTaskTimer_(std::make_shared<MonitorTaskTimer>(MONITOR_TASK_TIMER_ID, MONITOR_TASK_DELAY_MS)),
+    isUnInitTimeOut_(false)
 {
     DHLOGI("Ctor ComponentManager");
 }
@@ -161,6 +163,12 @@ int32_t ComponentManager::UnInit()
     LowLatency::GetInstance().CloseLowLatency();
 #endif
     DHLOGI("Release component success");
+
+    if (isUnInitTimeOut_.load()) {
+        DHLOGE("Some component stop timeout, FORCE exit!");
+        _Exit(0);
+    }
+
     return DH_FWK_SUCCESS;
 }
 
@@ -274,11 +282,25 @@ bool ComponentManager::WaitForResult(const Action &action, ActionResult actionsR
     DHLOGD("start.");
     auto ret = true;
     for (auto &iter : actionsResult) {
-        auto result = iter.second.get();
-        DHLOGI("action = %d, compType = %#X, ret = %d.", static_cast<int32_t>(action), iter.first, result);
-        if (result != DH_FWK_SUCCESS) {
-            ret = false;
-            DHLOGE("there is error, but want to continue.");
+        std::future_status status = iter.second.wait_for(std::chrono::seconds(UNINIT_COMPONENT_TIMEOUT_SECONDS));
+        if (status == std::future_status::ready) {
+            auto result = iter.second.get();
+            DHLOGI("action = %d, compType = %#X, READY, ret = %d.", static_cast<int32_t>(action), iter.first, result);
+            if (result != DH_FWK_SUCCESS) {
+                ret = false;
+                DHLOGE("there is error, but want to continue.");
+            }
+        }
+
+        if (status == std::future_status::timeout) {
+            DHLOGI("action = %d, compType = %#X, TIMEOUT", static_cast<int32_t>(action), iter.first);
+            if (action == Action::STOP_SOURCE || action == Action::STOP_SINK) {
+                isUnInitTimeOut_ = true;
+            }
+        }
+
+        if (status == std::future_status::deferred) {
+            DHLOGI("action = %d, compType = %#X, DEFERRED", static_cast<int32_t>(action), iter.first);
         }
     }
     DHLOGD("end.");
