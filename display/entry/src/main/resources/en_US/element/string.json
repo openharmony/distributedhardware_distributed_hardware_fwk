@@ -1,0 +1,96 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "PrivacyView"
+    },
+    {
+      "name": "connected_to",
+      "value": "connected to"
+    },
+    {
+      "name": "conjuncts",
+      "value": "'s"
+    },
+    {
+      "name": "stop_device",
+      "value": "You can disconnect to stop using this device's"
+    },
+    {
+      "name": "pause",
+      "value": "Pause"
+    },
+    {
+      "name": "continue",
+      "value": "Continue"
+    },
+    {
+      "name": "camera",
+      "value": "Camera"
+    },
+    {
+      "name": "audio",
+      "value": "Audio"
+    },
+    {
+      "name": "pc",
+      "value": "PC"
+    },
+    {
+      "name": "phone",
+      "value": "Phone"
+    },
+    {
+      "name": "pad",
+      "value": "Pad"
+    },
+    {
+      "name": "watch",
+      "value": "Watch"
+    },
+    {
+      "name": "car",
+      "value": "Car"
+    },
+    {
+      "name": "tv",
+      "value": "TV"
+    },
+    {
+      "name": "display",
+      "value": "Display"
+    },
+    {
+      "name": "2in1",
+      "value": "2in1"
+    },
+    {
+      "name": "default",
+      "value": "Phone"
+    },
+    {
+      "name": "tablet",
+      "value": "Tablet"
+    },
+    {
+      "name": "wearable",
+      "value": "Wearable"
+    },
+    {
+      "name": "microphone",
+      "value": "Mic"
+    },
+    {
+      "name": "disconnect",
+      "value": "disconnect"
+    }
+  ]
+}

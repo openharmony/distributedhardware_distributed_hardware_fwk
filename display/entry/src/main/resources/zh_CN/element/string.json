@@ -1,0 +1,96 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "分布式硬件控制UI"
+    },
+    {
+      "name": "connected_to",
+      "value": "已连接到"
+    },
+    {
+      "name": "conjuncts",
+      "value": "的"
+    },
+    {
+      "name": "stop_device",
+      "value": "你可以断开连接以停止使用此设备的"
+    },
+    {
+      "name": "pause",
+      "value": "暂停"
+    },
+    {
+      "name": "continue",
+      "value": "继续"
+    },
+    {
+      "name": "camera",
+      "value": "相机"
+    },
+    {
+      "name": "audio",
+      "value": "音频"
+    },
+    {
+      "name": "pc",
+      "value": "笔记本电脑"
+    },
+    {
+      "name": "phone",
+      "value": "手机"
+    },
+    {
+      "name": "pad",
+      "value": "平板"
+    },
+    {
+      "name": "watch",
+      "value": "手表"
+    },
+    {
+      "name": "car",
+      "value": "车机"
+    },
+    {
+      "name": "tv",
+      "value": "电视"
+    },
+    {
+      "name": "display",
+      "value": "显示器"
+    },
+    {
+      "name": "2in1",
+      "value": "2in1"
+    },
+    {
+      "name": "default",
+      "value": "手机"
+    },
+    {
+      "name": "tablet",
+      "value": "平板"
+    },
+    {
+      "name": "wearable",
+      "value": "可穿戴电子设备"
+    },
+    {
+      "name": "microphone",
+      "value": "麦克风"
+    },
+    {
+      "name": "disconnect",
+      "value": "断开连接"
+    }
+  ]
+}
