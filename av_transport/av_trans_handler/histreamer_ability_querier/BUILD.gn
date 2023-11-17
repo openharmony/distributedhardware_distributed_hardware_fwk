@@ -52,13 +52,18 @@ ohos_shared_library("histreamer_ability_querier") {
     "HST_ANY_WITH_NO_RTTI",
   ]
 
-  external_deps = [
+  if (histreamer_compile_part) {
+    external_deps = [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_codec_filters",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+    ]
+  }
+
+  external_deps += [
     "bounds_checking_function:libsec_shared",
     "hilog:libhilog",
-    "histreamer:histreamer_base",
-    "histreamer:histreamer_codec_filters",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
   ]
 
   cflags = [

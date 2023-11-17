@@ -48,9 +48,10 @@ void ResourceManagerFuzzTest(const uint8_t* data, size_t size)
     uint16_t devType = *(reinterpret_cast<const uint16_t*>(data));
     DHType dhType = dhTypeFuzz[data[0] % DH_TYPE_SIZE];
     std::string dhAttrs(reinterpret_cast<const char*>(data), size);
+    std::string dhSubtype(reinterpret_cast<const char*>(data), size);
 
     std::shared_ptr<CapabilityInfo> capInfo =
-        std::make_shared<CapabilityInfo>(dhId, devId, devName, devType, dhType, dhAttrs);
+        std::make_shared<CapabilityInfo>(dhId, devId, devName, devType, dhType, dhAttrs, dhSubtype);
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
     resInfos.emplace_back(capInfo);
 

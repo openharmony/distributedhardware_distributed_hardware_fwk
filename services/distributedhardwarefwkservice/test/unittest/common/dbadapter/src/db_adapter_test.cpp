@@ -52,29 +52,44 @@ const string TEST_DH_ID_3 = "Display_03";
 const string TEST_DH_ID_4 = "Input_04";
 const string TEST_DH_ATTR_0 = "db_test_attr0";
 const string TEST_DH_ATTR_1 = "db_test_attr1";
+const string TEST_DH_SUBTYPE_0 = "camera";
+const string TEST_DH_SUBTYPE_1 = "mic";
+const string TEST_DH_SUBTYPE_2 = "gps";
+const string TEST_DH_SUBTYPE_3 = "screen";
+const string TEST_DH_SUBTYPE_4 = "input";
 constexpr uint16_t TEST_DEV_TYPE = 0x11;
 
 const shared_ptr<CapabilityInfo> CAP_INFO_0 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_0, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE, DHType::CAMERA, TEST_DH_ATTR_0);
+    make_shared<CapabilityInfo>(TEST_DH_ID_0, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE, DHType::CAMERA, TEST_DH_ATTR_0,
+    TEST_DH_SUBTYPE_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_1 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_1, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE, DHType::AUDIO, TEST_DH_ATTR_0);
+    make_shared<CapabilityInfo>(TEST_DH_ID_1, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE, DHType::AUDIO, TEST_DH_ATTR_0,
+    TEST_DH_SUBTYPE_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_2 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_2, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE, DHType::GPS, TEST_DH_ATTR_0);
+    make_shared<CapabilityInfo>(TEST_DH_ID_2, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE, DHType::GPS, TEST_DH_ATTR_0,
+    TEST_DH_SUBTYPE_2);
 const shared_ptr<CapabilityInfo> CAP_INFO_3 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_3, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE, DHType::HFP, TEST_DH_ATTR_0);
+    make_shared<CapabilityInfo>(TEST_DH_ID_3, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE, DHType::HFP, TEST_DH_ATTR_0,
+    TEST_DH_SUBTYPE_3);
 const shared_ptr<CapabilityInfo> CAP_INFO_4 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_4, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE, DHType::INPUT, TEST_DH_ATTR_0);
+    make_shared<CapabilityInfo>(TEST_DH_ID_4, TEST_DEV_ID_0, DEV_NAME, TEST_DEV_TYPE, DHType::INPUT, TEST_DH_ATTR_0,
+    TEST_DH_SUBTYPE_4);
 
 const shared_ptr<CapabilityInfo> CAP_INFO_5 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_0, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE, DHType::CAMERA, TEST_DH_ATTR_1);
+    make_shared<CapabilityInfo>(TEST_DH_ID_0, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE, DHType::CAMERA, TEST_DH_ATTR_1,
+    TEST_DH_SUBTYPE_0);
 const shared_ptr<CapabilityInfo> CAP_INFO_6 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_1, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE, DHType::AUDIO, TEST_DH_ATTR_1);
+    make_shared<CapabilityInfo>(TEST_DH_ID_1, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE, DHType::AUDIO, TEST_DH_ATTR_1,
+    TEST_DH_SUBTYPE_1);
 const shared_ptr<CapabilityInfo> CAP_INFO_7 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_2, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE, DHType::GPS, TEST_DH_ATTR_1);
+    make_shared<CapabilityInfo>(TEST_DH_ID_2, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE, DHType::GPS, TEST_DH_ATTR_1,
+    TEST_DH_SUBTYPE_2);
 const shared_ptr<CapabilityInfo> CAP_INFO_8 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_3, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE, DHType::HFP, TEST_DH_ATTR_1);
+    make_shared<CapabilityInfo>(TEST_DH_ID_3, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE, DHType::HFP, TEST_DH_ATTR_1,
+    TEST_DH_SUBTYPE_3);
 const shared_ptr<CapabilityInfo> CAP_INFO_9 =
-    make_shared<CapabilityInfo>(TEST_DH_ID_4, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE, DHType::INPUT, TEST_DH_ATTR_1);
+    make_shared<CapabilityInfo>(TEST_DH_ID_4, TEST_DEV_ID_1, DEV_NAME, TEST_DEV_TYPE, DHType::INPUT, TEST_DH_ATTR_1,
+    TEST_DH_SUBTYPE_4);
 
 std::shared_ptr<DBAdapter> g_dbAdapterPtr;
 }

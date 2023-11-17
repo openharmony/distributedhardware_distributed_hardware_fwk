@@ -27,17 +27,19 @@ ohos_source_set("avtrans_input_filter") {
     "av_transport_input/av_transport_input_filter.cpp",
   ]
 
-  external_deps = [
-    "histreamer:histreamer_codec_filters",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
-  ]
+  if (histreamer_compile_part) {
+    external_deps = [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_codec_filters",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+    ]
 
-  external_deps += [
-    "bounds_checking_function:libsec_shared",
-    "hilog:libhilog",
-    "histreamer:histreamer_base",
-  ]
+    external_deps += [
+      "bounds_checking_function:libsec_shared",
+      "hilog:libhilog",
+    ]
+  }
 
   public_deps = [
     "${plugin_path}/plugins/av_trans_input/daudio_input:plugin_AVTransDaudioInput",
@@ -78,16 +80,18 @@ ohos_source_set("avtrans_output_filter") {
     "av_transport_output/av_transport_output_filter.cpp",
   ]
 
-  external_deps = [
-    "histreamer:histreamer_codec_filters",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
-  ]
+  if (histreamer_compile_part) {
+    external_deps = [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_codec_filters",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+    ]
+  }
 
   external_deps += [
     "bounds_checking_function:libsec_shared",
     "hilog:libhilog",
-    "histreamer:histreamer_base",
   ]
 
   public_deps = [

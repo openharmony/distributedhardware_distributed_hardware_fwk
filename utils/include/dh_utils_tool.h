@@ -54,6 +54,8 @@ bool IsUInt32(const nlohmann::json& jsonObj, const std::string& key);
 bool IsBool(const nlohmann::json& jsonObj, const std::string& key);
 
 bool IsString(const nlohmann::json& jsonObj, const std::string& key);
+
+bool IsArray(const nlohmann::json& jsonObj, const std::string& key);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

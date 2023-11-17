@@ -40,14 +40,19 @@ ohos_unittest("DsoftbusInputPluginTest") {
     "//third_party/googletest:gtest",
   ]
 
-  external_deps = [
+  if (histreamer_compile_part) {
+    external_deps = [
+      "histreamer:histreamer_base",
+      "histreamer:histreamer_ffmpeg_convert",
+      "histreamer:histreamer_plugin_base",
+    ]
+  }
+
+  external_deps += [
     "bounds_checking_function:libsec_shared",
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "hilog:libhilog",
-    "histreamer:histreamer_base",
-    "histreamer:histreamer_ffmpeg_convert",
-    "histreamer:histreamer_plugin_base",
   ]
 
   cflags = [

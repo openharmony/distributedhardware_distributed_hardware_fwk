@@ -56,6 +56,9 @@ const std::string COMP_SOURCE_SA_ID = "comp_source_sa_id";
 const std::string COMP_SINK_LOC = "comp_sink_loc";
 const std::string COMP_SINK_VERSION = "comp_sink_version";
 const std::string COMP_SINK_SA_ID = "comp_sink_sa_id";
+const std::string COMP_RESOURCE_DESC = "comp_resource_desc";
+const std::string COMP_SUBTYPE = "subtype";
+const std::string COMP_SENSITIVE = "sensitive";
 
 const std::string COMPONENTSLOAD_DISTRIBUTED_COMPONENTS = "distributed_components";
 
@@ -170,6 +173,21 @@ int32_t ParseSink(const nlohmann::json &json, CompConfig &cfg)
     return DH_FWK_SUCCESS;
 }
 
+int32_t ParseResourceDesc(const nlohmann::json &json, CompConfig &cfg)
+{
+    if (!IsArray(json, COMP_RESOURCE_DESC)) {
+        DHLOGE("COMP_RESOURCE_DESC is invalid");
+        return ERR_DH_FWK_JSON_PARSE_FAILED;
+    }
+    for (const auto &obj : json.at(COMP_RESOURCE_DESC)) {
+        ResourceDesc desc;
+        desc.subtype = obj[COMP_SUBTYPE];
+        desc.sensitiveValue = obj[COMP_SENSITIVE];
+        cfg.compResourceDesc.push_back(desc);
+    }
+    return DH_FWK_SUCCESS;
+}
+
 void from_json(const nlohmann::json &json, CompConfig &cfg)
 {
     if (ParseComponent(json, cfg) != DH_FWK_SUCCESS) {
@@ -182,6 +200,10 @@ void from_json(const nlohmann::json &json, CompConfig &cfg)
     }
     if (ParseSink(json, cfg) != DH_FWK_SUCCESS) {
         DHLOGE("ParseSink is failed");
+        return;
+    }
+    if (ParseResourceDesc(json, cfg) != DH_FWK_SUCCESS) {
+        DHLOGE("ParseResourceDesc is failed");
         return;
     }
 }
@@ -278,6 +300,7 @@ void ComponentLoader::GetAllHandler(std::map<DHType, CompConfig> &dhtypeMap)
         comHandler.sourceSaId = itor->second.compSourceSaId;
         comHandler.sinkHandler = GetHandler(itor->second.compSinkLoc);
         comHandler.sinkSaId = itor->second.compSinkSaId;
+        comHandler.resourceDesc = itor->second.compResourceDesc;
         compHandlerMap_[itor->second.type] = comHandler;
     }
 }
@@ -503,6 +526,14 @@ DHType ComponentLoader::GetDHTypeBySrcSaId(const int32_t saId)
         }
     }
     return type;
+}
+
+std::vector<ResourceDesc> ComponentLoader::GetCompResourceDesc(const DHType dhType)
+{
+    if (!IsDHTypeExist(dhType)) {
+        return {};
+    }
+    return compHandlerMap_[dhType].resourceDesc;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

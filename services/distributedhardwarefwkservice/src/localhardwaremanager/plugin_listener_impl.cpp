@@ -40,7 +40,7 @@ void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::stri
     std::string devName = DHContext::GetInstance().GetDeviceInfo().deviceName;
     uint16_t devType = DHContext::GetInstance().GetDeviceInfo().deviceType;
     std::shared_ptr<CapabilityInfo> dhCapabilityInfo =
-        std::make_shared<CapabilityInfo>(dhId, deviceId, devName, devType, dhType_, attrs);
+        std::make_shared<CapabilityInfo>(dhId, deviceId, devName, devType, dhType_, attrs, "");
     capabilityInfos.push_back(dhCapabilityInfo);
 
     CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);
