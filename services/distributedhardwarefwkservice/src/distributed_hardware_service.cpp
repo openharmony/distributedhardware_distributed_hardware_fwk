@@ -17,9 +17,11 @@
 
 #include <cinttypes>
 
+#include "constants.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "ipc_types.h"
+#include "ipublisher_listener.h"
 #include "iservice_registry.h"
 #include "nlohmann/json.hpp"
 #include "string_ex.h"
@@ -206,6 +208,14 @@ int32_t DistributedHardwareService::RegisterCtlCenterCallback(int32_t engineId,
     const sptr<IAVTransControlCenterCallback> &callback)
 {
     return AVTransControlCenter::GetInstance().RegisterCtlCenterCallback(engineId, callback);
+}
+
+int32_t DistributedHardwareService::NotifySourceRemoteSinkStarted(std::string &deviceId)
+{   
+    DHLOGI("DistributedHardwareService NotifySourceRemoteSinkStarted Cabin Ready Start.");
+    Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_CAR_CABIN_READY, deviceId);
+    DHLOGI("DistributedHardwareService NotifySourceRemoteSinkStarted Cabin Ready End.");
+    return DH_FWK_SUCCESS;
 }
 
 int DistributedHardwareService::Dump(int32_t fd, const std::vector<std::u16string>& args)

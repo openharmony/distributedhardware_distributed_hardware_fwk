@@ -31,7 +31,7 @@ namespace OHOS {
 namespace DistributedHardware {
 class IDistributedHardware : public OHOS::IRemoteBroker {
 public:
-    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.distributedhardware.distributedhardwarefwk");
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.distributedhardware.accessToken");
     IDistributedHardware() = default;
     virtual ~IDistributedHardware() = default;
     virtual int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) = 0;
@@ -45,6 +45,7 @@ public:
     virtual int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event) = 0;
     virtual int32_t RegisterCtlCenterCallback(int32_t engineId,
         const sptr<IAVTransControlCenterCallback> &callback) = 0;
+    virtual int32_t NotifySourceRemoteSinkStarted(std::string &deviceId) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
