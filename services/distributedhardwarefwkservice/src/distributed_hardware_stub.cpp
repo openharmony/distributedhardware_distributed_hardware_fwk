@@ -220,8 +220,8 @@ int32_t DistributedHardwareStub::RegisterControlCenterCallbackInner(MessageParce
     return DH_FWK_SUCCESS;
 }
 
-int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRemoteSinkStarted(MessageParcel &data, 
-MessageParcel &reply)
+int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRemoteSinkStarted(MessageParcel &data,
+    MessageParcel &reply)
 {
     DHLOGI("DistributedHardwareStub HandleNotifySourceRemoteSinkStarted Start.");
     std::string deviceId = data.ReadString();
