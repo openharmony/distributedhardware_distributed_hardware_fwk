@@ -19,7 +19,6 @@ import UIAbility from '@ohos.app.ability.UIAbility';
 import Want from '@ohos.app.ability.Want';
 import window from '@ohos.window';
 import hardwareManager from '@ohos.distributedHardware.hardwareManager';
-import { Logger } from '../utils/Logger';
 import power from '@ohos.power';
 import screenLock from '@ohos.screenLock';
 import {BusinessError} from '@ohos.base';
@@ -34,13 +33,13 @@ export default class DHardwareUIAbility extends UIAbility {
   isStopAbility:boolean = false;
 
   stop(){
-    Logger.info(TAG + 'stop')
+    console.info(TAG + 'stop')
     try {
       hardwareManager.stopDistributedHardware(AppStorage.get('description') as hardwareManager.HardwareDescriptor, () => {
         console.log(TAG + "stopDistributedHardware in ")
       })
     }catch (err){
-      Logger.info(TAG + 'stopDistributedHardware err' + err)
+      console.info(TAG + 'stopDistributedHardware err' + err)
     }
   }
 
@@ -96,14 +95,14 @@ export default class DHardwareUIAbility extends UIAbility {
   }
 
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam) {
-    Logger.info(TAG+ 'onCreate : '+'Ability onCreate');
+    console.info(TAG+ 'onCreate : '+'Ability onCreate');
 
     // 每次被拉起时，默认设置没有执行StopAbility
     this.isStopAbility = false;
-    Logger.info(TAG+'onCreate : ' +'this.isStopAbility : '+ this.isStopAbility);
+    console.info(TAG+'onCreate : ' +'this.isStopAbility : '+ this.isStopAbility);
 
     if (want.parameters != undefined) {
-      Logger.info(TAG+'onCreate : want.parameters : '+JSON.stringify(want.parameters));
+      console.info(TAG+'onCreate : want.parameters : '+JSON.stringify(want.parameters));
 
       AppStorage.setOrCreate('type',want.parameters['type']);
       AppStorage.setOrCreate('srcNetworkId',want.parameters['srcNetworkId']);
@@ -117,34 +116,34 @@ export default class DHardwareUIAbility extends UIAbility {
   }
 
   onNewWant(want:Want){
-    Logger.info(TAG+ 'onNewWant : '+'Ability onNewWant');
+    console.info(TAG+ 'onNewWant : '+'Ability onNewWant');
 
     if(want.parameters!=undefined){
-      Logger.info(TAG+'onNewWant : want.parameters : '+JSON.stringify(want.parameters));
-      Logger.info(TAG+"onNewWant : want.parameters['returnCode'] : "+JSON.stringify(want.parameters['returnCode']));
+      console.info(TAG+'onNewWant : want.parameters : '+JSON.stringify(want.parameters));
+      console.info(TAG+"onNewWant : want.parameters['returnCode'] : "+JSON.stringify(want.parameters['returnCode']));
 
       AppStorage.setOrCreate('returnCode',want.parameters['returnCode']);
 
       let returnCode:number =want.parameters['returnCode'] as number;
-      Logger.info(TAG+'onNewWant : returnCode : '+returnCode);
+      console.info(TAG+'onNewWant : returnCode : '+returnCode);
 
       // 接收到的returnCode如果满足条件，则表面已调用stopAbility
       if (returnCode == 24200102) {
         this.isStopAbility = true;
-        Logger.info(TAG+'onNewWant : this.isStopAbility : '+this.isStopAbility);
+        console.info(TAG+'onNewWant : this.isStopAbility : '+this.isStopAbility);
         try {
           this.context.terminateSelf((err: BusinessError)=>{
             if (err.code) {
-              Logger.error( `terminateSelf failed, code is ${err.code}, message is ${err.message}`);
+              console.error( `terminateSelf failed, code is ${err.code}, message is ${err.message}`);
               return;
             }
-            Logger.info(TAG+'terminateSelf succeed');
+            console.info(TAG+'terminateSelf succeed');
             router.back();
           });
         }catch (err){
           let code = (err as BusinessError).code;
           let message = (err as BusinessError).message;
-          Logger.error( `terminateSelf failed, code is ${code}, message is ${message}`);
+          console.error( `terminateSelf failed, code is ${code}, message is ${message}`);
         }
       }
     }
@@ -152,7 +151,7 @@ export default class DHardwareUIAbility extends UIAbility {
   }
 
   onDestroy() {
-    Logger.info(TAG+ 'onDestroy : '+'Ability onDestroy');
+    console.info(TAG+ 'onDestroy : '+'Ability onDestroy');
 
     let sign:string = AppStorage.get<string>('sign') as string;
     if (sign == 'stop') {
@@ -161,18 +160,18 @@ export default class DHardwareUIAbility extends UIAbility {
 
     // stopAbility后应用销毁自身：不再执行停止函数
     if (!this.isStopAbility && !(AppStorage.get<string>('sign')=='onBackPress')) {
-      Logger.info(TAG+ 'onDestroy : '+'this.isStopAbility ： '+this.isStopAbility);
-      Logger.info(TAG+ 'onDestroy : '+"AppStorage.get<string>('sign') ： "+AppStorage.get<string>('sign'));
+      console.info(TAG+ 'onDestroy : '+'this.isStopAbility ： '+this.isStopAbility);
+      console.info(TAG+ 'onDestroy : '+"AppStorage.get<string>('sign') ： "+AppStorage.get<string>('sign'));
 
       this.stop();
-      Logger.info(TAG+ 'onDestroy : '+'Distributed Hardware stopped');
+      console.info(TAG+ 'onDestroy : '+'Distributed Hardware stopped');
     }
 
   }
 
   onWindowStageCreate(windowStage: window.WindowStage) {
     // Main window is created, set main page for this ability
-    Logger.info(TAG+ 'onWindowStageCreate : '+'Ability onWindowStageCreate');
+    console.info(TAG+ 'onWindowStageCreate : '+'Ability onWindowStageCreate');
 
     windowStage.loadContent('pages/DHardwareUI', (err, data) => {
       if (err.code) {
@@ -185,36 +184,36 @@ export default class DHardwareUIAbility extends UIAbility {
 
   onWindowStageDestroy() {
     // Main window is destroyed, release UI related resources
-    Logger.info(TAG+ 'onWindowStageDestroy : '+'Ability onWindowStageDestroy');
+    console.info(TAG+ 'onWindowStageDestroy : '+'Ability onWindowStageDestroy');
 
   }
 
   eventFunc(){
-    Logger.info(TAG + 'call anonymous eventFunc : pause');
+    console.info(TAG + 'call anonymous eventFunc : pause');
   }
 
   onForeground() {
     // Ability has brought to foreground
-    Logger.info(TAG+ 'onForeground : '+'Ability onForeground');
+    console.info(TAG+ 'onForeground : '+'Ability onForeground');
 
     this.context.eventHub.on('pause',this.pause);
     this.context.eventHub.on('resume',this.resume);
 
     if (!this.isInit && !shareData.isPause) {
       this.context.eventHub.emit('resume');
-      Logger.info(TAG+'onForeground : ' + 'this.isInit : ' + this.isInit);
-      Logger.info(TAG+'onForeground : ' + 'shareData.isPause : ' + shareData.isPause);
+      console.info(TAG+'onForeground : ' + 'this.isInit : ' + this.isInit);
+      console.info(TAG+'onForeground : ' + 'shareData.isPause : ' + shareData.isPause);
     }
 
     this.isInit = false;
 
     AppStorage.setAndLink('isPause',false);
-    Logger.info(TAG+'onForeground : ' + "AppStorage.get<boolean>('isPause') : "+ AppStorage.get<boolean>('isPause'));
+    console.info(TAG+'onForeground : ' + "AppStorage.get<boolean>('isPause') : "+ AppStorage.get<boolean>('isPause'));
   }
 
   onBackground() {
     // Ability has back to background
-    Logger.info(TAG+ 'onBackground : '+'Ability onBackground');
+    console.info(TAG+ 'onBackground : '+'Ability onBackground');
 
     let sign:string = AppStorage.get<string>('sign') as string;
     if (sign == 'stop') {
@@ -222,9 +221,9 @@ export default class DHardwareUIAbility extends UIAbility {
     }
     // stopAbility后应用销毁自身：不再执行暂停函数
     if (!this.isStopAbility){
-      Logger.info(TAG+ 'onBackground : '+'this.isStopAbility' + this.isStopAbility);
+      console.info(TAG+ 'onBackground : '+'this.isStopAbility' + this.isStopAbility);
       this.pause();
-      Logger.info(TAG+ 'onBackground : '+'Distributed Hardware paused');
+      console.info(TAG+ 'onBackground : '+'Distributed Hardware paused');
     }
   }
 }

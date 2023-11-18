@@ -16,7 +16,6 @@ import {BusinessError} from '@ohos.base';
 import hardwareManager from '@ohos.distributedHardware.hardwareManager';
 import common from '@ohos.app.ability.common';
 import router from '@ohos.router';
-import { Logger } from '../utils/Logger';
 import CommonConstants from '../constants/CommonConstants';
 
 const TAG = 'testTag_DHardwareUI : ';
@@ -44,22 +43,22 @@ struct DHardwareUI {
   private context = getContext(this) as common.UIAbilityContext;
 
   aboutToAppear(){
-    Logger.info(TAG+ 'aboutToAppear ');
+    console.info(TAG+ 'aboutToAppear ');
     this.sign = '';
 
     this.deviceType = this.convertDeviceTypeToChStr(this.stoLink_deviceType);
     AppStorage.setAndLink('description',this.description);
 
-    Logger.info(TAG+'aboutToAppear : this.description : '+this.description);
-    Logger.info(TAG+'aboutToAppear : this.description.type : '+this.description.type);
-    Logger.info(TAG+'aboutToAppear : this.description.srcNetworkId : '+this.description.srcNetworkId);
+    console.info(TAG+'aboutToAppear : this.description : '+this.description);
+    console.info(TAG+'aboutToAppear : this.description.type : '+this.description.type);
+    console.info(TAG+'aboutToAppear : this.description.srcNetworkId : '+this.description.srcNetworkId);
 
     if (this.stoLink_type == 1024) {
       this.DHTypeName = '麦克风';
-      Logger.info(TAG+'aboutToAppear : this.DHTypeName : '+this.DHTypeName);
+      console.info(TAG+'aboutToAppear : this.DHTypeName : '+this.DHTypeName);
     }else {
       this.DHTypeName = '相机';
-      Logger.info(TAG+'aboutToAppear : this.DHTypeName : '+this.DHTypeName);
+      console.info(TAG+'aboutToAppear : this.DHTypeName : '+this.DHTypeName);
 
     }
   }
@@ -119,13 +118,13 @@ struct DHardwareUI {
   }
 
   stop(){
-    Logger.info(TAG + 'stop')
+    console.info(TAG + 'stop')
     try {
       hardwareManager.stopDistributedHardware(this.description, () => {
         console.log(TAG + "stopDistributedHardware in ")
       })
     }catch (err){
-      Logger.info(TAG + 'stopDistributedHardware err' + err)
+      console.info(TAG + 'stopDistributedHardware err' + err)
     }
   }
 
@@ -152,20 +151,18 @@ struct DHardwareUI {
   }
 
   onPageHide(){
-    Logger.info(TAG+ 'onPageHide');
+    console.info(TAG+ 'onPageHide');
   }
 
   onBackPress(){
-    Logger.info(TAG+ 'onBackPress');
+    console.info(TAG+ 'onBackPress');
 
     this.sign = 'onBackPress';
   }
 
   aboutToDisappear(){
-    Logger.info(TAG+ 'aboutToDisappear');
+    console.info(TAG+ 'aboutToDisappear');
   }
-
-
 
   build() {
     Stack(){
