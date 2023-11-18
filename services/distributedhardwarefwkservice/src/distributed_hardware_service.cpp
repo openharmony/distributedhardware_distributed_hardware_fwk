@@ -211,7 +211,7 @@ int32_t DistributedHardwareService::RegisterCtlCenterCallback(int32_t engineId,
 }
 
 int32_t DistributedHardwareService::NotifySourceRemoteSinkStarted(std::string &deviceId)
-{   
+{
     DHLOGI("DistributedHardwareService NotifySourceRemoteSinkStarted Cabin Ready Start.");
     Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_CAR_CABIN_READY, deviceId);
     DHLOGI("DistributedHardwareService NotifySourceRemoteSinkStarted Cabin Ready End.");

@@ -220,12 +220,13 @@ int32_t DistributedHardwareStub::RegisterControlCenterCallbackInner(MessageParce
     return DH_FWK_SUCCESS;
 }
 
-int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRemoteSinkStarted(MessageParcel &data, MessageParcel &reply)
+int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRemoteSinkStarted(MessageParcel &data, 
+MessageParcel &reply)
 {
     DHLOGI("DistributedHardwareStub HandleNotifySourceRemoteSinkStarted Start.");
     std::string deviceId = data.ReadString();
     int32_t ret = NotifySourceRemoteSinkStarted(deviceId);
-    if(!reply.WriteInt32(ret)) {
+    if (!reply.WriteInt32(ret)) {
         DHLOGE("write ret failed.");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
     }

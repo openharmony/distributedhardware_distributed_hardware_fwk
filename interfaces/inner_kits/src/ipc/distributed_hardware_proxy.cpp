@@ -395,7 +395,7 @@ int32_t DistributedHardwareProxy::NotifySourceRemoteSinkStarted(std::string &dev
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
     MessageParcel data;
-    MessageParcel reply;     
+    MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         DHLOGE("WriteInterfaceToken fail!");
@@ -405,7 +405,8 @@ int32_t DistributedHardwareProxy::NotifySourceRemoteSinkStarted(std::string &dev
         DHLOGE("Write deviceId error.");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
     }
-    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED), data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED), 
+    data, reply, option);
     DHLOGI("DistributedHardwareProxy NotifySourceRemoteSinkStarted End");
     return ret;
 }
