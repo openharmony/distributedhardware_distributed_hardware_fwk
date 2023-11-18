@@ -105,6 +105,12 @@ int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCe
     (void)callback;
     return DH_FWK_SUCCESS;
 }
+
+int32_t NotifySourceRemoteSinkStarted(std::string &deviceId)
+{
+    (void)deviceId;
+    return DH_FWK_SUCCESS;
+}
 };
 } // namespace DistributedHardware
 } // namespace OHOS
