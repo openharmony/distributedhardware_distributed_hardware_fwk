@@ -555,7 +555,7 @@ ErrorCode AVInputFilter::PushData(const std::string& inPort, const AVBufferPtr& 
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
     }
 
-    int32_t bufSize = buffer->GetMemory()->GetSize();
+    size_t bufSize = buffer->GetMemory()->GetSize();
     auto tempBuffer = std::make_shared<AVBuffer>(Plugin::BufferMetaType::VIDEO);
     tempBuffer->pts = buffer->pts;
     tempBuffer->flag = buffer->flag;
