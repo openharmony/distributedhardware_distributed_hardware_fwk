@@ -300,6 +300,10 @@ void ComponentLoader::GetAllHandler(std::map<DHType, CompConfig> &dhtypeMap)
         comHandler.sourceSaId = itor->second.compSourceSaId;
         comHandler.sinkHandler = GetHandler(itor->second.compSinkLoc);
         comHandler.sinkSaId = itor->second.compSinkSaId;
+        std::vector<ResourceDesc> compResourceDesc = itor->second.compResourceDesc;
+        for (auto it = compResourceDesc.begin(); it != compResourceDesc.end(); it++) {
+            resDescMap_[it->subtype] = it->sensitiveValue;
+        }
         comHandler.resourceDesc = itor->second.compResourceDesc;
         compHandlerMap_[itor->second.type] = comHandler;
     }
@@ -452,6 +456,7 @@ int32_t ComponentLoader::UnInit()
         ret += ReleaseSink(iter->first);
     }
     compHandlerMap_.clear();
+    resDescMap_.clear();
     DHTraceEnd();
     return ret;
 }
@@ -528,12 +533,9 @@ DHType ComponentLoader::GetDHTypeBySrcSaId(const int32_t saId)
     return type;
 }
 
-std::vector<ResourceDesc> ComponentLoader::GetCompResourceDesc(const DHType dhType)
+std::map<std::string, bool> ComponentLoader::GetCompResourceDesc()
 {
-    if (!IsDHTypeExist(dhType)) {
-        return {};
-    }
-    return compHandlerMap_[dhType].resourceDesc;
+    return resDescMap_;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

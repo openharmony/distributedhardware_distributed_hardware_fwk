@@ -108,6 +108,9 @@ namespace DistributedHardware {
     /* DHFWK Publisher errno, range: [-11100, -11199] */
     constexpr int32_t ERR_DH_FWK_PUBLISH_MSG_FAILED = -11100;
     constexpr uint32_t ERR_DH_FWK_PUBLISH_LISTENER_OVER_SIZE = -11101;
+
+    /* DHFWK Check Permission errno, range: [-11200, -11299] */
+    constexpr int32_t ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL = -11200;
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DISTRIBUTED_HARDWARE_ERRNO

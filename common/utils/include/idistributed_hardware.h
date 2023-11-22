@@ -46,6 +46,9 @@ public:
     virtual int32_t RegisterCtlCenterCallback(int32_t engineId,
         const sptr<IAVTransControlCenterCallback> &callback) = 0;
     virtual int32_t NotifySourceRemoteSinkStarted(std::string &deviceId) = 0;
+    virtual int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId) = 0;
+    virtual int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId) = 0;
+    virtual int32_t StopDistributedHardware(DHType dhType, const std::string &networkId) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -111,6 +111,27 @@ int32_t NotifySourceRemoteSinkStarted(std::string &deviceId)
     (void)deviceId;
     return DH_FWK_SUCCESS;
 }
+
+int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    (void)dhType;
+    (void)networkId;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    (void)dhType;
+    (void)networkId;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t StopDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    (void)dhType;
+    (void)networkId;
+    return DH_FWK_SUCCESS;
+}
 };
 } // namespace DistributedHardware
 } // namespace OHOS

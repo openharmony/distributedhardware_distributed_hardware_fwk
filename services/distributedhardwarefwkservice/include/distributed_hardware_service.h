@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,6 +48,9 @@ public:
     int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event) override;
     int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback) override;
     int32_t NotifySourceRemoteSinkStarted(std::string &deviceId) override;
+    int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId) override;
+    int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId) override;
+    int32_t StopDistributedHardware(DHType dhType, const std::string &networkId) override;
 
 protected:
     void OnStart() override;
