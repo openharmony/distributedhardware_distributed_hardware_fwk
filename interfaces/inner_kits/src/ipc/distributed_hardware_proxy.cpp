@@ -386,5 +386,110 @@ int32_t DistributedHardwareProxy::RegisterCtlCenterCallback(int32_t engineId,
 
     return reply.ReadInt32();
 }
+
+int32_t DistributedHardwareProxy::PauseDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    uint32_t type = static_cast<uint32_t>(dhType);
+    if (!data.WriteInt32(type)) {
+        DHLOGE("Write type failed");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteString(networkId)) {
+        DHLOGE("Write networkId failed");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::PAUSE_DISTRIBUTED_HARDWARE),
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %d", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::ResumeDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    uint32_t type = static_cast<uint32_t>(dhType);
+    if (!data.WriteInt32(type)) {
+        DHLOGE("Write type failed");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteString(networkId)) {
+        DHLOGE("Write networkId failed");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::RESUME_DISTRIBUTED_HARDWARE),
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %d", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::StopDistributedHardware(DHType dhType, const std::string &networkId)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    int32_t type = static_cast<int32_t>(dhType);
+    if (!data.WriteInt32(type)) {
+        DHLOGE("Write type failed");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteString(networkId)) {
+        DHLOGE("Write networkId failed");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::STOP_DISTRIBUTED_HARDWARE),
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %d", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return reply.ReadInt32();
+}
 } // namespace DistributedHardware
 } // namespace OHOS

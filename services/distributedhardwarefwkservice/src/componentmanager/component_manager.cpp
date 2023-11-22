@@ -31,6 +31,7 @@
 #include "component_enable.h"
 #include "component_loader.h"
 #include "constants.h"
+#include "device_manager.h"
 #include "dh_context.h"
 #include "dh_utils_hitrace.h"
 #include "dh_utils_hisysevent.h"
@@ -219,6 +220,14 @@ ActionResult ComponentManager::StartSink()
         auto params = compversion.sinkVersion;
         auto future = std::async(std::launch::async, [item, params]() { return item.second->InitSink(params); });
         futures.emplace(item.first, future.share());
+        if (cameraCompPrivacy_ == nullptr && item.first == DHType::CAMERA) {
+            cameraCompPrivacy_ = std::make_shared<ComponentPrivacy>();
+            item.second->RegisterPrivacyResources(cameraCompPrivacy_);
+        }
+        if (audioCompPrivacy_ == nullptr && item.first == DHType::AUDIO) {
+            audioCompPrivacy_ = std::make_shared<ComponentPrivacy>();
+            item.second->RegisterPrivacyResources(audioCompPrivacy_);
+        }
     }
     return futures;
 }
@@ -240,6 +249,14 @@ ActionResult ComponentManager::StartSink(DHType dhType)
         return compSink_[dhType]->InitSink(params);
     });
     futures.emplace(dhType, future.share());
+    if (cameraCompPrivacy_ == nullptr && dhType == DHType::CAMERA) {
+        cameraCompPrivacy_ = std::make_shared<ComponentPrivacy>();
+        compSink_[dhType]->RegisterPrivacyResources(cameraCompPrivacy_);
+    }
+    if (audioCompPrivacy_ == nullptr && dhType == DHType::AUDIO) {
+        audioCompPrivacy_ = std::make_shared<ComponentPrivacy>();
+        compSink_[dhType]->RegisterPrivacyResources(audioCompPrivacy_);
+    }
 
     return futures;
 }
@@ -364,19 +381,21 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("GetEnableParam failed, uuid = %s, dhId = %s, errCode = %d", GetAnonyString(uuid).c_str(),
             GetAnonyString(dhId).c_str(), ret);
-        for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
-            if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
-                DHLOGE("device is already offline, no need try GetEnableParam, uuid = %s",
-                    GetAnonyString(uuid).c_str());
-                return ret;
-            }
-            if (GetEnableParam(networkId, uuid, dhId, dhType, param) == DH_FWK_SUCCESS) {
-                DHLOGE("GetEnableParam success, retryCount = %d", retryCount);
-                break;
-            }
-            DHLOGE("GetEnableParam failed, retryCount = %d", retryCount);
-            usleep(ENABLE_PARAM_RETRY_TIME);
+        if (RetryGetEnableParam(networkId, uuid, dhId, dhType, param) != DH_FWK_SUCCESS) {
+            return ret;
         }
+    }
+    std::string subtype = param.subtype;
+    std::map<std::string, bool> resourceDesc = ComponentLoader::GetInstance().GetCompResourceDesc();
+    if (resourceDesc.find(subtype) == resourceDesc.end()) {
+        DHLOGE("GetCompResourceDesc failed.");
+        return ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY;
+    }
+    bool sensitiveVal = resourceDesc[subtype];
+    bool isSameAuthForm = IsIdenticalAccount(networkId);
+    if (sensitiveVal && !isSameAuthForm) {
+        DHLOGE("Privacy resources must be logged in with the same account.");
+        return ERR_DH_FWK_COMPONENT_ENABLE_FAILED;
     }
 
     auto compEnable = std::make_shared<ComponentEnable>();
@@ -401,6 +420,25 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
     EnabledCompsDump::GetInstance().DumpEnabledComp(networkId, dhType, dhId);
 
     return result;
+}
+
+int32_t ComponentManager::RetryGetEnableParam(const std::string &networkId, const std::string &uuid,
+    const std::string &dhId, const DHType dhType, EnableParam &param)
+{
+    for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
+        if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
+            DHLOGE("device is already offline, no need try GetEnableParam, uuid = %s",
+                GetAnonyString(uuid).c_str());
+            return ERR_DH_FWK_COMPONENT_ENABLE_FAILED;
+        }
+        if (GetEnableParam(networkId, uuid, dhId, dhType, param) == DH_FWK_SUCCESS) {
+            DHLOGE("GetEnableParam success, retryCount = %d", retryCount);
+            break;
+        }
+        DHLOGE("GetEnableParam failed, retryCount = %d", retryCount);
+        usleep(ENABLE_PARAM_RETRY_TIME);
+    }
+    return DH_FWK_SUCCESS;
 }
 
 int32_t ComponentManager::Disable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
@@ -628,6 +666,32 @@ void ComponentManager::RecoverDistributedHardware(DHType dhType)
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
         TaskExecutor::GetInstance().PushTask(task);
     }
+}
+
+std::map<DHType, IDistributedHardwareSink*> ComponentManager::GetDHSinkInstance()
+{
+    return compSink_;
+}
+
+bool ComponentManager::IsIdenticalAccount(const std::string &networkId)
+{
+    DmAuthForm authForm = DmAuthForm::INVALID_TYPE;
+    std::vector<DmDeviceInfo> deviceList;
+    DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
+    if (deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) {
+        DHLOGE("DeviceList size is invalid!");
+        return false;
+    }
+    for (const auto &deviceInfo : deviceList) {
+        if (std::string(deviceInfo.networkId) == networkId) {
+            authForm = deviceInfo.authForm;
+            break;
+        }
+    }
+    if (authForm == DmAuthForm::IDENTICAL_ACCOUNT) {
+        return true;
+    }
+    return false;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

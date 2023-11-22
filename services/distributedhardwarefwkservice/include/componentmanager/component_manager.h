@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,6 +32,7 @@
 #include "low_latency_listener.h"
 #include "monitor_task_timer.h"
 #include "version_info.h"
+#include "component_privacy.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -53,6 +54,7 @@ public:
 
     void DumpLoadedComps(std::set<DHType> &compSourceType, std::set<DHType> &compSinkType);
     void Recover(DHType dhType);
+    std::map<DHType, IDistributedHardwareSink*> GetDHSinkInstance();
 
 private:
     enum class Action : int32_t {
@@ -83,11 +85,16 @@ private:
     void DoRecover(DHType dhType);
     void ReStartSA(DHType dhType);
     void RecoverDistributedHardware(DHType dhType);
+    bool IsIdenticalAccount(const std::string &networkId);
+    int32_t RetryGetEnableParam(const std::string &networkId, const std::string &uuid,
+        const std::string &dhId, const DHType dhType, EnableParam &param);
 
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::map<DHType, IDistributedHardwareSink*> compSink_;
     std::map<DHType, int32_t> compSrcSaId_;
+    std::shared_ptr<ComponentPrivacy> audioCompPrivacy_ = nullptr;
+    std::shared_ptr<ComponentPrivacy> cameraCompPrivacy_ = nullptr;
     std::shared_ptr<ComponentMonitor> compMonitorPtr_ = nullptr;
     sptr<LowLatencyListener> lowLatencyListener_ = nullptr;
     std::shared_ptr<DHTimer> monitorTaskTimer_ = nullptr;

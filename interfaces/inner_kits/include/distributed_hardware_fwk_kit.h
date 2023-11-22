@@ -130,6 +130,33 @@ public:
      */
     API_EXPORT int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback);
 
+    /**
+     * @brief Pause distributed hardware.
+     *
+     * @param dhType  distributed hardware type
+     * @param networkId distributed hardware networkId.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId);
+
+    /**
+     * @brief Resume distributed hardware.
+     *
+     * @param dhType  distributed hardware type
+     * @param networkId distributed hardware networkId.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId);
+
+    /**
+     * @brief Stop distributed hardware.
+     *
+     * @param dhType  distributed hardware type
+     * @param networkId distributed hardware networkId.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t StopDistributedHardware(DHType dhType, const std::string &networkId);
+
 private:
     /**
      * @brief Determine whether the topic is valid.

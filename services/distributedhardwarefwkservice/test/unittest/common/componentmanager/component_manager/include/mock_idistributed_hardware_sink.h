@@ -38,6 +38,22 @@ public:
     {
         return 0;
     }
+    int32_t RegisterPrivacyResources(std::shared_ptr<PrivacyResourcesListener> listener)
+    {
+        return 0;
+    }
+    int32_t PauseDistributedHardware(const std::string &networkId)
+    {
+        return 0;
+    }
+    int32_t ResumeDistributedHardware(const std::string &networkId)
+    {
+        return 0;
+    }
+    int32_t StopDistributedHardware(const std::string &networkId)
+    {
+        return 0;
+    }
 };
 } // namespace DistributedHardware
 } // namespace OHOS
