@@ -17,9 +17,15 @@
 #define OHOS_DISTRIBUTED_HARDWARE_COMPONENT_PRIVACY_H
 
 #include "idistributed_hardware_sink.h"
+#include "event_handler.h"
 
 namespace OHOS {
 namespace DistributedHardware {
+const std::string PRIVACY_SUBTYPE = "subtype";
+const std::string PRIVACY_NETWORKID = "networkId";
+constexpr uint32_t COMP_START_PAGE = 1;
+constexpr uint32_t COMP_STOP_PAGE = 2;
+constexpr uint32_t COMP_PRIVACY_DELAY_TIME = 1000; // million seconds
 class ComponentPrivacy : public PrivacyResourcesListener {
 public:
     ComponentPrivacy();
@@ -29,9 +35,29 @@ public:
     int32_t OnResourceInfoCallback(const std::string &subtype, const std::string &networkId,
         bool &isSensitive, bool &isSameAccout);
     int32_t StartPrivacePage(const std::string &subtype, const std::string &networkId);
-    int32_t StopPrivacePage();
+    int32_t StopPrivacePage(const std::string &subtype);
+
+    class ComponentEventHandler : public AppExecFwk::EventHandler {
+    public:
+        explicit ComponentEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+            ComponentPrivacy *comPrivacy);
+        ~ComponentEventHandler() override;
+
+        void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+    private:
+        void ProcessStartPage(const AppExecFwk::InnerEvent::Pointer &event);
+        void ProcessStopPage(const AppExecFwk::InnerEvent::Pointer &event);
+
+        using compEventFunc = void (ComponentEventHandler::*)(
+            const AppExecFwk::InnerEvent::Pointer &event);
+        std::map<int32_t, compEventFunc> eventFuncMap_;
+        ComponentPrivacy *comPrivacyObj_;
+    };
+
 private:
     std::string DeviceTypeToString(uint16_t deviceTypeId);
+
+    std::shared_ptr<ComponentPrivacy::ComponentEventHandler> eventHandler_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

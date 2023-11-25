@@ -23,6 +23,8 @@
 #include "device_manager.h"
 #include "dm_device_info.h"
 #include "device_type.h"
+#include "event_handler.h"
+#include "nlohmann/json.hpp"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -32,6 +34,8 @@ namespace DistributedHardware {
 ComponentPrivacy::ComponentPrivacy()
 {
     DHLOGI("ComponentPrivacy ctor.");
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    eventHandler_ = std::make_shared<ComponentPrivacy::ComponentEventHandler>(runner, this);
 }
 
 ComponentPrivacy::~ComponentPrivacy()
@@ -48,10 +52,29 @@ int32_t ComponentPrivacy::OnPrivaceResourceMessage(const ResourceEventType &type
         ret = OnResourceInfoCallback(subtype, networkId, isSensitive, isSameAccout);
     }
     if (type == ResourceEventType::EVENT_TYPE_PULL_UP_PAGE) {
-        ret = StartPrivacePage(subtype, networkId);
+        if (eventHandler_ != nullptr) {
+            DHLOGI("SendEvent COMP_START_PAGE");
+            std::shared_ptr<nlohmann::json> jsonArrayMsg = std::make_shared<nlohmann::json>();
+            nlohmann::json tmpJson;
+            tmpJson[PRIVACY_SUBTYPE] = subtype;
+            tmpJson[PRIVACY_NETWORKID] = networkId;
+            jsonArrayMsg->push_back(tmpJson);
+            AppExecFwk::InnerEvent::Pointer msgEvent =
+                AppExecFwk::InnerEvent::Get(COMP_START_PAGE, jsonArrayMsg, 0);
+            eventHandler_->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+        }
     }
     if (type == ResourceEventType::EVENT_TYPE_CLOSE_PAGE) {
-        ret = StopPrivacePage();
+        if (eventHandler_ != nullptr) {
+            DHLOGI("SendEvent COMP_STOP_PAGE");
+            std::shared_ptr<nlohmann::json> jsonArrayMsg = std::make_shared<nlohmann::json>();
+            nlohmann::json tmpJson;
+            tmpJson[PRIVACY_SUBTYPE] = subtype;
+            jsonArrayMsg->push_back(tmpJson);
+            AppExecFwk::InnerEvent::Pointer msgEvent =
+                AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE, jsonArrayMsg, 0);
+            eventHandler_->SendEvent(msgEvent, COMP_PRIVACY_DELAY_TIME, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+        }
     }
     return ret;
 }
@@ -119,14 +142,21 @@ int32_t ComponentPrivacy::StartPrivacePage(const std::string &subtype, const std
     return result;
 }
 
-int32_t ComponentPrivacy::StopPrivacePage()
+int32_t ComponentPrivacy::StopPrivacePage(const std::string &subtype)
 {
     DHLOGI("StopPrivacePage start.");
+    int32_t type = -1;
+    if (subtype == "mic") {
+        type = static_cast<int32_t>(DHSubtype::AUDIO_MIC);
+    } else if (subtype == "camera") {
+        type = static_cast<int32_t>(DHSubtype::CAMERA);
+    }
     const std::string bundleName = "com.ohos.dhardwareui";
     const std::string abilityName = "DHardwareUIAbility";
     int32_t returnCode = 24200102;
     AAFwk::Want want;
     want.SetElementName(bundleName, abilityName);
+    want.SetParam("type", type);
     want.SetParam("returnCode", returnCode);
     auto abilityManager = AAFwk::AbilityManagerClient::GetInstance();
     if (abilityManager == nullptr) {
@@ -140,7 +170,7 @@ int32_t ComponentPrivacy::StopPrivacePage()
 
 std::string ComponentPrivacy::DeviceTypeToString(uint16_t deviceTypeId)
 {
-    DHLOGI("DeviceTypeToString start.");
+    DHLOGD("DeviceTypeToString start.");
     DmDeviceType deviceType = static_cast<DmDeviceType>(deviceTypeId);
     switch (deviceType) {
         case DmDeviceType::DEVICE_TYPE_WIFI_CAMERA:
@@ -166,6 +196,56 @@ std::string ComponentPrivacy::DeviceTypeToString(uint16_t deviceTypeId)
         default:
             return "unknown";
     }
+}
+
+void ComponentPrivacy::ComponentEventHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto iter = eventFuncMap_.find(event->GetInnerEventId());
+    if (iter == eventFuncMap_.end()) {
+        DHLOGE("ComponentEventHandler Event Id %d is undefined.", event->GetInnerEventId());
+        return;
+    }
+    compEventFunc &func = iter->second;
+    (this->*func)(event);
+}
+
+ComponentPrivacy::ComponentEventHandler::ComponentEventHandler(
+    const std::shared_ptr<AppExecFwk::EventRunner> &runner, ComponentPrivacy *comPrivacy)
+    : AppExecFwk::EventHandler(runner)
+{
+    eventFuncMap_[COMP_START_PAGE] = &ComponentEventHandler::ProcessStartPage;
+    eventFuncMap_[COMP_STOP_PAGE] = &ComponentEventHandler::ProcessStopPage;
+
+    comPrivacyObj_ = comPrivacy;
+}
+
+ComponentPrivacy::ComponentEventHandler::~ComponentEventHandler()
+{
+    eventFuncMap_.clear();
+    comPrivacyObj_ = nullptr;
+}
+
+void ComponentPrivacy::ComponentEventHandler::ProcessStartPage(
+    const AppExecFwk::InnerEvent::Pointer &event)
+{
+    DHLOGI("ProcessStartPage enter.");
+    std::shared_ptr<nlohmann::json> dataMsg = event->GetSharedObject<nlohmann::json>();
+    auto it = dataMsg->begin();
+    nlohmann::json innerMsg = *(it);
+    std::string subtype = innerMsg[PRIVACY_SUBTYPE];
+    std::string networkId = innerMsg[PRIVACY_NETWORKID];
+    comPrivacyObj_->StartPrivacePage(subtype, networkId);
+}
+
+void ComponentPrivacy::ComponentEventHandler::ProcessStopPage(
+    const AppExecFwk::InnerEvent::Pointer &event)
+{
+    DHLOGI("ProcessStopPage enter.");
+    std::shared_ptr<nlohmann::json> dataMsg = event->GetSharedObject<nlohmann::json>();
+    auto it = dataMsg->begin();
+    nlohmann::json innerMsg = *(it);
+    std::string subtype = innerMsg[PRIVACY_SUBTYPE];
+    comPrivacyObj_->StopPrivacePage(subtype);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
