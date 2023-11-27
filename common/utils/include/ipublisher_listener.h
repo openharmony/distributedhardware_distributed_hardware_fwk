@@ -36,8 +36,8 @@ enum class DHTopic : uint32_t {
     TOPIC_DEV_OFFLINE = 4,
     // publish low latency message
     TOPIC_LOW_LATENCY = 5,
-    // Topic car cabin is ready
-    TOPIC_CAR_CABIN_READY = 6,
+    // Topic init DHMS is ready
+    TOPIC_INIT_DHMS_READY = 6,
     // Topic max border, not use for real topic
     TOPIC_MAX = 7
 };
