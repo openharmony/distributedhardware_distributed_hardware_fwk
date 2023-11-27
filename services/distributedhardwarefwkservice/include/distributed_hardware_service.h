@@ -47,6 +47,7 @@ public:
     int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId) override;
     int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event) override;
     int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback) override;
+    int32_t NotifySourceRemoteSinkStarted(std::string &deviceId) override;
     int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId) override;
     int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId) override;
     int32_t StopDistributedHardware(DHType dhType, const std::string &networkId) override;

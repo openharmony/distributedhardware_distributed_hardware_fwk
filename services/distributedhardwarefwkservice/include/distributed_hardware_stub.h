@@ -37,6 +37,7 @@ private:
     int32_t CreateControlChannelInner(MessageParcel &data, MessageParcel &reply);
     int32_t NotifyAVCenterInner(MessageParcel &data, MessageParcel &reply);
     int32_t RegisterControlCenterCallbackInner(MessageParcel &data, MessageParcel &reply);
+    int32_t HandleNotifySourceRemoteSinkStarted(MessageParcel &data, MessageParcel &reply);
     int32_t PauseDistributedHardwareInner(MessageParcel &data, MessageParcel &reply);
     int32_t ResumeDistributedHardwareInner(MessageParcel &data, MessageParcel &reply);
     int32_t StopDistributedHardwareInner(MessageParcel &data, MessageParcel &reply);

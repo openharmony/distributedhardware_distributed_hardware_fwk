@@ -64,6 +64,9 @@ int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &d
         case static_cast<uint32_t>(DHMsgInterfaceCode::QUERY_LOCAL_SYS_SPEC): {
             return QueryLocalSysSpecInner(data, reply);
         }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED): {
+            return HandleNotifySourceRemoteSinkStarted(data, reply);
+        }
         case static_cast<uint32_t>(DHMsgInterfaceCode::PAUSE_DISTRIBUTED_HARDWARE): {
             return PauseDistributedHardwareInner(data, reply);
         }
@@ -224,6 +227,20 @@ int32_t DistributedHardwareStub::RegisterControlCenterCallbackInner(MessageParce
         DHLOGE("Write ret code failed");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
     }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRemoteSinkStarted(MessageParcel &data,
+    MessageParcel &reply)
+{
+    DHLOGI("DistributedHardwareStub HandleNotifySourceRemoteSinkStarted Start.");
+    std::string deviceId = data.ReadString();
+    int32_t ret = NotifySourceRemoteSinkStarted(deviceId);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("write ret failed.");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    DHLOGI("DistributedHardwareStub HandleNotifySourceRemoteSinkStarted End.");
     return DH_FWK_SUCCESS;
 }
 
