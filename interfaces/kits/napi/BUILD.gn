@@ -54,6 +54,6 @@ ohos_shared_library("hardwaremanager") {
   ]
 
   subsystem_name = "distributedhardware"
-  relative_install_dir = "module"
+  relative_install_dir = "module/distributedhardware"
   part_name = "distributed_hardware_fwk"
 }
