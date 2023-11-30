@@ -25,6 +25,7 @@ namespace DistributedHardware {
 namespace {
 const std::string dhId = "00000000000000000";
 const std::string attrs = "11111111111111111";
+const std::string subtype = "subtype";
 std::shared_ptr<PluginListener> g_listener;
 std::shared_ptr<MockHardwareHandler> g_mockHardwareHandler;
 }
@@ -51,7 +52,7 @@ void PluginListenerImplTest::TearDown() {}
 HWTEST_F(PluginListenerImplTest, plugin_listener_impl_test_001, TestSize.Level0)
 {
     g_mockHardwareHandler->RegisterPluginListener(g_listener);
-    EXPECT_EQ(g_mockHardwareHandler->PluginHardware(dhId, attrs), DH_FWK_SUCCESS);
+    EXPECT_EQ(g_mockHardwareHandler->PluginHardware(dhId, attrs, subtype), DH_FWK_SUCCESS);
 }
 
 /**
@@ -78,7 +79,7 @@ HWTEST_F(PluginListenerImplTest, PluginHardware_001, TestSize.Level0)
     std::shared_ptr<PluginListener> listener = std::make_shared<PluginListenerImpl>(type);
     std::string dhId;
     std::string attrs;
-    listener->PluginHardware(dhId, attrs);
+    listener->PluginHardware(dhId, attrs, subtype);
     EXPECT_EQ(true, dhId.empty());
 }
 
@@ -101,11 +102,11 @@ HWTEST_F(PluginListenerImplTest, PluginHardware_002, TestSize.Level0)
     std::string attrs2;
     attrs2.resize(MAX_ID_LEN);
     std::string attrs3 = "attrs3";
-    listener->PluginHardware(dhId1, attrs1);
-    listener->PluginHardware(dhId2, attrs1);
-    listener->PluginHardware(dhId3, attrs1);
-    listener->PluginHardware(dhId3, attrs2);
-    listener->PluginHardware(dhId3, attrs3);
+    listener->PluginHardware(dhId1, attrs1, subtype);
+    listener->PluginHardware(dhId2, attrs1, subtype);
+    listener->PluginHardware(dhId3, attrs1, subtype);
+    listener->PluginHardware(dhId3, attrs2, subtype);
+    listener->PluginHardware(dhId3, attrs3, subtype);
     EXPECT_EQ(true, dhId1.empty());
 }
 

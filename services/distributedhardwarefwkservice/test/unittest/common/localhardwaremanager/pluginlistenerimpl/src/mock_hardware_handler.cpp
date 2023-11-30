@@ -51,10 +51,11 @@ void MockHardwareHandler::UnRegisterPluginListener()
     listener_ = nullptr;
 }
 
-int32_t MockHardwareHandler::PluginHardware(const std::string &dhId, const std::string &attr)
+int32_t MockHardwareHandler::PluginHardware(const std::string &dhId, const std::string &attr,
+    const std::string &subtype)
 {
     if (listener_ != nullptr) {
-        listener_->PluginHardware(dhId, attr);
+        listener_->PluginHardware(dhId, attr, subtype);
     }
     return DH_FWK_SUCCESS;
 }

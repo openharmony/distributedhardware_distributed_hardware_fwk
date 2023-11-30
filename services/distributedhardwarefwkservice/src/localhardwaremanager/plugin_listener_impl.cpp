@@ -28,7 +28,7 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "PluginListenerImpl"
 
-void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::string &attrs)
+void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::string &attrs, const std::string &subtype)
 {
     if (dhId.size() == 0 || dhId.size() > MAX_ID_LEN || attrs.size() == 0 || attrs.size() > MAX_MESSAGE_LEN) {
         DHLOGE("Param is invalid!");
@@ -40,7 +40,7 @@ void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::stri
     std::string devName = DHContext::GetInstance().GetDeviceInfo().deviceName;
     uint16_t devType = DHContext::GetInstance().GetDeviceInfo().deviceType;
     std::shared_ptr<CapabilityInfo> dhCapabilityInfo =
-        std::make_shared<CapabilityInfo>(dhId, deviceId, devName, devType, dhType_, attrs, "");
+        std::make_shared<CapabilityInfo>(dhId, deviceId, devName, devType, dhType_, attrs, subtype);
     capabilityInfos.push_back(dhCapabilityInfo);
 
     CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);

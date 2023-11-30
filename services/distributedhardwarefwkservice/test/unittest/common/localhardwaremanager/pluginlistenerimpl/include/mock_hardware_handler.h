@@ -33,7 +33,7 @@ public:
     void RegisterPluginListener(std::shared_ptr<PluginListener> listener) override;
     void UnRegisterPluginListener() override;
 
-    int32_t PluginHardware(const std::string &dhId, const std::string &attr);
+    int32_t PluginHardware(const std::string &dhId, const std::string &attr, const std::string &subtype);
     int32_t UnPluginHardware(const std::string &dhId);
 
     std::shared_ptr<PluginListener> listener_ = nullptr;
