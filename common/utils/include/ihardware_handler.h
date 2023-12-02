@@ -32,7 +32,7 @@ struct DHItem {
 
 class PluginListener {
 public:
-    virtual void PluginHardware(const std::string &dhId, const std::string &attrs) = 0;
+    virtual void PluginHardware(const std::string &dhId, const std::string &attrs, const std::string &subtype) = 0;
     virtual void UnPluginHardware(const std::string &dhId) = 0;
 };
 
