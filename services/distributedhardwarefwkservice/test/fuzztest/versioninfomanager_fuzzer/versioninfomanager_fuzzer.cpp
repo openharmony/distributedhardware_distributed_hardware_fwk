@@ -32,8 +32,8 @@ namespace {
     constexpr uint32_t SLEEP_TIME_US = 10 * 1000;
     const uint32_t DH_TYPE_SIZE = 10;
     const DHType dhTypeFuzz[DH_TYPE_SIZE] = {
-        DHType::CAMERA, DHType::AUDIO, DHType::SCREEN, DHType::VIRMODEM_MIC,
-        DHType::INPUT, DHType::A2D, DHType::GPS, DHType::HFP, DHType::VIRMODEM_SPEAKER
+        DHType::CAMERA, DHType::AUDIO, DHType::SCREEN, DHType::VIRMODEM_AUDIO,
+        DHType::INPUT, DHType::A2D, DHType::GPS, DHType::HFP
     };
 }
 

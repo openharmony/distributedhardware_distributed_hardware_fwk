@@ -575,6 +575,29 @@ HWTEST_F(AvSenderEngineTest, SendMessage_002, testing::ext::TestSize.Level1)
     EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
 }
 
+HWTEST_F(AvSenderEngineTest, SendMessage_003, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_VIRMODEM_MIC;
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
+    EventType type = EventType::EVENT_ADD_STREAM;
+    sender->NotifyStreamChange(type);
+    int32_t ret = sender->SendMessage(nullptr);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
+}
+
+HWTEST_F(AvSenderEngineTest, SendMessage_004, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_VIRMODEM_SPEAKER;
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
+    EventType type = EventType::EVENT_ADD_STREAM;
+    sender->NotifyStreamChange(type);
+    std::shared_ptr<AVTransMessage> message = std::make_shared<AVTransMessage>();
+    int32_t ret = sender->SendMessage(message);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
+}
+
 HWTEST_F(AvSenderEngineTest, RegisterSenderCallback_001, testing::ext::TestSize.Level1)
 {
     std::string ownerName = OWNER_NAME_D_SCREEN;
