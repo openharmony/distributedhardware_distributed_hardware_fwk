@@ -455,21 +455,6 @@ HWTEST_F(VersionInfoManagerTest, HandleVersionDeleteChange_001, TestSize.Level0)
 }
 
 /**
- * @tc.name: VersionInfoEvent_001
- * @tc.desc: Verify the VersionInfoEvent function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(VersionInfoManagerTest, VersionInfoEvent_001, TestSize.Level0)
-{
-    EventSender sender;
-    VersionInfoEvent ev(sender);
-    ev.action_ = VersionInfoEvent::EventType::RECOVER;
-    VersionInfoManager::GetInstance()->OnEvent(ev);
-    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
-}
-
-/**
  * @tc.name: GetVersionInfoByDeviceId_001
  * @tc.desc: Verify the VersionInfoManager GetVersionInfoByDeviceId function.
  * @tc.type: FUNC

@@ -21,7 +21,6 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#include "event_bus.h"
 #include "task_executor.h"
 #include "task_factory.h"
 #include "version_info_event.h"
@@ -39,6 +38,37 @@ VersionInfoManager::VersionInfoManager() : dbAdapterPtr_(nullptr)
 VersionInfoManager::~VersionInfoManager()
 {
     DHLOGI("VersionInfoManager Destruction!");
+}
+
+VersionInfoManager::VersionInfoManagerEventHandler::VersionInfoManagerEventHandler(
+    const std::shared_ptr<AppExecFwk::EventRunner> &runner, std::shared_ptr<VersionInfoManager> versionInfoMgrPtr)
+    : AppExecFwk::EventHandler(runner)
+{
+    DHLOGI("Ctor VersionInfoManagerEventHandler");
+    versionInfoMgrWPtr_ = versionInfoMgrPtr;
+}
+
+void VersionInfoManager::VersionInfoManagerEventHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    uint32_t eventId = event->GetInnerEventId();
+    auto selfPtr = versionInfoMgrWPtr_.lock();
+    if (!selfPtr) {
+        DHLOGE("Can not get strong self ptr");
+        return;
+    }
+    switch (eventId) {
+        case EVENT_VERSION_INFO_DB_RECOVER:
+            selfPtr->SyncRemoteVersionInfos();
+            break;
+        default:
+            DHLOGE("event is undefined, id is %d", eventId);
+            break;
+    }
+}
+
+std::shared_ptr<VersionInfoManager::VersionInfoManagerEventHandler> VersionInfoManager::GetEventHandler()
+{
+    return this->eventHandler_;
 }
 
 std::shared_ptr<VersionInfoManager> VersionInfoManager::GetInstance()
@@ -60,8 +90,10 @@ int32_t VersionInfoManager::Init()
         DHLOGE("Init dbAdapterPtr_ failed");
         return ERR_DH_FWK_RESOURCE_INIT_DB_FAILED;
     }
-    VersionInfoEvent versionInfoEvent(*this);
-    DHContext::GetInstance().GetEventBus()->AddHandler<VersionInfoEvent>(versionInfoEvent.GetType(), *this);
+
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    eventHandler_ = std::make_shared<VersionInfoManager::VersionInfoManagerEventHandler>(
+        runner, shared_from_this());
     DHLOGI("VersionInfoManager instance init success");
     return DH_FWK_SUCCESS;
 }
@@ -318,18 +350,6 @@ void VersionInfoManager::HandleVersionDeleteChange(const std::vector<Distributed
         }
         DHLOGI("Delete version ,uuid: %s", GetAnonyString(uuid).c_str());
         VersionManager::GetInstance().RemoveDHVersion(uuid);
-    }
-}
-
-void VersionInfoManager::OnEvent(VersionInfoEvent &ev)
-{
-    switch (ev.GetAction()) {
-        case VersionInfoEvent::EventType::RECOVER:
-            SyncRemoteVersionInfos();
-            break;
-        default:
-            DHLOGE("Event is undefined, type is %d", ev.GetAction());
-            break;
     }
 }
 } // namespace DistributedHardware

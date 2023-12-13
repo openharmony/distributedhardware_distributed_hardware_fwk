@@ -17,6 +17,7 @@
 
 #include <unordered_map>
 
+#include "anonymous_string.h"
 #include "capability_info_manager.h"
 #include "component_loader.h"
 #include "component_manager.h"

@@ -73,6 +73,9 @@ namespace DistributedHardware {
     constexpr const char *START_EVENT = "StartEvent";
     constexpr const char *COMPONENTSLOAD_PROFILE_PATH =
         "etc/distributedhardware/distributed_hardware_components_cfg.json";
+
+    const uint32_t EVENT_VERSION_INFO_DB_RECOVER = 101;
+    const uint32_t EVENT_CAPABILITY_INFO_DB_RECOVER = 201;
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

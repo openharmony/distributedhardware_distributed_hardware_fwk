@@ -17,6 +17,7 @@
 
 #include <unistd.h>
 
+#include "anonymous_string.h"
 #include "capability_info_manager.h"
 #include "component_loader.h"
 #include "constants.h"

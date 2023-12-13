@@ -23,10 +23,7 @@
 #include "kvstore_observer.h"
 
 #include "db_adapter.h"
-#include "event.h"
-#include "eventbus_handler.h"
-#include "event_bus.h"
-#include "event_sender.h"
+#include "event_handler.h"
 #include "impl_utils.h"
 #include "single_instance.h"
 #include "version_info.h"
@@ -36,9 +33,7 @@ class DBAdapter;
 namespace OHOS {
 namespace DistributedHardware {
 class VersionInfoManager : public std::enable_shared_from_this<VersionInfoManager>,
-                           public EventSender,
-                           public DistributedKv::KvStoreObserver,
-                           public EventBusHandler<VersionInfoEvent> {
+                           public DistributedKv::KvStoreObserver {
 public:
     VersionInfoManager(const VersionInfoManager &) = delete;
     VersionInfoManager &operator = (const VersionInfoManager &) = delete;
@@ -61,7 +56,16 @@ public:
     int32_t ManualSync(const std::string &networkId);
 
     void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
-    void OnEvent(VersionInfoEvent &ev) override;
+    class VersionInfoManagerEventHandler : public AppExecFwk::EventHandler {
+        public:
+            VersionInfoManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+                std::shared_ptr<VersionInfoManager> versionInfoMgrPtr);
+            ~VersionInfoManagerEventHandler() override = default;
+            void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+        private:
+            std::weak_ptr<VersionInfoManager> versionInfoMgrWPtr_;
+    };
+    std::shared_ptr<VersionInfoManager::VersionInfoManagerEventHandler> GetEventHandler();
 
 private:
     VersionInfoManager();
@@ -73,6 +77,7 @@ private:
 private:
     mutable std::mutex verInfoMgrMutex_;
     std::shared_ptr<DBAdapter> dbAdapterPtr_;
+    std::shared_ptr<VersionInfoManager::VersionInfoManagerEventHandler> eventHandler_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

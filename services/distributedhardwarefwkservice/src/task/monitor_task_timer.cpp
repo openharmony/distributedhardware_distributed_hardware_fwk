@@ -15,6 +15,7 @@
 
 #include "monitor_task_timer.h"
 
+#include "anonymous_string.h"
 #include "capability_info.h"
 #include "capability_info_manager.h"
 #include "distributed_hardware_errno.h"

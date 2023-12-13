@@ -22,7 +22,7 @@
 #include <shared_mutex>
 
 #include "device_type.h"
-#include "event_bus.h"
+#include "event_handler.h"
 #include "single_instance.h"
 
 namespace OHOS {
@@ -32,7 +32,6 @@ DECLARE_SINGLE_INSTANCE_BASE(DHContext);
 public:
     DHContext();
     ~DHContext();
-    std::shared_ptr<EventBus> GetEventBus();
     const DeviceInfo& GetDeviceInfo();
 
     /* Save online device UUID and networkId when devices online */
@@ -46,8 +45,17 @@ public:
     /* DeviceId is which is hashed by sha256 */
     std::string GetUUIDByDeviceId(const std::string &deviceId);
 
+    class CommonEventHandler : public AppExecFwk::EventHandler {
+        public:
+            CommonEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
+            ~CommonEventHandler() override = default;
+
+            bool PostTask(const Callback &callback, const std::string &name = std::string(), int64_t delayTime = 0);
+            void RemoveTask(const std::string &name);
+    };
+    std::shared_ptr<DHContext::CommonEventHandler> GetEventHandler();
+
 private:
-    std::shared_ptr<EventBus> eventBus_;
     DeviceInfo devInfo_ { "", "", "", 0 };
     std::mutex devMutex_;
 
@@ -57,6 +65,8 @@ private:
     /* Save online device hashed uuid and uuid */
     std::unordered_map<std::string, std::string> deviceIdUUIDMap_;
     std::shared_mutex onlineDevMutex_;
+
+    std::shared_ptr<DHContext::CommonEventHandler> eventHandler_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

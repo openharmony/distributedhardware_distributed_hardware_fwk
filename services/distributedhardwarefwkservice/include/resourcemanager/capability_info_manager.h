@@ -26,19 +26,14 @@
 #include "capability_info_event.h"
 #include "capability_utils.h"
 #include "db_adapter.h"
-#include "event.h"
-#include "eventbus_handler.h"
-#include "event_bus.h"
-#include "event_sender.h"
+#include "event_handler.h"
 #include "single_instance.h"
 
 class DBAdapter;
 namespace OHOS {
 namespace DistributedHardware {
 class CapabilityInfoManager : public std::enable_shared_from_this<CapabilityInfoManager>,
-                              public EventSender,
-                              public DistributedKv::KvStoreObserver,
-                              public EventBusHandler<CapabilityInfoEvent> {
+                              public DistributedKv::KvStoreObserver {
 public:
     CapabilityInfoManager(const CapabilityInfoManager &) = delete;
     CapabilityInfoManager &operator = (const CapabilityInfoManager &) = delete;
@@ -87,8 +82,17 @@ public:
     int32_t ManualSync(const std::string &networkId);
     /* Database data changes callback */
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
-    /* EventBus async processing callback */
-    void OnEvent(CapabilityInfoEvent &e) override;
+
+    class CapabilityInfoManagerEventHandler : public AppExecFwk::EventHandler {
+        public:
+            CapabilityInfoManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+                std::shared_ptr<CapabilityInfoManager> versionInfoMgrPtr);
+            ~CapabilityInfoManagerEventHandler() override = default;
+            void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+        private:
+            std::weak_ptr<CapabilityInfoManager> capabilityInfoMgrWPtr_;
+    };
+    std::shared_ptr<CapabilityInfoManager::CapabilityInfoManagerEventHandler> GetEventHandler();
 
     void DumpCapabilityInfos(std::vector<CapabilityInfo> &capInfos);
 
@@ -102,6 +106,8 @@ private:
     mutable std::mutex capInfoMgrMutex_;
     std::shared_ptr<DBAdapter> dbAdapterPtr_;
     CapabilityInfoMap globalCapInfoMap_;
+
+    std::shared_ptr<CapabilityInfoManager::CapabilityInfoManagerEventHandler> eventHandler_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
