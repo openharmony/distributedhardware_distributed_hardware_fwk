@@ -193,7 +193,6 @@ int32_t VersionInfoManager::RemoveVersionInfoByDeviceId(const std::string &devic
 int32_t VersionInfoManager::SyncVersionInfoFromDB(const std::string &deviceId)
 {
     DHLOGI("Sync versionInfo from DB, deviceId: %s", GetAnonyString(deviceId).c_str());
-    
     std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");

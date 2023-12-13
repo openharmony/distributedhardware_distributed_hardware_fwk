@@ -26,7 +26,6 @@
 #include "event_handler.h"
 #include "version_info_manager.h"
 
-class VersionInfoManager;
 namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
