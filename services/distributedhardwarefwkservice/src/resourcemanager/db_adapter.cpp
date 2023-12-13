@@ -23,8 +23,8 @@
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#include "event_bus.h"
-#include "version_info_event.h"
+#include "event_handler.h"
+#include "version_info_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -155,7 +155,7 @@ void DBAdapter::SyncCompleted(const std::map<std::string, DistributedKv::Status>
                     this->ManualSync(deviceId);
                     usleep(MANUAL_SYNC_INTERVAL);
                 };
-                DHContext::GetInstance().GetEventBus()->PostTask(retryTask, "retryTask", 0);
+                DHContext::GetInstance().GetEventHandler()->PostTask(retryTask, "retryTask", 0);
             }
         }
     }
@@ -289,13 +289,15 @@ void DBAdapter::SyncDBForRecover()
 {
     DHLOGI("Sync store id: %s after db recover", storeId_.storeId.c_str());
     if (storeId_.storeId == GLOBAL_CAPABILITY_ID) {
-        CapabilityInfoEvent recoverEvent(*this, CapabilityInfoEvent::EventType::RECOVER);
-        DHContext::GetInstance().GetEventBus()->PostEvent<CapabilityInfoEvent>(recoverEvent);
+        AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_CAPABILITY_INFO_DB_RECOVER);
+        CapabilityInfoManager::GetInstance()->GetEventHandler()->SendEvent(msgEvent,
+            0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
     }
 
     if (storeId_.storeId == GLOBAL_VERSION_ID) {
-        VersionInfoEvent recoverEvent(*this, VersionInfoEvent::EventType::RECOVER);
-        DHContext::GetInstance().GetEventBus()->PostEvent<VersionInfoEvent>(recoverEvent);
+        AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_VERSION_INFO_DB_RECOVER);
+        VersionInfoManager::GetInstance()->GetEventHandler()->SendEvent(msgEvent,
+            0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
     }
 }
 
@@ -381,7 +383,7 @@ void DBAdapter::OnRemoteDied()
             usleep(DIED_CHECK_INTERVAL);
         }
     };
-    DHContext::GetInstance().GetEventBus()->PostTask(reInitTask, "reInitTask", 0);
+    DHContext::GetInstance().GetEventHandler()->PostTask(reInitTask, "reInitTask", 0);
     DHLOGI("OnRemoteDied, recover db end");
 }
 

@@ -15,6 +15,7 @@
 
 #include <algorithm>
 
+#include "anonymous_string.h"
 #include "constants.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
@@ -24,19 +25,37 @@
 namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DHContext);
-DHContext::DHContext() : eventBus_(std::make_shared<EventBus>()) {}
+DHContext::DHContext()
+{
+    DHLOGI("Ctor DHContext");
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    eventHandler_ = std::make_shared<DHContext::CommonEventHandler>(runner);
+}
 
 DHContext::~DHContext()
 {
-    if (eventBus_ != nullptr) {
-        eventBus_.reset();
-        eventBus_ = nullptr;
-    }
+    DHLOGI("Dtor DHContext");
 }
 
-std::shared_ptr<EventBus> DHContext::GetEventBus()
+DHContext::CommonEventHandler::CommonEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner)
+    : AppExecFwk::EventHandler(runner)
 {
-    return eventBus_;
+    DHLOGI("Ctor CommonEventHandler");
+}
+
+std::shared_ptr<DHContext::CommonEventHandler> DHContext::GetEventHandler()
+{
+    return eventHandler_;
+}
+
+bool DHContext::CommonEventHandler::PostTask(const Callback &callback, const std::string &name, int64_t delayTime)
+{
+    return AppExecFwk::EventHandler::PostTask(callback, name, delayTime);
+}
+
+void DHContext::CommonEventHandler::RemoveTask(const std::string &name)
+{
+    AppExecFwk::EventHandler::RemoveTask(name);
 }
 
 const DeviceInfo& DHContext::GetDeviceInfo()

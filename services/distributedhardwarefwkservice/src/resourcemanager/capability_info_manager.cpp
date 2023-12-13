@@ -24,7 +24,6 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager.h"
-#include "event_bus.h"
 #include "task_executor.h"
 #include "task_factory.h"
 
@@ -53,6 +52,39 @@ std::shared_ptr<CapabilityInfoManager> CapabilityInfoManager::GetInstance()
     return instance;
 }
 
+CapabilityInfoManager::CapabilityInfoManagerEventHandler::CapabilityInfoManagerEventHandler(
+    const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+    std::shared_ptr<CapabilityInfoManager> capabilityInfoMgrPtr)
+    : AppExecFwk::EventHandler(runner)
+{
+    DHLOGI("Ctor CapabilityInfoManagerEventHandler");
+    capabilityInfoMgrWPtr_ = capabilityInfoMgrPtr;
+}
+
+void CapabilityInfoManager::CapabilityInfoManagerEventHandler::ProcessEvent(
+    const AppExecFwk::InnerEvent::Pointer &event)
+{
+    uint32_t eventId = event->GetInnerEventId();
+    auto selfPtr = capabilityInfoMgrWPtr_.lock();
+    if (!selfPtr) {
+        DHLOGE("Can not get strong self ptr");
+        return;
+    }
+    switch (eventId) {
+        case EVENT_CAPABILITY_INFO_DB_RECOVER:
+            selfPtr->SyncRemoteCapabilityInfos();
+            break;
+        default:
+            DHLOGE("event is undefined, id is %d", eventId);
+            break;
+    }
+}
+
+std::shared_ptr<CapabilityInfoManager::CapabilityInfoManagerEventHandler> CapabilityInfoManager::GetEventHandler()
+{
+    return this->eventHandler_;
+}
+
 int32_t CapabilityInfoManager::Init()
 {
     DHLOGI("CapabilityInfoManager instance init!");
@@ -66,8 +98,9 @@ int32_t CapabilityInfoManager::Init()
         DHLOGE("Init dbAdapterPtr_ failed");
         return ERR_DH_FWK_RESOURCE_INIT_DB_FAILED;
     }
-    CapabilityInfoEvent capabilityInfoEvent(*this);
-    DHContext::GetInstance().GetEventBus()->AddHandler<CapabilityInfoEvent>(capabilityInfoEvent.GetType(), *this);
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    eventHandler_ = std::make_shared<CapabilityInfoManager::CapabilityInfoManagerEventHandler>(
+        runner, shared_from_this());
     DHLOGI("CapabilityInfoManager instance init success");
     return DH_FWK_SUCCESS;
 }
@@ -340,18 +373,6 @@ void CapabilityInfoManager::OnChange(const DistributedKv::ChangeNotification &ch
         changeNotification.GetDeleteEntries().size() <= MAX_DB_RECORD_SIZE) {
         DHLOGI("Handle capability data delete change");
         HandleCapabilityDeleteChange(changeNotification.GetDeleteEntries());
-    }
-}
-
-void CapabilityInfoManager::OnEvent(CapabilityInfoEvent &ev)
-{
-    switch (ev.GetAction()) {
-        case CapabilityInfoEvent::EventType::RECOVER:
-            SyncRemoteCapabilityInfos();
-            break;
-        default:
-            DHLOGE("Event is undefined, type is %d", ev.GetAction());
-            break;
     }
 }
 

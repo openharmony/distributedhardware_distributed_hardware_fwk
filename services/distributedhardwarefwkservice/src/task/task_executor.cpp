@@ -20,8 +20,8 @@
 
 #include "constants.h"
 #include "dh_context.h"
+#include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#include "event_bus.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -97,7 +97,7 @@ void TaskExecutor::TriggerTask()
         };
 
         DHLOGI("Post task to EventBus: %s", task->GetId().c_str());
-        DHContext::GetInstance().GetEventBus()->PostTask(taskFunc, task->GetId());
+        DHContext::GetInstance().GetEventHandler()->PostTask(taskFunc, task->GetId());
     }
 }
 } // namespace DistributedHardware

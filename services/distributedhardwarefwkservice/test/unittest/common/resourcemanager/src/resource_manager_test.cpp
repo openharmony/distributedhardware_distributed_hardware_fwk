@@ -512,35 +512,6 @@ HWTEST_F(ResourceManagerTest, OnChange_001, TestSize.Level0)
 }
 
 /**
- * @tc.name: OnEvent_001
- * @tc.desc: Verify the OnEvent function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ResourceManagerTest, OnEvent_001, TestSize.Level0)
-{
-    EventSender sender;
-    CapabilityInfoEvent ev(sender);
-    CapabilityInfoManager::GetInstance()->OnEvent(ev);
-    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
-}
-
-/**
- * @tc.name: OnEvent_002
- * @tc.desc: Verify the OnEvent function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ResourceManagerTest, OnEvent_002, TestSize.Level0)
-{
-    EventSender sender;
-    CapabilityInfoEvent ev(sender);
-    ev.action_ = CapabilityInfoEvent::EventType::RECOVER;
-    CapabilityInfoManager::GetInstance()->OnEvent(ev);
-    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
-}
-
-/**
  * @tc.name: HandleCapabilityAddChange_001
  * @tc.desc: Verify the HandleCapabilityAddChange function
  * @tc.type: FUNC
