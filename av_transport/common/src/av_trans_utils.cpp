@@ -36,9 +36,11 @@ std::string TransName2PkgName(const std::string &ownerName)
 {
     const static std::pair<std::string, std::string> mapArray[] = {
         {OWNER_NAME_D_MIC, PKG_NAME_D_AUDIO},
+        {OWNER_NAME_D_VIRMODEM_MIC, PKG_NAME_D_CALL},
         {OWNER_NAME_D_CAMERA, PKG_NAME_D_CAMERA},
         {OWNER_NAME_D_SCREEN, PKG_NAME_D_SCREEN},
         {OWNER_NAME_D_SPEAKER, PKG_NAME_D_AUDIO},
+        {OWNER_NAME_D_VIRMODEM_SPEAKER, PKG_NAME_D_CALL},
     };
     for (const auto& item : mapArray) {
         if (item.first == ownerName) {
@@ -52,9 +54,11 @@ OHOS::Media::Plugin::MediaType TransName2MediaType(const std::string &ownerName)
 {
     const static std::pair<std::string, OHOS::Media::Plugin::MediaType> mapArray[] = {
         {OWNER_NAME_D_MIC, OHOS::Media::Plugin::MediaType::AUDIO},
+        {OWNER_NAME_D_VIRMODEM_MIC, OHOS::Media::Plugin::MediaType::AUDIO},
         {OWNER_NAME_D_CAMERA, OHOS::Media::Plugin::MediaType::VIDEO},
         {OWNER_NAME_D_SCREEN, OHOS::Media::Plugin::MediaType::VIDEO},
         {OWNER_NAME_D_SPEAKER, OHOS::Media::Plugin::MediaType::AUDIO},
+        {OWNER_NAME_D_VIRMODEM_SPEAKER, OHOS::Media::Plugin::MediaType::AUDIO},
     };
     for (const auto& item : mapArray) {
         if (item.first == ownerName) {

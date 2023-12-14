@@ -30,8 +30,7 @@ enum class DHType : uint32_t {
     INPUT = 0x20,             // Key board
     HFP = 0x40,               // HFP External device
     A2D = 0x80,               // A2DP External device
-    VIRMODEM_MIC = 0x100,     // Cellular call MIC
-    VIRMODEM_SPEAKER = 0x200, // Cellular call Speaker
+    VIRMODEM_AUDIO = 0x100,     // Cellular call AUDIO
     MAX_DH = 0x80000000
 };
 
@@ -51,8 +50,7 @@ const std::unordered_map<DHType, std::string> DHTypeStrMap = {
     { DHType::INPUT, "INPUT" },
     { DHType::HFP, "HFP" },
     { DHType::A2D, "A2D" },
-    { DHType::VIRMODEM_MIC, "VIRMODEM_MIC" },
-    { DHType::VIRMODEM_SPEAKER, "VIRMODEM_SPEAKER" },
+    { DHType::VIRMODEM_AUDIO, "VIRMODEM_AUDIO" },
 };
 
 struct DeviceInfo {

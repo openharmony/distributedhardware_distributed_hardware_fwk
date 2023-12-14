@@ -92,7 +92,8 @@ int32_t AVReceiverEngine::InitPipeline()
         if (ret == ErrorCode::SUCCESS) {
             ret = pipeline_->LinkFilters({avInput_.get(), videoDecoder_.get(), avOutput_.get()});
         }
-    } else if ((ownerName_ == OWNER_NAME_D_MIC) || (ownerName_ == OWNER_NAME_D_SPEAKER)) {
+    } else if ((ownerName_ == OWNER_NAME_D_MIC) || (ownerName_ == OWNER_NAME_D_SPEAKER) ||
+               (ownerName_ == OWNER_NAME_D_VIRMODEM_MIC) || (ownerName_ == OWNER_NAME_D_VIRMODEM_SPEAKER)) {
         ret = pipeline_->AddFilters({avInput_.get(), avOutput_.get()});
         if (ret == ErrorCode::SUCCESS) {
             ret = pipeline_->LinkFilters({avInput_.get(), avOutput_.get()});
