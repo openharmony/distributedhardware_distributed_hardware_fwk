@@ -26,6 +26,7 @@ Publisher::Publisher() : publisherItems_({
         { DHTopic::TOPIC_DEV_OFFLINE, std::make_shared<PublisherItem>(DHTopic::TOPIC_DEV_OFFLINE) },
         { DHTopic::TOPIC_LOW_LATENCY, std::make_shared<PublisherItem>(DHTopic::TOPIC_LOW_LATENCY) },
         { DHTopic::TOPIC_INIT_DHMS_READY, std::make_shared<PublisherItem>(DHTopic::TOPIC_INIT_DHMS_READY) },
+        { DHTopic::TOPIC_PHY_DEV_PLUGIN, std::make_shared<PublisherItem>(DHTopic::TOPIC_PHY_DEV_PLUGIN) }
     })
 {
 }
