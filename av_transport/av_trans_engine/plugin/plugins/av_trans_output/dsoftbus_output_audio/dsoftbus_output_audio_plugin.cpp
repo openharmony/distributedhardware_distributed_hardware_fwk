@@ -84,17 +84,6 @@ Status DsoftbusOutputAudioPlugin::Prepare()
     }
 
     sessionName_ = ownerName_ + "_" + SENDER_DATA_SESSION_NAME_SUFFIX;
-    int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName_), sessionName_);
-    if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Create Session Server failed ret: %d.", ret);
-        return Status::ERROR_INVALID_OPERATION;
-    }
-    ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
-    if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Register channel listener failed ret: %d.", ret);
-        return Status::ERROR_INVALID_OPERATION;
-    }
-
     if (!bufferPopTask_) {
         bufferPopTask_ = std::make_shared<Media::OSAL::Task>("audioBufferQueuePopThread");
         bufferPopTask_->RegisterHandler([this] { FeedChannelData(); });
@@ -199,8 +188,13 @@ Status DsoftbusOutputAudioPlugin::SetCallback(Callback *cb)
 
 Status DsoftbusOutputAudioPlugin::OpenSoftbusChannel()
 {
-    std::string peerSessName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
-    int32_t ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName_, peerDevId_);
+    int32_t ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
+    if (ret != DH_AVT_SUCCESS) {
+        AVTRANS_LOGE("Register channel listener failed ret: %d.", ret);
+        return Status::ERROR_INVALID_OPERATION;
+    }
+    std::string peerSessName = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
+    ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName, peerDevId_);
     if ((ret != DH_AVT_SUCCESS) && (ret != ERR_DH_AVT_SESSION_HAS_OPENED)) {
         AVTRANS_LOGE("Open softbus channel failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;

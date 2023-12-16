@@ -26,8 +26,6 @@ AVSenderEngineProvider::AVSenderEngineProvider(const std::string ownerName) : ow
 {
     AVTRANS_LOGI("AVSenderEngineProvider ctor.");
     sessionName_ = ownerName + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX;
-    SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName), sessionName_);
-    SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, AV_TRANS_SPECIAL_DEVICE_ID, this);
 }
 
 AVSenderEngineProvider::~AVSenderEngineProvider()

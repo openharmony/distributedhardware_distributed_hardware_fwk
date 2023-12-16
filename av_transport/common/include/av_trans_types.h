@@ -25,8 +25,8 @@ const std::string OWNER_NAME_D_CAMERA = "ohos.dhardware.dcamera";
 const std::string OWNER_NAME_D_SCREEN = "ohos.dhardware.dscreen";
 const std::string OWNER_NAME_D_MIC = "ohos.dhardware.daudio.dmic";
 const std::string OWNER_NAME_D_SPEAKER = "ohos.dhardware.daudio.dspeaker";
-const std::string OWNER_NAME_D_VIRMODEM_MIC = "ohos.dhardware.daudio.dmic";
-const std::string OWNER_NAME_D_VIRMODEM_SPEAKER = "ohos.dhardware.daudio.dspeaker";
+const std::string OWNER_NAME_D_VIRMODEM_MIC = "ohos.dhardware.dcall.dmic";
+const std::string OWNER_NAME_D_VIRMODEM_SPEAKER = "ohos.dhardware.dcall.dspeaker";
 
 const std::string SCENE_TYPE_D_MIC = "dmic_stream";
 const std::string SCENE_TYPE_D_SCREEN = "dscreen_stream";

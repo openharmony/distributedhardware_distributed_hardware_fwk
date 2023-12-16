@@ -62,16 +62,8 @@ int32_t AVTransControlCenter::InitializeAVCenter(const TransRole &transRole, int
     }
 
     int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(PKG_NAME_DH_FWK,
-        AV_SYNC_SENDER_CONTROL_SESSION_NAME);
-    TRUE_RETURN_V_MSG_E((ret != DH_AVT_SUCCESS), ret, "Create contro center session server failed, ret=%d", ret);
-
-    ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(PKG_NAME_DH_FWK,
         AV_SYNC_RECEIVER_CONTROL_SESSION_NAME);
     TRUE_RETURN_V_MSG_E((ret != DH_AVT_SUCCESS), ret, "Create contro center session server failed, ret=%d", ret);
-
-    ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(AV_SYNC_SENDER_CONTROL_SESSION_NAME,
-        AV_TRANS_SPECIAL_DEVICE_ID, this);
-    TRUE_RETURN_V_MSG_E((ret != DH_AVT_SUCCESS), ret, "Register control center channel callback failed, ret=%d", ret);
 
     ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(AV_SYNC_RECEIVER_CONTROL_SESSION_NAME,
         AV_TRANS_SPECIAL_DEVICE_ID, this);
@@ -167,7 +159,11 @@ int32_t AVTransControlCenter::CreateControlChannel(int32_t engineId, const std::
         }
     }
 
-    int32_t ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(AV_SYNC_SENDER_CONTROL_SESSION_NAME,
+    int32_t ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(AV_SYNC_SENDER_CONTROL_SESSION_NAME,
+        AV_TRANS_SPECIAL_DEVICE_ID, this);
+    TRUE_RETURN_V_MSG_E((ret != DH_AVT_SUCCESS), ret, "Register control center channel callback failed, ret=%d", ret);
+
+    ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(AV_SYNC_SENDER_CONTROL_SESSION_NAME,
         AV_SYNC_RECEIVER_CONTROL_SESSION_NAME, peerDevId);
     TRUE_RETURN_V_MSG_E(((ret != DH_AVT_SUCCESS) && (ret != ERR_DH_AVT_SESSION_HAS_OPENED)), ret,
         "Create av control center channel failed, ret=%d", ret);
