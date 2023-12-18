@@ -22,6 +22,7 @@
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "publisher.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -44,6 +45,7 @@ void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::stri
     capabilityInfos.push_back(dhCapabilityInfo);
 
     CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);
+    Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_PHY_DEV_PLUGIN, dhId);
     DHLOGI("plugin end, dhId: %s", GetAnonyString(dhId).c_str());
 }
 

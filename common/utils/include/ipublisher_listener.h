@@ -38,8 +38,10 @@ enum class DHTopic : uint32_t {
     TOPIC_LOW_LATENCY = 5,
     // Topic init DHMS is ready
     TOPIC_INIT_DHMS_READY = 6,
+    // Topic for physical input devices plugin event
+    TOPIC_PHY_DEV_PLUGIN = 7,
     // Topic max border, not use for real topic
-    TOPIC_MAX = 7
+    TOPIC_MAX = 8
 };
 
 class IPublisherListener : public IRemoteBroker {

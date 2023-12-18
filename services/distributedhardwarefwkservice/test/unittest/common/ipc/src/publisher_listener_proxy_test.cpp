@@ -46,7 +46,7 @@ void PublisherListenerProxyTest::TearDown()
  */
 HWTEST_F(PublisherListenerProxyTest, OnMessage_001, TestSize.Level0)
 {
-    uint32_t invalid = 7;
+    uint32_t invalid = 8;
     DHTopic topic = static_cast<DHTopic>(invalid);
     std::string message;
     proxy_->OnMessage(topic, message);
