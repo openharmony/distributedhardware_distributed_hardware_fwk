@@ -32,7 +32,7 @@ IMPLEMENT_SINGLE_INSTANCE(SoftbusChannelAdapter);
 
 static void OnSessionOpened(int32_t sessionId, PeerSocketInfo info)
 {
-    std::string peerDevId(info.devicedId);
+    std::string peerDevId(info.deviceId);
     std::string peerSessionName(info.name);
     return SoftbusChannelAdapter::GetInstance().OnSoftbusChannelOpened(peerSessionName, sessionId, peerDevId, 0);
 
