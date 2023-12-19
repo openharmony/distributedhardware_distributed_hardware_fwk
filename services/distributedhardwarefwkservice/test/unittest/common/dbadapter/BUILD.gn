@@ -42,6 +42,13 @@ ohos_unittest("DbAdapterTest") {
     "src/mock_db_change_listener.cpp",
   ]
 
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
   configs = [ ":module_private_config" ]
 
   deps = [
