@@ -173,7 +173,7 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
 
-    int32_t ret = Listen(socketId, qos, sizeof(qos) / sizeof(qos[0], &sessListener_));
+    int32_t ret = Listen(socketId, qos, sizeof(qos) / sizeof(qos[0]), &sessListener_);
     if (ret != 0) {
         AVTRANS_LOGE("Listen socket error for sessionName:%s", sessName.c_str());
         return ERR_DH_AVT_SESSION_ERROR;
@@ -197,7 +197,7 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
     {
         std::lock_guard<std::mutex> lock(listenerMtx_);
         for (auto it = listenerMap_.begin(); it != listenerMap_.end(); it++) {
-            if ((it->first).find(sessName) != std::string::npos) && (it->second != nullptr) {
+            if (((it->first).find(sessName) != std::string::npos) && (it->second != nullptr)) {
                 listenerMap_.erase(it->first);
             }
         }
@@ -225,7 +225,7 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName,
     TRUE_RETURN_V_MSG_E(mySessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input mySessName is empty.");
     TRUE_RETURN_V_MSG_E(peerSessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerSessName is empty.");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
-    std:string ownerName = GetOwnerFromSessName(mySessName);
+    std::string ownerName = GetOwnerFromSessName(mySessName);
     std::string PkgName = TransName2PkgName(ownerName);
     int32_t existSessId = GetSessIdBySessName(mySessName, peerDevId);
     if (existSessId > 0) {
@@ -257,7 +257,7 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName,
         AVTRANS_LOGE("Create Socket error");
         return ERR_DH_AVT_SESSION_ERROR;
     }
-    int32_t ret = Bind(socketId, qos, sizeof(qos) / sizeof(qos[0], &sessListener_));
+    int32_t ret = Bind(socketId, qos, sizeof(qos) / sizeof(qos[0]), &sessListener_);
     if (ret != DH_AVT_SUCCESS) {
         AVTRANS_LOGE("Bind SocketClient error");
         return ERR_DH_AVT_SESSION_ERROR;
@@ -267,7 +267,7 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName,
         devId2SessIdMap_.insert(std::make_pair(mySessName + "_" + peerDevId, socketId));
     }
 
-    EventType type = EVENT_CHANNEL_OPENED;
+    EventType type = EventType::EVENT_CHANNEL_OPENED;
     AVTransEvent event = {type, mySessName, peerDevId};
     std::lock_guard<std::mutex> lock(listenerMtx_);
     {
@@ -423,7 +423,8 @@ std::string SoftbusChannelAdapter::GetSessionNameById(int32_t sessionId)
     return EMPTY_STRING;
 }
 
-int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionName, int32_t sessionId, std::string peerDevId, int32_t result)
+int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string 
+, int32_t sessionId, std::string peerDevId, int32_t result)
 {
     AVTRANS_LOGI("On softbus channel opened, sessionId:%" PRId32", result:%" PRId32, sessionId, result);
     TRUE_RETURN_V_MSG_E(peerSessionName.empty(), ERR_DH_AVT_INVALID_PARAM, "peerSessionName is empty().");
@@ -455,7 +456,7 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionNam
 
 void SoftbusChannelAdapter::OnSoftbusChannelClosed(int32_t sessionId, ShutdownReason reason)
 {
-    void(reason);
+    (void)reason;
     AVTRANS_LOGI("On softbus channel closed, sessionId:%" PRId32, sessionId);
 
     std::string peerDevId = GetPeerDevIdBySessId(sessionId);

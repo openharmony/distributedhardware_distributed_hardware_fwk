@@ -260,7 +260,7 @@ Status DsoftbusOutputPlugin::PushData(const std::string &inPort, std::shared_ptr
         DumpBufferToFile(SCREEN_FILE_NAME_AFTERCODING,
             const_cast<uint8_t*>(bufferData->GetReadOnlyData()), bufferData->GetSize());
     } else {
-        AVTRANS_LOGE("DumpFlag = false.");
+        AVTRANS_LOGD("DumpFlag = false.");
     }
     while (dataQueue_.size() >= DATA_QUEUE_MAX_SIZE) {
         AVTRANS_LOGE("Data queue overflow.");
