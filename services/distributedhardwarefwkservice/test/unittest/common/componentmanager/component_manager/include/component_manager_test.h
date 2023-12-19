@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,8 +26,6 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-    int32_t Enable(int32_t timeout, int32_t status);
-    int32_t Disable(int32_t timeout, int32_t status);
 };
 } // namespace DistributedHardware
 } // namespace OHOS

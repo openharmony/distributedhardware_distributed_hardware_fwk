@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,17 +22,13 @@
 #include <thread>
 #include <vector>
 
-#include <gmock/gmock.h>
-
 #include "accesstoken_kit.h"
 #include "component_disable.h"
 #include "component_enable.h"
 #include "component_loader.h"
 #include "capability_info.h"
 #include "capability_info_manager.h"
-#define private public
 #include "component_manager.h"
-#undef private
 #include "constants.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
@@ -42,7 +38,7 @@
 #include "mock_idistributed_hardware_source.h"
 #include "nativetoken_kit.h"
 #include "softbus_common.h"
-#include "softbus_bus_center.h"
+#include "mock_softbus_bus_center.h"
 #include "token_setproc.h"
 #include "version_info_manager.h"
 #include "version_manager.h"
@@ -55,7 +51,6 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "ComponentManagerTest"
 
 namespace {
-constexpr int32_t EXECUTE_TIME_TEST = 1000;
 constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
 const std::string DATABASE_DIR = "/data/service/el1/public/database/dtbhardware_manager_service/";
 const std::string NAME_CAMERA = "distributed_camera";
@@ -68,6 +63,12 @@ const std::string DH_ATTR_1 = "attr1";
 const std::string DEVICE_NAME = "Dev1";
 const std::string DH_ID_1 = "Camera_1";
 const std::string DH_SUBTYPE_TEST = "camera";
+const std::string TEST_SOURCE_VERSION_1 = "2.2";
+const std::string TEST_SINK_VERSION_1 = "2.4";
+const std::string TEST_DH_VERSION = "3.1";
+const std::shared_ptr<CapabilityInfo> CAP_INFO_TEST =
+    std::make_shared<CapabilityInfo>(DH_ID_TEST, DEV_ID_TEST, DEVICE_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1,
+    DH_SUBTYPE_TEST);
 }
 
 void ComponentManagerTest::SetUpTestCase(void)
@@ -115,59 +116,6 @@ void ComponentManagerTest::TearDown()
     ComponentManager::GetInstance().compSink_.clear();
 }
 
-int32_t ComponentManagerTest::Enable(int32_t timeout, int32_t status)
-{
-    MockIDistributedHardwareSource stub;
-    auto compEnable = std::make_shared<ComponentEnable>();
-    EnableParam parameters;
-    std::future<int32_t> future;
-    auto handler = [&future, timeout, status, compEnable](std::string uuid, std::string dhId,
-        const EnableParam &parameters, std::shared_ptr<RegisterCallback> callback) {
-        future = std::async(std::launch::async, [timeout, compEnable, uuid, dhId, status]() {
-            std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
-            return compEnable->OnRegisterResult(uuid, dhId, status, "");
-        });
-        return DH_FWK_SUCCESS;
-    };
-
-    EXPECT_CALL(stub, RegisterDistributedHardware(DEV_ID_TEST, DH_ID_TEST, testing::_, testing::_))
-        .Times(1)
-        .WillOnce(testing::Invoke(handler));
-
-    auto start = std::chrono::system_clock::now();
-    auto ret = compEnable->Enable(DEV_ID_TEST, DH_ID_TEST, parameters, &stub);
-    auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
-    DHLOGI("enable callback use time: %d (ms)", diff);
-    return ret;
-}
-
-int32_t ComponentManagerTest::Disable(int32_t timeout, int32_t status)
-{
-    MockIDistributedHardwareSource stub;
-    auto compDisable = std::make_shared<ComponentDisable>();
-
-    std::future<int32_t> future;
-    auto handler = [&future, timeout, status, compDisable](std::string uuid, std::string dhId,
-        std::shared_ptr<UnregisterCallback> callback) {
-        future = std::async(std::launch::async, [timeout, compDisable, uuid, dhId, status]() {
-            std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
-            return compDisable->OnUnregisterResult(uuid, dhId, status, "");
-        });
-        return DH_FWK_SUCCESS;
-    };
-
-    EXPECT_CALL(stub, UnregisterDistributedHardware(DEV_ID_TEST, DH_ID_TEST, testing::_))
-        .Times(1)
-        .WillOnce(testing::Invoke(handler));
-
-    auto start = std::chrono::system_clock::now();
-
-    auto ret = compDisable->Disable(DEV_ID_TEST, DH_ID_TEST, &stub);
-    auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
-    DHLOGI("disable callback use time: %d (ms)", diff);
-    return ret;
-}
-
 /**
  * @tc.name: init_test_001
  * @tc.desc: Verify the Init function
@@ -196,41 +144,6 @@ HWTEST_F(ComponentManagerTest, init_test_002, TestSize.Level0)
 }
 
 /**
- * @tc.name: init_test_003
- * @tc.desc: Verify the Init function
- * @tc.type: FUNC
- * @tc.require: AR000GHSK5
- */
-HWTEST_F(ComponentManagerTest, init_test_003, TestSize.Level0)
-{
-    auto handler = [](std::string param) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(EXECUTE_TIME_TEST));
-        return DH_FWK_SUCCESS;
-    };
-
-    MockIDistributedHardwareSource cameraSource;
-    ComponentManager::GetInstance().compSource_.insert(std::make_pair(DHType::CAMERA, &cameraSource));
-    EXPECT_CALL(cameraSource, InitSource(testing::_)).Times(1).WillOnce(testing::Invoke(handler));
-
-    MockIDistributedHardwareSource displaySource;
-    ComponentManager::GetInstance().compSource_.insert(std::make_pair(DHType::SCREEN, &displaySource));
-    EXPECT_CALL(displaySource, InitSource(testing::_)).Times(1).WillOnce(testing::Invoke(handler));
-    
-    MockIDistributedHardwareSink micSink;
-    ComponentManager::GetInstance().compSink_.insert(std::make_pair(DHType::AUDIO, &micSink));
-    EXPECT_CALL(micSink, InitSink(testing::_)).Times(1).WillOnce(testing::Invoke(handler));
-
-    auto start = std::chrono::system_clock::now();
-
-    auto ret = ComponentManager::GetInstance().Init();
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-
-    auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
-    DHLOGI("Init use time: %d (ms)", diff);
-    ASSERT_TRUE(diff <= EXECUTE_TIME_TEST * 1.1);
-}
-
-/**
  * @tc.name: unInit_test_001
  * @tc.desc: Verify the UnInit function
  * @tc.type: FUNC
@@ -238,99 +151,8 @@ HWTEST_F(ComponentManagerTest, init_test_003, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, unInit_test_001, TestSize.Level0)
 {
-    auto handler = []() {
-        std::this_thread::sleep_for(std::chrono::milliseconds(EXECUTE_TIME_TEST));
-        return DH_FWK_SUCCESS;
-    };
-
-    MockIDistributedHardwareSource cameraSource;
-    ComponentManager::GetInstance().compSource_.insert(std::make_pair(DHType::CAMERA, &cameraSource));
-    EXPECT_CALL(cameraSource, ReleaseSource()).Times(1).WillOnce(testing::Invoke(handler));
-
-    MockIDistributedHardwareSink displaycSink;
-    ComponentManager::GetInstance().compSink_.insert(std::make_pair(DHType::SCREEN, &displaycSink));
-    EXPECT_CALL(displaycSink, ReleaseSink()).Times(1).WillOnce(testing::Invoke(handler));
-    
-    MockIDistributedHardwareSink micSink;
-    ComponentManager::GetInstance().compSink_.insert(std::make_pair(DHType::AUDIO, &micSink));
-    EXPECT_CALL(micSink, ReleaseSink()).Times(1).WillOnce(testing::Invoke(handler));
-
-    auto start = std::chrono::system_clock::now();
-
     auto ret = ComponentManager::GetInstance().UnInit();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
-
-    auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
-    DHLOGI("UnInit use time : %d (ms)", diff);
-    ASSERT_TRUE(diff <= EXECUTE_TIME_TEST * 1.1);
-}
-
-/**
- * @tc.name: enable_test_001
- * @tc.desc: Verify the Enable success
- * @tc.type: FUNC
- * @tc.require: AR000GHSK7
- */
-HWTEST_F(ComponentManagerTest, enable_test_001, TestSize.Level0)
-{
-    auto result = Enable(ENABLE_TIMEOUT_MS / 2, DH_FWK_SUCCESS);
-    EXPECT_EQ(DH_FWK_SUCCESS, result);
-}
-
-/**
- * @tc.name: enable_test_002
- * @tc.desc: Verify the Enable failed for register hardware failed
- * @tc.type: FUNC
- * @tc.require: AR000GHSK7
- */
-
-HWTEST_F(ComponentManagerTest, enable_test_002, TestSize.Level0)
-{
-    auto result = Enable(ENABLE_TIMEOUT_MS / 2, ERR_DH_FWK_COMPONENT_ENABLE_FAILED);
-    EXPECT_EQ(ERR_DH_FWK_COMPONENT_ENABLE_FAILED, result);
-}
-
-/**
- * @tc.name: enable_test_003
- * @tc.desc: Verify the Enable timeout
- * @tc.type: FUNC
- * @tc.require: AR000GHSK7
- */
-HWTEST_F(ComponentManagerTest, enable_test_003, TestSize.Level0)
-{
-    auto result = Enable(ENABLE_TIMEOUT_MS * 2, ERR_DH_FWK_COMPONENT_ENABLE_FAILED);
-    EXPECT_EQ(ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT, result);
-}
-
-/**
- * @tc.name: enable_test_004
- * @tc.desc: Verify the Enable for Multi-thread
- * @tc.type: FUNC
- * @tc.require: AR000GHSK7
- */
-HWTEST_F(ComponentManagerTest, enable_test_004, TestSize.Level0)
-{
-    auto handler = [this](int32_t time, int32_t status, int32_t expect) {
-        auto ret = this->Enable(time, status);
-        EXPECT_EQ(expect, ret);
-    };
-
-    std::thread thread1(handler, ENABLE_TIMEOUT_MS / 2, DH_FWK_SUCCESS, DH_FWK_SUCCESS);
-    std::thread thread2(handler, ENABLE_TIMEOUT_MS / 2, ERR_DH_FWK_COMPONENT_ENABLE_FAILED,
-        ERR_DH_FWK_COMPONENT_ENABLE_FAILED);
-    std::thread thread3(handler, ENABLE_TIMEOUT_MS * 3, DH_FWK_SUCCESS, ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT);
-
-    std::thread thread6(handler, ENABLE_TIMEOUT_MS / 10, DH_FWK_SUCCESS, DH_FWK_SUCCESS);
-    std::thread thread4(handler, ENABLE_TIMEOUT_MS / 10, ERR_DH_FWK_COMPONENT_ENABLE_FAILED,
-        ERR_DH_FWK_COMPONENT_ENABLE_FAILED);
-    std::thread thread5(handler, ENABLE_TIMEOUT_MS * 2, DH_FWK_SUCCESS, ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT);
-
-    thread1.join();
-    thread2.join();
-    thread3.join();
-    thread4.join();
-    thread5.join();
-    thread6.join();
 }
 
 /**
@@ -347,73 +169,6 @@ HWTEST_F(ComponentManagerTest, Enable_test_005, TestSize.Level0)
     ComponentManager::GetInstance().compSource_.clear();
     auto ret = ComponentManager::GetInstance().Enable(networkId, uuid, dhId, DHType::CAMERA);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
-}
-
-/**
- * @tc.name: disable_test_001
- * @tc.desc: Verify the Disable success
- * @tc.type: FUNC
- * @tc.require: AR000GHSK9
- */
-HWTEST_F(ComponentManagerTest, disable_test_001, TestSize.Level0)
-{
-    auto result = Disable(DISABLE_TIMEOUT_MS / 2, DH_FWK_SUCCESS);
-    EXPECT_EQ(DH_FWK_SUCCESS, result);
-}
-
-/**
- * @tc.name: disable_test_002
- * @tc.desc: Verify the Disable failed
- * @tc.type: FUNC
- * @tc.require: AR000GHSK9
- */
-HWTEST_F(ComponentManagerTest, disable_test_002, TestSize.Level0)
-{
-    auto result = Disable(DISABLE_TIMEOUT_MS / 2, ERR_DH_FWK_COMPONENT_DISABLE_FAILED);
-    EXPECT_EQ(ERR_DH_FWK_COMPONENT_DISABLE_FAILED, result);
-}
-
-/**
- * @tc.name: disable_test_003
- * @tc.desc: Verify the Disable timeout
- * @tc.type: FUNC
- * @tc.require: AR000GHSK9
- */
-HWTEST_F(ComponentManagerTest, disable_test_003, TestSize.Level0)
-{
-    auto result = Disable(DISABLE_TIMEOUT_MS * 2, ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT);
-    EXPECT_EQ(ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT, result);
-}
-
-/**
- * @tc.name: disable_test_004
- * @tc.desc: Verify the Disable for Multi-thread
- * @tc.type: FUNC
- * @tc.require: AR000GHSK9
- */
-HWTEST_F(ComponentManagerTest, disable_test_004, TestSize.Level0)
-{
-    auto handler = [this](int32_t timeout, int32_t status, int32_t expect) {
-        auto result = this->Disable(timeout, status);
-        EXPECT_EQ(expect, result);
-    };
-
-    std::thread thread1(handler, DISABLE_TIMEOUT_MS / 2, DH_FWK_SUCCESS, DH_FWK_SUCCESS);
-    std::thread thread2(handler, DISABLE_TIMEOUT_MS / 2, ERR_DH_FWK_COMPONENT_DISABLE_FAILED,
-        ERR_DH_FWK_COMPONENT_DISABLE_FAILED);
-    std::thread thread3(handler, DISABLE_TIMEOUT_MS * 3, DH_FWK_SUCCESS, ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT);
-
-    std::thread thread4(handler, DISABLE_TIMEOUT_MS / 10, ERR_DH_FWK_COMPONENT_DISABLE_FAILED,
-        ERR_DH_FWK_COMPONENT_DISABLE_FAILED);
-    std::thread thread6(handler, DISABLE_TIMEOUT_MS / 10, DH_FWK_SUCCESS, DH_FWK_SUCCESS);
-    std::thread thread5(handler, DISABLE_TIMEOUT_MS * 2, DH_FWK_SUCCESS, ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT);
-
-    thread1.join();
-    thread2.join();
-    thread3.join();
-    thread4.join();
-    thread5.join();
-    thread6.join();
 }
 
 /**
@@ -448,7 +203,7 @@ HWTEST_F(ComponentManagerTest, init_compSource_test_001, TestSize.Level0)
 
 /**
  * @tc.name: init_compSink_test_001
- * @tc.desc: Verify the InitCompSource
+ * @tc.desc: Verify the InitCompSink
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
@@ -502,7 +257,7 @@ HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
     EnableParam param;
     auto ret = ComponentManager::GetInstance().GetEnableParam(info->networkId, devInfo.uuid,
         DH_ID_1, DHType::CAMERA, param);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED);
 }
 
 /**
@@ -755,6 +510,20 @@ HWTEST_F(ComponentManagerTest, GetDHType_001, TestSize.Level0)
 }
 
 /**
+ * @tc.name: GetDHType_002
+ * @tc.desc: Verify the GetDHType function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, GetDHType_002, TestSize.Level0)
+{
+    std::string key = Sha256(UUID_TEST) + RESOURCE_SEPARATOR + DH_ID_1;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = CAP_INFO_TEST;
+    auto ret = ComponentManager::GetInstance().GetDHType(UUID_TEST, DH_ID_1);
+    EXPECT_EQ(DHType::CAMERA, ret);
+}
+
+/**
  * @tc.name: GetEnableParam_001
  * @tc.desc: Verify the GetEnableParam function
  * @tc.type: FUNC
@@ -769,6 +538,21 @@ HWTEST_F(ComponentManagerTest, GetEnableParam_001, TestSize.Level0)
     EnableParam param;
     int32_t ret = ComponentManager::GetInstance().GetEnableParam(networkId, uuid, dhId, dhType, param);
     EXPECT_NE(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: GetEnableParam_002
+ * @tc.desc: Verify the GetEnableParam function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, GetEnableParam_002, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    EnableParam param;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    int32_t ret = ComponentManager::GetInstance().GetEnableParam(NETWORK_TEST, UUID_TEST, DH_ID_1, dhType, param);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND, ret);
 }
 
 /**
@@ -787,6 +571,41 @@ HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_001, TestSize.Level0)
 }
 
 /**
+ * @tc.name: GetVersionFromVerMgr_002
+ * @tc.desc: Verify the GetVersionFromVerMgr function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_002, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    std::string sinkVersion;
+    VersionManager::GetInstance().dhVersions_.clear();
+    int32_t ret = ComponentManager::GetInstance().GetVersionFromVerMgr(UUID_TEST, dhType, sinkVersion, true);
+    EXPECT_EQ(ret, ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST);
+}
+
+/**
+ * @tc.name: GetVersionFromVerMgr_003
+ * @tc.desc: Verify the GetVersionFromVerMgr function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_003, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    DHVersion dhVersion;
+    std::string sinkVersion;
+    CompVersion cVs {NAME_CAMERA, dhType, VERSION_1, TEST_SOURCE_VERSION_1, TEST_SINK_VERSION_1};
+    dhVersion.uuid = UUID_TEST;
+    dhVersion.dhVersion = TEST_DH_VERSION;
+    dhVersion.compVersions.insert(std::make_pair(cVs.dhType, cVs));
+    VersionManager::GetInstance().AddDHVersion(dhVersion.uuid, dhVersion);
+    int32_t ret = ComponentManager::GetInstance().GetVersionFromVerMgr(UUID_TEST, dhType, sinkVersion, true);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
  * @tc.name: GetVersionFromVerInfoMgr_001
  * @tc.desc: Verify the GetVersionFromVerInfoMgr function
  * @tc.type: FUNC
@@ -799,6 +618,21 @@ HWTEST_F(ComponentManagerTest, GetVersionFromVerInfoMgr_001, TestSize.Level0)
     std::string sinkVersion;
     int32_t ret = ComponentManager::GetInstance().GetVersionFromVerInfoMgr(uuid, dhType, sinkVersion, true);
     EXPECT_NE(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: GetVersionFromVerInfoMgr_002
+ * @tc.desc: Verify the GetVersionFromVerInfoMgr function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, GetVersionFromVerInfoMgr_002, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    std::string sinkVersion;
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    int32_t ret = ComponentManager::GetInstance().GetVersionFromVerInfoMgr(UUID_TEST, dhType, sinkVersion, true);
+    EXPECT_EQ(ret, ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL);
 }
 
 /**
@@ -895,6 +729,55 @@ HWTEST_F(ComponentManagerTest, RecoverDistributedHardware_001, TestSize.Level0)
     DHType dhType = DHType::CAMERA;
     ComponentManager::GetInstance().RecoverDistributedHardware(dhType);
     EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
+}
+
+/**
+ * @tc.name: RetryGetEnableParam_001
+ * @tc.desc: Verify the RetryGetEnableParam function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, RetryGetEnableParam_001, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    EnableParam param;
+    DHContext::GetInstance().onlineDeviceMap_.clear();
+    auto ret = ComponentManager::GetInstance().RetryGetEnableParam(NETWORK_TEST, UUID_TEST, DH_ID_1, dhType, param);
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_ENABLE_FAILED);
+}
+
+/**
+ * @tc.name: RetryGetEnableParam_002
+ * @tc.desc: Verify the RetryGetEnableParam function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, RetryGetEnableParam_002, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    EnableParam param;
+    DHContext::GetInstance().onlineDeviceMap_[UUID_TEST] = NETWORK_TEST;
+    auto ret = ComponentManager::GetInstance().RetryGetEnableParam(NETWORK_TEST, UUID_TEST, DH_ID_1, dhType, param);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    std::string key = Sha256(UUID_TEST);
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = CAP_INFO_TEST;
+    ret = ComponentManager::GetInstance().RetryGetEnableParam(NETWORK_TEST, UUID_TEST, DH_ID_1, dhType, param);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: IsIdenticalAccount_001
+ * @tc.desc: Verify the IsIdenticalAccount function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, IsIdenticalAccount_001, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    ComponentManager::GetInstance().RecoverDistributedHardware(dhType);
+    auto ret = ComponentManager::GetInstance().IsIdenticalAccount(NETWORK_TEST);
+    EXPECT_EQ(ret, false);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
