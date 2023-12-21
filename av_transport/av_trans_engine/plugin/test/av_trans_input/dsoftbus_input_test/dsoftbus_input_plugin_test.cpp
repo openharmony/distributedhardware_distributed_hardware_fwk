@@ -112,6 +112,7 @@ HWTEST_F(DsoftbusInputPluginTest, GetParameter_002, TestSize.Level1)
     AVTransEvent event;
     plugin->OnChannelEvent(event);
 
+    plugin->SetDumpFlagFalse();
     std::shared_ptr<AVBuffer> buffer = std::make_shared<AVBuffer>();
     plugin->DataEnqueue(buffer);
 }
