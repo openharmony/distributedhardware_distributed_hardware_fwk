@@ -145,7 +145,7 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
     {
         std::lock_guard<std::mutex> lock(serverMapMtx_);
         if (serverMap_.count(pkgName + "_" + sessName)) {
-            AVTRANS_LOGI("Session has already creared for name:%s", sessName.c_str());
+            AVTRANS_LOGI("Session has already created for name:%s", sessName.c_str());
             return DH_AVT_SUCCESS;
         }
     }
