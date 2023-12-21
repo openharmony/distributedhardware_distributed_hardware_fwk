@@ -198,6 +198,7 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
             if (((it->first).find(serverMapKey) != std::string::npos)) {
                 serverSocketId = it->second;
                 serverMap_.erase(it->first);
+                break;
             }
         }
     }
