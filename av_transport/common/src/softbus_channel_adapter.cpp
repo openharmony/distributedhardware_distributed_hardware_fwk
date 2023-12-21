@@ -144,7 +144,7 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
 
     {
         std::lock_guard<std::mutex> lock(serverMapMtx_);
-        if (serverMap_.couunt(pkgName + "_" + sessName)) {
+        if (serverMap_.count(pkgName + "_" + sessName)) {
             AVTRANS_LOGI("Session has already creared for name:%s", sessName.c_str());
             return DH_AVT_SUCCESS;
         }
@@ -197,7 +197,7 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
         for (auto it = serverMap_.begin(); it != serverMap_.end(); it++) {
             if (((it->first).find(serverMapKey) != std::string::npos)) {
                 serverSocketId = it->second;
-                serverSocketId.erase(it->first);
+                serverMap_.erase(it->first);
             }
         }
     }
