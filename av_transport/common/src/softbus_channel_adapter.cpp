@@ -71,9 +71,9 @@ SoftbusChannelAdapter::SoftbusChannelAdapter()
 SoftbusChannelAdapter::~SoftbusChannelAdapter()
 {
     listenerMap_.clear();
-    mySessionNameSet_.clear();
     timeSyncSessNames_.clear();
     devId2SessIdMap_.clear();
+    serverMap_.clear();
 }
 
 std::string SoftbusChannelAdapter::TransName2PkgName(const std::string &ownerName)
@@ -143,12 +143,10 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessionName is empty.");
 
     {
-        std::lock_guard<std::mutex> setLock(mySessionNameMtx_);
-        if (mySessionNameSet_.find(sessName) != mySessionNameSet_.end()) {
-            AVTRANS_LOGE("Session has already created for name:%s", sessName.c_str());
+        std::lock_guard<std::mutex> lock(serverMapMtx_);
+        if (serverMap_.couunt(pkgName + "_" + sessName)) {
+            AVTRANS_LOGI("Session has already creared for name:%s", sessName.c_str());
             return DH_AVT_SUCCESS;
-        } else {
-            mySessionNameSet_.insert(sessName);
         }
     }
 
@@ -178,6 +176,10 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
         AVTRANS_LOGE("Listen socket error for sessionName:%s", sessName.c_str());
         return ERR_DH_AVT_SESSION_ERROR;
     }
+    {
+        std::lock_guard<std::mutex> lock(serverMapMtx_);
+        serverMap_.insert(std::make_pair(pkgName + "_" + sessName, socketId));
+    }
     AVTRANS_LOGI("Create session server success for sessionName:%s.", sessName.c_str());
     return DH_AVT_SUCCESS;
 }
@@ -187,21 +189,20 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
     AVTRANS_LOGI("Remove session server for sessionName:%s.", sessName.c_str());
     TRUE_RETURN_V_MSG_E(pkgName.empty(), ERR_DH_AVT_INVALID_PARAM, "input pkgName is empty.");
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessionName is empty.");
+   
+    std::string serverMapKey = pkgName + "_" + sessName;
+    int32_t serverSocketId;
     {
-        std::lock_guard<std::mutex> setLock(mySessionNameMtx_);
-        if (mySessionNameSet_.find(sessName) != mySessionNameSet_.end()) {
-            mySessionNameSet_.erase(sessName);
-        }
-    }
-
-    {
-        std::lock_guard<std::mutex> lock(listenerMtx_);
-        for (auto it = listenerMap_.begin(); it != listenerMap_.end(); it++) {
-            if (((it->first).find(sessName) != std::string::npos) && (it->second != nullptr)) {
-                listenerMap_.erase(it->first);
+        std::lock_guard<std::mutex> lock(serverMapMtx_);
+        for (auto it = serverMap_.begin(); it != serverMap_.end(); it++) {
+            if (((it->first).find(serverMapKey) != std::string::npos)) {
+                serverSocketId = it->second;
+                serverSocketId.erase(it->first);
             }
         }
     }
+    AVTRANS_LOGI("Remove session server success for serverSocketId:%" PRId32, serverSocketId);
+    Shutdown(serverSocketId);
     int32_t sessionId;
     {
         std::lock_guard<std::mutex> lock(idMapMutex_);
@@ -254,7 +255,7 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName,
 
     int32_t socketId = Socket(clientInfo);
     if (socketId <0) {
-        AVTRANS_LOGE("Create Socket error");
+        AVTRANS_LOGE("Create OpenSoftbusChannel Socket error");
         return ERR_DH_AVT_SESSION_ERROR;
     }
     int32_t ret = Bind(socketId, qos, sizeof(qos) / sizeof(qos[0]), &sessListener_);
@@ -448,8 +449,8 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionNam
     if (devId2SessIdMap_.find(idMapKey) == devId2SessIdMap_.end()) {
         AVTRANS_LOGI("Can not find sessionId for mySessionName:%s, peerDevId:%s.",
             mySessionName.c_str(), GetAnonyString(peerDevId).c_str());
+            devId2SessIdMap_.insert(std::make_pair(idMapKey, sessionId));
     }
-    devId2SessIdMap_.insert(std::make_pair(idMapKey, sessionId));
     return DH_AVT_SUCCESS;
 }
 

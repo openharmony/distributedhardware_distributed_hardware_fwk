@@ -83,10 +83,10 @@ private:
     std::mutex timeSyncMtx_;
     std::mutex idMapMutex_;
     std::mutex listenerMtx_;
-    std::mutex mySessionNameMtx_;
+    std::mutex serverMapMtx_;
 
     ISocketListener sessListener_;
-    std::set<std::string> mySessionNameSet_;
+    std::map<std::string, int32_t> serverMap_;
     std::set<std::string> timeSyncSessNames_;
     std::map<std::string, int32_t> devId2SessIdMap_;
     std::map<std::string, ISoftbusChannelListener *> listenerMap_;
