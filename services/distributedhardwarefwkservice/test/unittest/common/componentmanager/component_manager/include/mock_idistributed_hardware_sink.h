@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,8 +18,6 @@
 
 #include <string>
 
-#include "gmock/gmock.h"
-
 #include "idistributed_hardware_sink.h"
 
 namespace OHOS {
@@ -27,9 +25,14 @@ namespace DistributedHardware {
 class MockIDistributedHardwareSink : public IDistributedHardwareSink {
 public:
     virtual ~MockIDistributedHardwareSink() {}
-    MOCK_METHOD1(InitSink, int32_t(const std::string &params));
-    MOCK_METHOD0(ReleaseSink, int32_t());
-
+    int32_t InitSink(const std::string &params)
+    {
+        return 0;
+    }
+    int32_t ReleaseSink()
+    {
+        return 0;
+    }
     int32_t SubscribeLocalHardware(const std::string &dhId, const std::string &parameter)
     {
         return 0;

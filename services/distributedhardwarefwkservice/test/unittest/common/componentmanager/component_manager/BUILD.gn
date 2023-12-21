@@ -45,13 +45,18 @@ ohos_unittest("ComponentManagerTest") {
 
   sources = [ "src/component_manager_test.cpp" ]
 
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
   configs = [ ":module_private_config" ]
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [

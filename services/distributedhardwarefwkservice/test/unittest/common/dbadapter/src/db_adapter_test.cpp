@@ -21,14 +21,14 @@
 #include <vector>
 
 #include "capability_info.h"
+#include "capability_info_manager.h"
 #include "constants.h"
-#define private public
 #include "db_adapter.h"
-#undef private
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "mock_db_change_listener.h"
+#include "version_info_manager.h"
 
 using namespace testing::ext;
 using namespace std;
@@ -435,9 +435,11 @@ HWTEST_F(DbAdapterTest, RemoveManualSyncCount_001, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, SyncDBForRecover_001, TestSize.Level0)
 {
+    CapabilityInfoManager::GetInstance()->Init();
     g_dbAdapterPtr->storeId_.storeId = GLOBAL_CAPABILITY_ID;
     g_dbAdapterPtr->SyncDBForRecover();
     EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+    CapabilityInfoManager::GetInstance()->UnInit();
 }
 
 /**
@@ -448,9 +450,11 @@ HWTEST_F(DbAdapterTest, SyncDBForRecover_001, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, SyncDBForRecover_002, TestSize.Level0)
 {
+    VersionInfoManager::GetInstance()->Init();
     g_dbAdapterPtr->storeId_.storeId = GLOBAL_VERSION_ID;
     g_dbAdapterPtr->SyncDBForRecover();
     EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
+    VersionInfoManager::GetInstance()->UnInit();
 }
 
 /**
