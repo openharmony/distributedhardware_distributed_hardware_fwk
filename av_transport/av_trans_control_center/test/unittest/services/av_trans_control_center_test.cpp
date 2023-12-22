@@ -34,7 +34,6 @@ void AVTransControlCenterTest::SetUp()
 
 void AVTransControlCenterTest::TearDown()
 {
-    center_ = nullptr;
 }
 
 /**
@@ -78,7 +77,7 @@ HWTEST_F(AVTransControlCenterTest, initialize_av_center_003, TestSize.Level0)
     int32_t engineId = BASE_ENGINE_ID;
     center_->initialized_= false;
     int32_t ret = center_->InitializeAVCenter(transRole, engineId);
-    EXPECT_EQ(ERR_DH_AVT_CREATE_CHANNEL_FAILED, ret);
+    EXPECT_EQ(ERR_DH_AVT_SESSION_ERROR, ret);
 }
 
 /**

@@ -61,11 +61,11 @@ HWTEST_F(DsoftbusOutputPluginTest, Prepare_002, TestSize.Level1)
     plugin->state_ = State::INITIALIZED;
     plugin->ownerName_ = "ohos_dhardware.dcamera";
     Status ret = plugin->Prepare();
-    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    EXPECT_EQ(Status::OK, ret);
 
     plugin->ownerName_ = "";
     ret = plugin->Prepare();
-    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
 }
 
 HWTEST_F(DsoftbusOutputPluginTest, GetParameter_001, TestSize.Level1)

@@ -36,7 +36,6 @@ void AVTransControlCenterCallbackTest::SetUp()
 
 void AVTransControlCenterCallbackTest::TearDown()
 {
-    callBack_ = nullptr;
 }
 
 /**

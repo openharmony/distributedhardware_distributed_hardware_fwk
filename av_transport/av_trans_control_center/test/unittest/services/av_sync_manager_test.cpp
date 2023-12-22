@@ -34,7 +34,6 @@ void AVSyncManagerTest::SetUp()
 
 void AVSyncManagerTest::TearDown()
 {
-    syncManager_ = nullptr;
 }
 
 /**
