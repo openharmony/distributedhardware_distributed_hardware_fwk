@@ -191,7 +191,7 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessionName is empty.");
    
     std::string serverMapKey = pkgName + "_" + sessName;
-    int32_t serverSocketId;
+    int32_t serverSocketId = INVALID_SESSION_ID;
     {
         std::lock_guard<std::mutex> lock(serverMapMtx_);
         for (auto it = serverMap_.begin(); it != serverMap_.end(); it++) {
@@ -204,7 +204,7 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
     }
     AVTRANS_LOGI("Remove session server success for serverSocketId:%" PRId32, serverSocketId);
     Shutdown(serverSocketId);
-    int32_t sessionId;
+    int32_t sessionId = INVALID_SESSION_ID;
     {
         std::lock_guard<std::mutex> lock(idMapMutex_);
         for (auto it = devId2SessIdMap_.begin(); it != devId2SessIdMap_.end(); it++) {
