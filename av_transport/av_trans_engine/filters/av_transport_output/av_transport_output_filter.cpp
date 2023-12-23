@@ -295,7 +295,7 @@ ErrorCode AVOutputFilter::PushData(const std::string& inPort, const AVBufferPtr&
         return ErrorCode::ERROR_INVALID_PARAMETER_TYPE;
     }
     plugin_->PushData(inPort, buffer, offset);
-    AVTRANS_LOGE("push buffer to plugin.");
+    AVTRANS_LOGI("push buffer to plugin.");
     return ErrorCode::SUCCESS;
 }
 

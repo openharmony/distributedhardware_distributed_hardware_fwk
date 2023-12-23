@@ -20,8 +20,9 @@
 #include <mutex>
 #include <set>
 
+#include "transport/socket.h"
+#include "transport/trans_type.h"
 #include "av_trans_types.h"
-#include "session.h"
 #include "single_instance.h"
 #include "softbus_bus_center.h"
 #include "softbus_common.h"
@@ -60,8 +61,9 @@ public:
 
     void SendChannelEvent(const std::string &sessName, const AVTransEvent event);
 
-    int32_t OnSoftbusChannelOpened(int32_t sessionId, int32_t result);
-    void OnSoftbusChannelClosed(int32_t sessionId);
+    int32_t OnSoftbusChannelOpened(std::string peerSessionName, int32_t sessionId,
+        std::string peerDevId, int32_t result);
+    void OnSoftbusChannelClosed(int32_t sessionId, ShutdownReason reason);
     void OnSoftbusBytesReceived(int32_t sessionId, const void *data, uint32_t dataLen);
     void OnSoftbusTimeSyncResult(const TimeSyncResultInfo *info, int32_t result);
     void OnSoftbusStreamReceived(int32_t sessionId, const StreamData *data, const StreamData *ext,
@@ -75,15 +77,18 @@ private:
     int32_t GetSessIdBySessName(const std::string &sessName, const std::string &peerDevId);
     std::string GetPeerDevIdBySessId(int32_t sessionId);
     std::string GetOwnerFromSessName(const std::string &sessName);
+    std::string TransName2PkgName(const std::string &ownerName);
+    std::string UsePeerSessionNameFindSessionName(const std::string peerSessionName);
+    void SendEventChannelOPened(const std::string &mySessName, const std::string &peerDevId);
 
 private:
-    std::mutex name2IdMtx_;
     std::mutex timeSyncMtx_;
     std::mutex idMapMutex_;
     std::mutex listenerMtx_;
+    std::mutex serverMapMtx_;
 
-    ISessionListener sessListener_;
-    std::set<std::string> sessionNameSet_;
+    ISocketListener sessListener_;
+    std::map<std::string, int32_t> serverMap_;
     std::set<std::string> timeSyncSessNames_;
     std::map<std::string, int32_t> devId2SessIdMap_;
     std::map<std::string, ISoftbusChannelListener *> listenerMap_;

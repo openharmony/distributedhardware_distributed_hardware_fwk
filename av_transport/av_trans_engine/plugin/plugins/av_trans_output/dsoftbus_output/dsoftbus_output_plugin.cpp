@@ -94,12 +94,6 @@ Status DsoftbusOutputPlugin::Prepare()
     }
 
     sessionName_ = ownerName_ + "_" + SENDER_DATA_SESSION_NAME_SUFFIX;
-    int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName_), sessionName_);
-    if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Create Session Server failed ret: %d.", ret);
-        return Status::ERROR_INVALID_OPERATION;
-    }
-
     if (!bufferPopTask_) {
         bufferPopTask_ = std::make_shared<Media::OSAL::Task>("videoBufferQueuePopThread");
         bufferPopTask_->RegisterHandler([this] { FeedChannelData(); });
@@ -119,7 +113,6 @@ Status DsoftbusOutputPlugin::Reset()
     }
     DataQueueClear(dataQueue_);
     eventsCb_ = nullptr;
-    SoftbusChannelAdapter::GetInstance().RemoveChannelServer(TransName2PkgName(ownerName_), sessionName_);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
     state_ = State::INITIALIZED;
     return Status::OK;
@@ -267,7 +260,7 @@ Status DsoftbusOutputPlugin::PushData(const std::string &inPort, std::shared_ptr
         DumpBufferToFile(SCREEN_FILE_NAME_AFTERCODING,
             const_cast<uint8_t*>(bufferData->GetReadOnlyData()), bufferData->GetSize());
     } else {
-        AVTRANS_LOGE("DumpFlag = false.");
+        AVTRANS_LOGD("DumpFlag = false.");
     }
     while (dataQueue_.size() >= DATA_QUEUE_MAX_SIZE) {
         AVTRANS_LOGE("Data queue overflow.");

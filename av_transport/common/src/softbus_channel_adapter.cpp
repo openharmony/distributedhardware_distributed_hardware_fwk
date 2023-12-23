@@ -30,14 +30,16 @@ namespace DistributedHardware {
 
 IMPLEMENT_SINGLE_INSTANCE(SoftbusChannelAdapter);
 
-static int32_t OnSessionOpened(int32_t sessionId, int32_t result)
+static void OnSessionOpened(int32_t sessionId, PeerSocketInfo info)
 {
-    return SoftbusChannelAdapter::GetInstance().OnSoftbusChannelOpened(sessionId, result);
+    std::string peerDevId(info.networkId);
+    std::string peerSessionName(info.name);
+    SoftbusChannelAdapter::GetInstance().OnSoftbusChannelOpened(peerSessionName, sessionId, peerDevId, 0);
 }
 
-static void OnSessionClosed(int32_t sessionId)
+static void OnSessionClosed(int32_t sessionId, ShutdownReason reason)
 {
-    SoftbusChannelAdapter::GetInstance().OnSoftbusChannelClosed(sessionId);
+    SoftbusChannelAdapter::GetInstance().OnSoftbusChannelClosed(sessionId, reason);
 }
 
 static void OnBytesReceived(int32_t sessionId, const void *data, uint32_t dataLen)
@@ -58,20 +60,95 @@ static void onDevTimeSyncResult(const TimeSyncResultInfo *info, int32_t result)
 
 SoftbusChannelAdapter::SoftbusChannelAdapter()
 {
-    sessListener_.OnSessionOpened = OnSessionOpened;
-    sessListener_.OnSessionClosed = OnSessionClosed;
-    sessListener_.OnBytesReceived = OnBytesReceived;
-    sessListener_.OnStreamReceived = OnStreamReceived;
-    sessListener_.OnMessageReceived = nullptr;
-    sessListener_.OnQosEvent = nullptr;
+    sessListener_.OnBind = OnSessionOpened;
+    sessListener_.OnShutdown = OnSessionClosed;
+    sessListener_.OnBytes = OnBytesReceived;
+    sessListener_.OnStream = OnStreamReceived;
+    sessListener_.OnMessage = nullptr;
 }
 
 SoftbusChannelAdapter::~SoftbusChannelAdapter()
 {
     listenerMap_.clear();
-    sessionNameSet_.clear();
     timeSyncSessNames_.clear();
     devId2SessIdMap_.clear();
+    serverMap_.clear();
+}
+
+std::string SoftbusChannelAdapter::TransName2PkgName(const std::string &ownerName)
+{
+    const static std::pair<std::string, std::string> mapArray[] = {
+        {OWNER_NAME_D_MIC, PKG_NAME_D_AUDIO},
+        {OWNER_NAME_D_VIRMODEM_MIC, PKG_NAME_D_CALL},
+        {OWNER_NAME_D_CAMERA, PKG_NAME_D_CAMERA},
+        {OWNER_NAME_D_SCREEN, PKG_NAME_D_SCREEN},
+        {OWNER_NAME_D_SPEAKER, PKG_NAME_D_AUDIO},
+        {OWNER_NAME_D_VIRMODEM_SPEAKER, PKG_NAME_D_CALL},
+        {AV_SYNC_SENDER_CONTROL_SESSION_NAME, PKG_NAME_DH_FWK},
+        {AV_SYNC_RECEIVER_CONTROL_SESSION_NAME, PKG_NAME_DH_FWK},
+    };
+    for (const auto& item : mapArray) {
+        if (item.first == ownerName) {
+            return item.second;
+        }
+    }
+    return EMPTY_STRING;
+}
+
+std::string SoftbusChannelAdapter::UsePeerSessionNameFindSessionName(const std::string peerSessionName)
+{
+    const static std::pair<std::string, std::string> mapArray[] = {
+        {OWNER_NAME_D_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_SCREEN + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_SCREEN + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_SCREEN + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_SCREEN + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
+
+        {AV_SYNC_SENDER_CONTROL_SESSION_NAME, AV_SYNC_RECEIVER_CONTROL_SESSION_NAME},
+        {AV_SYNC_RECEIVER_CONTROL_SESSION_NAME, AV_SYNC_SENDER_CONTROL_SESSION_NAME},
+
+        {OWNER_NAME_D_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_SCREEN + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_SCREEN + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_SCREEN + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_SCREEN + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
+        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
+         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
+    };
+    for (const auto& item : mapArray) {
+        if (item.first == peerSessionName) {
+            return item.second;
+        }
+    }
+    return EMPTY_STRING;
 }
 
 int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, const std::string &sessName)
@@ -80,15 +157,44 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
     TRUE_RETURN_V_MSG_E(pkgName.empty(), ERR_DH_AVT_INVALID_PARAM, "input pkgName is empty.");
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessionName is empty.");
 
-    std::lock_guard<std::mutex> setLock(name2IdMtx_);
-    if (sessionNameSet_.find(sessName) == sessionNameSet_.end()) {
-        int32_t ret = CreateSessionServer(pkgName.c_str(), sessName.c_str(), &sessListener_);
-        TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CREATE_CHANNEL_FAILED, "create session server failed");
-    } else {
-        AVTRANS_LOGE("Session has already created for name:%s", sessName.c_str());
+    {
+        std::lock_guard<std::mutex> lock(serverMapMtx_);
+        if (serverMap_.count(pkgName + "_" + sessName)) {
+            AVTRANS_LOGI("Session has already created for name:%s", sessName.c_str());
+            return DH_AVT_SUCCESS;
+        }
     }
-    sessionNameSet_.insert(sessName);
 
+    TransDataType dataType = TransDataType::DATA_TYPE_BYTES;
+    if (sessName.find("avtrans.data") != std::string::npos) {
+        dataType = TransDataType::DATA_TYPE_VIDEO_STREAM;
+    }
+
+    SocketInfo serverInfo = {
+        .name = const_cast<char*>(sessName.c_str()),
+        .pkgName = const_cast<char*>(pkgName.c_str()),
+        .dataType = dataType,
+    };
+    int32_t socketId = Socket(serverInfo);
+    if (socketId < 0) {
+        AVTRANS_LOGE("Create Socket fail socketId:%" PRId32, socketId);
+        return ERR_DH_AVT_SESSION_ERROR;
+    }
+    QosTV qos[] = {
+        {.qos = QOS_TYPE_MIN_BW,        .value = 160 * 1024 * 1024},
+        {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
+        {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
+    };
+
+    int32_t ret = Listen(socketId, qos, sizeof(qos) / sizeof(qos[0]), &sessListener_);
+    if (ret != 0) {
+        AVTRANS_LOGE("Listen socket error for sessionName:%s", sessName.c_str());
+        return ERR_DH_AVT_SESSION_ERROR;
+    }
+    {
+        std::lock_guard<std::mutex> lock(serverMapMtx_);
+        serverMap_.insert(std::make_pair(pkgName + "_" + sessName, socketId));
+    }
     AVTRANS_LOGI("Create session server success for sessionName:%s.", sessName.c_str());
     return DH_AVT_SUCCESS;
 }
@@ -98,20 +204,52 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
     AVTRANS_LOGI("Remove session server for sessionName:%s.", sessName.c_str());
     TRUE_RETURN_V_MSG_E(pkgName.empty(), ERR_DH_AVT_INVALID_PARAM, "input pkgName is empty.");
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessionName is empty.");
-
-    std::lock_guard<std::mutex> setLock(name2IdMtx_);
-    if (sessionNameSet_.find(sessName) == sessionNameSet_.end()) {
-        AVTRANS_LOGE("Can not found session name:%s", sessName.c_str());
-        return ERR_DH_AVT_INVALID_PARAM_VALUE;
+   
+    std::string serverMapKey = pkgName + "_" + sessName;
+    int32_t serverSocketId = INVALID_SESSION_ID;
+    {
+        std::lock_guard<std::mutex> lock(serverMapMtx_);
+        for (auto it = serverMap_.begin(); it != serverMap_.end(); it++) {
+            if (((it->first).find(serverMapKey) != std::string::npos)) {
+                serverSocketId = it->second;
+                serverMap_.erase(it->first);
+                break;
+            }
+        }
     }
-    RemoveSessionServer(pkgName.c_str(), sessName.c_str());
-    sessionNameSet_.erase(sessName);
-
+    AVTRANS_LOGI("Remove session server success for serverSocketId:%" PRId32, serverSocketId);
+    Shutdown(serverSocketId);
+    int32_t sessionId = INVALID_SESSION_ID;
+    {
+        std::lock_guard<std::mutex> lock(idMapMutex_);
+        for (auto it = devId2SessIdMap_.begin(); it != devId2SessIdMap_.end(); it++) {
+            if ((it->first).find(sessName) != std::string::npos) {
+                sessionId = it->second;
+                devId2SessIdMap_.erase(it->first);
+            }
+        }
+    }
+    Shutdown(sessionId);
     AVTRANS_LOGI("Remove session server success for sessionName:%s.", sessName.c_str());
     return DH_AVT_SUCCESS;
 }
 
-int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName, const std::string &peerSessName,
+void OHOS::DistributedHardware::SoftbusChannelAdapter::SendEventChannelOPened(const std::string & mySessName,
+    const std::string & peerDevId)
+{
+    EventType type = EventType::EVENT_CHANNEL_OPENED;
+    AVTransEvent event = {type, mySessName, peerDevId};
+    std::lock_guard<std::mutex> lock(listenerMtx_);
+    {
+        for (auto it = listenerMap_.begin(); it != listenerMap_.end(); it++) {
+            if (((it->first).find(mySessName) != std::string::npos) && (it->second != nullptr)) {
+                std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->first, event).detach();
+            }
+        }
+    }
+}
+
+int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName, const std::string &peerSessName,
     const std::string &peerDevId)
 {
     AVTRANS_LOGI("Open softbus channel for mySessName:%s, peerSessName:%s, peerDevId:%s.",
@@ -119,45 +257,49 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName,
     TRUE_RETURN_V_MSG_E(mySessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input mySessName is empty.");
     TRUE_RETURN_V_MSG_E(peerSessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerSessName is empty.");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
-
+    std::string ownerName = GetOwnerFromSessName(mySessName);
+    std::string PkgName = TransName2PkgName(ownerName);
     int32_t existSessId = GetSessIdBySessName(mySessName, peerDevId);
     if (existSessId > 0) {
         AVTRANS_LOGI("Softbus channel already opened, sessionId:%" PRId32, existSessId);
         return ERR_DH_AVT_SESSION_HAS_OPENED;
     }
 
-    int dataType = TYPE_BYTES;
-    int streamType = INVALID;
+    QosTV qos[] = {
+        {.qos = QOS_TYPE_MIN_BW,        .value = 160 * 1024 * 1024},
+        {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
+        {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
+    };
+    
+    TransDataType dataType = TransDataType::DATA_TYPE_BYTES;
     if (mySessName.find("avtrans.data") != std::string::npos) {
-        dataType = TYPE_STREAM;
-        streamType = COMMON_VIDEO_STREAM;
+        dataType = TransDataType::DATA_TYPE_VIDEO_STREAM;
     }
 
-    SessionAttribute attr = { 0 };
-    attr.dataType = dataType;
-    attr.linkTypeNum = LINK_TYPE_MAX;
-    LinkType linkTypeList[LINK_TYPE_MAX] = {
-        LINK_TYPE_WIFI_P2P,
-        LINK_TYPE_WIFI_WLAN_5G,
-        LINK_TYPE_WIFI_WLAN_2G,
-        LINK_TYPE_BR,
+    SocketInfo clientInfo = {
+        .name = const_cast<char*>((mySessName.c_str())),
+        .peerName = const_cast<char*>(peerSessName.c_str()),
+        .peerNetworkId = const_cast<char*>(peerDevId.c_str()),
+        .pkgName = const_cast<char*>(PkgName.c_str()),
+        .dataType = dataType,
     };
-    int32_t ret = memcpy_s(attr.linkType, sizeof(attr.linkType), linkTypeList, sizeof(linkTypeList));
-    if (ret != EOK) {
-        AVTRANS_LOGE("Data copy failed.");
-        return ERR_DH_AVT_NO_MEMORY;
+
+    int32_t socketId = Socket(clientInfo);
+    if (socketId <0) {
+        AVTRANS_LOGE("Create OpenSoftbusChannel Socket error");
+        return ERR_DH_AVT_SESSION_ERROR;
     }
-    attr.attr.streamAttr.streamType = streamType;
-    int32_t sessionId = OpenSession(mySessName.c_str(), peerSessName.c_str(), peerDevId.c_str(), "0", &attr);
-    if (sessionId < 0) {
-        AVTRANS_LOGE("Open softbus session failed for sessionId:%" PRId32, sessionId);
+    int32_t ret = Bind(socketId, qos, sizeof(qos) / sizeof(qos[0]), &sessListener_);
+    if (ret != DH_AVT_SUCCESS) {
+        AVTRANS_LOGE("Bind SocketClient error");
         return ERR_DH_AVT_SESSION_ERROR;
     }
     {
         std::lock_guard<std::mutex> lock(idMapMutex_);
-        devId2SessIdMap_.insert(std::make_pair(mySessName + "_" + peerDevId, sessionId));
+        devId2SessIdMap_.insert(std::make_pair(mySessName + "_" + peerDevId, socketId));
     }
-    AVTRANS_LOGI("Open softbus channel finished, sessionId:%" PRId32, sessionId);
+    SendEventChannelOPened(mySessName, peerDevId);
+    AVTRANS_LOGI("Open softbus channel finished for mySessName:%s.", mySessName.c_str());
     return DH_AVT_SUCCESS;
 }
 
@@ -169,7 +311,7 @@ int32_t SoftbusChannelAdapter::CloseSoftbusChannel(const std::string& sessName, 
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
 
     int32_t sessionId = GetSessIdBySessName(sessName, peerDevId);
-    CloseSession(sessionId);
+    Shutdown(sessionId);
     {
         std::lock_guard<std::mutex> lock(idMapMutex_);
         devId2SessIdMap_.erase(sessName + "_" + peerDevId);
@@ -283,7 +425,7 @@ int32_t SoftbusChannelAdapter::GetSessIdBySessName(const std::string& sessName, 
     std::lock_guard<std::mutex> lock(idMapMutex_);
     std::string idMapKey = sessName + "_" + peerDevId;
     if (devId2SessIdMap_.find(idMapKey) == devId2SessIdMap_.end()) {
-        AVTRANS_LOGE("Can not find sessionId for sessName:%s, peerDevId:%s.",
+        AVTRANS_LOGI("Can not find sessionId for sessName:%s, peerDevId:%s.",
             sessName.c_str(), GetAnonyString(peerDevId).c_str());
         return -1;
     }
@@ -303,47 +445,40 @@ std::string SoftbusChannelAdapter::GetSessionNameById(int32_t sessionId)
     return EMPTY_STRING;
 }
 
-int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(int32_t sessionId, int32_t result)
+int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionName, int32_t sessionId,
+    std::string peerDevId, int32_t result)
 {
     AVTRANS_LOGI("On softbus channel opened, sessionId:%" PRId32", result:%" PRId32, sessionId, result);
+    TRUE_RETURN_V_MSG_E(peerSessionName.empty(), ERR_DH_AVT_INVALID_PARAM, "peerSessionName is empty().");
+    TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "peerDevId is empty().");
 
-    char peerDevIdChar[MAX_DEVICE_ID_LEN] = "";
-    int32_t ret = GetPeerDeviceId(sessionId, peerDevIdChar, sizeof(peerDevIdChar));
-    TRUE_RETURN_V_MSG_E(ret != 0, ret, "Get peer device id from softbus failed.");
-    std::string peerDevId(peerDevIdChar);
-
-    char sessNameChar[MAX_SESSION_NAME_LEN] = "";
-    ret = GetMySessionName(sessionId, sessNameChar, sizeof(sessNameChar));
-    TRUE_RETURN_V_MSG_E(ret != 0, ret, "Get my session name from softbus failed.");
-    std::string sessName(sessNameChar);
-
+    std::lock_guard<std::mutex> lock(idMapMutex_);
+    std::string mySessionName = UsePeerSessionNameFindSessionName(peerSessionName);
+    TRUE_RETURN_V_MSG_E(mySessionName.empty(), ERR_DH_AVT_INVALID_PARAM, "mySessionName is empty().");
     EventType type = (result == 0) ? EventType::EVENT_CHANNEL_OPENED : EventType::EVENT_CHANNEL_OPEN_FAIL;
-    AVTransEvent event = {type, sessName, peerDevId};
-
+    AVTransEvent event = {type, mySessionName, peerDevId};
     {
-        std::lock_guard<std::mutex> lock(idMapMutex_);
-        {
-            for (auto it = listenerMap_.begin(); it != listenerMap_.end(); it++) {
-                if (((it->first).find(sessName) != std::string::npos) && (it->second != nullptr)) {
-                    std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->first, event).detach();
-                    devId2SessIdMap_.erase(it->first);
-                    devId2SessIdMap_.insert(std::make_pair(it->first, sessionId));
-                }
+        std::lock_guard<std::mutex> lock(listenerMtx_);
+        for (auto it = listenerMap_.begin(); it != listenerMap_.end(); it++) {
+            if (((it->first).find(mySessionName) != std::string::npos) && (it->second != nullptr)) {
+                std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->first, event).detach();
+                devId2SessIdMap_.erase(it->first);
+                devId2SessIdMap_.insert(std::make_pair(it->first, sessionId));
             }
         }
     }
-
-    int32_t existSessId = GetSessIdBySessName(sessName, peerDevId);
-    if (existSessId == -1) {
-        std::lock_guard<std::mutex> lock(idMapMutex_);
-        devId2SessIdMap_.insert(std::make_pair(sessName + "_" + peerDevId, sessionId));
+    std::string idMapKey = mySessionName + "_" + peerDevId;
+    if (devId2SessIdMap_.find(idMapKey) == devId2SessIdMap_.end()) {
+        AVTRANS_LOGI("Can not find sessionId for mySessionName:%s, peerDevId:%s.",
+            mySessionName.c_str(), GetAnonyString(peerDevId).c_str());
+            devId2SessIdMap_.insert(std::make_pair(idMapKey, sessionId));
     }
-
     return DH_AVT_SUCCESS;
 }
 
-void SoftbusChannelAdapter::OnSoftbusChannelClosed(int32_t sessionId)
+void SoftbusChannelAdapter::OnSoftbusChannelClosed(int32_t sessionId, ShutdownReason reason)
 {
+    (void)reason;
     AVTRANS_LOGI("On softbus channel closed, sessionId:%" PRId32, sessionId);
 
     std::string peerDevId = GetPeerDevIdBySessId(sessionId);
@@ -367,10 +502,8 @@ void SoftbusChannelAdapter::OnSoftbusBytesReceived(int32_t sessionId, const void
     TRUE_RETURN(data == nullptr, "input data is nullptr.");
     TRUE_RETURN(dataLen == 0, "input dataLen is 0.");
 
-    char peerDevIdChar[MAX_DEVICE_ID_LEN] = "";
-    int32_t ret = GetPeerDeviceId(sessionId, peerDevIdChar, sizeof(peerDevIdChar));
-    TRUE_RETURN(ret != 0, "Get peer device id from softbus failed.");
-    std::string peerDevId(peerDevIdChar);
+    std::string peerDevId = GetPeerDevIdBySessId(sessionId);
+    AVTRANS_LOGI("OnSoftbusBytesReceived peerDevId:%s.", GetAnonyString(peerDevId).c_str());
 
     std::string dataStr = std::string(reinterpret_cast<const char *>(data), dataLen);
     AVTransEvent event = {EventType::EVENT_DATA_RECEIVED, dataStr, peerDevId};
@@ -449,11 +582,15 @@ std::string SoftbusChannelAdapter::GetOwnerFromSessName(const std::string &sessN
     if (position != std::string::npos) {
         return sessName.substr(0, position);
     }
+    if (sessName == AV_SYNC_SENDER_CONTROL_SESSION_NAME || sessName == AV_SYNC_RECEIVER_CONTROL_SESSION_NAME) {
+        return sessName;
+    }
     return EMPTY_STRING;
 }
 
 void SoftbusChannelAdapter::SendChannelEvent(const std::string &sessName, const AVTransEvent event)
 {
+    AVTRANS_LOGI("SendChannelEvent  event.type_" PRId32, event.type);
     pthread_setname_np(pthread_self(), SEND_CHANNEL_EVENT);
 
     ISoftbusChannelListener *listener = nullptr;

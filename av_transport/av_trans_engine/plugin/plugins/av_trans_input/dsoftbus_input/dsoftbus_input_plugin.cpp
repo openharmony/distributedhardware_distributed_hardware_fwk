@@ -97,17 +97,16 @@ Status DsoftbusInputPlugin::Prepare()
     }
 
     sessionName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
-    int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName_), sessionName_);
-    if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Create Session Server failed ret: %d.", ret);
-        return Status::ERROR_INVALID_OPERATION;
-    }
-    ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
+    int32_t ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
     if (ret != DH_AVT_SUCCESS) {
         AVTRANS_LOGE("Register channel listener failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
-
+    ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName_), sessionName_);
+    if (ret != DH_AVT_SUCCESS) {
+        AVTRANS_LOGE("Create Session Server failed ret: %d.", ret);
+        return Status::ERROR_INVALID_OPERATION;
+    }
     if (!bufferPopTask_) {
         bufferPopTask_ = std::make_shared<Media::OSAL::Task>("videoBufferQueuePopThread");
         bufferPopTask_->RegisterHandler([this] { HandleData(); });
