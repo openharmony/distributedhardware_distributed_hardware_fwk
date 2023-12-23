@@ -444,7 +444,8 @@ std::string SoftbusChannelAdapter::GetSessionNameById(int32_t sessionId)
     return EMPTY_STRING;
 }
 
-int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionName, int32_t sessionId, std::string peerDevId, int32_t result)
+int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionName, int32_t sessionId,
+    std::string peerDevId, int32_t result)
 {
     AVTRANS_LOGI("On softbus channel opened, sessionId:%" PRId32", result:%" PRId32, sessionId, result);
     TRUE_RETURN_V_MSG_E(peerSessionName.empty(), ERR_DH_AVT_INVALID_PARAM, "peerSessionName is empty().");
