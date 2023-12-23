@@ -234,7 +234,8 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
     return DH_AVT_SUCCESS;
 }
 
-void OHOS::DistributedHardware::SoftbusChannelAdapter::SendEventChannelOPened(const std::string & mySessName, const std::string & peerDevId)
+void OHOS::DistributedHardware::SoftbusChannelAdapter::SendEventChannelOPened(const std::string & mySessName,
+    const std::string & peerDevId)
 {
     EventType type = EventType::EVENT_CHANNEL_OPENED;
     AVTransEvent event = {type, mySessName, peerDevId};
