@@ -234,7 +234,7 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
     return DH_AVT_SUCCESS;
 }
 
-void SendEventChannelOPened(const std::string &mySessName, const std::string &peerDevId)
+void OHOS::DistributedHardware::SoftbusChannelAdapter::SendEventChannelOPened(const std::string & mySessName, const std::string & peerDevId)
 {
     EventType type = EventType::EVENT_CHANNEL_OPENED;
     AVTransEvent event = {type, mySessName, peerDevId};
@@ -297,7 +297,7 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
         std::lock_guard<std::mutex> lock(idMapMutex_);
         devId2SessIdMap_.insert(std::make_pair(mySessName + "_" + peerDevId, socketId));
     }
-    SendEventChannelOPened(const std::string &mySessName, const std::string &peerDevId);  
+    SendEventChannelOPened(mySessName, peerDevId);
     AVTRANS_LOGI("Open softbus channel finished for mySessName:%s.", mySessName.c_str());
     return DH_AVT_SUCCESS;
 }
