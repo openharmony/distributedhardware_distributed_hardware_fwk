@@ -234,10 +234,8 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
     return DH_AVT_SUCCESS;
 }
 
-void SendEventChannelOPened(const std::string& mySessName, const std::string &peerDevId)
+void SendEventChannelOPened(const std::string &mySessName, const std::string &peerDevId)
 {
-    TRUE_RETURN_V_MSG_E(mySessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input mySessName is empty.");
-    TRUE_RETURN_V_MSG_E(peerSessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerSessName is empty.");
     EventType type = EventType::EVENT_CHANNEL_OPENED;
     AVTransEvent event = {type, mySessName, peerDevId};
     std::lock_guard<std::mutex> lock(listenerMtx_);
@@ -250,7 +248,7 @@ void SendEventChannelOPened(const std::string& mySessName, const std::string &pe
     }
 }
 
-int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName, const std::string &peerSessName,
+int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName, const std::string &peerSessName,
     const std::string &peerDevId)
 {
     AVTRANS_LOGI("Open softbus channel for mySessName:%s, peerSessName:%s, peerDevId:%s.",
@@ -299,7 +297,7 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string& mySessName,
         std::lock_guard<std::mutex> lock(idMapMutex_);
         devId2SessIdMap_.insert(std::make_pair(mySessName + "_" + peerDevId, socketId));
     }
-    SendEventChannelOPened(const std::string& mySessName, const std::string &peerDevId);  
+    SendEventChannelOPened(const std::string &mySessName, const std::string &peerDevId);  
     AVTRANS_LOGI("Open softbus channel finished for mySessName:%s.", mySessName.c_str());
     return DH_AVT_SUCCESS;
 }
