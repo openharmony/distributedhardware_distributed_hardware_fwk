@@ -61,7 +61,8 @@ public:
 
     void SendChannelEvent(const std::string &sessName, const AVTransEvent event);
 
-    int32_t OnSoftbusChannelOpened(std::string peerSessionName, int32_t sessionId, std::string peerDevId, int32_t result);
+    int32_t OnSoftbusChannelOpened(std::string peerSessionName, int32_t sessionId,
+        std::string peerDevId, int32_t result);
     void OnSoftbusChannelClosed(int32_t sessionId, ShutdownReason reason);
     void OnSoftbusBytesReceived(int32_t sessionId, const void *data, uint32_t dataLen);
     void OnSoftbusTimeSyncResult(const TimeSyncResultInfo *info, int32_t result);
@@ -78,6 +79,7 @@ private:
     std::string GetOwnerFromSessName(const std::string &sessName);
     std::string TransName2PkgName(const std::string &ownerName);
     std::string UsePeerSessionNameFindSessionName(const std::string peerSessionName);
+    void SendEventChannelOPened(const std::string& mySessName, const std::string &peerDevId);
 
 private:
     std::mutex timeSyncMtx_;

@@ -107,8 +107,6 @@ Status DsoftbusInputPlugin::Prepare()
         AVTRANS_LOGE("Create Session Server failed ret: %d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
-    
-
     if (!bufferPopTask_) {
         bufferPopTask_ = std::make_shared<Media::OSAL::Task>("videoBufferQueuePopThread");
         bufferPopTask_->RegisterHandler([this] { HandleData(); });
