@@ -26,8 +26,10 @@ AVReceiverEngineProvider::AVReceiverEngineProvider(const std::string &ownerName)
 {
     AVTRANS_LOGI("AVReceiverEngineProvider ctor.");
     sessionName_ = ownerName + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
-    SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName), sessionName_);
-    SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, AV_TRANS_SPECIAL_DEVICE_ID, this);
+    if (ownerName != OWNER_NAME_D_MIC && ownerName != OWNER_NAME_D_VIRMODEM_MIC) {
+        SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName), sessionName_);
+        SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, AV_TRANS_SPECIAL_DEVICE_ID, this);
+    }
 }
 
 AVReceiverEngineProvider::~AVReceiverEngineProvider()
