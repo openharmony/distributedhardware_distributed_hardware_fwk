@@ -79,14 +79,14 @@ ohos_shared_library("distributed_av_sender") {
 
   if (histreamer_compile_part) {
     external_deps = [
-      "histreamer:histreamer_codec_filters",
-      "histreamer:histreamer_ffmpeg_convert",
-      "histreamer:histreamer_plugin_base",
+      "media_foundation:histreamer_codec_filters",
+      "media_foundation:histreamer_ffmpeg_convert",
+      "media_foundation:histreamer_plugin_base",
     ]
   }
 
   if (histreamer_compile_part) {
-    external_deps += [ "histreamer:histreamer_base" ]
+    external_deps += [ "media_foundation:histreamer_base" ]
   }
 
   external_deps += [

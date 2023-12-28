@@ -52,9 +52,9 @@ ohos_unittest("DscreenOutputPluginTest") {
 
   if (histreamer_compile_part) {
     external_deps = [
-      "histreamer:histreamer_base",
-      "histreamer:histreamer_ffmpeg_convert",
-      "histreamer:histreamer_plugin_base",
+      "media_foundation:histreamer_base",
+      "media_foundation:histreamer_ffmpeg_convert",
+      "media_foundation:histreamer_plugin_base",
     ]
   }
 
