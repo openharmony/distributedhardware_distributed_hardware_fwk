@@ -48,7 +48,7 @@
         "kv_store",
         "resource_schedule_service",
         "graphic_2d",
-        "histreamer",
+        "media_foundation",
         "bounds_checking_function"
       ],
       "third_party": [
