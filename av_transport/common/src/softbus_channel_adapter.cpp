@@ -226,6 +226,7 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
             if ((it->first).find(sessName) != std::string::npos) {
                 sessionId = it->second;
                 devId2SessIdMap_.erase(it->first);
+                break;
             }
         }
     }
@@ -489,7 +490,7 @@ void SoftbusChannelAdapter::OnSoftbusChannelClosed(int32_t sessionId, ShutdownRe
         if (it->second == sessionId) {
             event.content = GetOwnerFromSessName(it->first);
             std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->first, event).detach();
-            devId2SessIdMap_.erase(it++);
+            it = devId2SessIdMap_.erase(it);
         } else {
             it++;
         }
