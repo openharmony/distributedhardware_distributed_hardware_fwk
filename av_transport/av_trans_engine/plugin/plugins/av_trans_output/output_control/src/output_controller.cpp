@@ -488,7 +488,7 @@ void OutputController::HandleSmoothTime(const std::shared_ptr<Plugin::Buffer>& d
     int64_t vTimeStamp = data->pts;
     int64_t vcts = (sleep_ > 0) ? (vTimeStamp - sleep_) : vTimeStamp;
     int64_t offset = vcts - timeStampBaseline_ - (GetClockTime() - clockBaseline_);
-    AVTRANS_LOGD("Smooth vTimeStamp: %lld, offset: %lld, waitClockThre: %lld, trackClockThre: %lld.",
+    AVTRANS_LOGD("Smooth vTimeStamp: %lld, offset: %lld, averTimeStampInterval:%lld, waitClockThre: %lld, trackClockThre: %lld.",
         vTimeStamp, offset, averTimeStampInterval, waitClockThre, trackClockThre);
     if (offset > waitClockThre || offset < -trackClockThre) {
         sleep_ += offset;
