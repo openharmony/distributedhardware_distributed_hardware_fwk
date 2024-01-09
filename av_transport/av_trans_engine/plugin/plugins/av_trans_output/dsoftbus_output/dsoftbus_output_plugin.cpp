@@ -309,7 +309,7 @@ void DsoftbusOutputPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffer)
     auto hisAMeta = std::make_shared<AVTransVideoBufferMeta>();
     hisAMeta->frameNum_ = Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER));
     hisAMeta->pts_ = buffer->pts;
-    AVTRANS_LOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", hisAMeta->pts_, buffer->GetMemory()->GetSize(),
+    AVTRANS_LOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %u", hisAMeta->pts_, buffer->GetMemory()->GetSize(),
         hisAMeta->frameNum_);
     if (bufferMeta->IsExist(Tag::MEDIA_START_TIME)) {
         hisAMeta->extPts_ = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::MEDIA_START_TIME));

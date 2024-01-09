@@ -227,7 +227,7 @@ int32_t DistributedHardwareFwkKit::RegisterCtlCenterCallback(int32_t engineId,
 
 int32_t DistributedHardwareFwkKit::PauseDistributedHardware(DHType dhType, const std::string &networkId)
 {
-    DHLOGI("Pause distributed hardware dhType %d, networkId %s", (uint32_t)dhType, networkId.c_str());
+    DHLOGI("Pause distributed hardware dhType %u, networkId %s", (uint32_t)dhType, networkId.c_str());
 
     if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
         DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
@@ -239,7 +239,7 @@ int32_t DistributedHardwareFwkKit::PauseDistributedHardware(DHType dhType, const
 
 int32_t DistributedHardwareFwkKit::ResumeDistributedHardware(DHType dhType, const std::string &networkId)
 {
-    DHLOGI("Resume distributed hardware dhType %d, networkId %s", (uint32_t)dhType, networkId.c_str());
+    DHLOGI("Resume distributed hardware dhType %u, networkId %s", (uint32_t)dhType, networkId.c_str());
 
     if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
         DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
@@ -251,7 +251,7 @@ int32_t DistributedHardwareFwkKit::ResumeDistributedHardware(DHType dhType, cons
 
 int32_t DistributedHardwareFwkKit::StopDistributedHardware(DHType dhType, const std::string &networkId)
 {
-    DHLOGI("Stop distributed hardware dhType %d, networkId %s", (uint32_t)dhType, networkId.c_str());
+    DHLOGI("Stop distributed hardware dhType %u, networkId %s", (uint32_t)dhType, networkId.c_str());
 
     if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
         DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");

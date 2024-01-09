@@ -246,12 +246,12 @@ int32_t DistributedHardwareService::PauseDistributedHardware(DHType dhType, cons
 {
     std::map<DHType, IDistributedHardwareSink*> sinkMap = ComponentManager::GetInstance().GetDHSinkInstance();
     if (sinkMap.find(dhType) == sinkMap.end()) {
-        DHLOGE("PauseDistributedHardware for DHType: %d not init sink handler", (uint32_t)dhType);
+        DHLOGE("PauseDistributedHardware for DHType: %u not init sink handler", (uint32_t)dhType);
         return ERR_DH_FWK_PARA_INVALID;
     }
     int32_t ret = sinkMap[dhType]->PauseDistributedHardware(networkId);
     if (ret != 0) {
-        DHLOGE("PauseDistributedHardware for DHType: %d failed, ret: %d", (uint32_t)dhType, ret);
+        DHLOGE("PauseDistributedHardware for DHType: %u failed, ret: %d", (uint32_t)dhType, ret);
         return ret;
     }
     return DH_FWK_SUCCESS;
@@ -261,12 +261,12 @@ int32_t DistributedHardwareService::ResumeDistributedHardware(DHType dhType, con
 {
     std::map<DHType, IDistributedHardwareSink*> sinkMap = ComponentManager::GetInstance().GetDHSinkInstance();
     if (sinkMap.find(dhType) == sinkMap.end()) {
-        DHLOGE("ResumeDistributedHardware for DHType: %d not init sink handler", (uint32_t)dhType);
+        DHLOGE("ResumeDistributedHardware for DHType: %u not init sink handler", (uint32_t)dhType);
         return ERR_DH_FWK_PARA_INVALID;
     }
     int32_t ret = sinkMap[dhType]->ResumeDistributedHardware(networkId);
     if (ret != 0) {
-        DHLOGE("ResumeDistributedHardware for DHType: %d failed, ret: %d", (uint32_t)dhType, ret);
+        DHLOGE("ResumeDistributedHardware for DHType: %u failed, ret: %d", (uint32_t)dhType, ret);
         return ret;
     }
     return DH_FWK_SUCCESS;
@@ -276,12 +276,12 @@ int32_t DistributedHardwareService::StopDistributedHardware(DHType dhType, const
 {
     std::map<DHType, IDistributedHardwareSink*> sinkMap = ComponentManager::GetInstance().GetDHSinkInstance();
     if (sinkMap.find(dhType) == sinkMap.end()) {
-        DHLOGE("StopDistributedHardware for DHType: %d not init sink handler", (uint32_t)dhType);
+        DHLOGE("StopDistributedHardware for DHType: %u not init sink handler", (uint32_t)dhType);
         return ERR_DH_FWK_PARA_INVALID;
     }
     int32_t ret = sinkMap[dhType]->StopDistributedHardware(networkId);
     if (ret != 0) {
-        DHLOGE("StopDistributedHardware for DHType: %d failed, ret: %d", (uint32_t)dhType, ret);
+        DHLOGE("StopDistributedHardware for DHType: %u failed, ret: %d", (uint32_t)dhType, ret);
         return ret;
     }
     return DH_FWK_SUCCESS;
