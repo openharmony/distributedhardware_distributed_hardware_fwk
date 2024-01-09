@@ -181,7 +181,7 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
         return ERR_DH_AVT_SESSION_ERROR;
     }
     QosTV qos[] = {
-        {.qos = QOS_TYPE_MIN_BW,        .value = 160 * 1024 * 1024},
+        {.qos = QOS_TYPE_MIN_BW,        .value = 40 * 1024 * 1024},
         {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
@@ -267,7 +267,7 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
     }
 
     QosTV qos[] = {
-        {.qos = QOS_TYPE_MIN_BW,        .value = 160 * 1024 * 1024},
+        {.qos = QOS_TYPE_MIN_BW,        .value = 40 * 1024 * 1024},
         {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
