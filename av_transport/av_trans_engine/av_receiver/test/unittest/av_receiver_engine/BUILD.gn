@@ -84,7 +84,7 @@ ohos_unittest("AvReceiverEngineTest") {
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "graphic_2d:libgraphic_utils",
-    "graphic_2d:surface",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",

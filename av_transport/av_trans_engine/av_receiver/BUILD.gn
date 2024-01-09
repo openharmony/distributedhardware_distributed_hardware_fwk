@@ -99,7 +99,7 @@ ohos_shared_library("distributed_av_receiver") {
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "graphic_2d:libgraphic_utils",
-    "graphic_2d:surface",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
