@@ -233,7 +233,7 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
 
     std::vector<CompConfig> vecJsnCfg =
         jsonCfg.at(COMPONENTSLOAD_DISTRIBUTED_COMPONENTS).get<std::vector<CompConfig>>();
-    DHLOGI("get distributed_components CompConfig size is %d", vecJsnCfg.size());
+    DHLOGI("get distributed_components CompConfig size is %zu", vecJsnCfg.size());
     if (vecJsnCfg.size() == 0 || vecJsnCfg.size() > MAX_COMP_SIZE) {
         DHLOGE("CompConfig size is invalid!");
         return ERR_DH_FWK_PARA_INVALID;

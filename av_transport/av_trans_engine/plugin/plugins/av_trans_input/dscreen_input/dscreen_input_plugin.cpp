@@ -129,7 +129,7 @@ Status DscreenInputPlugin::PushData(const std::string& inPort, std::shared_ptr<B
 
     ++frameNumber_;
     bufferMeta->SetMeta(Tag::USER_FRAME_NUMBER, frameNumber_.load());
-    AVTRANS_LOGI("Push video buffer pts: %ld, bufferLen: %d, frameNumber: %zu.",
+    AVTRANS_LOGI("Push video buffer pts: %ld, bufferLen: %d, frameNumber: %u.",
         buffer->pts, buffer->GetMemory()->GetSize(),
         Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER)));
 

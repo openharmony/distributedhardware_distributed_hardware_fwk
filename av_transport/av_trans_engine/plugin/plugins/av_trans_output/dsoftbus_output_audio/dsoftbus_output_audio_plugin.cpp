@@ -98,7 +98,7 @@ Status DsoftbusOutputAudioPlugin::Prepare()
     TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_SAMPLE_RATE, sampleRateValue) != Status::OK,
         Status::ERROR_UNKNOWN, "Not found AUDIO_SAMPLE_RATE");
     sampleRate_ = static_cast<uint32_t>(Plugin::AnyCast<int>(sampleRateValue));
-    AVTRANS_LOGI("channels_ = %d, sampleRate_ = %d.", channels_, sampleRate_);
+    AVTRANS_LOGI("channels_ = %u, sampleRate_ = %u.", channels_, sampleRate_);
 
     state_ = State::PREPARED;
     return Status::OK;
@@ -206,7 +206,7 @@ void DsoftbusOutputAudioPlugin::CloseSoftbusChannel()
 {
     int32_t ret = SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Close softbus channle failed ret: %s.", ret);
+        AVTRANS_LOGE("Close softbus channle failed ret: %d.", ret);
     }
 }
 
