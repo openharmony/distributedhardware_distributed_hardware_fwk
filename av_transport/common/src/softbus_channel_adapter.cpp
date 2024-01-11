@@ -15,6 +15,7 @@
 
 #include "softbus_channel_adapter.h"
 
+#include <algorithm>
 #include <securec.h>
 #include <thread>
 #include <unistd.h>
@@ -87,10 +88,10 @@ std::string SoftbusChannelAdapter::TransName2PkgName(const std::string &ownerNam
         {AV_SYNC_SENDER_CONTROL_SESSION_NAME, PKG_NAME_DH_FWK},
         {AV_SYNC_RECEIVER_CONTROL_SESSION_NAME, PKG_NAME_DH_FWK},
     };
-    for (const auto& item : mapArray) {
-        if (item.first == ownerName) {
-            return item.second;
-        }
+    auto foundItem = std::find_if(std::begin(mapArray), std::end(mapArray),
+        [&](const auto& item) { return item.first == ownerName; });
+    if (foundItem != std::end(mapArray)) {
+        return foundItem->second;
     }
     return EMPTY_STRING;
 }
@@ -143,10 +144,10 @@ std::string SoftbusChannelAdapter::UsePeerSessionNameFindSessionName(const std::
         {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
          OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
     };
-    for (const auto& item : mapArray) {
-        if (item.first == peerSessionName) {
-            return item.second;
-        }
+    auto foundItem = std::find_if(std::begin(mapArray), std::end(mapArray),
+        [&](const auto& item) { return item.first == peerSessionName; });
+    if (foundItem != std::end(mapArray)) {
+        return foundItem->second;
     }
     return EMPTY_STRING;
 }
