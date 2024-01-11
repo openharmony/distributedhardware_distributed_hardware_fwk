@@ -449,7 +449,7 @@ std::string SoftbusChannelAdapter::GetSessionNameById(int32_t sessionId)
 int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionName, int32_t sessionId,
     std::string peerDevId, int32_t result)
 {
-    AVTRANS_LOGI("On softbus channel opened, sessionId:%" PRId32", result:%" PRId32" peerSessionName: %s",
+    AVTRANS_LOGI("On softbus channel opened, sessionId: %" PRId32", result: %" PRId32" peerSessionName: %s",
         sessionId, result, peerSessionName.c_str());
     TRUE_RETURN_V_MSG_E(peerSessionName.empty(), ERR_DH_AVT_INVALID_PARAM, "peerSessionName is empty().");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "peerDevId is empty().");
@@ -593,7 +593,7 @@ std::string SoftbusChannelAdapter::GetOwnerFromSessName(const std::string &sessN
 
 void SoftbusChannelAdapter::SendChannelEvent(const std::string &sessName, const AVTransEvent event)
 {
-    AVTRANS_LOGI("SendChannelEvent  event.type_%" PRId32", sessName: %s", event.type, sessName.c_str());
+    AVTRANS_LOGI("SendChannelEvent event.type_%" PRId32", sessName: %s", event.type, sessName.c_str());
     pthread_setname_np(pthread_self(), SEND_CHANNEL_EVENT);
 
     ISoftbusChannelListener *listener = nullptr;
