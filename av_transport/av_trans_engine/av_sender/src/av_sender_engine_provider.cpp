@@ -39,7 +39,7 @@ AVSenderEngineProvider::~AVSenderEngineProvider()
     for (auto &sender : senderEngineList_) {
         sender->Release();
     }
-    if (ownerName == OWNER_NAME_D_MIC || ownerName == OWNER_NAME_D_VIRMODEM_MIC) {
+    if (ownerName_ == OWNER_NAME_D_MIC || ownerName_ == OWNER_NAME_D_VIRMODEM_MIC) {
         SoftbusChannelAdapter::GetInstance().RemoveChannelServer(TransName2PkgName(ownerName_), sessionName_);
         SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, AV_TRANS_SPECIAL_DEVICE_ID);
     }
