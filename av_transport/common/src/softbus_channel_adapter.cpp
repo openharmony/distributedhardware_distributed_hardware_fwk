@@ -593,7 +593,7 @@ std::string SoftbusChannelAdapter::GetOwnerFromSessName(const std::string &sessN
 
 void SoftbusChannelAdapter::SendChannelEvent(const std::string &sessName, const AVTransEvent event)
 {
-    AVTRANS_LOGI("SendChannelEvent  event.type_%" PRId32" sessName: %s", event.type, sessName.c_str());
+    AVTRANS_LOGI("SendChannelEvent  event.type_%" PRId32", sessName: %s", event.type, sessName.c_str());
     pthread_setname_np(pthread_self(), SEND_CHANNEL_EVENT);
 
     ISoftbusChannelListener *listener = nullptr;
