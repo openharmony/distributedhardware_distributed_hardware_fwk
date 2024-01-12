@@ -96,7 +96,7 @@ std::string SoftbusChannelAdapter::TransName2PkgName(const std::string &ownerNam
     return EMPTY_STRING;
 }
 
-std::string SoftbusChannelAdapter::UsePeerSessionNameFindSessionName(const std::string peerSessionName)
+std::string SoftbusChannelAdapter::FindSessionNameByPeerSessionName(const std::string peerSessionName)
 {
     auto foundItem = std::find_if(std::begin(mapArray), std::end(mapArray),
         [&](const auto& item) { return item.first == peerSessionName; });
@@ -410,7 +410,7 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionNam
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "peerDevId is empty().");
 
     std::lock_guard<std::mutex> lock(idMapMutex_);
-    std::string mySessionName = UsePeerSessionNameFindSessionName(peerSessionName);
+    std::string mySessionName = FindSessionNameByPeerSessionName(peerSessionName);
     TRUE_RETURN_V_MSG_E(mySessionName.empty(), ERR_DH_AVT_INVALID_PARAM, "mySessionName is empty().");
     EventType type = (result == 0) ? EventType::EVENT_CHANNEL_OPENED : EventType::EVENT_CHANNEL_OPEN_FAIL;
     AVTransEvent event = {type, mySessionName, peerDevId};
