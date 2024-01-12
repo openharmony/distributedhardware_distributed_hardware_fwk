@@ -79,6 +79,7 @@ private:
     std::string GetOwnerFromSessName(const std::string &sessName);
     std::string TransName2PkgName(const std::string &ownerName);
     std::string UsePeerSessionNameFindSessionName(const std::string peerSessionName);
+    std::string SplitPeerSessionNameFindSessionName(const std::string peerSessionName);
     void SendEventChannelOPened(const std::string &mySessName, const std::string &peerDevId);
 
 private:

@@ -122,7 +122,22 @@ std::string SoftbusChannelAdapter::UsePeerSessionNameFindSessionName(const std::
 
         {AV_SYNC_SENDER_CONTROL_SESSION_NAME, AV_SYNC_RECEIVER_CONTROL_SESSION_NAME},
         {AV_SYNC_RECEIVER_CONTROL_SESSION_NAME, AV_SYNC_SENDER_CONTROL_SESSION_NAME},
+    };
+    auto foundItem = std::find_if(std::begin(mapArray), std::end(mapArray),
+        [&](const auto& item) { return item.first == peerSessionName; });
+    if (foundItem != std::end(mapArray)) {
+        return foundItem->second;
+    }
+    std::string mySessionName = SplitPeerSessionNameFindSessionName(peerSessionName)
+    if (mySessionName != nullptr) {
+       return mySessionName;
+    }
+    return EMPTY_STRING;
+}
 
+std::string SoftbusChannelAdapter::SplitPeerSessionNameFindSessionName(const std::string peerSessionName)
+{
+    const static std::pair<std::string, std::string> mapArray[] = {
         {OWNER_NAME_D_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
          OWNER_NAME_D_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
         {OWNER_NAME_D_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
