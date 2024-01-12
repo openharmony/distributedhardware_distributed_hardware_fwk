@@ -129,7 +129,7 @@ std::string SoftbusChannelAdapter::UsePeerSessionNameFindSessionName(const std::
         return foundItem->second;
     }
     std::string mySessionName = SplitPeerSessionNameFindSessionName(peerSessionName);
-    if (mySessionName != nullptr) {
+    if (!mySessionName.empty()) {
        return mySessionName;
     }
     return EMPTY_STRING;
