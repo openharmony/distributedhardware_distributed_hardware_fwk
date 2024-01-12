@@ -98,67 +98,6 @@ std::string SoftbusChannelAdapter::TransName2PkgName(const std::string &ownerNam
 
 std::string SoftbusChannelAdapter::UsePeerSessionNameFindSessionName(const std::string peerSessionName)
 {
-    const static std::pair<std::string, std::string> mapArray[] = {
-        {OWNER_NAME_D_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SCREEN + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SCREEN + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SCREEN + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SCREEN + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
-
-        {AV_SYNC_SENDER_CONTROL_SESSION_NAME, AV_SYNC_RECEIVER_CONTROL_SESSION_NAME},
-        {AV_SYNC_RECEIVER_CONTROL_SESSION_NAME, AV_SYNC_SENDER_CONTROL_SESSION_NAME},
-    };
-    auto foundItem = std::find_if(std::begin(mapArray), std::end(mapArray),
-        [&](const auto& item) { return item.first == peerSessionName; });
-    if (foundItem != std::end(mapArray)) {
-        return foundItem->second;
-    }
-    std::string mySessionName = SplitPeerSessionNameFindSessionName(peerSessionName);
-    if (!mySessionName.empty()) {
-       return mySessionName;
-    }
-    return EMPTY_STRING;
-}
-
-std::string SoftbusChannelAdapter::SplitPeerSessionNameFindSessionName(const std::string peerSessionName)
-{
-    const static std::pair<std::string, std::string> mapArray[] = {
-        {OWNER_NAME_D_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SCREEN + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SCREEN + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SCREEN + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SCREEN + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
-    };
     auto foundItem = std::find_if(std::begin(mapArray), std::end(mapArray),
         [&](const auto& item) { return item.first == peerSessionName; });
     if (foundItem != std::end(mapArray)) {
