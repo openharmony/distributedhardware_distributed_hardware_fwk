@@ -76,6 +76,7 @@ const static std::pair<std::string, std::string> mapArray[] = {
         {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
          OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
     };
+
 public:
     virtual ~ISoftbusChannelListener() = default;
     virtual void OnChannelEvent(const AVTransEvent &event) = 0;
