@@ -26,10 +26,10 @@
 #include "single_instance.h"
 #include "softbus_bus_center.h"
 #include "softbus_common.h"
+#include "av_trans_constants.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class ISoftbusChannelListener {
 const static std::pair<std::string, std::string> mapArray[] = {
         {OWNER_NAME_D_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
          OWNER_NAME_D_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
@@ -76,6 +76,7 @@ const static std::pair<std::string, std::string> mapArray[] = {
         {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
          OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
     };
+class ISoftbusChannelListener {
 
 public:
     virtual ~ISoftbusChannelListener() = default;
