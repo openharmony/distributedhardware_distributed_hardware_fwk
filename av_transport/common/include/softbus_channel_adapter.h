@@ -126,7 +126,7 @@ private:
     std::string GetPeerDevIdBySessId(int32_t sessionId);
     std::string GetOwnerFromSessName(const std::string &sessName);
     std::string TransName2PkgName(const std::string &ownerName);
-    std::string FindSessionNameByPeerSessionName(const std::string peerSessionName);
+    std::string FindSessNameByPeerSessName(const std::string peerSessionName);
     void SendEventChannelOPened(const std::string &mySessName, const std::string &peerDevId);
 
 private:
