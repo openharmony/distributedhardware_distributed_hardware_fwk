@@ -181,7 +181,7 @@ void DscreenOutputPlugin::OnOutput(const std::shared_ptr<Plugin::Buffer>& data)
     if (bufferMeta->IsExist(Tag::USER_FRAME_NUMBER)) {
         vFrameNumber = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER));
     }
-    AVTRANS_LOGD("OnOutput vFrameNumber: %zu.", vFrameNumber);
+    AVTRANS_LOGD("OnOutput vFrameNumber: %u.", vFrameNumber);
     dataCb_(data);
 }
 

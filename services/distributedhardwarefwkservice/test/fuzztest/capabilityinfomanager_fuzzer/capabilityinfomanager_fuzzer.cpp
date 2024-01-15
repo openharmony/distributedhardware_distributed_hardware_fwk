@@ -27,14 +27,18 @@ void CapabilityInfoManagerFuzzTest(const uint8_t* data, size_t size)
         return;
     }
 
-    DistributedKv::Entry insert, update, del;
+    DistributedKv::Entry insert;
+    DistributedKv::Entry update;
+    DistributedKv::Entry del;
     insert.key = std::string(reinterpret_cast<const char*>(data), size);
     update.key = std::string(reinterpret_cast<const char*>(data), size);
     del.key = std::string(reinterpret_cast<const char*>(data), size);
     insert.value = std::string(reinterpret_cast<const char*>(data), size);
     update.value = std::string(reinterpret_cast<const char*>(data), size);
     del.value = std::string(reinterpret_cast<const char*>(data), size);
-    std::vector<DistributedKv::Entry> inserts, updates, deleteds;
+    std::vector<DistributedKv::Entry> inserts;
+    std::vector<DistributedKv::Entry> updates;
+    std::vector<DistributedKv::Entry> deleteds;
     inserts.push_back(insert);
     updates.push_back(update);
     deleteds.push_back(del);

@@ -237,7 +237,7 @@ Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<P
     if (bufferMeta->IsExist(Tag::USER_FRAME_NUMBER) && bufferMeta->IsExist(Tag::USER_FRAME_PTS)) {
         int64_t pts = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::USER_FRAME_PTS));
         uint32_t frameNum = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER));
-        AVTRANS_LOGI("Push audio buffer, bufferLen: %zu, frameNum: %d, pts: %ld", buffer->GetMemory()->GetSize(),
+        AVTRANS_LOGI("Push audio buffer, bufferLen: %zu, frameNum: %u, pts: %ld", buffer->GetMemory()->GetSize(),
             frameNum, pts);
     } else {
         AVTRANS_LOGI("Push audio buffer, bufferLen: %zu, not contains metadata.", buffer->GetMemory()->GetSize());

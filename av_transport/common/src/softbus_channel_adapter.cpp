@@ -15,6 +15,7 @@
 
 #include "softbus_channel_adapter.h"
 
+#include <algorithm>
 #include <securec.h>
 #include <thread>
 #include <unistd.h>
@@ -87,66 +88,20 @@ std::string SoftbusChannelAdapter::TransName2PkgName(const std::string &ownerNam
         {AV_SYNC_SENDER_CONTROL_SESSION_NAME, PKG_NAME_DH_FWK},
         {AV_SYNC_RECEIVER_CONTROL_SESSION_NAME, PKG_NAME_DH_FWK},
     };
-    for (const auto& item : mapArray) {
-        if (item.first == ownerName) {
-            return item.second;
-        }
+    auto foundItem = std::find_if(std::begin(mapArray), std::end(mapArray),
+        [&](const auto& item) { return item.first == ownerName; });
+    if (foundItem != std::end(mapArray)) {
+        return foundItem->second;
     }
     return EMPTY_STRING;
 }
 
-std::string SoftbusChannelAdapter::UsePeerSessionNameFindSessionName(const std::string peerSessionName)
+std::string SoftbusChannelAdapter::FindSessNameByPeerSessName(const std::string peerSessionName)
 {
-    const static std::pair<std::string, std::string> mapArray[] = {
-        {OWNER_NAME_D_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SCREEN + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SCREEN + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SCREEN + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SCREEN + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX},
-
-        {AV_SYNC_SENDER_CONTROL_SESSION_NAME, AV_SYNC_RECEIVER_CONTROL_SESSION_NAME},
-        {AV_SYNC_RECEIVER_CONTROL_SESSION_NAME, AV_SYNC_SENDER_CONTROL_SESSION_NAME},
-
-        {OWNER_NAME_D_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SCREEN + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SCREEN + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_SCREEN + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_SCREEN + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_MIC + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_MIC + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX},
-        {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
-         OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
-    };
-    for (const auto& item : mapArray) {
-        if (item.first == peerSessionName) {
-            return item.second;
-        }
+    auto foundItem = std::find_if(std::begin(mapArray), std::end(mapArray),
+        [&](const auto& item) { return item.first == peerSessionName; });
+    if (foundItem != std::end(mapArray)) {
+        return foundItem->second;
     }
     return EMPTY_STRING;
 }
@@ -181,7 +136,7 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
         return ERR_DH_AVT_SESSION_ERROR;
     }
     QosTV qos[] = {
-        {.qos = QOS_TYPE_MIN_BW,        .value = 160 * 1024 * 1024},
+        {.qos = QOS_TYPE_MIN_BW,        .value = 40 * 1024 * 1024},
         {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
@@ -267,7 +222,7 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
     }
 
     QosTV qos[] = {
-        {.qos = QOS_TYPE_MIN_BW,        .value = 160 * 1024 * 1024},
+        {.qos = QOS_TYPE_MIN_BW,        .value = 40 * 1024 * 1024},
         {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
@@ -449,12 +404,13 @@ std::string SoftbusChannelAdapter::GetSessionNameById(int32_t sessionId)
 int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionName, int32_t sessionId,
     std::string peerDevId, int32_t result)
 {
-    AVTRANS_LOGI("On softbus channel opened, sessionId:%" PRId32", result:%" PRId32, sessionId, result);
+    AVTRANS_LOGI("On softbus channel opened, sessionId: %" PRId32", result: %" PRId32" peerSessionName: %s",
+        sessionId, result, peerSessionName.c_str());
     TRUE_RETURN_V_MSG_E(peerSessionName.empty(), ERR_DH_AVT_INVALID_PARAM, "peerSessionName is empty().");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "peerDevId is empty().");
 
     std::lock_guard<std::mutex> lock(idMapMutex_);
-    std::string mySessionName = UsePeerSessionNameFindSessionName(peerSessionName);
+    std::string mySessionName = FindSessNameByPeerSessName(peerSessionName);
     TRUE_RETURN_V_MSG_E(mySessionName.empty(), ERR_DH_AVT_INVALID_PARAM, "mySessionName is empty().");
     EventType type = (result == 0) ? EventType::EVENT_CHANNEL_OPENED : EventType::EVENT_CHANNEL_OPEN_FAIL;
     AVTransEvent event = {type, mySessionName, peerDevId};
@@ -470,7 +426,7 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionNam
     }
     std::string idMapKey = mySessionName + "_" + peerDevId;
     if (devId2SessIdMap_.find(idMapKey) == devId2SessIdMap_.end()) {
-        AVTRANS_LOGI("Can not find sessionId for mySessionName:%s, peerDevId:%s.",
+        AVTRANS_LOGI("Can not find sessionId for mySessionName:%s, peerDevId:%s. try to insert it.",
             mySessionName.c_str(), GetAnonyString(peerDevId).c_str());
             devId2SessIdMap_.insert(std::make_pair(idMapKey, sessionId));
     }
@@ -489,6 +445,7 @@ void SoftbusChannelAdapter::OnSoftbusChannelClosed(int32_t sessionId, ShutdownRe
     for (auto it = devId2SessIdMap_.begin(); it != devId2SessIdMap_.end();) {
         if (it->second == sessionId) {
             event.content = GetOwnerFromSessName(it->first);
+            AVTRANS_LOGI("find sessName is: %s", it->first.c_str());
             std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->first, event).detach();
             it = devId2SessIdMap_.erase(it);
         } else {
@@ -591,7 +548,7 @@ std::string SoftbusChannelAdapter::GetOwnerFromSessName(const std::string &sessN
 
 void SoftbusChannelAdapter::SendChannelEvent(const std::string &sessName, const AVTransEvent event)
 {
-    AVTRANS_LOGI("SendChannelEvent  event.type_" PRId32, event.type);
+    AVTRANS_LOGI("SendChannelEvent event.type_%" PRId32", sessName: %s", event.type, sessName.c_str());
     pthread_setname_np(pthread_self(), SEND_CHANNEL_EVENT);
 
     ISoftbusChannelListener *listener = nullptr;

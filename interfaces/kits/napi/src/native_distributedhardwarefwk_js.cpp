@@ -156,7 +156,7 @@ napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, na
         napi_create_promise(env, &deferred, &promise);
         int32_t ret = dhFwkKit->PauseDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("PauseDistributedHardware for DHType: %d filed", (uint32_t)dhType);
+            DHLOGE("PauseDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
         return promise;
     } else if (argc == DH_NAPI_ARGS_TWO) {    // callback
@@ -165,7 +165,7 @@ napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, na
         }
         int32_t ret = dhFwkKit->PauseDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("PauseDistributedHardware for DHType: %d filed", (uint32_t)dhType);
+            DHLOGE("PauseDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
     }
     napi_get_undefined(env, &result);
@@ -208,7 +208,7 @@ napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, n
         napi_create_promise(env, &deferred, &promise);
         int32_t ret = dhFwkKit->ResumeDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("ResumeDistributedHardware for DHType: %d filed", (uint32_t)dhType);
+            DHLOGE("ResumeDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
         return promise;
     } else if (argc == DH_NAPI_ARGS_TWO) {    // callback
@@ -217,7 +217,7 @@ napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, n
         }
         int32_t ret = dhFwkKit->ResumeDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("ResumeDistributedHardware for DHType: %d filed", (uint32_t)dhType);
+            DHLOGE("ResumeDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
     }
     napi_get_undefined(env, &result);
@@ -260,7 +260,7 @@ napi_value DistributedHardwareManager::StopDistributedHardware(napi_env env, nap
         napi_create_promise(env, &deferred, &promise);
         int32_t ret = dhFwkKit->StopDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("StopDistributedHardware for DHType: %d filed", (uint32_t)dhType);
+            DHLOGE("StopDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
         return promise;
     } else if (argc == DH_NAPI_ARGS_TWO) {    // callback
@@ -269,7 +269,7 @@ napi_value DistributedHardwareManager::StopDistributedHardware(napi_env env, nap
         }
         int32_t ret = dhFwkKit->StopDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("StopDistributedHardware for DHType: %d filed", (uint32_t)dhType);
+            DHLOGE("StopDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
     }
     napi_get_undefined(env, &result);

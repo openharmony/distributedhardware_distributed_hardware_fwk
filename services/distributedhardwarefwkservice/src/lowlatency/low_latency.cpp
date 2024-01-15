@@ -53,7 +53,7 @@ void LowLatency::EnableLowLatency(DHType dhType)
         return;
     }
     std::lock_guard<std::mutex> lock(lowLatencyMutex_);
-    DHLOGI("lowLatencySwitchSet size: %d", lowLatencySwitchSet_.size());
+    DHLOGI("lowLatencySwitchSet size: %zu", lowLatencySwitchSet_.size());
     if (lowLatencySwitchSet_.empty() && lowLatencyTimer_ != nullptr) {
         DHLOGD("Open LowLatency dhType: %#X", dhType);
         lowLatencyTimer_->StartTimer();

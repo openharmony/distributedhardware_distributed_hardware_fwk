@@ -61,7 +61,7 @@ void TaskBoard::AddTask(std::shared_ptr<Task> task)
     std::lock_guard<std::mutex> lock(tasksMtx_);
     DHLOGI("Add task, id: %s", task->GetId().c_str());
     if (this->tasks_.find(task->GetId()) != this->tasks_.end()) {
-        DHLOGE("Task id duplicate, id: %d", task->GetId().c_str());
+        DHLOGE("Task id duplicate, id: %s", task->GetId().c_str());
         return;
     }
     this->tasks_.emplace(task->GetId(), task);
