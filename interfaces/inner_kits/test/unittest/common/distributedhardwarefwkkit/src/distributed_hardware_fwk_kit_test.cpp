@@ -235,5 +235,96 @@ HWTEST_F(DistributedHardwareFwkKitTest, UnregisterPublisherListener_002, testing
     int32_t ret = dhfwkPtr_->UnregisterPublisherListener(topic, listener);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
+
+/**
+ * @tc.name: QueryLocalSysSpec_001
+ * @tc.desc: Verify the QueryLocalSysSpec function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, QueryLocalSysSpec_001, testing::ext::TestSize.Level0)
+{
+    std::string ret = dhfwkPtr_->QueryLocalSysSpec(QueryLocalSysSpecType::MIN);
+    EXPECT_EQ("", ret);
+}
+
+/**
+ * @tc.name: QueryLocalSysSpec_002
+ * @tc.desc: Verify the QueryLocalSysSpec function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, QueryLocalSysSpec_002, testing::ext::TestSize.Level0)
+{
+    std::string ret = dhfwkPtr_->QueryLocalSysSpec(QueryLocalSysSpecType::HISTREAMER_AUDIO_ENCODER);
+    EXPECT_EQ("", ret);
+}
+
+/**
+ * @tc.name: NotifyAVCenter_001
+ * @tc.desc: Verify the NotifyAVCenter function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, NotifyAVCenter_001, testing::ext::TestSize.Level0)
+{
+    int32_t engineId = 0;
+    AVTransEvent event;
+    int32_t ret = dhfwkPtr_->NotifyAVCenter(engineId, event);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: RegisterCtlCenterCallback_001
+ * @tc.desc: Verify the RegisterCtlCenterCallback function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, RegisterCtlCenterCallback_001, testing::ext::TestSize.Level0)
+{
+    int32_t engineId = 0;
+    sptr<IAVTransControlCenterCallback> callback;
+    int32_t ret = dhfwkPtr_->RegisterCtlCenterCallback(engineId, callback);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: PauseDistributedHardware_001
+ * @tc.desc: Verify the PauseDistributedHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, PauseDistributedHardware_001, testing::ext::TestSize.Level0)
+{
+    std::string networkId = "networkId";
+    int32_t ret = dhfwkPtr_->PauseDistributedHardware(DHType::CAMERA, networkId);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: ResumeDistributedHardware_001
+ * @tc.desc: Verify the ResumeDistributedHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, ResumeDistributedHardware_001, testing::ext::TestSize.Level0)
+{
+    std::string networkId = "networkId";
+    int32_t ret = dhfwkPtr_->ResumeDistributedHardware(DHType::CAMERA, networkId);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: StopDistributedHardware_001
+ * @tc.desc: Verify the StopDistributedHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, StopDistributedHardware_001, testing::ext::TestSize.Level0)
+{
+    std::string networkId = "networkId";
+    int32_t ret = dhfwkPtr_->StopDistributedHardware(DHType::CAMERA, networkId);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

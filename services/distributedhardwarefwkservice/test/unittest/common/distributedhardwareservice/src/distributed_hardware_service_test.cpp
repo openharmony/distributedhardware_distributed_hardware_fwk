@@ -181,5 +181,70 @@ HWTEST_F(DistributedHardwareServiceTest, OnStart_001, TestSize.Level0)
     service.OnStop();
     EXPECT_EQ(ServiceRunningState::STATE_NOT_START, service.state_);
 }
+
+/**
+ * @tc.name: QueryLocalSysSpec_001
+ * @tc.desc: Verify the QueryLocalSysSpec function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, QueryLocalSysSpec_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string ret = service.QueryLocalSysSpec(QueryLocalSysSpecType::HISTREAMER_AUDIO_ENCODER);
+    ret = service.QueryLocalSysSpec(QueryLocalSysSpecType::HISTREAMER_AUDIO_DECODER);
+    ret = service.QueryLocalSysSpec(QueryLocalSysSpecType::HISTREAMER_VIDEO_ENCODER);
+    ret = service.QueryLocalSysSpec(QueryLocalSysSpecType::HISTREAMER_VIDEO_DECODER);
+    ret = service.QueryLocalSysSpec(QueryLocalSysSpecType::MAX);
+    EXPECT_EQ(ret.empty(), true);
+}
+
+/**
+ * @tc.name: PauseDistributedHardware_001
+ * @tc.desc: Verify the PauseDistributedHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, PauseDistributedHardware_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    auto ret = service.PauseDistributedHardware(DHType::UNKNOWN, networkId);
+    ret = service.PauseDistributedHardware(DHType::CAMERA, networkId);
+    ret = service.PauseDistributedHardware(DHType::MAX_DH, networkId);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+}
+
+/**
+ * @tc.name: ResumeDistributedHardware_001
+ * @tc.desc: Verify the ResumeDistributedHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    auto ret = service.PauseDistributedHardware(DHType::UNKNOWN, networkId);
+    ret = service.PauseDistributedHardware(DHType::AUDIO, networkId);
+    ret = service.PauseDistributedHardware(DHType::MAX_DH, networkId);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+}
+
+/**
+ * @tc.name: StopDistributedHardware_001
+ * @tc.desc: Verify the StopDistributedHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    auto ret = service.PauseDistributedHardware(DHType::UNKNOWN, networkId);
+    ret = service.PauseDistributedHardware(DHType::INPUT, networkId);
+    ret = service.PauseDistributedHardware(DHType::MAX_DH, networkId);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
