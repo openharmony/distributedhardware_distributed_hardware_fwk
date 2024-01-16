@@ -28,9 +28,9 @@ ohos_unittest("OutputControllerTest") {
   ]
 
   sources = [
+    "${common_path}/src/av_sync_utils.cpp",
     "${common_path}/src/av_trans_log.cpp",
     "${common_path}/src/av_trans_utils.cpp",
-    "${common_path}/src/av_sync_utils.cpp",
     "${common_path}/src/softbus_channel_adapter.cpp",
     "output_controller_test.cpp",
   ]
