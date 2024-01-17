@@ -26,6 +26,7 @@
 #include "dh_utils_hitrace.h"
 #include "distributed_hardware_errno.h"
 #include "plugin_listener_impl.h"
+#include "dh_utils_tool.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -45,7 +46,10 @@ void LocalHardwareManager::Init()
 {
     DHLOGI("start");
     std::vector<DHType> allCompTypes = ComponentLoader::GetInstance().GetAllCompTypes();
+    localDHItemsMap_.clear();
+    int64_t allQueryStartTime = GetCurrentTime();
     for (auto dhType : allCompTypes) {
+        int64_t singleQueryStartTime = GetCurrentTime();
         IHardwareHandler *hardwareHandler = nullptr;
         int32_t status = ComponentLoader::GetInstance().GetHardwareHandler(dhType, hardwareHandler);
         if (status != DH_FWK_SUCCESS || hardwareHandler == nullptr) {
@@ -70,7 +74,16 @@ void LocalHardwareManager::Init()
             pluginListenerMap_[dhType] = listener;
             hardwareHandler->RegisterPluginListener(listener);
         }
+        int64_t singleQueryEndTime = GetCurrentTime();
+        DHLOGI("query %#X hardware cost time: %ld ms", dhType, singleQueryEndTime - singleQueryStartTime);
     }
+    int64_t allQueryEndTime = GetCurrentTime();
+    DHLOGI("query all local hardware cost time: %ld ms", allQueryEndTime - allQueryStartTime);
+    std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
+    for (const auto &localDHItems : localDHItemsMap_) {
+        AddLocalCapabilityInfo(localDHItems.second, localDHItems.first, capabilityInfos);
+    }
+    CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);
 }
 
 void LocalHardwareManager::UnInit()
@@ -98,17 +111,17 @@ void LocalHardwareManager::QueryLocalHardware(const DHType dhType, IHardwareHand
              * So check and remove the non-exist local capabilityInfo.
              */
             CheckNonExistCapabilityInfo(dhItems, dhType);
-            AddLocalCapabilityInfo(dhItems, dhType);
+            localDHItemsMap_[dhType] = dhItems;
             break;
         }
         retryTimes--;
     }
 }
 
-void LocalHardwareManager::AddLocalCapabilityInfo(const std::vector<DHItem> &dhItems, const DHType dhType)
+void LocalHardwareManager::AddLocalCapabilityInfo(const std::vector<DHItem> &dhItems, const DHType dhType,
+                                                  std::vector<std::shared_ptr<CapabilityInfo>> &capabilityInfos)
 {
     DHLOGI("start!");
-    std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
     std::string devName = DHContext::GetInstance().GetDeviceInfo().deviceName;
     uint16_t devType = DHContext::GetInstance().GetDeviceInfo().deviceType;
@@ -117,7 +130,6 @@ void LocalHardwareManager::AddLocalCapabilityInfo(const std::vector<DHItem> &dhI
             dhItem.dhId, deviceId, devName, devType, dhType, dhItem.attrs, dhItem.subtype);
         capabilityInfos.push_back(dhCapabilityInfo);
     }
-    CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);
 }
 
 void LocalHardwareManager::CheckNonExistCapabilityInfo(const std::vector<DHItem> &dhItems, const DHType dhType)

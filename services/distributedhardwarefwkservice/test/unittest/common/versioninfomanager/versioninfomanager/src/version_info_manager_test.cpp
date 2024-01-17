@@ -319,65 +319,6 @@ HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_002, TestSize.Level0)
 }
 
 /**
- * @tc.name: CreateManualSyncCount_001
- * @tc.desc: Verify the CreateManualSyncCount function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(VersionInfoManagerTest, CreateManualSyncCount_001, TestSize.Level0)
-{
-    std::string deviceId;
-    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
-    VersionInfoManager::GetInstance()->CreateManualSyncCount(deviceId);
-    EXPECT_EQ(nullptr, VersionInfoManager::GetInstance()->dbAdapterPtr_);
-}
-
-/**
- * @tc.name: RemoveManualSyncCount_001
- * @tc.desc: Verify the RemoveManualSyncCount function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(VersionInfoManagerTest, RemoveManualSyncCount_001, TestSize.Level0)
-{
-    std::string deviceId;
-    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
-    VersionInfoManager::GetInstance()->RemoveManualSyncCount(deviceId);
-    EXPECT_EQ(nullptr, VersionInfoManager::GetInstance()->dbAdapterPtr_);
-}
-
-/**
- * @tc.name: ManualSync_001
- * @tc.desc: Verify the ManualSync function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(VersionInfoManagerTest, ManualSync_001, TestSize.Level0)
-{
-    std::string deviceId;
-    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
-    int32_t ret = VersionInfoManager::GetInstance()->ManualSync(deviceId);
-    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
-}
-
-/**
- * @tc.name: ManualSync_002
- * @tc.desc: Verify the ManualSync function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(VersionInfoManagerTest, ManualSync_002, TestSize.Level0)
-{
-    std::string appId;
-    std::string storeId;
-    std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = nullptr;
-    VersionInfoManager::GetInstance()->dbAdapterPtr_ = std::make_shared<MockDBAdapter>(appId, storeId, changeListener);
-    std::string deviceId;
-    int32_t ret = VersionInfoManager::GetInstance()->ManualSync(deviceId);
-    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
-}
-
-/**
  * @tc.name: OnChange_001
  * @tc.desc: Verify the OnChange function
  * @tc.type: FUNC

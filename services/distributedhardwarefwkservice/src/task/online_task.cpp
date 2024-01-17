@@ -69,18 +69,7 @@ void OnLineTask::DoTask()
 
 void OnLineTask::DoSyncInfo()
 {
-    DHLOGI("start sync resource when device online, uuid = %s", GetAnonyString(GetUUID()).c_str());
-    auto ret = CapabilityInfoManager::GetInstance()->ManualSync(GetNetworkId());
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGW("ManualSync failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
-    }
-
-    ret = VersionInfoManager::GetInstance()->ManualSync(GetNetworkId());
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGW("ManualSync version failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
-    }
-
-    ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(GetDeviceIdByUUID(GetUUID()));
+    auto ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(GetDeviceIdByUUID(GetUUID()));
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("SyncDeviceInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }

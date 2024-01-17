@@ -100,7 +100,6 @@ void DbAdapterTest::SetUpTestCase(void)
     if (ret != 0) {
         DHLOGE("mkdir failed, path: %s, errno : %d", DATABASE_DIR.c_str(), errno);
     }
-
     std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = std::make_shared<MockDBChangeListener>();
     g_dbAdapterPtr = std::make_shared<DBAdapter>(APP_ID, GLOBAL_CAPABILITY_ID, changeListener);
     if (g_dbAdapterPtr != nullptr) {
@@ -128,7 +127,6 @@ void DbAdapterTest::SetUp()
 
 void DbAdapterTest::TearDown()
 {
-    g_dbAdapterPtr->manualSyncCountMap_.clear();
 }
 
 /**
@@ -290,19 +288,6 @@ HWTEST_F(DbAdapterTest, db_adapter_test_010, TestSize.Level0)
 }
 
 /**
- * @tc.name: db_adapter_test_011
- * @tc.desc: Verify the ManualSync function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSCV
- */
-HWTEST_F(DbAdapterTest, db_adapter_test_011, TestSize.Level0)
-{
-    std::string networkId = DEV_NETWORK_ID_1;
-    g_dbAdapterPtr->kvStoragePtr_ = nullptr;
-    EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL, g_dbAdapterPtr->ManualSync(DEV_NETWORK_ID_1));
-}
-
-/**
  * @tc.name: db_adapter_test_012
  * @tc.desc: Verify the UnRegisterChangeListener function.
  * @tc.type: FUNC
@@ -354,208 +339,6 @@ HWTEST_F(DbAdapterTest, db_adapter_test_015, TestSize.Level0)
 }
 
 /**
- * @tc.name: SyncCompleted_001
- * @tc.desc: Verify the SyncCompleted function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, SyncCompleted_001, TestSize.Level0)
-{
-    std::map<std::string, DistributedKv::Status> results;
-    g_dbAdapterPtr->SyncCompleted(results);
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: SyncCompleted_002
- * @tc.desc: Verify the SyncCompleted function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, SyncCompleted_002, TestSize.Level0)
-{
-    std::map<std::string, DistributedKv::Status> results;
-    uint32_t MAX_DB_RECORD_SIZE = 10002;
-    for (uint32_t i = 0; i < MAX_DB_RECORD_SIZE; ++i) {
-        results.insert(std::pair<std::string, DistributedKv::Status>(to_string(i), DistributedKv::Status::SUCCESS));
-    }
-    g_dbAdapterPtr->SyncCompleted(results);
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: SyncCompleted_003
- * @tc.desc: Verify the SyncCompleted function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, SyncCompleted_003, TestSize.Level0)
-{
-    std::map<std::string, DistributedKv::Status> results;
-    uint32_t MAX_DB_RECORD_SIZE = 500;
-    for (uint32_t i = 0; i < MAX_DB_RECORD_SIZE; ++i) {
-        results.insert(std::pair<std::string, DistributedKv::Status>(to_string(i), DistributedKv::Status::SUCCESS));
-    }
-    g_dbAdapterPtr->SyncCompleted(results);
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: CreateManualSyncCount_001
- * @tc.desc: Verify the CreateManualSyncCount function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, CreateManualSyncCount_001, TestSize.Level0)
-{
-    std::string deviceId = "deviceId";
-    g_dbAdapterPtr->CreateManualSyncCount(deviceId);
-    EXPECT_EQ(false, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: RemoveManualSyncCount_001
- * @tc.desc: Verify the RemoveManualSyncCount function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, RemoveManualSyncCount_001, TestSize.Level0)
-{
-    std::string deviceId = "deviceId";
-    g_dbAdapterPtr->manualSyncCountMap_.insert(std::make_pair(deviceId, 1));
-    g_dbAdapterPtr->RemoveManualSyncCount(deviceId);
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: SyncDBForRecover_001
- * @tc.desc: Verify the SyncDBForRecover function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, SyncDBForRecover_001, TestSize.Level0)
-{
-    CapabilityInfoManager::GetInstance()->Init();
-    g_dbAdapterPtr->storeId_.storeId = GLOBAL_CAPABILITY_ID;
-    g_dbAdapterPtr->SyncDBForRecover();
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-    CapabilityInfoManager::GetInstance()->UnInit();
-}
-
-/**
- * @tc.name: SyncDBForRecover_002
- * @tc.desc: Verify the SyncDBForRecover function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, SyncDBForRecover_002, TestSize.Level0)
-{
-    VersionInfoManager::GetInstance()->Init();
-    g_dbAdapterPtr->storeId_.storeId = GLOBAL_VERSION_ID;
-    g_dbAdapterPtr->SyncDBForRecover();
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-    VersionInfoManager::GetInstance()->UnInit();
-}
-
-/**
- * @tc.name: RegisterKvStoreDeathListener_001
- * @tc.desc: Verify the RegisterKvStoreDeathListener function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, RegisterKvStoreDeathListener_001, TestSize.Level0)
-{
-    g_dbAdapterPtr->RegisterKvStoreDeathListener();
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: UnRegisterKvStoreDeathListener_001
- * @tc.desc: Verify the UnRegisterKvStoreDeathListener function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, UnRegisterKvStoreDeathListener_001, TestSize.Level0)
-{
-    g_dbAdapterPtr->UnRegisterKvStoreDeathListener();
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: RegisterManualSyncListener_001
- * @tc.desc: Verify the RegisterManualSyncListener function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, RegisterManualSyncListener_001, TestSize.Level0)
-{
-    g_dbAdapterPtr->kvStoragePtr_ = nullptr;
-    g_dbAdapterPtr->UnRegisterKvStoreDeathListener();
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: RegisterManualSyncListener_002
- * @tc.desc: Verify the RegisterManualSyncListener function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, RegisterManualSyncListener_002, TestSize.Level0)
-{
-    g_dbAdapterPtr->UnRegisterKvStoreDeathListener();
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: UnRegisterManualSyncListener_001
- * @tc.desc: Verify the UnRegisterManualSyncListener function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, UnRegisterManualSyncListener_001, TestSize.Level0)
-{
-    g_dbAdapterPtr->kvStoragePtr_ = nullptr;
-    g_dbAdapterPtr->UnRegisterManualSyncListener();
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: UnRegisterManualSyncListener_002
- * @tc.desc: Verify the UnRegisterManualSyncListener function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, UnRegisterManualSyncListener_002, TestSize.Level0)
-{
-    g_dbAdapterPtr->UnRegisterManualSyncListener();
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: OnRemoteDied_001
- * @tc.desc: Verify the OnRemoteDied function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, OnRemoteDied_001, TestSize.Level0)
-{
-    g_dbAdapterPtr->OnRemoteDied();
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
- * @tc.name: DeleteKvStore_001
- * @tc.desc: Verify the DeleteKvStore function
- * @tc.type: FUNC
- * @tc.require: AR000GHSCV
- */
-HWTEST_F(DbAdapterTest, DeleteKvStore_001, TestSize.Level0)
-{
-    g_dbAdapterPtr->DeleteKvStore();
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
-}
-
-/**
  * @tc.name: ReInit_001
  * @tc.desc: Verify the ReInit_001 function.
  * @tc.type: FUNC
@@ -577,19 +360,6 @@ HWTEST_F(DbAdapterTest, RemoveDeviceData_001, TestSize.Level0)
 {
     g_dbAdapterPtr->GetKvStorePtr();
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL, g_dbAdapterPtr->RemoveDeviceData(TEST_DEV_ID_0));
-}
-
-/**
- * @tc.name: UnInit_001
- * @tc.desc: Verify the UnInit function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DbAdapterTest, UnInit_001, TestSize.Level0)
-{
-    g_dbAdapterPtr->kvStoragePtr_ = nullptr;
-    g_dbAdapterPtr->UnInit();
-    EXPECT_EQ(true, g_dbAdapterPtr->manualSyncCountMap_.empty());
 }
 
 /**

@@ -126,32 +126,5 @@ HWTEST_F(LocalHardwareManagerTest, GetLocalCapabilityMapByPrefix_002, TestSize.L
     EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
 }
 
-/**
- * @tc.name: QueryLocalHardware_001
- * @tc.desc: Verify the QueryLocalHardware function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK3
- */
-HWTEST_F(LocalHardwareManagerTest, QueryLocalHardware_001, TestSize.Level0)
-{
-    DHType dhType = DHType::AUDIO;
-    IHardwareHandler *hardwareHandler = new MockHardwareHandler();
-    LocalHardwareManager::GetInstance().QueryLocalHardware(dhType, hardwareHandler);
-    EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
-}
-
-/**
- * @tc.name: AddLocalCapabilityInfo_001
- * @tc.desc: Verify the AddLocalCapabilityInfo function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK3
- */
-HWTEST_F(LocalHardwareManagerTest, AddLocalCapabilityInfo_001, TestSize.Level0)
-{
-    std::vector<DHItem> dhItems;
-    DHType dhType = DHType::AUDIO;
-    LocalHardwareManager::GetInstance().AddLocalCapabilityInfo(dhItems, dhType);
-    EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
-}
 } // namespace DistributedHardware
 } // namespace OHOS

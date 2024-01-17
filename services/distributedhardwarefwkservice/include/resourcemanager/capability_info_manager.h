@@ -74,12 +74,6 @@ public:
     int32_t GetDataByDHType(const DHType dhType, CapabilityInfoMap &capabilityMap);
     /* Queries batch records in the database based on the prefix of the key. */
     int32_t GetDataByKeyPrefix(const std::string &keyPrefix, CapabilityInfoMap &capabilityMap);
-    /* Init the count of manual sync times */
-    void CreateManualSyncCount(const std::string &deviceId);
-    /* Clearing the count of manual sync times */
-    void RemoveManualSyncCount(const std::string &deviceId);
-    /* Actively synchronizes data */
-    int32_t ManualSync(const std::string &networkId);
     /* Database data changes callback */
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
 

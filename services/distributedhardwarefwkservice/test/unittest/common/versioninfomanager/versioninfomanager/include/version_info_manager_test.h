@@ -64,12 +64,6 @@ int32_t GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<std::string
     (void)values;
     return DH_FWK_SUCCESS;
 }
-
-int32_t ManualSync(const std::string &networkId)
-{
-    (void)networkId;
-    return DH_FWK_SUCCESS;
-}
 };
 } // namespace DistributedHardware
 } // namespace OHOS

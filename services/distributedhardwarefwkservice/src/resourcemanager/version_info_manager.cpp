@@ -252,41 +252,6 @@ int32_t VersionInfoManager::SyncRemoteVersionInfos()
     return DH_FWK_SUCCESS;
 }
 
-void VersionInfoManager::CreateManualSyncCount(const std::string &deviceId)
-{
-    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
-    if (dbAdapterPtr_ == nullptr) {
-        DHLOGE("dbAdapterPtr_ is null");
-        return;
-    }
-    dbAdapterPtr_->CreateManualSyncCount(deviceId);
-}
-
-void VersionInfoManager::RemoveManualSyncCount(const std::string &deviceId)
-{
-    std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
-    if (dbAdapterPtr_ == nullptr) {
-        DHLOGE("dbAdapterPtr_ is null");
-        return;
-    }
-    dbAdapterPtr_->RemoveManualSyncCount(deviceId);
-}
-
-int32_t VersionInfoManager::ManualSync(const std::string &networkId)
-{
-    DHLOGI("ManualSync start, networkId: %s", GetAnonyString(networkId).c_str());
-    std::unique_lock<std::mutex> lock(verInfoMgrMutex_);
-    if (dbAdapterPtr_ == nullptr) {
-        DHLOGE("dbAdapterPtr_ is null");
-        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
-    }
-    if (dbAdapterPtr_->ManualSync(networkId) != DH_FWK_SUCCESS) {
-        DHLOGE("ManualSync failed");
-        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
-    }
-    return DH_FWK_SUCCESS;
-}
-
 void VersionInfoManager::OnChange(const DistributedKv::ChangeNotification &changeNotification)
 {
     DHLOGI("DB data OnChange");

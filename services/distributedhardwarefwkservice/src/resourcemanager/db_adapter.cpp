@@ -15,6 +15,8 @@
 
 #include "db_adapter.h"
 
+#include <vector>
+
 #include "anonymous_string.h"
 #include "capability_info.h"
 #include "capability_info_manager.h"
@@ -34,8 +36,6 @@ namespace DistributedHardware {
 namespace {
     constexpr int32_t MAX_INIT_RETRY_TIMES = 20;
     constexpr int32_t INIT_RETRY_SLEEP_INTERVAL = 200 * 1000; // 200ms
-    constexpr int32_t MANUAL_SYNC_TIMES = 6;
-    constexpr int32_t MANUAL_SYNC_INTERVAL = 100 * 1000; // 100ms
     constexpr int32_t DIED_CHECK_MAX_TIMES = 300;
     constexpr int32_t DIED_CHECK_INTERVAL = 100 * 1000; // 100ms
     const std::string DATABASE_DIR = "/data/service/el1/public/database/";
@@ -66,6 +66,10 @@ DistributedKv::Status DBAdapter::GetKvStorePtr()
         .area = DistributedKv::EL1,
         .baseDir = DATABASE_DIR + appId_.appId
     };
+    DistributedKv::SyncPolicy syncPolicyOnline {
+        .type = DistributedKv::IMMEDIATE_SYNC_ON_ONLINE
+    };
+    options.policies.emplace_back(syncPolicyOnline);
     return kvDataMgr_.GetSingleKvStore(options, appId_, storeId_, kvStoragePtr_);
 }
 
@@ -78,7 +82,6 @@ int32_t DBAdapter::Init()
         DistributedKv::Status status = GetKvStorePtr();
         if (status == DistributedKv::Status::SUCCESS && kvStoragePtr_) {
             DHLOGI("Init KvStorePtr Success");
-            RegisterManualSyncListener();
             RegisterChangeListener();
             RegisterKvStoreDeathListener();
             return DH_FWK_SUCCESS;
@@ -104,7 +107,6 @@ void DBAdapter::UnInit()
     }
     UnRegisterKvStoreDeathListener();
     UnRegisterChangeListener();
-    UnRegisterManualSyncListener();
     kvStoragePtr_.reset();
 }
 
@@ -116,49 +118,14 @@ int32_t DBAdapter::ReInit()
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    UnRegisterManualSyncListener();
     kvStoragePtr_.reset();
     DistributedKv::Status status = GetKvStorePtr();
     if (status != DistributedKv::Status::SUCCESS || !kvStoragePtr_) {
         DHLOGW("Get kvStoragePtr_ failed, status: %d", status);
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
-    RegisterManualSyncListener();
     RegisterKvStoreDeathListener();
     return DH_FWK_SUCCESS;
-}
-
-void DBAdapter::SyncCompleted(const std::map<std::string, DistributedKv::Status> &results)
-{
-    DHLOGI("DBAdapter SyncCompleted start");
-    if (results.size() == 0 || results.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("Results size is invalid!");
-        return;
-    }
-    std::lock_guard<std::mutex> lock(dbAdapterMutex_);
-    for (const auto &result : results) {
-        std::string deviceId = result.first;
-        DHLOGI("SyncCompleted, deviceId: %s", GetAnonyString(deviceId).c_str());
-        if (manualSyncCountMap_.count(deviceId) == 0) {
-            DHLOGE("SyncCompleted, error, ManualSyncCount is removed");
-            return;
-        }
-        DHLOGI("ManualSyncCallback::SyncCompleted, retryCount: %d", manualSyncCountMap_[deviceId]);
-        if (result.second == DistributedKv::Status::SUCCESS) {
-            manualSyncCountMap_[deviceId] = 0;
-        } else {
-            manualSyncCountMap_[deviceId]++;
-            if (manualSyncCountMap_[deviceId] >= MANUAL_SYNC_TIMES) {
-                manualSyncCountMap_[deviceId] = 0;
-            } else {
-                auto retryTask = [this, deviceId] {
-                    this->ManualSync(deviceId);
-                    usleep(MANUAL_SYNC_INTERVAL);
-                };
-                DHContext::GetInstance().GetEventHandler()->PostTask(retryTask, "retryTask", 0);
-            }
-        }
-    }
 }
 
 int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
@@ -256,35 +223,6 @@ int32_t DBAdapter::PutDataBatch(const std::vector<std::string> &keys, const std:
     return DH_FWK_SUCCESS;
 }
 
-void DBAdapter::CreateManualSyncCount(const std::string &deviceId)
-{
-    std::lock_guard<std::mutex> lock(dbAdapterMutex_);
-    manualSyncCountMap_[deviceId] = 0;
-}
-
-void DBAdapter::RemoveManualSyncCount(const std::string &deviceId)
-{
-    std::lock_guard<std::mutex> lock(dbAdapterMutex_);
-    manualSyncCountMap_.erase(deviceId);
-}
-
-int32_t DBAdapter::ManualSync(const std::string &networkId)
-{
-    DHLOGI("Manual sync between networkId: %s", GetAnonyString(networkId).c_str());
-    std::lock_guard<std::mutex> lock(dbAdapterMutex_);
-    if (kvStoragePtr_ == nullptr) {
-        DHLOGE("kvStoragePtr_ is null");
-        return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
-    }
-    std::vector<std::string> devList = { networkId };
-    DistributedKv::Status status = kvStoragePtr_->Sync(devList, DistributedKv::SyncMode::PULL);
-    if (status != DistributedKv::Status::SUCCESS) {
-        DHLOGE("ManualSync Data failed, networkId: %s", GetAnonyString(networkId).c_str());
-        return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
-    }
-    return DH_FWK_SUCCESS;
-}
-
 void DBAdapter::SyncDBForRecover()
 {
     DHLOGI("Sync store id: %s after db recover", storeId_.storeId.c_str());
@@ -343,26 +281,6 @@ void DBAdapter::UnRegisterKvStoreDeathListener()
 {
     DHLOGI("UnRegister kvStore death listener");
     kvDataMgr_.UnRegisterKvStoreServiceDeathRecipient(shared_from_this());
-}
-
-void DBAdapter::RegisterManualSyncListener()
-{
-    DHLOGI("Register manualSyncCallback");
-    if (kvStoragePtr_ == nullptr) {
-        DHLOGE("kvStoragePtr_ is null");
-        return;
-    }
-    kvStoragePtr_->RegisterSyncCallback(shared_from_this());
-}
-
-void DBAdapter::UnRegisterManualSyncListener()
-{
-    DHLOGI("UnRegister manualSyncCallback");
-    if (kvStoragePtr_ == nullptr) {
-        DHLOGE("kvStoragePtr_ is null");
-        return;
-    }
-    kvStoragePtr_->UnRegisterSyncCallback();
 }
 
 void DBAdapter::OnRemoteDied()
