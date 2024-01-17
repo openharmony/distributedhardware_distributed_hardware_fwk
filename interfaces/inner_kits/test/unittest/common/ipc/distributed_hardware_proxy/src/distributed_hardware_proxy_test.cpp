@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -165,6 +165,129 @@ HWTEST_F(DistributedHardwareProxyTest, PublishMessage_003, TestSize.Level0)
     std::string msg = "msg";
     int32_t ret = hardwareProxy_->PublishMessage(topic, msg);
     EXPECT_NE(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: QueryLocalSysSpec_001
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareProxyTest, QueryLocalSysSpec_001, TestSize.Level0)
+{
+    QueryLocalSysSpecType spec = QueryLocalSysSpecType::MIN;
+    std::string ret = hardwareProxy_->QueryLocalSysSpec(spec);
+    EXPECT_EQ(true, ret.empty());
+}
+
+/**
+ * @tc.name: InitializeAVCenter_001
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareProxyTest, InitializeAVCenter_001, TestSize.Level0)
+{
+    TransRole transRole = TransRole::UNKNOWN;;
+    int32_t engineId = 0;
+    int32_t ret = hardwareProxy_->InitializeAVCenter(transRole, engineId);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_REMOTE_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: ReleaseAVCenter_001
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareProxyTest, ReleaseAVCenter_001, TestSize.Level0)
+{
+    int32_t engineId = 0;
+    int32_t ret = hardwareProxy_->ReleaseAVCenter(engineId);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_REMOTE_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: CreateControlChannel_001
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareProxyTest, CreateControlChannel_001, TestSize.Level0)
+{
+    int32_t engineId = 0;
+    std::string peerDevId = "peerDevId_test";
+    int32_t ret = hardwareProxy_->CreateControlChannel(engineId, peerDevId);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_REMOTE_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: NotifyAVCenter_001
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareProxyTest, NotifyAVCenter_001, TestSize.Level0)
+{
+    int32_t engineId = 0;
+    AVTransEvent event;
+    int32_t ret = hardwareProxy_->NotifyAVCenter(engineId, event);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_REMOTE_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: NotifySourceRemoteSinkStarted_001
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareProxyTest, NotifySourceRemoteSinkStarted_001, TestSize.Level0)
+{
+    std::string deviceId = "devid_test";
+    int32_t ret = hardwareProxy_->NotifySourceRemoteSinkStarted(deviceId);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_REMOTE_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: PauseDistributedHardware_001
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareProxyTest, PauseDistributedHardware_001, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    std::string networkId = "networkId_test";
+    int32_t ret = hardwareProxy_->PauseDistributedHardware(dhType, networkId);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_REMOTE_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: ResumeDistributedHardware_001
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareProxyTest, ResumeDistributedHardware_001, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    std::string networkId = "networkId_test";
+    int32_t ret = hardwareProxy_->ResumeDistributedHardware(dhType, networkId);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_REMOTE_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: StopDistributedHardware_001
+ * @tc.desc: Verify the PublishMessage function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareProxyTest, StopDistributedHardware_001, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    std::string networkId = "networkId_test";
+    int32_t ret = hardwareProxy_->StopDistributedHardware(dhType, networkId);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_REMOTE_IS_NULL, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

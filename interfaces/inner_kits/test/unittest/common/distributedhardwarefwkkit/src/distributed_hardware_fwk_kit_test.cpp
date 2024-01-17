@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -244,8 +244,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, UnregisterPublisherListener_002, testing
  */
 HWTEST_F(DistributedHardwareFwkKitTest, QueryLocalSysSpec_001, testing::ext::TestSize.Level0)
 {
-    std::string ret = dhfwkPtr_->QueryLocalSysSpec(QueryLocalSysSpecType::MIN);
-    EXPECT_EQ("", ret);
+    QueryLocalSysSpecType spec = QueryLocalSysSpecType::MIN;
+    std::string ret = dhfwkPtr_->QueryLocalSysSpec(spec);
+    EXPECT_EQ(true, ret.empty());
 }
 
 /**
@@ -256,8 +257,50 @@ HWTEST_F(DistributedHardwareFwkKitTest, QueryLocalSysSpec_001, testing::ext::Tes
  */
 HWTEST_F(DistributedHardwareFwkKitTest, QueryLocalSysSpec_002, testing::ext::TestSize.Level0)
 {
-    std::string ret = dhfwkPtr_->QueryLocalSysSpec(QueryLocalSysSpecType::HISTREAMER_AUDIO_ENCODER);
-    EXPECT_EQ("", ret);
+    QueryLocalSysSpecType spec = QueryLocalSysSpecType::HISTREAMER_AUDIO_ENCODER;
+    std::string ret = dhfwkPtr_->QueryLocalSysSpec(spec);
+    EXPECT_EQ(true, ret.empty());
+}
+
+/**
+ * @tc.name: InitializeAVCenter_001
+ * @tc.desc: Verify the InitializeAVCenter function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, InitializeAVCenter_001, testing::ext::TestSize.Level0)
+{
+    TransRole transRole = TransRole::UNKNOWN;
+    int32_t engineId = 0;
+    int32_t ret = dhfwkPtr_->InitializeAVCenter(transRole, engineId);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: ReleaseAVCenter_001
+ * @tc.desc: Verify the ReleaseAVCenter function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, ReleaseAVCenter_001, testing::ext::TestSize.Level0)
+{
+    int32_t engineId = 0;
+    int32_t ret = dhfwkPtr_->ReleaseAVCenter(engineId);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: CreateControlChannel_001
+ * @tc.desc: Verify the CreateControlChannel function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, CreateControlChannel_001, testing::ext::TestSize.Level0)
+{
+    int32_t engineId = 0;
+    std::string peerDevId = "peerDevId_test";
+    int32_t ret = dhfwkPtr_->CreateControlChannel(engineId, peerDevId);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
 
 /**
@@ -275,20 +318,6 @@ HWTEST_F(DistributedHardwareFwkKitTest, NotifyAVCenter_001, testing::ext::TestSi
 }
 
 /**
- * @tc.name: RegisterCtlCenterCallback_001
- * @tc.desc: Verify the RegisterCtlCenterCallback function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DistributedHardwareFwkKitTest, RegisterCtlCenterCallback_001, testing::ext::TestSize.Level0)
-{
-    int32_t engineId = 0;
-    sptr<IAVTransControlCenterCallback> callback;
-    int32_t ret = dhfwkPtr_->RegisterCtlCenterCallback(engineId, callback);
-    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
-}
-
-/**
  * @tc.name: PauseDistributedHardware_001
  * @tc.desc: Verify the PauseDistributedHardware function
  * @tc.type: FUNC
@@ -296,8 +325,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, RegisterCtlCenterCallback_001, testing::
  */
 HWTEST_F(DistributedHardwareFwkKitTest, PauseDistributedHardware_001, testing::ext::TestSize.Level0)
 {
-    std::string networkId = "networkId";
-    int32_t ret = dhfwkPtr_->PauseDistributedHardware(DHType::CAMERA, networkId);
+    DHType dhType = DHType::CAMERA;
+    std::string networkId = "networkId_test";
+    int32_t ret = dhfwkPtr_->PauseDistributedHardware(dhType, networkId);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
 
@@ -309,8 +339,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, PauseDistributedHardware_001, testing::e
  */
 HWTEST_F(DistributedHardwareFwkKitTest, ResumeDistributedHardware_001, testing::ext::TestSize.Level0)
 {
-    std::string networkId = "networkId";
-    int32_t ret = dhfwkPtr_->ResumeDistributedHardware(DHType::CAMERA, networkId);
+    DHType dhType = DHType::CAMERA;
+    std::string networkId = "networkId_test";
+    int32_t ret = dhfwkPtr_->ResumeDistributedHardware(dhType, networkId);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
 
@@ -322,8 +353,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, ResumeDistributedHardware_001, testing::
  */
 HWTEST_F(DistributedHardwareFwkKitTest, StopDistributedHardware_001, testing::ext::TestSize.Level0)
 {
-    std::string networkId = "networkId";
-    int32_t ret = dhfwkPtr_->StopDistributedHardware(DHType::CAMERA, networkId);
+    DHType dhType = DHType::CAMERA;
+    std::string networkId = "networkId_test";
+    int32_t ret = dhfwkPtr_->StopDistributedHardware(dhType, networkId);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
 } // namespace DistributedHardware

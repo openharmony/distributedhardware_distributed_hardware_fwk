@@ -533,6 +533,5 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_023, Test
     EXPECT_FALSE(videoDecoder.ins.empty());
     EXPECT_TRUE(videoDecoder.outs.empty());
 }
-
 } // namespace DistributedHardware
 } // namespace OHOS
