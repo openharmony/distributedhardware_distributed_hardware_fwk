@@ -238,7 +238,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, UnregisterPublisherListener_002, testing
 
 /**
  * @tc.name: QueryLocalSysSpec_001
- * @tc.desc: Verify the UnregisterPublisherListener function
+ * @tc.desc: Verify the QueryLocalSysSpec function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
@@ -251,7 +251,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, QueryLocalSysSpec_001, testing::ext::Tes
 
 /**
  * @tc.name: QueryLocalSysSpec_002
- * @tc.desc: Verify the UnregisterPublisherListener function
+ * @tc.desc: Verify the QueryLocalSysSpec function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
@@ -264,7 +264,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, QueryLocalSysSpec_002, testing::ext::Tes
 
 /**
  * @tc.name: InitializeAVCenter_001
- * @tc.desc: Verify the UnregisterPublisherListener function
+ * @tc.desc: Verify the InitializeAVCenter function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
@@ -278,7 +278,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, InitializeAVCenter_001, testing::ext::Te
 
 /**
  * @tc.name: ReleaseAVCenter_001
- * @tc.desc: Verify the UnregisterPublisherListener function
+ * @tc.desc: Verify the ReleaseAVCenter function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
@@ -291,7 +291,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, ReleaseAVCenter_001, testing::ext::TestS
 
 /**
  * @tc.name: CreateControlChannel_001
- * @tc.desc: Verify the UnregisterPublisherListener function
+ * @tc.desc: Verify the CreateControlChannel function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
@@ -305,7 +305,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, CreateControlChannel_001, testing::ext::
 
 /**
  * @tc.name: NotifyAVCenter_001
- * @tc.desc: Verify the UnregisterPublisherListener function
+ * @tc.desc: Verify the NotifyAVCenter function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
@@ -319,7 +319,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, NotifyAVCenter_001, testing::ext::TestSi
 
 /**
  * @tc.name: PauseDistributedHardware_001
- * @tc.desc: Verify the UnregisterPublisherListener function
+ * @tc.desc: Verify the PauseDistributedHardware function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
@@ -333,7 +333,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, PauseDistributedHardware_001, testing::e
 
 /**
  * @tc.name: ResumeDistributedHardware_001
- * @tc.desc: Verify the UnregisterPublisherListener function
+ * @tc.desc: Verify the ResumeDistributedHardware function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
@@ -347,7 +347,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, ResumeDistributedHardware_001, testing::
 
 /**
  * @tc.name: StopDistributedHardware_001
- * @tc.desc: Verify the UnregisterPublisherListener function
+ * @tc.desc: Verify the StopDistributedHardware function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */

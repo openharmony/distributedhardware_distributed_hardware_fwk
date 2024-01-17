@@ -661,6 +661,5 @@ HWTEST_F(DbAdapterTest, PutData_05, TestSize.Level0)
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL, g_dbAdapterPtr->PutData(key, value));
 }
-
 } // namespace DistributedHardware
 } // namespace OHOS
