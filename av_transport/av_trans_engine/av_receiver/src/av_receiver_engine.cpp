@@ -145,8 +145,6 @@ int32_t AVReceiverEngine::CreateControlChannel(const std::vector<std::string> &d
     TRUE_RETURN_V(ret == ERR_DH_AVT_SESSION_HAS_OPENED, ERR_DH_AVT_CHANNEL_ALREADY_CREATED);
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CREATE_CHANNEL_FAILED,
         "create receiver control channel failed");
-
-    SetCurrentState(StateId::CH_CREATING);
     return DH_AVT_SUCCESS;
 }
 
