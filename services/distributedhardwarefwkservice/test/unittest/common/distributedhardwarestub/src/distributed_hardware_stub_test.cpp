@@ -122,5 +122,33 @@ HWTEST_F(DistributedHardwareStubTest, ValidTopic_001, TestSize.Level0)
     uint32_t topic2 = static_cast<uint32_t>(DHTopic::TOPIC_START_DSCREEN);
     EXPECT_EQ(true, stubTest_->ValidTopic(topic2));
 }
+
+/**
+ * @tc.name: ValidQueryLocalSpec_001
+ * @tc.desc: Verify the ValidQueryLocalSpec function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_001, TestSize.Level0)
+{
+    uint32_t spec = 1;
+    EXPECT_EQ(true, stubTest_->ValidQueryLocalSpec(spec));
+}
+
+/**
+ * @tc.name: ValidQueryLocalSpec_002
+ * @tc.desc: Verify the ValidQueryLocalSpec function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_002, TestSize.Level0)
+{
+    uint32_t spec = 0;
+    EXPECT_EQ(false, stubTest_->ValidQueryLocalSpec(spec));
+    spec = 5;
+    EXPECT_EQ(false, stubTest_->ValidQueryLocalSpec(spec));
+}
+
+
 } // namespace DistributedHardware
 } // namespace OHOS

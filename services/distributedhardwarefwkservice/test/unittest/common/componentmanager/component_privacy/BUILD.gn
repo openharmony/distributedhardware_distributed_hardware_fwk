@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+# Copyright (c) 2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,45 +12,47 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../../distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/hidump_helper_test"
+module_out_path = "distributed_hardware_fwk/component_privacy_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "include",
-    "${av_trans_path}/common/include",
     "//third_party/json/include",
-    "${common_path}/utils/include",
+    "${utils_path}/include",
     "${utils_path}/include/log",
-    "${innerkits_path}/include",
     "${utils_path}/include/eventbus",
     "${services_path}/distributedhardwarefwkservice/include",
-    "${services_path}/distributedhardwarefwkservice/include/hidumphelper",
-    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "${services_path}/distributedhardwarefwkservice/include/componentloader",
     "${services_path}/distributedhardwarefwkservice/include/componentmanager",
     "${services_path}/distributedhardwarefwkservice/include/lowlatency",
+    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "${services_path}/distributedhardwarefwkservice/include/versionmanager",
     "${services_path}/distributedhardwarefwkservice/include/utils",
-    "${services_path}/distributedhardwarefwkservice/include/task",
     "${common_path}/utils/include",
     "${common_path}/log/include",
   ]
 }
 
-ohos_unittest("HidumpHelperTest") {
+ohos_unittest("ComponentPrivacyTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/hidump_helper_test.cpp" ]
+  sources = [ "component_privacy_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "${utils_path}:distributedhardwareutils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "ability_runtime:ability_manager",
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "ipc:ipc_core",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
   ]
 
   cflags = [
@@ -62,20 +64,12 @@ ohos_unittest("HidumpHelperTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"HidumpHelperTest\"",
+    "DH_LOG_TAG=\"ComponentPrivacyTest\"",
     "LOG_DOMAIN=0xD004100",
-  ]
-
-  external_deps = [
-    "c_utils:utils",
-    "eventhandler:libeventhandler",
-    "ipc:ipc_core",
-    "kv_store:distributeddata_inner",
-    "safwk:system_ability_fwk",
   ]
 }
 
-group("hidump_helper_test") {
+group("component_privacy_test") {
   testonly = true
-  deps = [ ":HidumpHelperTest" ]
+  deps = [ ":ComponentPrivacyTest" ]
 }
