@@ -100,10 +100,6 @@ int32_t DistributedHardwareManager::SendOnLineEvent(const std::string &networkId
     };
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, taskParam, nullptr);
     TaskExecutor::GetInstance().PushTask(task);
-
-    CapabilityInfoManager::GetInstance()->CreateManualSyncCount(GetDeviceIdByUUID(uuid));
-    VersionInfoManager::GetInstance()->CreateManualSyncCount(GetDeviceIdByUUID(uuid));
-
     return DH_FWK_SUCCESS;
 }
 
@@ -127,9 +123,6 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
     };
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);
     TaskExecutor::GetInstance().PushTask(task);
-
-    CapabilityInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(uuid));
-    VersionInfoManager::GetInstance()->RemoveManualSyncCount(GetDeviceIdByUUID(uuid));
     Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_DEV_OFFLINE, networkId);
 
     HiSysEventWriteCompOfflineMsg(DHFWK_DEV_OFFLINE, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,

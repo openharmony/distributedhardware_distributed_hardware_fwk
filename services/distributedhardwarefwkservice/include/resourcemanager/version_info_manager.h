@@ -51,10 +51,6 @@ public:
     int32_t SyncVersionInfoFromDB(const std::string &deviceId);
     int32_t SyncRemoteVersionInfos();
 
-    void CreateManualSyncCount(const std::string &deviceId);
-    void RemoveManualSyncCount(const std::string &deviceId);
-    int32_t ManualSync(const std::string &networkId);
-
     void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     class VersionInfoManagerEventHandler : public AppExecFwk::EventHandler {
         public:

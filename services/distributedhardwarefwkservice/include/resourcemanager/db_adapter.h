@@ -33,7 +33,6 @@ namespace OHOS {
 namespace DistributedHardware {
 class DBAdapter : public std::enable_shared_from_this<DBAdapter>,
     public EventSender,
-    public DistributedKv::KvStoreSyncCallback,
     public DistributedKv::KvStoreDeathRecipient {
 public:
     DBAdapter(const std::string &appId, const std::string &storeId,
@@ -44,14 +43,10 @@ public:
     int32_t Init();
     void UnInit();
     int32_t ReInit();
-    void SyncCompleted(const std::map<std::string, DistributedKv::Status> &results) override;
     int32_t GetDataByKey(const std::string &key, std::string &data);
     int32_t GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<std::string> &values);
     int32_t PutData(const std::string &key, const std::string &value);
     int32_t PutDataBatch(const std::vector<std::string> &keys, const std::vector<std::string> &values);
-    void CreateManualSyncCount(const std::string &deviceId);
-    void RemoveManualSyncCount(const std::string &deviceId);
-    int32_t ManualSync(const std::string &networkId);
     void SyncDBForRecover();
     virtual void OnRemoteDied() override;
     void DeleteKvStore();
@@ -63,8 +58,6 @@ private:
     int32_t UnRegisterChangeListener();
     void RegisterKvStoreDeathListener();
     void UnRegisterKvStoreDeathListener();
-    void RegisterManualSyncListener();
-    void UnRegisterManualSyncListener();
     DistributedKv::Status GetKvStorePtr();
 
 private:
@@ -74,7 +67,6 @@ private:
     std::shared_ptr<DistributedKv::SingleKvStore> kvStoragePtr_;
     std::shared_ptr<DistributedKv::KvStoreObserver> dataChangeListener_;
     std::mutex dbAdapterMutex_;
-    std::unordered_map<std::string, int32_t> manualSyncCountMap_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
