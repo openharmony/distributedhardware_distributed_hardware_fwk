@@ -1,0 +1,51 @@
+# Copyright (c) 2024 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import("./DHardware_UI.gni")
+
+ohos_hap("DHardware_UI") {
+  hap_profile = "entry/src/main/module.json"
+  deps = [
+    ":DHardware_UI_js_assets",
+    ":DHardware_UI_resources",
+  ]
+  certificate_profile = "signature/DHardware_UI.p7b"
+  hap_name = "DHardware_UI"
+  part_name = "prebuilt_hap"
+  subsystem_name = "applications"
+  js_build_mode = "release"
+  module_install_dir = "app/com.ohos.dhardwareui"
+  if (defined(sign_hap_py_path)) {
+    certificate_profile = "${certificate_profile_path}"
+    key_alias = "DHardwareUI Release"
+    private_key_path = "DHardwareUI Release"
+    compatible_version = "11"
+  }
+}
+
+ohos_app_scope("DHardware_UI_app_profile") {
+  app_profile = "AppScope/app.json"
+  sources = [ "AppScope/resources" ]
+}
+
+ohos_js_assets("DHardware_UI_js_assets") {
+  ets2abc = true
+  source_dir = "entry/src/main/ets"
+}
+
+ohos_resources("DHardware_UI_resources") {
+  sources = [ "entry/src/main/resources" ]
+  deps = [ ":DHardware_UI_app_profile" ]
+  hap_profile = "entry/src/main/module.json"
+}

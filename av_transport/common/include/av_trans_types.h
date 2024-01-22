@@ -81,11 +81,10 @@ enum struct BufferDataType : uint32_t {
 enum struct StateId : uint32_t {
     IDLE = 0,
     INITIALIZED = 1,
-    CH_CREATING = 2,
-    CH_CREATED = 3,
-    STARTED = 4,
-    PLAYING = 5,
-    STOPPED = 6,
+    CH_CREATED = 2,
+    STARTED = 3,
+    PLAYING = 4,
+    STOPPED = 5,
     BUTT,
 };
 
