@@ -64,7 +64,7 @@ ohos_source_set("avtrans_input_filter") {
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"av_transport_input_filter\"",
     "HST_ANY_WITH_NO_RTTI",
-    "LOG_DOMAIN=0xD004100",
+    "LOG_DOMAIN=0xD004101",
   ]
 }
 
@@ -117,6 +117,6 @@ ohos_source_set("avtrans_output_filter") {
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"av_transport_output_filter\"",
     "HST_ANY_WITH_NO_RTTI",
-    "LOG_DOMAIN=0xD004100",
+    "LOG_DOMAIN=0xD004101",
   ]
 }

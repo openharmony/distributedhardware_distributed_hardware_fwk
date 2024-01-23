@@ -68,7 +68,7 @@ ohos_unittest("DsoftbusInputPluginTest") {
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"dsoftbus_input_plugin_test\"",
-    "LOG_DOMAIN=0xD004100",
+    "LOG_DOMAIN=0xD004101",
   ]
 }
 

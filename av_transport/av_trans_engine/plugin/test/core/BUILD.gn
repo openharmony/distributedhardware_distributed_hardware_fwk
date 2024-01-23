@@ -75,7 +75,7 @@ ohos_unittest("AvTransInputOutputTest") {
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"avtrans_input_output_test\"",
-    "LOG_DOMAIN=0xD004100",
+    "LOG_DOMAIN=0xD004101",
     "HST_ANY_WITH_NO_RTTI",
   ]
 }

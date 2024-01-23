@@ -67,7 +67,7 @@ ohos_shared_library("distributed_av_sender") {
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"av_trans_sender\"",
-    "LOG_DOMAIN=0xD004100",
+    "LOG_DOMAIN=0xD004101",
   ]
 
   defines += [
