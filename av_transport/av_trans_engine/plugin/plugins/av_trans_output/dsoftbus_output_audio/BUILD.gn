@@ -43,7 +43,7 @@ ohos_source_set("plugin_AVTransDsoftbusOutputAudio") {
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"dsoftbus_output_audio_plugin\"",
-    "LOG_DOMAIN=0xD004100",
+    "LOG_DOMAIN=0xD004101",
   ]
   part_name = "distributed_hardware_fwk"
   subsystem_name = "distributedhardware"

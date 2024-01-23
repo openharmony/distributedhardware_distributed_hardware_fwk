@@ -47,7 +47,7 @@ ohos_unittest("AvTransportOutputFilterTest") {
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"av_transport_output_filter_test\"",
-    "LOG_DOMAIN=0xD004100",
+    "LOG_DOMAIN=0xD004101",
   ]
 
   deps = [
