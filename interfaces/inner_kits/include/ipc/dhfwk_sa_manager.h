@@ -19,6 +19,7 @@
 #include <atomic>
 #include <functional>
 #include <mutex>
+#include <set>
 
 #include "refbase.h"
 #include "system_ability_status_change_stub.h"
@@ -45,6 +46,15 @@ public:
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
 };
+
+private:
+    static int32_t RestoreListener();
+
+public:
+    static std::mutex publisherListenersMutex_;
+    static std::unordered_map<DHTopic, std::set<sptr<IPublisherListener>>> publisherListenersCahce_;
+    static std::mutex avTransControlCenterCbMutex_;
+    static std::unordered_map<int32_t, sptr<IAVTransControlCenterCallback>> avTransControlCenterCbCache_;
 
 private:
     std::atomic<bool> dhfwkOnLine_;

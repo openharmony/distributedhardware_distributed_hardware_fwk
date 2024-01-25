@@ -26,7 +26,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-DistributedHardwareFwkKit::DistributedHardwareFwkKit() : listenerMap_({}), isDHFWKOnLine_(false)
+
+DistributedHardwareFwkKit::DistributedHardwareFwkKit() : isDHFWKOnLine_(false)
 {
     DHLOGI("Ctor DistributedHardwareFwkKit");
     DHFWKSAManager::GetInstance().RegisterSAStateCallback(
@@ -49,19 +50,27 @@ int32_t DistributedHardwareFwkKit::RegisterPublisherListener(const DHTopic topic
     }
 
     int32_t ret = DH_FWK_SUCCESS;
+    std::lock_guard<std::mutex> publisherListenersLock(DHFWKSAManager::publisherListenersMutex_);
     if (DHFWKSAManager::GetInstance().GetDHFWKProxy() != nullptr) {
         ret = DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterPublisherListener(topic, listener);
         DHLOGI("Register publisher listener to DHFWK, ret: %" PRId32, ret);
-    } else {
-        DHLOGI("DHFWK not online, or get proxy failed, save listener temporary");
-        std::lock_guard<std::mutex> lock(listenerMutex_);
-        if (listenerMap_.size() >= MAX_TOPIC_SIZE || listenerMap_[topic].size() >= MAX_LISTENER_SIZE) {
+        if (DHFWKSAManager::publisherListenersCahce_.size() >= MAX_TOPIC_SIZE ||
+            DHFWKSAManager::publisherListenersCahce_[topic].size() >= MAX_LISTENER_SIZE) {
             DHLOGE("listeners are over size!");
             return ERR_DH_FWK_PUBLISH_LISTENER_OVER_SIZE;
         }
-        listenerMap_[topic].insert(listener);
+        if (ret == DH_FWK_SUCCESS) {
+            DHFWKSAManager::publisherListenersCahce_[topic].insert(listener);
+        }
+    } else {
+        DHLOGI("DHFWK not online, or get proxy failed, save listener temporary");
+        if (DHFWKSAManager::publisherListenersCahce_.size() >= MAX_TOPIC_SIZE ||
+            DHFWKSAManager::publisherListenersCahce_[topic].size() >= MAX_LISTENER_SIZE) {
+            DHLOGE("listeners are over size!");
+            return ERR_DH_FWK_PUBLISH_LISTENER_OVER_SIZE;
+        }
+        DHFWKSAManager::publisherListenersCahce_[topic].insert(listener);
     }
-
     return ret;
 }
 
@@ -79,9 +88,8 @@ int32_t DistributedHardwareFwkKit::UnregisterPublisherListener(const DHTopic top
         ret = DHFWKSAManager::GetInstance().GetDHFWKProxy()->UnregisterPublisherListener(topic, listener);
         DHLOGI("Unregister publisher listener to DHFWK, ret: %" PRId32, ret);
     }
-    std::lock_guard<std::mutex> lock(listenerMutex_);
-    listenerMap_[topic].erase(listener);
-
+    std::lock_guard<std::mutex> publisherListenersLock(DHFWKSAManager::publisherListenersMutex_);
+    DHFWKSAManager::publisherListenersCahce_[topic].erase(listener);
     return ret;
 }
 
@@ -117,29 +125,6 @@ void DistributedHardwareFwkKit::OnDHFWKOnLine(bool isOnLine)
 {
     DHLOGI("Receive DHFWK online callback, %s", (isOnLine ? "true" : "false"));
     isDHFWKOnLine_ = isOnLine;
-
-    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
-        return;
-    }
-
-    DHLOGI("DHFWK online, register saved listener to it");
-    std::unordered_map<DHTopic, std::set<sptr<IPublisherListener>>> regSuccListeners;
-    std::lock_guard<std::mutex> lock(listenerMutex_);
-    for (const auto &entry : listenerMap_) {
-        for (const auto &listener : entry.second) {
-            int32_t ret =
-                DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterPublisherListener(entry.first, listener);
-            if (ret == DH_FWK_SUCCESS) {
-                regSuccListeners[entry.first].insert(listener);
-            }
-        }
-    }
-
-    for (const auto &succ : regSuccListeners) {
-        for (const auto &listener : succ.second) {
-            listenerMap_[succ.first].erase(listener);
-        }
-    }
 }
 
 bool DistributedHardwareFwkKit::IsQueryLocalSysSpecTypeValid(QueryLocalSysSpecType spec)
@@ -221,7 +206,8 @@ int32_t DistributedHardwareFwkKit::RegisterCtlCenterCallback(int32_t engineId,
         DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-
+    std::lock_guard<std::mutex> avTransControlCenterCbLock(DHFWKSAManager::avTransControlCenterCbMutex_);
+    DHFWKSAManager::avTransControlCenterCbCache_[engineId] = callback;
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterCtlCenterCallback(engineId, callback);
 }
 
@@ -260,5 +246,6 @@ int32_t DistributedHardwareFwkKit::StopDistributedHardware(DHType dhType, const 
 
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->StopDistributedHardware(dhType, networkId);
 }
+
 } // DistributedHardware
 } // OHOS
