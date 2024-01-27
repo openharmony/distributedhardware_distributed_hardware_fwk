@@ -49,6 +49,7 @@ ohos_unittest("DistributedHardwareManagerTest") {
   external_deps = [
     "c_utils:utils",
     "eventhandler:libeventhandler",
+    "power_manager:powermgr_client",
   ]
 
   defines = [

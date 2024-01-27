@@ -61,6 +61,7 @@ ohos_unittest("DbAdapterTest") {
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "kv_store:distributeddata_inner",
+    "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
   ]
 }
