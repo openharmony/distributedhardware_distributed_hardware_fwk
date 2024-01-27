@@ -67,8 +67,8 @@ ohos_unittest("ComponentManagerTest") {
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "ipc:ipc_single",
-    "power_manager:powermgr_client",
     "kv_store:distributeddata_inner",
+    "power_manager:powermgr_client",
   ]
 
   defines = [
