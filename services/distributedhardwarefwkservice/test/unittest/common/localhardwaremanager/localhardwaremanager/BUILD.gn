@@ -57,6 +57,7 @@ ohos_unittest("LocalHardwareManagerTest") {
     "eventhandler:libeventhandler",
     "hisysevent:libhisysevent",
     "kv_store:distributeddata_inner",
+    "power_manager:powermgr_client",
   ]
 
   defines = [

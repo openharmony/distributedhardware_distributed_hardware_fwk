@@ -130,6 +130,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "init:libbegetutil",
     "ipc:ipc_core",
     "kv_store:distributeddata_inner",
+    "power_manager:powermgr_client",
     "resource_schedule_service:ressched_client",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",

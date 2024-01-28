@@ -17,6 +17,7 @@
 #define OHOS_DISTRIBUTED_HARDWARE_EVENT_BUS_TEST_H
 
 #include <cstdint>
+#include <gtest/gtest.h>
 #include <gtest/gtest_pred_impl.h>
 #include <string>
 
