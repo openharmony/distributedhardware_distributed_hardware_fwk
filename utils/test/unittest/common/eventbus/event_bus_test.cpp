@@ -15,6 +15,7 @@
 
 #include "event_bus_test.h"
 
+#include <gtest/gtest.h>
 #include <memory>
 #include <new>
 #include <sys/time.h>
