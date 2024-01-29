@@ -20,15 +20,18 @@
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 
+#include "constants.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_proxy.h"
+#include "distributed_hardware_errno.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DHFWKSAManager);
 DHFWKSAManager::DHFWKSAManager()
     : dhfwkOnLine_(false), isSubscribeDHFWKSAChangeListener(false), dhfwkProxy_(nullptr),
-      saListener_(new SystemAbilityListener()), saStateCallback(nullptr)
+      saListener_(new SystemAbilityListener()), saStateCallback(nullptr),
+      publisherListenersCache_({}), avTransControlCenterCbCache_({})
 {
     DHLOGI("Ctor DHFWKSAManager");
 }
@@ -112,6 +115,9 @@ void DHFWKSAManager::SystemAbilityListener::OnAddSystemAbility(int32_t systemAbi
             DHFWKSAManager::GetInstance().saStateCallback(true);
         }
     }
+    if (DHFWKSAManager::GetInstance().RestoreListener() != DH_FWK_SUCCESS) {
+        DHLOGE("Partial listeners failed to restore");
+    }
     DHLOGI("sa %" PRId32 " started", systemAbilityId);
 }
 
@@ -135,6 +141,71 @@ void DHFWKSAManager::SystemAbilityListener::OnRemoveSystemAbility(int32_t system
         }
     }
     DHLOGI("sa %" PRId32 " stopped", systemAbilityId);
+}
+
+int32_t DHFWKSAManager::RestoreListener()
+{
+    DHLOGI("Restore the failed listeners due to sa crash");
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    int32_t ret = DH_FWK_SUCCESS;
+    {
+        std::lock_guard<std::mutex> publisherListenersLock(publisherListenersMutex_);
+        for (const auto &entry : publisherListenersCache_) {
+            for (const auto &listener : entry.second) {
+                int32_t innerRet =
+                    DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterPublisherListener(entry.first, listener);
+                if (ret != DH_FWK_SUCCESS) {
+                    ret = innerRet;
+                    DHLOGE("Register publisher listener failed, topic: %" PRIu32, (uint32_t)entry.first);
+                }
+            }
+        }
+    }
+    {
+        std::lock_guard<std::mutex> avTransControlCenterCbLock(avTransControlCenterCbMutex_);
+        for (auto &entry : avTransControlCenterCbCache_) {
+            int32_t innerRet =
+                DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterCtlCenterCallback(entry.first, entry.second);
+            if (innerRet != DH_FWK_SUCCESS) {
+                ret = innerRet;
+                DHLOGE("Restore register av control center callback failed, engineId: %" PRId32, entry.first);
+            }
+        }
+    }
+    return ret;
+}
+
+int32_t DHFWKSAManager::AddPublisherListenerToCache(const DHTopic topic, sptr<IPublisherListener> listener)
+{
+    std::lock_guard<std::mutex> publisherListenersLock(publisherListenersMutex_);
+    if (publisherListenersCache_.size() >= MAX_TOPIC_SIZE ||
+        publisherListenersCache_[topic].size() >= MAX_LISTENER_SIZE) {
+        DHLOGE("listeners are over size!");
+        return ERR_DH_FWK_PUBLISH_LISTENER_OVER_SIZE;
+    }
+    publisherListenersCache_[topic].insert(listener);
+    return DH_FWK_SUCCESS;
+}
+
+void DHFWKSAManager::RemovePublisherListenerFromCache(const DHTopic topic, sptr<IPublisherListener> listener)
+{
+    std::lock_guard<std::mutex> publisherListenersLock(publisherListenersMutex_);
+    publisherListenersCache_[topic].erase(listener);
+}
+
+void DHFWKSAManager::AddAVTransControlCenterCbToCache(int32_t engineId,
+    const sptr<IAVTransControlCenterCallback> callback)
+{
+    std::lock_guard<std::mutex> avTransControlCenterCbLock(avTransControlCenterCbMutex_);
+    avTransControlCenterCbCache_[engineId] = callback;
+}
+
+void DHFWKSAManager::RemoveAVTransControlCenterCbFromCache(int32_t engineId)
+{
+    std::lock_guard<std::mutex> avTransControlCenterCbLock(avTransControlCenterCbMutex_);
+    avTransControlCenterCbCache_.erase(engineId);
 }
 } // DistributedHardware
 } // OHOS

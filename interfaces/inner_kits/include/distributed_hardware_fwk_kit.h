@@ -173,8 +173,6 @@ private:
     bool IsQueryLocalSysSpecTypeValid(QueryLocalSysSpecType spec);
 
 private:
-    std::mutex listenerMutex_;
-    std::unordered_map<DHTopic, std::set<sptr<IPublisherListener>>> listenerMap_;
     std::atomic<bool> isDHFWKOnLine_;
 };
 } // namespace DistributedHardware

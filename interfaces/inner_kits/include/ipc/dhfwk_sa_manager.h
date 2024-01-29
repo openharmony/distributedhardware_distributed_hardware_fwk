@@ -19,6 +19,7 @@
 #include <atomic>
 #include <functional>
 #include <mutex>
+#include <set>
 
 #include "refbase.h"
 #include "system_ability_status_change_stub.h"
@@ -39,12 +40,20 @@ public:
     sptr<IDistributedHardware> GetDHFWKProxy();
     void RegisterSAStateCallback(DHFWKSAStateCb callback);
 
+    int32_t AddPublisherListenerToCache(const DHTopic topic, sptr<IPublisherListener> listener);
+    void RemovePublisherListenerFromCache(const DHTopic topic, sptr<IPublisherListener> listener);
+    void AddAVTransControlCenterCbToCache(int32_t engineId, const sptr<IAVTransControlCenterCallback> callback);
+    void RemoveAVTransControlCenterCbFromCache(int32_t engineId);
+
 public:
 class SystemAbilityListener : public SystemAbilityStatusChangeStub {
 public:
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
 };
+
+private:
+    int32_t RestoreListener();
 
 private:
     std::atomic<bool> dhfwkOnLine_;
@@ -54,6 +63,10 @@ private:
     sptr<SystemAbilityListener> saListener_;
     std::mutex saStatCbMutex_;
     DHFWKSAStateCb saStateCallback;
+    std::mutex publisherListenersMutex_;
+    std::unordered_map<DHTopic, std::set<sptr<IPublisherListener>>> publisherListenersCache_;
+    std::mutex avTransControlCenterCbMutex_;
+    std::unordered_map<int32_t, sptr<IAVTransControlCenterCallback>> avTransControlCenterCbCache_;
 };
 } // DistributedHardware
 } // OHOS
