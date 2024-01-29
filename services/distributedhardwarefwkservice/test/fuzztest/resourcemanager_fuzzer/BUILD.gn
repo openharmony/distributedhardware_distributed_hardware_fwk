@@ -56,6 +56,7 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
     "eventhandler:libeventhandler",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
+    "power_manager:powermgr_client",
   ]
 }
 

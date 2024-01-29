@@ -16,10 +16,14 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_DHCONTEXT_H
 #define OHOS_DISTRIBUTED_HARDWARE_DHCONTEXT_H
 
+#include <atomic>
 #include <memory>
 #include <string>
 #include <unordered_set>
 #include <shared_mutex>
+
+#include "power_mgr_client.h"
+#include "power_state_callback_stub.h"
 
 #include "device_type.h"
 #include "event_handler.h"
@@ -55,18 +59,30 @@ public:
     };
     std::shared_ptr<DHContext::CommonEventHandler> GetEventHandler();
 
+    bool IsSleeping();
+    void SetIsSleeping(bool isSleeping);
+
+private:
+    class DHFWKPowerStateCallback : public OHOS::PowerMgr::PowerStateCallbackStub {
+    public:
+        void OnPowerStateChanged(OHOS::PowerMgr::PowerState state) override;
+    };
+    void RegisterPowerStateLinstener();
+
 private:
     DeviceInfo devInfo_ { "", "", "", 0 };
     std::mutex devMutex_;
 
     /* Save online device uuid and networkId */
-    std::unordered_map<std::string, std::string> onlineDeviceMap_;
+    std::unordered_map<std::string, std::string> onlineDeviceMap_ = {};
 
     /* Save online device hashed uuid and uuid */
-    std::unordered_map<std::string, std::string> deviceIdUUIDMap_;
+    std::unordered_map<std::string, std::string> deviceIdUUIDMap_ = {};
     std::shared_mutex onlineDevMutex_;
 
     std::shared_ptr<DHContext::CommonEventHandler> eventHandler_;
+    /* true for system in sleeping, false for NOT in sleeping */
+    std::atomic<bool> isSleeping_ = false;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

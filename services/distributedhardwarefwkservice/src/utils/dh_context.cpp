@@ -30,11 +30,52 @@ DHContext::DHContext()
     DHLOGI("Ctor DHContext");
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
     eventHandler_ = std::make_shared<DHContext::CommonEventHandler>(runner);
+    RegisterPowerStateLinstener();
 }
 
 DHContext::~DHContext()
 {
     DHLOGI("Dtor DHContext");
+}
+
+void DHContext::RegisterPowerStateLinstener()
+{
+    sptr<PowerMgr::IPowerStateCallback> powerStateCallback_(new DHFWKPowerStateCallback());
+    if (powerStateCallback_ == nullptr) {
+        DHLOGE("DHFWK subscribe create power state callback Create Error");
+        return;
+    }
+
+    bool ret = PowerMgr::PowerMgrClient::GetInstance().RegisterPowerStateCallback(powerStateCallback_);
+    if (!ret) {
+        DHLOGE("DHFWK register power state callback failed");
+    } else {
+        DHLOGE("DHFWK register power state callback success");
+    }
+}
+
+void DHContext::DHFWKPowerStateCallback::OnPowerStateChanged(PowerMgr::PowerState state)
+{
+    DHLOGI("DHFWK OnPowerStateChanged state: %u", static_cast<uint32_t>(state));
+    if (state == PowerMgr::PowerState::SLEEP || state == PowerMgr::PowerState::HIBERNATE ||
+        state == PowerMgr::PowerState::SHUTDOWN) {
+        DHLOGI("DHFWK set in sleeping");
+        DHContext::GetInstance().SetIsSleeping(true);
+        return;
+    }
+
+    DHLOGI("DHFWK set NOT in sleeping");
+    DHContext::GetInstance().SetIsSleeping(false);
+}
+
+bool DHContext::IsSleeping()
+{
+    return isSleeping_;
+}
+
+void DHContext::SetIsSleeping(bool isSleeping)
+{
+    isSleeping_ = isSleeping;
 }
 
 DHContext::CommonEventHandler::CommonEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner)

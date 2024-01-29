@@ -51,6 +51,7 @@ ohos_unittest("EventTranceTest") {
     "c_utils:utils",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
+    "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
   ]
 }
