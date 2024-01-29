@@ -54,6 +54,7 @@ ohos_unittest("ComponentLoaderTest") {
     "config_policy:configpolicy_util",
     "hitrace:hitrace_meter",
     "kv_store:distributeddata_inner",
+    "power_manager:powermgr_client",
   ]
 
   defines = [
