@@ -67,6 +67,5 @@ HWTEST_F(DscreenInputTest, PushData_001, TestSize.Level0)
     ret = plugin->PushData("", buffer, 0);
     EXPECT_EQ(Status::OK, ret);
 }
-
 } // namespace DistributedHardware
 } // namespace OHOS

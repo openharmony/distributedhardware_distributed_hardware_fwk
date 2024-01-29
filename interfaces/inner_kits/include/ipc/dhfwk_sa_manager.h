@@ -40,6 +40,11 @@ public:
     sptr<IDistributedHardware> GetDHFWKProxy();
     void RegisterSAStateCallback(DHFWKSAStateCb callback);
 
+    int32_t AddPublisherListenerToCache(const DHTopic topic, sptr<IPublisherListener> listener);
+    void RemovePublisherListenerFromCache(const DHTopic topic, sptr<IPublisherListener> listener);
+    void AddAVTransControlCenterCbToCache(int32_t engineId, const sptr<IAVTransControlCenterCallback> callback);
+    void RemoveAVTransControlCenterCbFromCache(int32_t engineId);
+
 public:
 class SystemAbilityListener : public SystemAbilityStatusChangeStub {
 public:
@@ -48,13 +53,7 @@ public:
 };
 
 private:
-    static int32_t RestoreListener();
-
-public:
-    static std::mutex publisherListenersMutex_;
-    static std::unordered_map<DHTopic, std::set<sptr<IPublisherListener>>> publisherListenersCahce_;
-    static std::mutex avTransControlCenterCbMutex_;
-    static std::unordered_map<int32_t, sptr<IAVTransControlCenterCallback>> avTransControlCenterCbCache_;
+    int32_t RestoreListener();
 
 private:
     std::atomic<bool> dhfwkOnLine_;
@@ -64,6 +63,10 @@ private:
     sptr<SystemAbilityListener> saListener_;
     std::mutex saStatCbMutex_;
     DHFWKSAStateCb saStateCallback;
+    std::mutex publisherListenersMutex_;
+    std::unordered_map<DHTopic, std::set<sptr<IPublisherListener>>> publisherListenersCache_;
+    std::mutex avTransControlCenterCbMutex_;
+    std::unordered_map<int32_t, sptr<IAVTransControlCenterCallback>> avTransControlCenterCbCache_;
 };
 } // DistributedHardware
 } // OHOS
