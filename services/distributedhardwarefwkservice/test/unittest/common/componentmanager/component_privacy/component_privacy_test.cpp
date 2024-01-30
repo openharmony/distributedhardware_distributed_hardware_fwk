@@ -71,7 +71,7 @@ HWTEST_F(ComponentPrivacyTest, StartPrivacePage_001, TestSize.Level0)
     std::string subtype = "mic";
     std::string networkId = "networkId_test";
     int32_t ret = compPrivacy_->StartPrivacePage(subtype, networkId);
-    EXPECT_EQ(AAFwk::RESOLVE_ABILITY_ERR, ret);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 HWTEST_F(ComponentPrivacyTest, StartPrivacePage_002, TestSize.Level0)
@@ -79,21 +79,21 @@ HWTEST_F(ComponentPrivacyTest, StartPrivacePage_002, TestSize.Level0)
     std::string subtype = "camera";
     std::string networkId = "networkId_test";
     int32_t ret = compPrivacy_->StartPrivacePage(subtype, networkId);
-    EXPECT_EQ(AAFwk::RESOLVE_ABILITY_ERR, ret);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 HWTEST_F(ComponentPrivacyTest, StopPrivacePage_001, TestSize.Level0)
 {
     std::string subtype = "mic";
     int32_t ret = compPrivacy_->StopPrivacePage(subtype);
-    EXPECT_EQ(AAFwk::RESOLVE_ABILITY_ERR, ret);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 HWTEST_F(ComponentPrivacyTest, StopPrivacePage_002, TestSize.Level0)
 {
     std::string subtype = "camera";
     int32_t ret = compPrivacy_->StopPrivacePage(subtype);
-    EXPECT_EQ(AAFwk::RESOLVE_ABILITY_ERR, ret);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 HWTEST_F(ComponentPrivacyTest, DeviceTypeToString_001, TestSize.Level0)
