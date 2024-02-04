@@ -333,10 +333,10 @@ int32_t SoftbusChannelAdapter::SendBytesData(const std::string& sessName, const 
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
     TRUE_RETURN_V_MSG_E(data.empty(), ERR_DH_AVT_INVALID_PARAM, "input data string is empty.");
 
-    int32_t existSessId = GetSessIdBySessName(mySessName, peerDevId);
+    int32_t existSessId = GetSessIdBySessName(sessName, peerDevId);
     if (existSessId < 0) {
         AVTRANS_LOGI("Can not find sessionId for mySessName:%s, peerDevId:%s.",
-            mySessName.c_str(), peerDevId.c_str());
+            sessName.c_str(), peerDevId.c_str());
         return ERR_DH_AVT_SEND_DATA_FAILED;
     }
     int32_t ret = SendBytes(existSessId, data.c_str(), strlen(data.c_str()));

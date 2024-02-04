@@ -66,18 +66,6 @@ public:
     Status SetCallback(Callback *cb) override;
     Status SetDataCallback(AVDataCallback callback) override;
 
-    StateId GetCurrentState()
-    {
-        std::lock_guard<std::mutex> lock(stateMutex_);
-        return currentState_;
-    }
-
-    void SetCurrentState(State state)
-    {
-        std::lock_guard<std::mutex> lock(stateMutex_);
-        currentState_ = stateId;
-    }
-
     // interface from ISoftbusChannelListener
     void OnChannelEvent(const AVTransEvent &event) override;
     void OnStreamReceived(const StreamData *data, const StreamData *ext) override;
@@ -87,6 +75,17 @@ private:
     void DataEnqueue(std::shared_ptr<Buffer> &buffer);
     void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &queue);
     std::shared_ptr<Buffer> CreateBuffer(uint32_t metaType, const StreamData *data, const json &resMsg);
+    State GetCurrentState()
+    {
+        std::lock_guard<std::mutex> lock(stateMutex_);
+        return currentState_;
+    }
+
+    void SetCurrentState(State state)
+    {
+        std::lock_guard<std::mutex> lock(stateMutex_);
+        currentState_ = state;
+    }
 
 private:
     std::mutex stateMutex_;
