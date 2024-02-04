@@ -72,7 +72,7 @@ public:
         return currentState_;
     }
 
-    void SetCurrentState(StateId state)
+    void SetCurrentState(State state)
     {
         std::lock_guard<std::mutex> lock(stateMutex_);
         currentState_ = stateId;
@@ -99,7 +99,7 @@ private:
     Media::OSAL::Mutex operationMutes_ {};
     std::queue<std::shared_ptr<Buffer>> dataQueue_;
     std::map<Tag, ValueType> paramsMap_;
-    std::atmoc<State> currentState_ = State::CREATED
+    std::atomic<State> currentState_ = State::CREATED;
     Callback* eventsCb_ = nullptr;
     AVDataCallback dataCb_;
 };
