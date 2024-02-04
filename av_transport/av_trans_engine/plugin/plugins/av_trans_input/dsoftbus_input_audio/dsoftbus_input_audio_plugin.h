@@ -66,6 +66,18 @@ public:
     Status SetCallback(Callback *cb) override;
     Status SetDataCallback(AVDataCallback callback) override;
 
+    StateId GetCurrentState()
+    {
+        std::lock_guard<std::mutex> lock(stateMutex_);
+        return currentState_;
+    }
+
+    void SetCurrentState(StateId state)
+    {
+        std::lock_guard<std::mutex> lock(stateMutex_);
+        currentState_ = stateId;
+    }
+
     // interface from ISoftbusChannelListener
     void OnChannelEvent(const AVTransEvent &event) override;
     void OnStreamReceived(const StreamData *data, const StreamData *ext) override;
@@ -77,6 +89,7 @@ private:
     std::shared_ptr<Buffer> CreateBuffer(uint32_t metaType, const StreamData *data, const json &resMsg);
 
 private:
+    std::mutex stateMutex_;
     std::string ownerName_;
     std::string sessionName_;
     std::string peerDevId_;
@@ -86,7 +99,7 @@ private:
     Media::OSAL::Mutex operationMutes_ {};
     std::queue<std::shared_ptr<Buffer>> dataQueue_;
     std::map<Tag, ValueType> paramsMap_;
-    State state_ {State::CREATED};
+    std::atmoc<State> currentState_ = State::CREATED
     Callback* eventsCb_ = nullptr;
     AVDataCallback dataCb_;
 };

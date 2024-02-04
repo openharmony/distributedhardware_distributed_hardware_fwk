@@ -134,18 +134,18 @@ ErrorCode AVOutputFilter::Start()
 ErrorCode AVOutputFilter::Stop()
 {
     AVTRANS_LOGI("Stop");
-    OSAL::ScopedLock lock(outputFilterMutex_);
-    if (state_ != FilterState::RUNNING) {
-        AVTRANS_LOGE("The current state is invalid");
-        return ErrorCode::ERROR_INVALID_STATE;
-    }
     if (plugin_ == nullptr) {
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_NULL_POINTER;
     }
+    OSAL::ScopedLock lock(outputFilterMutex_);
+    if (state_ != FilterState::RUNNING) {
+        AVTRANS_LOGE("The current state is invalid");
+        plugin_->Deinit();
+        return ErrorCode::SUCCESS;
+    }
     if (TranslatePluginStatus(plugin_->Stop()) != ErrorCode::SUCCESS) {
         AVTRANS_LOGE("The plugin stop fail!");
-        return ErrorCode::ERROR_INVALID_OPERATION;
     }
     plugin_->Deinit();
     plugin_ = nullptr;

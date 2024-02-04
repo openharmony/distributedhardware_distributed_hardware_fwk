@@ -129,17 +129,17 @@ ErrorCode AVInputFilter::Stop()
 {
     AVTRANS_LOGI("Stop");
     OSAL::ScopedLock lock(inputFilterMutex_);
-    if (state_ != FilterState::RUNNING && state_ != FilterState::PAUSED) {
-        AVTRANS_LOGE("The current state is invalid");
-        return ErrorCode::ERROR_INVALID_STATE;
-    }
     if (plugin_ == nullptr) {
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_NULL_POINTER;
     }
+    if (state_ != FilterState::RUNNING && state_ != FilterState::PAUSED) {
+        AVTRANS_LOGE("The current state is invalid");
+        plugin_->Deinit();
+        return ErrorCode::ERROR_INVALID_STATE;
+    }
     if (TranslatePluginStatus(plugin_->Stop()) != ErrorCode::SUCCESS) {
         AVTRANS_LOGE("The plugin stop fail!");
-        return ErrorCode::ERROR_INVALID_OPERATION;
     }
     plugin_->Deinit();
     plugin_ = nullptr;

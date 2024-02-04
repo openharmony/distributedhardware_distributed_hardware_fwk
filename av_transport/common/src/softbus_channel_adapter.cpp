@@ -333,7 +333,13 @@ int32_t SoftbusChannelAdapter::SendBytesData(const std::string& sessName, const 
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
     TRUE_RETURN_V_MSG_E(data.empty(), ERR_DH_AVT_INVALID_PARAM, "input data string is empty.");
 
-    int32_t ret = SendBytes(GetSessIdBySessName(sessName, peerDevId), data.c_str(), strlen(data.c_str()));
+    int32_t existSessId = GetSessIdBySessName(mySessName, peerDevId);
+    if (existSessId < 0) {
+        AVTRANS_LOGI("Can not find sessionId for mySessName:%s, peerDevId:%s.",
+            mySessName.c_str(), peerDevId.c_str());
+        return ERR_DH_AVT_SEND_DATA_FAILED;
+    }
+    int32_t ret = SendBytes(existSessId, data.c_str(), strlen(data.c_str()));
     if (ret != DH_AVT_SUCCESS) {
         AVTRANS_LOGE("Send bytes data failed ret:%" PRId32, ret);
         return ERR_DH_AVT_SEND_DATA_FAILED;
@@ -350,7 +356,13 @@ int32_t SoftbusChannelAdapter::SendStreamData(const std::string& sessName, const
     TRUE_RETURN_V_MSG_E(ext == nullptr, ERR_DH_AVT_INVALID_PARAM, "input ext data is nullptr.");
 
     StreamFrameInfo frameInfo = {0};
-    int32_t ret = SendStream(GetSessIdBySessName(sessName, peerDevId), data, ext, &frameInfo);
+    int32_t existSessId = GetSessIdBySessName(sessName, peerDevId);
+    if (existSessId < 0) {
+        AVTRANS_LOGI("Can not find sessionId for mySessName:%s, peerDevId:%s.",
+            sessName.c_str(), peerDevId.c_str());
+        return ERR_DH_AVT_SEND_DATA_FAILED;
+    }
+    int32_t ret = SendStream(existSessId, data, ext, &frameInfo);
     if (ret != DH_AVT_SUCCESS) {
         AVTRANS_LOGE("Send stream data failed ret:%" PRId32, ret);
         return ERR_DH_AVT_SEND_DATA_FAILED;
@@ -602,6 +614,9 @@ void SoftbusChannelAdapter::SendChannelEvent(const std::string &sessName, const 
     ISoftbusChannelListener *listener = nullptr;
     {
         std::lock_guard<std::mutex> lock(listenerMtx_);
+        for (auto it = listenerMap_.begin(); it != listenerMap_.end(); it++) {
+            AVTRANS_LOGI("listenerMtx_ all key:%s", it->first.c_str());
+        }
         listener = listenerMap_[sessName];
         TRUE_RETURN(listener == nullptr, "input listener is nullptr.");
     }
