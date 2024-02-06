@@ -75,7 +75,9 @@ private:
     std::shared_ptr<Plugin::PluginInfo> pluginInfo_ {nullptr};
     Capability capNegWithDownstream_ {};
     std::unordered_map<Plugin::Tag, Plugin::Any> paramsMap_;
-    OSAL::Mutex inputFilterMutex_ {};
+    std::mutex inputFilterMutex_;
+    std::mutex paramsMapMutex_;
+
 };
 } // namespace DistributedHardware
 } // namespace OHOS

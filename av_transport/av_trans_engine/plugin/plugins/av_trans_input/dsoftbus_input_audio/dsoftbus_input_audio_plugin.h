@@ -88,13 +88,14 @@ private:
     }
 
 private:
-    std::mutex stateMutex_;
     std::string ownerName_;
     std::string sessionName_;
     std::string peerDevId_;
     std::condition_variable dataCond_;
     std::shared_ptr<Media::OSAL::Task> bufferPopTask_;
+    std::mutex stateMutex_;
     std::mutex dataQueueMtx_;
+    std::mutex paramsMapMutex_;
     Media::OSAL::Mutex operationMutes_ {};
     std::queue<std::shared_ptr<Buffer>> dataQueue_;
     std::map<Tag, ValueType> paramsMap_;

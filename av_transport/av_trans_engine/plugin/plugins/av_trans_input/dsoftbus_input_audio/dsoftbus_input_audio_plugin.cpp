@@ -106,7 +106,10 @@ Status DsoftbusInputAudioPlugin::Reset()
     AVTRANS_LOGI("Reset");
     eventsCb_ = nullptr;
     dataCb_ = nullptr;
-    paramsMap_.clear();
+    {
+        std::lock_guard<std::mutex> lock(paramsMapMutex_);
+        paramsMap_.clear();
+    }
     if (bufferPopTask_) {
         bufferPopTask_->Stop();
         bufferPopTask_.reset();
@@ -158,6 +161,7 @@ Status DsoftbusInputAudioPlugin::Resume()
 
 Status DsoftbusInputAudioPlugin::GetParameter(Tag tag, ValueType &value)
 {
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     auto res = paramsMap_.find(tag);
     if (res != paramsMap_.end()) {
         value = res->second;
@@ -168,17 +172,16 @@ Status DsoftbusInputAudioPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DsoftbusInputAudioPlugin::SetParameter(Tag tag, const ValueType &value)
 {
-    Media::OSAL::ScopedLock lock(operationMutes_);
     if (tag == Tag::MEDIA_DESCRIPTION) {
         ParseChannelDescription(Plugin::AnyCast<std::string>(value), ownerName_, peerDevId_);
     }
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     paramsMap_.insert(std::pair<Tag, ValueType>(tag, value));
     return Status::OK;
 }
 
 Status DsoftbusInputAudioPlugin::SetCallback(Callback *cb)
 {
-    Media::OSAL::ScopedLock lock(operationMutes_);
     if (cb == nullptr) {
         AVTRANS_LOGE("SetCallBack failed, callback is nullptr.");
         return Status::ERROR_NULL_POINTER;
@@ -190,7 +193,6 @@ Status DsoftbusInputAudioPlugin::SetCallback(Callback *cb)
 
 Status DsoftbusInputAudioPlugin::SetDataCallback(AVDataCallback callback)
 {
-    Media::OSAL::ScopedLock lock(operationMutes_);
     dataCb_ = callback;
     AVTRANS_LOGI("SetDataCallback success.");
     return Status::OK;
