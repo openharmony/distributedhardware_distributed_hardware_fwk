@@ -75,7 +75,7 @@ Status DaudioInputPlugin::Deinit()
 Status DaudioInputPlugin::Reset()
 {
     AVTRANS_LOGI("Reset enter.");
-    std::lock_guard<std::mutex> lock(tagsMapMutex_);
+    std::lock_guard<std::mutex> lock(tagMapMutex_);
     tagMap_.clear();
     frameNumber_.store(0);
     return Status::OK;
@@ -99,7 +99,7 @@ Status DaudioInputPlugin::Resume()
 Status DaudioInputPlugin::GetParameter(Tag tag, ValueType &value)
 {
     {
-        std::lock_guard<std::mutex> lock(tagsMapMutex_);
+        std::lock_guard<std::mutex> lock(tagMapMutex_);
         auto iter = tagMap_.find(tag);
         if (iter != tagMap_.end()) {
             value = iter->second;
@@ -111,7 +111,7 @@ Status DaudioInputPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DaudioInputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
-    std::lock_guard<std::mutex> lock(tagsMapMutex_);
+    std::lock_guard<std::mutex> lock(tagMapMutex_);
     tagMap_.insert(std::make_pair(tag, value));
     if (tag == Plugin::Tag::USER_SHARED_MEMORY_FD) {
         sharedMemory_ = UnmarshalSharedMemory(Media::Plugin::AnyCast<std::string>(value));
