@@ -446,7 +446,7 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
 {
     auto find = compSource_.find(dhType);
     if (find == compSource_.end()) {
-        DHLOGE("can not find handler for dhId = %s.", dhId.c_str());
+        DHLOGE("can not find handler for dhId = %s.", GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_PARA_INVALID;
     }
 
