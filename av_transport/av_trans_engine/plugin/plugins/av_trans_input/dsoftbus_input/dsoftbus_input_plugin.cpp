@@ -124,7 +124,6 @@ Status DsoftbusInputPlugin::Reset()
         bufferPopTask_->Stop();
         bufferPopTask_.reset();
     }
-    std::lock_guard<std::mutex> lock(dataQueueMtx_);
     DataQueueClear(dataQueue_);
     SoftbusChannelAdapter::GetInstance().RemoveChannelServer(TransName2PkgName(ownerName_), sessionName_);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
@@ -139,7 +138,6 @@ Status DsoftbusInputPlugin::Start()
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
-    std::lock_guard<std::mutex> lock(dataQueueMtx_);
     DataQueueClear(dataQueue_);
     bufferPopTask_->Start();
     SetCurrentState(State::RUNNING);
@@ -155,7 +153,6 @@ Status DsoftbusInputPlugin::Stop()
     }
     SetCurrentState(State::PREPARED);
     bufferPopTask_->Stop();
-    std::lock_guard<std::mutex> lock(dataQueueMtx_);
     DataQueueClear(dataQueue_);
     return Status::OK;
 }
@@ -336,6 +333,7 @@ void DsoftbusInputPlugin::HandleData()
 
 void DsoftbusInputPlugin::DataQueueClear(std::queue<std::shared_ptr<Buffer>> &queue)
 {
+    std::lock_guard<std::mutex> lock(dataQueueMtx_);
     std::queue<std::shared_ptr<Buffer>> empty;
     swap(empty, queue);
 }

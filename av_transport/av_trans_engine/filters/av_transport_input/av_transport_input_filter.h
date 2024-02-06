@@ -18,6 +18,7 @@
 
 #include <memory>
 #include <string>
+#include <mutex>
 
 #include "foundation/osal/utils/util.h"
 #include "foundation/utils/constants.h"

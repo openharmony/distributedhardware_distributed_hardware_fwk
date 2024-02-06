@@ -141,7 +141,7 @@ Status DaudioOutputPlugin::Reset()
     }
     smIndex_ = 0;
     {
-        std::lock_guard<std::mutex> lock(paramMapMutex_);
+        std::lock_guard<std::mutex> lock(paramsMapMutex_);
         paramsMap_.clear();
     }
     DataQueueClear(outputBuffer_);
@@ -151,7 +151,7 @@ Status DaudioOutputPlugin::Reset()
 
 Status DaudioOutputPlugin::GetParameter(Tag tag, ValueType &value)
 {
-    std::lock_guard<std::mutex> lock(paramMapMutex_);
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     auto iter = paramsMap_.find(tag);
     if (iter != paramsMap_.end()) {
         value = iter->second;
@@ -162,7 +162,7 @@ Status DaudioOutputPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DaudioOutputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
-    std::lock_guard<std::mutex> lock(paramMapMutex_);
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     paramsMap_.insert(std::make_pair(tag, value));
     if (tag == Plugin::Tag::USER_SHARED_MEMORY_FD) {
         std::unique_lock<std::mutex> lock(sharedMemMtx_);
