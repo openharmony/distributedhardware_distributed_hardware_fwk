@@ -319,7 +319,6 @@ void DsoftbusInputPlugin::HandleData()
             if (dataQueue_.empty()) {
                 continue;
             }
-            std::lock_guard<std::mutex> lock(dataQueueMtx_);
             buffer = dataQueue_.front();
             dataQueue_.pop();
         }
