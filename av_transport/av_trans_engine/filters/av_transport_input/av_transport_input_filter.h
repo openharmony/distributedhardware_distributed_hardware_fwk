@@ -78,7 +78,6 @@ private:
     std::unordered_map<Plugin::Tag, Plugin::Any> paramsMap_;
     std::mutex inputFilterMutex_;
     std::mutex paramsMapMutex_;
-
 };
 } // namespace DistributedHardware
 } // namespace OHOS

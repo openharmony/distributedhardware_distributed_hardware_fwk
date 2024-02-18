@@ -101,17 +101,13 @@ Status DscreenOutputPlugin::Reset()
 
 Status DscreenOutputPlugin::GetParameter(Tag tag, ValueType &value)
 {
-    {
-        TRUE_RETURN_V_MSG_E((!controller_), Status::ERROR_NULL_POINTER, "Controller is nullptr.");
-    }
+    TRUE_RETURN_V_MSG_E((!controller_), Status::ERROR_NULL_POINTER, "Controller is nullptr.");
     return controller_->GetParameter(tag, value);
 }
 
 Status DscreenOutputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
-    {
-        TRUE_RETURN_V_MSG_E((!controller_), Status::ERROR_NULL_POINTER, "Controller is nullptr.");
-    }
+    TRUE_RETURN_V_MSG_E((!controller_), Status::ERROR_NULL_POINTER, "Controller is nullptr.");
     return controller_->SetParameter(tag, value);
 }
 
@@ -156,11 +152,9 @@ Status DscreenOutputPlugin::SetDataCallback(AVDataCallback callback)
 
 Status DscreenOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
-    {
-        TRUE_RETURN_V_MSG_E((buffer == nullptr || buffer->IsEmpty()), Status::ERROR_NULL_POINTER,
-            "AVBuffer is nullptr.");
-        TRUE_RETURN_V_MSG_E((!controller_), Status::ERROR_NULL_POINTER, "Controller is nullptr.");
-    }
+    TRUE_RETURN_V_MSG_E((buffer == nullptr || buffer->IsEmpty()), Status::ERROR_NULL_POINTER,
+        "AVBuffer is nullptr.");
+    TRUE_RETURN_V_MSG_E((!controller_), Status::ERROR_NULL_POINTER, "Controller is nullptr.");
     controller_->PushData(buffer);
     return Status::OK;
 }

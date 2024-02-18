@@ -163,6 +163,7 @@ Status DsoftbusOutputPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DsoftbusOutputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
+    std::lock_guard<std::mutex> lock(paramMapMutex_);
     if (tag == Tag::MEDIA_DESCRIPTION) {
         ParseChannelDescription(Plugin::AnyCast<std::string>(value), ownerName_, peerDevId_);
     }
@@ -172,7 +173,6 @@ Status DsoftbusOutputPlugin::SetParameter(Tag tag, const ValueType &value)
     if (tag == Tag::SECTION_VIDEO_SPECIFIC_START) {
         reDumpFlag_.store(Plugin::AnyCast<bool>(value));
     }
-    std::lock_guard<std::mutex> lock(paramMapMutex_);
     paramsMap_.insert(std::pair<Tag, ValueType>(tag, value));
     return Status::OK;
 }
@@ -245,6 +245,7 @@ void DsoftbusOutputPlugin::OnStreamReceived(const StreamData *data, const Stream
 
 Status DsoftbusOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
 {
+    std::lock_guard<std::mutex> lock(dataQueueMtx_);
     if (buffer == nullptr || buffer->IsEmpty()) {
         AVTRANS_LOGE("Buffer is nullptr.");
         return Status::ERROR_NULL_POINTER;
@@ -260,7 +261,6 @@ Status DsoftbusOutputPlugin::PushData(const std::string &inPort, std::shared_ptr
     } else {
         AVTRANS_LOGD("DumpFlag = false.");
     }
-    std::lock_guard<std::mutex> lock(dataQueueMtx_);
     while (dataQueue_.size() >= DATA_QUEUE_MAX_SIZE) {
         AVTRANS_LOGE("Data queue overflow.");
         dataQueue_.pop();

@@ -121,6 +121,7 @@ Status DaudioInputPlugin::SetParameter(Tag tag, const ValueType &value)
 
 Status DaudioInputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
+    std::lock_guard<std::mutex> lock(tagMapMutex_);
     TRUE_RETURN_V(buffer == nullptr, Status::ERROR_NULL_POINTER);
     if (buffer->IsEmpty()) {
         AVTRANS_LOGE("bufferData is Empty.");

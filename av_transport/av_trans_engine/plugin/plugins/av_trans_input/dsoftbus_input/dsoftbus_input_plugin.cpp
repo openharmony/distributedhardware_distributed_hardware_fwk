@@ -182,6 +182,7 @@ Status DsoftbusInputPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DsoftbusInputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     if (tag == Tag::MEDIA_DESCRIPTION) {
         ParseChannelDescription(Plugin::AnyCast<std::string>(value), ownerName_, peerDevId_);
     }
@@ -191,13 +192,13 @@ Status DsoftbusInputPlugin::SetParameter(Tag tag, const ValueType &value)
     if (tag == Tag::SECTION_VIDEO_SPECIFIC_START) {
         reDumpFlag_.store(Plugin::AnyCast<bool>(value));
     }
-    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     paramsMap_.insert(std::pair<Tag, ValueType>(tag, value));
     return Status::OK;
 }
 
 Status DsoftbusInputPlugin::SetCallback(Callback *cb)
 {
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     if (cb == nullptr) {
         AVTRANS_LOGE("SetCallBack failed, callback is nullptr.");
         return Status::ERROR_NULL_POINTER;
@@ -209,6 +210,7 @@ Status DsoftbusInputPlugin::SetCallback(Callback *cb)
 
 Status DsoftbusInputPlugin::SetDataCallback(AVDataCallback callback)
 {
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     dataCb_ = callback;
     AVTRANS_LOGI("SetDataCallback success.");
     return Status::OK;

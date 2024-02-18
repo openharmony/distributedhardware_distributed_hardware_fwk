@@ -115,6 +115,7 @@ Status DscreenInputPlugin::SetParameter(Tag tag, const ValueType &value)
 
 Status DscreenInputPlugin::PushData(const std::string& inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
 {
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     if (!buffer || buffer->IsEmpty()) {
         AVTRANS_LOGE("buffer is nullptr or empty.");
         return Status::ERROR_NULL_POINTER;

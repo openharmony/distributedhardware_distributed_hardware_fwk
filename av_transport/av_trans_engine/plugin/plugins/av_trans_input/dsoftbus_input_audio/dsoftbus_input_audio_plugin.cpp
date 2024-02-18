@@ -172,16 +172,17 @@ Status DsoftbusInputAudioPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DsoftbusInputAudioPlugin::SetParameter(Tag tag, const ValueType &value)
 {
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     if (tag == Tag::MEDIA_DESCRIPTION) {
         ParseChannelDescription(Plugin::AnyCast<std::string>(value), ownerName_, peerDevId_);
     }
-    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     paramsMap_.insert(std::pair<Tag, ValueType>(tag, value));
     return Status::OK;
 }
 
 Status DsoftbusInputAudioPlugin::SetCallback(Callback *cb)
 {
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     if (cb == nullptr) {
         AVTRANS_LOGE("SetCallBack failed, callback is nullptr.");
         return Status::ERROR_NULL_POINTER;
@@ -193,6 +194,7 @@ Status DsoftbusInputAudioPlugin::SetCallback(Callback *cb)
 
 Status DsoftbusInputAudioPlugin::SetDataCallback(AVDataCallback callback)
 {
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     dataCb_ = callback;
     AVTRANS_LOGI("SetDataCallback success.");
     return Status::OK;

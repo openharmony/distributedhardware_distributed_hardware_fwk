@@ -336,7 +336,7 @@ int32_t SoftbusChannelAdapter::SendBytesData(const std::string& sessName, const 
     int32_t existSessId = GetSessIdBySessName(sessName, peerDevId);
     if (existSessId < 0) {
         AVTRANS_LOGI("Can not find sessionId for mySessName:%s, peerDevId:%s.",
-            sessName.c_str(), peerDevId.c_str());
+            sessName.c_str(), GetAnonyString(peerDevId).c_str());
         return ERR_DH_AVT_SEND_DATA_FAILED;
     }
     int32_t ret = SendBytes(existSessId, data.c_str(), strlen(data.c_str()));
@@ -359,7 +359,7 @@ int32_t SoftbusChannelAdapter::SendStreamData(const std::string& sessName, const
     int32_t existSessId = GetSessIdBySessName(sessName, peerDevId);
     if (existSessId < 0) {
         AVTRANS_LOGI("Can not find sessionId for mySessName:%s, peerDevId:%s.",
-            sessName.c_str(), peerDevId.c_str());
+            sessName.c_str(), GetAnonyString(peerDevId).c_str());
         return ERR_DH_AVT_SEND_DATA_FAILED;
     }
     int32_t ret = SendStream(existSessId, data, ext, &frameInfo);
