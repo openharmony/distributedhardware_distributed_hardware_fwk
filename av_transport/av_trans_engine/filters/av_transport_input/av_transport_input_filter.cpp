@@ -336,7 +336,6 @@ ErrorCode AVInputFilter::ConfigMeta(Plugin::Meta& meta)
 ErrorCode AVInputFilter::ConfigVideoMeta(Plugin::Meta& meta)
 {
     AVTRANS_LOGI("ConfigVideoMeta start!");
-    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     if (paramsMap_.find(Tag::VIDEO_WIDTH) != paramsMap_.end() &&
         Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::VIDEO_WIDTH])) {
         uint32_t width = static_cast<uint32_t>(Plugin::AnyCast<int>(paramsMap_[Tag::VIDEO_WIDTH]));
@@ -411,7 +410,6 @@ OHOS::Media::Plugin::AudioSampleFormat AVInputFilter::TransAudioSampleFormat(int
 ErrorCode AVInputFilter::ConfigAudioMeta(Plugin::Meta& meta)
 {
     AVTRANS_LOGI("ConfigAudioMeta start");
-    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     if (paramsMap_.find(Tag::AUDIO_CHANNELS) != paramsMap_.end() &&
         Plugin::Any::IsSameTypeWith<int>(paramsMap_[Tag::AUDIO_CHANNELS])) {
         uint32_t audioChannel = static_cast<uint32_t>(Plugin::AnyCast<int>(paramsMap_[Tag::AUDIO_CHANNELS]));
