@@ -142,8 +142,8 @@ Status DsoftbusInputAudioPlugin::Stop()
         return Status::ERROR_WRONG_STATE;
     }
     SetCurrentState(State::PREPARED);
-    bufferPopTask_->Stop();
     DataQueueClear(dataQueue_);
+    bufferPopTask_->Stop();
     return Status::OK;
 }
 
