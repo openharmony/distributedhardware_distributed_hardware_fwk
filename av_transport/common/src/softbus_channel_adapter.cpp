@@ -505,7 +505,6 @@ void SoftbusChannelAdapter::OnSoftbusChannelClosed(int32_t sessionId, ShutdownRe
     for (auto it = devId2SessIdMap_.begin(); it != devId2SessIdMap_.end();) {
         if (it->second == sessionId) {
             event.content = GetOwnerFromSessName(it->first);
-            AVTRANS_LOGI("find sessName is: %s", it->first.c_str());
             std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->first, event).detach();
             it = devId2SessIdMap_.erase(it);
         } else {
@@ -608,15 +607,12 @@ std::string SoftbusChannelAdapter::GetOwnerFromSessName(const std::string &sessN
 
 void SoftbusChannelAdapter::SendChannelEvent(const std::string &sessName, const AVTransEvent event)
 {
-    AVTRANS_LOGI("SendChannelEvent event.type_%" PRId32", sessName: %s", event.type, sessName.c_str());
+    AVTRANS_LOGI("SendChannelEvent event.type_%" PRId32, event.type);
     pthread_setname_np(pthread_self(), SEND_CHANNEL_EVENT);
 
     ISoftbusChannelListener *listener = nullptr;
     {
         std::lock_guard<std::mutex> lock(listenerMtx_);
-        for (auto it = listenerMap_.begin(); it != listenerMap_.end(); it++) {
-            AVTRANS_LOGI("listenerMtx_ all key:%s", it->first.c_str());
-        }
         listener = listenerMap_[sessName];
         TRUE_RETURN(listener == nullptr, "input listener is nullptr.");
     }
