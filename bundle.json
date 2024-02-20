@@ -50,7 +50,8 @@
         "graphic_2d",
         "graphic_surface",
         "media_foundation",
-        "bounds_checking_function"
+        "bounds_checking_function",
+        "power_manager"
       ],
       "third_party": [
         "json",
