@@ -68,10 +68,21 @@ public:
 
 private:
     void InitOutputController();
+    State GetCurrentState()
+    {
+        std::lock_guard<std::mutex> lock(stateMutex_);
+        return state_;
+    }
+
+    void SetCurrentState(State state)
+    {
+        std::lock_guard<std::mutex> lock(stateMutex_);
+        state_ = state;
+    }
 
 private:
-    Media::OSAL::Mutex operationMutes_ {};
-    State state_ {State::CREATED};
+    std::mutex stateMutex_;
+    std::atomic<State> state_ = State::CREATED;
     Callback *eventsCb_ = nullptr;
     AVDataCallback dataCb_;
     std::condition_variable dataCond_;

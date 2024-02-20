@@ -64,8 +64,7 @@ DaudioOutputPlugin::~DaudioOutputPlugin()
 Status DaudioOutputPlugin::Init()
 {
     AVTRANS_LOGI("Init.");
-    OSAL::ScopedLock lock(operationMutes_);
-    state_ = State::INITIALIZED;
+    SetCurrentState(State::INITIALIZED);
     return Status::OK;
 }
 
@@ -95,8 +94,7 @@ void DaudioOutputPlugin::RampleInit(uint32_t channels, uint32_t sampleRate, uint
 Status DaudioOutputPlugin::Prepare()
 {
     AVTRANS_LOGI("Prepare");
-    OSAL::ScopedLock lock(operationMutes_);
-    if (state_ != State::INITIALIZED) {
+    if (GetCurrentState() != State::INITIALIZED) {
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
@@ -126,14 +124,13 @@ Status DaudioOutputPlugin::Prepare()
     }
     AVTRANS_LOGI("channels = %d, sampleRate = %d, channelLayout = %d.", channels, sampleRate, channelsLayout);
     RampleInit(channels, sampleRate, channelsLayout);
-    state_ = State::PREPARED;
+    SetCurrentState(State::PREPARED);
     return Status::OK;
 }
 
 Status DaudioOutputPlugin::Reset()
 {
     AVTRANS_LOGI("Reset enter");
-    OSAL::ScopedLock lock(operationMutes_);
     eventcallback_ = nullptr;
     if (sendPlayTask_) {
         sendPlayTask_->Stop();
@@ -143,14 +140,18 @@ Status DaudioOutputPlugin::Reset()
         resample_.reset();
     }
     smIndex_ = 0;
-    paramsMap_.clear();
+    {
+        std::lock_guard<std::mutex> lock(paramsMapMutex_);
+        paramsMap_.clear();
+    }
     DataQueueClear(outputBuffer_);
-    state_ = State::INITIALIZED;
+    SetCurrentState(State::INITIALIZED);
     return Status::OK;
 }
 
 Status DaudioOutputPlugin::GetParameter(Tag tag, ValueType &value)
 {
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     auto iter = paramsMap_.find(tag);
     if (iter != paramsMap_.end()) {
         value = iter->second;
@@ -161,7 +162,7 @@ Status DaudioOutputPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DaudioOutputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
-    Media::OSAL::ScopedLock lock(operationMutes_);
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     paramsMap_.insert(std::make_pair(tag, value));
     if (tag == Plugin::Tag::USER_SHARED_MEMORY_FD) {
         std::unique_lock<std::mutex> lock(sharedMemMtx_);
@@ -177,26 +178,24 @@ Status DaudioOutputPlugin::SetParameter(Tag tag, const ValueType &value)
 Status DaudioOutputPlugin::Start()
 {
     AVTRANS_LOGI("Start enter");
-    OSAL::ScopedLock lock(operationMutes_);
-    if (state_ != State::PREPARED) {
+    if (GetCurrentState() != State::PREPARED) {
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
     DataQueueClear(outputBuffer_);
     sendPlayTask_->Start();
-    state_ = State::RUNNING;
+    SetCurrentState(State::RUNNING);
     return Status::OK;
 }
 
 Status DaudioOutputPlugin::Stop()
 {
     AVTRANS_LOGI("Stop enter");
-    OSAL::ScopedLock lock(operationMutes_);
-    if (state_ != State::RUNNING) {
+    if (GetCurrentState() != State::RUNNING) {
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
-    state_ = State::PREPARED;
+    SetCurrentState(State::PREPARED);
     sendPlayTask_->Stop();
     DataQueueClear(outputBuffer_);
     return Status::OK;
@@ -204,7 +203,6 @@ Status DaudioOutputPlugin::Stop()
 
 Status DaudioOutputPlugin::SetCallback(Callback *cb)
 {
-    OSAL::ScopedLock lock(operationMutes_);
     if (cb == nullptr) {
         AVTRANS_LOGE("SetCallBack failed, cb is nullptr.");
         return Status::ERROR_NULL_POINTER;
@@ -216,7 +214,6 @@ Status DaudioOutputPlugin::SetCallback(Callback *cb)
 
 Status DaudioOutputPlugin::SetDataCallback(AVDataCallback callback)
 {
-    OSAL::ScopedLock lock(operationMutes_);
     if (callback == nullptr) {
         AVTRANS_LOGE("SetCallBack failed, callback is nullptr.");
         return Status::ERROR_NULL_POINTER;
@@ -242,8 +239,7 @@ Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<P
     } else {
         AVTRANS_LOGI("Push audio buffer, bufferLen: %zu, not contains metadata.", buffer->GetMemory()->GetSize());
     }
-
-    OSAL::ScopedLock lock(operationMutes_);
+    std::lock_guard<std::mutex> lock(dataQueueMtx_);
     while (outputBuffer_.size() >= DATA_QUEUE_MAX_SIZE) {
         AVTRANS_LOGE("outputBuffer_ queue overflow.");
         outputBuffer_.pop();
@@ -255,13 +251,13 @@ Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<P
 
 void DaudioOutputPlugin::HandleData()
 {
-    while (state_ == State::RUNNING) {
+    while (GetCurrentState() == State::RUNNING) {
         std::shared_ptr<Plugin::Buffer> buffer;
         {
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
             dataCond_.wait_for(lock, std::chrono::milliseconds(PLUGIN_TASK_WAIT_TIME),
                 [this]() { return !outputBuffer_.empty(); });
-            if (state_ != State::RUNNING) {
+            if (GetCurrentState() != State::RUNNING) {
                 return;
             }
             if (outputBuffer_.empty()) {
@@ -312,6 +308,7 @@ void DaudioOutputPlugin::WriteMasterClockToMemory(const std::shared_ptr<Plugin::
 
 void DaudioOutputPlugin::DataQueueClear(std::queue<std::shared_ptr<Buffer>> &q)
 {
+    std::lock_guard<std::mutex> lock(dataQueueMtx_);
     std::queue<std::shared_ptr<Buffer>> empty;
     swap(empty, q);
 }

@@ -75,7 +75,7 @@ Status DaudioInputPlugin::Deinit()
 Status DaudioInputPlugin::Reset()
 {
     AVTRANS_LOGI("Reset enter.");
-    Media::OSAL::ScopedLock lock(operationMutes_);
+    std::lock_guard<std::mutex> lock(tagMapMutex_);
     tagMap_.clear();
     frameNumber_.store(0);
     return Status::OK;
@@ -84,7 +84,6 @@ Status DaudioInputPlugin::Reset()
 Status DaudioInputPlugin::Pause()
 {
     AVTRANS_LOGI("Pause enter.");
-    Media::OSAL::ScopedLock lock(operationMutes_);
     if ((sharedMemory_.fd > 0) && (sharedMemory_.size > 0) && !sharedMemory_.name.empty()) {
         ResetSharedMemory(sharedMemory_);
     }
@@ -100,7 +99,7 @@ Status DaudioInputPlugin::Resume()
 Status DaudioInputPlugin::GetParameter(Tag tag, ValueType &value)
 {
     {
-        Media::OSAL::ScopedLock lock(operationMutes_);
+        std::lock_guard<std::mutex> lock(tagMapMutex_);
         auto iter = tagMap_.find(tag);
         if (iter != tagMap_.end()) {
             value = iter->second;
@@ -112,7 +111,7 @@ Status DaudioInputPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DaudioInputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
-    Media::OSAL::ScopedLock lock(operationMutes_);
+    std::lock_guard<std::mutex> lock(tagMapMutex_);
     tagMap_.insert(std::make_pair(tag, value));
     if (tag == Plugin::Tag::USER_SHARED_MEMORY_FD) {
         sharedMemory_ = UnmarshalSharedMemory(Media::Plugin::AnyCast<std::string>(value));
@@ -122,9 +121,8 @@ Status DaudioInputPlugin::SetParameter(Tag tag, const ValueType &value)
 
 Status DaudioInputPlugin::PushData(const std::string &inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
-    Media::OSAL::ScopedLock lock(operationMutes_);
+    std::lock_guard<std::mutex> lock(tagMapMutex_);
     TRUE_RETURN_V(buffer == nullptr, Status::ERROR_NULL_POINTER);
-
     if (buffer->IsEmpty()) {
         AVTRANS_LOGE("bufferData is Empty.");
         return Status::ERROR_INVALID_PARAMETER;

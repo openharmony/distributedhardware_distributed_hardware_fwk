@@ -136,7 +136,7 @@ HWTEST_F(AvTransportOutputFilterTest, Stop_001, testing::ext::TestSize.Level1)
     std::shared_ptr<AVOutputFilter> avOutputTest_ =
         FilterFactory::Instance().CreateFilterWithType<AVOutputFilter>(AVOUTPUT_NAME, FILTERNAME);
     ErrorCode ret = avOutputTest_->Stop();
-    EXPECT_EQ(ErrorCode::ERROR_INVALID_STATE, ret);
+    EXPECT_EQ(ErrorCode::ERROR_NULL_POINTER, ret);
 }
 
 HWTEST_F(AvTransportOutputFilterTest, Stop_002, testing::ext::TestSize.Level1)
