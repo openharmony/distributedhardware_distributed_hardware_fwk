@@ -75,13 +75,13 @@ private:
     State GetCurrentState()
     {
         std::lock_guard<std::mutex> lock(stateMutex_);
-        return currentState_;
+        return state_;
     }
 
     void SetCurrentState(State state)
     {
         std::lock_guard<std::mutex> lock(stateMutex_);
-        currentState_ = state;
+        state_ = state;
     }
 private:
     std::condition_variable dataCond_;
@@ -92,7 +92,7 @@ private:
     std::shared_ptr<OSAL::Task> sendPlayTask_;
 
     std::mutex stateMutex_;
-    std::atomic<State> currentState_ = State::CREATED;
+    std::atomic<State> state_ = State::CREATED;
     Callback *eventcallback_ = nullptr;
     AVDataCallback datacallback_ = nullptr;
     std::shared_ptr<Ffmpeg::Resample> resample_ {nullptr};

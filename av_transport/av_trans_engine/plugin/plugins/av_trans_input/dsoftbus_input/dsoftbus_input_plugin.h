@@ -84,13 +84,13 @@ private:
     State GetCurrentState()
     {
         std::lock_guard<std::mutex> lock(stateMutex_);
-        return currentState_;
+        return state_;
     }
 
     void SetCurrentState(State state)
     {
         std::lock_guard<std::mutex> lock(stateMutex_);
-        currentState_ = state;
+        state_ = state;
     }
 
 private:
@@ -106,7 +106,7 @@ private:
     std::mutex paramsMapMutex_;
     std::queue<std::shared_ptr<Buffer>> dataQueue_;
     std::map<Tag, ValueType> paramsMap_;
-    std::atomic<State> currentState_ = State::CREATED;
+    std::atomic<State> state_ = State::CREATED;
     Callback* eventsCb_ = nullptr;
     AVDataCallback dataCb_;
 };

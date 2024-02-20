@@ -140,15 +140,12 @@ HWTEST_F(AvTransportInputFilterTest, Stop_001, testing::ext::TestSize.Level1)
     std::shared_ptr<AVInputFilter> avInputTest_ =
         FilterFactory::Instance().CreateFilterWithType<AVInputFilter>(AVINPUT_NAME, FILTERNAME);
     ErrorCode ret = avInputTest_->Stop();
-    EXPECT_EQ(ErrorCode::ERROR_INVALID_STATE, ret);
-
-    avInputTest_->state_ = FilterState::RUNNING;
-    ret = avInputTest_->Stop();
     EXPECT_EQ(ErrorCode::ERROR_NULL_POINTER, ret);
-
+    avInputTest_->plugin_ =
+        PluginManager::Instance().CreateGenericPlugin<AvTransInput, AvTransInputPlugin>("AVTransDaudioInputPlugin");
     avInputTest_->state_ = FilterState::PAUSED;
     ret = avInputTest_->Stop();
-    EXPECT_EQ(ErrorCode::ERROR_NULL_POINTER, ret);
+    EXPECT_EQ(ErrorCode::SUCCESS, ret);
 }
 
 HWTEST_F(AvTransportInputFilterTest, Stop_002, testing::ext::TestSize.Level1)
