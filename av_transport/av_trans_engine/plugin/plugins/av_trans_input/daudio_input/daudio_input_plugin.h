@@ -63,8 +63,8 @@ public:
 
 private:
     std::atomic<uint32_t> frameNumber_;
+    std::mutex tagMapMutex_;
     std::map<Tag, ValueType> tagMap_;
-    OSAL::Mutex operationMutes_ {};
     AVTransSharedMemory sharedMemory_ = AVTransSharedMemory{ 0, 0, "" };
 };
 } // namespace DistributedHardware

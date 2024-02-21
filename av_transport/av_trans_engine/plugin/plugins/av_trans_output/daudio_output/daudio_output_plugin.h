@@ -72,16 +72,27 @@ private:
     void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &q);
     void RampleInit(uint32_t channels, uint32_t sampleRate, uint32_t channelLayout);
     void WriteMasterClockToMemory(const std::shared_ptr<Plugin::Buffer> &buffer);
+    State GetCurrentState()
+    {
+        std::lock_guard<std::mutex> lock(stateMutex_);
+        return state_;
+    }
 
+    void SetCurrentState(State state)
+    {
+        std::lock_guard<std::mutex> lock(stateMutex_);
+        state_ = state;
+    }
 private:
     std::condition_variable dataCond_;
+    std::mutex paramsMapMutex_;
     std::map<Tag, ValueType> paramsMap_;
     std::mutex dataQueueMtx_;
     std::queue<std::shared_ptr<Plugin::Buffer>> outputBuffer_;
     std::shared_ptr<OSAL::Task> sendPlayTask_;
 
-    Media::OSAL::Mutex operationMutes_ {};
-    State state_ {State::CREATED};
+    std::mutex stateMutex_;
+    std::atomic<State> state_ = State::CREATED;
     Callback *eventcallback_ = nullptr;
     AVDataCallback datacallback_ = nullptr;
     std::shared_ptr<Ffmpeg::Resample> resample_ {nullptr};
