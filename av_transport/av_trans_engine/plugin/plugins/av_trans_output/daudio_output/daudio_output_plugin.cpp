@@ -162,7 +162,7 @@ Status DaudioOutputPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DaudioOutputPlugin::SetParameter(Tag tag, const ValueType &value)
 {
-    std::lock_guard<std::mutex> lock(paramsMapMutex_);
+    std::lock_guard<std::mutex> mutexLock(paramsMapMutex_);
     paramsMap_.insert(std::make_pair(tag, value));
     if (tag == Plugin::Tag::USER_SHARED_MEMORY_FD) {
         std::unique_lock<std::mutex> lock(sharedMemMtx_);
