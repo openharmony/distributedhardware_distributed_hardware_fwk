@@ -30,7 +30,7 @@ const int32_t INVALID_SESSION_ID = -1;
 const int32_t SESSION_WAIT_SECONDS = 5;
 const int32_t INTERCERT_STRING_LENGTH = 20;
 const int32_t PLUGIN_RANK = 100;
-const int32_t PLUGIN_TASK_WAIT_TIME = 20;
+const int32_t PLUGIN_TASK_WAIT_TIME = 10;
 
 const uint32_t VIDEO_H264_LEVEL = 32;
 const uint32_t MAX_DEVICE_ID_LEN = 100;

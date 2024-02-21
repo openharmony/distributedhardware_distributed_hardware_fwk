@@ -54,7 +54,7 @@ ErrorCode AVOutputFilter::SetParameter(int32_t key, const Any& value)
         plugin_->SetParameter(static_cast<Plugin::Tag>(key), value);
     }
     {
-        OSAL::ScopedLock lock(outputFilterMutex_);
+        std::lock_guard<std::mutex> lock(paramsMapMutex_);
         paramsMap_[tag] = value;
     }
     return ErrorCode::SUCCESS;
@@ -68,7 +68,7 @@ ErrorCode AVOutputFilter::GetParameter(int32_t key, Any& value)
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
     }
     {
-        OSAL::ScopedLock lock(outputFilterMutex_);
+        std::lock_guard<std::mutex> lock(paramsMapMutex_);
         value = paramsMap_[tag];
     }
     return ErrorCode::SUCCESS;
@@ -114,7 +114,7 @@ ErrorCode AVOutputFilter::Prepare()
 ErrorCode AVOutputFilter::Start()
 {
     AVTRANS_LOGI("Start");
-    OSAL::ScopedLock lock(outputFilterMutex_);
+    std::lock_guard<std::mutex> lock(outputFilterMutex_);
     if (state_ != FilterState::READY && state_ != FilterState::PAUSED) {
         AVTRANS_LOGE("The current state is invalid");
         return ErrorCode::ERROR_INVALID_STATE;
@@ -134,18 +134,18 @@ ErrorCode AVOutputFilter::Start()
 ErrorCode AVOutputFilter::Stop()
 {
     AVTRANS_LOGI("Stop");
-    OSAL::ScopedLock lock(outputFilterMutex_);
-    if (state_ != FilterState::RUNNING) {
-        AVTRANS_LOGE("The current state is invalid");
-        return ErrorCode::ERROR_INVALID_STATE;
-    }
+    std::lock_guard<std::mutex> lock(outputFilterMutex_);
     if (plugin_ == nullptr) {
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_NULL_POINTER;
     }
+    if (state_ != FilterState::RUNNING) {
+        AVTRANS_LOGE("The current state is invalid");
+        plugin_->Deinit();
+        return ErrorCode::SUCCESS;
+    }
     if (TranslatePluginStatus(plugin_->Stop()) != ErrorCode::SUCCESS) {
         AVTRANS_LOGE("The plugin stop fail!");
-        return ErrorCode::ERROR_INVALID_OPERATION;
     }
     plugin_->Deinit();
     plugin_ = nullptr;
@@ -170,14 +170,14 @@ void AVOutputFilter::InitPorts()
     AVTRANS_LOGI("InitPorts");
     auto inPort = std::make_shared<InPort>(this);
     {
-        OSAL::ScopedLock lock(outputFilterMutex_);
+        std::lock_guard<std::mutex> lock(outputFilterMutex_);
         inPorts_.push_back(inPort);
     }
 }
 
 ErrorCode AVOutputFilter::FindPlugin()
 {
-    OSAL::ScopedLock lock(outputFilterMutex_);
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     std::string mime;
     if (paramsMap_.find(Tag::MIME) == paramsMap_.end() ||
         !Plugin::Any::IsSameTypeWith<std::string>(paramsMap_[Tag::MIME])) {
@@ -248,7 +248,7 @@ bool AVOutputFilter::Configure(const std::string& inPort, const std::shared_ptr<
 ErrorCode AVOutputFilter::InitPlugin()
 {
     AVTRANS_LOGI("InitPlugin");
-    OSAL::ScopedLock lock(outputFilterMutex_);
+    std::lock_guard<std::mutex> lock(outputFilterMutex_);
     if (plugin_ == nullptr) {
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
@@ -279,7 +279,7 @@ ErrorCode AVOutputFilter::ConfigPlugin()
 
 ErrorCode AVOutputFilter::PreparePlugin()
 {
-    OSAL::ScopedLock lock(outputFilterMutex_);
+    std::lock_guard<std::mutex> lock(outputFilterMutex_);
     if (plugin_ == nullptr) {
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_INVALID_PARAMETER_TYPE;
@@ -289,7 +289,7 @@ ErrorCode AVOutputFilter::PreparePlugin()
 
 ErrorCode AVOutputFilter::PushData(const std::string& inPort, const AVBufferPtr& buffer, int64_t offset)
 {
-    OSAL::ScopedLock lock(outputFilterMutex_);
+    std::lock_guard<std::mutex> lock(outputFilterMutex_);
     if (buffer == nullptr || plugin_ == nullptr) {
         AVTRANS_LOGE("buffer or plugin is nullptr!");
         return ErrorCode::ERROR_INVALID_PARAMETER_TYPE;
@@ -301,7 +301,7 @@ ErrorCode AVOutputFilter::PushData(const std::string& inPort, const AVBufferPtr&
 
 ErrorCode AVOutputFilter::SetPluginParams()
 {
-    OSAL::ScopedLock lock(outputFilterMutex_);
+    std::lock_guard<std::mutex> lock(paramsMapMutex_);
     if (plugin_ == nullptr) {
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_NULL_POINTER;
@@ -329,7 +329,7 @@ ErrorCode AVOutputFilter::SetPluginParams()
 
 ErrorCode AVOutputFilter::SetEventCallBack()
 {
-    OSAL::ScopedLock lock(outputFilterMutex_);
+    std::lock_guard<std::mutex> lock(outputFilterMutex_);
     if (plugin_ == nullptr) {
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
@@ -340,7 +340,7 @@ ErrorCode AVOutputFilter::SetEventCallBack()
 
 ErrorCode AVOutputFilter::SetDataCallBack()
 {
-    OSAL::ScopedLock lock(outputFilterMutex_);
+    std::lock_guard<std::mutex> lock(outputFilterMutex_);
     if (plugin_ == nullptr) {
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
@@ -351,7 +351,7 @@ ErrorCode AVOutputFilter::SetDataCallBack()
 
 void AVOutputFilter::OnDataCallback(std::shared_ptr<Plugin::Buffer> buffer)
 {
-    OSAL::ScopedLock lock(outputFilterMutex_);
+    std::lock_guard<std::mutex> lock(outputFilterMutex_);
     if (buffer == nullptr) {
         AVTRANS_LOGE("buffer is nullptr!");
         return;
