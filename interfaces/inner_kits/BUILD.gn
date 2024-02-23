@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+# Copyright (c) 2022-2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -15,6 +15,10 @@ import("//build/ohos.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
+config("innerkits_external_config") {
+  include_dirs = [ "${innerkits_path}/include" ]
+}
+
 ohos_shared_library("libdhfwk_sdk") {
   sanitize = {
     boundary_sanitize = true
@@ -25,6 +29,8 @@ ohos_shared_library("libdhfwk_sdk") {
     debug = false
   }
   branch_protector_ret = "pac_ret"
+  public_configs = [ ":innerkits_external_config" ]
+
   include_dirs = [
     "${av_center_kits_path}/include",
     "${av_trans_path}/common/include",
