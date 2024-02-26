@@ -17,7 +17,6 @@
 
 #include <cinttypes>
 
-#include "nlohmann/json.hpp"
 #include "accesstoken_kit.h"
 #include "anonymous_string.h"
 #include "constants.h"

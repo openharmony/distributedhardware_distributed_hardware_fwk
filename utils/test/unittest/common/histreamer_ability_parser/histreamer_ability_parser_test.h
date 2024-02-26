@@ -17,7 +17,7 @@
 #define OHOS_DISTRIBUTED_HARDWARE_HISTREAMER_ABILITY_PARSER_TEST_H
 
 #include "histreamer_ability_parser.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 #include <gtest/gtest.h>
 #include <cstdint>
 #include <set>

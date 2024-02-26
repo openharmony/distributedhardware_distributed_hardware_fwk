@@ -26,7 +26,7 @@ ohos_shared_library("distributedhardwareutils") {
   }
   branch_protector_ret = "pac_ret"
   include_dirs = [
-    "//third_party/json/include",
+    "//third_party/cJSON",
     "${common_path}/log/include",
     "${common_path}/utils/include",
     "include",
@@ -44,7 +44,10 @@ ohos_shared_library("distributedhardwareutils") {
     "src/log/dh_log.cpp",
   ]
 
-  deps = [ "//third_party/openssl:libcrypto_shared" ]
+  deps = [
+    "//third_party/cJSON:cjson",
+    "//third_party/openssl:libcrypto_shared",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",

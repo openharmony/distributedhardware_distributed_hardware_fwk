@@ -21,7 +21,7 @@ config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
-    "//third_party/json/include",
+    "//third_party/cJSON",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include/lowlatency",
     "${services_path}/distributedhardwarefwkservice/include/utils",
@@ -38,6 +38,7 @@ ohos_unittest("LowLatencyListenerTest") {
   deps = [
     "${innerkits_path}:libdhfwk_sdk",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "//third_party/cJSON:cjson",
     "//third_party/googletest:gtest_main",
   ]
 

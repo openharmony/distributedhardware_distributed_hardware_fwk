@@ -14,7 +14,7 @@
  */
 
 #include "low_latency_listener_test.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 using namespace testing::ext;
 
@@ -90,14 +90,17 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_004, TestSize.Level0)
 {
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
 
-    nlohmann::json json;
-    const std::string DH_TYPE = "dh_type";
-    const std::string LOW_LATENCY_ENABLE = "low_latency_enable";
+    cJSON* json = cJSON_CreateObject();
+    const char* DH_TYPE = "dh_type";
+    const char* LOW_LATENCY_ENABLE = "low_latency_enable";
 
-    json[DH_TYPE] = "dh_type";
-    json[LOW_LATENCY_ENABLE] = "low_latency_enable";
-    std::string message = json.dump();
+    cJSON_AddStringToObject(json, DH_TYPE, "dh_type");
+    cJSON_AddStringToObject(json, LOW_LATENCY_ENABLE, "low_latency_enable");
+    char* cjson = cJSON_Print(json);
+    std::string message(cjson);
     listener_->OnMessage(topic, message);
+    cJSON_free(cjson);
+    cJSON_Delete(json);
     EXPECT_EQ(nullptr, listener_->AsObject());
 }
 
@@ -126,14 +129,16 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_005, TestSize.Level0)
 HWTEST_F(LowLatencyListenerTest, OnMessage_006, TestSize.Level0)
 {
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
-    nlohmann::json json;
-    const std::string DH_TYPE;
-    const std::string LOW_LATENCY_ENABLE;
-
-    json[DH_TYPE] = 0x01;
-    json[LOW_LATENCY_ENABLE] = true;
-    std::string message = json.dump();
+    cJSON* json = cJSON_CreateObject();
+    const char* DH_TYPE = "dh_type";
+    const char* LOW_LATENCY_ENABLE = "low_latency_enable";
+    cJSON_AddNumberToObject(json, DH_TYPE, 0x01);
+    cJSON_AddBoolToObject(json, LOW_LATENCY_ENABLE, true);
+    char* cjson = cJSON_Print(json);
+    std::string message(cjson);
     listener_->OnMessage(topic, message);
+    cJSON_free(cjson);
+    cJSON_Delete(json);
     EXPECT_EQ(nullptr, listener_->AsObject());
 }
 
@@ -146,14 +151,16 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_006, TestSize.Level0)
 HWTEST_F(LowLatencyListenerTest, OnMessage_007, TestSize.Level0)
 {
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
-    nlohmann::json json;
-    const std::string DH_TYPE;
-    const std::string LOW_LATENCY_ENABLE;
-
-    json[DH_TYPE] = 0x01;
-    json[LOW_LATENCY_ENABLE] = false;
-    std::string message = json.dump();
+    cJSON* json = cJSON_CreateObject();
+    const char* DH_TYPE = "dh_type";
+    const char* LOW_LATENCY_ENABLE = "low_latency_enable";
+    cJSON_AddNumberToObject(json, DH_TYPE, 0x01);
+    cJSON_AddBoolToObject(json, LOW_LATENCY_ENABLE, false);
+    char* cjson = cJSON_Print(json);
+    std::string message(cjson);
     listener_->OnMessage(topic, message);
+    cJSON_free(cjson);
+    cJSON_Delete(json);
     EXPECT_EQ(nullptr, listener_->AsObject());
 }
 

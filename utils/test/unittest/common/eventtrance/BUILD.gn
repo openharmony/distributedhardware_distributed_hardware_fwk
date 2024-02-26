@@ -24,7 +24,7 @@ config("module_private_config") {
     "${utils_path}/include/log",
     "${utils_path}/include/eventbus",
     "${utils_path}/test/unittest/common/eventtrance",
-    "//third_party/json/include",
+    "//third_party/cJSON",
     "//third_party/openssl:libcrypto_shared",
     "${common_path}/log/include",
     "${common_path}/utils/include",
@@ -44,6 +44,7 @@ ohos_unittest("EventTranceTest") {
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
+    "//third_party/cJSON:cjson",
     "//third_party/googletest:gtest_main",
   ]
 

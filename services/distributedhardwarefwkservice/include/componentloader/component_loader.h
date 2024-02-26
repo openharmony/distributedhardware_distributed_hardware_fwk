@@ -27,6 +27,7 @@
 #include "idistributed_hardware_sink.h"
 #include "idistributed_hardware_source.h"
 #include "utils/impl_utils.h"
+#include "cJSON.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -93,6 +94,8 @@ private:
     void StoreLocalDHVersionInDB();
     bool IsDHTypeExist(DHType dhType);
     std::string Readfile(const std::string &filePath);
+    void ParseCompConfigFromJson(cJSON *component, CompConfig &config);
+    void ParseResourceDescFromJson(cJSON *resourceDescs, CompConfig &config);
 
 private:
     DHVersion localDHVersion_;

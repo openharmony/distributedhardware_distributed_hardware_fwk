@@ -31,7 +31,7 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//third_party/json/include",
+    "//third_party/cJSON",
   ]
 }
 
@@ -44,6 +44,7 @@ ohos_unittest("VersionManagerTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "//third_party/cJSON:cjson",
     "//third_party/googletest:gtest_main",
   ]
 

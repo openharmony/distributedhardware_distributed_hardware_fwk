@@ -34,7 +34,7 @@ ohos_fuzztest("ComponentloaderFuzzTest") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//third_party/json/include",
+    "//third_party/cJSON",
   ]
   cflags = [
     "-g",
@@ -46,6 +46,7 @@ ohos_fuzztest("ComponentloaderFuzzTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "//third_party/cJSON:cjson",
   ]
 
   defines = [

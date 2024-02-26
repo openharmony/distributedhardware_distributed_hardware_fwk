@@ -22,7 +22,7 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "${av_trans_path}/common/include",
-    "//third_party/json/include",
+    "//third_party/cJSON",
     "${common_path}/utils/include",
     "${utils_path}/include/log",
     "${innerkits_path}/include",
@@ -49,6 +49,7 @@ ohos_unittest("HidumpHelperTest") {
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
+    "//third_party/cJSON:cjson",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]

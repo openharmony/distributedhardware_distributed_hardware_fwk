@@ -127,49 +127,64 @@ DeviceInfo GetLocalDeviceInfo()
     return devInfo;
 }
 
-bool IsUInt8(const nlohmann::json& jsonObj, const std::string& key)
+bool IsUInt8(const cJSON* jsonObj, const std::string& key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT8_MAX;
-    return res;
+    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
+    if (value == NULL || !cJSON_IsNumber(value)) {
+        return false;
+    }
+    return (value->valuedouble >= 0 && value->valuedouble <= UINT8_MAX);
 }
 
-bool IsUInt16(const nlohmann::json& jsonObj, const std::string& key)
+bool IsUInt16(const cJSON* jsonObj, const std::string& key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT16_MAX;
-    return res;
+    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
+    if (value == NULL || !cJSON_IsNumber(value)) {
+        return false;
+    }
+    return (value->valuedouble >= 0 && value->valuedouble <= UINT16_MAX);
 }
 
-bool IsInt32(const nlohmann::json& jsonObj, const std::string& key)
+bool IsInt32(const cJSON* jsonObj, const std::string& key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_number_integer() && INT32_MIN <= jsonObj[key] &&
-        jsonObj[key] <= INT32_MAX;
-    return res;
+    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
+    if (value == NULL || !cJSON_IsNumber(value)) {
+        return false;
+    }
+    return (value->valuedouble >= INT32_MIN && value->valuedouble <= INT32_MAX);
 }
 
-bool IsUInt32(const nlohmann::json& jsonObj, const std::string& key)
+bool IsUInt32(const cJSON* jsonObj, const std::string& key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT32_MAX;
-    return res;
+    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
+    if (value == NULL || !cJSON_IsNumber(value)) {
+        return false;
+    }
+    return (value->valuedouble >= 0 && value->valuedouble <= UINT32_MAX);
 }
 
-bool IsBool(const nlohmann::json& jsonObj, const std::string& key)
+bool IsBool(const cJSON* jsonObj, const std::string& key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_boolean();
-    return res;
+    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
+    return (value != NULL && cJSON_IsBool(value));
 }
 
-bool IsString(const nlohmann::json& jsonObj, const std::string& key)
+bool IsString(const cJSON* jsonObj, const std::string& key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_string() && MIN_MESSAGE_LEN < jsonObj[key].size() &&
-        jsonObj[key].size() <= MAX_MESSAGE_LEN;
-    return res;
+    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
+    if (value == NULL || !cJSON_IsString(value)) {
+        return false;
+    }
+    return (strlen(value->valuestring) > MIN_MESSAGE_LEN && strlen(value->valuestring) <= MAX_MESSAGE_LEN);
 }
 
-bool IsArray(const nlohmann::json& jsonObj, const std::string& key)
+bool IsArray(const cJSON* jsonObj, const std::string& key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_array() && jsonObj[key].size() > 0 &&
-        jsonObj[key].size() <= MAX_COMP_SIZE;
-    return res;
+    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
+    if (value == NULL || !cJSON_IsArray(value)) {
+        return false;
+    }
+    return ((uint32_t)cJSON_GetArraySize(value) > 0 && (uint32_t)cJSON_GetArraySize(value) <= MAX_COMP_SIZE);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

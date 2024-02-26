@@ -23,7 +23,7 @@ config("module_private_config") {
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
-    "//third_party/json/include",
+    "//third_party/cJSON",
   ]
 }
 
@@ -37,6 +37,7 @@ ohos_unittest("HistreamerAbilityParserTest") {
 
   deps = [
     "${utils_path}:distributedhardwareutils",
+    "//third_party/cJSON:cjson",
     "//third_party/googletest:gtest_main",
   ]
 

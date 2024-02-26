@@ -38,7 +38,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "${common_path}/utils/include",
     "${utils_path}/include/log",
     "${utils_path}/include",
-    "//third_party/json/include",
+    "//third_party/cJSON",
     "include/componentloader",
     "include/versionmanager",
     "include/componentmanager",
@@ -102,7 +102,10 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/versionmanager/version_manager.cpp",
   ]
 
-  deps = [ "${utils_path}:distributedhardwareutils" ]
+  deps = [
+    "${utils_path}:distributedhardwareutils",
+    "//third_party/cJSON:cjson",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",

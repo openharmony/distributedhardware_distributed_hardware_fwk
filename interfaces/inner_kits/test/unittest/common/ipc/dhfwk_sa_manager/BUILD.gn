@@ -28,7 +28,7 @@ config("module_private_config") {
     "${common_path}/log/include",
     "${innerkits_path}/include",
     "${innerkits_path}/include/ipc",
-    "//third_party/json/include",
+    "//third_party/cJSON",
   ]
 }
 
@@ -43,6 +43,7 @@ ohos_unittest("DhfwkSaManagerTest") {
     "${innerkits_path}:libdhfwk_sdk",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
+    "//third_party/cJSON:cjson",
     "//third_party/googletest:gtest_main",
   ]
 

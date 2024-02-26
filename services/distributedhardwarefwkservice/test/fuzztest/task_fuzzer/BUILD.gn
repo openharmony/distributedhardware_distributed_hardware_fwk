@@ -25,7 +25,7 @@ ohos_fuzztest("TaskFuzzTest") {
 
   include_dirs = [
     "include",
-    "//third_party/json/include",
+    "//third_party/cJSON",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${services_path}/distributedhardwarefwkservice/include",
@@ -44,6 +44,7 @@ ohos_fuzztest("TaskFuzzTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "//third_party/cJSON:cjson",
   ]
 
   external_deps = [ "c_utils:utils" ]

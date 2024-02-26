@@ -21,7 +21,7 @@
 #include "hitrace_meter.h"
 #include "hidump_helper.h"
 #include "kvstore_observer.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 #include "versionmanager/version_manager.h"
 
 using namespace testing::ext;
@@ -308,17 +308,20 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_017, TestSize.Level0)
  */
 HWTEST_F(ComponentLoaderTest, component_loader_test_018, TestSize.Level0)
 {
-    std::string NAME = "NAME";
-    std::string TYPE = "TYPE";
-    std::string PATH = "PATH";
-    nlohmann::json json0bject;
-    nlohmann::json compVers;
-    compVers[NAME] = "name";
-    compVers[TYPE] = 1111;
-    json0bject[PATH] = compVers;
-    std::string jsonStr = json0bject.dump();
+    const char *NAME = "NAME";
+    const char *TYPE = "TYPE";
+    const char *PATH = "PATH";
+    cJSON* json0bject = cJSON_CreateObject();
+    cJSON* compVers = cJSON_CreateObject();
+    cJSON_AddStringToObject(compVers, NAME, "name");
+    cJSON_AddNumberToObject(compVers, TYPE, 1111);
+    cJSON_AddItemToObject(json0bject, PATH, compVers);
+    char* cjson = cJSON_Print(json0bject);
+    std::string jsonStr(cjson);
     std::map<DHType, CompConfig> dhtypeMap;
     int32_t ret = ComponentLoader::GetInstance().GetCompPathAndVersion(jsonStr, dhtypeMap);
+    cJSON_free(cjson);
+    cJSON_Delete(json0bject);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
@@ -393,7 +396,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_023, TestSize.Level0)
  */
 HWTEST_F(ComponentLoaderTest, component_loader_test_024, TestSize.Level0)
 {
-    DHType dhType =  DHType::GPS;
+    DHType dhType = DHType::GPS;
     int32_t ret = ComponentLoader::GetInstance().ReleaseHardwareHandler(dhType);
     EXPECT_EQ(ERR_DH_FWK_TYPE_NOT_EXIST, ret);
 }
@@ -406,7 +409,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_024, TestSize.Level0)
  */
 HWTEST_F(ComponentLoaderTest, component_loader_test_025, TestSize.Level0)
 {
-    DHType dhType =  DHType::GPS;
+    DHType dhType = DHType::GPS;
     int32_t ret = ComponentLoader::GetInstance().ReleaseSource(dhType);
     EXPECT_EQ(ERR_DH_FWK_TYPE_NOT_EXIST, ret);
 }
@@ -419,7 +422,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_025, TestSize.Level0)
  */
 HWTEST_F(ComponentLoaderTest, component_loader_test_026, TestSize.Level0)
 {
-    DHType dhType =  DHType::GPS;
+    DHType dhType = DHType::GPS;
     int32_t ret = ComponentLoader::GetInstance().ReleaseSink(dhType);
     EXPECT_EQ(ERR_DH_FWK_TYPE_NOT_EXIST, ret);
 }
@@ -432,7 +435,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_026, TestSize.Level0)
  */
 HWTEST_F(ComponentLoaderTest, component_loader_test_027, TestSize.Level0)
 {
-    DHType dhType =  DHType::GPS;
+    DHType dhType = DHType::GPS;
     bool ret = ComponentLoader::GetInstance().IsDHTypeExist(dhType);
     EXPECT_EQ(false, ret);
 }
@@ -459,10 +462,11 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_028, TestSize.Level0)
 HWTEST_F(ComponentLoaderTest, component_loader_test_029, TestSize.Level0)
 {
     CompConfig cfg;
-    nlohmann::json json;
-    json[COMP_NAME] = 4801;
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddNumberToObject(json, COMP_NAME.c_str(), 4801);
 
     from_json(json, cfg);
+    cJSON_Delete(json);
     EXPECT_EQ(true, cfg.name.empty());
 }
 
@@ -475,11 +479,12 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_029, TestSize.Level0)
 HWTEST_F(ComponentLoaderTest, component_loader_test_030, TestSize.Level0)
 {
     CompConfig cfg;
-    nlohmann::json json;
-    json[COMP_NAME] = "name";
-    json[COMP_TYPE] = 0x02;
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
+    cJSON_AddNumberToObject(json, COMP_TYPE.c_str(), 0x02);
 
     from_json(json, cfg);
+    cJSON_Delete(json);
     EXPECT_NE(DHType::AUDIO, cfg.type);
 }
 
@@ -492,12 +497,13 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_030, TestSize.Level0)
 HWTEST_F(ComponentLoaderTest, component_loader_test_031, TestSize.Level0)
 {
     CompConfig cfg;
-    nlohmann::json json;
-    json[COMP_NAME] = "name";
-    json[COMP_TYPE] = "DHType::AUDIO";
-    json[COMP_HANDLER_LOC] = 4801;
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
+    cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
+    cJSON_AddNumberToObject(json, COMP_HANDLER_LOC.c_str(), 4801);
 
     from_json(json, cfg);
+    cJSON_Delete(json);
     EXPECT_EQ(true, cfg.compHandlerLoc.empty());
 }
 
@@ -510,13 +516,14 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_031, TestSize.Level0)
 HWTEST_F(ComponentLoaderTest, component_loader_test_032, TestSize.Level0)
 {
     CompConfig cfg;
-    nlohmann::json json;
-    json[COMP_NAME] = "name";
-    json[COMP_TYPE] = "DHType::AUDIO";
-    json[COMP_HANDLER_LOC] = "comp_handler_loc";
-    json[COMP_HANDLER_VERSION] = 4801;
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
+    cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
+    cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
+    cJSON_AddNumberToObject(json, COMP_HANDLER_VERSION.c_str(), 4801);
 
     from_json(json, cfg);
+    cJSON_Delete(json);
     EXPECT_EQ(true, cfg.compHandlerVersion.empty());
 }
 
@@ -529,14 +536,15 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_032, TestSize.Level0)
 HWTEST_F(ComponentLoaderTest, component_loader_test_033, TestSize.Level0)
 {
     CompConfig cfg;
-    nlohmann::json json;
-    json[COMP_NAME] = "name";
-    json[COMP_TYPE] = "DHType::AUDIO";
-    json[COMP_HANDLER_LOC] = "comp_handler_loc";
-    json[COMP_HANDLER_VERSION] = "comp_handler_version";
-    json[COMP_SOURCE_LOC] = 4801;
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
+    cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
+    cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
+    cJSON_AddStringToObject(json, COMP_HANDLER_VERSION.c_str(), "comp_handler_version");
+    cJSON_AddNumberToObject(json, COMP_SOURCE_LOC.c_str(), 4801);
 
     from_json(json, cfg);
+    cJSON_Delete(json);
     EXPECT_EQ(true, cfg.compSourceLoc.empty());
 }
 
@@ -549,15 +557,16 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_033, TestSize.Level0)
 HWTEST_F(ComponentLoaderTest, component_loader_test_034, TestSize.Level0)
 {
     CompConfig cfg;
-    nlohmann::json json;
-    json[COMP_NAME] = "name";
-    json[COMP_TYPE] = "DHType::AUDIO";
-    json[COMP_HANDLER_LOC] = "comp_handler_loc";
-    json[COMP_HANDLER_VERSION] = "comp_handler_version";
-    json[COMP_SOURCE_LOC] = "comp_source_loc";
-    json[COMP_SOURCE_VERSION] = 4801;
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
+    cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
+    cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
+    cJSON_AddStringToObject(json, COMP_HANDLER_VERSION.c_str(), "comp_handler_version");
+    cJSON_AddStringToObject(json, COMP_SOURCE_LOC.c_str(), "comp_source_loc");
+    cJSON_AddNumberToObject(json, COMP_SOURCE_VERSION.c_str(), 4801);
 
     from_json(json, cfg);
+    cJSON_Delete(json);
     EXPECT_EQ(true, cfg.compSourceVersion.empty());
 }
 
@@ -570,16 +579,17 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_034, TestSize.Level0)
 HWTEST_F(ComponentLoaderTest, component_loader_test_035, TestSize.Level0)
 {
     CompConfig cfg;
-    nlohmann::json json;
-    json[COMP_NAME] = "name";
-    json[COMP_TYPE] = "DHType::AUDIO";
-    json[COMP_HANDLER_LOC] = "comp_handler_loc";
-    json[COMP_HANDLER_VERSION] = "comp_handler_version";
-    json[COMP_SOURCE_LOC] = "comp_source_loc";
-    json[COMP_SOURCE_VERSION] = "comp_source_version";
-    json[COMP_SOURCE_SA_ID] = "comp_source_sa_id";
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
+    cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
+    cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
+    cJSON_AddStringToObject(json, COMP_HANDLER_VERSION.c_str(), "comp_handler_version");
+    cJSON_AddStringToObject(json, COMP_SOURCE_LOC.c_str(), "comp_source_loc");
+    cJSON_AddStringToObject(json, COMP_SOURCE_VERSION.c_str(), "comp_source_version");
+    cJSON_AddStringToObject(json, COMP_SOURCE_SA_ID.c_str(), "comp_source_sa_id");
 
     from_json(json, cfg);
+    cJSON_Delete(json);
     EXPECT_NE(4801, cfg.compSourceSaId);
 }
 
@@ -592,17 +602,18 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_035, TestSize.Level0)
 HWTEST_F(ComponentLoaderTest, component_loader_test_036, TestSize.Level0)
 {
     CompConfig cfg;
-    nlohmann::json json;
-    json[COMP_NAME] = "name";
-    json[COMP_TYPE] = "DHType::AUDIO";
-    json[COMP_HANDLER_LOC] = "comp_handler_loc";
-    json[COMP_HANDLER_VERSION] = "comp_handler_version";
-    json[COMP_SOURCE_LOC] = "comp_source_loc";
-    json[COMP_SOURCE_VERSION] = "comp_source_version";
-    json[COMP_SOURCE_SA_ID] = 4801;
-    json[COMP_SINK_LOC] = 4802;
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
+    cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
+    cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
+    cJSON_AddStringToObject(json, COMP_HANDLER_VERSION.c_str(), "comp_handler_version");
+    cJSON_AddStringToObject(json, COMP_SOURCE_LOC.c_str(), "comp_source_loc");
+    cJSON_AddStringToObject(json, COMP_SOURCE_VERSION.c_str(), "comp_source_version");
+    cJSON_AddStringToObject(json, COMP_SOURCE_SA_ID.c_str(), "4801");
+    cJSON_AddNumberToObject(json, COMP_SINK_LOC.c_str(), 4802);
 
     from_json(json, cfg);
+    cJSON_Delete(json);
     EXPECT_EQ(true, cfg.compSinkLoc.empty());
 }
 
@@ -615,18 +626,19 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_036, TestSize.Level0)
 HWTEST_F(ComponentLoaderTest, component_loader_test_037, TestSize.Level0)
 {
     CompConfig cfg;
-    nlohmann::json json;
-    json[COMP_NAME] = "name";
-    json[COMP_TYPE] = "DHType::AUDIO";
-    json[COMP_HANDLER_LOC] = "comp_handler_loc";
-    json[COMP_HANDLER_VERSION] = "comp_handler_version";
-    json[COMP_SOURCE_LOC] = "comp_source_loc";
-    json[COMP_SOURCE_VERSION] = "comp_source_version";
-    json[COMP_SOURCE_SA_ID] = 4801;
-    json[COMP_SINK_LOC] = "comp_sink_loc";
-    json[COMP_SINK_VERSION] = 4802;
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
+    cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
+    cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
+    cJSON_AddStringToObject(json, COMP_HANDLER_VERSION.c_str(), "comp_handler_version");
+    cJSON_AddStringToObject(json, COMP_SOURCE_LOC.c_str(), "comp_source_loc");
+    cJSON_AddStringToObject(json, COMP_SOURCE_VERSION.c_str(), "comp_source_version");
+    cJSON_AddNumberToObject(json, COMP_SOURCE_SA_ID.c_str(), 4801);
+    cJSON_AddStringToObject(json, COMP_SINK_LOC.c_str(), "comp_sink_loc");
+    cJSON_AddNumberToObject(json, COMP_SINK_VERSION.c_str(), 4802);
 
     from_json(json, cfg);
+    cJSON_Delete(json);
     EXPECT_EQ(true, cfg.compSinkVersion.empty());
 }
 
@@ -639,19 +651,20 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_037, TestSize.Level0)
 HWTEST_F(ComponentLoaderTest, component_loader_test_038, TestSize.Level0)
 {
     CompConfig cfg;
-    nlohmann::json json;
-    json[COMP_NAME] = "name";
-    json[COMP_TYPE] = "DHType::AUDIO";
-    json[COMP_HANDLER_LOC] = "comp_handler_loc";
-    json[COMP_HANDLER_VERSION] = "comp_handler_version";
-    json[COMP_SOURCE_LOC] = "comp_source_loc";
-    json[COMP_SOURCE_VERSION] = "comp_source_version";
-    json[COMP_SOURCE_SA_ID] = 4801;
-    json[COMP_SINK_LOC] = "comp_sink_loc";
-    json[COMP_SINK_VERSION] = "comp_sink_version";
-    json[COMP_SINK_SA_ID] = "4802";
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
+    cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
+    cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
+    cJSON_AddStringToObject(json, COMP_HANDLER_VERSION.c_str(), "comp_handler_version");
+    cJSON_AddStringToObject(json, COMP_SOURCE_LOC.c_str(), "comp_source_loc");
+    cJSON_AddStringToObject(json, COMP_SOURCE_VERSION.c_str(), "comp_source_version");
+    cJSON_AddNumberToObject(json, COMP_SOURCE_SA_ID.c_str(), 4801);
+    cJSON_AddStringToObject(json, COMP_SINK_LOC.c_str(), "comp_sink_loc");
+    cJSON_AddStringToObject(json, COMP_SINK_VERSION.c_str(), "comp_sink_version");
+    cJSON_AddStringToObject(json, COMP_SINK_SA_ID.c_str(), "4802");
 
     from_json(json, cfg);
+    cJSON_Delete(json);
     EXPECT_NE(4802, cfg.compSinkSaId);
 }
 
@@ -664,19 +677,20 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_038, TestSize.Level0)
 HWTEST_F(ComponentLoaderTest, component_loader_test_039, TestSize.Level0)
 {
     CompConfig cfg;
-    nlohmann::json json;
-    json[COMP_NAME] = "name";
-    json[COMP_TYPE] = "DHType::AUDIO";
-    json[COMP_HANDLER_LOC] = "comp_handler_loc";
-    json[COMP_HANDLER_VERSION] = "comp_handler_version";
-    json[COMP_SOURCE_LOC] = "comp_source_loc";
-    json[COMP_SOURCE_VERSION] = "comp_source_version";
-    json[COMP_SOURCE_SA_ID] = 4801;
-    json[COMP_SINK_LOC] = "comp_sink_loc";
-    json[COMP_SINK_VERSION] = "comp_sink_version";
-    json[COMP_SINK_SA_ID] = 4802;
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
+    cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
+    cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
+    cJSON_AddStringToObject(json, COMP_HANDLER_VERSION.c_str(), "comp_handler_version");
+    cJSON_AddStringToObject(json, COMP_SOURCE_LOC.c_str(), "comp_source_loc");
+    cJSON_AddStringToObject(json, COMP_SOURCE_VERSION.c_str(), "comp_source_version");
+    cJSON_AddNumberToObject(json, COMP_SOURCE_SA_ID.c_str(), 4801);
+    cJSON_AddStringToObject(json, COMP_SINK_LOC.c_str(), "comp_sink_loc");
+    cJSON_AddStringToObject(json, COMP_SINK_VERSION.c_str(), "comp_sink_version");
+    cJSON_AddNumberToObject(json, COMP_SINK_SA_ID.c_str(), 4802);
 
     from_json(json, cfg);
+    cJSON_Delete(json);
     EXPECT_EQ(4802, cfg.compSinkSaId);
 }
 } // namespace DistributedHardware

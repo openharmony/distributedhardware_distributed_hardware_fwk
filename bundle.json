@@ -55,6 +55,7 @@
       ],
       "third_party": [
         "json",
+        "cJSON",
         "openssl"
       ]
     },

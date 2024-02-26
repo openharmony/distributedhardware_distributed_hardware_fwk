@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 #ifndef API_EXPORT
 #define API_EXPORT __attribute__((visibility("default")))
@@ -276,9 +276,9 @@ struct AudioEncoder {
     std::vector<AudioEncoderOut> outs;
 };
 
-void FromJson(const nlohmann::json &jsonObject, AudioEncoderIn &audioEncoderIn);
-void FromJson(const nlohmann::json &jsonObject, AudioEncoderOut &audioEncoderOut);
-void FromJson(const nlohmann::json &jsonObject, AudioEncoder &audioEncoder);
+void FromJson(const cJSON *jsonObject, AudioEncoderIn &audioEncoderIn);
+void FromJson(const cJSON *jsonObject, AudioEncoderOut &audioEncoderOut);
+void FromJson(const cJSON *jsonObject, AudioEncoder &audioEncoder);
 /******************* AudioEncoder End *******************/
 
 /******************* AudioDecoder Begin *****************/
@@ -298,9 +298,9 @@ struct AudioDecoder {
     std::vector<AudioDecoderOut> outs;
 };
 
-void FromJson(const nlohmann::json &jsonObject, AudioDecoderIn &audioDecoderIn);
-void FromJson(const nlohmann::json &jsonObject, AudioDecoderOut &audioDecoderOut);
-void FromJson(const nlohmann::json &jsonObject, AudioDecoder &audioDecoder);
+void FromJson(const cJSON *jsonObject, AudioDecoderIn &audioDecoderIn);
+void FromJson(const cJSON *jsonObject, AudioDecoderOut &audioDecoderOut);
+void FromJson(const cJSON *jsonObject, AudioDecoder &audioDecoder);
 /******************* AudioDecoder End *******************/
 
 /******************* VideoEncoder Begin *****************/
@@ -319,9 +319,9 @@ struct VideoEncoder {
     std::vector<VideoEncoderOut> outs;
 };
 
-void FromJson(const nlohmann::json &jsonObject, VideoEncoderIn &videoEncoderIn);
-void FromJson(const nlohmann::json &jsonObject, VideoEncoderOut &videoEncoderOut);
-void FromJson(const nlohmann::json &jsonObject, VideoEncoder &videoEncoder);
+void FromJson(const cJSON *jsonObject, VideoEncoderIn &videoEncoderIn);
+void FromJson(const cJSON *jsonObject, VideoEncoderOut &videoEncoderOut);
+void FromJson(const cJSON *jsonObject, VideoEncoder &videoEncoder);
 /******************* VideoEncoder End *******************/
 
 /******************* VideoDecoder Begin *****************/
@@ -341,12 +341,12 @@ struct VideoDecoder {
     std::vector<VideoDecoderOut> outs;
 };
 
-void FromJson(const nlohmann::json &jsonObject, VideoDecoderIn &videoDecoderIn);
-void FromJson(const nlohmann::json &jsonObject, VideoDecoderOut &videoDecoderOut);
-void FromJson(const nlohmann::json &jsonObject, VideoDecoder &videoDecoder);
+void FromJson(const cJSON *jsonObject, VideoDecoderIn &videoDecoderIn);
+void FromJson(const cJSON *jsonObject, VideoDecoderOut &videoDecoderOut);
+void FromJson(const cJSON *jsonObject, VideoDecoder &videoDecoder);
 /******************* VideoDecoder End *******************/
 template<typename T>
-API_EXPORT void FromJson(const std::string &key, const nlohmann::json &jsonObject, std::vector<T> &objs);
+API_EXPORT void FromJson(const std::string &key, const cJSON *jsonObject, std::vector<T> &objs);
 }
 }
 #endif

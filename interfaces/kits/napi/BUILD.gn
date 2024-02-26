@@ -29,7 +29,7 @@ ohos_shared_library("hardwaremanager") {
     "${av_trans_path}/common/include",
     "${utils_path}/include/log",
     "//third_party/node/src",
-    "//third_party/json/include",
+    "//third_party/cJSON",
   ]
 
   sources = [ "src/native_distributedhardwarefwk_js.cpp" ]
@@ -38,6 +38,7 @@ ohos_shared_library("hardwaremanager") {
     "${distributedhardwarefwk_path}/interfaces/inner_kits:libdhfwk_sdk",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
+    "//third_party/cJSON:cjson",
   ]
 
   defines = [

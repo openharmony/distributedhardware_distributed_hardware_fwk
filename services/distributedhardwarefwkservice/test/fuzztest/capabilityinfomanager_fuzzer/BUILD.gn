@@ -28,6 +28,7 @@ ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
     "${common_path}/log/include",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "//third_party/cJSON",
   ]
   cflags = [
     "-g",
@@ -39,6 +40,7 @@ ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "//third_party/cJSON:cjson",
   ]
 
   defines = [

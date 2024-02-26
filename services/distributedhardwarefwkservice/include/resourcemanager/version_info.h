@@ -16,7 +16,7 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_VERSION_INFO_H
 #define OHOS_DISTRIBUTED_HARDWARE_VERSION_INFO_H
 
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 #include "impl_utils.h"
 
@@ -31,9 +31,9 @@ struct VersionInfo {
     std::string ToJsonString() const;
 };
 
-void ToJson(nlohmann::json &jsonObject, const VersionInfo &versionInfo);
-void FromJson(const nlohmann::json &jsonObject, CompVersion &compVer);
-void FromJson(const nlohmann::json &jsonObject, VersionInfo &versionInfo);
+void ToJson(cJSON *jsonObject, const VersionInfo &versionInfo);
+void FromJson(const cJSON *jsonObject, CompVersion &compVer);
+void FromJson(const cJSON *jsonObject, VersionInfo &versionInfo);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
