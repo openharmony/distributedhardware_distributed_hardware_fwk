@@ -179,6 +179,7 @@ std::string DistributedHardwareService::QueryDhSysSpec(const std::string &target
     }
     if (!IsString(attrJson, targetKey)) {
         DHLOGE("Attrs Json not contains key: %s", targetKey.c_str());
+        cJSON_Delete(attrJson);
         return "";
     }
     std::string result = cJSON_GetObjectItem(attrJson, targetKey.c_str())->valuestring;

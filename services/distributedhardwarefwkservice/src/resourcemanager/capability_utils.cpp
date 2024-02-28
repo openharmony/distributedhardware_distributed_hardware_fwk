@@ -53,7 +53,6 @@ bool CapabilityUtils::IsCapInfoJsonEqual(const std::string &firstData, const std
     cJSON *firstJson = cJSON_Parse(firstData.c_str());
     if (firstJson == NULL) {
         DHLOGE("firstData parse failed");
-        cJSON_Delete(firstJson);
         return false;
     }
     CapabilityInfo firstCapInfo;
@@ -62,11 +61,12 @@ bool CapabilityUtils::IsCapInfoJsonEqual(const std::string &firstData, const std
     if (lastJson == NULL) {
         DHLOGE("lastData parse failed");
         cJSON_Delete(firstJson);
-        cJSON_Delete(lastJson);
         return false;
     }
     CapabilityInfo lastCapInfo;
     FromJson(lastJson, lastCapInfo);
+    cJSON_Delete(firstJson);
+    cJSON_Delete(lastJson);
     return firstCapInfo.Compare(lastCapInfo);
 }
 } // namespace DistributedHardware

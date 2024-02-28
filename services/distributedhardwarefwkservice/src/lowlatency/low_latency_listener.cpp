@@ -71,6 +71,7 @@ void LowLatencyListener::OnMessage(const DHTopic topic, const std::string& messa
     } else {
         LowLatency::GetInstance().DisableLowLatency(dhType);
     }
+    cJSON_Delete(jsonObj);
 #endif
 }
 
