@@ -149,7 +149,8 @@
         "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/filters/test:filter_test",
         "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/av_receiver/test/unittest:receiver_test",
         "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/av_sender/test/unittest:sender_test",
-        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/plugin/test:plugin_test"
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/plugin/test:plugin_test",
+        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_control_center/test/fuzztest:fuzztest"
       ]
     }
   }
