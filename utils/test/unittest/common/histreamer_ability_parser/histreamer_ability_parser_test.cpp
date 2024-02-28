@@ -396,6 +396,7 @@ HWTEST_F(HistreamerAbilityParserTest, histreamer_ability_parser_test_014, TestSi
     EXPECT_TRUE(audioDecoders.empty());
 
     FromJson(NAME, jsonObject, audioDecoders);
+    cJSON_Delete(jsonObject);
     EXPECT_FALSE(audioDecoders.empty());
 }
 
@@ -417,6 +418,7 @@ HWTEST_F(HistreamerAbilityParserTest, histreamer_ability_parser_test_015, TestSi
     EXPECT_TRUE(videoEncoders.empty());
 
     FromJson(NAME, jsonObject, videoEncoders);
+    cJSON_Delete(jsonObject);
     EXPECT_FALSE(videoEncoders.empty());
 }
 
@@ -438,6 +440,7 @@ HWTEST_F(HistreamerAbilityParserTest, histreamer_ability_parser_test_016, TestSi
     EXPECT_TRUE(videoDecoders.empty());
 
     FromJson(NAME, jsonObject, videoDecoders);
+    cJSON_Delete(jsonObject);
     EXPECT_FALSE(videoDecoders.empty());
 }
 
