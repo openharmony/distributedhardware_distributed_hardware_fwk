@@ -24,7 +24,6 @@ config("module_private_config") {
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${common_path}/utils/include",
-    "//third_party/cJSON",
   ]
 }
 
@@ -39,11 +38,13 @@ ohos_unittest("UtilsToolTest") {
 
   deps = [
     "${utils_path}:distributedhardwareutils",
-    "//third_party/cJSON:cjson",
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [ "c_utils:utils" ]
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+  ]
 }
 
 group("utils_tool_test") {

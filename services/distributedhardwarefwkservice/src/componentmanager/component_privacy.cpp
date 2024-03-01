@@ -50,30 +50,40 @@ int32_t ComponentPrivacy::OnPrivaceResourceMessage(const ResourceEventType &type
     int32_t ret = DH_FWK_SUCCESS;
     if (type == ResourceEventType::EVENT_TYPE_QUERY_RESOURCE) {
         ret = OnResourceInfoCallback(subtype, networkId, isSensitive, isSameAccout);
-    }
-    if (type == ResourceEventType::EVENT_TYPE_PULL_UP_PAGE) {
-        if (eventHandler_ != nullptr) {
-            DHLOGI("SendEvent COMP_START_PAGE");
-            cJSON *jsonArrayMsg = cJSON_CreateArray();
-            cJSON *tmpJson = cJSON_CreateObject();
-            cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), subtype.c_str());
-            cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID.c_str(), networkId.c_str());
-            cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
-            AppExecFwk::InnerEvent::Pointer msgEvent =
-                AppExecFwk::InnerEvent::Get(COMP_START_PAGE, std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
-            eventHandler_->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+    } else if (type == ResourceEventType::EVENT_TYPE_PULL_UP_PAGE ||
+        type == ResourceEventType::EVENT_TYPE_CLOSE_PAGE) {
+        cJSON *jsonArrayMsg = cJSON_CreateArray();
+        if (jsonArrayMsg == NULL) {
+            DHLOGE("Failed to create cJSON arrary.");
+            return ERR_DH_FWK_JSON_PARSE_FAILED;
         }
-    }
-    if (type == ResourceEventType::EVENT_TYPE_CLOSE_PAGE) {
-        if (eventHandler_ != nullptr) {
-            DHLOGI("SendEvent COMP_STOP_PAGE");
-            cJSON *jsonArrayMsg = cJSON_CreateArray();
-            cJSON *tmpJson = cJSON_CreateObject();
-            cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), subtype.c_str());
-            cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
-            AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE,
-                std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
-            eventHandler_->SendEvent(msgEvent, COMP_PRIVACY_DELAY_TIME, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+        cJSON *tmpJson = cJSON_CreateObject();
+        if (tmpJson == NULL) {
+            cJSON_Delete(jsonArrayMsg);
+            DHLOGE("Failed to create cJSON object.");
+            return ERR_DH_FWK_JSON_PARSE_FAILED;
+        }
+        if (type == ResourceEventType::EVENT_TYPE_PULL_UP_PAGE) {
+            if (eventHandler_ != nullptr) {
+                DHLOGI("SendEvent COMP_START_PAGE");
+                cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), subtype.c_str());
+                cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID.c_str(), networkId.c_str());
+                cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
+                AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_START_PAGE,
+                    std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
+                eventHandler_->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+            }
+        }
+        if (type == ResourceEventType::EVENT_TYPE_CLOSE_PAGE) {
+            if (eventHandler_ != nullptr) {
+                DHLOGI("SendEvent COMP_STOP_PAGE");
+                cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), subtype.c_str());
+                cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
+                AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE,
+                    std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
+                eventHandler_->SendEvent(msgEvent,
+                    COMP_PRIVACY_DELAY_TIME, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+            }
         }
     }
     return ret;

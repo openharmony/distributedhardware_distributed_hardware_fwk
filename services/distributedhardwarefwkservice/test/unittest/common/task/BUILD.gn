@@ -21,7 +21,6 @@ config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
-    "//third_party/cJSON",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${services_path}/distributedhardwarefwkservice/include",
@@ -50,11 +49,13 @@ ohos_unittest("DHTaskTest") {
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
-    "//third_party/cJSON:cjson",
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [ "c_utils:utils" ]
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",

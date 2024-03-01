@@ -29,7 +29,6 @@ ohos_shared_library("hardwaremanager") {
     "${av_trans_path}/common/include",
     "${utils_path}/include/log",
     "//third_party/node/src",
-    "//third_party/cJSON",
   ]
 
   sources = [ "src/native_distributedhardwarefwk_js.cpp" ]
@@ -38,7 +37,6 @@ ohos_shared_library("hardwaremanager") {
     "${distributedhardwarefwk_path}/interfaces/inner_kits:libdhfwk_sdk",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
-    "//third_party/cJSON:cjson",
   ]
 
   defines = [
@@ -50,6 +48,7 @@ ohos_shared_library("hardwaremanager") {
   external_deps = [
     "access_token:libtokenid_sdk",
     "bundle_framework:appexecfwk_base",
+    "cJSON:cjson",
     "ipc:ipc_core",
     "napi:ace_napi",
   ]

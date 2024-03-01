@@ -20,7 +20,6 @@ module_out_path = "distributed_hardware_fwk/component_monitor_test"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "//third_party/cJSON",
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
@@ -46,12 +45,12 @@ ohos_unittest("ComponentMonitorTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//third_party/cJSON:cjson",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",

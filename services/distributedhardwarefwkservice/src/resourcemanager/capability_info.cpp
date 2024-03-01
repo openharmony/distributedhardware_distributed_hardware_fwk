@@ -134,6 +134,10 @@ int32_t CapabilityInfo::FromJsonString(const std::string &jsonStr)
 std::string CapabilityInfo::ToJsonString()
 {
     cJSON *jsonObj = cJSON_CreateObject();
+    if (jsonObj == NULL) {
+        DHLOGE("Failed to create cJSON object.");
+        return "";
+    }
     ToJson(jsonObj, *this);
     char *cjson = cJSON_Print(jsonObj);
     std::string jsonString(cjson);
@@ -210,7 +214,7 @@ void FromJson(const cJSON *jsonObject, CapabilityInfo &capability)
         DHLOGE("DEV_TYPE is invalid!");
         return;
     }
-    capability.SetDeviceType((uint16_t)cJSON_GetObjectItem(jsonObject, DEV_TYPE.c_str())->valueint);
+    capability.SetDeviceType((uint16_t)cJSON_GetObjectItem(jsonObject, DEV_TYPE.c_str())->valuedouble);
 
     if (!IsUInt32(jsonObject, DH_TYPE)) {
         DHLOGE("DH_TYPE is invalid!");

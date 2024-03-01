@@ -26,7 +26,6 @@ ohos_fuzztest("UtilsFuzzTest") {
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${common_path}/utils/include",
-    "//third_party/cJSON",
   ]
   cflags = [
     "-g",
@@ -36,12 +35,12 @@ ohos_fuzztest("UtilsFuzzTest") {
   ]
   sources = [ "utils_fuzzer.cpp" ]
 
-  deps = [
-    "${utils_path}:distributedhardwareutils",
-    "//third_party/cJSON:cjson",
-  ]
+  deps = [ "${utils_path}:distributedhardwareutils" ]
 
-  external_deps = [ "c_utils:utils" ]
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+  ]
 }
 
 ###############################################################################

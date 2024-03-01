@@ -45,6 +45,10 @@ int32_t VersionInfo::FromJsonString(const std::string &jsonStr)
 std::string VersionInfo::ToJsonString() const
 {
     cJSON *jsonObj = cJSON_CreateObject();
+    if (jsonObj == NULL) {
+        DHLOGE("Failed to create cJSON object.");
+        return "";
+    }
     ToJson(jsonObj, *this);
     char *cjson = cJSON_Print(jsonObj);
     std::string result(cjson);
@@ -59,8 +63,17 @@ void ToJson(cJSON *jsonObject, const VersionInfo &versionInfo)
     cJSON_AddStringToObject(jsonObject, DH_VER.c_str(), versionInfo.dhVersion.c_str());
 
     cJSON *compVers = cJSON_CreateObject();
+    if (compVers == NULL) {
+        DHLOGE("Failed to create cJSON object.");
+        return;
+    }
     for (const auto &compVersion : versionInfo.compVersions) {
         cJSON *compVer = cJSON_CreateObject();
+        if (compVer == NULL) {
+            cJSON_Delete(compVers);
+            DHLOGE("Failed to create cJSON object.");
+            return;
+        }
         cJSON_AddStringToObject(compVer, NAME.c_str(), compVersion.second.name.c_str());
         cJSON_AddNumberToObject(compVer, TYPE.c_str(), (double)compVersion.second.dhType);
         cJSON_AddStringToObject(compVer, HANDLER.c_str(), compVersion.second.handlerVersion.c_str());
@@ -77,8 +90,8 @@ void FromJson(const cJSON *jsonObject, CompVersion &compVer)
         compVer.name = cJSON_GetObjectItem(jsonObject, NAME.c_str())->valuestring;
     }
     if (IsUInt32(jsonObject, TYPE) &&
-        (DHType)cJSON_GetObjectItem(jsonObject, TYPE.c_str())->valueint <= DHType::MAX_DH) {
-        compVer.dhType = (DHType)(cJSON_GetObjectItem(jsonObject, TYPE.c_str())->valueint);
+        (DHType)cJSON_GetObjectItem(jsonObject, TYPE.c_str())->valuedouble <= DHType::MAX_DH) {
+        compVer.dhType = (DHType)(cJSON_GetObjectItem(jsonObject, TYPE.c_str())->valuedouble);
     }
     if (IsString(jsonObject, HANDLER)) {
         compVer.handlerVersion = cJSON_GetObjectItem(jsonObject, HANDLER.c_str())->valuestring;

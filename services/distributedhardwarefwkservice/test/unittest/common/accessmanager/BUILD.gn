@@ -19,7 +19,6 @@ module_out_path = "distributed_hardware_fwk/access_manager_test"
 
 config("module_private_config") {
   include_dirs = [
-    "//third_party/cJSON",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${common_path}/utils/include",
@@ -46,7 +45,6 @@ ohos_unittest("AccessManagerTest") {
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
-    "//third_party/cJSON:cjson",
     "//third_party/googletest:gtest_main",
   ]
   defines = [
@@ -56,6 +54,7 @@ ohos_unittest("AccessManagerTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "device_manager:devicemanagersdk",
     "eventhandler:libeventhandler",

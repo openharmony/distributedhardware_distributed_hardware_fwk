@@ -145,7 +145,7 @@ int32_t ParseSource(const cJSON *json, CompConfig &cfg)
         DHLOGE("COMP_SOURCE_SA_ID is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compSourceSaId = cJSON_GetObjectItem(json, COMP_SOURCE_SA_ID.c_str())->valueint;
+    cfg.compSourceSaId = (uint32_t)cJSON_GetObjectItem(json, COMP_SOURCE_SA_ID.c_str())->valuedouble;
     return DH_FWK_SUCCESS;
 }
 
@@ -165,7 +165,7 @@ int32_t ParseSink(const cJSON *json, CompConfig &cfg)
         DHLOGE("COMP_SINK_SA_ID is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compSinkSaId = cJSON_GetObjectItem(json, COMP_SINK_SA_ID.c_str())->valueint;
+    cfg.compSinkSaId = (uint32_t)cJSON_GetObjectItem(json, COMP_SINK_SA_ID.c_str())->valuedouble;
     return DH_FWK_SUCCESS;
 }
 
@@ -276,7 +276,7 @@ void ComponentLoader::ParseCompConfigFromJson(cJSON *component, CompConfig &conf
         config.compSourceVersion = cJSON_GetObjectItem(component, COMP_SOURCE_VERSION.c_str())->valuestring;
     }
     if (IsInt32(component, COMP_SOURCE_SA_ID.c_str())) {
-        config.compSourceSaId = cJSON_GetObjectItem(component, COMP_SOURCE_SA_ID.c_str())->valueint;
+        config.compSourceSaId = (uint32_t)cJSON_GetObjectItem(component, COMP_SOURCE_SA_ID.c_str())->valuedouble;
     }
     if (IsString(component, COMP_SINK_LOC.c_str())) {
         config.compSinkLoc = cJSON_GetObjectItem(component, COMP_SINK_LOC.c_str())->valuestring;
@@ -285,7 +285,7 @@ void ComponentLoader::ParseCompConfigFromJson(cJSON *component, CompConfig &conf
         config.compSinkVersion = cJSON_GetObjectItem(component, COMP_SINK_VERSION.c_str())->valuestring;
     }
     if (IsInt32(component, COMP_SINK_SA_ID.c_str())) {
-        config.compSinkSaId = cJSON_GetObjectItem(component, COMP_SINK_SA_ID.c_str())->valueint;
+        config.compSinkSaId = (uint32_t)cJSON_GetObjectItem(component, COMP_SINK_SA_ID.c_str())->valuedouble;
     }
     if (IsArray(component, COMP_RESOURCE_DESC.c_str())) {
         cJSON *resourceDescs = cJSON_GetObjectItem(component, COMP_RESOURCE_DESC.c_str());
