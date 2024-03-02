@@ -15,7 +15,7 @@
 
 #include "avtrans_input.h"
 
-#include "../interface/avtrans_input_plugin.h"
+#include "avtrans_input_plugin.h"
 
 namespace OHOS {
 namespace DistributedHardware {
