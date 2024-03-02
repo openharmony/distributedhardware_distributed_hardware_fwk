@@ -35,8 +35,6 @@ ohos_shared_library("distributed_av_receiver") {
   public_configs = [ ":receiver_external_config" ]
 
   include_dirs = [
-    "${drivers_disaplay_path}/interfaces/include",
-    "${media_standard_path}/interfaces/inner_api/native",
     "//third_party/json/include",
     "${common_path}/include",
     "${engine_path}",
@@ -49,6 +47,8 @@ ohos_shared_library("distributed_av_receiver") {
     "${control_center_path}/inner_kits/include/ipc",
     "${filters_path}/av_transport_input",
     "${filters_path}/av_transport_output",
+    "${plugin_path}/core",
+    "${plugin_path}/interface",
   ]
 
   sources = [
