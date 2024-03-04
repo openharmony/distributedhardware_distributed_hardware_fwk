@@ -15,7 +15,7 @@
 
 #include "avtrans_output.h"
 
-#include "../interface/avtrans_output_plugin.h"
+#include "avtrans_output_plugin.h"
 
 namespace OHOS {
 namespace DistributedHardware {

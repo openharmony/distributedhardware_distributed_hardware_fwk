@@ -22,6 +22,8 @@ ohos_unittest("AvTransportInputFilterTest") {
   include_dirs = [
     "${filters_path}/av_transport_input",
     "${common_path}/include",
+    "${plugin_path}/core",
+    "${plugin_path}/interface",
     "//third_party/json/include",
   ]
 

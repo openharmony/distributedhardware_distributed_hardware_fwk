@@ -27,8 +27,8 @@
 #include "plugin/common/plugin_video_tags.h"
 #include "plugin/core/plugin_manager.h"
 #include "pipeline/core/type_define.h"
-#include "../../plugin/interface/avtrans_input_plugin.h"
-#include "../../plugin/core/avtrans_input.h"
+#include "avtrans_input_plugin.h"
+#include "avtrans_input.h"
 
 namespace OHOS {
 namespace DistributedHardware {

@@ -30,6 +30,8 @@ config("module_private_config") {
     "${engine_path}/av_receiver/test/unittest/av_receiver_engine/include",
     "${interface_path}",
     "${media_standard_path}/interfaces/inner_api/native",
+    "${plugin_path}/core",
+    "${plugin_path}/interface",
   ]
 }
 
