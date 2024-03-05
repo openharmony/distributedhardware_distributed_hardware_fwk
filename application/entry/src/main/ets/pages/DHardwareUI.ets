@@ -25,13 +25,11 @@ PersistentStorage.persistProp('sign', '');
 @Component
 struct DHardwareUI {
   @State deviceName: string = '';
-  @State deviceType: string = '';
   @State DHTypeName: string = '';
   @State bgcImg: PixelMap | null = null;
   @StorageLink('type') stoLink_type: number = 0;
   @StorageLink('srcNetworkId') stoLink_srcNetworkId: string = '';
   @StorageLink('deviceName') stoLink_deviceName: string = '';
-  @StorageLink('deviceType') stoLink_deviceType: string = '';
   @StorageLink('sign') sign: string = '';
   @StorageLink('camera') camera: number = 999;
   @StorageLink('mic') mic: number = 999;
@@ -64,7 +62,6 @@ struct DHardwareUI {
       }
     }
 
-    this.deviceType = this.convertDeviceTypeToChStr(this.stoLink_deviceType);
     AppStorage.setAndLink('description', this.description);
 
     console.info(TAG + 'aboutToAppear : this.description : ' + this.description);
@@ -72,11 +69,35 @@ struct DHardwareUI {
     console.info(TAG + 'aboutToAppear : this.description.srcNetworkId : ' + this.description.srcNetworkId);
 
     if (this.stoLink_type == 1024) {
-      this.DHTypeName = '麦克风';
-      console.info(TAG + 'aboutToAppear : this.DHTypeName : ' + this.DHTypeName);
+      try {
+        this.context.resourceManager.getStringValue($r('app.string.DHTypeName_Mic').id, (error, value) => {
+          if (error != null) {
+            console.log("error is " + error);
+          } else {
+            this.DHTypeName = value;
+            console.info(TAG + 'aboutToAppear : this.DHTypeName : ' + this.DHTypeName);
+          }
+        });
+      } catch (error) {
+        let code = (error as BusinessError).code;
+        let message = (error as BusinessError).message;
+        console.error(`callback getStringValue failed, error code: ${code}, message: ${message}.`);
+      }
     } else {
-      this.DHTypeName = '相机';
-      console.info(TAG + 'aboutToAppear : this.DHTypeName : ' + this.DHTypeName);
+      try {
+        this.context.resourceManager.getStringValue($r('app.string.DHTypeName_Camera').id, (error, value) => {
+          if (error != null) {
+            console.log("error is " + error);
+          } else {
+            this.DHTypeName = value;
+            console.info(TAG + 'aboutToAppear : this.DHTypeName : ' + this.DHTypeName);
+          }
+        });
+      } catch (error) {
+        let code = (error as BusinessError).code;
+        let message = (error as BusinessError).message;
+        console.error(`callback getStringValue failed, error code: ${code}, message: ${message}.`);
+      }
     }
   }
 
@@ -87,55 +108,6 @@ struct DHardwareUI {
       this.isPause = true;
       console.info(TAG + 'onPageShow : this.camera ' + this.camera);
       console.info(TAG + 'onPageShow : this.isPause ' + this.isPause);
-    }
-  }
-
-  //转换对端可信设备列表的设备类型为中文字符
-  convertDeviceTypeToChStr(deviceType: string): string {
-    console.log(TAG + 'convertDeviceTypeToChStr', deviceType);
-    switch (deviceType) {
-      case 'camera': {
-        return '相机';
-      }
-      case 'audio': {
-        return '音频';
-      }
-      case 'pc': {
-        return '笔记本电脑';
-      }
-      case 'phone': {
-        return '手机';
-      }
-      case 'pad': {
-        return '平板';
-      }
-      case 'watch': {
-        return '手表';
-      }
-      case 'car': {
-        return '车机';
-      }
-      case 'tv': {
-        return '电视';
-      }
-      case 'display': {
-        return '显示屏';
-      }
-      case '2in1': {
-        return '2in1';
-      }
-      case 'default': {
-        return '手机';
-      }
-      case 'tablet': {
-        return '平板';
-      }
-      case 'wearable': {
-        return '可穿戴电子设备';
-      }
-      default: {
-        return '';
-      }
     }
   }
 
@@ -192,7 +164,6 @@ struct DHardwareUI {
 
   onBackPress() {
     console.info(TAG + 'onBackPress');
-
     this.sign = 'onBackPress';
   }
 
@@ -220,14 +191,14 @@ struct DHardwareUI {
           .height(54)
           .backgroundColor("rgba(0,0,0,0.15)")
 
-          Text(CommonConstants.CONNECTED_TO + this.stoLink_deviceName + CommonConstants.CONJUNCTS + this.deviceType)
+          Text($r('app.string.connected_to',this.stoLink_deviceName))
             .fontSize(18)
             .fontWeight(FontWeight.Medium)
             .fontColor("#FFFFFF")
             .margin({ left: 0, top: 16, right: 0 })
             .textAlign(TextAlign.Center)
 
-          Text(CommonConstants.STOP_DEVICE + this.DHTypeName)
+          Text($r('app.string.stop_device',this.DHTypeName))
             .fontSize(16)
             .fontWeight(FontWeight.Regular)
             .fontColor("#99FFFFFF")
