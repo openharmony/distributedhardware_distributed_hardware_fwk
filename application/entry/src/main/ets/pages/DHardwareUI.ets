@@ -67,6 +67,16 @@ struct DHardwareUI {
     console.info(TAG + 'aboutToAppear : this.description : ' + this.description);
     console.info(TAG + 'aboutToAppear : this.description.type : ' + this.description.type);
     console.info(TAG + 'aboutToAppear : this.description.srcNetworkId : ' + this.description.srcNetworkId);
+  }
+
+  onPageShow() {
+    console.log(TAG + 'onPageShow() ');
+    // 若之前点击了暂停按钮，切换了相机前后置后，不再显示暂停画面，按钮不再显示‘继续’
+    if (this.isPause === false && this.camera === 2) {
+      this.isPause = true;
+      console.info(TAG + 'onPageShow : this.camera ' + this.camera);
+      console.info(TAG + 'onPageShow : this.isPause ' + this.isPause);
+    }
 
     if (this.stoLink_type == 1024) {
       try {
@@ -98,16 +108,6 @@ struct DHardwareUI {
         let message = (error as BusinessError).message;
         console.error(`callback getStringValue failed, error code: ${code}, message: ${message}.`);
       }
-    }
-  }
-
-  onPageShow() {
-    console.log(TAG + 'onPageShow() ');
-    // 若之前点击了暂停按钮，切换了相机前后置后，不再显示暂停画面，按钮不再显示‘继续’
-    if (this.isPause === false && this.camera === 2) {
-      this.isPause = true;
-      console.info(TAG + 'onPageShow : this.camera ' + this.camera);
-      console.info(TAG + 'onPageShow : this.isPause ' + this.isPause);
     }
   }
 
