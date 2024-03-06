@@ -24,6 +24,7 @@
         "startWindowIcon": "$media:icon01",
         "startWindowBackground": "$color:start_window_background",
         "exported": true,
+        "removeMissionAfterTerminate": true,
         "skills": [
           {
             "entities": [
