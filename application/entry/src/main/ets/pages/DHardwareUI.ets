@@ -45,7 +45,6 @@ struct DHardwareUI {
     console.info(TAG + 'aboutToAppear() ');
     this.sign = '';
 
-    // stopAbility后直接不显示页面
     if (this.camera == 0 && this.mic == 0) {
       try {
         this.context.terminateSelf((err: BusinessError) => {
@@ -70,7 +69,7 @@ struct DHardwareUI {
   }
 
   onPageShow() {
-    console.log(TAG + 'onPageShow() '); // 若之前点击了暂停按钮，切换了相机前后置后，不再显示暂停画面，按钮不再显示‘继续’
+    console.log(TAG + 'onPageShow() ');
     if (this.isPause === false && this.camera === 2) {
       this.isPause = true;
       console.info(TAG + 'onPageShow : this.camera ' + this.camera);
@@ -206,10 +205,10 @@ struct DHardwareUI {
                   .onClick(() => {
                     console.log(TAG + (this.isPause ? "click pause button" : "click continue button"));
                     if (this.isPause) {
-                      this.pause(); // 点击’暂停‘后：存储一个标志，记录是否点击了暂停按钮
+                      this.pause();
                       AppStorage.setOrCreate('isPauseTag', true);
                     } else {
-                      this.resume(); // 点击'继续'后：存储一个标志
+                      this.resume();
                       AppStorage.setOrCreate('isPauseTag', false);
                     }
                     this.changePauseOrResumeStatus();
