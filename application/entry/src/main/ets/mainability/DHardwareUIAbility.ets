@@ -33,6 +33,7 @@ console.log(TAG + "OUT : AppStorage.get<number>('mic') : " + AppStorage.get<numb
 
 export default class DHardwareUIAbility extends UIAbility {
   isInit: boolean = true;
+  //是否是第一次初始化
   isStopAbility: boolean = false;
   cameraCount: number = 0;
 
@@ -88,6 +89,7 @@ export default class DHardwareUIAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam) {
     console.info(TAG + 'onCreate : ' + 'Ability onCreate');
 
+    // 每次被拉起时，默认设置没有执行StopAbility
     this.isStopAbility = false;
     console.info(TAG + 'onCreate : ' + 'this.isStopAbility : ' + this.isStopAbility);
 
@@ -105,7 +107,7 @@ export default class DHardwareUIAbility extends UIAbility {
 
       console.log(TAG + "oncreate : after set want -- type --");
 
-      // StartAbility type+1
+      // startAbility时，每次修改type的值+1
       if (want.parameters['type'] == 1) {
         let camera: number = AppStorage.get<number>('camera') as number + 1;
         AppStorage.set('camera', camera);
@@ -149,8 +151,9 @@ export default class DHardwareUIAbility extends UIAbility {
       console.info(TAG + 'onNewWant : returnCode : ' + returnCode);
       AppStorage.setOrCreate('returnCode', returnCode);
 
+      // returnCode为undefined，表明新拉起了type,对应type+1
       if (returnCode == undefined) {
-        // Toggle back and forth camera refresh button text to 'pause'
+        // 切换前后置后刷新按钮文本为‘暂停’
         AppStorage.setOrCreate('isPause', true);
         console.log(TAG + "onNewWant : refresh Btn Text : " + "AppStorage.get<boolean>('isPause') : " + AppStorage.get<boolean>('isPause'));
 
@@ -166,12 +169,12 @@ export default class DHardwareUIAbility extends UIAbility {
         }
       }
 
-      // Received returnCode meets the condition, stopAbility has been called
+      // 接收到的returnCode如果满足条件，则表面已调用stopAbility
       if (returnCode == 24200102) {
         this.isStopAbility = true;
         console.info(TAG + 'onNewWant :[returnCode == 24200102] this.isStopAbility : ' + this.isStopAbility);
 
-        // StopAbility:the value of type is changed each time
+        // stopAbility时，每次修改type的值
         if (want.parameters['type'] == 1) {
           let camera: number = AppStorage.get<number>('camera') as number - 1;
           AppStorage.set('camera', camera);
@@ -210,6 +213,7 @@ export default class DHardwareUIAbility extends UIAbility {
     }
     let stopFlag = AppStorage.get<number>('camera') == 0 && AppStorage.get<number>('mic') == 0;
 
+    // stopAbility后应用销毁自身：不再执行停止函数
     if (!stopFlag && AppStorage.get<string>('sign') != 'onBackPress') {
       console.info(TAG + 'onDestroy : ' + 'this.isStopAbility ： ' + this.isStopAbility);
       console.info(TAG + 'onDestroy : ' + "AppStorage.get<string>('sign') ： " + AppStorage.get<string>('sign'));
@@ -247,12 +251,12 @@ export default class DHardwareUIAbility extends UIAbility {
     // Ability has brought to foreground
     console.info(TAG + 'onForeground : ' + 'Ability onForeground');
 
-    // isInit: records whether the application was first initialized into the background
+    // 存储一个标志：isInit 记录应用是否是第一次初始化进入后台
     AppStorage.setOrCreate('isInit', this.isInit);
     console.info(TAG + 'onForeground : ' + " AppStorage.get<boolean>('isInit') : " + AppStorage.get<boolean>('isInit'));
     console.info(TAG + 'onForeground : ' + " AppStorage.get<boolean>('isPauseTag') : " + AppStorage.get<boolean>('isPauseTag'));
 
-    // Neither initializing the page for the first time nor suspending the pause state triggers the recovery function
+    // 再次回到前台：既不是第一次初始化页面，也不是暂停状态，此时触发恢复函数
     if (!this.isInit && !AppStorage.get<boolean>('isPauseTag')) {
       console.info(TAG + 'onForeground : ' + 'this.isInit : ' + this.isInit);
 
@@ -265,7 +269,7 @@ export default class DHardwareUIAbility extends UIAbility {
     }
     this.isInit = false;
     AppStorage.setOrCreate('isInit', false);
-    // Click Pause state initialization
+    // 恢复未点击暂停状态：点击暂停状态初始化
     AppStorage.setAndLink('isPause', true);
     console.info(TAG + 'onForeground : ' + "AppStorage.get<boolean>('isPause') : " + AppStorage.get<boolean>('isPause'));
   }
@@ -278,7 +282,7 @@ export default class DHardwareUIAbility extends UIAbility {
     if (sign == 'stop') {
       return;
     }
-    // After stopAbility,app destroys: pause func no longer executed
+    // stopAbility后应用销毁自身：不再执行暂停函数
     let stopFlag = AppStorage.get<number>('camera') == 0 && AppStorage.get<number>('mic') == 0;
     console.log(TAG + 'onBackground : stopFlag : ' + stopFlag)
     if (!stopFlag) {
