@@ -156,14 +156,14 @@ std::string SoftbusChannelAdapter::FindSessNameByPeerSessName(const std::string 
 
 int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, const std::string &sessName)
 {
-    AVTRANS_LOGI("Create session server for sessionName:%s.", sessName.c_str());
+    AVTRANS_LOGI("Create session server for sessionName:%{public}s.", sessName.c_str());
     TRUE_RETURN_V_MSG_E(pkgName.empty(), ERR_DH_AVT_INVALID_PARAM, "input pkgName is empty.");
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessionName is empty.");
 
     {
         std::lock_guard<std::mutex> lock(serverMapMtx_);
         if (serverMap_.count(pkgName + "_" + sessName)) {
-            AVTRANS_LOGI("Session has already created for name:%s", sessName.c_str());
+            AVTRANS_LOGI("Session has already created for name:%{public}s", sessName.c_str());
             return DH_AVT_SUCCESS;
         }
     }
@@ -180,31 +180,31 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
     };
     int32_t socketId = Socket(serverInfo);
     if (socketId < 0) {
-        AVTRANS_LOGE("Create Socket fail socketId:%" PRId32, socketId);
+        AVTRANS_LOGE("Create Socket fail socketId:%{public}" PRId32, socketId);
         return ERR_DH_AVT_SESSION_ERROR;
     }
     QosTV qos[] = {
         {.qos = QOS_TYPE_MIN_BW,        .value = 40 * 1024 * 1024},
-        {.qos = QOS_TYPE_MAX_LATENCY,       .value = 8000},
+        {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
 
     int32_t ret = Listen(socketId, qos, sizeof(qos) / sizeof(qos[0]), &sessListener_);
     if (ret != 0) {
-        AVTRANS_LOGE("Listen socket error for sessionName:%s", sessName.c_str());
+        AVTRANS_LOGE("Listen socket error for sessionName:%{public}s", sessName.c_str());
         return ERR_DH_AVT_SESSION_ERROR;
     }
     {
         std::lock_guard<std::mutex> lock(serverMapMtx_);
         serverMap_.insert(std::make_pair(pkgName + "_" + sessName, socketId));
     }
-    AVTRANS_LOGI("Create session server success for sessionName:%s.", sessName.c_str());
+    AVTRANS_LOGI("Create session server success for sessionName:%{public}s.", sessName.c_str());
     return DH_AVT_SUCCESS;
 }
 
 int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, const std::string &sessName)
 {
-    AVTRANS_LOGI("Remove session server for sessionName:%s.", sessName.c_str());
+    AVTRANS_LOGI("Remove session server for sessionName:%{public}s.", sessName.c_str());
     TRUE_RETURN_V_MSG_E(pkgName.empty(), ERR_DH_AVT_INVALID_PARAM, "input pkgName is empty.");
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessionName is empty.");
    
@@ -220,7 +220,7 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
             }
         }
     }
-    AVTRANS_LOGI("Remove session server success for serverSocketId:%" PRId32, serverSocketId);
+    AVTRANS_LOGI("Remove session server success for serverSocketId:%{public}" PRId32, serverSocketId);
     Shutdown(serverSocketId);
     int32_t sessionId = INVALID_SESSION_ID;
     {
@@ -234,7 +234,7 @@ int32_t SoftbusChannelAdapter::RemoveChannelServer(const std::string& pkgName, c
         }
     }
     Shutdown(sessionId);
-    AVTRANS_LOGI("Remove session server success for sessionName:%s.", sessName.c_str());
+    AVTRANS_LOGI("Remove session server success for sessionName:%{public}s.", sessName.c_str());
     return DH_AVT_SUCCESS;
 }
 
@@ -256,7 +256,7 @@ void OHOS::DistributedHardware::SoftbusChannelAdapter::SendEventChannelOPened(co
 int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName, const std::string &peerSessName,
     const std::string &peerDevId)
 {
-    AVTRANS_LOGI("Open softbus channel for mySessName:%s, peerSessName:%s, peerDevId:%s.",
+    AVTRANS_LOGI("Open softbus channel for mySessName:%{public}s, peerSessName:%{public}s, peerDevId:%{public}s.",
         mySessName.c_str(), peerSessName.c_str(), GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(mySessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input mySessName is empty.");
     TRUE_RETURN_V_MSG_E(peerSessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerSessName is empty.");
@@ -265,13 +265,13 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
     std::string PkgName = TransName2PkgName(ownerName);
     int32_t existSessId = GetSessIdBySessName(mySessName, peerDevId);
     if (existSessId > 0) {
-        AVTRANS_LOGI("Softbus channel already opened, sessionId:%" PRId32, existSessId);
+        AVTRANS_LOGI("Softbus channel already opened, sessionId:%{public}" PRId32, existSessId);
         return ERR_DH_AVT_SESSION_HAS_OPENED;
     }
 
     QosTV qos[] = {
         {.qos = QOS_TYPE_MIN_BW,        .value = 40 * 1024 * 1024},
-        {.qos = QOS_TYPE_MAX_LATENCY,       .value = 8000},
+        {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
     
@@ -303,13 +303,13 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
         devId2SessIdMap_.insert(std::make_pair(mySessName + "_" + peerDevId, socketId));
     }
     SendEventChannelOPened(mySessName, peerDevId);
-    AVTRANS_LOGI("Open softbus channel finished for mySessName:%s.", mySessName.c_str());
+    AVTRANS_LOGI("Open softbus channel finished for mySessName:%{public}s.", mySessName.c_str());
     return DH_AVT_SUCCESS;
 }
 
 int32_t SoftbusChannelAdapter::CloseSoftbusChannel(const std::string& sessName, const std::string &peerDevId)
 {
-    AVTRANS_LOGI("Close softbus channel for sessName:%s, peerDevId:%s.", sessName.c_str(),
+    AVTRANS_LOGI("Close softbus channel for sessName:%{public}s, peerDevId:%{public}s.", sessName.c_str(),
         GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessName is empty.");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
@@ -321,27 +321,28 @@ int32_t SoftbusChannelAdapter::CloseSoftbusChannel(const std::string& sessName, 
         devId2SessIdMap_.erase(sessName + "_" + peerDevId);
     }
 
-    AVTRANS_LOGI("Close softbus channel success, sessionId:%" PRId32, sessionId);
+    AVTRANS_LOGI("Close softbus channel success, sessionId:%{public}" PRId32, sessionId);
     return DH_AVT_SUCCESS;
 }
 
 int32_t SoftbusChannelAdapter::SendBytesData(const std::string& sessName, const std::string &peerDevId,
     const std::string &data)
 {
-    AVTRANS_LOGI("Send bytes data for sessName:%s, peerDevId:%s.", sessName.c_str(), GetAnonyString(peerDevId).c_str());
+    AVTRANS_LOGI("Send bytes data for sessName:%{public}s, peerDevId:%{public}s.",
+        sessName.c_str(), GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessName is empty.");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
     TRUE_RETURN_V_MSG_E(data.empty(), ERR_DH_AVT_INVALID_PARAM, "input data string is empty.");
 
     int32_t existSessId = GetSessIdBySessName(sessName, peerDevId);
     if (existSessId < 0) {
-        AVTRANS_LOGI("Can not find sessionId for mySessName:%s, peerDevId:%s.",
+        AVTRANS_LOGI("Can not find sessionId for mySessName:%{public}s, peerDevId:%{public}s.",
             sessName.c_str(), GetAnonyString(peerDevId).c_str());
         return ERR_DH_AVT_SEND_DATA_FAILED;
     }
     int32_t ret = SendBytes(existSessId, data.c_str(), strlen(data.c_str()));
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Send bytes data failed ret:%" PRId32, ret);
+        AVTRANS_LOGE("Send bytes data failed ret:%{public}" PRId32, ret);
         return ERR_DH_AVT_SEND_DATA_FAILED;
     }
     return DH_AVT_SUCCESS;
@@ -358,13 +359,13 @@ int32_t SoftbusChannelAdapter::SendStreamData(const std::string& sessName, const
     StreamFrameInfo frameInfo = {0};
     int32_t existSessId = GetSessIdBySessName(sessName, peerDevId);
     if (existSessId < 0) {
-        AVTRANS_LOGI("Can not find sessionId for mySessName:%s, peerDevId:%s.",
+        AVTRANS_LOGI("Can not find sessionId for mySessName:%{public}s, peerDevId:%{public}s.",
             sessName.c_str(), GetAnonyString(peerDevId).c_str());
         return ERR_DH_AVT_SEND_DATA_FAILED;
     }
     int32_t ret = SendStream(existSessId, data, ext, &frameInfo);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Send stream data failed ret:%" PRId32, ret);
+        AVTRANS_LOGE("Send stream data failed ret:%{public}" PRId32, ret);
         return ERR_DH_AVT_SEND_DATA_FAILED;
     }
     return DH_AVT_SUCCESS;
@@ -373,7 +374,7 @@ int32_t SoftbusChannelAdapter::SendStreamData(const std::string& sessName, const
 int32_t SoftbusChannelAdapter::RegisterChannelListener(const std::string& sessName, const std::string &peerDevId,
     ISoftbusChannelListener *listener)
 {
-    AVTRANS_LOGI("Register channel listener for sessName:%s, peerDevId:%s.",
+    AVTRANS_LOGI("Register channel listener for sessName:%{public}s, peerDevId:%{public}s.",
         sessName.c_str(), GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessName is empty.");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
@@ -387,7 +388,7 @@ int32_t SoftbusChannelAdapter::RegisterChannelListener(const std::string& sessNa
 
 int32_t SoftbusChannelAdapter::UnRegisterChannelListener(const std::string& sessName, const std::string &peerDevId)
 {
-    AVTRANS_LOGI("Unregister channel listener for sessName:%s, peerDevId:%s.",
+    AVTRANS_LOGI("Unregister channel listener for sessName:%{public}s, peerDevId:%{public}s.",
         sessName.c_str(), GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(sessName.empty(), ERR_DH_AVT_INVALID_PARAM, "input sessName is empty.");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
@@ -401,14 +402,14 @@ int32_t SoftbusChannelAdapter::UnRegisterChannelListener(const std::string& sess
 int32_t SoftbusChannelAdapter::StartDeviceTimeSync(const std::string &pkgName, const std::string& sessName,
     const std::string &peerDevId)
 {
-    AVTRANS_LOGI("Start device time sync for peerDeviceId:%s.", GetAnonyString(peerDevId).c_str());
+    AVTRANS_LOGI("Start device time sync for peerDeviceId:%{public}s.", GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
 
     ITimeSyncCb timeSyncCbk = {.onTimeSyncResult = onDevTimeSyncResult};
     int32_t ret = StartTimeSync(pkgName.c_str(), peerDevId.c_str(), TimeSyncAccuracy::SUPER_HIGH_ACCURACY,
         TimeSyncPeriod::SHORT_PERIOD, &timeSyncCbk);
     if (ret != 0) {
-        AVTRANS_LOGE("StartTimeSync failed ret:%" PRId32, ret);
+        AVTRANS_LOGE("StartTimeSync failed ret:%{public}" PRId32, ret);
         return ERR_DH_AVT_TIME_SYNC_FAILED;
     }
 
@@ -421,12 +422,12 @@ int32_t SoftbusChannelAdapter::StartDeviceTimeSync(const std::string &pkgName, c
 int32_t SoftbusChannelAdapter::StopDeviceTimeSync(const std::string &pkgName, const std::string& sessName,
     const std::string &peerDevId)
 {
-    AVTRANS_LOGI("Stop device time sync for peerDeviceId:%s.", GetAnonyString(peerDevId).c_str());
+    AVTRANS_LOGI("Stop device time sync for peerDeviceId:%{public}s.", GetAnonyString(peerDevId).c_str());
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "input peerDevId is empty.");
 
     int32_t ret = StopTimeSync(pkgName.c_str(), peerDevId.c_str());
     if (ret != 0) {
-        AVTRANS_LOGE("StopTimeSync failed ret:%" PRId32, ret);
+        AVTRANS_LOGE("StopTimeSync failed ret:%{public}" PRId32, ret);
         return ERR_DH_AVT_TIME_SYNC_FAILED;
     }
 
@@ -441,7 +442,7 @@ int32_t SoftbusChannelAdapter::GetSessIdBySessName(const std::string& sessName, 
     std::lock_guard<std::mutex> lock(idMapMutex_);
     std::string idMapKey = sessName + "_" + peerDevId;
     if (devId2SessIdMap_.find(idMapKey) == devId2SessIdMap_.end()) {
-        AVTRANS_LOGI("Can not find sessionId for sessName:%s, peerDevId:%s.",
+        AVTRANS_LOGI("Can not find sessionId for sessName:%{public}s, peerDevId:%{public}s.",
             sessName.c_str(), GetAnonyString(peerDevId).c_str());
         return -1;
     }
@@ -457,15 +458,15 @@ std::string SoftbusChannelAdapter::GetSessionNameById(int32_t sessionId)
         }
     }
 
-    AVTRANS_LOGE("No available channel or invalid sessionId:%" PRId32, sessionId);
+    AVTRANS_LOGE("No available channel or invalid sessionId:%{public}" PRId32, sessionId);
     return EMPTY_STRING;
 }
 
 int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionName, int32_t sessionId,
     std::string peerDevId, int32_t result)
 {
-    AVTRANS_LOGI("On softbus channel opened, sessionId: %" PRId32", result: %" PRId32" peerSessionName: %s",
-        sessionId, result, peerSessionName.c_str());
+    AVTRANS_LOGI("On softbus channel opened, sessionId: %{public}" PRId32", result: %{public}" PRId32
+        " peerSessionName: %{public}s", sessionId, result, peerSessionName.c_str());
     TRUE_RETURN_V_MSG_E(peerSessionName.empty(), ERR_DH_AVT_INVALID_PARAM, "peerSessionName is empty().");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "peerDevId is empty().");
 
@@ -486,7 +487,7 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionNam
     }
     std::string idMapKey = mySessionName + "_" + peerDevId;
     if (devId2SessIdMap_.find(idMapKey) == devId2SessIdMap_.end()) {
-        AVTRANS_LOGI("Can not find sessionId for mySessionName:%s, peerDevId:%s. try to insert it.",
+        AVTRANS_LOGI("Can not find sessionId for mySessionName:%{public}s, peerDevId:%{public}s. try to insert it.",
             mySessionName.c_str(), GetAnonyString(peerDevId).c_str());
             devId2SessIdMap_.insert(std::make_pair(idMapKey, sessionId));
     }
@@ -496,7 +497,7 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionNam
 void SoftbusChannelAdapter::OnSoftbusChannelClosed(int32_t sessionId, ShutdownReason reason)
 {
     (void)reason;
-    AVTRANS_LOGI("On softbus channel closed, sessionId:%" PRId32, sessionId);
+    AVTRANS_LOGI("On softbus channel closed, sessionId:%{public}" PRId32, sessionId);
 
     std::string peerDevId = GetPeerDevIdBySessId(sessionId);
     AVTransEvent event = {EventType::EVENT_CHANNEL_CLOSED, "", peerDevId};
@@ -515,12 +516,12 @@ void SoftbusChannelAdapter::OnSoftbusChannelClosed(int32_t sessionId, ShutdownRe
 
 void SoftbusChannelAdapter::OnSoftbusBytesReceived(int32_t sessionId, const void *data, uint32_t dataLen)
 {
-    AVTRANS_LOGI("On softbus channel bytes received, sessionId:%" PRId32, sessionId);
+    AVTRANS_LOGI("On softbus channel bytes received, sessionId:%{public}" PRId32, sessionId);
     TRUE_RETURN(data == nullptr, "input data is nullptr.");
     TRUE_RETURN(dataLen == 0, "input dataLen is 0.");
 
     std::string peerDevId = GetPeerDevIdBySessId(sessionId);
-    AVTRANS_LOGI("OnSoftbusBytesReceived peerDevId:%s.", GetAnonyString(peerDevId).c_str());
+    AVTRANS_LOGI("OnSoftbusBytesReceived peerDevId:%{public}s.", GetAnonyString(peerDevId).c_str());
 
     std::string dataStr = std::string(reinterpret_cast<const char *>(data), dataLen);
     AVTransEvent event = {EventType::EVENT_DATA_RECEIVED, dataStr, peerDevId};
@@ -553,14 +554,14 @@ void SoftbusChannelAdapter::OnSoftbusStreamReceived(int32_t sessionId, const Str
 
 void SoftbusChannelAdapter::OnSoftbusTimeSyncResult(const TimeSyncResultInfo *info, int32_t result)
 {
-    AVTRANS_LOGI("On softbus channel time sync result:%" PRId32, result);
+    AVTRANS_LOGI("On softbus channel time sync result:%{public}" PRId32, result);
     TRUE_RETURN(result == 0, "On softbus channel time sync failed");
 
     int32_t millisecond = info->result.millisecond;
     int32_t microsecond = info->result.microsecond;
     TimeSyncAccuracy accuracy  = info->result.accuracy;
-    AVTRANS_LOGI("Time sync success, flag:%" PRId32", millisecond:%" PRId32 ", microsecond:%" PRId32
-        ", accuracy:%" PRId32, info->flag, millisecond, microsecond, accuracy);
+    AVTRANS_LOGI("Time sync success, flag:%{public}" PRId32", millisecond:%{public}" PRId32 ", microsecond:%{public}"
+        PRId32 ", accuracy:%{public}" PRId32, info->flag, millisecond, microsecond, accuracy);
 
     std::string targetDevId(info->target.targetNetworkId);
     std::string masterDevId(info->target.masterNetworkId);
@@ -607,7 +608,7 @@ std::string SoftbusChannelAdapter::GetOwnerFromSessName(const std::string &sessN
 
 void SoftbusChannelAdapter::SendChannelEvent(const std::string &sessName, const AVTransEvent event)
 {
-    AVTRANS_LOGI("SendChannelEvent event.type_%" PRId32, event.type);
+    AVTRANS_LOGI("SendChannelEvent event.type_%{public}" PRId32, event.type);
     pthread_setname_np(pthread_self(), SEND_CHANNEL_EVENT);
 
     ISoftbusChannelListener *listener = nullptr;

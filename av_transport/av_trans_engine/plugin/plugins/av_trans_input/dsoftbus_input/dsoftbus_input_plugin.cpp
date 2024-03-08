@@ -97,12 +97,12 @@ Status DsoftbusInputPlugin::Prepare()
     sessionName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
     int32_t ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Register channel listener failed ret: %d.", ret);
+        AVTRANS_LOGE("Register channel listener failed ret: %{public}d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
     ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName_), sessionName_);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Create Session Server failed ret: %d.", ret);
+        AVTRANS_LOGE("Create Session Server failed ret: %{public}d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
     if (!bufferPopTask_) {
@@ -218,7 +218,7 @@ Status DsoftbusInputPlugin::SetDataCallback(AVDataCallback callback)
 
 void DsoftbusInputPlugin::OnChannelEvent(const AVTransEvent &event)
 {
-    AVTRANS_LOGI("OnChannelEvent enter, event type: %d", event.type);
+    AVTRANS_LOGI("OnChannelEvent enter, event type: %{public}d", event.type);
     if (eventsCb_ == nullptr) {
         AVTRANS_LOGE("OnChannelEvent failed, event callback is nullptr.");
         return;
@@ -244,7 +244,7 @@ void DsoftbusInputPlugin::OnChannelEvent(const AVTransEvent &event)
 void DsoftbusInputPlugin::OnStreamReceived(const StreamData *data, const StreamData *ext)
 {
     std::string message(reinterpret_cast<const char *>(ext->buf), ext->bufLen);
-    AVTRANS_LOGI("Receive message : %s", message.c_str());
+    AVTRANS_LOGI("Receive message : %{public}s", message.c_str());
 
     json resMsg = json::parse(message, nullptr, false);
     TRUE_RETURN(resMsg.is_discarded(), "The resMsg parse failed");
@@ -280,8 +280,8 @@ std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
         buffer->GetBufferMeta()->SetMeta(Tag::MEDIA_START_TIME, meta->extPts_);
         buffer->GetBufferMeta()->SetMeta(Tag::AUDIO_SAMPLE_PER_FRAME, meta->extFrameNum_);
     }
-    AVTRANS_LOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %zu", buffer->pts, buffer->GetMemory()->GetSize(),
-        meta->frameNum_);
+    AVTRANS_LOGI("buffer pts: %{public}ld, bufferLen: %{public}zu, frameNumber: %{public}zu",
+        buffer->pts, buffer->GetMemory()->GetSize(), meta->frameNum_);
     return buffer;
 }
 

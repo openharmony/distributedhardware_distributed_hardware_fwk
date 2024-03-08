@@ -192,13 +192,13 @@ Status DsoftbusOutputPlugin::OpenSoftbusChannel()
 {
     int32_t ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Register channel listener failed ret: %d.", ret);
+        AVTRANS_LOGE("Register channel listener failed ret: %{public}d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
     std::string peerSessName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
     ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName_, peerDevId_);
     if ((ret != DH_AVT_SUCCESS) && (ret != ERR_DH_AVT_SESSION_HAS_OPENED)) {
-        AVTRANS_LOGE("Open softbus channel failed ret: %d.", ret);
+        AVTRANS_LOGE("Open softbus channel failed ret: %{public}d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
     return Status::OK;
@@ -208,13 +208,13 @@ void DsoftbusOutputPlugin::CloseSoftbusChannel()
 {
     int32_t ret = SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Close softbus channle failed ret: %s.", ret);
+        AVTRANS_LOGE("Close softbus channle failed ret: %{public}s.", ret);
     }
 }
 
 void DsoftbusOutputPlugin::OnChannelEvent(const AVTransEvent &event)
 {
-    AVTRANS_LOGI("OnChannelEvent enter, event type: %d", event.type);
+    AVTRANS_LOGI("OnChannelEvent enter, event type: %{public}d", event.type);
     if (eventsCb_ == nullptr) {
         AVTRANS_LOGE("OnChannelEvent failed, event callback is nullptr.");
         return;
@@ -308,8 +308,8 @@ void DsoftbusOutputPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffer)
     auto hisAMeta = std::make_shared<AVTransVideoBufferMeta>();
     hisAMeta->frameNum_ = Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER));
     hisAMeta->pts_ = buffer->pts;
-    AVTRANS_LOGI("buffer pts: %ld, bufferLen: %zu, frameNumber: %u", hisAMeta->pts_, buffer->GetMemory()->GetSize(),
-        hisAMeta->frameNum_);
+    AVTRANS_LOGI("buffer pts: %{public}ld, bufferLen: %{public}zu, frameNumber: %{public}u",
+        hisAMeta->pts_, buffer->GetMemory()->GetSize(), hisAMeta->frameNum_);
     if (bufferMeta->IsExist(Tag::MEDIA_START_TIME)) {
         hisAMeta->extPts_ = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::MEDIA_START_TIME));
     }
@@ -319,7 +319,7 @@ void DsoftbusOutputPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffer)
     jsonObj[AVT_DATA_PARAM] = hisAMeta->MarshalVideoMeta();
 
     std::string jsonStr = jsonObj.dump();
-    AVTRANS_LOGI("jsonStr->bufLen %zu, jsonStR: %s", jsonStr.length(), jsonStr.c_str());
+    AVTRANS_LOGI("jsonStr->bufLen %{public}zu, jsonStR: %{public}s", jsonStr.length(), jsonStr.c_str());
 
     auto bufferData = buffer->GetMemory();
     StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*>(bufferData->GetReadOnlyData())),

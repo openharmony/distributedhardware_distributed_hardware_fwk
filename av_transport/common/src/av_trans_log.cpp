@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,66 +25,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-const std::string DAVTRANS_LOG_TITLE_TAG = "DAVTRANS";
-constexpr int32_t AV_LOG_MAX_LEN = 4096;
-
-static void AVTransLogOut(DHLogLevel logLevel, const char *logBuf)
-{
-#ifdef HI_LOG_ENABLE
-    LogLevel hiLogLevel = LOG_INFO;
-    switch (logLevel) {
-        case DH_LOG_DEBUG:
-            hiLogLevel = LOG_DEBUG;
-            break;
-        case DH_LOG_INFO:
-            hiLogLevel = LOG_INFO;
-            break;
-        case DH_LOG_WARN:
-            hiLogLevel = LOG_WARN;
-            break;
-        case DH_LOG_ERROR:
-            hiLogLevel = LOG_ERROR;
-            break;
-        default:
-            break;
-    }
-    (void)HiLogPrint(LOG_CORE, hiLogLevel, LOG_DOMAIN, DAVTRANS_LOG_TITLE_TAG.c_str(), "%{public}s", logBuf);
-#else
-    switch (logLevel) {
-        case DH_LOG_DEBUG:
-            printf("[D]%s\n", logBuf);
-            break;
-        case DH_LOG_INFO:
-            printf("[I]%s\n", logBuf);
-            break;
-        case DH_LOG_WARN:
-            printf("[W]%s\n", logBuf);
-            break;
-        case DH_LOG_ERROR:
-            printf("[E]%s\n", logBuf);
-            break;
-        default:
-            break;
-    }
-#endif
-}
-
-void AVTransLog(DHLogLevel logLevel, const char *fmt, ...)
-{
-    char logBuf[AV_LOG_MAX_LEN] = {0};
-    va_list arg;
-
-    (void)memset_s(&arg, sizeof(va_list), 0, sizeof(va_list));
-    va_start(arg, fmt);
-    int32_t ret = vsprintf_s(logBuf, sizeof(logBuf), fmt, arg);
-    va_end(arg);
-    if (ret < 0) {
-        AVTransLogOut(logLevel, "AVTrans log length error.");
-        return;
-    }
-    AVTransLogOut(logLevel, logBuf);
-}
-
 std::string GetAnonyString(const std::string &value)
 {
     constexpr size_t INT32_SHORT_ID_LENGTH = 20;

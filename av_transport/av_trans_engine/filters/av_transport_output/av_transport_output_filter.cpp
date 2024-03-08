@@ -192,7 +192,7 @@ ErrorCode AVOutputFilter::FindPlugin()
             continue;
         }
         if (CreatePlugin(info) == ErrorCode::SUCCESS) {
-            AVTRANS_LOGI("CreatePlugin %s success", name_.c_str());
+            AVTRANS_LOGI("CreatePlugin %{public}s success", name_.c_str());
             return ErrorCode::SUCCESS;
         }
     }
@@ -221,20 +221,20 @@ ErrorCode AVOutputFilter::CreatePlugin(const std::shared_ptr<PluginInfo>& select
     }
     if ((plugin_ != nullptr) && (pluginInfo_ != nullptr)) {
         if (selectedInfo->name == pluginInfo_->name && TranslatePluginStatus(plugin_->Reset()) == ErrorCode::SUCCESS) {
-            AVTRANS_LOGI("Reuse last plugin: %s", selectedInfo->name.c_str());
+            AVTRANS_LOGI("Reuse last plugin: %{public}s", selectedInfo->name.c_str());
             return ErrorCode::SUCCESS;
         }
         if (TranslatePluginStatus(plugin_->Deinit()) != ErrorCode::SUCCESS) {
-            AVTRANS_LOGE("Deinit last plugin: %s error", pluginInfo_->name.c_str());
+            AVTRANS_LOGE("Deinit last plugin: %{public}s error", pluginInfo_->name.c_str());
         }
     }
     plugin_ = PluginManager::Instance().CreateGenericPlugin<AvTransOutput, AvTransOutputPlugin>(selectedInfo->name);
     if (plugin_ == nullptr) {
-        AVTRANS_LOGE("PluginManager CreatePlugin %s fail", selectedInfo->name.c_str());
+        AVTRANS_LOGE("PluginManager CreatePlugin %{public}s fail", selectedInfo->name.c_str());
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
     }
     pluginInfo_ = selectedInfo;
-    AVTRANS_LOGI("Create new plugin: %s success", pluginInfo_->name.c_str());
+    AVTRANS_LOGI("Create new plugin: %{public}s success", pluginInfo_->name.c_str());
     return ErrorCode::SUCCESS;
 }
 

@@ -57,7 +57,7 @@ void TimeStatistician::CalAverPushInterval(const int64_t pushTime)
     pushIntervalSum_ += pushInterval_;
     averPushInterval_ = pushIntervalSum_ / pushIndex_;
     lastPushTime_ = pushTime_;
-    AVTRANS_LOGD("Statistic pushInterval: %lld, pushIndex: %" PRIu32 ", averPushInterval: %lld",
+    AVTRANS_LOGD("Statistic pushInterval: %{public}lld, pushIndex: %{public}" PRIu32 ", averPushInterval: %{public}lld",
         pushInterval_, pushIndex_, averPushInterval_);
 }
 
@@ -73,8 +73,8 @@ void TimeStatistician::CalAverTimeStampInterval(const int64_t timeStamp)
     timeStampIntervalSum_ += timeStampInterval_;
     averTimeStampInterval_ = timeStampIntervalSum_ / timeStampIndex_;
     lastTimeStamp_ = timeStamp_;
-    AVTRANS_LOGD("Statistic timeStampInterval: %lld, timeStampIndex: %" PRIu32 ", averTimeStampInterval: %lld",
-        timeStampInterval_, timeStampIndex_, averTimeStampInterval_);
+    AVTRANS_LOGD("Statistic timeStampInterval: %{public}lld, timeStampIndex: %{public}" PRIu32
+        ", averTimeStampInterval: %{public}lld", timeStampInterval_, timeStampIndex_, averTimeStampInterval_);
 }
 
 int64_t TimeStatistician::GetAverPushInterval()
