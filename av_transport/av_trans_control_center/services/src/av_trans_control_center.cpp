@@ -163,8 +163,8 @@ int32_t AVTransControlCenter::CreateControlChannel(int32_t engineId, const std::
 
     int32_t ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(AV_SYNC_SENDER_CONTROL_SESSION_NAME,
         AV_TRANS_SPECIAL_DEVICE_ID, this);
-    TRUE_RETURN_V_MSG_E((ret != DH_AVT_SUCCESS), ret, "Register control center channel callback failed, ret=%{public}d"
-        , ret);
+    TRUE_RETURN_V_MSG_E((ret != DH_AVT_SUCCESS), ret, "Register control center channel callback failed, ret=%{public}d",
+        ret);
 
     ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(AV_SYNC_SENDER_CONTROL_SESSION_NAME,
         AV_SYNC_RECEIVER_CONTROL_SESSION_NAME, peerDevId);
