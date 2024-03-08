@@ -73,7 +73,7 @@ void TimeStatistician::CalAverTimeStampInterval(const int64_t timeStamp)
     timeStampIntervalSum_ += timeStampInterval_;
     averTimeStampInterval_ = timeStampIntervalSum_ / timeStampIndex_;
     lastTimeStamp_ = timeStamp_;
-    AVTRANS_LOGD("Statistic timeStampInterval: %{public}lld, timeStampIndex: %{public}" PRIu32 
+    AVTRANS_LOGD("Statistic timeStampInterval: %{public}lld, timeStampIndex: %{public}" PRIu32
         ", averTimeStampInterval: %{public}lld", timeStampInterval_, timeStampIndex_, averTimeStampInterval_);
 }
 

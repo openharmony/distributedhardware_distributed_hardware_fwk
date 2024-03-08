@@ -54,7 +54,7 @@ std::string GetAnonyInt32(const int32_t value)
 {
     constexpr int32_t INT32_STRING_LENGTH = 40;
     char tempBuffer[INT32_STRING_LENGTH] = "";
-    int32_t secRet = sprintf_s(tempBuffer, INT32_STRING_LENGTH, "%{public}d", value);
+    int32_t secRet = sprintf_s(tempBuffer, INT32_STRING_LENGTH, "%d", value);
     if (secRet <= 0) {
         std::string nullString("");
         return nullString;
