@@ -25,19 +25,19 @@ PersistentStorage.persistProp('sign', '');
 @Component
 struct DHardwareUI {
   @State deviceName: string = '';
-  @State DHTypeName: string = '';
+  @State dhTypeName: string = '';
   @State bgcImg: PixelMap | null = null;
-  @StorageLink('type') stoLink_type: number = 0;
-  @StorageLink('srcNetworkId') stoLink_srcNetworkId: string = '';
-  @StorageLink('deviceName') stoLink_deviceName: string = '';
+  @StorageLink('type') type: number = 0;
+  @StorageLink('srcNetworkId') srcNetworkId: string = '';
+  @StorageLink('deviceName') srcDeviceName: string = '';
   @StorageLink('sign') sign: string = '';
   @StorageLink('camera') camera: number = 999;
   @StorageLink('mic') mic: number = 999;
   @StorageLink('switchedCamera') switchedCamera: number = 999;
   @StorageLink('isPause') isPause: boolean = true;
   @State description: hardwareManager.HardwareDescriptor = {
-    type: this.stoLink_type,
-    srcNetworkId: this.stoLink_srcNetworkId
+    type: this.type,
+    srcNetworkId: this.srcNetworkId
   }
   private context = getContext(this) as common.UIAbilityContext;
 
@@ -76,13 +76,13 @@ struct DHardwareUI {
       console.info(TAG + 'onPageShow : this.isPause ' + this.isPause);
     }
 
-    if (this.stoLink_type == 1024) {
+    if (this.type == 1024) {
       this.context.resourceManager.getStringValue($r('app.string.DHTypeName_Mic').id, (error, value) => {
         if (error != null) {
           console.log('error is ' + error);
         } else {
-          this.DHTypeName = value;
-          console.info(TAG + 'aboutToAppear : this.DHTypeName : ' + this.DHTypeName);
+          this.dhTypeName = value;
+          console.info(TAG + 'aboutToAppear : this.dhTypeName : ' + this.dhTypeName);
         }
       });
     } else {
@@ -90,8 +90,8 @@ struct DHardwareUI {
         if (error != null) {
           console.log('error is ' + error);
         } else {
-          this.DHTypeName = value;
-          console.info(TAG + 'aboutToAppear : this.DHTypeName : ' + this.DHTypeName);
+          this.dhTypeName = value;
+          console.info(TAG + 'aboutToAppear : this.dhTypeName : ' + this.dhTypeName);
         }
       });
     }
@@ -99,7 +99,7 @@ struct DHardwareUI {
 
   changePauseOrResumeStatus() {
     this.isPause = !this.isPause;
-    console.log(TAG + "changePauseOrResumeStatus - this.isPause" + JSON.stringify(this.isPause))
+    console.log(TAG + 'changePauseOrResumeStatus - this.isPause' + JSON.stringify(this.isPause))
   }
 
   stop() {
@@ -166,24 +166,24 @@ struct DHardwareUI {
       Row() {
         Column() {
           Row() {
-            Image(this.stoLink_type == 1024 ? $r('app.media.ic_public_voice') : $r('app.media.ic_public_screencap'))
+            Image(this.type == 1024 ? $r('app.media.ic_public_voice') : $r('app.media.ic_public_screencap'))
               .width(28)
               .height(28)
               .fillColor(Color.White)
               .margin({ left: 13 })
-          }.borderRadius(50).width(54).height(54).backgroundColor("rgba(0,0,0,0.15)")
+          }.borderRadius(50).width(54).height(54).backgroundColor('rgba(0,0,0,0.15)')
 
-          Text($r('app.string.connected_to', this.stoLink_deviceName))
+          Text($r('app.string.connected_to', this.srcDeviceName))
             .fontSize(18)
             .fontWeight(FontWeight.Medium)
-            .fontColor("#FFFFFF")
+            .fontColor('#FFFFFF')
             .margin({ left: 0, top: 16, right: 0 })
             .textAlign(TextAlign.Center)
 
-          Text($r('app.string.stop_device', this.DHTypeName))
+          Text($r('app.string.stop_device', this.dhTypeName))
             .fontSize(16)
             .fontWeight(FontWeight.Regular)
-            .fontColor("#99FFFFFF")
+            .fontColor('#99FFFFFF')
             .margin({ top: 2 })
             .fontStyle(FontStyle.Normal)
             .textAlign(TextAlign.Center)
@@ -203,7 +203,7 @@ struct DHardwareUI {
                   .margin({ top: 24 })
                   .width('100%')
                   .onClick(() => {
-                    console.log(TAG + (this.isPause ? "click pause button" : "click continue button"));
+                    console.log(TAG + (this.isPause ? 'click pause button' : 'click continue button'));
                     if (this.isPause) {
                       this.pause();
                       AppStorage.setOrCreate('isPauseTag', true);
@@ -212,7 +212,7 @@ struct DHardwareUI {
                       AppStorage.setOrCreate('isPauseTag', false);
                     }
                     this.changePauseOrResumeStatus();
-                    console.info(TAG + "onClick : AppStorage.get<boolean>('isPauseTag') " + AppStorage.get<boolean>('isPauseTag'));
+                    console.info(TAG + 'onClick : AppStorage.get<boolean>(isPauseTag) ' + AppStorage.get<boolean>('isPauseTag'));
                   })
 
                 Button($r('app.string.disconnect'), { type: ButtonType.Capsule, stateEffect: true })
