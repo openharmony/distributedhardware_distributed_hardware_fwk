@@ -25,7 +25,7 @@ PersistentStorage.persistProp('sign', '');
 @Component
 struct DHardwareUI {
   @State deviceName: string = '';
-  @State DHTypeName: string = '';
+  @State dhTypeName: string = '';
   @State bgcImg: PixelMap | null = null;
   @StorageLink('type') type: number = 0;
   @StorageLink('srcNetworkId') srcNetworkId: string = '';
@@ -81,8 +81,8 @@ struct DHardwareUI {
         if (error != null) {
           console.log('error is ' + error);
         } else {
-          this.DHTypeName = value;
-          console.info(TAG + 'aboutToAppear : this.DHTypeName : ' + this.DHTypeName);
+          this.dhTypeName = value;
+          console.info(TAG + 'aboutToAppear : this.dhTypeName : ' + this.dhTypeName);
         }
       });
     } else {
@@ -180,7 +180,7 @@ struct DHardwareUI {
             .margin({ left: 0, top: 16, right: 0 })
             .textAlign(TextAlign.Center)
 
-          Text($r('app.string.stop_device', this.DHTypeName))
+          Text($r('app.string.stop_device', this.dhTypeName))
             .fontSize(16)
             .fontWeight(FontWeight.Regular)
             .fontColor('#99FFFFFF')
