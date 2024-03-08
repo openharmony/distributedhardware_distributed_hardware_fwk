@@ -90,8 +90,8 @@ struct DHardwareUI {
         if (error != null) {
           console.log('error is ' + error);
         } else {
-          this.DHTypeName = value;
-          console.info(TAG + 'aboutToAppear : this.DHTypeName : ' + this.DHTypeName);
+          this.dhTypeName = value;
+          console.info(TAG + 'aboutToAppear : this.dhTypeName : ' + this.dhTypeName);
         }
       });
     }
