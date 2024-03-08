@@ -96,7 +96,7 @@ Status DsoftbusOutputAudioPlugin::Prepare()
     TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_SAMPLE_RATE, sampleRateValue) != Status::OK,
         Status::ERROR_UNKNOWN, "Not found AUDIO_SAMPLE_RATE");
     sampleRate_ = static_cast<uint32_t>(Plugin::AnyCast<int>(sampleRateValue));
-    AVTRANS_LOGI("channels_ = %u, sampleRate_ = %u.", channels_, sampleRate_);
+    AVTRANS_LOGI("channels_ = %{public}u, sampleRate_ = %{public}u.", channels_, sampleRate_);
 
     SetCurrentState(State::PREPARED);
     return Status::OK;
@@ -189,13 +189,13 @@ Status DsoftbusOutputAudioPlugin::OpenSoftbusChannel()
 {
     int32_t ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Register channel listener failed ret: %d.", ret);
+        AVTRANS_LOGE("Register channel listener failed ret: %{public}d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
     std::string peerSessName = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
     ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName, peerDevId_);
     if ((ret != DH_AVT_SUCCESS) && (ret != ERR_DH_AVT_SESSION_HAS_OPENED)) {
-        AVTRANS_LOGE("Open softbus channel failed ret: %d.", ret);
+        AVTRANS_LOGE("Open softbus channel failed ret: %{public}d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
     return Status::OK;
@@ -205,13 +205,13 @@ void DsoftbusOutputAudioPlugin::CloseSoftbusChannel()
 {
     int32_t ret = SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Close softbus channle failed ret: %d.", ret);
+        AVTRANS_LOGE("Close softbus channle failed ret: %{public}d.", ret);
     }
 }
 
 void DsoftbusOutputAudioPlugin::OnChannelEvent(const AVTransEvent &event)
 {
-    AVTRANS_LOGI("OnChannelEvent enter, event type: %d", event.type);
+    AVTRANS_LOGI("OnChannelEvent enter, event type: %{public}d", event.type);
     if (eventsCb_ == nullptr) {
         AVTRANS_LOGE("OnChannelEvent failed, event callback is nullptr.");
         return;
@@ -313,8 +313,8 @@ void DsoftbusOutputAudioPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffe
 
     auto bufferData = buffer->GetMemory();
     std::string jsonStr = jsonObj.dump();
-    AVTRANS_LOGI("buffer data len = %zu, ext data len = %zu, ext data = %s", bufferData->GetSize(),
-        jsonStr.length(), jsonStr.c_str());
+    AVTRANS_LOGI("buffer data len = %{public}zu, ext data len = %{public}zu, ext data = %{public}s",
+        bufferData->GetSize(), jsonStr.length(), jsonStr.c_str());
 
     StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*>(bufferData->GetReadOnlyData())),
         bufferData->GetSize()};

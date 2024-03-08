@@ -122,7 +122,8 @@ Status DaudioOutputPlugin::Prepare()
     } else if (channelsLayout == AUDIO_CHANNEL_LAYOUT_STEREO) {
         channelsLayout = AV_CH_LAYOUT_STEREO;
     }
-    AVTRANS_LOGI("channels = %d, sampleRate = %d, channelLayout = %d.", channels, sampleRate, channelsLayout);
+    AVTRANS_LOGI("channels = %{public}d, sampleRate = %{public}d, channelLayout = %{public}d.",
+        channels, sampleRate, channelsLayout);
     RampleInit(channels, sampleRate, channelsLayout);
     SetCurrentState(State::PREPARED);
     return Status::OK;
@@ -170,7 +171,8 @@ Status DaudioOutputPlugin::SetParameter(Tag tag, const ValueType &value)
     }
     if (tag == Plugin::Tag::USER_AV_SYNC_GROUP_INFO) {
         std::string groupInfo = Media::Plugin::AnyCast<std::string>(value);
-        AVTRANS_LOGI("Set USER_AV_SYNC_GROUP_INFO parameter done, group info = %s.", GetAnonyString(groupInfo).c_str());
+        AVTRANS_LOGI("Set USER_AV_SYNC_GROUP_INFO parameter done, group info = %{public}s.",
+            GetAnonyString(groupInfo).c_str());
     }
     return Status::OK;
 }
@@ -234,10 +236,11 @@ Status DaudioOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<P
     if (bufferMeta->IsExist(Tag::USER_FRAME_NUMBER) && bufferMeta->IsExist(Tag::USER_FRAME_PTS)) {
         int64_t pts = Plugin::AnyCast<int64_t>(bufferMeta->GetMeta(Tag::USER_FRAME_PTS));
         uint32_t frameNum = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER));
-        AVTRANS_LOGI("Push audio buffer, bufferLen: %zu, frameNum: %u, pts: %ld", buffer->GetMemory()->GetSize(),
-            frameNum, pts);
+        AVTRANS_LOGI("Push audio buffer, bufferLen: %{public}zu, frameNum: %{public}u, pts: %{public}ld",
+            buffer->GetMemory()->GetSize(), frameNum, pts);
     } else {
-        AVTRANS_LOGI("Push audio buffer, bufferLen: %zu, not contains metadata.", buffer->GetMemory()->GetSize());
+        AVTRANS_LOGI("Push audio buffer, bufferLen: %{public}zu, not contains metadata.",
+            buffer->GetMemory()->GetSize());
     }
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
     while (outputBuffer_.size() >= DATA_QUEUE_MAX_SIZE) {

@@ -75,7 +75,7 @@ bool IsString(const nlohmann::json &jsonObj, const std::string &key)
 {
     bool res = jsonObj.contains(key) && jsonObj[key].is_string() && jsonObj[key].size() <= MAX_MESSAGES_LEN;
     if (!res) {
-        AVTRANS_LOGE("the key %s in jsonObj is invalid.", key.c_str());
+        AVTRANS_LOGE("the key %{public}s in jsonObj is invalid.", key.c_str());
     }
     return res;
 }
@@ -90,7 +90,7 @@ bool IsUInt32(const nlohmann::json &jsonObj, const std::string &key)
 {
     bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT32_MAX;
     if (!res) {
-        AVTRANS_LOGE("the key %s in jsonObj is invalid.", key.c_str());
+        AVTRANS_LOGE("the key %{public}s in jsonObj is invalid.", key.c_str());
     }
     return res;
 }
@@ -99,7 +99,7 @@ std::vector<AudioEncoderIn> ParseAudioEncoderIn(CapabilitySet &inCaps)
 {
     std::vector<AudioEncoderIn> ins;
     for (auto &cap : inCaps) {
-        AVTRANS_LOGD("AudioEncoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
+        AVTRANS_LOGD("AudioEncoderIn Raw: %{public}s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         AudioEncoderIn in;
         in.mime = cap.mime;
         in.sample_rate = AnyCast<std::vector<uint32_t>>(cap.keys[CapabilityID::AUDIO_SAMPLE_RATE]);
@@ -113,7 +113,7 @@ std::vector<AudioEncoderOut> ParseAudioEncoderOut(CapabilitySet &outCaps)
 {
     std::vector<AudioEncoderOut> outs;
     for (auto &cap : outCaps) {
-        AVTRANS_LOGD("AudioEncoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
+        AVTRANS_LOGD("AudioEncoderOut Raw: %{public}s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         AudioEncoderOut out;
         out.mime = cap.mime;
         out.ad_mpeg_ver = AnyCast<uint32_t>(cap.keys[CapabilityID::AUDIO_MPEG_VERSION]);
@@ -129,7 +129,7 @@ std::vector<AudioEncoder> QueryAudioEncoderAbility()
     auto audioEncNameList = PluginManager::Instance().ListPlugins(PluginType::AUDIO_ENCODER);
     for (const std::string& name : audioEncNameList) {
         if (find(AUDIO_ENCODER_WANT.begin(), AUDIO_ENCODER_WANT.end(), name) == AUDIO_ENCODER_WANT.end()) {
-            AVTRANS_LOGI("AudioEncoder Plugin not want: %s", name.c_str());
+            AVTRANS_LOGI("AudioEncoder Plugin not want: %{public}s", name.c_str());
             continue;
         }
         auto pluginInfo = PluginManager::Instance().GetPluginInfo(PluginType::AUDIO_ENCODER, name);
@@ -258,7 +258,7 @@ std::vector<AudioDecoderIn> ParseAudioDecoderIn(CapabilitySet &inCaps)
 {
     std::vector<AudioDecoderIn> ins;
     for (auto &cap : inCaps) {
-        AVTRANS_LOGD("AudioDecoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
+        AVTRANS_LOGD("AudioDecoderIn Raw: %{public}s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         AudioDecoderIn in;
         in.mime = cap.mime;
         in.channel_layout = AnyCast<std::vector<AudioChannelLayout>>(cap.keys[CapabilityID::AUDIO_CHANNEL_LAYOUT]);
@@ -272,7 +272,7 @@ std::vector<AudioDecoderOut> ParseAudioDecoderOut(CapabilitySet &outCaps)
 {
     std::vector<AudioDecoderOut> outs;
     for (auto &cap : outCaps) {
-        AVTRANS_LOGD("AudioDecoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
+        AVTRANS_LOGD("AudioDecoderOut Raw: %{public}s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         AudioDecoderOut out;
         out.mime = cap.mime;
         out.sample_fmt = AnyCast<std::vector<AudioSampleFormat>>(cap.keys[CapabilityID::AUDIO_SAMPLE_FORMAT]);
@@ -288,7 +288,7 @@ std::vector<AudioDecoder> QueryAudioDecoderAbility()
     auto audioDecNameList = PluginManager::Instance().ListPlugins(PluginType::AUDIO_DECODER);
     for (const std::string &name : audioDecNameList) {
         if (find(AUDIO_DECODER_WANT.begin(), AUDIO_DECODER_WANT.end(), name) == AUDIO_DECODER_WANT.end()) {
-            AVTRANS_LOGI("AudioDecoder Plugin not want: %s", name.c_str());
+            AVTRANS_LOGI("AudioDecoder Plugin not want: %{public}s", name.c_str());
             continue;
         }
         auto pluginInfo = PluginManager::Instance().GetPluginInfo(PluginType::AUDIO_DECODER, name);
@@ -414,7 +414,7 @@ std::vector<VideoEncoderIn> ParseVideoEncoderIn(CapabilitySet &inCaps)
 {
     std::vector<VideoEncoderIn> ins;
     for (auto &cap : inCaps) {
-        AVTRANS_LOGD("VideoEncoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
+        AVTRANS_LOGD("VideoEncoderIn Raw: %{public}s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         VideoEncoderIn in;
         in.mime = cap.mime;
         in.pixel_fmt = AnyCast<std::vector<VideoPixelFormat>>(cap.keys[CapabilityID::VIDEO_PIXEL_FORMAT]);
@@ -428,7 +428,7 @@ std::vector<VideoEncoderOut> ParseVideoEncoderOut(CapabilitySet &outCaps)
 {
     std::vector<VideoEncoderOut> outs;
     for (auto &cap : outCaps) {
-        AVTRANS_LOGD("VideoEncoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
+        AVTRANS_LOGD("VideoEncoderOut Raw: %{public}s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         VideoEncoderOut out;
         out.mime = cap.mime;
         outs.push_back(out);
@@ -443,7 +443,7 @@ std::vector<VideoEncoder> QueryVideoEncoderAbility()
     auto videoEncNameList = PluginManager::Instance().ListPlugins(PluginType::VIDEO_ENCODER);
     for (const std::string& name : videoEncNameList) {
         if (find(VIDEO_ENCODER_WANT.begin(), VIDEO_ENCODER_WANT.end(), name) == VIDEO_ENCODER_WANT.end()) {
-            AVTRANS_LOGI("VideoEncoder Plugin not want: %s", name.c_str());
+            AVTRANS_LOGI("VideoEncoder Plugin not want: %{public}s", name.c_str());
             continue;
         }
         auto pluginInfo = PluginManager::Instance().GetPluginInfo(PluginType::VIDEO_ENCODER, name);
@@ -554,7 +554,7 @@ std::vector<VideoDecoderIn> ParseVideoDecoderIn(CapabilitySet &inCaps)
 {
     std::vector<VideoDecoderIn> ins;
     for (auto &cap : inCaps) {
-        AVTRANS_LOGD("VideoDecoderIn Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
+        AVTRANS_LOGD("VideoDecoderIn Raw: %{public}s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         VideoDecoderIn in;
         in.mime = cap.mime;
         in.vd_bit_stream_fmt =
@@ -569,7 +569,7 @@ std::vector<VideoDecoderOut> ParseVideoDecoderOut(CapabilitySet &outCaps)
 {
     std::vector<VideoDecoderOut> outs;
     for (auto &cap : outCaps) {
-        AVTRANS_LOGD("VideoDecoderOut Raw: %s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
+        AVTRANS_LOGD("VideoDecoderOut Raw: %{public}s", OHOS::Media::Pipeline::Capability2String(cap).c_str());
         VideoDecoderOut out;
         out.mime = cap.mime;
         out.pixel_fmt = AnyCast<std::vector<VideoPixelFormat>>(cap.keys[CapabilityID::VIDEO_PIXEL_FORMAT]);
@@ -585,7 +585,7 @@ std::vector<VideoDecoder> QueryVideoDecoderAbility()
     auto videoDecNameList = PluginManager::Instance().ListPlugins(PluginType::VIDEO_DECODER);
     for (const std::string& name : videoDecNameList) {
         if (find(VIDEO_DECODER_WANT.begin(), VIDEO_DECODER_WANT.end(), name) == VIDEO_DECODER_WANT.end()) {
-            AVTRANS_LOGI("VideoDecoder Plugin not want: %s", name.c_str());
+            AVTRANS_LOGI("VideoDecoder Plugin not want: %{public}s", name.c_str());
             continue;
         }
         auto pluginInfo = PluginManager::Instance().GetPluginInfo(PluginType::VIDEO_DECODER, name);
@@ -721,7 +721,7 @@ template<typename T>
 void FromJson(const std::string &key, const nlohmann::json &jsonObject, std::vector<T> &objs)
 {
     if (jsonObject.find(key) == jsonObject.end()) {
-        AVTRANS_LOGE("JSONObject key invalid, key: %s", key.c_str());
+        AVTRANS_LOGE("JSONObject key invalid, key: %{public}s", key.c_str());
         return;
     }
     for (const auto &json : jsonObject[key]) {
@@ -737,7 +737,7 @@ int32_t QueryAudioEncoderAbilityStr(char* res)
     nlohmann::json jsonObject;
     ToJson<AudioEncoder>(AUDIO_ENCODERS, jsonObject, audioEncoders);
     std::string ret = jsonObject.dump();
-    AVTRANS_LOGI("QueryAudioEncoderAbilityStr ret: %s", ret.c_str());
+    AVTRANS_LOGI("QueryAudioEncoderAbilityStr ret: %{public}s", ret.c_str());
     if (ret.length() > MAX_MESSAGES_LEN) {
         AVTRANS_LOGE("QueryAudioEncoderAbilityStr too long");
         return 0;
@@ -754,7 +754,7 @@ int32_t QueryAudioDecoderAbilityStr(char* res)
     nlohmann::json jsonObject;
     ToJson<AudioDecoder>(AUDIO_DECODERS, jsonObject, audioDecoders);
     std::string ret = jsonObject.dump();
-    AVTRANS_LOGI("QueryAudioDecoderAbilityStr ret: %s", ret.c_str());
+    AVTRANS_LOGI("QueryAudioDecoderAbilityStr ret: %{public}s", ret.c_str());
     if (ret.length() > MAX_MESSAGES_LEN) {
         AVTRANS_LOGE("QueryAudioDecoderAbilityStr too long");
         return 0;
@@ -771,7 +771,7 @@ int32_t QueryVideoEncoderAbilityStr(char* res)
     nlohmann::json jsonObject;
     ToJson<VideoEncoder>(VIDEO_ENCODERS, jsonObject, viudeoEncoders);
     std::string ret = jsonObject.dump();
-    AVTRANS_LOGI("QueryVideoEncoderAbilityStr ret: %s", ret.c_str());
+    AVTRANS_LOGI("QueryVideoEncoderAbilityStr ret: %{public}s", ret.c_str());
     if (ret.length() > MAX_MESSAGES_LEN) {
         AVTRANS_LOGE("QueryVideoEncoderAbilityStr too long");
         return 0;
@@ -788,7 +788,7 @@ int32_t QueryVideoDecoderAbilityStr(char* res)
     nlohmann::json jsonObject;
     ToJson<VideoDecoder>(VIDEO_DECODERS, jsonObject, videoDecoders);
     std::string ret = jsonObject.dump();
-    AVTRANS_LOGI("QueryVideoDecoderAbilityStr ret: %s", ret.c_str());
+    AVTRANS_LOGI("QueryVideoDecoderAbilityStr ret: %{public}s", ret.c_str());
     if (ret.length() > MAX_MESSAGES_LEN) {
         AVTRANS_LOGE("QueryVideoDecoderAbilityStr too long");
         return 0;

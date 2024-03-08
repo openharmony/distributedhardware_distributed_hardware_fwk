@@ -82,7 +82,7 @@ void AVSenderEngineProvider::OnChannelEvent(const AVTransEvent &event)
         return;
     }
     if ((event.type == EventType::EVENT_CHANNEL_OPENED) || (event.type == EventType::EVENT_CHANNEL_CLOSED)) {
-        AVTRANS_LOGI("on receiver channel event. event type:%" PRId32, event.type);
+        AVTRANS_LOGI("on receiver channel event. event type:%{public}" PRId32, event.type);
         providerCallback_->OnProviderEvent(event);
     }
 }

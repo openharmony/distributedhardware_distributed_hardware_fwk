@@ -36,6 +36,7 @@ ohos_source_set("plugin_AVTransDsoftbusInputAudio") {
   external_deps += [
     "bounds_checking_function:libsec_shared",
     "dsoftbus:softbus_client",
+    "hilog:libhilog",
   ]
 
   public_configs = [ "${plugin_path}/plugins:avtrans_cflags" ]

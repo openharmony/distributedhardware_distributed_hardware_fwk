@@ -139,7 +139,7 @@ Status DaudioInputPlugin::PushData(const std::string &inPort, std::shared_ptr<Pl
     buffer->pts = GetCurrentTime();
     bufferMeta->SetMeta(Tag::USER_FRAME_PTS, buffer->pts);
     bufferMeta->SetMeta(Tag::USER_FRAME_NUMBER, frameNumber_.load());
-    AVTRANS_LOGI("Push audio buffer pts: %ld, bufferLen: %d, indexNumber: %u.",
+    AVTRANS_LOGI("Push audio buffer pts: %{public}ld, bufferLen: %{public}d, indexNumber: %{public}u.",
         buffer->pts, buffer->GetMemory()->GetSize(),
         Plugin::AnyCast<uint32_t>(buffer->GetBufferMeta()->GetMeta(Tag::USER_FRAME_NUMBER)));
 

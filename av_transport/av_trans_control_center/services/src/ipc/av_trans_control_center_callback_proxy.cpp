@@ -56,7 +56,7 @@ int32_t AVTransControlCenterCallbackProxy::SetParameter(AVTransTag tag, const st
     int32_t ret = remote->SendRequest((uint32_t)IAVTransControlCenterCallback::Message::SET_PARAMETER,
         data, reply, option);
     if (ret != NO_ERROR) {
-        AVTRANS_LOGE("Send Request failed, ret: %d", ret);
+        AVTRANS_LOGE("Send Request failed, ret: %{public}d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
@@ -94,7 +94,7 @@ int32_t AVTransControlCenterCallbackProxy::SetSharedMemory(const AVTransSharedMe
     int32_t ret = remote->SendRequest((uint32_t)IAVTransControlCenterCallback::Message::SET_SHARED_MEMORY,
         data, reply, option);
     if (ret != NO_ERROR) {
-        AVTRANS_LOGE("Send Request failed, ret: %d", ret);
+        AVTRANS_LOGE("Send Request failed, ret: %{public}d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
@@ -132,7 +132,7 @@ int32_t AVTransControlCenterCallbackProxy::Notify(const AVTransEvent& event)
     int32_t ret = remote->SendRequest((uint32_t)IAVTransControlCenterCallback::Message::NOTIFY_AV_EVENT,
         data, reply, option);
     if (ret != NO_ERROR) {
-        AVTRANS_LOGE("Send Request failed, ret: %d", ret);
+        AVTRANS_LOGE("Send Request failed, ret: %{public}d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 

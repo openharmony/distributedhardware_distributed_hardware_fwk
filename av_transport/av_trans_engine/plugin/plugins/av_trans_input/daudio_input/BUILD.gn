@@ -33,7 +33,10 @@ ohos_source_set("plugin_AVTransDaudioInput") {
     ]
   }
 
-  external_deps += [ "bounds_checking_function:libsec_shared" ]
+  external_deps += [
+    "bounds_checking_function:libsec_shared",
+    "hilog:libhilog",
+  ]
 
   public_configs = [ "${plugin_path}/plugins:avtrans_cflags" ]
 
