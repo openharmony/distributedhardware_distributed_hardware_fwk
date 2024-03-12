@@ -30,6 +30,7 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "SoftbusChannelAdapter"
 
 IMPLEMENT_SINGLE_INSTANCE(SoftbusChannelAdapter);
+
 namespace {
 const static std::pair<std::string, std::string> LOCAL_TO_PEER_SESSION_NAME_MAP[] = {
     {OWNER_NAME_D_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
@@ -185,7 +186,7 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
     }
     QosTV qos[] = {
         {.qos = QOS_TYPE_MIN_BW,        .value = 40 * 1024 * 1024},
-        {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
+        {.qos = QOS_TYPE_MAX_LATENCY,       .value = 8000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
 
@@ -271,7 +272,7 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
 
     QosTV qos[] = {
         {.qos = QOS_TYPE_MIN_BW,        .value = 40 * 1024 * 1024},
-        {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
+        {.qos = QOS_TYPE_MAX_LATENCY,       .value = 8000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
     
