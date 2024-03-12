@@ -30,6 +30,7 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "SoftbusChannelAdapter"
 
 IMPLEMENT_SINGLE_INSTANCE(SoftbusChannelAdapter);
+
 namespace {
 const static std::pair<std::string, std::string> LOCAL_TO_PEER_SESSION_NAME_MAP[] = {
     {OWNER_NAME_D_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
