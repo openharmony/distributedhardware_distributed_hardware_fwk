@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,7 @@ void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::stri
         DHLOGE("Param is invalid!");
         return;
     }
-    DHLOGI("plugin start, dhId: %s", GetAnonyString(dhId).c_str());
+    DHLOGI("plugin start, dhId: %{public}s", GetAnonyString(dhId).c_str());
     if (DHContext::GetInstance().IsSleeping()) {
         DHLOGI("System is in sleeping, drop it");
         return;
@@ -50,7 +50,7 @@ void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::stri
 
     CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);
     Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_PHY_DEV_PLUGIN, dhId);
-    DHLOGI("plugin end, dhId: %s", GetAnonyString(dhId).c_str());
+    DHLOGI("plugin end, dhId: %{public}s", GetAnonyString(dhId).c_str());
 }
 
 void PluginListenerImpl::UnPluginHardware(const std::string &dhId)
@@ -59,7 +59,7 @@ void PluginListenerImpl::UnPluginHardware(const std::string &dhId)
         DHLOGE("DhId is invalid!");
         return;
     }
-    DHLOGI("unplugin start, dhId: %s", GetAnonyString(dhId).c_str());
+    DHLOGI("unplugin start, dhId: %{public}s", GetAnonyString(dhId).c_str());
     if (DHContext::GetInstance().IsSleeping()) {
         DHLOGI("System is in sleeping, drop it");
         return;
@@ -68,12 +68,12 @@ void PluginListenerImpl::UnPluginHardware(const std::string &dhId)
     std::shared_ptr<CapabilityInfo> capability = nullptr;
     auto ret = CapabilityInfoManager::GetInstance()->GetCapability(deviceId, dhId, capability);
     if ((ret != DH_FWK_SUCCESS) || (capability == nullptr)) {
-        DHLOGE("GetCapability failed, deviceId =%s, dhId = %s, errCode = %d",
+        DHLOGE("GetCapability failed, deviceId =%{public}s, dhId = %{public}s, errCode = %{public}d",
             GetAnonyString(deviceId).c_str(), GetAnonyString(dhId).c_str(), ret);
         return;
     }
     CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(capability->GetKey());
-    DHLOGI("unplugin end, dhId: %s", GetAnonyString(dhId).c_str());
+    DHLOGI("unplugin end, dhId: %{public}s", GetAnonyString(dhId).c_str());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
