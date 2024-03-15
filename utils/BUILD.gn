@@ -71,7 +71,7 @@ ohos_shared_library("distributedhardwareutils") {
     "safwk:system_ability_fwk",
   ]
 
+  innerapi_tags = [ "platformsdk" ]
   subsystem_name = "distributedhardware"
-
   part_name = "distributed_hardware_fwk"
 }
