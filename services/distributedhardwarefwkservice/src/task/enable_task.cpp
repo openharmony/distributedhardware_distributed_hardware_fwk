@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,12 +37,12 @@ EnableTask::EnableTask(const std::string &networkId, const std::string &uuid, co
 {
     SetTaskType(TaskType::ENABLE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::DO_ENABLE });
-    DHLOGD("id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(uuid).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(uuid).c_str());
 }
 
 EnableTask::~EnableTask()
 {
-    DHLOGD("id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
 }
 
 void EnableTask::DoTask()
@@ -56,13 +56,13 @@ void EnableTask::DoTaskInner()
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DoTaskInner setname failed.");
     }
-    DHLOGD("id = %{public}s, uuid = %{public}s, dhId = %{public}s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
+    DHLOGD("id = %s, uuid = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
         GetAnonyString(GetDhId()).c_str());
     SetTaskState(TaskState::RUNNING);
     auto result = RegisterHardware();
     auto state = (result == DH_FWK_SUCCESS) ? TaskState::SUCCESS : TaskState::FAIL;
     SetTaskState(state);
-    DHLOGD("finish enable task, remove it, id = %{public}s", GetId().c_str());
+    DHLOGD("finish enable task, remove it, id = %s", GetId().c_str());
     if (result == DH_FWK_SUCCESS) {
         TaskParam taskParam = {
             .networkId = GetNetworkId(),
@@ -80,9 +80,8 @@ int32_t EnableTask::RegisterHardware()
 {
     DHCompMgrTraceStart(GetAnonyString(GetNetworkId()), GetAnonyString(GetDhId()), DH_ENABLE_START);
     auto result = ComponentManager::GetInstance().Enable(GetNetworkId(), GetUUID(), GetDhId(), GetDhType());
-    DHLOGI("enable task %{public}s, id = %{public}s, uuid = %{public}s, dhId = %{public}s",
-        (result == DH_FWK_SUCCESS) ? "success" : "failed", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
-        GetAnonyString(GetDhId()).c_str());
+    DHLOGI("enable task %s, id = %s, uuid = %s, dhId = %s", (result == DH_FWK_SUCCESS) ? "success" : "failed",
+        GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetDhId()).c_str());
     DHTraceEnd();
     return result;
 }

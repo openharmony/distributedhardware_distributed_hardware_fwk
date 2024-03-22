@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,7 +30,7 @@ void HiSysEventWriteMsg(const std::string &status, const OHOS::HiviewDFX::HiSysE
         eventType,
         "MSG", msg.c_str());
     if (res != DH_FWK_SUCCESS) {
-        DHLOGE("Write HiSysEvent error, res:%{public}d", res);
+        DHLOGE("Write HiSysEvent error, res:%d", res);
     }
 }
 
@@ -44,7 +44,7 @@ void HiSysEventWriteErrCodeMsg(const std::string &status, const OHOS::HiviewDFX:
         "ERR_CODE", errCode,
         "ERR_MSG", msg.c_str());
     if (res != DH_FWK_SUCCESS) {
-        DHLOGE("Write HiSysEvent error, res:%{public}d", res);
+        DHLOGE("Write HiSysEvent error, res:%d", res);
     }
 }
 
@@ -65,7 +65,7 @@ void HiSysEventWriteReleaseMsg(const std::string &status, const OHOS::HiviewDFX:
         "ERR_CODE", errCode,
         "ERR_MSG", msg.c_str());
     if (res != DH_FWK_SUCCESS) {
-        DHLOGE("Write HiSysEvent error, res:%{public}d", res);
+        DHLOGE("Write HiSysEvent error, res:%d", res);
     }
 }
 
@@ -79,7 +79,7 @@ void HiSysEventWriteCompOfflineMsg(const std::string &status, const OHOS::Hiview
         "NETWORKID", anonyNetworkId.c_str(),
         "MSG", msg.c_str());
     if (res != DH_FWK_SUCCESS) {
-        DHLOGE("Write HiSysEvent error, res:%{public}d", res);
+        DHLOGE("Write HiSysEvent error, res:%d", res);
     }
 }
 
@@ -94,7 +94,7 @@ void HiSysEventWriteCompMgrFailedMsg(const std::string &status, const OHOS::Hivi
         "ERR_CODE", errCode,
         "ERR_MSG", msg.c_str());
     if (res != DH_FWK_SUCCESS) {
-        DHLOGE("Write HiSysEvent error, res:%{public}d", res);
+        DHLOGE("Write HiSysEvent error, res:%d", res);
     }
 }
 } // namespace DistributedHardware

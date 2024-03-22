@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,14 +54,14 @@ void HiStreamerQueryTool::Init()
     DHLOGI("Start Init HiStreamer Query SO");
     void *pHandler = dlopen(LIB_LOAD_PATH.c_str(), RTLD_LAZY | RTLD_NODELETE);
     if (pHandler == nullptr) {
-        DHLOGE("libhistreamer_ability_querier.z.so handler load failed, failed reason : %{public}s", dlerror());
+        DHLOGE("libhistreamer_ability_querier.z.so handler load failed, failed reason : %s", dlerror());
         return;
     }
     
     queryAudioEncoderFunc = (QueryAudioEncoderFunc)dlsym(pHandler,
         QueryAudioEncoderFuncName.c_str());
     if (queryAudioEncoderFunc == nullptr) {
-        DHLOGE("get QueryAudioEncoderAbilityStr is null, failed reason : %{public}s", dlerror());
+        DHLOGE("get QueryAudioEncoderAbilityStr is null, failed reason : %s", dlerror());
         dlclose(pHandler);
         return;
     }
@@ -69,7 +69,7 @@ void HiStreamerQueryTool::Init()
     queryAudioDecoderFunc = (QueryAudioDecoderFunc)dlsym(pHandler,
         QueryAudioDecoderFuncName.c_str());
     if (queryAudioDecoderFunc == nullptr) {
-        DHLOGE("get QueryAudioDecoderAbilityStr is null, failed reason : %{public}s", dlerror());
+        DHLOGE("get QueryAudioDecoderAbilityStr is null, failed reason : %s", dlerror());
         dlclose(pHandler);
         return;
     }
@@ -77,7 +77,7 @@ void HiStreamerQueryTool::Init()
     queryVideoEncoderFunc = (QueryVideoEncoderFunc)dlsym(pHandler,
         QueryVideoEncoderFuncName.c_str());
     if (queryVideoEncoderFunc == nullptr) {
-        DHLOGE("get QueryVideoEncoderAbilityStr is null, failed reason : %{public}s", dlerror());
+        DHLOGE("get QueryVideoEncoderAbilityStr is null, failed reason : %s", dlerror());
         dlclose(pHandler);
         return;
     }
@@ -85,7 +85,7 @@ void HiStreamerQueryTool::Init()
     queryVideoDecoderFunc = (QueryVideoDecoderFunc)dlsym(pHandler,
         QueryVideoDecoderFuncName.c_str());
     if (queryVideoDecoderFunc == nullptr) {
-        DHLOGE("get QueryVideoDecoderAbilityStr is null, failed reason : %{public}s", dlerror());
+        DHLOGE("get QueryVideoDecoderAbilityStr is null, failed reason : %s", dlerror());
         dlclose(pHandler);
         return;
     }

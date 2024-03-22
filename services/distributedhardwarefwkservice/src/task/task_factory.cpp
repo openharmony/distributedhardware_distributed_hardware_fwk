@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,7 +31,7 @@ namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(TaskFactory);
 std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskParam, std::shared_ptr<Task> fatherTask)
 {
-    DHLOGI("taskType = %{public}d, networkId = %{public}s, uuid = %{public}s, dhId = %{public}s",
+    DHLOGI("taskType = %d, networkId = %s, uuid = %s, dhId = %s",
         static_cast<int32_t>(taskType), GetAnonyString(taskParam.networkId).c_str(),
         GetAnonyString(taskParam.uuid).c_str(), GetAnonyString(taskParam.dhId).c_str());
     std::shared_ptr<Task> task = nullptr;
@@ -53,7 +53,7 @@ std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskP
             break;
         }
         default: {
-            DHLOGE("CreateTask type invalid, type: %{public}d", taskType);
+            DHLOGE("CreateTask type invalid, type: %d", taskType);
             return nullptr;
         }
     }

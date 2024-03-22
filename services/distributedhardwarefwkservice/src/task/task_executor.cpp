@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,7 +49,7 @@ void TaskExecutor::PushTask(const std::shared_ptr<Task>& task)
     }
 
     {
-        DHLOGI("Push task: %{public}s", task->GetId().c_str());
+        DHLOGI("Push task: %s", task->GetId().c_str());
         std::unique_lock<std::mutex> lock(taskQueueMtx_);
         if (taskQueue_.size() > MAX_TASK_QUEUE_LENGTH) {
             DHLOGE("Task queue is full");
@@ -73,7 +73,7 @@ std::shared_ptr<Task> TaskExecutor::PopTask()
     if (!taskQueue_.empty()) {
         task = taskQueue_.front();
         taskQueue_.pop();
-        DHLOGI("Pop task: %{public}s", task->GetId().c_str());
+        DHLOGI("Pop task: %s", task->GetId().c_str());
     }
 
     return task;
@@ -96,7 +96,7 @@ void TaskExecutor::TriggerTask()
             task->DoTask();
         };
 
-        DHLOGI("Post task to EventBus: %{public}s", task->GetId().c_str());
+        DHLOGI("Post task to EventBus: %s", task->GetId().c_str());
         DHContext::GetInstance().GetEventHandler()->PostTask(taskFunc, task->GetId());
     }
 }

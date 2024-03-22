@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,12 +38,12 @@ DisableTask::DisableTask(const std::string &networkId, const std::string &uuid, 
 {
     SetTaskType(TaskType::DISABLE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::DO_DISABLE });
-    DHLOGD("id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(uuid).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(uuid).c_str());
 }
 
 DisableTask::~DisableTask()
 {
-    DHLOGD("id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
 }
 
 void DisableTask::DoTask()
@@ -57,7 +57,7 @@ void DisableTask::DoTaskInner()
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DoTaskInner setname failed.");
     }
-    DHLOGD("id = %{public}s, uuid = %{public}s, dhId = %{public}s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
+    DHLOGD("id = %s, uuid = %s, dhId = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
         GetAnonyString(GetDhId()).c_str());
     SetTaskState(TaskState::RUNNING);
 
@@ -72,7 +72,7 @@ void DisableTask::DoTaskInner()
         auto offLineTask = std::static_pointer_cast<OffLineTask>(father);
         offLineTask->NotifyFatherFinish(GetId());
     }
-    DHLOGD("finish disable task, remove it, id = %{public}s", GetId().c_str());
+    DHLOGD("finish disable task, remove it, id = %s", GetId().c_str());
     TaskBoard::GetInstance().RemoveTask(GetId());
     if (result == DH_FWK_SUCCESS) {
         std::string enabledDeviceKey = CapabilityUtils::GetCapabilityKey(GetDeviceIdByUUID(GetUUID()), GetDhId());
@@ -84,9 +84,8 @@ int32_t DisableTask::UnRegisterHardware()
 {
     DHCompMgrTraceStart(GetAnonyString(GetNetworkId()), GetAnonyString(GetDhId()), DH_DISABLE_START);
     auto result = ComponentManager::GetInstance().Disable(GetNetworkId(), GetUUID(), GetDhId(), GetDhType());
-    DHLOGI("disable task %{public}s, id = %{public}s, uuid = %{public}s, dhId = %{public}s",
-        (result == DH_FWK_SUCCESS) ? "success" : "failed", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
-        GetAnonyString(GetDhId()).c_str());
+    DHLOGI("disable task %s, id = %s, uuid = %s, dhId = %s", (result == DH_FWK_SUCCESS) ? "success" : "failed",
+        GetId().c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetDhId()).c_str());
     DHTraceEnd();
     return result;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -90,7 +90,7 @@ void DistributedHardwareManager::JsObjectToString(const napi_env &env, const nap
         size_t result = 0;
         NAPI_CALL_RETURN_VOID(env, napi_get_value_string_utf8(env, field, dest, destLen, &result));
     } else {
-        DHLOGE("devicemanager napi js to str no property: %{public}s", fieldStr.c_str());
+        DHLOGE("devicemanager napi js to str no property: %s", fieldStr.c_str());
     }
 }
 
@@ -110,7 +110,7 @@ void DistributedHardwareManager::JsObjectToInt(const napi_env &env, const napi_v
         }
         napi_get_value_int32(env, field, &fieldRef);
     } else {
-        DHLOGE("devicemanager napi js to int no property: %{public}s", fieldStr.c_str());
+        DHLOGE("devicemanager napi js to int no property: %s", fieldStr.c_str());
     }
 }
 
@@ -156,7 +156,7 @@ napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, na
         napi_create_promise(env, &deferred, &promise);
         int32_t ret = dhFwkKit->PauseDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("PauseDistributedHardware for DHType: %{public}u filed", (uint32_t)dhType);
+            DHLOGE("PauseDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
         return promise;
     } else if (argc == DH_NAPI_ARGS_TWO) {    // callback
@@ -165,7 +165,7 @@ napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, na
         }
         int32_t ret = dhFwkKit->PauseDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("PauseDistributedHardware for DHType: %{public}u filed", (uint32_t)dhType);
+            DHLOGE("PauseDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
     }
     napi_get_undefined(env, &result);
@@ -208,7 +208,7 @@ napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, n
         napi_create_promise(env, &deferred, &promise);
         int32_t ret = dhFwkKit->ResumeDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("ResumeDistributedHardware for DHType: %{public}u filed", (uint32_t)dhType);
+            DHLOGE("ResumeDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
         return promise;
     } else if (argc == DH_NAPI_ARGS_TWO) {    // callback
@@ -217,7 +217,7 @@ napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, n
         }
         int32_t ret = dhFwkKit->ResumeDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("ResumeDistributedHardware for DHType: %{public}u filed", (uint32_t)dhType);
+            DHLOGE("ResumeDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
     }
     napi_get_undefined(env, &result);
@@ -260,7 +260,7 @@ napi_value DistributedHardwareManager::StopDistributedHardware(napi_env env, nap
         napi_create_promise(env, &deferred, &promise);
         int32_t ret = dhFwkKit->StopDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("StopDistributedHardware for DHType: %{public}u filed", (uint32_t)dhType);
+            DHLOGE("StopDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
         return promise;
     } else if (argc == DH_NAPI_ARGS_TWO) {    // callback
@@ -269,7 +269,7 @@ napi_value DistributedHardwareManager::StopDistributedHardware(napi_env env, nap
         }
         int32_t ret = dhFwkKit->StopDistributedHardware(dhType, std::string(networkId));
         if (ret != 0) {
-            DHLOGE("StopDistributedHardware for DHType: %{public}u filed", (uint32_t)dhType);
+            DHLOGE("StopDistributedHardware for DHType: %u filed", (uint32_t)dhType);
         }
     }
     napi_get_undefined(env, &result);

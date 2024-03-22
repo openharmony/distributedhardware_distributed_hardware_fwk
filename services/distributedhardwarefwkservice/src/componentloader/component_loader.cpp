@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -233,7 +233,7 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
 
     std::vector<CompConfig> vecJsnCfg =
         jsonCfg.at(COMPONENTSLOAD_DISTRIBUTED_COMPONENTS).get<std::vector<CompConfig>>();
-    DHLOGI("get distributed_components CompConfig size is %{public}zu", vecJsnCfg.size());
+    DHLOGI("get distributed_components CompConfig size is %zu", vecJsnCfg.size());
     if (vecJsnCfg.size() == 0 || vecJsnCfg.size() > MAX_COMP_SIZE) {
         DHLOGE("CompConfig size is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
@@ -280,7 +280,7 @@ void *ComponentLoader::GetHandler(const std::string &soName)
     }
     void *pHandler = dlopen(path, RTLD_LAZY | RTLD_NODELETE);
     if (pHandler == nullptr) {
-        DHLOGE("%{public}s handler load failed, failed reason : %{public}s", path, dlerror());
+        DHLOGE("%s handler load failed, failed reason : %s", path, dlerror());
         HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             "dhfwk so open failed, soname : " + soName);
         return nullptr;
@@ -311,7 +311,7 @@ void ComponentLoader::GetAllHandler(std::map<DHType, CompConfig> &dhtypeMap)
 int32_t ComponentLoader::GetHardwareHandler(const DHType dhType, IHardwareHandler *&hardwareHandlerPtr)
 {
     if (compHandlerMap_.find(dhType) == compHandlerMap_.end()) {
-        DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
+        DHLOGE("DHType not exist, dhType: %" PRIu32, (uint32_t)dhType);
         return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
     }
 
@@ -323,7 +323,7 @@ int32_t ComponentLoader::GetHardwareHandler(const DHType dhType, IHardwareHandle
     GetHardwareClass getHardwareClassHandler = (GetHardwareClass)dlsym(compHandlerMap_[dhType].hardwareHandler,
         COMPONENT_LOADER_GET_HARDWARE_HANDLER.c_str());
     if (getHardwareClassHandler == nullptr) {
-        DHLOGE("get getHardwareClassHandler is null, failed reason : %{public}s", dlerror());
+        DHLOGE("get getHardwareClassHandler is null, failed reason : %s", dlerror());
         dlclose(compHandlerMap_[dhType].hardwareHandler);
         compHandlerMap_[dhType].hardwareHandler = nullptr;
         return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
@@ -335,7 +335,7 @@ int32_t ComponentLoader::GetHardwareHandler(const DHType dhType, IHardwareHandle
 int32_t ComponentLoader::GetSource(const DHType dhType, IDistributedHardwareSource *&sourcePtr)
 {
     if (compHandlerMap_.find(dhType) == compHandlerMap_.end()) {
-        DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
+        DHLOGE("DHType not exist, dhType: %" PRIu32, (uint32_t)dhType);
         return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
     }
 
@@ -347,7 +347,7 @@ int32_t ComponentLoader::GetSource(const DHType dhType, IDistributedHardwareSour
     GetSourceHardwareClass getSourceHardClassHandler = (GetSourceHardwareClass)dlsym(
         compHandlerMap_[dhType].sourceHandler, COMPONENT_LOADER_GET_SOURCE_HANDLER.c_str());
     if (getSourceHardClassHandler == nullptr) {
-        DHLOGE("get getSourceHardClassHandler is null, failed reason : %{public}s", dlerror());
+        DHLOGE("get getSourceHardClassHandler is null, failed reason : %s", dlerror());
         dlclose(compHandlerMap_[dhType].sourceHandler);
         compHandlerMap_[dhType].sourceHandler = nullptr;
         return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
@@ -359,7 +359,7 @@ int32_t ComponentLoader::GetSource(const DHType dhType, IDistributedHardwareSour
 int32_t ComponentLoader::GetSink(const DHType dhType, IDistributedHardwareSink *&sinkPtr)
 {
     if (compHandlerMap_.find(dhType) == compHandlerMap_.end()) {
-        DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
+        DHLOGE("DHType not exist, dhType: %" PRIu32, (uint32_t)dhType);
         return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
     }
 
@@ -371,7 +371,7 @@ int32_t ComponentLoader::GetSink(const DHType dhType, IDistributedHardwareSink *
     GetSinkHardwareClass getSinkHardwareClassHandler =
         (GetSinkHardwareClass)dlsym(compHandlerMap_[dhType].sinkHandler, COMPONENT_LOADER_GET_SINK_HANDLER.c_str());
     if (getSinkHardwareClassHandler == nullptr) {
-        DHLOGE("get getSinkHardwareClassHandler is null, failed reason : %{public}s", dlerror());
+        DHLOGE("get getSinkHardwareClassHandler is null, failed reason : %s", dlerror());
         dlclose(compHandlerMap_[dhType].sinkHandler);
         compHandlerMap_[dhType].sinkHandler = nullptr;
         return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
@@ -387,7 +387,7 @@ std::string ComponentLoader::Readfile(const std::string &filePath)
     std::string sAll = "";
     infile.open(filePath);
     if (!infile.is_open()) {
-        DHLOGE("filePath: %{public}s Readfile fail", filePath.c_str());
+        DHLOGE("filePath: %s Readfile fail", filePath.c_str());
         return sAll;
     }
 
@@ -467,7 +467,7 @@ int32_t ComponentLoader::ReleaseHardwareHandler(const DHType dhType)
     }
     int32_t ret = ReleaseHandler(compHandlerMap_[dhType].hardwareHandler);
     if (ret) {
-        DHLOGE("fail, dhType: %{public}#X", dhType);
+        DHLOGE("fail, dhType: %#X", dhType);
         HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             dhType, ret, "dhfwk release hardware handler failed.");
     }
@@ -481,7 +481,7 @@ int32_t ComponentLoader::ReleaseSource(const DHType dhType)
     }
     int32_t ret = ReleaseHandler(compHandlerMap_[dhType].sourceHandler);
     if (ret) {
-        DHLOGE("fail, dhType: %{public}#X", dhType);
+        DHLOGE("fail, dhType: %#X", dhType);
         HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             dhType, ret, "dhfwk release source failed.");
     }
@@ -495,7 +495,7 @@ int32_t ComponentLoader::ReleaseSink(const DHType dhType)
     }
     int32_t ret = ReleaseHandler(compHandlerMap_[dhType].sinkHandler);
     if (ret) {
-        DHLOGE("fail, dhType: %{public}#X", dhType);
+        DHLOGE("fail, dhType: %#X", dhType);
         HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             dhType, ret, "dhfwk release sink failed.");
     }
@@ -505,7 +505,7 @@ int32_t ComponentLoader::ReleaseSink(const DHType dhType)
 bool ComponentLoader::IsDHTypeExist(DHType dhType)
 {
     if (compHandlerMap_.find(dhType) == compHandlerMap_.end()) {
-        DHLOGE("fail, dhType: %{public}#X not exist", dhType);
+        DHLOGE("fail, dhType: %#X not exist", dhType);
         return false;
     }
     return true;
@@ -514,7 +514,7 @@ bool ComponentLoader::IsDHTypeExist(DHType dhType)
 int32_t ComponentLoader::GetSourceSaId(const DHType dhType)
 {
     if (compHandlerMap_.find(dhType) == compHandlerMap_.end()) {
-        DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
+        DHLOGE("DHType not exist, dhType: %" PRIu32, (uint32_t)dhType);
         return DEFAULT_SA_ID;
     }
     return compHandlerMap_[dhType].sourceSaId;

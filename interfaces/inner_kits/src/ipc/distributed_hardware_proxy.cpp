@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -73,13 +73,13 @@ int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic,
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::REG_PUBLISHER_LISTNER),
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
     ret = reply.ReadInt32();
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Register Publisher Listener failed, ret: %{public}d", ret);
+        DHLOGE("Register Publisher Listener failed, ret: %d", ret);
     }
 
     return ret;
@@ -122,13 +122,13 @@ int32_t DistributedHardwareProxy::UnregisterPublisherListener(const DHTopic topi
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_PUBLISHER_LISTENER),
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
     ret = reply.ReadInt32();
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Unregister Publisher Listener failed, ret: %{public}d", ret);
+        DHLOGE("Unregister Publisher Listener failed, ret: %d", ret);
     }
 
     return ret;
@@ -169,13 +169,13 @@ int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std:
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::PUBLISH_MESSAGE),
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
     ret = reply.ReadInt32();
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("PublishMessage failed, ret: %{public}d", ret);
+        DHLOGE("PublishMessage failed, ret: %d", ret);
     }
 
     return ret;
@@ -209,12 +209,12 @@ std::string DistributedHardwareProxy::QueryLocalSysSpec(QueryLocalSysSpecType sp
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::QUERY_LOCAL_SYS_SPEC),
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return "";
     }
 
     std::string specStr = reply.ReadString();
-    DHLOGI("Query local sys spec %{public}" PRIu32 ", get: %{public}s", (uint32_t)spec, specStr.c_str());
+    DHLOGI("Query local sys spec %" PRIu32 ", get: %s", (uint32_t)spec, specStr.c_str());
     return specStr;
 }
 
@@ -240,7 +240,7 @@ int32_t DistributedHardwareProxy::InitializeAVCenter(const TransRole &transRole,
     }
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::INIT_CTL_CEN), data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
     engineId = reply.ReadInt32();
@@ -270,7 +270,7 @@ int32_t DistributedHardwareProxy::ReleaseAVCenter(int32_t engineId)
     }
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::RELEASE_CTL_CEN), data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
@@ -304,7 +304,7 @@ int32_t DistributedHardwareProxy::CreateControlChannel(int32_t engineId, const s
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::CREATE_CTL_CEN_CHANNEL),
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
@@ -345,7 +345,7 @@ int32_t DistributedHardwareProxy::NotifyAVCenter(int32_t engineId, const AVTrans
     }
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_AV_EVENT), data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
@@ -379,7 +379,7 @@ int32_t DistributedHardwareProxy::RegisterCtlCenterCallback(int32_t engineId,
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::REGISTER_CTL_CEN_CALLBACK),
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
@@ -408,7 +408,7 @@ int32_t DistributedHardwareProxy::NotifySourceRemoteSinkStarted(std::string &dev
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED), data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
     DHLOGI("DistributedHardwareProxy NotifySourceRemoteSinkStarted End");
@@ -443,7 +443,7 @@ int32_t DistributedHardwareProxy::PauseDistributedHardware(DHType dhType, const 
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::PAUSE_DISTRIBUTED_HARDWARE),
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
@@ -478,7 +478,7 @@ int32_t DistributedHardwareProxy::ResumeDistributedHardware(DHType dhType, const
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::RESUME_DISTRIBUTED_HARDWARE),
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 
@@ -513,7 +513,7 @@ int32_t DistributedHardwareProxy::StopDistributedHardware(DHType dhType, const s
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::STOP_DISTRIBUTED_HARDWARE),
         data, reply, option);
     if (ret != NO_ERROR) {
-        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        DHLOGE("Send Request failed, ret: %d", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
 

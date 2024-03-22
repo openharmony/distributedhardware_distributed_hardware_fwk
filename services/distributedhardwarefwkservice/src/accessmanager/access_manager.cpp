@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -109,10 +109,10 @@ void AccessManager::OnRemoteDied()
     for (int32_t tryCount = 0; tryCount < DH_RETRY_INIT_DM_COUNT; ++tryCount) {
         usleep(DH_RETRY_INIT_DM_INTERVAL_US);
         if (Init() == DH_FWK_SUCCESS) {
-            DHLOGI("DeviceManager onDied, try to init success, tryCount = %{public}d", tryCount);
+            DHLOGI("DeviceManager onDied, try to init success, tryCount = %d", tryCount);
             return;
         }
-        DHLOGW("DeviceManager onDied, try to init failed, tryCount = %{public}d", tryCount);
+        DHLOGW("DeviceManager onDied, try to init failed, tryCount = %d", tryCount);
     }
     DHLOGE("DeviceManager onDied, try to init has reached the maximum, but still failed");
     return;
@@ -127,9 +127,8 @@ void AccessManager::OnDeviceOnline(const DmDeviceInfo &deviceInfo)
 void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
 {
     std::lock_guard<std::mutex> lock(accessMutex_);
-    DHLOGI("start, networkId = %{public}s, deviceName = %{public}s, deviceTypeId = %{public}d",
-        GetAnonyString(deviceInfo.networkId).c_str(), GetAnonyString(deviceInfo.deviceName).c_str(),
-        deviceInfo.deviceTypeId);
+    DHLOGI("start, networkId = %s, deviceName = %s, deviceTypeId = %d", GetAnonyString(deviceInfo.networkId).c_str(),
+        GetAnonyString(deviceInfo.deviceName).c_str(), deviceInfo.deviceTypeId);
 
     auto networkId = std::string(deviceInfo.networkId);
     if (networkId.size() == 0 || networkId.size() > MAX_ID_LEN) {
@@ -148,16 +147,15 @@ void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
 
     auto ret =
         DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
-    DHLOGI("offline result = %{public}d, networkId = %{public}s, uuid = %{public}s", ret,
-        GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
+    DHLOGI("offline result = %d, networkId = %s, uuid = %s", ret, GetAnonyString(networkId).c_str(),
+        GetAnonyString(uuid).c_str());
 }
 
 void AccessManager::OnDeviceReady(const DmDeviceInfo &deviceInfo)
 {
     std::lock_guard<std::mutex> lock(accessMutex_);
-    DHLOGI("start, networkId = %{public}s, deviceName = %{public}s, deviceTypeId = %{public}d",
-        GetAnonyString(deviceInfo.networkId).c_str(), GetAnonyString(deviceInfo.deviceName).c_str(),
-        deviceInfo.deviceTypeId);
+    DHLOGI("start, networkId = %s, deviceName = %s, deviceTypeId = %d", GetAnonyString(deviceInfo.networkId).c_str(),
+        GetAnonyString(deviceInfo.deviceName).c_str(), deviceInfo.deviceTypeId);
 
     auto networkId = std::string(deviceInfo.networkId);
     if (networkId.size() == 0 || networkId.size() > MAX_ID_LEN) {
@@ -171,8 +169,8 @@ void AccessManager::OnDeviceReady(const DmDeviceInfo &deviceInfo)
     }
     auto ret =
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
-    DHLOGI("online result = %{public}d, networkId = %{public}s, uuid = %{public}s", ret,
-        GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
+    DHLOGI("online result = %d, networkId = %s, uuid = %s", ret, GetAnonyString(networkId).c_str(),
+        GetAnonyString(uuid).c_str());
 }
 
 void AccessManager::OnDeviceChanged(const DmDeviceInfo &deviceInfo)
@@ -192,8 +190,8 @@ void AccessManager::SendTrustedDeviceOnline()
     for (const auto &deviceInfo : deviceList) {
         const auto networkId = std::string(deviceInfo.networkId);
         const auto uuid = GetUUIDBySoftBus(networkId);
-        DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s",
-            GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
+        DHLOGI("Send trusted device online, networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(),
+            GetAnonyString(uuid).c_str());
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
     }
 }
