@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -56,7 +56,7 @@ void DHContext::RegisterPowerStateLinstener()
 
 void DHContext::DHFWKPowerStateCallback::OnPowerStateChanged(PowerMgr::PowerState state)
 {
-    DHLOGI("DHFWK OnPowerStateChanged state: %{public}u", static_cast<uint32_t>(state));
+    DHLOGI("DHFWK OnPowerStateChanged state: %u", static_cast<uint32_t>(state));
     if (state == PowerMgr::PowerState::SLEEP || state == PowerMgr::PowerState::HIBERNATE ||
         state == PowerMgr::PowerState::SHUTDOWN) {
         DHLOGI("DHFWK set in sleeping");
@@ -146,7 +146,7 @@ std::string DHContext::GetNetworkIdByUUID(const std::string &uuid)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
     if (onlineDeviceMap_.find(uuid) == onlineDeviceMap_.end()) {
-        DHLOGE("Can not find networkId, uuid: %{public}s", GetAnonyString(uuid).c_str());
+        DHLOGE("Can not find networkId, uuid: %s", GetAnonyString(uuid).c_str());
         return "";
     }
     return onlineDeviceMap_[uuid];
@@ -158,7 +158,7 @@ std::string DHContext::GetUUIDByNetworkId(const std::string &networkId)
     auto iter = std::find_if(onlineDeviceMap_.begin(), onlineDeviceMap_.end(),
         [networkId](const auto &item) {return networkId.compare(item.second) == 0; });
     if (iter == onlineDeviceMap_.end()) {
-        DHLOGE("Can not find uuid, networkId: %{public}s", GetAnonyString(networkId).c_str());
+        DHLOGE("Can not find uuid, networkId: %s", GetAnonyString(networkId).c_str());
         return "";
     }
     return iter->first;
@@ -168,7 +168,7 @@ std::string DHContext::GetUUIDByDeviceId(const std::string &deviceId)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
     if (deviceIdUUIDMap_.find(deviceId) == deviceIdUUIDMap_.end()) {
-        DHLOGE("Can not find uuid, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
+        DHLOGE("Can not find uuid, deviceId: %s", GetAnonyString(deviceId).c_str());
         return "";
     }
     return deviceIdUUIDMap_[deviceId];

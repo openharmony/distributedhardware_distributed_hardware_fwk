@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -138,7 +138,7 @@ int32_t ComponentPrivacy::StartPrivacePage(const std::string &subtype, const std
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
     int32_t result = abilityManager->StartAbility(want);
-    DHLOGI("performance time: StartPrivacePage result = %{public}d", result);
+    DHLOGI("performance time: StartPrivacePage result = %d", result);
     return result;
 }
 
@@ -164,7 +164,7 @@ int32_t ComponentPrivacy::StopPrivacePage(const std::string &subtype)
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
     int32_t result = abilityManager->StartAbility(want);
-    DHLOGI("performance time: StopPrivacePage result = %{public}d", result);
+    DHLOGI("performance time: StopPrivacePage result = %d", result);
     return result;
 }
 
@@ -202,7 +202,7 @@ void ComponentPrivacy::ComponentEventHandler::ProcessEvent(const AppExecFwk::Inn
 {
     auto iter = eventFuncMap_.find(event->GetInnerEventId());
     if (iter == eventFuncMap_.end()) {
-        DHLOGE("ComponentEventHandler Event Id %{public}d is undefined.", event->GetInnerEventId());
+        DHLOGE("ComponentEventHandler Event Id %d is undefined.", event->GetInnerEventId());
         return;
     }
     compEventFunc &func = iter->second;

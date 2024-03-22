@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -53,11 +53,11 @@ void LocalHardwareManager::Init()
         IHardwareHandler *hardwareHandler = nullptr;
         int32_t status = ComponentLoader::GetInstance().GetHardwareHandler(dhType, hardwareHandler);
         if (status != DH_FWK_SUCCESS || hardwareHandler == nullptr) {
-            DHLOGE("GetHardwareHandler %{public}#X failed", dhType);
+            DHLOGE("GetHardwareHandler %#X failed", dhType);
             continue;
         }
         if (hardwareHandler->Initialize() != DH_FWK_SUCCESS) {
-            DHLOGE("Initialize %{public}#X failed", dhType);
+            DHLOGE("Initialize %#X failed", dhType);
             continue;
         }
 
@@ -75,11 +75,10 @@ void LocalHardwareManager::Init()
             hardwareHandler->RegisterPluginListener(listener);
         }
         int64_t singleQueryEndTime = GetCurrentTime();
-        DHLOGI("query %{public}#X hardware cost time: %{public}" PRIu64 " ms",
-            dhType, singleQueryEndTime - singleQueryStartTime);
+        DHLOGI("query %#X hardware cost time: %ld ms", dhType, singleQueryEndTime - singleQueryStartTime);
     }
     int64_t allQueryEndTime = GetCurrentTime();
-    DHLOGI("query all local hardware cost time: %{public}" PRIu64 " ms", allQueryEndTime - allQueryStartTime);
+    DHLOGI("query all local hardware cost time: %ld ms", allQueryEndTime - allQueryStartTime);
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     for (const auto &localDHItems : localDHItemsMap_) {
         AddLocalCapabilityInfo(localDHItems.second, localDHItems.first, capabilityInfos);
@@ -99,13 +98,13 @@ void LocalHardwareManager::QueryLocalHardware(const DHType dhType, IHardwareHand
     std::vector<DHItem> dhItems;
     int32_t retryTimes = QUERY_RETRY_MAX_TIMES;
     while (retryTimes > 0) {
-        DHLOGI("Query hardwareHandler retry times left: %{public}d, dhType: %{public}#X", retryTimes, dhType);
+        DHLOGI("Query hardwareHandler retry times left: %d, dhType: %#X", retryTimes, dhType);
         dhItems = hardwareHandler->Query();
         if (dhItems.empty()) {
-            DHLOGE("Query hardwareHandler and obtain empty, dhType: %{public}#X", dhType);
+            DHLOGE("Query hardwareHandler and obtain empty, dhType: %#X", dhType);
             usleep(QUERY_INTERVAL_TIME);
         } else {
-            DHLOGI("Query hardwareHandler success, dhType: %{public}#X!", dhType);
+            DHLOGI("Query hardwareHandler success, dhType: %#X!", dhType);
 
             /*
              * Failed to delete data when the device restarts or other exception situation.
@@ -148,21 +147,19 @@ void LocalHardwareManager::CheckNonExistCapabilityInfo(const std::vector<DHItem>
             DHLOGE("capabilityInfo value is nullptr");
             continue;
         }
-        DHLOGI("The key in allLocalCapabilityInfos is %{public}s", capabilityValue->GetAnonymousKey().c_str());
+        DHLOGI("The key in allLocalCapabilityInfos is %s", capabilityValue->GetAnonymousKey().c_str());
         bool isExist = false;
         for (auto dhItem : dhItems) {
-            DHLOGI("This data key is: %{public}s, dhItem: %{public}s", capabilityValue->GetAnonymousKey().c_str(),
+            DHLOGI("This data key is: %s, dhItem: %s", capabilityValue->GetAnonymousKey().c_str(),
                 GetAnonyString(dhItem.dhId).c_str());
             if (capabilityValue->GetDHId() == dhItem.dhId) {
-                DHLOGI("This data is exist, no need removed key: %{public}s",
-                    capabilityValue->GetAnonymousKey().c_str());
+                DHLOGI("This data is exist, no need removed key: %s", capabilityValue->GetAnonymousKey().c_str());
                 isExist = true;
                 break;
             }
         }
         if (!isExist) {
-            DHLOGI("This data is non-exist, it should be removed, key: %{public}s",
-                capabilityValue->GetAnonymousKey().c_str());
+            DHLOGI("This data is non-exist, it should be removed, key: %s", capabilityValue->GetAnonymousKey().c_str());
             CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(capabilityValue->GetKey());
         }
     }
@@ -177,7 +174,7 @@ void LocalHardwareManager::GetLocalCapabilityMapByPrefix(const DHType dhType, Ca
         return;
     }
     if (DHTypePrefixMap.find(dhType) == DHTypePrefixMap.end()) {
-        DHLOGE("DHTypePrefixMap can not find dhType: %{public}#X", dhType);
+        DHLOGE("DHTypePrefixMap can not find dhType: %#X", dhType);
         return;
     }
     std::string prefix = DHTypePrefixMap.find(dhType)->second;

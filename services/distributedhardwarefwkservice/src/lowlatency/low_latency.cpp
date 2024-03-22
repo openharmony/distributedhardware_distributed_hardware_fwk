@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,15 +47,15 @@ LowLatency::~LowLatency()
 
 void LowLatency::EnableLowLatency(DHType dhType)
 {
-    DHLOGI("Start EnableLowLatency dhType: %{public}#X", dhType);
+    DHLOGI("Start EnableLowLatency dhType: %#X", dhType);
     if (dhType <= DHType::UNKNOWN || dhType >= DHType::MAX_DH) {
-        DHLOGE("DHType is invalid, dhType: %{public}" PRIu32, (uint32_t)dhType);
+        DHLOGE("DHType is invalid, dhType: %" PRIu32, (uint32_t)dhType);
         return;
     }
     std::lock_guard<std::mutex> lock(lowLatencyMutex_);
-    DHLOGI("lowLatencySwitchSet size: %{public}zu", lowLatencySwitchSet_.size());
+    DHLOGI("lowLatencySwitchSet size: %zu", lowLatencySwitchSet_.size());
     if (lowLatencySwitchSet_.empty() && lowLatencyTimer_ != nullptr) {
-        DHLOGD("Open LowLatency dhType: %{public}#X", dhType);
+        DHLOGD("Open LowLatency dhType: %#X", dhType);
         lowLatencyTimer_->StartTimer();
     }
     if (lowLatencySwitchSet_.size() >= MAX_SWITCH_SIZE) {
@@ -63,23 +63,23 @@ void LowLatency::EnableLowLatency(DHType dhType)
         return;
     }
     lowLatencySwitchSet_.insert(dhType);
-    DHLOGI("End EnableLowLatency dhType: %{public}#X", dhType);
+    DHLOGI("End EnableLowLatency dhType: %#X", dhType);
 }
 
 void LowLatency::DisableLowLatency(DHType dhType)
 {
-    DHLOGI("Start DisableLowLatency dhType: %{public}#X", dhType);
+    DHLOGI("Start DisableLowLatency dhType: %#X", dhType);
     if (dhType <= DHType::UNKNOWN || dhType >= DHType::MAX_DH) {
-        DHLOGE("DHType is invalid, dhType: %{public}" PRIu32, (uint32_t)dhType);
+        DHLOGE("DHType is invalid, dhType: %" PRIu32, (uint32_t)dhType);
         return;
     }
     std::lock_guard<std::mutex> lock(lowLatencyMutex_);
     lowLatencySwitchSet_.erase(dhType);
     if (lowLatencySwitchSet_.empty() && lowLatencyTimer_ != nullptr) {
-        DHLOGD("Close LowLatency dhType: %{public}#X", dhType);
+        DHLOGD("Close LowLatency dhType: %#X", dhType);
         lowLatencyTimer_->StopTimer();
     }
-    DHLOGI("End DisableLowLatency dhType: %{public}#X", dhType);
+    DHLOGI("End DisableLowLatency dhType: %#X", dhType);
 }
 
 void LowLatency::CloseLowLatency()

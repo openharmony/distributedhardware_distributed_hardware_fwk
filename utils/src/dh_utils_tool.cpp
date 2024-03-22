@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -117,7 +117,7 @@ DeviceInfo GetLocalDeviceInfo()
     auto info = std::make_unique<NodeBasicInfo>();
     auto ret = GetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetLocalNodeDeviceInfo failed, errCode = %{public}d", ret);
+        DHLOGE("GetLocalNodeDeviceInfo failed, errCode = %d", ret);
         return devInfo;
     }
     devInfo.uuid = GetUUIDBySoftBus(info->networkId);

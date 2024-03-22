@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -86,7 +86,7 @@ int32_t DistributedHardwareStub::RegisterPublisherListenerInner(MessageParcel &d
 {
     uint32_t topicInt = data.ReadUint32();
     if (!ValidTopic(topicInt)) {
-        DHLOGE("Topic invalid: %{public}" PRIu32, topicInt);
+        DHLOGE("Topic invalid: %" PRIu32, topicInt);
         reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
         return ERR_DH_FWK_PARA_INVALID;
     }
@@ -98,7 +98,7 @@ int32_t DistributedHardwareStub::RegisterPublisherListenerInner(MessageParcel &d
         reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
         return ERR_DH_FWK_PARA_INVALID;
     }
-    DHLOGI("Register listener, topic: %{public}" PRIu32, (uint32_t)topic);
+    DHLOGI("Register listener, topic: %" PRIu32, (uint32_t)topic);
     RegisterPublisherListener(topic, listener);
     reply.WriteInt32(DH_FWK_SUCCESS);
     return DH_FWK_SUCCESS;
@@ -108,7 +108,7 @@ int32_t DistributedHardwareStub::UnregisterPublisherListenerInner(MessageParcel 
 {
     uint32_t topicInt = data.ReadUint32();
     if (!ValidTopic(topicInt)) {
-        DHLOGE("Topic invalid: %{public}" PRIu32, topicInt);
+        DHLOGE("Topic invalid: %" PRIu32, topicInt);
         reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
         return ERR_DH_FWK_PARA_INVALID;
     }
@@ -120,7 +120,7 @@ int32_t DistributedHardwareStub::UnregisterPublisherListenerInner(MessageParcel 
         reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
         return ERR_DH_FWK_PARA_INVALID;
     }
-    DHLOGI("Unregister listener, topic: %{public}" PRIu32, (uint32_t)topic);
+    DHLOGI("Unregister listener, topic: %" PRIu32, (uint32_t)topic);
     UnregisterPublisherListener(topic, listener);
     reply.WriteInt32(DH_FWK_SUCCESS);
     return DH_FWK_SUCCESS;
@@ -130,14 +130,14 @@ int32_t DistributedHardwareStub::PublishMessageInner(MessageParcel &data, Messag
 {
     uint32_t topicInt = data.ReadUint32();
     if (!ValidTopic(topicInt)) {
-        DHLOGE("Topic invalid: %{public}" PRIu32, topicInt);
+        DHLOGE("Topic invalid: %" PRIu32, topicInt);
         reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
         return ERR_DH_FWK_PARA_INVALID;
     }
 
     DHTopic topic = (DHTopic)topicInt;
     std::string message = data.ReadString();
-    DHLOGI("Publish message, topic: %{public}" PRIu32, (uint32_t)topic);
+    DHLOGI("Publish message, topic: %" PRIu32, (uint32_t)topic);
     PublishMessage(topic, message);
     reply.WriteInt32(DH_FWK_SUCCESS);
     return DH_FWK_SUCCESS;
@@ -147,15 +147,15 @@ int32_t DistributedHardwareStub::QueryLocalSysSpecInner(MessageParcel &data, Mes
 {
     uint32_t specInt = data.ReadUint32();
     if (!ValidQueryLocalSpec(specInt)) {
-        DHLOGE("Spec invalid: %{public}" PRIu32, specInt);
+        DHLOGE("Spec invalid: %" PRIu32, specInt);
         reply.WriteInt32(ERR_DH_FWK_PARA_INVALID);
         return ERR_DH_FWK_PARA_INVALID;
     }
 
     QueryLocalSysSpecType spec = (QueryLocalSysSpecType)specInt;
-    DHLOGI("Query Local Sys Spec: %{public}" PRIu32, (uint32_t)spec);
+    DHLOGI("Query Local Sys Spec: %" PRIu32, (uint32_t)spec);
     std::string res = QueryLocalSysSpec(spec);
-    DHLOGI("Get Local spec: %{public}s", res.c_str());
+    DHLOGI("Get Local spec: %s", res.c_str());
     reply.WriteString(res);
     return DH_FWK_SUCCESS;
 }

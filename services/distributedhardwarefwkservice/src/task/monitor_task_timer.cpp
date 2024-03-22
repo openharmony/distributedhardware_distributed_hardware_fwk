@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,10 +52,9 @@ void MonitorTaskTimer::ExecuteInner()
             continue;
         }
         if (CapabilityInfoManager::GetInstance()->GetDataByKey(capabilityKey, capInfoPtr) != DH_FWK_SUCCESS) {
-            DHLOGI("CapabilityInfoManager can not find this key in DB, key: %{public}s, networkId: %{public}s, "
-                "uuid: %{public}s, dhId: %{public}s", GetAnonyString(capabilityKey).c_str(),
-                GetAnonyString(taskParam.networkId).c_str(), GetAnonyString(taskParam.uuid).c_str(),
-                GetAnonyString(taskParam.dhId).c_str());
+            DHLOGI("CapabilityInfoManager can not find this key in DB, key: %s, networkId: %s, uuid: %s, dhId: %s",
+                GetAnonyString(capabilityKey).c_str(), GetAnonyString(taskParam.networkId).c_str(),
+                GetAnonyString(taskParam.uuid).c_str(), GetAnonyString(taskParam.dhId).c_str());
             auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, nullptr);
             TaskExecutor::GetInstance().PushTask(task);
         }

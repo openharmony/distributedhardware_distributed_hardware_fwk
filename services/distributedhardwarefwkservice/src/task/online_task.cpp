@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,17 +35,17 @@ OnLineTask::OnLineTask(const std::string &networkId, const std::string &uuid, co
 {
     SetTaskType(TaskType::ON_LINE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::SYNC_ONLINE_INFO, TaskStep::REGISTER_ONLINE_DISTRIBUTED_HARDWARE });
-    DHLOGD("id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(uuid).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(uuid).c_str());
 }
 
 OnLineTask::~OnLineTask()
 {
-    DHLOGD("id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
+    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
 }
 
 void OnLineTask::DoTask()
 {
-    DHLOGD("start online task, id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
+    DHLOGD("start online task, id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
     this->SetTaskState(TaskState::RUNNING);
     for (const auto& step : this->GetTaskSteps()) {
         switch (step) {
@@ -63,7 +63,7 @@ void OnLineTask::DoTask()
         }
     }
     SetTaskState(TaskState::SUCCESS);
-    DHLOGD("finish online task, remove it, id = %{public}s.", GetId().c_str());
+    DHLOGD("finish online task, remove it, id = %s.", GetId().c_str());
     TaskBoard::GetInstance().RemoveTask(this->GetId());
 }
 
@@ -71,26 +71,22 @@ void OnLineTask::DoSyncInfo()
 {
     auto ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(GetDeviceIdByUUID(GetUUID()));
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("SyncDeviceInfoFromDB failed, uuid = %{public}s, errCode = %{public}d",
-            GetAnonyString(GetUUID()).c_str(), ret);
+        DHLOGE("SyncDeviceInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
 
     ret = VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(GetDeviceIdByUUID(GetUUID()));
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("SyncVersionInfoFromDB failed, uuid = %{public}s, errCode = %{public}d",
-            GetAnonyString(GetUUID()).c_str(), ret);
+        DHLOGE("SyncVersionInfoFromDB failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
     }
 }
 
 void OnLineTask::CreateEnableTask()
 {
-    DHLOGI("networkId = %{public}s, uuid = %{public}s", GetAnonyString(GetNetworkId()).c_str(),
-        GetAnonyString(GetUUID()).c_str());
+    DHLOGI("networkId = %s, uuid = %s", GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str());
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(GetDeviceIdByUUID(GetUUID()), capabilityInfos);
     if (capabilityInfos.empty()) {
-        DHLOGE("capabilityInfos is empty, can not create enableTask, uuid = %{public}s",
-            GetAnonyString(GetUUID()).c_str());
+        DHLOGE("capabilityInfos is empty, can not create enableTask, uuid = %s", GetAnonyString(GetUUID()).c_str());
         return;
     }
     for (const auto &iter : capabilityInfos) {

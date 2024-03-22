@@ -50,6 +50,7 @@ ohos_shared_library("distributedhardwareutils") {
     "src/dh_utils_tool.cpp",
     "src/histreamer_ability_parser.cpp",
     "src/histreamer_query_tool.cpp",
+    "src/log/dh_log.cpp",
   ]
 
   deps = [ "//third_party/openssl:libcrypto_shared" ]

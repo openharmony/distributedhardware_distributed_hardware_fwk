@@ -67,7 +67,6 @@ ohos_shared_library("libdhfwk_sdk") {
 
   external_deps = [
     "c_utils:utils",
-    "hilog:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",

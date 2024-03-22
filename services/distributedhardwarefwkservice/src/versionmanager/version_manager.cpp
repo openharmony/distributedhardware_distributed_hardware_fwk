@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,8 +51,7 @@ void VersionManager::UnInit()
 void VersionManager::ShowLocalVersion(const DHVersion &dhVersion) const
 {
     for (const auto &item : dhVersion.compVersions) {
-        DHLOGI("LocalDHVersion = %{public}s, DHtype = %{public}#X, handlerVersion = %{public}s, "
-            "sourceVersion = %{public}s, sinkVersion = %{public}s",
+        DHLOGI("LocalDHVersion = %s, DHtype = %#X, handlerVersion = %s, sourceVersion = %s, sinkVersion = %s",
             dhVersion.dhVersion.c_str(), item.first, item.second.handlerVersion.c_str(),
             item.second.sourceVersion.c_str(), item.second.sinkVersion.c_str());
     }
@@ -60,7 +59,7 @@ void VersionManager::ShowLocalVersion(const DHVersion &dhVersion) const
 
 int32_t VersionManager::AddDHVersion(const std::string &uuid, const DHVersion &dhVersion)
 {
-    DHLOGI("addDHVersion uuid: %{public}s", GetAnonyString(uuid).c_str());
+    DHLOGI("addDHVersion uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
     dhVersions_[uuid] = dhVersion;
     return DH_FWK_SUCCESS;
@@ -68,11 +67,11 @@ int32_t VersionManager::AddDHVersion(const std::string &uuid, const DHVersion &d
 
 int32_t VersionManager::RemoveDHVersion(const std::string &uuid)
 {
-    DHLOGI("uuid: %{public}s", GetAnonyString(uuid).c_str());
+    DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
     std::unordered_map<std::string, DHVersion>::iterator iter = dhVersions_.find(uuid);
     if (iter == dhVersions_.end()) {
-        DHLOGE("there is no uuid: %{public}s, remove fail", GetAnonyString(uuid).c_str());
+        DHLOGE("there is no uuid: %s, remove fail", GetAnonyString(uuid).c_str());
         return ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST;
     }
     dhVersions_.erase(iter);
@@ -81,11 +80,11 @@ int32_t VersionManager::RemoveDHVersion(const std::string &uuid)
 
 int32_t VersionManager::GetDHVersion(const std::string &uuid, DHVersion &dhVersion)
 {
-    DHLOGI("uuid: %{public}s", GetAnonyString(uuid).c_str());
+    DHLOGI("uuid: %s", GetAnonyString(uuid).c_str());
     std::lock_guard<std::mutex> lock(versionMutex_);
     std::unordered_map<std::string, DHVersion>::iterator iter = dhVersions_.find(uuid);
     if (iter == dhVersions_.end()) {
-        DHLOGE("there is no uuid: %{public}s, get version fail", GetAnonyString(uuid).c_str());
+        DHLOGE("there is no uuid: %s, get version fail", GetAnonyString(uuid).c_str());
         return ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST;
     } else {
         dhVersion = dhVersions_[uuid];
@@ -98,15 +97,15 @@ int32_t VersionManager::GetCompVersion(const std::string &uuid, const DHType dhT
     DHVersion dhVersion;
     int32_t ret = GetDHVersion(uuid, dhVersion);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetDHVersion fail, uuid: %{public}s", GetAnonyString(uuid).c_str());
+        DHLOGE("GetDHVersion fail, uuid: %s", GetAnonyString(uuid).c_str());
         return ret;
     }
     if (dhVersion.compVersions.find(dhType) == dhVersion.compVersions.end()) {
-        DHLOGE("not find dhType: %{public}#X", dhType);
+        DHLOGE("not find dhType: %#X", dhType);
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
 
-    DHLOGI("GetCompVersion success, uuid: %{public}s, dhType: %{public}#X", GetAnonyString(uuid).c_str(), dhType);
+    DHLOGI("GetCompVersion success, uuid: %s, dhType: %#X", GetAnonyString(uuid).c_str(), dhType);
     compVersion = dhVersion.compVersions[dhType];
     return DH_FWK_SUCCESS;
 }
