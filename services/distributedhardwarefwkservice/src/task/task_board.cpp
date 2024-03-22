@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -59,9 +59,9 @@ void TaskBoard::AddTask(std::shared_ptr<Task> task)
     }
 
     std::lock_guard<std::mutex> lock(tasksMtx_);
-    DHLOGI("Add task, id: %s", task->GetId().c_str());
+    DHLOGI("Add task, id: %{public}s", task->GetId().c_str());
     if (this->tasks_.find(task->GetId()) != this->tasks_.end()) {
-        DHLOGE("Task id duplicate, id: %s", task->GetId().c_str());
+        DHLOGE("Task id duplicate, id: %{public}s", task->GetId().c_str());
         return;
     }
     this->tasks_.emplace(task->GetId(), task);
@@ -70,7 +70,7 @@ void TaskBoard::AddTask(std::shared_ptr<Task> task)
 void TaskBoard::RemoveTask(std::string taskId)
 {
     std::lock_guard<std::mutex> lock(tasksMtx_);
-    DHLOGI("Remove task, id: %s", taskId.c_str());
+    DHLOGI("Remove task, id: %{public}s", taskId.c_str());
     RemoveTaskInner(taskId);
     if (tasks_.empty()) {
         conVar_.notify_one();
@@ -107,14 +107,14 @@ void TaskBoard::DumpAllTasks(std::vector<TaskDump> &taskInfos)
 void TaskBoard::SaveEnabledDevice(const std::string &enabledDeviceKey, const TaskParam &taskParam)
 {
     std::lock_guard<std::mutex> lock(enabledDevicesMutex_);
-    DHLOGI("SaveEnabledDevice key is %s", GetAnonyString(enabledDeviceKey).c_str());
+    DHLOGI("SaveEnabledDevice key is %{public}s", GetAnonyString(enabledDeviceKey).c_str());
     enabledDevices_[enabledDeviceKey] = taskParam;
 }
 
 void TaskBoard::RemoveEnabledDevice(const std::string &enabledDeviceKey)
 {
     std::lock_guard<std::mutex> lock(enabledDevicesMutex_);
-    DHLOGI("RemoveEnabledDevice key is %s", GetAnonyString(enabledDeviceKey).c_str());
+    DHLOGI("RemoveEnabledDevice key is %{public}s", GetAnonyString(enabledDeviceKey).c_str());
     enabledDevices_.erase(enabledDeviceKey);
 }
 

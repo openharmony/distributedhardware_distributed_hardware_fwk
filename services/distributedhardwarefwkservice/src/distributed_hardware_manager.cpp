@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -90,7 +90,8 @@ int32_t DistributedHardwareManager::SendOnLineEvent(const std::string &networkId
         return ERR_DH_FWK_PARA_INVALID;
     }
 
-    DHLOGI("networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
+    DHLOGI("networkId = %{public}s, uuid = %{public}s", GetAnonyString(networkId).c_str(),
+        GetAnonyString(uuid).c_str());
 
     TaskParam taskParam = {
         .networkId = networkId,
@@ -113,7 +114,8 @@ int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkI
         return ERR_DH_FWK_PARA_INVALID;
     }
 
-    DHLOGI("networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
+    DHLOGI("networkId = %{public}s, uuid = %{public}s", GetAnonyString(networkId).c_str(),
+        GetAnonyString(uuid).c_str());
 
     TaskParam taskParam = {
         .networkId = networkId,
@@ -142,7 +144,7 @@ int32_t DistributedHardwareManager::GetComponentVersion(std::unordered_map<DHTyp
     DHVersion dhVersion;
     int32_t ret = ComponentLoader::GetInstance().GetLocalDHVersion(dhVersion);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetLocalDHVersion fail, errCode = %d", ret);
+        DHLOGE("GetLocalDHVersion fail, errCode = %{public}d", ret);
         return ret;
     }
 
