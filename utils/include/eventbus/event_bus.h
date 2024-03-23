@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,7 +63,7 @@ public:
 
     explicit EventBus(const std::string &threadName)
     {
-        ULOGI("ctor EventBus threadName: %s", threadName.c_str());
+        ULOGI("ctor EventBus threadName: %{public}s", threadName.c_str());
         if (eventbusHandler_ == nullptr) {
             eventThread_ = std::thread(&EventBus::StartEventWithName, this, threadName);
             std::unique_lock<std::mutex> lock(eventMutex_);

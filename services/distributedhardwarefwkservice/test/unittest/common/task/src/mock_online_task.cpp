@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +27,7 @@ namespace DistributedHardware {
 MockOnLineTask::MockOnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
     const DHType dhType) : OnLineTask(networkId, uuid, dhId, dhType)
 {
-    DHLOGI("Ctor MockOnLineTask: %s, type: %d", this->GetId().c_str(), this->GetTaskType());
+    DHLOGI("Ctor MockOnLineTask: %{public}s, type: %{public}d", this->GetId().c_str(), this->GetTaskType());
 }
 
 void MockOnLineTask::DoSyncInfo()
