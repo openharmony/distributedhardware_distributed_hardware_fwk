@@ -569,7 +569,6 @@ ErrorCode AVInputFilter::PushData(const std::string& inPort, const AVBufferPtr& 
 
 ErrorCode AVInputFilter::SetEventCallBack()
 {
-    std::lock_guard<std::mutex> lock(inputFilterMutex_);
     if (plugin_ == nullptr) {
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_NULL_POINTER ;
@@ -579,7 +578,6 @@ ErrorCode AVInputFilter::SetEventCallBack()
 
 ErrorCode AVInputFilter::SetDataCallBack()
 {
-    std::lock_guard<std::mutex> lock(inputFilterMutex_);
     if (plugin_ == nullptr) {
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_NULL_POINTER;
@@ -590,7 +588,6 @@ ErrorCode AVInputFilter::SetDataCallBack()
 
 void AVInputFilter::OnDataCallback(std::shared_ptr<Plugin::Buffer> buffer)
 {
-    std::lock_guard<std::mutex> lock(inputFilterMutex_);
     if (buffer == nullptr) {
         AVTRANS_LOGE("buffer is nullptr!");
         return;
