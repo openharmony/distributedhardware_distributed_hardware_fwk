@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,12 +39,12 @@ OffLineTask::OffLineTask(const std::string &networkId, const std::string &uuid, 
     this->SetTaskType(TaskType::OFF_LINE);
     this->SetTaskSteps({TaskStep::UNREGISTER_OFFLINE_DISTRIBUTED_HARDWARE, TaskStep::WAIT_UNREGISTGER_COMPLETE,
         TaskStep::CLEAR_OFFLINE_INFO});
-    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(uuid).c_str());
+    DHLOGD("id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(uuid).c_str());
 }
 
 OffLineTask::~OffLineTask()
 {
-    DHLOGD("id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
+    DHLOGD("id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
 }
 
 void OffLineTask::DoTask()
@@ -58,7 +58,8 @@ void OffLineTask::DoTaskInner()
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DoTaskInner setname failed.");
     }
-    DHLOGD("start offline task, id = %s, uuid = %s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
+    DHLOGD("start offline task, id = %{public}s, uuid = %{public}s", GetId().c_str(),
+        GetAnonyString(GetUUID()).c_str());
     this->SetTaskState(TaskState::RUNNING);
     for (const auto& step : this->GetTaskSteps()) {
         switch (step) {
@@ -81,17 +82,19 @@ void OffLineTask::DoTaskInner()
     }
 
     this->SetTaskState(TaskState::SUCCESS);
-    DHLOGD("Finish OffLine task, remove it, id: %s", GetId().c_str());
+    DHLOGD("Finish OffLine task, remove it, id: %{public}s", GetId().c_str());
     TaskBoard::GetInstance().RemoveTask(this->GetId());
 }
 
 void OffLineTask::CreateDisableTask()
 {
-    DHLOGI("networkId = %s, uuid = %s", GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str());
+    DHLOGI("networkId = %{public}s, uuid = %{public}s", GetAnonyString(GetNetworkId()).c_str(),
+        GetAnonyString(GetUUID()).c_str());
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(GetDeviceIdByUUID(GetUUID()), capabilityInfos);
     if (capabilityInfos.empty()) {
-        DHLOGE("capabilityInfos is empty, can not create disableTask, uuid = %s", GetAnonyString(GetUUID()).c_str());
+        DHLOGE("capabilityInfos is empty, can not create disableTask, uuid = %{public}s",
+            GetAnonyString(GetUUID()).c_str());
         return;
     }
     for (const auto &iter : capabilityInfos) {
@@ -120,10 +123,11 @@ void OffLineTask::WaitDisableTaskFinish()
 
 void OffLineTask::ClearOffLineInfo()
 {
-    DHLOGI("start clear resource when device offline, uuid = %s", GetAnonyString(GetUUID()).c_str());
+    DHLOGI("start clear resource when device offline, uuid = %{public}s", GetAnonyString(GetUUID()).c_str());
     auto ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInMem(GetDeviceIdByUUID(GetUUID()));
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("RemoveCapabilityInfoInMem failed, uuid = %s, errCode = %d", GetAnonyString(GetUUID()).c_str(), ret);
+        DHLOGE("RemoveCapabilityInfoInMem failed, uuid = %{public}s, errCode = %{public}d",
+            GetAnonyString(GetUUID()).c_str(), ret);
     }
 }
 

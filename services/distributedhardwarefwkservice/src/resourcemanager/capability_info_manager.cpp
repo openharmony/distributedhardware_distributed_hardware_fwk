@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -75,7 +75,7 @@ void CapabilityInfoManager::CapabilityInfoManagerEventHandler::ProcessEvent(
             selfPtr->SyncRemoteCapabilityInfos();
             break;
         default:
-            DHLOGE("event is undefined, id is %d", eventId);
+            DHLOGE("event is undefined, id is %{public}d", eventId);
             break;
     }
 }
@@ -120,7 +120,7 @@ int32_t CapabilityInfoManager::UnInit()
 
 int32_t CapabilityInfoManager::SyncDeviceInfoFromDB(const std::string &deviceId)
 {
-    DHLOGI("Sync DeviceInfo from DB, deviceId: %s", GetAnonyString(deviceId).c_str());
+    DHLOGI("Sync DeviceInfo from DB, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
@@ -128,7 +128,7 @@ int32_t CapabilityInfoManager::SyncDeviceInfoFromDB(const std::string &deviceId)
     }
     std::vector<std::string> dataVector;
     if (dbAdapterPtr_->GetDataByKeyPrefix(deviceId, dataVector) != DH_FWK_SUCCESS) {
-        DHLOGE("Query data from DB by deviceId failed, id: %s", GetAnonyString(deviceId).c_str());
+        DHLOGE("Query data from DB by deviceId failed, id: %{public}s", GetAnonyString(deviceId).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
@@ -176,7 +176,7 @@ int32_t CapabilityInfoManager::SyncRemoteCapabilityInfos()
             continue;
         }
         if (!DHContext::GetInstance().IsDeviceOnline(deviceId)) {
-            DHLOGE("offline device, no need sync to memory, deviceId : %s ", GetAnonyString(deviceId).c_str());
+            DHLOGE("offline device, no need sync to memory, deviceId : %{public}s ", GetAnonyString(deviceId).c_str());
             continue;
         }
         globalCapInfoMap_[capabilityInfo->GetKey()] = capabilityInfo;
@@ -207,10 +207,10 @@ int32_t CapabilityInfoManager::AddCapability(const std::vector<std::shared_ptr<C
         globalCapInfoMap_[key] = resInfo;
         if (dbAdapterPtr_->GetDataByKey(key, data) == DH_FWK_SUCCESS && CapabilityUtils::IsCapInfoJsonEqual(data,
             resInfo->ToJsonString())) {
-            DHLOGD("this record is exist, Key: %s", resInfo->GetAnonymousKey().c_str());
+            DHLOGD("this record is exist, Key: %{public}s", resInfo->GetAnonymousKey().c_str());
             continue;
         }
-        DHLOGI("AddCapability, Key: %s", resInfo->GetAnonymousKey().c_str());
+        DHLOGI("AddCapability, Key: %{public}s", resInfo->GetAnonymousKey().c_str());
         keys.push_back(key);
         values.push_back(resInfo->ToJsonString());
     }
@@ -233,7 +233,7 @@ int32_t CapabilityInfoManager::AddCapabilityInMem(const std::vector<std::shared_
             continue;
         }
         const std::string key = resInfo->GetKey();
-        DHLOGI("AddCapabilityInMem, Key: %s", resInfo->GetAnonymousKey().c_str());
+        DHLOGI("AddCapabilityInMem, Key: %{public}s", resInfo->GetAnonymousKey().c_str());
         globalCapInfoMap_[key] = resInfo;
     }
     return DH_FWK_SUCCESS;
@@ -245,7 +245,7 @@ int32_t CapabilityInfoManager::RemoveCapabilityInfoInDB(const std::string &devic
         DHLOGE("DeviceId is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
     }
-    DHLOGI("Remove capability device info, deviceId: %s", GetAnonyString(deviceId).c_str());
+    DHLOGI("Remove capability device info, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
@@ -257,12 +257,12 @@ int32_t CapabilityInfoManager::RemoveCapabilityInfoInDB(const std::string &devic
             iter++;
             continue;
         }
-        DHLOGI("Clear globalCapInfoMap_ iter: %s", GetAnonyString(iter->first).c_str());
+        DHLOGI("Clear globalCapInfoMap_ iter: %{public}s", GetAnonyString(iter->first).c_str());
         globalCapInfoMap_.erase(iter++);
     }
     // 2. Delete the corresponding record from the database(use UUID).
     if (dbAdapterPtr_->RemoveDeviceData(deviceId) != DH_FWK_SUCCESS) {
-        DHLOGE("Remove capability Device Data failed, deviceId: %s", GetAnonyString(deviceId).c_str());
+        DHLOGE("Remove capability Device Data failed, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     return DH_FWK_SUCCESS;
@@ -270,7 +270,7 @@ int32_t CapabilityInfoManager::RemoveCapabilityInfoInDB(const std::string &devic
 
 int32_t CapabilityInfoManager::RemoveCapabilityInfoByKey(const std::string &key)
 {
-    DHLOGI("Remove capability device info, key: %s", GetAnonyString(key).c_str());
+    DHLOGI("Remove capability device info, key: %{public}s", GetAnonyString(key).c_str());
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
@@ -281,7 +281,7 @@ int32_t CapabilityInfoManager::RemoveCapabilityInfoByKey(const std::string &key)
 
     // 2. Delete the corresponding record from the database.(use key)
     if (dbAdapterPtr_->RemoveDataByKey(key) != DH_FWK_SUCCESS) {
-        DHLOGE("Remove capability Device Data failed, key: %s", GetAnonyString(key).c_str());
+        DHLOGE("Remove capability Device Data failed, key: %{public}s", GetAnonyString(key).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     return DH_FWK_SUCCESS;
@@ -289,7 +289,7 @@ int32_t CapabilityInfoManager::RemoveCapabilityInfoByKey(const std::string &key)
 
 int32_t CapabilityInfoManager::RemoveCapabilityInfoInMem(const std::string &deviceId)
 {
-    DHLOGI("remove capability device info in memory, deviceId: %s", GetAnonyString(deviceId).c_str());
+    DHLOGI("remove capability device info in memory, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     for (auto iter = globalCapInfoMap_.begin(); iter != globalCapInfoMap_.end();) {
         if (!CapabilityUtils::IsCapKeyMatchDeviceId(iter->first, deviceId)) {
@@ -352,7 +352,7 @@ void CapabilityInfoManager::HandleCapabilityAddChange(const std::vector<Distribu
             continue;
         }
         const auto keyString = capPtr->GetKey();
-        DHLOGI("Add capability key: %s", capPtr->GetAnonymousKey().c_str());
+        DHLOGI("Add capability key: %{public}s", capPtr->GetAnonymousKey().c_str());
         globalCapInfoMap_[keyString] = capPtr;
         std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(capPtr->GetDeviceId());
         if (uuid.empty()) {
@@ -361,7 +361,7 @@ void CapabilityInfoManager::HandleCapabilityAddChange(const std::vector<Distribu
         }
         std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
         if (networkId.empty()) {
-            DHLOGI("Find network failed and never enable, uuid: %s", GetAnonyString(uuid).c_str());
+            DHLOGI("Find network failed and never enable, uuid: %{public}s", GetAnonyString(uuid).c_str());
             continue;
         }
         TaskParam taskParam = {
@@ -386,7 +386,7 @@ void CapabilityInfoManager::HandleCapabilityUpdateChange(const std::vector<Distr
             continue;
         }
         const auto keyString = capPtr->GetKey();
-        DHLOGI("Update capability key: %s", capPtr->GetAnonymousKey().c_str());
+        DHLOGI("Update capability key: %{public}s", capPtr->GetAnonymousKey().c_str());
         globalCapInfoMap_[keyString] = capPtr;
     }
 }
@@ -409,7 +409,7 @@ void CapabilityInfoManager::HandleCapabilityDeleteChange(const std::vector<Distr
         }
         std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
         if (networkId.empty()) {
-            DHLOGI("Find network failed and never disable, uuid: %s", GetAnonyString(uuid).c_str());
+            DHLOGI("Find network failed and never disable, uuid: %{public}s", GetAnonyString(uuid).c_str());
             continue;
         }
         TaskParam taskParam = {
@@ -420,7 +420,7 @@ void CapabilityInfoManager::HandleCapabilityDeleteChange(const std::vector<Distr
         };
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, nullptr);
         TaskExecutor::GetInstance().PushTask(task);
-        DHLOGI("Delete capability key: %s", capPtr->GetAnonymousKey().c_str());
+        DHLOGI("Delete capability key: %{public}s", capPtr->GetAnonymousKey().c_str());
         globalCapInfoMap_.erase(keyString);
     }
 }
@@ -496,7 +496,7 @@ int32_t CapabilityInfoManager::GetCapability(const std::string &deviceId, const 
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     std::string key = CapabilityUtils::GetCapabilityKey(deviceId, dhId);
     if (globalCapInfoMap_.find(key) == globalCapInfoMap_.end()) {
-        DHLOGE("Can not find capability In globalCapInfoMap_: %s", GetAnonyString(deviceId).c_str());
+        DHLOGE("Can not find capability In globalCapInfoMap_: %{public}s", GetAnonyString(deviceId).c_str());
         return ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND;
     }
     capPtr = globalCapInfoMap_[key];
@@ -512,7 +512,7 @@ int32_t CapabilityInfoManager::GetDataByKey(const std::string &key, std::shared_
     }
     std::string data;
     if (dbAdapterPtr_->GetDataByKey(key, data) != DH_FWK_SUCCESS) {
-        DHLOGE("Query capability info from db failed, key: %s", GetAnonyString(key).c_str());
+        DHLOGE("Query capability info from db failed, key: %{public}s", GetAnonyString(key).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     return CapabilityUtils::GetCapabilityByValue(data, capInfoPtr);
@@ -539,7 +539,7 @@ int32_t CapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, 
     }
     std::vector<std::string> dataVector;
     if (dbAdapterPtr_->GetDataByKeyPrefix(keyPrefix, dataVector) != DH_FWK_SUCCESS) {
-        DHLOGE("Query capability info from db failed, key: %s", GetAnonyString(keyPrefix).c_str());
+        DHLOGE("Query capability info from db failed, key: %{public}s", GetAnonyString(keyPrefix).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
@@ -553,7 +553,7 @@ int32_t CapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, 
             continue;
         }
         if (capabilityInfo->FromJsonString(data) != DH_FWK_SUCCESS) {
-            DHLOGE("Wrong data: %s", GetAnonyString(data).c_str());
+            DHLOGE("Wrong data: %{public}s", GetAnonyString(data).c_str());
             continue;
         }
         capabilityMap[capabilityInfo->GetKey()] = capabilityInfo;

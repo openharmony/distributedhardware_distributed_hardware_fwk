@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,7 +47,7 @@ DBAdapter::DBAdapter(const std::string &appId, const std::string &storeId,
     this->appId_.appId = appId;
     this->storeId_.storeId = storeId;
     this->dataChangeListener_ = changeListener;
-    DHLOGI("DBAdapter Constructor Success, appId: %s, storeId: %s", appId.c_str(), storeId.c_str());
+    DHLOGI("DBAdapter Constructor Success, appId: %{public}s, storeId: %{public}s", appId.c_str(), storeId.c_str());
 }
 
 DBAdapter::~DBAdapter()
@@ -75,7 +75,7 @@ DistributedKv::Status DBAdapter::GetKvStorePtr()
 
 int32_t DBAdapter::Init()
 {
-    DHLOGI("Init DB, storeId: %s", storeId_.storeId.c_str());
+    DHLOGI("Init DB, storeId: %{public}s", storeId_.storeId.c_str());
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     int32_t tryTimes = MAX_INIT_RETRY_TIMES;
     while (tryTimes > 0) {
@@ -86,7 +86,7 @@ int32_t DBAdapter::Init()
             RegisterKvStoreDeathListener();
             return DH_FWK_SUCCESS;
         }
-        DHLOGD("CheckKvStore, left times: %d", tryTimes);
+        DHLOGD("CheckKvStore, left times: %{public}d", tryTimes);
         usleep(INIT_RETRY_SLEEP_INTERVAL);
         tryTimes--;
     }
@@ -112,7 +112,7 @@ void DBAdapter::UnInit()
 
 int32_t DBAdapter::ReInit()
 {
-    DHLOGI("ReInit DB, storeId: %s", storeId_.storeId.c_str());
+    DHLOGI("ReInit DB, storeId: %{public}s", storeId_.storeId.c_str());
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is null");
@@ -121,7 +121,7 @@ int32_t DBAdapter::ReInit()
     kvStoragePtr_.reset();
     DistributedKv::Status status = GetKvStorePtr();
     if (status != DistributedKv::Status::SUCCESS || !kvStoragePtr_) {
-        DHLOGW("Get kvStoragePtr_ failed, status: %d", status);
+        DHLOGW("Get kvStoragePtr_ failed, status: %{public}d", status);
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
     RegisterKvStoreDeathListener();
@@ -130,7 +130,7 @@ int32_t DBAdapter::ReInit()
 
 int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
 {
-    DHLOGI("Get data by key: %s", GetAnonyString(key).c_str());
+    DHLOGI("Get data by key: %{public}s", GetAnonyString(key).c_str());
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is null");
@@ -140,7 +140,7 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
     DistributedKv::Value kvValue;
     DistributedKv::Status status = kvStoragePtr_->Get(kvKey, kvValue);
     if (status != DistributedKv::Status::SUCCESS) {
-        DHLOGE("Query from db failed, key: %s", GetAnonyString(key).c_str());
+        DHLOGE("Query from db failed, key: %{public}s", GetAnonyString(key).c_str());
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
     data = kvValue.ToString();
@@ -149,7 +149,7 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
 
 int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<std::string> &values)
 {
-    DHLOGI("Get data by key prefix: %s", GetAnonyString(keyPrefix).c_str());
+    DHLOGI("Get data by key prefix: %{public}s", GetAnonyString(keyPrefix).c_str());
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is null");
@@ -161,7 +161,7 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
     std::vector<DistributedKv::Entry> allEntries;
     DistributedKv::Status status = kvStoragePtr_->GetEntries(allEntryKeyPrefix, allEntries);
     if (status != DistributedKv::Status::SUCCESS) {
-        DHLOGE("Query data by keyPrefix failed, prefix: %s",
+        DHLOGE("Query data by keyPrefix failed, prefix: %{public}s",
             GetAnonyString(keyPrefix).c_str());
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
@@ -190,7 +190,7 @@ int32_t DBAdapter::PutData(const std::string &key, const std::string &value)
     DistributedKv::Value kvValue(value);
     DistributedKv::Status status = kvStoragePtr_->Put(kvKey, kvValue);
     if (status == DistributedKv::Status::IPC_ERROR) {
-        DHLOGE("Put kv to db failed, ret: %d", status);
+        DHLOGE("Put kv to db failed, ret: %{public}d", status);
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
     return DH_FWK_SUCCESS;
@@ -216,7 +216,7 @@ int32_t DBAdapter::PutDataBatch(const std::vector<std::string> &keys, const std:
     }
     DistributedKv::Status status = kvStoragePtr_->PutBatch(entries);
     if (status != DistributedKv::Status::SUCCESS) {
-        DHLOGE("Put kv batch to db failed, ret: %d", status);
+        DHLOGE("Put kv batch to db failed, ret: %{public}d", status);
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
     DHLOGI("Put kv batch to db success");
@@ -225,7 +225,7 @@ int32_t DBAdapter::PutDataBatch(const std::vector<std::string> &keys, const std:
 
 void DBAdapter::SyncDBForRecover()
 {
-    DHLOGI("Sync store id: %s after db recover", storeId_.storeId.c_str());
+    DHLOGI("Sync store id: %{public}s after db recover", storeId_.storeId.c_str());
     if (storeId_.storeId == GLOBAL_CAPABILITY_ID) {
         AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_CAPABILITY_INFO_DB_RECOVER);
         CapabilityInfoManager::GetInstance()->GetEventHandler()->SendEvent(msgEvent,
@@ -249,7 +249,7 @@ int32_t DBAdapter::RegisterChangeListener()
     DistributedKv::Status status = kvStoragePtr_->SubscribeKvStore(DistributedKv::SubscribeType::SUBSCRIBE_TYPE_REMOTE,
         dataChangeListener_);
     if (status == DistributedKv::Status::IPC_ERROR) {
-        DHLOGE("Register db data change listener failed, ret: %d", status);
+        DHLOGE("Register db data change listener failed, ret: %{public}d", status);
         return ERR_DH_FWK_RESOURCE_REGISTER_DB_FAILED;
     }
     return DH_FWK_SUCCESS;
@@ -265,7 +265,7 @@ int32_t DBAdapter::UnRegisterChangeListener()
     DistributedKv::Status status = kvStoragePtr_->UnSubscribeKvStore(
         DistributedKv::SubscribeType::SUBSCRIBE_TYPE_REMOTE, dataChangeListener_);
     if (status == DistributedKv::Status::IPC_ERROR) {
-        DHLOGE("UnRegister db data change listener failed, ret: %d", status);
+        DHLOGE("UnRegister db data change listener failed, ret: %{public}d", status);
         return ERR_DH_FWK_RESOURCE_UNREGISTER_DB_FAILED;
     }
     return DH_FWK_SUCCESS;
@@ -294,7 +294,7 @@ void DBAdapter::OnRemoteDied()
                 // register data change listener again.
                 this->RegisterChangeListener();
                 this->SyncDBForRecover();
-                DHLOGE("Current times is %d", times);
+                DHLOGE("Current times is %{public}d", times);
                 break;
             }
             times++;
@@ -310,11 +310,11 @@ void DBAdapter::DeleteKvStore()
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     DistributedKv::Status status = kvDataMgr_.DeleteKvStore(appId_, storeId_);
     if (status != DistributedKv::Status::SUCCESS) {
-        DHLOGE("DeleteKvStore error, appId: %s, storeId: %s, status: %d",
+        DHLOGE("DeleteKvStore error, appId: %{public}s, storeId: %{public}s, status: %{public}d",
             appId_.appId.c_str(), storeId_.storeId.c_str(), status);
         return;
     }
-    DHLOGI("DeleteKvStore success appId: %s", appId_.appId.c_str());
+    DHLOGI("DeleteKvStore success appId: %{public}s", appId_.appId.c_str());
 }
 
 int32_t DBAdapter::RemoveDeviceData(const std::string &deviceId)
@@ -326,10 +326,10 @@ int32_t DBAdapter::RemoveDeviceData(const std::string &deviceId)
     }
     DistributedKv::Status status = kvStoragePtr_->RemoveDeviceData(deviceId);
     if (status != DistributedKv::Status::SUCCESS) {
-        DHLOGE("Remove device data failed, deviceId: %s", GetAnonyString(deviceId).c_str());
+        DHLOGE("Remove device data failed, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
-    DHLOGD("Remove device data success, deviceId: %s", GetAnonyString(deviceId).c_str());
+    DHLOGD("Remove device data success, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
     return DH_FWK_SUCCESS;
 }
 
