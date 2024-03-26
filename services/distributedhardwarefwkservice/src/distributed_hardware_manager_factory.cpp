@@ -50,7 +50,7 @@ bool DistributedHardwareManagerFactory::InitLocalDevInfo()
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
     if (deviceList.size() > 0 && deviceList.size() <= MAX_ONLINE_DEVICE_SIZE) {
         DHLOGI("There is other device online, on need just init db, use normal logic");
-        return;
+        return true;
     }
     auto initResult = DistributedHardwareManager::GetInstance().LocalInit();
     if (initResult != DH_FWK_SUCCESS) {
