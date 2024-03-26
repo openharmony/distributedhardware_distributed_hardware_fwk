@@ -59,6 +59,7 @@ bool DistributedHardwareManagerFactory::InitLocalDevInfo()
     }
     DHLOGI("InitLocalDevInfo success, check is need exit");
 
+    deviceList.clear();
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
     if (deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) {
         DHLOGI("After InitLocalDevInfo, no device online, exit dhfwk");
