@@ -25,6 +25,7 @@ namespace DistributedHardware {
 class DistributedHardwareManager : public IDistributedHardwareManager {
 DECLARE_SINGLE_INSTANCE(DistributedHardwareManager);
 public:
+    int32_t LocalInit();
     int32_t Initialize() override;
     int32_t Release() override;
     int32_t SendOnLineEvent(const std::string &networkId, const std::string &uuid, uint16_t deviceType) override;

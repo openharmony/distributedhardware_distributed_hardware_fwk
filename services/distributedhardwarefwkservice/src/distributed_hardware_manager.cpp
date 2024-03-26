@@ -41,22 +41,27 @@ namespace DistributedHardware {
 
 IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManager);
 
+int32_t DistributedHardwareManager::LocalInit()
+{
+    DHLOGI("DHFWK Local Init begin");
+    VersionInfoManager::GetInstance()->Init();
+    ComponentLoader::GetInstance().Init();
+    VersionManager::GetInstance().Init();
+    CapabilityInfoManager::GetInstance()->Init();
+    LocalHardwareManager::GetInstance().Init();
+    DHLOGI("DHFWK Local Init end");
+    return DH_FWK_SUCCESS;
+}
+
 int32_t DistributedHardwareManager::Initialize()
 {
     DHLOGI("start");
-
     VersionInfoManager::GetInstance()->Init();
-
     ComponentLoader::GetInstance().Init();
-
     VersionManager::GetInstance().Init();
-
     ComponentManager::GetInstance().Init();
-
     CapabilityInfoManager::GetInstance()->Init();
-
     LocalHardwareManager::GetInstance().Init();
-
     return DH_FWK_SUCCESS;
 }
 
@@ -64,19 +69,12 @@ int32_t DistributedHardwareManager::Release()
 {
     DHLOGI("start");
     TaskBoard::GetInstance().WaitForALLTaskFinish();
-
     LocalHardwareManager::GetInstance().UnInit();
-
     CapabilityInfoManager::GetInstance()->UnInit();
-
     ComponentManager::GetInstance().UnInit();
-
     VersionManager::GetInstance().UnInit();
-
     ComponentLoader::GetInstance().UnInit();
-
     VersionInfoManager::GetInstance()->UnInit();
-
     return DH_FWK_SUCCESS;
 }
 

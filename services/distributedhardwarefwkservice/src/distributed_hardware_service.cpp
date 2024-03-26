@@ -87,10 +87,17 @@ bool DistributedHardwareService::Init()
             ret, "dhfwk sa AccessManager init fail.");
         return false;
     }
+    InitLocalDevInfo();
     DHLOGI("DistributedHardwareService::Init init success.");
     HiSysEventWriteMsg(DHFWK_INIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "dhfwk sa init success.");
     return true;
+}
+
+void DistributedHardwareService::InitLocalDevInfo()
+{
+    DHLOGI("Init Local device info in DB");
+    DistributedHardwareManagerFactory::GetInstance().InitLocalDevInfo();
 }
 
 void DistributedHardwareService::OnStop()

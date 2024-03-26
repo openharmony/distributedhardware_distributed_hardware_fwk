@@ -43,6 +43,31 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "DistributedHardwareManagerFactory"
 
 IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
+bool DistributedHardwareManagerFactory::InitLocalDevInfo()
+{
+    DHLOGI("InitLocalDevInfo start");
+    std::vector<DmDeviceInfo> deviceList;
+    DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
+    if (deviceList.size() > 0 && deviceList.size() <= MAX_ONLINE_DEVICE_SIZE) {
+        DHLOGI("There is other device online, on need just init db, use normal logic");
+        return true;
+    }
+    auto initResult = DistributedHardwareManager::GetInstance().LocalInit();
+    if (initResult != DH_FWK_SUCCESS) {
+        DHLOGE("InitLocalDevInfo failed, errCode = %{public}d", initResult);
+        return false;
+    }
+    DHLOGI("InitLocalDevInfo success, check is need exit");
+
+    deviceList.clear();
+    DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
+    if (deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) {
+        DHLOGI("After InitLocalDevInfo, no device online, exit dhfwk");
+        ExitDHFWK();
+    }
+    return true;
+}
+
 bool DistributedHardwareManagerFactory::Init()
 {
     DHLOGI("start");
@@ -52,7 +77,7 @@ bool DistributedHardwareManagerFactory::Init()
         DHLOGE("Initialize failed, errCode = %{public}d", initResult);
         return false;
     }
-    DHLOGD("success");
+    DHLOGI("success");
     return true;
 }
 
@@ -70,26 +95,30 @@ void DistributedHardwareManagerFactory::UnInit()
     CheckExitSAOrNot();
 }
 
+void DistributedHardwareManagerFactory::ExitDHFWK()
+{
+    DHLOGI("No device online or deviceList is over size, exit sa process");
+    HiSysEventWriteMsg(DHFWK_EXIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+        "dhfwk sa exit end.");
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityMgr == nullptr) {
+        DHLOGE("systemAbilityMgr is null");
+        return;
+    }
+    int32_t ret = systemAbilityMgr->UnloadSystemAbility(DISTRIBUTED_HARDWARE_SA_ID);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("systemAbilityMgr UnLoadSystemAbility failed, ret: %{public}d", ret);
+        return;
+    }
+    DHLOGI("systemAbilityMgr UnLoadSystemAbility success");
+}
+
 void DistributedHardwareManagerFactory::CheckExitSAOrNot()
 {
     std::vector<DmDeviceInfo> deviceList;
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
     if (deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) {
-        DHLOGI("DM report devices offline or deviceList is over size, exit sa process");
-        HiSysEventWriteMsg(DHFWK_EXIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
-            "dhfwk sa exit end.");
-
-        auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        if (systemAbilityMgr == nullptr) {
-            DHLOGE("systemAbilityMgr is null");
-            return;
-        }
-        int32_t ret = systemAbilityMgr->UnloadSystemAbility(DISTRIBUTED_HARDWARE_SA_ID);
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGE("systemAbilityMgr UnLoadSystemAbility failed, ret: %{public}d", ret);
-            return;
-        }
-        DHLOGI("systemAbilityMgr UnLoadSystemAbility success");
+        ExitDHFWK();
         return;
     }
 

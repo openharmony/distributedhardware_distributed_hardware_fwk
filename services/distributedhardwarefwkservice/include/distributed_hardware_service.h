@@ -59,6 +59,7 @@ protected:
 private:
     bool Init();
     std::string QueryDhSysSpec(const std::string &targetKey, std::string &attrs);
+    void InitLocalDevInfo();
 
 private:
     bool registerToService_ = false;
