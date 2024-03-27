@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Copyright (c) 2023-2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -23,8 +23,6 @@ ohos_unittest("DaudioOutputPluginTest") {
     "${common_path}/include",
     "${plugin_path}/interface",
     "${plugin_path}/plugins/av_trans_output/daudio_output",
-    "//third_party/ffmpeg",
-    "//third_party/json/include",
   ]
 
   sources = [
@@ -61,7 +59,9 @@ ohos_unittest("DaudioOutputPluginTest") {
     "bounds_checking_function:libsec_shared",
     "c_utils:utils",
     "eventhandler:libeventhandler",
+    "ffmpeg:libohosffmpeg",
     "hilog:libhilog",
+    "json:nlohmann_json_static",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
   ]
