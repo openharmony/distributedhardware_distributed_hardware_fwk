@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,16 +43,41 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "DistributedHardwareManagerFactory"
 
 IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
+bool DistributedHardwareManagerFactory::InitLocalDevInfo()
+{
+    DHLOGI("InitLocalDevInfo start");
+    std::vector<DmDeviceInfo> deviceList;
+    DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
+    if (deviceList.size() > 0 && deviceList.size() <= MAX_ONLINE_DEVICE_SIZE) {
+        DHLOGI("There is other device online, on need just init db, use normal logic");
+        return true;
+    }
+    auto initResult = DistributedHardwareManager::GetInstance().LocalInit();
+    if (initResult != DH_FWK_SUCCESS) {
+        DHLOGE("InitLocalDevInfo failed, errCode = %{public}d", initResult);
+        return false;
+    }
+    DHLOGI("InitLocalDevInfo success, check is need exit");
+
+    deviceList.clear();
+    DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
+    if (deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) {
+        DHLOGI("After InitLocalDevInfo, no device online, exit dhfwk");
+        ExitDHFWK();
+    }
+    return true;
+}
+
 bool DistributedHardwareManagerFactory::Init()
 {
     DHLOGI("start");
     isInit = true;
     auto initResult = DistributedHardwareManager::GetInstance().Initialize();
     if (initResult != DH_FWK_SUCCESS) {
-        DHLOGE("Initialize failed, errCode = %d", initResult);
+        DHLOGE("Initialize failed, errCode = %{public}d", initResult);
         return false;
     }
-    DHLOGD("success");
+    DHLOGI("success");
     return true;
 }
 
@@ -70,26 +95,30 @@ void DistributedHardwareManagerFactory::UnInit()
     CheckExitSAOrNot();
 }
 
+void DistributedHardwareManagerFactory::ExitDHFWK()
+{
+    DHLOGI("No device online or deviceList is over size, exit sa process");
+    HiSysEventWriteMsg(DHFWK_EXIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+        "dhfwk sa exit end.");
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityMgr == nullptr) {
+        DHLOGE("systemAbilityMgr is null");
+        return;
+    }
+    int32_t ret = systemAbilityMgr->UnloadSystemAbility(DISTRIBUTED_HARDWARE_SA_ID);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("systemAbilityMgr UnLoadSystemAbility failed, ret: %{public}d", ret);
+        return;
+    }
+    DHLOGI("systemAbilityMgr UnLoadSystemAbility success");
+}
+
 void DistributedHardwareManagerFactory::CheckExitSAOrNot()
 {
     std::vector<DmDeviceInfo> deviceList;
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
     if (deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) {
-        DHLOGI("DM report devices offline or deviceList is over size, exit sa process");
-        HiSysEventWriteMsg(DHFWK_EXIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
-            "dhfwk sa exit end.");
-
-        auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        if (systemAbilityMgr == nullptr) {
-            DHLOGE("systemAbilityMgr is null");
-            return;
-        }
-        int32_t ret = systemAbilityMgr->UnloadSystemAbility(DISTRIBUTED_HARDWARE_SA_ID);
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGE("systemAbilityMgr UnLoadSystemAbility failed, ret: %d", ret);
-            return;
-        }
-        DHLOGI("systemAbilityMgr UnLoadSystemAbility success");
+        ExitDHFWK();
         return;
     }
 
@@ -98,7 +127,8 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
     for (const auto &deviceInfo : deviceList) {
         const auto networkId = std::string(deviceInfo.networkId);
         const auto uuid = GetUUIDBySoftBus(networkId);
-        DHLOGI("Send trusted device online, networkId = %s, uuid = %s", GetAnonyString(networkId).c_str(),
+        DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s",
+            GetAnonyString(networkId).c_str(),
             GetAnonyString(uuid).c_str());
         std::thread(&DistributedHardwareManagerFactory::SendOnLineEvent, this, networkId, uuid,
             deviceInfo.deviceTypeId).detach();
@@ -123,7 +153,7 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
     }
 
     if (DHContext::GetInstance().IsDeviceOnline(uuid)) {
-        DHLOGW("device is already online, uuid = %s", GetAnonyString(uuid).c_str());
+        DHLOGW("device is already online, uuid = %{public}s", GetAnonyString(uuid).c_str());
         return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE;
     }
 
@@ -136,7 +166,7 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
 
     auto onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId, uuid, deviceType);
     if (onlineResult != DH_FWK_SUCCESS) {
-        DHLOGE("online failed, errCode = %d", onlineResult);
+        DHLOGE("online failed, errCode = %{public}d", onlineResult);
         return onlineResult;
     }
     return DH_FWK_SUCCESS;
@@ -156,14 +186,14 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
     }
 
     if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
-        DHLOGE("Device not online, networkId: %s, uuid: %s",
+        DHLOGE("Device not online, networkId: %{public}s, uuid: %{public}s",
             GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
         return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_OFFLINE;
     }
 
     auto offlineResult = DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId, uuid, deviceType);
     if (offlineResult != DH_FWK_SUCCESS) {
-        DHLOGE("offline failed, errCode = %d", offlineResult);
+        DHLOGE("offline failed, errCode = %{public}d", offlineResult);
         return offlineResult;
     }
 

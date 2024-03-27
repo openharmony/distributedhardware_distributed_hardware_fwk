@@ -34,13 +34,13 @@ void OutputController::PushData(std::shared_ptr<Plugin::Buffer>& data)
     {
         std::lock_guard<std::mutex> lock(queueMutex_);
         if (dataQueue_.size() > QUEUE_MAX_SIZE) {
-            AVTRANS_LOGE("DataQueue is greater than QUEUE_MAX_SIZE %zu.", QUEUE_MAX_SIZE);
+            AVTRANS_LOGE("DataQueue is greater than QUEUE_MAX_SIZE %{public}zu.", QUEUE_MAX_SIZE);
             dataQueue_.pop();
         }
         CheckSyncInfo(data);
         data->GetBufferMeta()->SetMeta(Tag::USER_PUSH_DATA_TIME, pushTime);
         dataQueue_.push(data);
-        AVTRANS_LOGD("Push Data, dataQueue size is %zu.", dataQueue_.size());
+        AVTRANS_LOGD("Push Data, dataQueue size is %{public}zu.", dataQueue_.size());
     }
     if (GetControlMode() == ControlMode::SYNC) {
         clockCon_.notify_one();
@@ -137,14 +137,14 @@ Status OutputController::SetParameter(Tag tag, const ValueType& value)
         switch (tag) {
             case Tag::USER_AV_SYNC_GROUP_INFO: {
                 std::string jsonStr = Plugin::AnyCast<std::string>(value);
-                AVTRANS_LOGD("Set parameter USER_AV_SYNC_GROUP_INFO: %s", jsonStr.c_str());
+                AVTRANS_LOGD("Set parameter USER_AV_SYNC_GROUP_INFO: %{public}s", jsonStr.c_str());
                 break;
             }
             case Tag::USER_SHARED_MEMORY_FD: {
                 std::string jsonStr = Plugin::AnyCast<std::string>(value);
                 sharedMem_ = UnmarshalSharedMemory(jsonStr);
-                AVTRANS_LOGD("Set parameter USER_SHARED_MEMORY_FD: %s, unmarshal sharedMem fd: %d, " +
-                    "size: %d, name: %s", jsonStr.c_str(), sharedMem_.fd, sharedMem_.size,
+                AVTRANS_LOGD("Set parameter USER_SHARED_MEMORY_FD: %{public}s, unmarshal sharedMem fd: %{public}d, "
+                    "size: %{public}d, name: %{public}s", jsonStr.c_str(), sharedMem_.fd, sharedMem_.size,
                     sharedMem_.name.c_str());
                 break;
             }
@@ -152,7 +152,7 @@ Status OutputController::SetParameter(Tag tag, const ValueType& value)
                 std::string jsonStr = Plugin::AnyCast<std::string>(value);
                 int32_t devClockDiff = atoi(jsonStr.c_str());
                 SetDevClockDiff(devClockDiff);
-                AVTRANS_LOGD("Set parameter USER_TIME_SYNC_RESULT: %s, devClockDiff is %d.",
+                AVTRANS_LOGD("Set parameter USER_TIME_SYNC_RESULT: %{public}s, devClockDiff is %{public}d.",
                     jsonStr.c_str(), devClockDiff);
                 break;
             }
@@ -266,7 +266,7 @@ void OutputController::CheckSyncInfo(const std::shared_ptr<Plugin::Buffer>& data
         sleepCon_.notify_one();
         clockCon_.notify_one();
         SetControlMode(ControlMode::SMOOTH);
-        AVTRANS_LOGI("Stop sync and start smooth, aFrameNumberExist: %d, aPtsExist: %d.",
+        AVTRANS_LOGI("Stop sync and start smooth, aFrameNumberExist: %{public}d, aPtsExist: %{public}d.",
             isAFrameNumberExist, isAPtsExist);
         return;
     }
@@ -275,7 +275,7 @@ void OutputController::CheckSyncInfo(const std::shared_ptr<Plugin::Buffer>& data
         sleepCon_.notify_one();
         clockCon_.notify_one();
         SetControlMode(ControlMode::SYNC);
-        AVTRANS_LOGI("Stop smooth and start sync, aFrameNumberExist: %d, aPtsExist: %d.",
+        AVTRANS_LOGI("Stop smooth and start sync, aFrameNumberExist: %{public}d, aPtsExist: %{public}d.",
             isAFrameNumberExist, isAPtsExist);
     }
 }
@@ -350,7 +350,7 @@ int32_t OutputController::AcquireSyncClockTime(const std::shared_ptr<Plugin::Buf
         clockUnit_.pts = clockUnit.pts;
         clockUnit_.frameNum = clockUnit.frameNum;
         SetClockTime(clockUnit_.pts);
-        AVTRANS_LOGD("Acquire sync clock success, pts: %lld.", clockUnit_.pts);
+        AVTRANS_LOGD("Acquire sync clock success, pts: %{public}lld.", clockUnit_.pts);
     }
     return ret;
 }
@@ -372,7 +372,7 @@ bool OutputController::WaitRereadClockFailed(const std::shared_ptr<Plugin::Buffe
             }
         } else if (GetQueueSize() >= halfQueueSize) {
             {
-                AVTRANS_LOGD("Dataqueue size is greater than half size, scheduled %lld query.",
+                AVTRANS_LOGD("Dataqueue size is greater than half size, scheduled %{public}lld query.",
                     GREATER_HALF_REREAD_TIME);
                 std::unique_lock<std::mutex> lock(clockMutex_);
                 clockCon_.wait_for(lock, std::chrono::nanoseconds(GREATER_HALF_REREAD_TIME),
@@ -437,19 +437,20 @@ void OutputController::CalSleepTime(const int64_t timeStamp)
     int64_t delta = render - sleep_ - elapse;
     delta_ += delta;
     sleep_ = interval - elapse;
-    AVTRANS_LOGD("Control frame pts: %lld, interval: %lld, elapse: %lld, render: %lld, delta: %lld," +
-        " delat count: %lld, sleep: %lld.", timeStamp, interval, elapse, render, delta, delta_, sleep_);
+    AVTRANS_LOGD("Control frame pts: %{public}lld, interval: %{public}lld, elapse: %{public}lld, render: %{public}lld,"
+        " delta: %{public}lld, delat count: %{public}lld, sleep: %{public}lld.",
+        timeStamp, interval, elapse, render, delta, delta_, sleep_);
     TRUE_RETURN((interval == INVALID_INTERVAL), "Interverl is Invalid.");
     const int64_t adjustThre = interval * adjustSleepFactor_;
     if (delta_ > adjustThre && sleep_ > 0) {
         int64_t sleep = sleep_ - adjustThre;
         delta_ -= (sleep < 0) ? sleep_ : adjustThre;
         sleep_ = sleep;
-        AVTRANS_LOGD("Delta greater than thre, adjust sleep to %lld.", sleep_);
+        AVTRANS_LOGD("Delta greater than thre, adjust sleep to %{public}lld.", sleep_);
     } else if (delta_ < -adjustThre) {
         sleep_ += delta_;
         delta_ = 0;
-        AVTRANS_LOGD("Delta less than negative thre, adjust sleep to %lld.", sleep_);
+        AVTRANS_LOGD("Delta less than negative thre, adjust sleep to %{public}lld.", sleep_);
     }
 }
 
@@ -462,13 +463,13 @@ void OutputController::SyncClock(const std::shared_ptr<Plugin::Buffer>& data)
     }
     if (sleep_ > sleepThre_) {
         sleep_ = sleepThre_;
-        AVTRANS_LOGD("Sleep is more than sleepThre %lld, adjust sleep to %lld", sleepThre_, sleep_);
+        AVTRANS_LOGD("Sleep is more than sleepThre %{public}lld, adjust sleep to %{public}lld", sleepThre_, sleep_);
     }
     if (sleep_ < 0) {
         sleep_ = 0;
         AVTRANS_LOGD("Sleep less than zero, adjust sleep to zero.");
     }
-    AVTRANS_LOGD("After sync clock, sleep is %lld.", sleep_);
+    AVTRANS_LOGD("After sync clock, sleep is %{public}lld.", sleep_);
     {
         std::unique_lock<std::mutex> lock(sleepMutex_);
         sleepCon_.wait_for(lock, std::chrono::nanoseconds(sleep_),
@@ -488,11 +489,12 @@ void OutputController::HandleSmoothTime(const std::shared_ptr<Plugin::Buffer>& d
     int64_t vTimeStamp = data->pts;
     int64_t vcts = (sleep_ > 0) ? (vTimeStamp - sleep_) : vTimeStamp;
     int64_t offset = vcts - timeStampBaseline_ - (GetClockTime() - clockBaseline_);
-    AVTRANS_LOGD("Smooth vTimeStamp: %lld, offset: %lld, averTimeStampInterval: %lld, waitClockThre: %lld," +
-        "trackClockThre: %lld.", vTimeStamp, offset, averTimeStampInterval, waitClockThre, trackClockThre);
+    AVTRANS_LOGD("Smooth vTimeStamp: %{public}lld, offset: %{public}lld, averTimeStampInterval: %{public}lld,"
+        " waitClockThre: %{public}lld, trackClockThre: %{public}lld.",
+        vTimeStamp, offset, averTimeStampInterval, waitClockThre, trackClockThre);
     if (offset > waitClockThre || offset < -trackClockThre) {
         sleep_ += offset;
-        AVTRANS_LOGD("Smooth offset %lld is over than thre, adjust sleep to %lld.",
+        AVTRANS_LOGD("Smooth offset %{public}lld is over than thre, adjust sleep to %{public}lld.",
             offset, sleep_);
     }
 }
@@ -508,17 +510,17 @@ void OutputController::HandleSyncTime(const std::shared_ptr<Plugin::Buffer>& dat
     int64_t acts = GetClockTime();
     int64_t ctsDiff = vcts - acts;
     int64_t offset = (vcts - vFront_ - vBack_) - (acts - aFront_ - aBack_) - GetDevClockDiff();
-    AVTRANS_LOGD("Sync vTimeStamp: %lld, vFrameNumber: %" PRIu32 " vcts: %lld, aTimeStamp: %lld, " +
-        "aFrameNumber: %" PRIu32 " acts: %lld, ctsDiff: %lld, offset: %lld", vTimeStamp, vFrameNumber,
-        vcts, aTimeStamp, aFrameNumber, acts, ctsDiff, offset);
+    AVTRANS_LOGD("Sync vTimeStamp: %{public}lld, vFrameNumber: %{public}" PRIu32 " vcts: %{public}lld,"
+        " aTimeStamp: %{public}lld, aFrameNumber: %{public}" PRIu32 " acts: %{public}lld, ctsDiff: %{public}lld,"
+        " offset: %{public}lld", vTimeStamp, vFrameNumber, vcts, aTimeStamp, aFrameNumber, acts, ctsDiff, offset);
     const int64_t append = (trackClockThre_ + waitClockThre_) / 2;
     if (offset > waitClockThre_) {
         sleep_ += offset - waitClockThre_ + append;
-        AVTRANS_LOGD("Sync offset %lld is over than wait thre %lld, adjust sleep to %lld.",
+        AVTRANS_LOGD("Sync offset %{public}lld is over than wait thre %{public}lld, adjust sleep to %{public}lld.",
             offset, waitClockThre_, sleep_);
     } else if (offset < -trackClockThre_) {
         sleep_ += offset - trackClockThre_ - append;
-        AVTRANS_LOGD("Sync offset %lld is over than track thre %lld, adjust sleep to %lld.",
+        AVTRANS_LOGD("Sync offset %{public}lld is over than track thre %{public}lld, adjust sleep to %{public}lld.",
             offset, -trackClockThre_, sleep_);
     }
 }

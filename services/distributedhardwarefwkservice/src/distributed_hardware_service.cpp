@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -87,10 +87,17 @@ bool DistributedHardwareService::Init()
             ret, "dhfwk sa AccessManager init fail.");
         return false;
     }
+    InitLocalDevInfo();
     DHLOGI("DistributedHardwareService::Init init success.");
     HiSysEventWriteMsg(DHFWK_INIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "dhfwk sa init success.");
     return true;
+}
+
+void DistributedHardwareService::InitLocalDevInfo()
+{
+    DHLOGI("Init Local device info in DB");
+    DistributedHardwareManagerFactory::GetInstance().InitLocalDevInfo();
 }
 
 void DistributedHardwareService::OnStop()
@@ -148,7 +155,8 @@ std::string DistributedHardwareService::QueryLocalSysSpec(const QueryLocalSysSpe
             break;
     }
 
-    DHLOGE("QueryLocalSysSpec targetKey: %s, targetDhType: %" PRIu32, targetKey.c_str(), (uint32_t)targetDhType);
+    DHLOGE("QueryLocalSysSpec targetKey: %{public}s, targetDhType: %{public}" PRIu32, targetKey.c_str(),
+        (uint32_t)targetDhType);
     if (targetDhType == DHType::UNKNOWN) {
         DHLOGE("Can not find matched dhtype");
         return "";
@@ -174,11 +182,11 @@ std::string DistributedHardwareService::QueryDhSysSpec(const std::string &target
 {
     cJSON *attrJson = cJSON_Parse(attrs.c_str());
     if (attrJson == NULL) {
-        DHLOGE("attrs json is invalid, attrs: %s", attrs.c_str());
+        DHLOGE("attrs json is invalid, attrs: %{public}s", attrs.c_str());
         return "";
     }
     if (!IsString(attrJson, targetKey)) {
-        DHLOGE("Attrs Json not contains key: %s", targetKey.c_str());
+        DHLOGE("Attrs Json not contains key: %{public}s", targetKey.c_str());
         cJSON_Delete(attrJson);
         return "";
     }
@@ -233,10 +241,10 @@ int DistributedHardwareService::Dump(int32_t fd, const std::vector<std::u16strin
     std::string result("");
     int ret = AccessManager::GetInstance()->Dump(argsStr, result);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Dump error, ret = %d", ret);
+        DHLOGE("Dump error, ret = %{public}d", ret);
     }
 
-    if (dprintf(fd, "%s\n", result.c_str()) < 0) {
+    if (dprintf(fd, "%{public}s\n", result.c_str()) < 0) {
         DHLOGE("Hidump dprintf error");
         ret = ERR_DH_FWK_HIDUMP_DPRINTF_ERROR;
     }
@@ -248,12 +256,12 @@ int32_t DistributedHardwareService::PauseDistributedHardware(DHType dhType, cons
 {
     std::map<DHType, IDistributedHardwareSink*> sinkMap = ComponentManager::GetInstance().GetDHSinkInstance();
     if (sinkMap.find(dhType) == sinkMap.end()) {
-        DHLOGE("PauseDistributedHardware for DHType: %u not init sink handler", (uint32_t)dhType);
+        DHLOGE("PauseDistributedHardware for DHType: %{public}u not init sink handler", (uint32_t)dhType);
         return ERR_DH_FWK_PARA_INVALID;
     }
     int32_t ret = sinkMap[dhType]->PauseDistributedHardware(networkId);
     if (ret != 0) {
-        DHLOGE("PauseDistributedHardware for DHType: %u failed, ret: %d", (uint32_t)dhType, ret);
+        DHLOGE("PauseDistributedHardware for DHType: %{public}u failed, ret: %{public}d", (uint32_t)dhType, ret);
         return ret;
     }
     return DH_FWK_SUCCESS;
@@ -263,12 +271,12 @@ int32_t DistributedHardwareService::ResumeDistributedHardware(DHType dhType, con
 {
     std::map<DHType, IDistributedHardwareSink*> sinkMap = ComponentManager::GetInstance().GetDHSinkInstance();
     if (sinkMap.find(dhType) == sinkMap.end()) {
-        DHLOGE("ResumeDistributedHardware for DHType: %u not init sink handler", (uint32_t)dhType);
+        DHLOGE("ResumeDistributedHardware for DHType: %{public}u not init sink handler", (uint32_t)dhType);
         return ERR_DH_FWK_PARA_INVALID;
     }
     int32_t ret = sinkMap[dhType]->ResumeDistributedHardware(networkId);
     if (ret != 0) {
-        DHLOGE("ResumeDistributedHardware for DHType: %u failed, ret: %d", (uint32_t)dhType, ret);
+        DHLOGE("ResumeDistributedHardware for DHType: %{public}u failed, ret: %{public}d", (uint32_t)dhType, ret);
         return ret;
     }
     return DH_FWK_SUCCESS;
@@ -278,12 +286,12 @@ int32_t DistributedHardwareService::StopDistributedHardware(DHType dhType, const
 {
     std::map<DHType, IDistributedHardwareSink*> sinkMap = ComponentManager::GetInstance().GetDHSinkInstance();
     if (sinkMap.find(dhType) == sinkMap.end()) {
-        DHLOGE("StopDistributedHardware for DHType: %u not init sink handler", (uint32_t)dhType);
+        DHLOGE("StopDistributedHardware for DHType: %{public}u not init sink handler", (uint32_t)dhType);
         return ERR_DH_FWK_PARA_INVALID;
     }
     int32_t ret = sinkMap[dhType]->StopDistributedHardware(networkId);
     if (ret != 0) {
-        DHLOGE("StopDistributedHardware for DHType: %u failed, ret: %d", (uint32_t)dhType, ret);
+        DHLOGE("StopDistributedHardware for DHType: %{public}u failed, ret: %{public}d", (uint32_t)dhType, ret);
         return ret;
     }
     return DH_FWK_SUCCESS;

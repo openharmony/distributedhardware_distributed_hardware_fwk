@@ -44,6 +44,9 @@ plugin_path = "${engine_path}/plugin"
 
 output_controller_path = "${plugin_path}/plugins/av_trans_output/output_control"
 
+fuzz_test_output_path =
+    "distributed_hardware_fwk/distributed_hardware_fwk/av_transport"
+
 build_flags = [ "-Werror" ]
 
 if (!defined(ohos_lite)) {

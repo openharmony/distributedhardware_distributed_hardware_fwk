@@ -18,6 +18,7 @@
 
 #include <memory>
 #include <string>
+#include <mutex>
 
 #include "foundation/osal/utils/util.h"
 #include "foundation/utils/constants.h"
@@ -26,8 +27,8 @@
 #include "plugin/common/plugin_video_tags.h"
 #include "plugin/core/plugin_manager.h"
 #include "pipeline/core/type_define.h"
-#include "../../plugin/interface/avtrans_input_plugin.h"
-#include "../../plugin/core/avtrans_input.h"
+#include "avtrans_input_plugin.h"
+#include "avtrans_input.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -75,7 +76,8 @@ private:
     std::shared_ptr<Plugin::PluginInfo> pluginInfo_ {nullptr};
     Capability capNegWithDownstream_ {};
     std::unordered_map<Plugin::Tag, Plugin::Any> paramsMap_;
-    OSAL::Mutex inputFilterMutex_ {};
+    std::mutex inputFilterMutex_;
+    std::mutex paramsMapMutex_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

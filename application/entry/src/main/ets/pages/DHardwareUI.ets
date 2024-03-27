@@ -25,21 +25,19 @@ PersistentStorage.persistProp('sign', '');
 @Component
 struct DHardwareUI {
   @State deviceName: string = '';
-  @State deviceType: string = '';
-  @State DHTypeName: string = '';
+  @State dhTypeName: string = '';
   @State bgcImg: PixelMap | null = null;
-  @StorageLink('type') stoLink_type: number = 0;
-  @StorageLink('srcNetworkId') stoLink_srcNetworkId: string = '';
-  @StorageLink('deviceName') stoLink_deviceName: string = '';
-  @StorageLink('deviceType') stoLink_deviceType: string = '';
+  @StorageLink('type') type: number = 0;
+  @StorageLink('srcNetworkId') srcNetworkId: string = '';
+  @StorageLink('deviceName') srcDeviceName: string = '';
   @StorageLink('sign') sign: string = '';
   @StorageLink('camera') camera: number = 999;
   @StorageLink('mic') mic: number = 999;
   @StorageLink('switchedCamera') switchedCamera: number = 999;
   @StorageLink('isPause') isPause: boolean = true;
   @State description: hardwareManager.HardwareDescriptor = {
-    type: this.stoLink_type,
-    srcNetworkId: this.stoLink_srcNetworkId
+    type: this.type,
+    srcNetworkId: this.srcNetworkId
   }
   private context = getContext(this) as common.UIAbilityContext;
 
@@ -47,7 +45,6 @@ struct DHardwareUI {
     console.info(TAG + 'aboutToAppear() ');
     this.sign = '';
 
-    // stopAbility后直接不显示页面
     if (this.camera == 0 && this.mic == 0) {
       try {
         this.context.terminateSelf((err: BusinessError) => {
@@ -64,84 +61,45 @@ struct DHardwareUI {
       }
     }
 
-    this.deviceType = this.convertDeviceTypeToChStr(this.stoLink_deviceType);
     AppStorage.setAndLink('description', this.description);
 
     console.info(TAG + 'aboutToAppear : this.description : ' + this.description);
     console.info(TAG + 'aboutToAppear : this.description.type : ' + this.description.type);
     console.info(TAG + 'aboutToAppear : this.description.srcNetworkId : ' + this.description.srcNetworkId);
-
-    if (this.stoLink_type == 1024) {
-      this.DHTypeName = '麦克风';
-      console.info(TAG + 'aboutToAppear : this.DHTypeName : ' + this.DHTypeName);
-    } else {
-      this.DHTypeName = '相机';
-      console.info(TAG + 'aboutToAppear : this.DHTypeName : ' + this.DHTypeName);
-    }
   }
 
   onPageShow() {
     console.log(TAG + 'onPageShow() ');
-    // 若之前点击了暂停按钮，切换了相机前后置后，不再显示暂停画面，按钮不再显示‘继续’
     if (this.isPause === false && this.camera === 2) {
       this.isPause = true;
       console.info(TAG + 'onPageShow : this.camera ' + this.camera);
       console.info(TAG + 'onPageShow : this.isPause ' + this.isPause);
     }
-  }
 
-  //转换对端可信设备列表的设备类型为中文字符
-  convertDeviceTypeToChStr(deviceType: string): string {
-    console.log(TAG + 'convertDeviceTypeToChStr', deviceType);
-    switch (deviceType) {
-      case 'camera': {
-        return '相机';
-      }
-      case 'audio': {
-        return '音频';
-      }
-      case 'pc': {
-        return '笔记本电脑';
-      }
-      case 'phone': {
-        return '手机';
-      }
-      case 'pad': {
-        return '平板';
-      }
-      case 'watch': {
-        return '手表';
-      }
-      case 'car': {
-        return '车机';
-      }
-      case 'tv': {
-        return '电视';
-      }
-      case 'display': {
-        return '显示屏';
-      }
-      case '2in1': {
-        return '2in1';
-      }
-      case 'default': {
-        return '手机';
-      }
-      case 'tablet': {
-        return '平板';
-      }
-      case 'wearable': {
-        return '可穿戴电子设备';
-      }
-      default: {
-        return '';
-      }
+    if (this.type == 1024) {
+      this.context.resourceManager.getStringValue($r('app.string.DHTypeName_Mic').id, (error, value) => {
+        if (error != null) {
+          console.log('error is ' + error);
+        } else {
+          this.dhTypeName = value;
+          console.info(TAG + 'aboutToAppear : this.dhTypeName : ' + this.dhTypeName);
+        }
+      });
+    } else {
+      this.context.resourceManager.getStringValue($r('app.string.DHTypeName_Camera').id, (error, value) => {
+        if (error != null) {
+          console.log('error is ' + error);
+        } else {
+          this.dhTypeName = value;
+          console.info(TAG + 'aboutToAppear : this.dhTypeName : ' + this.dhTypeName);
+        }
+      });
     }
   }
 
   changePauseOrResumeStatus() {
     this.isPause = !this.isPause;
-    console.log(TAG + "changePauseOrResumeStatus - this.isPause" + JSON.stringify(this.isPause))
+    console.log(TAG + 'changePauseOrResumeStatus - this.isPause' + JSON.stringify(this.isPause))
   }
 
   stop() {
@@ -192,7 +150,6 @@ struct DHardwareUI {
 
   onBackPress() {
     console.info(TAG + 'onBackPress');
-
     this.sign = 'onBackPress';
   }
 
@@ -209,28 +166,24 @@ struct DHardwareUI {
       Row() {
         Column() {
           Row() {
-            Image(this.stoLink_type == 1024 ? $r('app.media.ic_public_voice') : $r('app.media.ic_public_screencap'))
+            Image(this.type == 1024 ? $r('app.media.ic_public_voice') : $r('app.media.ic_public_screencap'))
               .width(28)
               .height(28)
               .fillColor(Color.White)
               .margin({ left: 13 })
-          }
-          .borderRadius(50)
-          .width(54)
-          .height(54)
-          .backgroundColor("rgba(0,0,0,0.15)")
+          }.borderRadius(50).width(54).height(54).backgroundColor('rgba(0,0,0,0.15)')
 
-          Text(CommonConstants.CONNECTED_TO + this.stoLink_deviceName + CommonConstants.CONJUNCTS + this.deviceType)
+          Text($r('app.string.connected_to', this.srcDeviceName))
             .fontSize(18)
             .fontWeight(FontWeight.Medium)
-            .fontColor("#FFFFFF")
+            .fontColor('#FFFFFF')
             .margin({ left: 0, top: 16, right: 0 })
             .textAlign(TextAlign.Center)
 
-          Text(CommonConstants.STOP_DEVICE + this.DHTypeName)
+          Text($r('app.string.stop_device', this.dhTypeName))
             .fontSize(16)
             .fontWeight(FontWeight.Regular)
-            .fontColor("#99FFFFFF")
+            .fontColor('#99FFFFFF')
             .margin({ top: 2 })
             .fontStyle(FontStyle.Normal)
             .textAlign(TextAlign.Center)
@@ -250,18 +203,16 @@ struct DHardwareUI {
                   .margin({ top: 24 })
                   .width('100%')
                   .onClick(() => {
-                    console.log(TAG + (this.isPause ? "click pause button" : "click continue button"));
+                    console.log(TAG + (this.isPause ? 'click pause button' : 'click continue button'));
                     if (this.isPause) {
                       this.pause();
-                      // 点击’暂停‘后：存储一个标志，记录是否点击了暂停按钮
                       AppStorage.setOrCreate('isPauseTag', true);
                     } else {
                       this.resume();
-                      // 点击'继续'后：存储一个标志
                       AppStorage.setOrCreate('isPauseTag', false);
                     }
                     this.changePauseOrResumeStatus();
-                    console.info(TAG + "onClick : AppStorage.get<boolean>('isPauseTag') " + AppStorage.get<boolean>('isPauseTag'));
+                    console.info(TAG + 'onClick : AppStorage.get<boolean>(isPauseTag) ' + AppStorage.get<boolean>('isPauseTag'));
                   })
 
                 Button($r('app.string.disconnect'), { type: ButtonType.Capsule, stateEffect: true })
@@ -297,11 +248,8 @@ struct DHardwareUI {
             GridCol({ span: 1 })
           }
 
-        }
-        .width('100%')
-        .padding({ left: 24, right: 24 })
-      }
-      .width('100%')
+        }.width('100%').padding({ left: 24, right: 24 })
+      }.width('100%')
     }
 
   }

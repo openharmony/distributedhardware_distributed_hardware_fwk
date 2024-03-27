@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,7 +42,7 @@ void LowLatencyListener::OnMessage(const DHTopic topic, const std::string& messa
     (void) message;
 #ifdef DHARDWARE_LOW_LATENCY
     if (topic <= DHTopic::TOPIC_MIN || topic >= DHTopic::TOPIC_MAX) {
-        DHLOGE("Topic is invalid, topic: %" PRIu32, (uint32_t)topic);
+        DHLOGE("Topic is invalid, topic: %{public}" PRIu32, (uint32_t)topic);
         return;
     }
     if (message.size() == 0 || message.size() > MAX_MESSAGE_LEN) {

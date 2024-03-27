@@ -31,37 +31,37 @@ AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t si
 {
     int32_t fd = AshmemCreate(name.c_str(), size);
     if (fd <= 0) {
-        AVTRANS_LOGE("create av trans shared memory failed, name=%s, fd=%" PRId32, name.c_str(), fd);
+        AVTRANS_LOGE("create av trans shared memory failed, name=%{public}s, fd=%{public}" PRId32, name.c_str(), fd);
         return AVTransSharedMemory{0, 0, name};
     }
 
     unsigned int prot = PROT_READ | PROT_WRITE;
     int result = AshmemSetProt(fd, static_cast<int>(prot));
     if (result < 0) {
-        AVTRANS_LOGE("AshmemSetProt failed, name=%s, fd=%" PRId32, name.c_str(), fd);
+        AVTRANS_LOGE("AshmemSetProt failed, name=%{public}s, fd=%{public}" PRId32, name.c_str(), fd);
         (void)::close(fd);
         return AVTransSharedMemory{0, 0, name};
     }
 
     void *addr = ::mmap(nullptr, size, static_cast<int>(prot), MAP_SHARED, fd, 0);
     if (addr == MAP_FAILED) {
-        AVTRANS_LOGE("shared memory mmap failed, name=%s, fd=%" PRId32, name.c_str(), fd);
+        AVTRANS_LOGE("shared memory mmap failed, name=%{public}s, fd=%{public}" PRId32, name.c_str(), fd);
         (void)::close(fd);
         return AVTransSharedMemory{0, 0, name};
     }
 
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
     (void)memset_s(base, size, INVALID_VALUE_FALG, size);
-
-    AVTRANS_LOGI("create av trans shared memory success, name=%s, size=%" PRId32 ", fd=%" PRId32,
-        name.c_str(), size, fd);
+    uint64_t tmpsize = static_cast<uint64_t>(size);
+    AVTRANS_LOGI("create av trans shared memory success, name=%{public}s, size=%{public}" PRIu64 ", fd=%{public}"
+        PRId32, name.c_str(), tmpsize, fd);
     return AVTransSharedMemory{fd, size, name};
 }
 
 void CloseAVTransSharedMemory(const AVTransSharedMemory &memory) noexcept
 {
-    AVTRANS_LOGI("close shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32, memory.name.c_str(),
-        memory.size, memory.fd);
+    AVTRANS_LOGI("close shared memory, name=%{public}s, size=%{public}" PRId32 ", fd=%{public}" PRId32,
+        memory.name.c_str(), memory.size, memory.fd);
     if (IsInValidSharedMemory(memory)) {
         AVTRANS_LOGE("invalid input shared memory");
         return;
@@ -73,16 +73,17 @@ void CloseAVTransSharedMemory(const AVTransSharedMemory &memory) noexcept
 
 int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUnit &clockUnit)
 {
-    AVTRANS_LOGI("write clock unit to shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
+    AVTRANS_LOGI("write clock unit to shared memory, name=%{public}s, size=%{public}" PRId32 ", fd=%{public}" PRId32,
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
-    AVTRANS_LOGI("clock unit index=%" PRId32 ", frameNum=%" PRId32 ", pts=%lld", clockUnit.index,
-        clockUnit.frameNum, (long long)clockUnit.pts);
+    AVTRANS_LOGI("clock unit index=%{public}" PRId32 ", frameNum=%{public}" PRId32 ", pts=%{public}lld",
+        clockUnit.index, clockUnit.frameNum, (long long)clockUnit.pts);
     TRUE_RETURN_V_MSG_E(IsInValidClockUnit(clockUnit), ERR_DH_AVT_INVALID_PARAM, "invalid input clock unit");
 
     int size = AshmemGetSize(memory.fd);
-    TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %" PRId32, size);
+    TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %{public}" PRId32,
+        size);
 
     unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
@@ -107,22 +108,24 @@ int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUni
         clockUnit.index = 0;
     }
 
-    AVTRANS_LOGI("write clock unit frameNum=%" PRId32 ", pts=%lld to shared memory success",
+    AVTRANS_LOGI("write clock unit frameNum=%{public}" PRId32 ", pts=%{public}lld to shared memory success",
         clockUnit.frameNum, (long long)(clockUnit.pts));
     return DH_AVT_SUCCESS;
 }
 
 int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUnit &clockUnit)
 {
-    AVTRANS_LOGI("read clock unit from shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
+    AVTRANS_LOGI("read clock unit from shared memory, name=%{public}s, size=%{public}" PRId32 ", fd=%{public}" PRId32,
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
-    AVTRANS_LOGI("clock unit index=%" PRId32 ", frameNum=%" PRId32, clockUnit.index, clockUnit.frameNum);
+    AVTRANS_LOGI("clock unit index=%{public}" PRId32 ", frameNum=%{public}" PRId32,
+        clockUnit.index, clockUnit.frameNum);
     TRUE_RETURN_V_MSG_E((clockUnit.frameNum <= 0), ERR_DH_AVT_INVALID_PARAM, "invalid input frame number");
 
     int size = AshmemGetSize(memory.fd);
-    TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %" PRId32, size);
+    TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %{public}" PRId32,
+        size);
 
     unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
@@ -153,21 +156,22 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
         }
         index++;
     }
-    AVTRANS_LOGI("read clock unit from shared memory success, frameNum=%" PRId32 ", pts=%lld",
+    AVTRANS_LOGI("read clock unit from shared memory success, frameNum=%{public}" PRId32 ", pts=%{public}lld",
         clockUnit.frameNum, (long long)clockUnit.pts);
     return DH_AVT_SUCCESS;
 }
 
 int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frameNum, int64_t timestamp)
 {
-    AVTRANS_LOGI("write frame info to shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
+    AVTRANS_LOGI("write frame info to shared memory, name=%{public}s, size=%{public}" PRId32 ", fd=%{public}" PRId32,
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
     TRUE_RETURN_V_MSG_E((frameNum <= 0), ERR_DH_AVT_INVALID_PARAM, "invalid input frame number");
 
     int size = AshmemGetSize(memory.fd);
-    TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %" PRId32, size);
+    TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %{public}" PRId32,
+        size);
 
     unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
@@ -185,18 +189,20 @@ int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frame
     U32ToU8(base, frameNum);
     U64ToU8(base + sizeof(uint32_t), timestamp);
 
-    AVTRANS_LOGI("write frameNum=%" PRId32 ", timestamp=%lld to shared memory success", frameNum, (long long)timestamp);
+    AVTRANS_LOGI("write frameNum=%{public}" PRId32 ", timestamp=%{public}lld to shared memory success",
+        frameNum, (long long)timestamp);
     return DH_AVT_SUCCESS;
 }
 
 int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &frameNum, int64_t &timestamp)
 {
-    AVTRANS_LOGI("read frame info from shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32,
+    AVTRANS_LOGI("read frame info from shared memory, name=%{public}s, size=%{public}" PRId32 ", fd=%{public}" PRId32,
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
     int size = AshmemGetSize(memory.fd);
-    TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %" PRId32, size);
+    TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %{public}" PRId32,
+        size);
 
     unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
@@ -215,19 +221,20 @@ int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &fra
     timestamp = static_cast<int64_t>(U8ToU64(base + sizeof(uint32_t)));
     TRUE_RETURN_V_MSG_E(frameNum <= 0, ERR_DH_AVT_MASTER_NOT_READY, "master queue not ready, frameNum is null.");
 
-    AVTRANS_LOGI("read frameNum=%" PRId32 ", timestamp=%lld from shared memory success.", frameNum,
+    AVTRANS_LOGI("read frameNum=%{public}" PRId32 ", timestamp=%{public}lld from shared memory success.", frameNum,
         (long long)timestamp);
     return DH_AVT_SUCCESS;
 }
 
 int32_t ResetSharedMemory(const AVTransSharedMemory &memory)
 {
-    AVTRANS_LOGI("reset shared memory, name=%s, size=%" PRId32 ", fd=%" PRId32, memory.name.c_str(),
-        memory.size, memory.fd);
+    AVTRANS_LOGI("reset shared memory, name=%{public}s, size=%{public}" PRId32 ", fd=%{public}" PRId32,
+        memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
     int size = AshmemGetSize(memory.fd);
-    TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %" PRId32, size);
+    TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %{public}" PRId32,
+        size);
 
     unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));

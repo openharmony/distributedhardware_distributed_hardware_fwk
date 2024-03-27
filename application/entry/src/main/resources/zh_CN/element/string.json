@@ -14,15 +14,11 @@
     },
     {
       "name": "connected_to",
-      "value": "已连接到"
-    },
-    {
-      "name": "conjuncts",
-      "value": "的"
+      "value": "已连接至%1$s"
     },
     {
       "name": "stop_device",
-      "value": "你可以断开连接以停止使用此设备的"
+      "value": "您可以断开连接以停止使用此设备的%1$s"
     },
     {
       "name": "pause",
@@ -33,59 +29,11 @@
       "value": "继续"
     },
     {
-      "name": "camera",
+      "name": "DHTypeName_Camera",
       "value": "相机"
     },
     {
-      "name": "audio",
-      "value": "音频"
-    },
-    {
-      "name": "pc",
-      "value": "笔记本电脑"
-    },
-    {
-      "name": "phone",
-      "value": "手机"
-    },
-    {
-      "name": "pad",
-      "value": "平板"
-    },
-    {
-      "name": "watch",
-      "value": "手表"
-    },
-    {
-      "name": "car",
-      "value": "车机"
-    },
-    {
-      "name": "tv",
-      "value": "电视"
-    },
-    {
-      "name": "display",
-      "value": "显示器"
-    },
-    {
-      "name": "2in1",
-      "value": "2in1"
-    },
-    {
-      "name": "default",
-      "value": "手机"
-    },
-    {
-      "name": "tablet",
-      "value": "平板"
-    },
-    {
-      "name": "wearable",
-      "value": "可穿戴电子设备"
-    },
-    {
-      "name": "microphone",
+      "name": "DHTypeName_Mic",
       "value": "麦克风"
     },
     {

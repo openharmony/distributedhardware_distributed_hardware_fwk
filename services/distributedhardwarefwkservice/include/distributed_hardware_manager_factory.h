@@ -29,6 +29,7 @@ class DistributedHardwareManagerFactory {
     DECLARE_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
 
 public:
+    bool InitLocalDevInfo();
     bool IsInit();
     int32_t SendOnLineEvent(const std::string &networkId, const std::string &uuid, uint16_t deviceType);
     int32_t SendOffLineEvent(const std::string &networkId, const std::string &uuid, uint16_t deviceType);
@@ -40,6 +41,7 @@ private:
     bool Init();
     void UnInit();
     void CheckExitSAOrNot();
+    void ExitDHFWK();
 
 private:
     std::atomic<bool> isInit = false;

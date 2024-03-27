@@ -10,19 +10,15 @@
     },
     {
       "name": "EntryAbility_label",
-      "value": "PrivacyView"
+      "value": "DHardwareUI"
     },
     {
       "name": "connected_to",
-      "value": "connected to"
-    },
-    {
-      "name": "conjuncts",
-      "value": "'s"
+      "value": "Connected to %1$s"
     },
     {
       "name": "stop_device",
-      "value": "You can disconnect to stop using this device's"
+      "value": "Disconnect to stop using this device's %1$s."
     },
     {
       "name": "pause",
@@ -30,67 +26,19 @@
     },
     {
       "name": "continue",
-      "value": "Continue"
+      "value": "Resume"
     },
     {
-      "name": "camera",
-      "value": "Camera"
+      "name": "DHTypeName_Camera",
+      "value": "camera"
     },
     {
-      "name": "audio",
-      "value": "Audio"
-    },
-    {
-      "name": "pc",
-      "value": "PC"
-    },
-    {
-      "name": "phone",
-      "value": "Phone"
-    },
-    {
-      "name": "pad",
-      "value": "Pad"
-    },
-    {
-      "name": "watch",
-      "value": "Watch"
-    },
-    {
-      "name": "car",
-      "value": "Car"
-    },
-    {
-      "name": "tv",
-      "value": "TV"
-    },
-    {
-      "name": "display",
-      "value": "Display"
-    },
-    {
-      "name": "2in1",
-      "value": "2in1"
-    },
-    {
-      "name": "default",
-      "value": "Phone"
-    },
-    {
-      "name": "tablet",
-      "value": "Tablet"
-    },
-    {
-      "name": "wearable",
-      "value": "Wearable"
-    },
-    {
-      "name": "microphone",
-      "value": "Mic"
+      "name": "DHTypeName_Mic",
+      "value": "microphone"
     },
     {
       "name": "disconnect",
-      "value": "disconnect"
+      "value": "Disconnect"
     }
   ]
 }

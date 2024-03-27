@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -324,7 +324,7 @@ void FromJson(const std::string &key, const cJSON *jsonObject, std::vector<T> &o
 {
     cJSON *json = cJSON_GetObjectItem(jsonObject, key.c_str());
     if (json == NULL) {
-        DHLOGE("JSONObject key invalid, key: %s", key.c_str());
+        DHLOGE("JSONObject key invalid, key: %{public}s", key.c_str());
         return;
     }
     if (cJSON_IsArray(json)) {

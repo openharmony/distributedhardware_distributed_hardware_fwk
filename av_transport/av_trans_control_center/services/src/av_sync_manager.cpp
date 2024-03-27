@@ -43,14 +43,14 @@ AVSyncManager::~AVSyncManager()
 
 void AVSyncManager::AddStreamInfo(const AVStreamInfo &stream)
 {
-    AVTRANS_LOGI("add new stream info: sceneType=%s, peerDevId=%s", stream.sceneType.c_str(),
+    AVTRANS_LOGI("add new stream info: sceneType=%{public}s, peerDevId=%{public}s", stream.sceneType.c_str(),
         GetAnonyString(stream.peerDevId).c_str());
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         streamInfoList_.push_back(stream);
 
         if (streamInfoList_.size() < AV_SYNC_STREAM_COUNT) {
-            AVTRANS_LOGI("No need enable sender av sync, stream info list size=%zu", streamInfoList_.size());
+            AVTRANS_LOGI("No need enable sender av sync, stream info list size=%{public}zu", streamInfoList_.size());
             return;
         }
     }
@@ -59,7 +59,7 @@ void AVSyncManager::AddStreamInfo(const AVStreamInfo &stream)
 
 void AVSyncManager::RemoveStreamInfo(const AVStreamInfo &stream)
 {
-    AVTRANS_LOGI("remove stream info: sceneType=%s, peerDevId=%s", stream.sceneType.c_str(),
+    AVTRANS_LOGI("remove stream info: sceneType=%{public}s, peerDevId=%{public}s", stream.sceneType.c_str(),
         GetAnonyString(stream.peerDevId).c_str());
     {
         std::lock_guard<std::mutex> lock(listMutex_);
@@ -81,7 +81,7 @@ void AVSyncManager::EnableSenderAVSync()
         AVTRANS_LOGI("No need start av sync.");
         return;
     }
-    AVTRANS_LOGI("merged av sync group info=%s", GetAnonyString(syncGroupInfo).c_str());
+    AVTRANS_LOGI("merged av sync group info=%{public}s", GetAnonyString(syncGroupInfo).c_str());
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         for (const auto &item : streamInfoList_) {
@@ -100,7 +100,7 @@ void AVSyncManager::DisableSenderAVSync()
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         if (streamInfoList_.size() >= AV_SYNC_STREAM_COUNT) {
-            AVTRANS_LOGI("Cannot disable sender av sync, stream info list size=%zu", streamInfoList_.size());
+            AVTRANS_LOGI("Cannot disable sender av sync, stream info list size=%{public}zu", streamInfoList_.size());
             return;
         }
         for (const auto &item : streamInfoList_) {

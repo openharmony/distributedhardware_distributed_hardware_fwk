@@ -63,8 +63,7 @@ DsoftbusOutputAudioPlugin::~DsoftbusOutputAudioPlugin()
 Status DsoftbusOutputAudioPlugin::Init()
 {
     AVTRANS_LOGI("Init.");
-    Media::OSAL::ScopedLock lock(operationMutes_);
-    state_ = State::INITIALIZED;
+    SetCurrentState(State::INITIALIZED);
     return Status::OK;
 }
 
@@ -77,8 +76,7 @@ Status DsoftbusOutputAudioPlugin::Deinit()
 Status DsoftbusOutputAudioPlugin::Prepare()
 {
     AVTRANS_LOGI("Prepare");
-    Media::OSAL::ScopedLock lock(operationMutes_);
-    if (state_ != State::INITIALIZED) {
+    if (GetCurrentState() != State::INITIALIZED) {
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
@@ -98,17 +96,19 @@ Status DsoftbusOutputAudioPlugin::Prepare()
     TRUE_RETURN_V_MSG_E(GetParameter(Tag::AUDIO_SAMPLE_RATE, sampleRateValue) != Status::OK,
         Status::ERROR_UNKNOWN, "Not found AUDIO_SAMPLE_RATE");
     sampleRate_ = static_cast<uint32_t>(Plugin::AnyCast<int>(sampleRateValue));
-    AVTRANS_LOGI("channels_ = %u, sampleRate_ = %u.", channels_, sampleRate_);
+    AVTRANS_LOGI("channels_ = %{public}u, sampleRate_ = %{public}u.", channels_, sampleRate_);
 
-    state_ = State::PREPARED;
+    SetCurrentState(State::PREPARED);
     return Status::OK;
 }
 
 Status DsoftbusOutputAudioPlugin::Reset()
 {
     AVTRANS_LOGI("Reset");
-    Media::OSAL::ScopedLock lock(operationMutes_);
-    paramsMap_.clear();
+    {
+        std::lock_guard<std::mutex> lock(paramMapMutex_);
+        paramsMap_.clear();
+    }
     if (bufferPopTask_) {
         bufferPopTask_->Stop();
         bufferPopTask_.reset();
@@ -117,15 +117,14 @@ Status DsoftbusOutputAudioPlugin::Reset()
     eventsCb_ = nullptr;
     SoftbusChannelAdapter::GetInstance().RemoveChannelServer(TransName2PkgName(ownerName_), sessionName_);
     SoftbusChannelAdapter::GetInstance().UnRegisterChannelListener(sessionName_, peerDevId_);
-    state_ = State::INITIALIZED;
+    SetCurrentState(State::INITIALIZED);
     return Status::OK;
 }
 
 Status DsoftbusOutputAudioPlugin::Start()
 {
     AVTRANS_LOGI("Dsoftbus Output Plugin start.");
-    Media::OSAL::ScopedLock lock(operationMutes_);
-    if (state_ != State::PREPARED) {
+    if (GetCurrentState() != State::PREPARED) {
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
@@ -136,18 +135,18 @@ Status DsoftbusOutputAudioPlugin::Start()
     }
     DataQueueClear(dataQueue_);
     bufferPopTask_->Start();
-    state_ = State::RUNNING;
+    SetCurrentState(State::RUNNING);
     return Status::OK;
 }
 
 Status DsoftbusOutputAudioPlugin::Stop()
 {
     AVTRANS_LOGI("Dsoftbus Output Plugin stop.");
-    if (state_ != State::RUNNING) {
+    if (GetCurrentState() != State::RUNNING) {
         AVTRANS_LOGE("The state is wrong.");
         return Status::ERROR_WRONG_STATE;
     }
-    state_ = State::PREPARED;
+    SetCurrentState(State::PREPARED);
     bufferPopTask_->Stop();
     DataQueueClear(dataQueue_);
     CloseSoftbusChannel();
@@ -156,6 +155,7 @@ Status DsoftbusOutputAudioPlugin::Stop()
 
 Status DsoftbusOutputAudioPlugin::GetParameter(Tag tag, ValueType &value)
 {
+    std::lock_guard<std::mutex> lock(paramMapMutex_);
     auto res = paramsMap_.find(tag);
     if (res != paramsMap_.end()) {
         value = res->second;
@@ -166,7 +166,7 @@ Status DsoftbusOutputAudioPlugin::GetParameter(Tag tag, ValueType &value)
 
 Status DsoftbusOutputAudioPlugin::SetParameter(Tag tag, const ValueType &value)
 {
-    Media::OSAL::ScopedLock lock(operationMutes_);
+    std::lock_guard<std::mutex> lock(paramMapMutex_);
     if (tag == Tag::MEDIA_DESCRIPTION) {
         ParseChannelDescription(Plugin::AnyCast<std::string>(value), ownerName_, peerDevId_);
     }
@@ -176,7 +176,6 @@ Status DsoftbusOutputAudioPlugin::SetParameter(Tag tag, const ValueType &value)
 
 Status DsoftbusOutputAudioPlugin::SetCallback(Callback *cb)
 {
-    Media::OSAL::ScopedLock lock(operationMutes_);
     if (cb == nullptr) {
         AVTRANS_LOGE("SetCallback failed, cb is nullptr.");
         return Status::ERROR_INVALID_OPERATION;
@@ -190,13 +189,13 @@ Status DsoftbusOutputAudioPlugin::OpenSoftbusChannel()
 {
     int32_t ret = SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Register channel listener failed ret: %d.", ret);
+        AVTRANS_LOGE("Register channel listener failed ret: %{public}d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
     std::string peerSessName = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
     ret = SoftbusChannelAdapter::GetInstance().OpenSoftbusChannel(sessionName_, peerSessName, peerDevId_);
     if ((ret != DH_AVT_SUCCESS) && (ret != ERR_DH_AVT_SESSION_HAS_OPENED)) {
-        AVTRANS_LOGE("Open softbus channel failed ret: %d.", ret);
+        AVTRANS_LOGE("Open softbus channel failed ret: %{public}d.", ret);
         return Status::ERROR_INVALID_OPERATION;
     }
     return Status::OK;
@@ -206,13 +205,13 @@ void DsoftbusOutputAudioPlugin::CloseSoftbusChannel()
 {
     int32_t ret = SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Close softbus channle failed ret: %d.", ret);
+        AVTRANS_LOGE("Close softbus channle failed ret: %{public}d.", ret);
     }
 }
 
 void DsoftbusOutputAudioPlugin::OnChannelEvent(const AVTransEvent &event)
 {
-    AVTRANS_LOGI("OnChannelEvent enter, event type: %d", event.type);
+    AVTRANS_LOGI("OnChannelEvent enter, event type: %{public}d", event.type);
     if (eventsCb_ == nullptr) {
         AVTRANS_LOGE("OnChannelEvent failed, event callback is nullptr.");
         return;
@@ -243,7 +242,7 @@ void DsoftbusOutputAudioPlugin::OnStreamReceived(const StreamData *data, const S
 
 Status DsoftbusOutputAudioPlugin::PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
 {
-    Media::OSAL::ScopedLock lock(operationMutes_);
+    std::lock_guard<std::mutex> lock(dataQueueMtx_);
     if (buffer == nullptr || buffer->IsEmpty()) {
         AVTRANS_LOGE("Buffer is nullptr.");
         return Status::ERROR_NULL_POINTER;
@@ -266,13 +265,13 @@ Status DsoftbusOutputAudioPlugin::PushData(const std::string &inPort, std::share
 
 void DsoftbusOutputAudioPlugin::FeedChannelData()
 {
-    while (state_ == State::RUNNING) {
+    while (GetCurrentState() == State::RUNNING) {
         std::shared_ptr<Buffer> buffer;
         {
             std::unique_lock<std::mutex> lock(dataQueueMtx_);
             dataCond_.wait_for(lock, std::chrono::milliseconds(PLUGIN_TASK_WAIT_TIME),
                 [this]() { return !dataQueue_.empty(); });
-            if (state_ != State::RUNNING) {
+            if (GetCurrentState() != State::RUNNING) {
                 return;
             }
             if (dataQueue_.empty()) {
@@ -314,8 +313,8 @@ void DsoftbusOutputAudioPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffe
 
     auto bufferData = buffer->GetMemory();
     std::string jsonStr = jsonObj.dump();
-    AVTRANS_LOGI("buffer data len = %zu, ext data len = %zu, ext data = %s", bufferData->GetSize(),
-        jsonStr.length(), jsonStr.c_str());
+    AVTRANS_LOGI("buffer data len = %{public}zu, ext data len = %{public}zu, ext data = %{public}s",
+        bufferData->GetSize(), jsonStr.length(), jsonStr.c_str());
 
     StreamData data = {reinterpret_cast<char *>(const_cast<uint8_t*>(bufferData->GetReadOnlyData())),
         bufferData->GetSize()};
@@ -329,6 +328,7 @@ void DsoftbusOutputAudioPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffe
 
 void DsoftbusOutputAudioPlugin::DataQueueClear(std::queue<std::shared_ptr<Buffer>> &queue)
 {
+    std::lock_guard<std::mutex> lock(dataQueueMtx_);
     std::queue<std::shared_ptr<Buffer>> empty;
     swap(empty, queue);
 }
