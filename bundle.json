@@ -126,7 +126,7 @@
           "name": "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
           "header": {
             "header_files": [ "distributed_hardware_log.h" ],
-            "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/log/include"
+            "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/common/log/include"
           }
         },
         {
