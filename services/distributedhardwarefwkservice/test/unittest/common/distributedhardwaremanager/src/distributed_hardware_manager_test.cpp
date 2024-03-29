@@ -255,5 +255,17 @@ HWTEST_F(DistributedHardwareManagerTest, SendOffLineEvent_001, TestSize.Level0)
     int32_t ret5 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId3, uuid2, deviceType);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret5);
 }
+
+/**
+ * @tc.name: LocalInit_001
+ * @tc.desc: Verify the LocalInit function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareManagerTest, LocalInit_001, TestSize.Level0)
+{
+    int32_t ret =  DistributedHardwareManager::GetInstance().LocalInit();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -414,5 +414,16 @@ HWTEST_F(AccessManagerTest, CheckExitSAOrNot_001, TestSize.Level0)
     DistributedHardwareManagerFactory::GetInstance().CheckExitSAOrNot();
     ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
 }
+
+/**
+ * @tc.name: InitLocalDevInfo_001
+ * @tc.desc: Verify the InitLocalDevInfo function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, InitLocalDevInfo_001, TestSize.Level0)
+{
+    ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().InitLocalDevInfo());
+}
 } // namespace DistributedHardware
 } // namespace OHOS
