@@ -16,7 +16,10 @@ import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 config("innerkits_external_config") {
-  include_dirs = [ "${innerkits_path}/include" ]
+  include_dirs = [
+    "${innerkits_path}/include",
+    "${innerkits_path}/include/ipc",
+  ]
 }
 
 ohos_shared_library("libdhfwk_sdk") {

@@ -124,12 +124,26 @@
           "type": "so",
           "name": "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
           "header": {
+            "header_files": [ "distributed_hardware_log.h" ],
+            "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/common/log/include"
+          }
+        },
+        {
+          "type": "so",
+          "name": "//foundation/distributedhardware/distributed_hardware_fwk/utils:distributedhardwareutils",
+          "header": {
             "header_files": [
               "constants.h",
+              "device_type.h",
+              "dhardware_ipc_interface_code.h",
+              "distributed_hardware_errno.h",
+              "iav_trans_control_center_callback.h",
+              "idistributed_hardware_manager.h",
               "idistributed_hardware_sink.h",
               "idistributed_hardware_source.h",
               "idistributed_hardware.h",
               "ihardware_handler.h",
+              "ipublisher_listener.h",
               "single_instance.h"
             ],
             "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/common/utils/include"
