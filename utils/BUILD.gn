@@ -35,7 +35,6 @@ ohos_shared_library("distributedhardwareutils") {
   public_configs = [ ":utils_external_config" ]
 
   include_dirs = [
-    "//third_party/json/include",
     "${common_path}/log/include",
     "${common_path}/utils/include",
     "include",
@@ -52,8 +51,6 @@ ohos_shared_library("distributedhardwareutils") {
     "src/histreamer_query_tool.cpp",
   ]
 
-  deps = [ "//third_party/openssl:libcrypto_shared" ]
-
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"distributedhardwareutils\"",
@@ -67,6 +64,8 @@ ohos_shared_library("distributedhardwareutils") {
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
+    "json:nlohmann_json_static",
+    "openssl:libcrypto_shared",
     "safwk:system_ability_fwk",
   ]
 

@@ -51,11 +51,10 @@
         "graphic_surface",
         "media_foundation",
         "bounds_checking_function",
-        "power_manager"
-      ],
-      "third_party": [
+        "power_manager",
+        "openssl",
         "json",
-        "openssl"
+        "ffmpeg"
       ]
     },
     "build": {

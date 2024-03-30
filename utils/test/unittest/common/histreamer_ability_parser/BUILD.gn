@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Copyright (c) 2023-2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -23,7 +23,6 @@ config("module_private_config") {
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
-    "//third_party/json/include",
   ]
 }
 
@@ -40,7 +39,10 @@ ohos_unittest("HistreamerAbilityParserTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [ "c_utils:utils" ]
+  external_deps = [
+    "c_utils:utils",
+    "json:nlohmann_json_static",
+  ]
 }
 
 group("histreamer_ability_parser_test") {

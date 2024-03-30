@@ -28,8 +28,6 @@ ohos_shared_library("hardwaremanager") {
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${av_trans_path}/common/include",
     "${utils_path}/include/log",
-    "//third_party/node/src",
-    "//third_party/json/include",
   ]
 
   sources = [ "src/native_distributedhardwarefwk_js.cpp" ]
