@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,12 +29,10 @@
 #include "av_trans_log.h"
 #include "av_trans_meta.h"
 #include "av_trans_types.h"
-#include "av_trans_utils.h"
 #include "avtrans_output_plugin.h"
 #include "foundation/osal/thread/mutex.h"
 #include "foundation/osal/thread/scoped_lock.h"
 #include "foundation/osal/thread/task.h"
-#include "nlohmann/json.hpp"
 #include "plugin_manager.h"
 #include "plugin_types.h"
 #include "plugin/convert/ffmpeg_convert.h"
@@ -45,7 +43,6 @@ namespace DistributedHardware {
 using namespace OHOS::Media;
 using namespace OHOS::Media::Plugin;
 
-using json = nlohmann::json;
 using AVDataCallback = std::function<void(std::shared_ptr<Plugin::Buffer>)>;
 
 class DaudioOutputPlugin : public AvTransOutputPlugin {

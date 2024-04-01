@@ -24,7 +24,6 @@
 #include "dhardware_ipc_interface_code.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#include "cJSON.h"
 #include "parcel.h"
 
 namespace OHOS {

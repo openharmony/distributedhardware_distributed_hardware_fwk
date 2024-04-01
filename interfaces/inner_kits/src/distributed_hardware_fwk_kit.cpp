@@ -22,6 +22,7 @@
 #include "dhfwk_sa_manager.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "dh_utils_hisysevent.h"
 #include "idistributed_hardware.h"
 
 namespace OHOS {
@@ -210,7 +211,8 @@ int32_t DistributedHardwareFwkKit::PauseDistributedHardware(DHType dhType, const
         DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-
+    HiSysEventWriteMsg(DHFWK_INIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+        "user pause sink ui.");
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->PauseDistributedHardware(dhType, networkId);
 }
 
@@ -223,7 +225,8 @@ int32_t DistributedHardwareFwkKit::ResumeDistributedHardware(DHType dhType, cons
         DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-
+    HiSysEventWriteMsg(DHFWK_INIT_BEGIN, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+        "user resume sink ui.");
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->ResumeDistributedHardware(dhType, networkId);
 }
 
@@ -236,7 +239,8 @@ int32_t DistributedHardwareFwkKit::StopDistributedHardware(DHType dhType, const 
         DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-
+    HiSysEventWriteMsg(DHFWK_EXIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+        "user stop sink ui.");
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->StopDistributedHardware(dhType, networkId);
 }
 } // DistributedHardware
