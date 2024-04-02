@@ -16,7 +16,6 @@
 #include "av_trans_control_center_callback_proxy.h"
 
 #include <unordered_set>
-#include "nlohmann/json.hpp"
 #include "parcel.h"
 
 #include "av_trans_constants.h"

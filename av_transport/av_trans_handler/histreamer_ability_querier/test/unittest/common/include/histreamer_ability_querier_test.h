@@ -16,7 +16,7 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_HISTREAMER_ABILITY_QUERIER_TEST_H
 #define OHOS_DISTRIBUTED_HARDWARE_HISTREAMER_ABILITY_QUERIER_TEST_H
 
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 #include <gtest/gtest.h>
 
 namespace OHOS {
@@ -28,11 +28,11 @@ public:
     void SetUp();
     void TearDown();
 };
-bool IsUInt8(const nlohmann::json& jsonObj, const std::string& key);
+bool IsUInt8(const cJSON *jsonObj, const std::string& key);
 
-bool IsUInt32(const nlohmann::json& jsonObj, const std::string& key);
+bool IsUInt32(const cJSON *jsonObj, const std::string& key);
 
-bool IsString(const nlohmann::json& jsonObj, const std::string& key);
+bool IsString(const cJSON *jsonObj, const std::string& key);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

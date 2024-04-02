@@ -208,12 +208,21 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_008, Test
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_009, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
-    jsonObject[KEY] = TEST_STR;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
+    cJSON_AddStringToObject(jsonObject, KEY.c_str(), TEST_STR.c_str());
     EXPECT_TRUE(IsString(jsonObject, KEY));
+    cJSON_Delete(jsonObject);
 
-    jsonObject[KEY] = 1;
-    EXPECT_FALSE(IsString(jsonObject, KEY));
+    cJSON *jsonObject2 = cJSON_CreateObject();
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+    cJSON_AddNumberToObject(jsonObject2, KEY.c_str(), 1);
+    EXPECT_FALSE(IsString(jsonObject2, KEY));
+    cJSON_Delete(jsonObject2);
 }
 
 /**
@@ -224,14 +233,18 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_009, Test
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_010, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     const uint8_t num_s = 1;
-    jsonObject[KEY] = num_s;
+    cJSON_AddNumberToObject(jsonObject, KEY.c_str(), num_s);
     EXPECT_TRUE(IsUInt8(jsonObject, KEY));
 
     const uint16_t num_b = UINT8_MAX + 1 ;
-    jsonObject[KEY] = num_b;
-    EXPECT_FALSE(IsUInt8(jsonObject, KEY));
+    cJSON_AddNumberToObject(jsonObject, KEY.c_str(), num_b);
+    EXPECT_TRUE(IsUInt8(jsonObject, KEY));
+    cJSON_Delete(jsonObject);
 }
 
 /**
@@ -242,77 +255,99 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_010, Test
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_011, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     const uint32_t num_s = 1;
-    jsonObject[KEY] = num_s;
+    cJSON_AddNumberToObject(jsonObject, KEY.c_str(), num_s);
     EXPECT_TRUE(IsUInt32(jsonObject, KEY));
 
     const int32_t num_i = -1;
-    jsonObject[KEY] = num_i;
-    EXPECT_FALSE(IsUInt32(jsonObject, KEY));
+    cJSON_AddNumberToObject(jsonObject, KEY.c_str(), num_i);
+    EXPECT_TRUE(IsUInt32(jsonObject, KEY));
+    cJSON_Delete(jsonObject);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_012
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, AudioEncoderIn &audioEncoderIn) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, AudioEncoderIn &audioEncoderIn) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_012, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     AudioEncoderIn audioEncoderIn;
-    jsonObject[MIME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioEncoderIn);
     EXPECT_TRUE(audioEncoderIn.mime.empty());
+    cJSON_Delete(jsonObject);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_013
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, AudioEncoderOut &audioEncoderOut) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, AudioEncoderOut &audioEncoderOut) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_013, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     AudioEncoderOut audioEncoderOut;
-    jsonObject[MIME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioEncoderOut);
     EXPECT_TRUE(audioEncoderOut.mime.empty());
+    cJSON_Delete(jsonObject);
+    cJSON *jsonObject2 = cJSON_CreateObject();
+    if (jsonObject2 == nullptr) {
+        return;
+    }
 
-    jsonObject[MIME] = AUDIO_ENCODEROUT_MIME;
-    jsonObject[AD_MPEG_VER] = TEST_STR;
-    FromJson(jsonObject, audioEncoderOut);
+    cJSON_AddStringToObject(jsonObject2, MIME.c_str(), AUDIO_ENCODEROUT_MIME.c_str());
+    cJSON_AddNumberToObject(jsonObject2, AD_MPEG_VER.c_str(), AD_MPEG_VER_VALUE);
+    FromJson(jsonObject2, audioEncoderOut);
     EXPECT_EQ(AUDIO_ENCODEROUT_MIME, audioEncoderOut.mime);
-
-    jsonObject[AD_MPEG_VER] = AD_MPEG_VER_VALUE;
-    jsonObject[AUDIO_AAC_PROFILE] = TEST_STR;
-    FromJson(jsonObject, audioEncoderOut);
     EXPECT_EQ(AD_MPEG_VER_VALUE, (uint32_t)audioEncoderOut.ad_mpeg_ver);
 
-    jsonObject[AUDIO_AAC_PROFILE] = AUDIO_AAC_PROFILE_VALUE;
-    jsonObject[AUDIO_AAC_STREAM_FORMAT] = TEST_STR;
-    FromJson(jsonObject, audioEncoderOut);
+    cJSON_AddNumberToObject(jsonObject2, AUDIO_AAC_PROFILE.c_str(), AUDIO_AAC_PROFILE_VALUE);
+    cJSON_AddStringToObject(jsonObject2, AUDIO_AAC_STREAM_FORMAT.c_str(), TEST_STR.c_str());
+    FromJson(jsonObject2, audioEncoderOut);
     EXPECT_EQ(AUDIO_AAC_PROFILE_VALUE, (uint32_t)audioEncoderOut.aac_profile);
+    cJSON_Delete(jsonObject2);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_014
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, AudioEncoder &audioEncoder) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, AudioEncoder &audioEncoder) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_014, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     AudioEncoder audioEncoder;
-    jsonObject[NAME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, NAME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioEncoder);
     EXPECT_TRUE(audioEncoder.name.empty());
+    cJSON_Delete(jsonObject);
 
-    jsonObject[NAME] = AUDIO_ENCODER_NAME;
-    FromJson(jsonObject, audioEncoder);
+    cJSON *jsonObject2 = cJSON_CreateObject();
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
+    cJSON_AddStringToObject(jsonObject2, NAME.c_str(), AUDIO_ENCODER_NAME.c_str());
+    FromJson(jsonObject2, audioEncoder);
     EXPECT_EQ(AUDIO_ENCODER_NAME, audioEncoder.name);
     EXPECT_TRUE(audioEncoder.ins.empty());
 
@@ -320,67 +355,97 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_014, Test
     audioEncoderIn.mime = AUDIO_ENCODERIN_MIME;
     audioEncoderIn.sample_rate = {96000, 88200, 64000, 48000, 44100, 32000};
     audioEncoder.ins.push_back(audioEncoderIn);
-    FromJson(jsonObject, audioEncoder);
+    FromJson(jsonObject2, audioEncoder);
     EXPECT_FALSE(audioEncoder.ins.empty());
     EXPECT_TRUE(audioEncoder.outs.empty());
+    cJSON_Delete(jsonObject2);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_015
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, AudioDecoderIn &audioDecoderIn) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, AudioDecoderIn &audioDecoderIn) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_015, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     AudioDecoderIn audioDecoderIn;
-    jsonObject[MIME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioDecoderIn);
     EXPECT_TRUE(audioDecoderIn.mime.empty());
+    cJSON_Delete(jsonObject);
 
-    jsonObject[MIME] = AUDIO_DECODERIN_MIME;
-    FromJson(jsonObject, audioDecoderIn);
+    cJSON *jsonObject2 = cJSON_CreateObject();
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
+    cJSON_AddStringToObject(jsonObject2, MIME.c_str(), AUDIO_DECODERIN_MIME.c_str());
+    FromJson(jsonObject2, audioDecoderIn);
     EXPECT_EQ(AUDIO_DECODERIN_MIME, audioDecoderIn.mime);
     EXPECT_TRUE(audioDecoderIn.channel_layout.empty());
+    cJSON_Delete(jsonObject2);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_016
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, AudioDecoderOut &audioDecoderOut) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, AudioDecoderOut &audioDecoderOut) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_016, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     AudioDecoderOut audioDecoderOut;
-    jsonObject[MIME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioDecoderOut);
     EXPECT_TRUE(audioDecoderOut.mime.empty());
+    cJSON_Delete(jsonObject);
 
-    jsonObject[MIME] = AUDIO_DECODEROUT_MIME;
-    FromJson(jsonObject, audioDecoderOut);
+    cJSON *jsonObject2 = cJSON_CreateObject();
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
+    cJSON_AddStringToObject(jsonObject2, MIME.c_str(), AUDIO_DECODEROUT_MIME.c_str());
+    FromJson(jsonObject2, audioDecoderOut);
     EXPECT_EQ(AUDIO_DECODEROUT_MIME, audioDecoderOut.mime);
     EXPECT_TRUE(audioDecoderOut.sample_fmt.empty());
+    cJSON_Delete(jsonObject2);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_017
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, AudioDecoder &audioDecoder) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, AudioDecoder &audioDecoder) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_017, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     AudioDecoder audioDecoder;
-    jsonObject[NAME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, NAME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioDecoder);
     EXPECT_TRUE(audioDecoder.name.empty());
+    cJSON_Delete(jsonObject);
 
-    jsonObject[NAME] = AUDIO_DECODER_NAME;
-    FromJson(jsonObject, audioDecoder);
+    cJSON *jsonObject2 = cJSON_CreateObject();
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
+    cJSON_AddStringToObject(jsonObject2, NAME.c_str(), AUDIO_DECODER_NAME.c_str());
+    FromJson(jsonObject2, audioDecoder);
     EXPECT_EQ(AUDIO_DECODER_NAME, audioDecoder.name);
     EXPECT_TRUE(audioDecoder.ins.empty());
 
@@ -392,62 +457,86 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_017, Test
         AudioChannelLayout::SURROUND,
     };
     audioDecoder.ins.push_back(audioDecoderIn);
-    FromJson(jsonObject, audioDecoder);
+    FromJson(jsonObject2, audioDecoder);
     EXPECT_FALSE(audioDecoder.ins.empty());
     EXPECT_TRUE(audioDecoder.outs.empty());
+    cJSON_Delete(jsonObject2);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_018
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, VideoEncoderIn &videoEncoderIn) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, VideoEncoderIn &videoEncoderIn) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_018, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     VideoEncoderIn videoEncoderIn;
-    jsonObject[MIME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoEncoderIn);
     EXPECT_TRUE(videoEncoderIn.mime.empty());
+    cJSON_Delete(jsonObject);
 
-    jsonObject[MIME] = VIDEO_ENCODERIN_MIME;
-    FromJson(jsonObject, videoEncoderIn);
+    cJSON *jsonObject2 = cJSON_CreateObject();
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
+    cJSON_AddStringToObject(jsonObject2, MIME.c_str(), VIDEO_ENCODERIN_MIME.c_str());
+    FromJson(jsonObject2, videoEncoderIn);
     EXPECT_EQ(VIDEO_ENCODERIN_MIME, videoEncoderIn.mime);
     EXPECT_TRUE(videoEncoderIn.pixel_fmt.empty());
+    cJSON_Delete(jsonObject2);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_019
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, VideoEncoderOut &videoEncoderOut) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, VideoEncoderOut &videoEncoderOut) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_019, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     VideoEncoderOut videoEncoderOut;
-    jsonObject[MIME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoEncoderOut);
     EXPECT_TRUE(videoEncoderOut.mime.empty());
+    cJSON_Delete(jsonObject);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_020
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, VideoEncoder &videoEncoder) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, VideoEncoder &videoEncoder) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_020, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     VideoEncoder videoEncoder;
-    jsonObject[NAME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, NAME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoEncoder);
     EXPECT_TRUE(videoEncoder.name.empty());
+    cJSON_Delete(jsonObject);
 
-    jsonObject[NAME] = VIDEO_ENCODER_NAME;
-    FromJson(jsonObject, videoEncoder);
+    cJSON *jsonObject2 = cJSON_CreateObject();
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
+    cJSON_AddStringToObject(jsonObject2, NAME.c_str(), VIDEO_ENCODER_NAME.c_str());
+    FromJson(jsonObject2, videoEncoder);
     EXPECT_EQ(VIDEO_ENCODER_NAME, videoEncoder.name);
     EXPECT_TRUE(videoEncoder.ins.empty());
 
@@ -458,67 +547,97 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_020, Test
         VideoPixelFormat::RGBA,
     };
     videoEncoder.ins.push_back(videoEncoderIn);
-    FromJson(jsonObject, videoEncoder);
+    FromJson(jsonObject2, videoEncoder);
     EXPECT_FALSE(videoEncoder.ins.empty());
     EXPECT_TRUE(videoEncoder.outs.empty());
+    cJSON_Delete(jsonObject2);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_021
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, VideoDecoderIn &videoDecoderIn) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, VideoDecoderIn &videoDecoderIn) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_021, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     VideoDecoderIn videoDecoderIn;
-    jsonObject[MIME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoDecoderIn);
     EXPECT_TRUE(videoDecoderIn.mime.empty());
+    cJSON_Delete(jsonObject);
 
-    jsonObject[MIME] = VIDEO_DECODERIN_MIME;
-    FromJson(jsonObject, videoDecoderIn);
+    cJSON *jsonObject2 = cJSON_CreateObject();
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
+    cJSON_AddStringToObject(jsonObject2, MIME.c_str(), VIDEO_DECODERIN_MIME.c_str());
+    FromJson(jsonObject2, videoDecoderIn);
     EXPECT_EQ(VIDEO_DECODERIN_MIME, videoDecoderIn.mime);
     EXPECT_TRUE(videoDecoderIn.vd_bit_stream_fmt.empty());
+    cJSON_Delete(jsonObject2);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_022
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, VideoDecoderOut &videoDecoderOut) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, VideoDecoderOut &videoDecoderOut) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_022, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     VideoDecoderOut videoDecoderOut;
-    jsonObject[MIME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoDecoderOut);
     EXPECT_TRUE(videoDecoderOut.mime.empty());
+    cJSON_Delete(jsonObject);
 
-    jsonObject[MIME] = VIDEO_DECODEROUT_MIME;
-    FromJson(jsonObject, videoDecoderOut);
+    cJSON *jsonObject2 = cJSON_CreateObject();
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
+    cJSON_AddStringToObject(jsonObject2, MIME.c_str(), VIDEO_DECODEROUT_MIME.c_str());
+    FromJson(jsonObject2, videoDecoderOut);
     EXPECT_EQ(VIDEO_DECODEROUT_MIME, videoDecoderOut.mime);
     EXPECT_TRUE(videoDecoderOut.pixel_fmt.empty());
+    cJSON_Delete(jsonObject2);
 }
 
 /**
  * @tc.name: histreamer_ability_querier_test_023
- * @tc.desc: Verify the FromJson(const nlohmann::json &jsonObject, VideoDecoder &videoDecoder) function.
+ * @tc.desc: Verify the FromJson(const cJSON *jsonObject, VideoDecoder &videoDecoder) function.
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_023, TestSize.Level0)
 {
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return;
+    }
     VideoDecoder videoDecoder;
-    jsonObject[NAME] = UINT16_ONE;
+    cJSON_AddNumberToObject(jsonObject, NAME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoDecoder);
     EXPECT_TRUE(videoDecoder.name.empty());
+    cJSON_Delete(jsonObject);
 
-    jsonObject[NAME] = VIDEO_DECODER_NAME;
-    FromJson(jsonObject, videoDecoder);
+    cJSON *jsonObject2 = cJSON_CreateObject();
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
+    cJSON_AddStringToObject(jsonObject2, NAME.c_str(), VIDEO_DECODER_NAME.c_str());
+    FromJson(jsonObject2, videoDecoder);
     EXPECT_EQ(VIDEO_DECODER_NAME, videoDecoder.name);
     EXPECT_TRUE(videoDecoder.ins.empty());
 
@@ -529,9 +648,10 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_023, Test
         VideoBitStreamFormat::HEVC,
     };
     videoDecoder.ins.push_back(videoDecoderIn);
-    FromJson(jsonObject, videoDecoder);
+    FromJson(jsonObject2, videoDecoder);
     EXPECT_FALSE(videoDecoder.ins.empty());
     EXPECT_TRUE(videoDecoder.outs.empty());
+    cJSON_Delete(jsonObject2);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -23,7 +23,7 @@
 
 #include "av_trans_buffer.h"
 #include "av_trans_types.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 // follwing head files depends on histreamer
 #include "event.h"
@@ -53,9 +53,9 @@ void ParseChannelDescription(const std::string &descJsonStr, std::string &ownerN
 EventType CastEventType(Plugin::PluginEventType type, bool isAbnormal);
 void DumpBufferToFile(std::string fileName, uint8_t *buffer, int32_t bufSize);
 
-bool IsUInt32(const nlohmann::json &jsonObj, const std::string &key);
-bool IsInt64(const nlohmann::json &jsonObj, const std::string &key);
-bool IsString(const nlohmann::json &jsonObj, const std::string &key);
+bool IsUInt32(const cJSON *jsonObj, const std::string &key);
+bool IsInt64(const cJSON *jsonObj, const std::string &key);
+bool IsString(const cJSON *jsonObj, const std::string &key);
 
 int64_t GetCurrentTime();
 

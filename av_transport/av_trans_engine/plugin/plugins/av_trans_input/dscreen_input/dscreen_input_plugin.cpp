@@ -16,13 +16,11 @@
 
 #include "av_trans_utils.h"
 #include "foundation/utils/constants.h"
-#include "nlohmann/json.hpp"
 #include "plugin/factory/plugin_factory.h"
 #include "plugin/interface/generic_plugin.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-using json = nlohmann::json;
 
 GenericPluginDef CreateDscreenInputPluginDef()
 {

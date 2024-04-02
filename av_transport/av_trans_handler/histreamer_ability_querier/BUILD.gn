@@ -61,8 +61,8 @@ ohos_shared_library("histreamer_ability_querier") {
 
   external_deps += [
     "bounds_checking_function:libsec_shared",
+    "cJSON:cjson",
     "hilog:libhilog",
-    "json:nlohmann_json_static",
   ]
 
   cflags = [

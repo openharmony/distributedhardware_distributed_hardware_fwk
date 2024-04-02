@@ -68,6 +68,7 @@ ohos_shared_library("libdhfwk_sdk") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "hilog:libhilog",
     "hisysevent:libhisysevent",

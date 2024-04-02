@@ -32,7 +32,7 @@
 #include "av_trans_types.h"
 #include "av_trans_utils.h"
 #include "avtrans_input_plugin.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 #include "foundation/osal/thread/task.h"
 #include "plugin_types.h"
 #include "plugin_manager.h"
@@ -42,7 +42,6 @@ namespace OHOS {
 namespace DistributedHardware {
 
 using namespace Media::Plugin;
-using json = nlohmann::json;
 using AVDataCallback = std::function<void(std::shared_ptr<Buffer>)>;
 
 class DsoftbusInputAudioPlugin : public AvTransInputPlugin,
@@ -74,7 +73,7 @@ private:
     void HandleData();
     void DataEnqueue(std::shared_ptr<Buffer> &buffer);
     void DataQueueClear(std::queue<std::shared_ptr<Buffer>> &queue);
-    std::shared_ptr<Buffer> CreateBuffer(uint32_t metaType, const StreamData *data, const json &resMsg);
+    std::shared_ptr<Buffer> CreateBuffer(uint32_t metaType, const StreamData *data, const cJSON *resMsg);
     State GetCurrentState()
     {
         std::lock_guard<std::mutex> lock(stateMutex_);

@@ -18,7 +18,7 @@
 
 #include <string>
 #include <unistd.h>
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -32,8 +32,8 @@ public:
     bool UnmarshalMessage(const std::string &jsonStr, const std::string &peerDevId);
 
 private:
-    bool IsUInt32(const nlohmann::json &msgJson, const std::string &key);
-    bool IsString(const nlohmann::json &msgJson, const std::string &key);
+    bool IsUInt32(const cJSON *msgJson, const std::string &key);
+    bool IsString(const cJSON *msgJson, const std::string &key);
 
 public:
     uint32_t type_;

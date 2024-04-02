@@ -16,6 +16,7 @@
 #ifndef OHOS_AV_SYNC_MANAGER_H
 #define OHOS_AV_SYNC_MANAGER_H
 
+#include <set>
 #include <mutex>
 
 #include "av_sync_utils.h"
@@ -41,6 +42,8 @@ private:
     void EnableReceiverAVSync(const std::string &groupInfo);
     void DisableReceiverAVSync(const std::string &groupInfo);
     bool MergeGroupInfo(std::string &syncGroupInfo);
+    bool MergeGroupInfoInner(std::set<std::string> &groupInfoSet);
+    std::string GetsyncGroupInfo(std::set<std::string> &groupInfoSet);
 
 private:
     std::mutex listMutex_;

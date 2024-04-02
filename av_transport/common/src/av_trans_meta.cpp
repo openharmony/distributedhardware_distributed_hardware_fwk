@@ -16,7 +16,7 @@
 #include "av_trans_meta.h"
 
 #include "av_trans_utils.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -42,26 +42,54 @@ std::shared_ptr<OHOS::Media::Plugin::BufferMeta> AVTransAudioBufferMeta::Clone()
 
 std::string AVTransAudioBufferMeta::MarshalAudioMeta()
 {
-    nlohmann::json metaJson;
-    metaJson[META_DATA_TYPE] = dataType_;
-    metaJson[META_TIMESTAMP] = pts_;
-    metaJson[META_FRAME_NUMBER] = frameNum_;
-    return metaJson.dump();
+    cJSON *metaJson = cJSON_CreateObject();
+    if (metaJson == nullptr) {
+        return "";
+    }
+    cJSON_AddNumberToObject(metaJson, META_DATA_TYPE.c_str(), static_cast<uint32_t>(dataType_));
+    cJSON_AddNumberToObject(metaJson, META_TIMESTAMP.c_str(), pts_);
+    cJSON_AddNumberToObject(metaJson, META_FRAME_NUMBER.c_str(), frameNum_);
+    char *data = cJSON_Print(metaJson);
+    if (data == nullptr) {
+        cJSON_Delete(metaJson);
+        return "";
+    }
+    std::string jsonstr(data);
+    cJSON_free(data);
+    cJSON_Delete(metaJson);
+    return jsonstr;
 }
 
 bool AVTransAudioBufferMeta::UnmarshalAudioMeta(const std::string& jsonStr)
 {
-    nlohmann::json metaJson = nlohmann::json::parse(jsonStr, nullptr, false);
-    if (metaJson.is_discarded()) {
+    cJSON *metaJson = cJSON_Parse(jsonStr.c_str());
+    if (metaJson == nullptr) {
         return false;
     }
     if (!IsUInt32(metaJson, META_DATA_TYPE) || !IsInt64(metaJson, META_TIMESTAMP) ||
         !IsUInt32(metaJson, META_FRAME_NUMBER)) {
+        cJSON_Delete(metaJson);
         return false;
     }
-    dataType_ = metaJson[META_DATA_TYPE].get<BufferDataType>();
-    pts_ = metaJson[META_TIMESTAMP].get<int64_t>();
-    frameNum_ = metaJson[META_FRAME_NUMBER].get<uint32_t>();
+    cJSON *typeObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_DATA_TYPE.c_str());
+    if (typeObj == nullptr || !cJSON_IsNumber(typeObj)) {
+        cJSON_Delete(metaJson);
+        return false;
+    }
+    cJSON *ptsObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_TIMESTAMP.c_str());
+    if (ptsObj == nullptr || !cJSON_IsNumber(ptsObj)) {
+        cJSON_Delete(metaJson);
+        return false;
+    }
+    cJSON *frameObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_FRAME_NUMBER.c_str());
+    if (frameObj == nullptr || !cJSON_IsNumber(frameObj)) {
+        cJSON_Delete(metaJson);
+        return false;
+    }
+    dataType_ = static_cast<BufferDataType>(typeObj->valueint);
+    pts_ = static_cast<int64_t>(ptsObj->valueint);
+    frameNum_ = static_cast<uint32_t>(frameObj->valueint);
+    cJSON_Delete(metaJson);
     return true;
 }
 
@@ -83,40 +111,71 @@ std::shared_ptr<OHOS::Media::Plugin::BufferMeta> AVTransVideoBufferMeta::Clone()
 
 std::string AVTransVideoBufferMeta::MarshalVideoMeta()
 {
-    nlohmann::json metaJson;
-    metaJson[META_DATA_TYPE] = dataType_;
-    metaJson[META_TIMESTAMP] = pts_;
-    metaJson[META_FRAME_NUMBER] = frameNum_;
+    cJSON *metaJson = cJSON_CreateObject();
+    if (metaJson == nullptr) {
+        return "";
+    }
+    cJSON_AddNumberToObject(metaJson, META_DATA_TYPE.c_str(), static_cast<uint32_t>(dataType_));
+    cJSON_AddNumberToObject(metaJson, META_TIMESTAMP.c_str(), pts_);
+    cJSON_AddNumberToObject(metaJson, META_FRAME_NUMBER.c_str(), frameNum_);
     if (extPts_ > 0) {
-        metaJson[META_EXT_TIMESTAMP] = extPts_;
+        cJSON_AddNumberToObject(metaJson, META_EXT_TIMESTAMP.c_str(), extPts_);
     }
     if (extFrameNum_ > 0) {
-        metaJson[META_EXT_FRAME_NUMBER] = extFrameNum_;
+        cJSON_AddNumberToObject(metaJson, META_EXT_FRAME_NUMBER.c_str(), extFrameNum_);
     }
-    return metaJson.dump();
+    char *data = cJSON_Print(metaJson);
+    if (data == nullptr) {
+        cJSON_Delete(metaJson);
+        return "";
+    }
+    std::string jsonstr(data);
+    cJSON_Delete(metaJson);
+    cJSON_free(data);
+    return jsonstr;
 }
 
 bool AVTransVideoBufferMeta::UnmarshalVideoMeta(const std::string& jsonStr)
 {
-    nlohmann::json metaJson = nlohmann::json::parse(jsonStr, nullptr, false);
-    if (metaJson.is_discarded()) {
+    cJSON *metaJson = cJSON_Parse(jsonStr.c_str());
+    if (metaJson == nullptr) {
         return false;
     }
-    if (IsUInt32(metaJson, META_DATA_TYPE)) {
-        dataType_ = metaJson[META_DATA_TYPE].get<BufferDataType>();
+    cJSON *typeObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_DATA_TYPE.c_str());
+    if (typeObj == nullptr || !IsUInt32(metaJson, META_DATA_TYPE)) {
+        cJSON_Delete(metaJson);
+        return false;
     }
-    if (IsInt64(metaJson, META_TIMESTAMP)) {
-        pts_ = metaJson[META_TIMESTAMP].get<int64_t>();
+    dataType_ = static_cast<BufferDataType>(typeObj->valueint);
+
+    cJSON *timeStampObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_TIMESTAMP.c_str());
+    if (timeStampObj == nullptr || !IsInt64(metaJson, META_TIMESTAMP)) {
+        cJSON_Delete(metaJson);
+        return false;
     }
-    if (IsUInt32(metaJson, META_FRAME_NUMBER)) {
-        frameNum_ = metaJson[META_FRAME_NUMBER].get<uint32_t>();
+    pts_ = static_cast<int64_t>(timeStampObj->valueint);
+    
+    cJSON *numberObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_FRAME_NUMBER.c_str());
+    if (numberObj == nullptr || !IsUInt32(metaJson, META_FRAME_NUMBER)) {
+        cJSON_Delete(metaJson);
+        return false;
     }
-    if (IsInt64(metaJson, META_EXT_TIMESTAMP)) {
-        extPts_ = metaJson[META_EXT_TIMESTAMP].get<int64_t>();
+    frameNum_ = static_cast<uint32_t>(numberObj->valueint);
+
+    cJSON *extTimeStampObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_EXT_TIMESTAMP.c_str());
+    if (extTimeStampObj == nullptr || !IsInt64(metaJson, META_EXT_TIMESTAMP)) {
+        cJSON_Delete(metaJson);
+        return false;
     }
-    if (IsUInt32(metaJson, META_EXT_FRAME_NUMBER)) {
-        extFrameNum_ = metaJson[META_EXT_FRAME_NUMBER].get<uint32_t>();
+    extPts_ = static_cast<int64_t>(extTimeStampObj->valueint);
+
+    cJSON *extNumberObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_EXT_FRAME_NUMBER.c_str());
+    if (extNumberObj == nullptr || !IsUInt32(metaJson, META_EXT_FRAME_NUMBER)) {
+        cJSON_Delete(metaJson);
+        return false;
     }
+    extFrameNum_ =static_cast<uint32_t>(extNumberObj->valueint);
+    cJSON_Delete(metaJson);
     return true;
 }
 } // namespace DistributedHardware
