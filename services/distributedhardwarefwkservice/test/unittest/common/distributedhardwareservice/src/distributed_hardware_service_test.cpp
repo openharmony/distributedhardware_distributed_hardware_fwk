@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -244,6 +244,22 @@ HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_001, TestSize.L
     auto ret = service.PauseDistributedHardware(DHType::UNKNOWN, networkId);
     ret = service.PauseDistributedHardware(DHType::INPUT, networkId);
     ret = service.PauseDistributedHardware(DHType::MAX_DH, networkId);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+}
+
+HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_002, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    auto ret = service.ResumeDistributedHardware(DHType::UNKNOWN, networkId);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+}
+
+HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_002, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    auto ret = service.StopDistributedHardware(DHType::UNKNOWN, networkId);
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 } // namespace DistributedHardware

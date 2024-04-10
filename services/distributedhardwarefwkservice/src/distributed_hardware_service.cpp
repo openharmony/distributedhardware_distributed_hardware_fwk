@@ -242,7 +242,7 @@ int DistributedHardwareService::Dump(int32_t fd, const std::vector<std::u16strin
         DHLOGE("Dump error, ret = %{public}d", ret);
     }
 
-    if (dprintf(fd, "%{public}s\n", result.c_str()) < 0) {
+    if (dprintf(fd, "%s\n", result.c_str()) < 0) {
         DHLOGE("Hidump dprintf error");
         ret = ERR_DH_FWK_HIDUMP_DPRINTF_ERROR;
     }
