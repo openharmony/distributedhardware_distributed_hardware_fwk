@@ -17,7 +17,7 @@
 
 #include <string>
 
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 #include "anonymous_string.h"
 #include "constants.h"
@@ -120,21 +120,30 @@ std::string CapabilityInfo::GetAnonymousKey() const
 
 int32_t CapabilityInfo::FromJsonString(const std::string &jsonStr)
 {
-    nlohmann::json jsonObj = nlohmann::json::parse(jsonStr, nullptr, false);
-    if (jsonObj.is_discarded()) {
+    cJSON *jsonObj = cJSON_Parse(jsonStr.c_str());
+    if (jsonObj == NULL) {
         DHLOGE("jsonStr parse failed");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
 
     FromJson(jsonObj, *this);
+    cJSON_Delete(jsonObj);
     return DH_FWK_SUCCESS;
 }
 
 std::string CapabilityInfo::ToJsonString()
 {
-    nlohmann::json jsonObj;
+    cJSON *jsonObj = cJSON_CreateObject();
+    if (jsonObj == NULL) {
+        DHLOGE("Failed to create cJSON object.");
+        return "";
+    }
     ToJson(jsonObj, *this);
-    return jsonObj.dump();
+    char *cjson = cJSON_Print(jsonObj);
+    std::string jsonString(cjson);
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+    return jsonString;
 }
 
 bool CapabilityInfo::Compare(const CapabilityInfo& capInfo)
@@ -170,54 +179,60 @@ bool CapabilityInfo::Compare(const CapabilityInfo& capInfo)
     return true;
 }
 
-void ToJson(nlohmann::json &jsonObject, const CapabilityInfo &capability)
+void ToJson(cJSON *jsonObject, const CapabilityInfo &capability)
 {
-    jsonObject[DH_ID] = capability.GetDHId();
-    jsonObject[DEV_ID] = capability.GetDeviceId();
-    jsonObject[DEV_NAME] = capability.GetDeviceName();
-    jsonObject[DEV_TYPE] = capability.GetDeviceType();
-    jsonObject[DH_TYPE] = capability.GetDHType();
-    jsonObject[DH_ATTRS] = capability.GetDHAttrs();
-    jsonObject[DH_SUBTYPE] = capability.GetDHSubtype();
+    cJSON_AddStringToObject(jsonObject, DH_ID.c_str(), capability.GetDHId().c_str());
+    cJSON_AddStringToObject(jsonObject, DEV_ID.c_str(), capability.GetDeviceId().c_str());
+    cJSON_AddStringToObject(jsonObject, DEV_NAME.c_str(), capability.GetDeviceName().c_str());
+    cJSON_AddNumberToObject(jsonObject, DEV_TYPE.c_str(), (double)capability.GetDeviceType());
+    cJSON_AddNumberToObject(jsonObject, DH_TYPE.c_str(), (double)capability.GetDHType());
+    cJSON_AddStringToObject(jsonObject, DH_ATTRS.c_str(), capability.GetDHAttrs().c_str());
+    cJSON_AddStringToObject(jsonObject, DH_SUBTYPE.c_str(), capability.GetDHSubtype().c_str());
 }
 
-void FromJson(const nlohmann::json &jsonObject, CapabilityInfo &capability)
+void FromJson(const cJSON *jsonObject, CapabilityInfo &capability)
 {
     if (!IsString(jsonObject, DH_ID)) {
         DHLOGE("DH_ID is invalid!");
         return;
     }
-    capability.SetDHId(jsonObject.at(DH_ID).get<std::string>());
+    capability.SetDHId(cJSON_GetObjectItem(jsonObject, DH_ID.c_str())->valuestring);
+
     if (!IsString(jsonObject, DEV_ID)) {
         DHLOGE("DEV_ID is invalid!");
         return;
     }
-    capability.SetDeviceId(jsonObject.at(DEV_ID).get<std::string>());
+    capability.SetDeviceId(cJSON_GetObjectItem(jsonObject, DEV_ID.c_str())->valuestring);
+
     if (!IsString(jsonObject, DEV_NAME)) {
         DHLOGE("DEV_NAME is invalid!");
         return;
     }
-    capability.SetDeviceName(jsonObject.at(DEV_NAME).get<std::string>());
+    capability.SetDeviceName(cJSON_GetObjectItem(jsonObject, DEV_NAME.c_str())->valuestring);
+
     if (!IsUInt16(jsonObject, DEV_TYPE)) {
         DHLOGE("DEV_TYPE is invalid!");
         return;
     }
-    capability.SetDeviceType(jsonObject.at(DEV_TYPE).get<uint16_t>());
+    capability.SetDeviceType((uint16_t)cJSON_GetObjectItem(jsonObject, DEV_TYPE.c_str())->valuedouble);
+
     if (!IsUInt32(jsonObject, DH_TYPE)) {
         DHLOGE("DH_TYPE is invalid!");
         return;
     }
-    capability.SetDHType(jsonObject.at(DH_TYPE).get<DHType>());
+    capability.SetDHType((DHType)cJSON_GetObjectItem(jsonObject, DH_TYPE.c_str())->valuedouble);
+
     if (!IsString(jsonObject, DH_ATTRS)) {
         DHLOGE("DH_ATTRS is invalid!");
         return;
     }
-    capability.SetDHAttrs(jsonObject.at(DH_ATTRS).get<std::string>());
+    capability.SetDHAttrs(cJSON_GetObjectItem(jsonObject, DH_ATTRS.c_str())->valuestring);
+
     if (!IsString(jsonObject, DH_SUBTYPE)) {
         DHLOGE("DH_SUBTYPE is invalid!");
         return;
     }
-    capability.SetDHSubtype(jsonObject.at(DH_SUBTYPE).get<std::string>());
+    capability.SetDHSubtype(cJSON_GetObjectItem(jsonObject, DH_SUBTYPE.c_str())->valuestring);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

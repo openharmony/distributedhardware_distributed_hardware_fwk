@@ -34,7 +34,6 @@ ohos_fuzztest("ComponentloaderFuzzTest") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//third_party/json/include",
   ]
   cflags = [
     "-g",
@@ -53,6 +52,8 @@ ohos_fuzztest("ComponentloaderFuzzTest") {
     "DH_LOG_TAG=\"ComponentloaderFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
+
+  external_deps = [ "cJSON:cjson" ]
 }
 
 ###############################################################################

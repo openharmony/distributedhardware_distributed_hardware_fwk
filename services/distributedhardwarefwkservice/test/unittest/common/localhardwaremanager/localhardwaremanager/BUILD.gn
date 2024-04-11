@@ -34,7 +34,6 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/test/unittest/common/localhardwaremanager/pluginlistenerimpl/include",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//third_party/json/include",
   ]
 }
 
@@ -54,6 +53,7 @@ ohos_unittest("LocalHardwareManagerTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "eventhandler:libeventhandler",
     "hisysevent:libhisysevent",
     "kv_store:distributeddata_inner",

@@ -20,7 +20,7 @@
 #include <memory>
 #include <map>
 
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 #include "device_type.h"
 
@@ -90,8 +90,8 @@ private:
     std::string dhSubtype_;
 };
 
-void ToJson(nlohmann::json &jsonObject, const CapabilityInfo &capability);
-void FromJson(const nlohmann::json &jsonObject, CapabilityInfo &capability);
+void ToJson(cJSON *jsonObject, const CapabilityInfo &capability);
+void FromJson(const cJSON *jsonObject, CapabilityInfo &capability);
 
 using CapabilityInfoMap = std::map<std::string, std::shared_ptr<CapabilityInfo>>;
 } // namespace DistributedHardware

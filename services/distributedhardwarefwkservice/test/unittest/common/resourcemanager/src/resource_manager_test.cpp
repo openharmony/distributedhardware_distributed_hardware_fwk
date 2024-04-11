@@ -28,7 +28,7 @@
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 using namespace testing::ext;
 using namespace std;
@@ -824,23 +824,28 @@ HWTEST_F(ResourceManagerTest, FromJson_001, TestSize.Level0)
     std::string dhAttrs;
     std::string dhSubtype;
     CapabilityInfo info(dhId, devId, devName, devType, dhType, dhAttrs, dhSubtype);
-    nlohmann::json jsonObject;
-    const std::string DH_ID = "dh_id";
-    const std::string DEV_ID = "dev_id";
-    const std::string DEV_NAME = "dev_name";
-    const std::string DEV_TYPE = "dev_type";
-    const std::string DH_TYPE = "dh_type";
-    const std::string DH_ATTRS = "dh_attrs";
-    const std::string DH_SUBTYPE = "dh_subtype";
-    jsonObject[DH_ID] = "dh_id";
-    jsonObject[DEV_ID] = "dev_id";
-    jsonObject[DEV_NAME] = "dev_name";
-    jsonObject[DEV_TYPE] = "dev_type";
-    jsonObject[DH_TYPE] = "dh_type";
-    jsonObject[DH_ATTRS] = "dh_attrs";
-    jsonObject[DH_SUBTYPE] = "dh_subtype";
-    CapabilityInfo capability;
-    std::string jsonStr = jsonObject.dump();
+
+    cJSON* json = cJSON_CreateObject();
+    const char* DH_ID = "dh_id";
+    const char* DEV_ID = "dev_id";
+    const char* DEV_NAME = "dev_name";
+    const char* DEV_TYPE = "dev_type";
+    const char* DH_TYPE = "dh_type";
+    const char* DH_ATTRS = "dh_attrs";
+    const char* DH_SUBTYPE = "dh_subtype";
+
+    cJSON_AddStringToObject(json, DH_ID, "dh_id");
+    cJSON_AddStringToObject(json, DEV_ID, "dev_id");
+    cJSON_AddStringToObject(json, DEV_NAME, "dev_name");
+    cJSON_AddNumberToObject(json, DEV_TYPE, devType);
+    cJSON_AddStringToObject(json, DH_TYPE, "dh_type");
+    cJSON_AddStringToObject(json, DH_ATTRS, "dh_attrs");
+    cJSON_AddStringToObject(json, DH_SUBTYPE, "dh_subtype");
+
+    char* cjson = cJSON_Print(json);
+    std::string jsonStr(cjson);
+    cJSON_free(cjson);
+    cJSON_Delete(json);
     EXPECT_EQ(DH_FWK_SUCCESS, info.FromJsonString(jsonStr));
 }
 } // namespace DistributedHardware

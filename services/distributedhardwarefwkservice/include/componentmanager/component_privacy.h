@@ -56,6 +56,8 @@ public:
 
 private:
     std::string DeviceTypeToString(uint16_t deviceTypeId);
+    void HandleClosePage(const std::string &subtype);
+    void HandlePullUpPage(const std::string &subtype, const std::string &networkId);
 
     std::shared_ptr<ComponentPrivacy::ComponentEventHandler> eventHandler_;
 };

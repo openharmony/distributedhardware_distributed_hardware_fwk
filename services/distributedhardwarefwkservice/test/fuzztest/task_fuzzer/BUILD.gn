@@ -25,7 +25,6 @@ ohos_fuzztest("TaskFuzzTest") {
 
   include_dirs = [
     "include",
-    "//third_party/json/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${services_path}/distributedhardwarefwkservice/include",
@@ -46,7 +45,10 @@ ohos_fuzztest("TaskFuzzTest") {
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
   ]
 
-  external_deps = [ "c_utils:utils" ]
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",

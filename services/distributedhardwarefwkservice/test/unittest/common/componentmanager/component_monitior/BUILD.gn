@@ -20,7 +20,6 @@ module_out_path = "distributed_hardware_fwk/component_monitor_test"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "//third_party/json/include",
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
@@ -51,6 +50,7 @@ ohos_unittest("ComponentMonitorTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",

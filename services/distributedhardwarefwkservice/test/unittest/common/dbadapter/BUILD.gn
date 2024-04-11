@@ -29,7 +29,6 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//third_party/json/include",
   ]
 }
 
@@ -58,6 +57,7 @@ ohos_unittest("DbAdapterTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "hilog:libhilog",

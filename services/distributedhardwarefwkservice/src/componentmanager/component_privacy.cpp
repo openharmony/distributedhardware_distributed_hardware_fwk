@@ -24,7 +24,7 @@
 #include "dm_device_info.h"
 #include "device_type.h"
 #include "event_handler.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -50,33 +50,69 @@ int32_t ComponentPrivacy::OnPrivaceResourceMessage(const ResourceEventType &type
     int32_t ret = DH_FWK_SUCCESS;
     if (type == ResourceEventType::EVENT_TYPE_QUERY_RESOURCE) {
         ret = OnResourceInfoCallback(subtype, networkId, isSensitive, isSameAccout);
-    }
-    if (type == ResourceEventType::EVENT_TYPE_PULL_UP_PAGE) {
-        if (eventHandler_ != nullptr) {
-            DHLOGI("SendEvent COMP_START_PAGE");
-            std::shared_ptr<nlohmann::json> jsonArrayMsg = std::make_shared<nlohmann::json>();
-            nlohmann::json tmpJson;
-            tmpJson[PRIVACY_SUBTYPE] = subtype;
-            tmpJson[PRIVACY_NETWORKID] = networkId;
-            jsonArrayMsg->push_back(tmpJson);
-            AppExecFwk::InnerEvent::Pointer msgEvent =
-                AppExecFwk::InnerEvent::Get(COMP_START_PAGE, jsonArrayMsg, 0);
-            eventHandler_->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
-        }
-    }
-    if (type == ResourceEventType::EVENT_TYPE_CLOSE_PAGE) {
-        if (eventHandler_ != nullptr) {
-            DHLOGI("SendEvent COMP_STOP_PAGE");
-            std::shared_ptr<nlohmann::json> jsonArrayMsg = std::make_shared<nlohmann::json>();
-            nlohmann::json tmpJson;
-            tmpJson[PRIVACY_SUBTYPE] = subtype;
-            jsonArrayMsg->push_back(tmpJson);
-            AppExecFwk::InnerEvent::Pointer msgEvent =
-                AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE, jsonArrayMsg, 0);
-            eventHandler_->SendEvent(msgEvent, COMP_PRIVACY_DELAY_TIME, AppExecFwk::EventQueue::Priority::IMMEDIATE);
-        }
+    } else if (type == ResourceEventType::EVENT_TYPE_PULL_UP_PAGE) {
+        HandlePullUpPage(subtype, networkId);
+    } else if (type == ResourceEventType::EVENT_TYPE_CLOSE_PAGE) {
+        HandleClosePage(subtype);
     }
     return ret;
+}
+
+void ComponentPrivacy::HandlePullUpPage(const std::string &subtype, const std::string &networkId)
+{
+    cJSON *jsonArrayMsg = cJSON_CreateArray();
+    if (jsonArrayMsg == NULL) {
+        DHLOGE("Failed to create cJSON arrary.");
+        return;
+    }
+
+    cJSON *tmpJson = cJSON_CreateObject();
+    if (tmpJson == NULL) {
+        cJSON_Delete(jsonArrayMsg);
+        DHLOGE("Failed to create cJSON object.");
+        return;
+    }
+    if (eventHandler_ != nullptr) {
+        DHLOGI("SendEvent COMP_START_PAGE");
+        cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), subtype.c_str());
+        cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID.c_str(), networkId.c_str());
+        cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
+
+        AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_START_PAGE,
+            std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
+        eventHandler_->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+        return;
+    }
+    cJSON_Delete(tmpJson);
+    cJSON_Delete(jsonArrayMsg);
+}
+
+void ComponentPrivacy::HandleClosePage(const std::string &subtype)
+{
+    cJSON *jsonArrayMsg = cJSON_CreateArray();
+    if (jsonArrayMsg == NULL) {
+        DHLOGE("Failed to create cJSON arrary.");
+        return;
+    }
+
+    cJSON *tmpJson = cJSON_CreateObject();
+    if (tmpJson == NULL) {
+        cJSON_Delete(jsonArrayMsg);
+        DHLOGE("Failed to create cJSON object.");
+        return;
+    }
+    if (eventHandler_ != nullptr) {
+        DHLOGI("SendEvent COMP_STOP_PAGE");
+        cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), subtype.c_str());
+        cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
+
+        AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE,
+            std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
+        eventHandler_->SendEvent(msgEvent, COMP_PRIVACY_DELAY_TIME, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+        return;
+    }
+    cJSON_Delete(tmpJson);
+    cJSON_Delete(jsonArrayMsg);
 }
 
 int32_t ComponentPrivacy::OnResourceInfoCallback(const std::string &subtype, const std::string &networkId,
@@ -225,26 +261,22 @@ ComponentPrivacy::ComponentEventHandler::~ComponentEventHandler()
     comPrivacyObj_ = nullptr;
 }
 
-void ComponentPrivacy::ComponentEventHandler::ProcessStartPage(
-    const AppExecFwk::InnerEvent::Pointer &event)
+void ComponentPrivacy::ComponentEventHandler::ProcessStartPage(const AppExecFwk::InnerEvent::Pointer &event)
 {
     DHLOGI("ProcessStartPage enter.");
-    std::shared_ptr<nlohmann::json> dataMsg = event->GetSharedObject<nlohmann::json>();
-    auto it = dataMsg->begin();
-    nlohmann::json innerMsg = *(it);
-    std::string subtype = innerMsg[PRIVACY_SUBTYPE];
-    std::string networkId = innerMsg[PRIVACY_NETWORKID];
+    std::shared_ptr<cJSON> dataMsg = event->GetSharedObject<cJSON>();
+    cJSON *innerMsg = cJSON_GetArrayItem(dataMsg.get(), 0);
+    std::string subtype = cJSON_GetObjectItem(innerMsg, PRIVACY_SUBTYPE.c_str())->valuestring;
+    std::string networkId = cJSON_GetObjectItem(innerMsg, PRIVACY_NETWORKID.c_str())->valuestring;
     comPrivacyObj_->StartPrivacePage(subtype, networkId);
 }
 
-void ComponentPrivacy::ComponentEventHandler::ProcessStopPage(
-    const AppExecFwk::InnerEvent::Pointer &event)
+void ComponentPrivacy::ComponentEventHandler::ProcessStopPage(const AppExecFwk::InnerEvent::Pointer &event)
 {
     DHLOGI("ProcessStopPage enter.");
-    std::shared_ptr<nlohmann::json> dataMsg = event->GetSharedObject<nlohmann::json>();
-    auto it = dataMsg->begin();
-    nlohmann::json innerMsg = *(it);
-    std::string subtype = innerMsg[PRIVACY_SUBTYPE];
+    std::shared_ptr<cJSON> dataMsg = event->GetSharedObject<cJSON>();
+    cJSON *innerMsg = cJSON_GetArrayItem(dataMsg.get(), 0);
+    std::string subtype = cJSON_GetObjectItem(innerMsg, PRIVACY_SUBTYPE.c_str())->valuestring;
     comPrivacyObj_->StopPrivacePage(subtype);
 }
 } // namespace DistributedHardware

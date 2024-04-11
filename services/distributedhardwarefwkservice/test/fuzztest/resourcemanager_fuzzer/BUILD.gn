@@ -31,7 +31,6 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//third_party/json/include",
   ]
   cflags = [
     "-g",
@@ -52,6 +51,7 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "ipc:ipc_single",

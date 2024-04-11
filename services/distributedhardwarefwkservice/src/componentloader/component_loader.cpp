@@ -21,7 +21,6 @@
 #include <string>
 
 #include "config_policy_utils.h"
-#include "nlohmann/json.hpp"
 
 #include "constants.h"
 #include "dh_context.h"
@@ -33,8 +32,6 @@
 #include "version_info.h"
 #include "version_info_manager.h"
 #include "version_manager.h"
-
-using nlohmann::json;
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -107,87 +104,94 @@ std::vector<DHType> ComponentLoader::GetAllCompTypes()
     return DHTypeALL;
 }
 
-int32_t ParseComponent(const nlohmann::json &json, CompConfig &cfg)
+int32_t ParseComponent(const cJSON *json, CompConfig &cfg)
 {
     if (!IsString(json, COMP_NAME)) {
         DHLOGE("COMP_NAME is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.name = json.at(COMP_NAME).get<std::string>();
+    cfg.name = cJSON_GetObjectItem(json, COMP_NAME.c_str())->valuestring;
     if (!IsString(json, COMP_TYPE)) {
         DHLOGE("COMP_TYPE is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.type = g_mapDhTypeName[json.at(COMP_TYPE).get<std::string>()];
+    cfg.type = g_mapDhTypeName[cJSON_GetObjectItem(json, COMP_TYPE.c_str())->valuestring];
     if (!IsString(json, COMP_HANDLER_LOC)) {
         DHLOGE("COMP_HANDLER_LOC is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compHandlerLoc = json.at(COMP_HANDLER_LOC).get<std::string>();
+    cfg.compHandlerLoc = cJSON_GetObjectItem(json, COMP_HANDLER_LOC.c_str())->valuestring;
     if (!IsString(json, COMP_HANDLER_VERSION)) {
         DHLOGE("COMP_HANDLER_VERSION is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compHandlerVersion = json.at(COMP_HANDLER_VERSION).get<std::string>();
+    cfg.compHandlerVersion = cJSON_GetObjectItem(json, COMP_HANDLER_VERSION.c_str())->valuestring;
     return DH_FWK_SUCCESS;
 }
 
-int32_t ParseSource(const nlohmann::json &json, CompConfig &cfg)
+int32_t ParseSource(const cJSON *json, CompConfig &cfg)
 {
     if (!IsString(json, COMP_SOURCE_LOC)) {
         DHLOGE("COMP_SOURCE_LOC is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compSourceLoc = json.at(COMP_SOURCE_LOC).get<std::string>();
+    cfg.compSourceLoc = cJSON_GetObjectItem(json, COMP_SOURCE_LOC.c_str())->valuestring;
     if (!IsString(json, COMP_SOURCE_VERSION)) {
         DHLOGE("COMP_SOURCE_VERSION is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compSourceVersion = json.at(COMP_SOURCE_VERSION).get<std::string>();
+    cfg.compSourceVersion = cJSON_GetObjectItem(json, COMP_SOURCE_VERSION.c_str())->valuestring;
     if (!IsInt32(json, COMP_SOURCE_SA_ID)) {
         DHLOGE("COMP_SOURCE_SA_ID is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compSourceSaId = json.at(COMP_SOURCE_SA_ID).get<int32_t>();
+    cfg.compSourceSaId = (uint32_t)cJSON_GetObjectItem(json, COMP_SOURCE_SA_ID.c_str())->valuedouble;
     return DH_FWK_SUCCESS;
 }
 
-int32_t ParseSink(const nlohmann::json &json, CompConfig &cfg)
+int32_t ParseSink(const cJSON *json, CompConfig &cfg)
 {
     if (!IsString(json, COMP_SINK_LOC)) {
         DHLOGE("COMP_SINK_LOC is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compSinkLoc = json.at(COMP_SINK_LOC).get<std::string>();
+    cfg.compSinkLoc = cJSON_GetObjectItem(json, COMP_SINK_LOC.c_str())->valuestring;
     if (!IsString(json, COMP_SINK_VERSION)) {
         DHLOGE("COMP_SINK_VERSION is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compSinkVersion = json.at(COMP_SINK_VERSION).get<std::string>();
+    cfg.compSinkVersion = cJSON_GetObjectItem(json, COMP_SINK_VERSION.c_str())->valuestring;
     if (!IsInt32(json, COMP_SINK_SA_ID)) {
         DHLOGE("COMP_SINK_SA_ID is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compSinkSaId = json.at(COMP_SINK_SA_ID).get<int32_t>();
+    cfg.compSinkSaId = (uint32_t)cJSON_GetObjectItem(json, COMP_SINK_SA_ID.c_str())->valuedouble;
     return DH_FWK_SUCCESS;
 }
 
-int32_t ParseResourceDesc(const nlohmann::json &json, CompConfig &cfg)
+int32_t ParseResourceDesc(const cJSON *json, CompConfig &cfg)
 {
     if (!IsArray(json, COMP_RESOURCE_DESC)) {
         DHLOGE("COMP_RESOURCE_DESC is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    for (const auto &obj : json.at(COMP_RESOURCE_DESC)) {
+    cJSON *resourceDescArray = cJSON_GetObjectItem(json, COMP_RESOURCE_DESC.c_str());
+    cJSON *element;
+    cJSON_ArrayForEach(element, resourceDescArray) {
         ResourceDesc desc;
-        desc.subtype = obj[COMP_SUBTYPE];
-        desc.sensitiveValue = obj[COMP_SENSITIVE];
+        desc.subtype = cJSON_GetObjectItem(element, COMP_SUBTYPE.c_str())->valuestring;
+        cJSON *sensitive = cJSON_GetObjectItem(element, COMP_SENSITIVE.c_str());
+        if (cJSON_IsTrue(sensitive)) {
+            desc.sensitiveValue = true;
+        } else {
+            desc.sensitiveValue = false;
+        }
         cfg.compResourceDesc.push_back(desc);
     }
     return DH_FWK_SUCCESS;
 }
 
-void from_json(const nlohmann::json &json, CompConfig &cfg)
+void from_json(const cJSON *json, CompConfig &cfg)
 {
     if (ParseComponent(json, cfg) != DH_FWK_SUCCESS) {
         DHLOGE("ParseComponent is failed");
@@ -220,31 +224,91 @@ CompVersion ComponentLoader::GetCompVersionFromComConfig(const CompConfig& cCfg)
 
 int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::map<DHType, CompConfig> &dhtypeMap)
 {
-    auto jsonCfg = json::parse(jsonStr, nullptr, false);
-    if (jsonCfg.is_discarded()) {
+    cJSON *root = cJSON_Parse(jsonStr.c_str());
+    if (root == NULL) {
         DHLOGE("jsonStr parse failed");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-
-    if (jsonCfg.find(COMPONENTSLOAD_DISTRIBUTED_COMPONENTS) == jsonCfg.end()) {
-        DHLOGE("not find distributed_components");
+    if (!IsArray(root, COMPONENTSLOAD_DISTRIBUTED_COMPONENTS)) {
+        DHLOGE("distributed_components is not an array");
+        cJSON_Delete(root);
         return ERR_DH_FWK_PARA_INVALID;
     }
+    cJSON *components = cJSON_GetObjectItem(root, COMPONENTSLOAD_DISTRIBUTED_COMPONENTS.c_str());
 
-    std::vector<CompConfig> vecJsnCfg =
-        jsonCfg.at(COMPONENTSLOAD_DISTRIBUTED_COMPONENTS).get<std::vector<CompConfig>>();
-    DHLOGI("get distributed_components CompConfig size is %{public}zu", vecJsnCfg.size());
-    if (vecJsnCfg.size() == 0 || vecJsnCfg.size() > MAX_COMP_SIZE) {
+    size_t compSize = cJSON_GetArraySize(components);
+    if (compSize == 0 || compSize > MAX_COMP_SIZE) {
         DHLOGE("CompConfig size is invalid!");
+        cJSON_Delete(root);
         return ERR_DH_FWK_PARA_INVALID;
     }
-    for (auto iter = vecJsnCfg.begin(); iter != vecJsnCfg.end(); ++iter) {
-        dhtypeMap.insert(std::pair<DHType, CompConfig>((*iter).type, (*iter)));
+    cJSON *component;
+    cJSON_ArrayForEach(component, components) {
+        CompConfig config;
+        ParseCompConfigFromJson(component, config);
+        dhtypeMap.insert(std::pair<DHType, CompConfig>(config.type, config));
         localDHVersion_.compVersions.insert(
-            std::pair<DHType, CompVersion>((*iter).type, GetCompVersionFromComConfig(*iter)));
+            std::pair<DHType, CompVersion>(config.type, GetCompVersionFromComConfig(config)));
     }
+    cJSON_Delete(root);
     isLocalVersionInit_.store(true);
     return DH_FWK_SUCCESS;
+}
+
+void ComponentLoader::ParseCompConfigFromJson(cJSON *component, CompConfig &config)
+{
+    if (IsString(component, COMP_NAME.c_str())) {
+        config.name = cJSON_GetObjectItem(component, COMP_NAME.c_str())->valuestring;
+    }
+    if (IsString(component, COMP_TYPE.c_str())) {
+        config.type = g_mapDhTypeName[cJSON_GetObjectItem(component, COMP_TYPE.c_str())->valuestring];
+    }
+    if (IsString(component, COMP_HANDLER_LOC.c_str())) {
+        config.compHandlerLoc = cJSON_GetObjectItem(component, COMP_HANDLER_LOC.c_str())->valuestring;
+    }
+    if (IsString(component, COMP_HANDLER_VERSION.c_str())) {
+        config.compHandlerVersion = cJSON_GetObjectItem(component, COMP_HANDLER_VERSION.c_str())->valuestring;
+    }
+    if (IsString(component, COMP_SOURCE_LOC.c_str())) {
+        config.compSourceLoc = cJSON_GetObjectItem(component, COMP_SOURCE_LOC.c_str())->valuestring;
+    }
+    if (IsString(component, COMP_SOURCE_VERSION.c_str())) {
+        config.compSourceVersion = cJSON_GetObjectItem(component, COMP_SOURCE_VERSION.c_str())->valuestring;
+    }
+    if (IsInt32(component, COMP_SOURCE_SA_ID.c_str())) {
+        config.compSourceSaId = (uint32_t)cJSON_GetObjectItem(component, COMP_SOURCE_SA_ID.c_str())->valuedouble;
+    }
+    if (IsString(component, COMP_SINK_LOC.c_str())) {
+        config.compSinkLoc = cJSON_GetObjectItem(component, COMP_SINK_LOC.c_str())->valuestring;
+    }
+    if (IsString(component, COMP_SINK_VERSION.c_str())) {
+        config.compSinkVersion = cJSON_GetObjectItem(component, COMP_SINK_VERSION.c_str())->valuestring;
+    }
+    if (IsInt32(component, COMP_SINK_SA_ID.c_str())) {
+        config.compSinkSaId = (uint32_t)cJSON_GetObjectItem(component, COMP_SINK_SA_ID.c_str())->valuedouble;
+    }
+    if (IsArray(component, COMP_RESOURCE_DESC.c_str())) {
+        cJSON *resourceDescs = cJSON_GetObjectItem(component, COMP_RESOURCE_DESC.c_str());
+        ParseResourceDescFromJson(resourceDescs, config);
+    }
+}
+
+void ComponentLoader::ParseResourceDescFromJson(cJSON *resourceDescs, CompConfig &config)
+{
+    cJSON *resourceDesc;
+    cJSON_ArrayForEach(resourceDesc, resourceDescs) {
+        bool sensitiveValue;
+        cJSON *sensitive = cJSON_GetObjectItem(resourceDesc, COMP_SENSITIVE.c_str());
+        if (cJSON_IsTrue(sensitive)) {
+            sensitiveValue = true;
+        } else {
+            sensitiveValue = false;
+        }
+        ResourceDesc resource;
+        resource.subtype = cJSON_GetObjectItem(resourceDesc, COMP_SUBTYPE.c_str())->valuestring;
+        resource.sensitiveValue = sensitiveValue;
+        config.compResourceDesc.push_back(resource);
+    }
 }
 
 int32_t ComponentLoader::GetLocalDHVersion(DHVersion &dhVersion)

@@ -48,22 +48,25 @@ bool CapabilityUtils::IsCapKeyMatchDeviceId(const std::string &key, const std::s
     return keyDevId.compare(deviceId) == 0;
 }
 
-bool CapabilityUtils::IsCapInfoJsonEqual(const std::string& firstData, const std::string& lastData)
+bool CapabilityUtils::IsCapInfoJsonEqual(const std::string &firstData, const std::string &lastData)
 {
-    nlohmann::json firstJson = nlohmann::json::parse(firstData, nullptr, false);
-    if (firstJson.is_discarded()) {
+    cJSON *firstJson = cJSON_Parse(firstData.c_str());
+    if (firstJson == NULL) {
         DHLOGE("firstData parse failed");
         return false;
     }
     CapabilityInfo firstCapInfo;
     FromJson(firstJson, firstCapInfo);
-    nlohmann::json lastJson = nlohmann::json::parse(lastData, nullptr, false);
-    if (lastJson.is_discarded()) {
+    cJSON *lastJson = cJSON_Parse(lastData.c_str());
+    if (lastJson == NULL) {
         DHLOGE("lastData parse failed");
+        cJSON_Delete(firstJson);
         return false;
     }
     CapabilityInfo lastCapInfo;
     FromJson(lastJson, lastCapInfo);
+    cJSON_Delete(firstJson);
+    cJSON_Delete(lastJson);
     return firstCapInfo.Compare(lastCapInfo);
 }
 } // namespace DistributedHardware

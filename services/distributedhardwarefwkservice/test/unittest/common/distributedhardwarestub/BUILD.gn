@@ -31,7 +31,6 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/task",
     "${services_path}/distributedhardwarefwkservice/include/utils",
-    "//third_party/json/include",
   ]
 }
 
@@ -55,6 +54,7 @@ ohos_unittest("DistributedHardwareStubTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",

@@ -21,7 +21,6 @@ config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
-    "//third_party/json/include",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include/hidumphelper",
   ]
@@ -47,6 +46,7 @@ ohos_unittest("EnabledCompsDumpTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",

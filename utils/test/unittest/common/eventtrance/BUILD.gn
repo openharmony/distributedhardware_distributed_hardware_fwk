@@ -24,7 +24,6 @@ config("module_private_config") {
     "${utils_path}/include/log",
     "${utils_path}/include/eventbus",
     "${utils_path}/test/unittest/common/eventtrance",
-    "//third_party/json/include",
     "${common_path}/log/include",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include/utils",
@@ -47,6 +46,7 @@ ohos_unittest("EventTranceTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",

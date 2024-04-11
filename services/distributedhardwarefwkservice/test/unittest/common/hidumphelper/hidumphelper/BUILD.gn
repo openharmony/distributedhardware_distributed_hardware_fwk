@@ -22,7 +22,6 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "${av_trans_path}/common/include",
-    "//third_party/json/include",
     "${common_path}/utils/include",
     "${utils_path}/include/log",
     "${innerkits_path}/include",
@@ -67,6 +66,7 @@ ohos_unittest("HidumpHelperTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",

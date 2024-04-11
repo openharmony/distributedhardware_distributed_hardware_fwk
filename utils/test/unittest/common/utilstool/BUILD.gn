@@ -42,8 +42,8 @@ ohos_unittest("UtilsToolTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
-    "json:nlohmann_json_static",
   ]
 }
 

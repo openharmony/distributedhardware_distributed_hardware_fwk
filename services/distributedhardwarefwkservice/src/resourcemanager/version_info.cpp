@@ -17,12 +17,13 @@
 
 #include <string>
 
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 #include "anonymous_string.h"
 #include "constants.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "dh_utils_tool.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -31,74 +32,95 @@ namespace DistributedHardware {
 
 int32_t VersionInfo::FromJsonString(const std::string &jsonStr)
 {
-    nlohmann::json jsonObj = nlohmann::json::parse(jsonStr, nullptr, false);
-    if (jsonObj.is_discarded()) {
+    cJSON *jsonObj = cJSON_Parse(jsonStr.c_str());
+    if (jsonObj == NULL) {
         DHLOGE("json string parse failed");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     FromJson(jsonObj, *this);
+    cJSON_Delete(jsonObj);
     return DH_FWK_SUCCESS;
 }
 
 std::string VersionInfo::ToJsonString() const
 {
-    nlohmann::json jsonObj;
+    cJSON *jsonObj = cJSON_CreateObject();
+    if (jsonObj == NULL) {
+        DHLOGE("Failed to create cJSON object.");
+        return "";
+    }
     ToJson(jsonObj, *this);
-    return jsonObj.dump();
+    char *cjson = cJSON_Print(jsonObj);
+    std::string result(cjson);
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+    return result;
 }
 
-void ToJson(nlohmann::json &jsonObject, const VersionInfo &versionInfo)
+void ToJson(cJSON *jsonObject, const VersionInfo &versionInfo)
 {
-    jsonObject[DEV_ID] = versionInfo.deviceId;
-    jsonObject[DH_VER] = versionInfo.dhVersion;
-    nlohmann::json compVers;
+    cJSON_AddStringToObject(jsonObject, DEV_ID.c_str(), versionInfo.deviceId.c_str());
+    cJSON_AddStringToObject(jsonObject, DH_VER.c_str(), versionInfo.dhVersion.c_str());
+
+    cJSON *compVers = cJSON_CreateObject();
+    if (compVers == NULL) {
+        DHLOGE("Failed to create cJSON object.");
+        return;
+    }
     for (const auto &compVersion : versionInfo.compVersions) {
-        nlohmann::json compVer;
-        compVer[NAME] = compVersion.second.name;
-        compVer[TYPE] = compVersion.second.dhType;
-        compVer[HANDLER] = compVersion.second.handlerVersion;
-        compVer[SOURCE_VER] = compVersion.second.sourceVersion;
-        compVer[SINK_VER] = compVersion.second.sinkVersion;
-        compVers.push_back(compVer);
+        cJSON *compVer = cJSON_CreateObject();
+        if (compVer == NULL) {
+            cJSON_Delete(compVers);
+            DHLOGE("Failed to create cJSON object.");
+            return;
+        }
+        cJSON_AddStringToObject(compVer, NAME.c_str(), compVersion.second.name.c_str());
+        cJSON_AddNumberToObject(compVer, TYPE.c_str(), (double)compVersion.second.dhType);
+        cJSON_AddStringToObject(compVer, HANDLER.c_str(), compVersion.second.handlerVersion.c_str());
+        cJSON_AddStringToObject(compVer, SOURCE_VER.c_str(), compVersion.second.sourceVersion.c_str());
+        cJSON_AddStringToObject(compVer, SINK_VER.c_str(), compVersion.second.sinkVersion.c_str());
+        cJSON_AddItemToArray(compVers, compVer);
     }
-    jsonObject[COMP_VER] = compVers;
+    cJSON_AddItemToObject(jsonObject, COMP_VER.c_str(), compVers);
 }
 
-void FromJson(const nlohmann::json &jsonObject, CompVersion &compVer)
+void FromJson(const cJSON *jsonObject, CompVersion &compVer)
 {
-    if (jsonObject.find(NAME) != jsonObject.end() && jsonObject[NAME].is_string()) {
-        compVer.name = jsonObject.at(NAME).get<std::string>();
+    if (IsString(jsonObject, NAME)) {
+        compVer.name = cJSON_GetObjectItem(jsonObject, NAME.c_str())->valuestring;
     }
-    if (jsonObject.find(TYPE) != jsonObject.end() && jsonObject[TYPE].is_number_unsigned() &&
-        jsonObject[TYPE] <= DHType::MAX_DH) {
-        compVer.dhType = jsonObject.at(TYPE).get<DHType>();
+    if (IsUInt32(jsonObject, TYPE) &&
+        (DHType)cJSON_GetObjectItem(jsonObject, TYPE.c_str())->valuedouble <= DHType::MAX_DH) {
+        compVer.dhType = (DHType)(cJSON_GetObjectItem(jsonObject, TYPE.c_str())->valuedouble);
     }
-    if (jsonObject.find(HANDLER) != jsonObject.end() && jsonObject[HANDLER].is_string()) {
-        compVer.handlerVersion = jsonObject.at(HANDLER).get<std::string>();
+    if (IsString(jsonObject, HANDLER)) {
+        compVer.handlerVersion = cJSON_GetObjectItem(jsonObject, HANDLER.c_str())->valuestring;
     }
-    if (jsonObject.find(SOURCE_VER) != jsonObject.end() && jsonObject[SOURCE_VER].is_string()) {
-        compVer.sourceVersion = jsonObject.at(SOURCE_VER).get<std::string>();
+    if (IsString(jsonObject, SOURCE_VER)) {
+        compVer.sourceVersion = cJSON_GetObjectItem(jsonObject, SOURCE_VER.c_str())->valuestring;
     }
-    if (jsonObject.find(SINK_VER) != jsonObject.end() && jsonObject[SINK_VER].is_string()) {
-        compVer.sinkVersion = jsonObject.at(SINK_VER).get<std::string>();
+    if (IsString(jsonObject, SINK_VER)) {
+        compVer.sinkVersion = cJSON_GetObjectItem(jsonObject, SINK_VER.c_str())->valuestring;
     }
 }
 
-void FromJson(const nlohmann::json &jsonObject, VersionInfo &versionInfo)
+void FromJson(const cJSON *jsonObject, VersionInfo &versionInfo)
 {
-    if (jsonObject.find(DEV_ID) != jsonObject.end() && jsonObject[DEV_ID].is_string()) {
-        versionInfo.deviceId = jsonObject.at(DEV_ID).get<std::string>();
+    if (IsString(jsonObject, DEV_ID)) {
+        versionInfo.deviceId = cJSON_GetObjectItem(jsonObject, DEV_ID.c_str())->valuestring;
     }
 
-    if (jsonObject.find(DH_VER) != jsonObject.end() && jsonObject[DH_VER].is_string()) {
-        versionInfo.dhVersion = jsonObject.at(DH_VER).get<std::string>();
+    if (IsString(jsonObject, DH_VER)) {
+        versionInfo.dhVersion = cJSON_GetObjectItem(jsonObject, DH_VER.c_str())->valuestring;
     }
 
-    if (jsonObject.find(COMP_VER) != jsonObject.end()) {
-        for (const auto &compVerObj : jsonObject.at(COMP_VER)) {
-            CompVersion compVer;
-            FromJson(compVerObj, compVer);
-            versionInfo.compVersions.insert(std::pair<DHType, CompVersion>(compVer.dhType, compVer));
+    const cJSON *compVer = cJSON_GetObjectItem(jsonObject, COMP_VER.c_str());
+    if (compVer != NULL) {
+        cJSON *compVerObj;
+        cJSON_ArrayForEach(compVerObj, compVer) {
+            CompVersion compVerValue;
+            FromJson(compVerObj, compVerValue);
+            versionInfo.compVersions.insert(std::pair<DHType, CompVersion>(compVerValue.dhType, compVerValue));
         }
     }
 }

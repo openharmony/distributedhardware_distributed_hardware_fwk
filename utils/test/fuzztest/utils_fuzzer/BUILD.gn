@@ -38,8 +38,8 @@ ohos_fuzztest("UtilsFuzzTest") {
   deps = [ "${utils_path}:distributedhardwareutils" ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
-    "json:nlohmann_json_static",
   ]
 }
 

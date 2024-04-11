@@ -49,26 +49,29 @@ void LowLatencyListener::OnMessage(const DHTopic topic, const std::string& messa
         DHLOGE("Message is invalid");
         return;
     }
-    nlohmann::json jsonObj = nlohmann::json::parse(message, nullptr, false);
-    if (jsonObj.is_discarded()) {
+    cJSON *jsonObj = cJSON_Parse(message.c_str());
+    if (jsonObj == NULL) {
         DHLOGE("jsonStr parse failed");
         return;
     }
     if (!IsUInt32(jsonObj, DH_TYPE)) {
         DHLOGE("The DH_TYPE key is invalid");
+        cJSON_Delete(jsonObj);
         return;
     }
     if (!IsBool(jsonObj, LOW_LATENCY_ENABLE)) {
         DHLOGE("The LOW_LATENCY_ENABLE key is invalid");
+        cJSON_Delete(jsonObj);
         return;
     }
-    DHType dhType = jsonObj[DH_TYPE];
-    bool isEnable = jsonObj[LOW_LATENCY_ENABLE];
-    if (isEnable) {
+    DHType dhType = (DHType)cJSON_GetObjectItem(jsonObj, DH_TYPE.c_str())->valuedouble;
+    cJSON *isEnable = cJSON_GetObjectItem(jsonObj, LOW_LATENCY_ENABLE.c_str());
+    if (cJSON_IsTrue(isEnable)) {
         LowLatency::GetInstance().EnableLowLatency(dhType);
     } else {
         LowLatency::GetInstance().DisableLowLatency(dhType);
     }
+    cJSON_Delete(jsonObj);
 #endif
 }
 

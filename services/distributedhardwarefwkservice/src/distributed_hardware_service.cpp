@@ -23,7 +23,7 @@
 #include "ipc_types.h"
 #include "ipublisher_listener.h"
 #include "iservice_registry.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
 
@@ -180,17 +180,19 @@ std::string DistributedHardwareService::QueryLocalSysSpec(const QueryLocalSysSpe
 
 std::string DistributedHardwareService::QueryDhSysSpec(const std::string &targetKey, std::string &attrs)
 {
-    nlohmann::json attrJson = nlohmann::json::parse(attrs, nullptr, false);
-    if (attrJson.is_discarded()) {
+    cJSON *attrJson = cJSON_Parse(attrs.c_str());
+    if (attrJson == NULL) {
         DHLOGE("attrs json is invalid, attrs: %{public}s", attrs.c_str());
         return "";
     }
-
     if (!IsString(attrJson, targetKey)) {
         DHLOGE("Attrs Json not contains key: %{public}s", targetKey.c_str());
+        cJSON_Delete(attrJson);
         return "";
     }
-    return attrJson.at(targetKey).get<std::string>();
+    std::string result = cJSON_GetObjectItem(attrJson, targetKey.c_str())->valuestring;
+    cJSON_Delete(attrJson);
+    return result;
 }
 
 int32_t DistributedHardwareService::InitializeAVCenter(const TransRole &transRole, int32_t &engineId)

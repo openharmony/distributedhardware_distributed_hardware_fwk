@@ -33,7 +33,6 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/src",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//third_party/json/include",
   ]
 }
 
@@ -51,6 +50,7 @@ ohos_unittest("ComponentLoaderTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "config_policy:configpolicy_util",
     "hilog:libhilog",
     "hitrace:hitrace_meter",

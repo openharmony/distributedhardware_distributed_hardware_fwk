@@ -38,6 +38,7 @@
         "hitrace",
         "c_utils",
         "hilog",
+        "cJSON",
         "samgr",
         "ipc",
         "safwk",

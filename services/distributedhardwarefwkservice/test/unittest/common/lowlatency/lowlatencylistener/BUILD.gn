@@ -21,7 +21,6 @@ config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
-    "//third_party/json/include",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include/lowlatency",
     "${services_path}/distributedhardwarefwkservice/include/utils",
@@ -48,6 +47,7 @@ ohos_unittest("LowLatencyListenerTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",

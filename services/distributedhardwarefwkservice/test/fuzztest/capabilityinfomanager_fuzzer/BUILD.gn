@@ -48,6 +48,7 @@ ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "device_manager:devicemanagersdk",
     "init:libbegetutil",

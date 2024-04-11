@@ -47,6 +47,7 @@ ohos_shared_library("hardwaremanager") {
   external_deps = [
     "access_token:libtokenid_sdk",
     "bundle_framework:appexecfwk_base",
+    "cJSON:cjson",
     "hilog:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",

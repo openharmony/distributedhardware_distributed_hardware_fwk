@@ -19,7 +19,6 @@ module_out_path = "distributed_hardware_fwk/component_privacy_test"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "//third_party/json/include",
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${utils_path}/include/eventbus",
@@ -48,6 +47,7 @@ ohos_unittest("ComponentPrivacyTest") {
 
   external_deps = [
     "ability_runtime:ability_manager",
+    "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",

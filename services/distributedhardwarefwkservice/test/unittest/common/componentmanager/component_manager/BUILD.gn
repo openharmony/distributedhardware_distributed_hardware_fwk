@@ -36,7 +36,6 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/task",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "//third_party/json/include",
   ]
 }
 
@@ -63,6 +62,7 @@ ohos_unittest("ComponentManagerTest") {
     "access_token:libaccesstoken_sdk",
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
+    "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",

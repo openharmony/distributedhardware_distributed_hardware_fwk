@@ -19,7 +19,7 @@
 #include "ipc_skeleton.h"
 #include "js_native_api.h"
 #include "tokenid_kit.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_fwk_kit.h"
 
