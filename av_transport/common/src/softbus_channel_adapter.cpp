@@ -115,6 +115,7 @@ SoftbusChannelAdapter::SoftbusChannelAdapter()
     sessListener_.OnBytes = OnBytesReceived;
     sessListener_.OnStream = OnStreamReceived;
     sessListener_.OnMessage = nullptr;
+    sessListener_.OnQos = nullptr;
 }
 
 SoftbusChannelAdapter::~SoftbusChannelAdapter()
