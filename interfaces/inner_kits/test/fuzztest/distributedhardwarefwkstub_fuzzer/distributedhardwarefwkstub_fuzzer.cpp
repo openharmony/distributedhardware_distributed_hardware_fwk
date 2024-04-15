@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,55 +13,59 @@
  * limitations under the License.
  */
 
-#include "distributed_input_transport_base_fuzzer.h"
+#include "distributedhardwarefwkstub_fuzzer.h"
 
+#include <algorithm>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
-#include <functional>
-#include <iostream>
+#include <map>
+#include <string>
 #include <thread>
 #include <unistd.h>
 
-#include <refbase.h>
-
-#include "constants_dinput.h"
-#include "distributed_input_transport_base.h"
+#include "distributed_hardware_fwk_kit.h"
+#include "distributed_hardware_errno.h"
+#include "publisher_listener_stub.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-void StartSessionFuzzTest(const uint8_t *data, size_t size)
-{
-    if ((data == nullptr) || (size < sizeof(int32_t))) {
+
+class MyPublisherListenerStub : public PublisherListenerStub {
+public:
+    void OnMessage(const DHTopic topic, const std::string& message) override
+    {
         return;
     }
+};
 
-    std::string remoteDevId(reinterpret_cast<const char*>(data), size);
-
-    const uint32_t sleepTimeUs = 100 * 1000;
-    usleep(sleepTimeUs);
-    DistributedInput::DistributedInputTransportBase::GetInstance().StartSession(remoteDevId);
-    DistributedInput::DistributedInputTransportBase::GetInstance().StopSession(remoteDevId);
-}
-
-void OnBytesReceivedFuzzTest(const uint8_t *data, size_t size)
+void DistributedHardwareFwkStubFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size < sizeof(int32_t))) {
+    if ((data == nullptr) || (size == 0)) {
         return;
     }
-
-    int32_t sessionId = *(reinterpret_cast<const int32_t*>(data));
-    const char *msg = reinterpret_cast<const char *>(data);
-    uint32_t dataLen = static_cast<const uint32_t>(size);
-    DistributedInput::DistributedInputTransportBase::GetInstance().OnBytesReceived(sessionId, msg, dataLen);
+    MessageParcel pdata;
+    MessageParcel reply;
+    MessageOption option;
+    uint32_t code = *(reinterpret_cast<const uint32_t*>(data));
+    pdata.WriteInterfaceToken(PublisherListenerStub::GetDescriptor());
+    if (code == (uint32_t)IPublisherListener::Message::ON_MESSAGE) {
+        uint32_t tag = *(reinterpret_cast<const uint32_t*>(data));
+        std::string value(reinterpret_cast<const char*>(data), size);
+        pdata.WriteUint32(tag);
+        pdata.WriteString(value);
+    }
+    sptr<PublisherListenerStub> publisherListenerStub(new (std::nothrow)
+        MyPublisherListenerStub());
+    publisherListenerStub->OnRemoteRequest(code, pdata, reply, option);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
 
 /* Fuzzer entry point */
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DistributedHardware::StartSessionFuzzTest(data, size);
-    OHOS::DistributedHardware::OnBytesReceivedFuzzTest(data, size);
+    OHOS::DistributedHardware::DistributedHardwareFwkStubFuzzTest(data, size);
     return 0;
 }
