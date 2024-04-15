@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,10 +20,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#define private public
 #include "low_latency_listener.h"
 #include "low_latency_timer.h"
-#undef private
 #include "distributed_hardware_errno.h"
 
 namespace OHOS {

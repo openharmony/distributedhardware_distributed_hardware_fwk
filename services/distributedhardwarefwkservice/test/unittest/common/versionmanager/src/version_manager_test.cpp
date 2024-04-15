@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,9 +15,7 @@
 
 #include "version_manager_test.h"
 
-#define private public
 #include "component_loader.h"
-#undef private
 #include "version_manager.h"
 
 using namespace testing::ext;

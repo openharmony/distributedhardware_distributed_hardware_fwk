@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,9 +17,8 @@
 #define OHOS_DISTRIBUTED_HARDWARE_COMPONENT_LOADER_TEST_H
 
 #include <gtest/gtest.h>
-#define private public
+
 #include "componentloader/component_loader.cpp"
-#undef private
 namespace OHOS {
 namespace DistributedHardware {
 class ComponentLoaderTest : public testing::Test {
