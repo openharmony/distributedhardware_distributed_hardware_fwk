@@ -1,0 +1,87 @@
+# Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#####################hydra-fuzz###################
+import("//build/config/features.gni")
+import("//build/test.gni")
+import(
+    "//foundation/distributedhardware/distributed_input/distributedinput.gni")
+
+##############################fuzztest##########################################
+ohos_fuzztest("DistributedInputTransportBaseFuzzTest") {
+  module_out_path = fuzz_test_path
+
+  fuzz_config_file = "${distributedinput_path}/test/fuzztest/distributedinputtransportbase_fuzzer"
+
+  include_dirs = [
+    "${av_transport_path}/common/include",
+    "${services_source_path}/transport/include",
+    "${distributedinput_path}/services/transportbase/include",
+    "${common_path}/include",
+    "${fwk_interfaces_path}/include",
+    "${service_common}/include",
+    "${services_source_path}/inputinject/include",
+    "${services_source_path}/transport/include",
+    "${dfx_utils_path}/include",
+    "${utils_path}/include",
+    "${frameworks_path}/include",
+    "${distributedinput_path}/inputdevicehandler/include",
+  ]
+
+  cflags = [
+    "-g",
+    "-O0",
+    "-Wno-unused-variable",
+    "-fno-omit-frame-pointer",
+  ]
+
+  sources = [
+    "${distributedinput_path}/services/transportbase/src/distributed_input_transport_base.cpp",
+    "distributed_input_transport_base_fuzzer.cpp",
+  ]
+
+  deps = [
+    "${dfx_utils_path}:libdinput_dfx_utils",
+    "${distributedinput_path}/services/transportbase:libdinput_trans_base",
+    "${services_source_path}/inputinject:libdinput_inject",
+    "${utils_path}:libdinput_utils",
+    "//third_party/libevdev:libevdev",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "distributed_hardware_fwk:distributedhardwareutils",
+    "distributed_hardware_fwk:libdhfwk_sdk",
+    "dsoftbus:softbus_client",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "hitrace:hitrace_meter",
+    "ipc:ipc_core",
+    "json:nlohmann_json_static",
+    "safwk:system_ability_fwk",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"DistributedInputTransportBaseFuzzTest\"",
+    "LOG_DOMAIN=0xD004120",
+  ]
+}
+
+###############################################################################
+group("fuzztest") {
+  testonly = true
+
+  deps = [ ":DistributedInputTransportBaseFuzzTest" ]
+}
+###############################################################################
