@@ -222,7 +222,11 @@ void DumpBufferToFile(std::string fileName, uint8_t *buffer, int32_t bufSize)
         AVTRANS_LOGE("input fileName is empty.");
         return;
     }
-    std::ofstream ofs(fileName, std::ios::binary | std::ios::out | std::ios::app);
+    char path[PATH_MAX + 1] = {0x00};
+    if (fileName.length() > PATH_MAX || realpath(fileName.c_str(), path) == nullptr) {
+        return;
+    }
+    std::ofstream ofs(path, std::ios::binary | std::ios::out | std::ios::app);
     if (!ofs.is_open()) {
         AVTRANS_LOGE("open file failed.");
         return;
@@ -275,6 +279,9 @@ void GenerateAdtsHeader(unsigned char* adtsHeader, uint32_t packetLen, uint32_t 
     uint32_t freqIdx = mapSampleRateToFreIndex[sampleRate]; // 48KHz : 3
     adtsHeader[0] = (unsigned char) 0xFF;
     adtsHeader[1] = (unsigned char) 0xF9;
+    if (profile < 1) {
+        return;
+    }
     adtsHeader[2] = (unsigned char) (((profile - 1) << 6) + (freqIdx << 2) + (channels >> 2));
     adtsHeader[3] = (unsigned char) (((channels & 3) << 6) + (packetLen >> 11));
     adtsHeader[4] = (unsigned char) ((packetLen & 0x7FF) >> 3);

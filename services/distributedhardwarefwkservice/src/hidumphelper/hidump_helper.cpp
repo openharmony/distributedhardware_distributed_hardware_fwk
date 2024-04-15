@@ -147,10 +147,11 @@ int32_t HidumpHelper::ShowAllLoadedComps(std::string &result)
                 sourceVersion = iter->second.sourceVersion;
             }
             result.append("\n{\n    DHType         : ").append(dhTypeStr);
-            result.append("\n    Version        : ").append(sourceVersion);
-            result.append("\n},");
+            result.append("\n    Version        : ").append(sourceVersion).append("\n},");
         }
-        result.replace(result.size() - 1, 1, "\n");
+        if (result.size() >= 1) {
+            result.replace(result.size() - 1, 1, "\n");
+        }
     }
 
     result.append("\nSink:");
@@ -167,10 +168,11 @@ int32_t HidumpHelper::ShowAllLoadedComps(std::string &result)
                 sinkVersion = iter->second.sinkVersion;
             }
             result.append("\n{\n    DHType         : ").append(dhTypeStr);
-            result.append("\n    Version        : ").append(sinkVersion);
-            result.append("\n},");
+            result.append("\n    Version        : ").append(sinkVersion).append("\n},");
         }
-        result.replace(result.size() - 1, 1, "\n");
+        if (result.size() >= 1) {
+            result.replace(result.size() - 1, 1, "\n");
+        }
     }
     return DH_FWK_SUCCESS;
 }
@@ -200,6 +202,9 @@ int32_t HidumpHelper::ShowAllEnabledComps(std::string &result)
         result.append("\n    DHId           : ");
         result.append(GetAnonyString(info.dhId_));
         result.append("\n},");
+    }
+    if (result.size() < 1) {
+        return DH_FWK_SUCCESS;
     }
     result.replace(result.size() - 1, 1, "\n");
     return DH_FWK_SUCCESS;
@@ -242,6 +247,9 @@ int32_t HidumpHelper::ShowAllTaskInfos(std::string &result)
         result.append("]\n");
         result.append("},");
     }
+    if (result.size() < 1) {
+        return DH_FWK_SUCCESS;
+    }
     result.replace(result.size() - 1, 1, "\n");
     return DH_FWK_SUCCESS;
 }
@@ -277,6 +285,9 @@ int32_t HidumpHelper::ShowAllCapabilityInfos(std::string &result)
         result.append("\n    DHAttrs        :\n");
         result.append(info.GetDHAttrs());
         result.append("\n},");
+    }
+    if (result.size() < 1) {
+        return DH_FWK_SUCCESS;
     }
     result.replace(result.size() - 1, 1, "\n");
     return DH_FWK_SUCCESS;

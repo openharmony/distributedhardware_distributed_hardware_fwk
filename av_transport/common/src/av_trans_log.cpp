@@ -60,6 +60,10 @@ std::string GetAnonyInt32(const int32_t value)
         return nullString;
     }
     size_t length = strlen(tempBuffer);
+    if (length <= 1) {
+        std::string nullString("");
+        return nullString;
+    }
     for (size_t i = 1; i <= length - 1; i++) {
         tempBuffer[i] = '*';
     }

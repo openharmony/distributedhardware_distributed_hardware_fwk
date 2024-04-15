@@ -91,7 +91,6 @@ int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUni
 
     void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
     if (addr == MAP_FAILED) {
-        free(addr);
         addr = nullptr;
         AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
         return ERR_DH_AVT_SHARED_MEMORY_FAILED;
@@ -133,7 +132,6 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
 
     void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
     if (addr == MAP_FAILED) {
-        free(addr);
         addr = nullptr;
         AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
         return ERR_DH_AVT_SHARED_MEMORY_FAILED;
@@ -179,7 +177,6 @@ int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frame
 
     void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
     if (addr == MAP_FAILED) {
-        free(addr);
         addr = nullptr;
         AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
         return ERR_DH_AVT_SHARED_MEMORY_FAILED;
@@ -210,7 +207,6 @@ int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &fra
 
     void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
     if (addr == MAP_FAILED) {
-        free(addr);
         addr = nullptr;
         AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
         return ERR_DH_AVT_SHARED_MEMORY_FAILED;
@@ -242,7 +238,6 @@ int32_t ResetSharedMemory(const AVTransSharedMemory &memory)
 
     void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
     if (addr == MAP_FAILED) {
-        free(addr);
         addr = nullptr;
         AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
         return ERR_DH_AVT_SHARED_MEMORY_FAILED;
