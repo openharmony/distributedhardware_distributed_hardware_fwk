@@ -48,10 +48,10 @@ ohos_unittest("DsoftbusInputAudioPluginTest") {
 
   external_deps += [
     "bounds_checking_function:libsec_shared",
+    "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "hilog:libhilog",
-    "json:nlohmann_json_static",
   ]
 
   cflags = [

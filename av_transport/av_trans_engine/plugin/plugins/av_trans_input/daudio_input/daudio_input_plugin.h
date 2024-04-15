@@ -32,7 +32,6 @@
 #include "foundation/osal/thread/mutex.h"
 #include "foundation/osal/thread/scoped_lock.h"
 #include "foundation/osal/thread/task.h"
-#include "nlohmann/json.hpp"
 #include "plugin_manager.h"
 #include "plugin_types.h"
 
@@ -42,7 +41,6 @@ namespace DistributedHardware {
 using namespace OHOS::Media;
 using namespace OHOS::Media::Plugin;
 
-using json = nlohmann::json;
 using AVDataCallback = std::function<void(std::shared_ptr<Plugin::Buffer>)>;
 
 class DaudioInputPlugin : public AvTransInputPlugin {

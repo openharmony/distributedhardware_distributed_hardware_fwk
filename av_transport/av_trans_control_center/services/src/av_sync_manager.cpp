@@ -15,8 +15,7 @@
 
 #include "av_sync_manager.h"
 
-#include <set>
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 #include "av_trans_control_center.h"
 #include "av_trans_log.h"
@@ -168,29 +167,86 @@ bool AVSyncManager::MergeGroupInfo(std::string &syncGroupInfo)
     }
 
     std::set<std::string> groupInfoSet;
+    if (!MergeGroupInfoInner(groupInfoSet)) {
+        return false;
+    }
+    std::string info = GetsyncGroupInfo(groupInfoSet);
+    if (info == "") {
+        return false;
+    }
+    syncGroupInfo = info;
+    return true;
+}
+
+bool AVSyncManager::MergeGroupInfoInner(std::set<std::string> &groupInfoSet)
+{
     for (const auto &item : streamInfoList_) {
         if ((item.sceneType == SCENE_TYPE_D_MIC) || (item.sceneType == SCENE_TYPE_D_SPEAKER)) {
-            nlohmann::json masterStr;
-            masterStr[KEY_SCENE_TYPE] = item.sceneType;
-            masterStr[KEY_PEER_DEV_ID] = item.peerDevId;
-            masterStr[KEY_START_FRAME_NUM] = 0;
-            masterStr[KEY_AV_SYNC_FLAG] = AvSyncFlag::MASTER;
-            groupInfoSet.insert(masterStr.dump());
+            cJSON *masterStr = cJSON_CreateObject();
+            if (masterStr == nullptr) {
+                return false;
+            }
+            cJSON_AddStringToObject(masterStr, KEY_SCENE_TYPE.c_str(), item.sceneType.c_str());
+            cJSON_AddStringToObject(masterStr, KEY_PEER_DEV_ID.c_str(), item.peerDevId.c_str());
+            cJSON_AddNumberToObject(masterStr, KEY_START_FRAME_NUM.c_str(), 0);
+            cJSON_AddNumberToObject(masterStr, KEY_AV_SYNC_FLAG.c_str(), static_cast<uint32_t>(AvSyncFlag::MASTER));
+            char *jsonstr = cJSON_Print(masterStr);
+            if (jsonstr == nullptr) {
+                cJSON_Delete(masterStr);
+                return false;
+            }
+            groupInfoSet.insert(std::string(jsonstr));
+            cJSON_Delete(masterStr);
+            cJSON_free(jsonstr);
         } else if ((item.sceneType == SCENE_TYPE_D_SCREEN) || (item.sceneType == SCENE_TYPE_D_CAMERA_STR)) {
-            nlohmann::json slaveStr;
-            slaveStr[KEY_SCENE_TYPE] = item.sceneType;
-            slaveStr[KEY_PEER_DEV_ID] = item.peerDevId;
-            slaveStr[KEY_START_FRAME_NUM] = 0;
-            slaveStr[KEY_AV_SYNC_FLAG] = AvSyncFlag::SLAVE;
-            groupInfoSet.insert(slaveStr.dump());
+            cJSON *slaveStr = cJSON_CreateObject();
+            if (slaveStr == nullptr) {
+                return false;
+            }
+            cJSON_AddStringToObject(slaveStr, KEY_SCENE_TYPE.c_str(), item.sceneType.c_str());
+            cJSON_AddStringToObject(slaveStr, KEY_PEER_DEV_ID.c_str(), item.peerDevId.c_str());
+            cJSON_AddNumberToObject(slaveStr, KEY_START_FRAME_NUM.c_str(), 0);
+            cJSON_AddNumberToObject(slaveStr, KEY_AV_SYNC_FLAG.c_str(), static_cast<uint32_t>(AvSyncFlag::SLAVE));
+            char *jsonstr = cJSON_Print(slaveStr);
+            if (jsonstr == nullptr) {
+                cJSON_Delete(slaveStr);
+                return false;
+            }
+            groupInfoSet.insert(std::string(jsonstr));
+            cJSON_Delete(slaveStr);
+            cJSON_free(jsonstr);
         } else {
             continue;
         }
     }
-
-    nlohmann::json jsonStr = { { KEY_MY_DEV_ID, "" }, { KEY_GROUP_INFO_ARRAY, groupInfoSet }, };
-    syncGroupInfo = jsonStr.dump();
     return true;
+}
+
+std::string AVSyncManager::GetsyncGroupInfo(std::set<std::string> &groupInfoSet)
+{
+    cJSON *jsonStr = cJSON_CreateObject();
+    if (jsonStr == nullptr) {
+        return "";
+    }
+    cJSON_AddStringToObject(jsonStr, KEY_MY_DEV_ID.c_str(), "");
+    cJSON *array = cJSON_CreateArray();
+    if (array == nullptr) {
+        cJSON_Delete(jsonStr);
+        return "";
+    }
+    for (auto &info : groupInfoSet) {
+        cJSON_AddItemToArray(array, cJSON_CreateString(info.c_str()));
+    }
+    cJSON_AddItemToObject(jsonStr, KEY_GROUP_INFO_ARRAY.c_str(), array);
+    char *data = cJSON_Print(jsonStr);
+    if (data == nullptr) {
+        cJSON_Delete(jsonStr);
+        return "";
+    }
+    std::string info = std::string(data);
+    cJSON_free(data);
+    cJSON_Delete(jsonStr);
+    return info;
 }
 }
 }

@@ -22,7 +22,6 @@ config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
-    "//third_party/json/include",
     "${handler_path}/histreamer_ability_querier/include",
     "${engine_path}/av_sender/include",
     "${engine_path}/av_receiver/include",
@@ -55,8 +54,8 @@ ohos_unittest("HistreamerAbilityQuerierTest") {
 
   external_deps += [
     "bounds_checking_function:libsec_shared",
+    "cJSON:cjson",
     "c_utils:utils",
-    "json:nlohmann_json_static",
   ]
 
   defines = [

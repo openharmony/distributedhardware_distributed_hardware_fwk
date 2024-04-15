@@ -31,7 +31,6 @@
 #include "av_trans_utils.h"
 #include "avtrans_output_plugin.h"
 #include "foundation/osal/thread/task.h"
-#include "nlohmann/json.hpp"
 #include "plugin_manager.h"
 #include "plugin_types.h"
 #include "dscreen_output_controller.h"
@@ -44,7 +43,6 @@ namespace DistributedHardware {
 using namespace OHOS::Media;
 using namespace OHOS::Media::Plugin;
 
-using json = nlohmann::json;
 using AVDataCallback = std::function<void(std::shared_ptr<Plugin::Buffer>)>;
 
 class DscreenOutputPlugin : public AvTransOutputPlugin, public ControllableOutput,

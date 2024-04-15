@@ -48,6 +48,7 @@ ohos_fuzztest("AVTransCallbackSetSharedMemoryFuzzTest") {
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",

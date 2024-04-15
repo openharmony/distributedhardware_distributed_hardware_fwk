@@ -28,7 +28,6 @@
 #include "av_trans_types.h"
 #include "av_trans_utils.h"
 #include "avtrans_input_plugin.h"
-#include "nlohmann/json.hpp"
 #include "plugin_manager.h"
 #include "plugin_types.h"
 

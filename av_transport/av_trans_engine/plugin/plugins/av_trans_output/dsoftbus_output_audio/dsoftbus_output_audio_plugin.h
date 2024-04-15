@@ -32,7 +32,7 @@
 #include "av_trans_types.h"
 #include "av_trans_utils.h"
 #include "avtrans_output_plugin.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 #include "foundation/osal/thread/task.h"
 #include "plugin_types.h"
 #include "plugin_manager.h"
@@ -43,7 +43,6 @@ namespace DistributedHardware {
 
 using namespace Media::Plugin;
 
-using json = nlohmann::json;
 using AVDataCallback = std::function<void(std::shared_ptr<Buffer>)>;
 
 class DsoftbusOutputAudioPlugin : public AvTransOutputPlugin,

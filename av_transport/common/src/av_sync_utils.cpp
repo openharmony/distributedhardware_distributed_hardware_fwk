@@ -19,7 +19,7 @@
 #include <securec.h>
 #include <unistd.h>
 #include "ashmem.h"
-#include "nlohmann/json.hpp"
+#include "cJSON.h"
 
 #include "av_trans_constants.h"
 #include "av_trans_errno.h"
@@ -261,36 +261,50 @@ bool IsInValidClockUnit(const AVSyncClockUnit &clockUnit)
 
 std::string MarshalSharedMemory(const AVTransSharedMemory &memory)
 {
-    nlohmann::json memoryJson;
+    cJSON *memoryJson = cJSON_CreateObject();
+    if (memoryJson == nullptr) {
+        return "";
+    }
+    cJSON_AddNumberToObject(memoryJson, KEY_SHARED_MEM_FD.c_str(), memory.fd);
+    cJSON_AddNumberToObject(memoryJson, KEY_SHARED_MEM_SIZE.c_str(), memory.size);
+    cJSON_AddStringToObject(memoryJson, KEY_SHARED_MEM_NAME.c_str(), memory.name.c_str());
 
-    memoryJson[KEY_SHARED_MEM_FD] = memory.fd;
-    memoryJson[KEY_SHARED_MEM_SIZE] = memory.size;
-    memoryJson[KEY_SHARED_MEM_NAME] = memory.name;
-
-    return memoryJson.dump();
+    char *data = cJSON_Print(memoryJson);
+    if (data == nullptr) {
+        cJSON_Delete(memoryJson);
+        return "";
+    }
+    std::string jsonstr(data);
+    cJSON_free(data);
+    cJSON_Delete(memoryJson);
+    return jsonstr;
 }
 
 AVTransSharedMemory UnmarshalSharedMemory(const std::string &jsonStr)
 {
-    nlohmann::json paramJson = nlohmann::json::parse(jsonStr, nullptr, false);
-    if (paramJson.is_discarded()) {
+    cJSON *paramJson = cJSON_Parse(jsonStr.c_str());
+    if (paramJson == nullptr) {
         return AVTransSharedMemory{0, 0, ""};
     }
-
-    if (!paramJson.contains(KEY_SHARED_MEM_FD) || !paramJson.contains(KEY_SHARED_MEM_SIZE) ||
-        !paramJson.contains(KEY_SHARED_MEM_NAME)) {
+    cJSON *fdObj = cJSON_GetObjectItemCaseSensitive(paramJson, KEY_SHARED_MEM_FD.c_str());
+    if (fdObj == nullptr || !cJSON_IsNumber(fdObj)) {
+        cJSON_Delete(paramJson);
         return AVTransSharedMemory{0, 0, ""};
     }
-
-    if (!paramJson[KEY_SHARED_MEM_FD].is_number_integer() || !paramJson[KEY_SHARED_MEM_SIZE].is_number_integer() ||
-        !paramJson[KEY_SHARED_MEM_NAME].is_string()) {
+    int32_t fd = fdObj->valueint;
+    cJSON *sizeObj = cJSON_GetObjectItemCaseSensitive(paramJson, KEY_SHARED_MEM_SIZE.c_str());
+    if (sizeObj == nullptr || !cJSON_IsNumber(sizeObj)) {
+        cJSON_Delete(paramJson);
         return AVTransSharedMemory{0, 0, ""};
     }
-
-    int32_t fd = paramJson[KEY_SHARED_MEM_FD].get<int32_t>();
-    int32_t size = paramJson[KEY_SHARED_MEM_SIZE].get<int32_t>();
-    std::string name = paramJson[KEY_SHARED_MEM_NAME].get<std::string>();
-
+    int32_t size = sizeObj->valueint;
+    cJSON *nameObj = cJSON_GetObjectItemCaseSensitive(paramJson, KEY_SHARED_MEM_NAME.c_str());
+    if (nameObj == nullptr || !cJSON_IsNumber(nameObj)) {
+        cJSON_Delete(paramJson);
+        return AVTransSharedMemory{0, 0, ""};
+    }
+    std::string name = nameObj->valuestring;
+    cJSON_Delete(paramJson);
     return AVTransSharedMemory{ fd, size, name };
 }
 

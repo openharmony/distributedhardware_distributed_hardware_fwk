@@ -70,26 +70,42 @@ OHOS::Media::Plugin::MediaType TransName2MediaType(const std::string &ownerName)
 
 std::string BuildChannelDescription(const std::string &ownerName, const std::string &peerDevId)
 {
-    nlohmann::json descJson;
-    descJson[KEY_OWNER_NAME] = ownerName;
-    descJson[KEY_PEER_DEVID] = peerDevId;
-    return descJson.dump();
+    cJSON *descJson = cJSON_CreateObject();
+    if (descJson == nullptr) {
+        return "";
+    }
+    cJSON_AddStringToObject(descJson, KEY_OWNER_NAME.c_str(), ownerName.c_str());
+    cJSON_AddStringToObject(descJson, KEY_PEER_DEVID.c_str(), peerDevId.c_str());
+    char *data = cJSON_Print(descJson);
+    if (data == nullptr) {
+        cJSON_Delete(descJson);
+        return "";
+    }
+    std::string jsonstr(data);
+    cJSON_Delete(descJson);
+    cJSON_free(data);
+    return jsonstr;
 }
 
 void ParseChannelDescription(const std::string &descJsonStr, std::string &ownerName, std::string &peerDevId)
 {
-    nlohmann::json descJson = nlohmann::json::parse(descJsonStr, nullptr, false);
-    if (descJson.is_discarded()) {
-        return;
+    cJSON *descJson = cJSON_Parse(descJsonStr.c_str());
+    if (descJson == nullptr) {
+        return ;
     }
-    if (!descJson.contains(KEY_OWNER_NAME) || !descJson.contains(KEY_PEER_DEVID)) {
-        return;
+    cJSON *nameObj = cJSON_GetObjectItemCaseSensitive(descJson, KEY_OWNER_NAME.c_str());
+    if (nameObj == nullptr || !IsString(descJson, KEY_OWNER_NAME)) {
+        cJSON_Delete(descJson);
+        return ;
     }
-    if (!IsString(descJson, KEY_OWNER_NAME) || !IsString(descJson, KEY_PEER_DEVID)) {
-        return;
+    cJSON *devObj = cJSON_GetObjectItemCaseSensitive(descJson, KEY_PEER_DEVID.c_str());
+    if (devObj == nullptr || !IsString(descJson, KEY_PEER_DEVID)) {
+        cJSON_Delete(descJson);
+        return ;
     }
-    ownerName = descJson[KEY_OWNER_NAME].get<std::string>();
-    peerDevId = descJson[KEY_PEER_DEVID].get<std::string>();
+    ownerName = nameObj->valuestring;
+    peerDevId = devObj->valuestring;
+    cJSON_Delete(descJson);
 }
 
 std::shared_ptr<AVBuffer> TransBuffer2HiSBuffer(const std::shared_ptr<AVTransBuffer>& transBuffer)
@@ -235,20 +251,26 @@ void DumpBufferToFile(std::string fileName, uint8_t *buffer, int32_t bufSize)
     ofs.close();
 }
 
-bool IsUInt32(const nlohmann::json &jsonObj, const std::string &key)
+bool IsUInt32(const cJSON *jsonObj, const std::string &key)
 {
-    return jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT32_MAX;
+    cJSON *keyObj = cJSON_GetObjectItemCaseSensitive(jsonObj, key.c_str());
+    return (keyObj != nullptr) && cJSON_IsNumber(keyObj) &&
+        static_cast<uint32_t>(keyObj->valueint) <= UINT32_MAX;
 }
 
-bool IsInt64(const nlohmann::json &jsonObj, const std::string &key)
+bool IsInt64(const cJSON *jsonObj, const std::string &key)
 {
-    return jsonObj.contains(key) && jsonObj[key].is_number_integer() && INT64_MIN <= jsonObj[key] &&
-        jsonObj[key] <= INT64_MAX;
+    cJSON *keyObj = cJSON_GetObjectItemCaseSensitive(jsonObj, key.c_str());
+    return (keyObj != nullptr) && cJSON_IsNumber(keyObj) &&
+        static_cast<int64_t>(keyObj->valueint) <= INT64_MAX &&
+        static_cast<int64_t>(keyObj->valueint) >= INT64_MIN;
 }
 
-bool IsString(const nlohmann::json &jsonObj, const std::string &key)
+bool IsString(const cJSON *jsonObj, const std::string &key)
 {
-    return jsonObj.contains(key) && jsonObj[key].is_string() && jsonObj[key].size() <= MAX_MESSAGES_LEN;
+    cJSON *keyObj = cJSON_GetObjectItemCaseSensitive(jsonObj, key.c_str());
+    return (keyObj != nullptr) && cJSON_IsString(keyObj) &&
+        strlen(cJSON_GetStringValue(keyObj)) <= MAX_MESSAGES_LEN;
 }
 
 int64_t GetCurrentTime()

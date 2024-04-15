@@ -71,24 +71,30 @@ static const std::vector<std::string> VIDEO_DECODER_WANT = {
     "HdiCodecAdapter.OMX.rk.video_decoder.avc"
     };
 
-bool IsString(const nlohmann::json &jsonObj, const std::string &key)
+bool IsString(const cJSON *jsonObj, const std::string &key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_string() && jsonObj[key].size() <= MAX_MESSAGES_LEN;
+    cJSON *keyObj = cJSON_GetObjectItemCaseSensitive(jsonObj, key.c_str());
+    bool res = (keyObj != nullptr) && cJSON_IsString(keyObj) &&
+        strlen(cJSON_GetStringValue(keyObj)) <= MAX_MESSAGES_LEN;
     if (!res) {
         AVTRANS_LOGE("the key %{public}s in jsonObj is invalid.", key.c_str());
     }
     return res;
 }
 
-bool IsUInt8(const nlohmann::json &jsonObj, const std::string &key)
+bool IsUInt8(const cJSON *jsonObj, const std::string &key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT8_MAX;
+    cJSON *keyObj = cJSON_GetObjectItemCaseSensitive(jsonObj, key.c_str());
+    bool res = (keyObj != nullptr) && cJSON_IsNumber(keyObj) &&
+        static_cast<uint8_t>(keyObj->valueint) <= UINT8_MAX;
     return res;
 }
 
-bool IsUInt32(const nlohmann::json &jsonObj, const std::string &key)
+bool IsUInt32(const cJSON *jsonObj, const std::string &key)
 {
-    bool res = jsonObj.contains(key) && jsonObj[key].is_number_unsigned() && jsonObj[key] <= UINT32_MAX;
+    cJSON *keyObj = cJSON_GetObjectItemCaseSensitive(jsonObj, key.c_str());
+    bool res = (keyObj != nullptr) && cJSON_IsNumber(keyObj) &&
+        static_cast<uint32_t>(keyObj->valueint) <= UINT32_MAX;
     if (!res) {
         AVTRANS_LOGE("the key %{public}s in jsonObj is invalid.", key.c_str());
     }
@@ -143,111 +149,170 @@ std::vector<AudioEncoder> QueryAudioEncoderAbility()
     return audioEncoders;
 }
 
-void ToJson(nlohmann::json &jsonObject, const AudioEncoderIn &audioEncoderIn)
+void ToJson(cJSON *jsonObject, const AudioEncoderIn &audioEncoderIn)
 {
-    jsonObject[MIME] = audioEncoderIn.mime;
-    nlohmann::json sampleRateJson;
-    for (auto rate : audioEncoderIn.sample_rate) {
-        sampleRateJson.push_back(rate);
+    if (jsonObject == nullptr) {
+        return;
     }
-    jsonObject[SAMPLE_RATE] = sampleRateJson;
+    cJSON_AddStringToObject(jsonObject, MIME.c_str(), audioEncoderIn.mime.c_str());
+    cJSON *sampleRateJson = cJSON_CreateArray();
+    if (sampleRateJson == nullptr) {
+        return;
+    }
+    for (auto rate : audioEncoderIn.sample_rate) {
+        cJSON_AddItemToArray(sampleRateJson, cJSON_CreateNumber(rate));
+    }
+    cJSON_AddItemToObject(jsonObject, SAMPLE_RATE.c_str(), sampleRateJson);
 }
 
-void FromJson(const nlohmann::json &jsonObject, AudioEncoderIn &audioEncoderIn)
+void FromJson(const cJSON *jsonObject, AudioEncoderIn &audioEncoderIn)
 {
     if (!IsString(jsonObject, MIME)) {
         AVTRANS_LOGE("AudioEncoderIn MIME is invalid!");
         return;
     }
-    audioEncoderIn.mime = jsonObject.at(MIME).get<std::string>();
-    if (jsonObject.find(SAMPLE_RATE) == jsonObject.end()) {
-        AVTRANS_LOGE("AudioEncoderIn SAMPLE_RATE is invalid");
+    cJSON *mimeObj = cJSON_GetObjectItemCaseSensitive(jsonObject, MIME.c_str());
+    if (mimeObj == nullptr || !cJSON_IsString(mimeObj)) {
+        return;
     }
-    audioEncoderIn.sample_rate = jsonObject.at(SAMPLE_RATE).get<std::vector<uint32_t>>();
+    audioEncoderIn.mime = mimeObj->valuestring;
+    cJSON *rateJson = cJSON_GetObjectItemCaseSensitive(jsonObject, SAMPLE_RATE.c_str());
+    if (rateJson == nullptr || !cJSON_IsArray(rateJson)) {
+        AVTRANS_LOGE("AudioEncoderIn SAMPLE_RATE is invalid");
+        return;
+    }
+    cJSON *rateInfo = nullptr;
+    cJSON_ArrayForEach(rateInfo, rateJson) {
+        if (rateInfo->type == cJSON_Number) {
+            audioEncoderIn.sample_rate.push_back(static_cast<uint32_t>(rateInfo->valueint));
+        }
+    }
 }
 
-void ToJson(nlohmann::json &jsonObject, const AudioEncoderOut &audioEncoderOut)
+void ToJson(cJSON *jsonObject, const AudioEncoderOut &audioEncoderOut)
 {
-    jsonObject[MIME] = audioEncoderOut.mime;
-    jsonObject[AD_MPEG_VER] = audioEncoderOut.ad_mpeg_ver;
-    jsonObject[AUDIO_AAC_PROFILE] = (uint8_t)audioEncoderOut.aac_profile;
-    jsonObject[AUDIO_AAC_STREAM_FORMAT] = (uint8_t)audioEncoderOut.aac_stm_fmt;
+    if (jsonObject == nullptr) {
+        return;
+    }
+    cJSON_AddStringToObject(jsonObject, MIME.c_str(), audioEncoderOut.mime.c_str());
+    cJSON_AddNumberToObject(jsonObject, AD_MPEG_VER.c_str(), static_cast<uint8_t>(audioEncoderOut.ad_mpeg_ver));
+    cJSON_AddNumberToObject(jsonObject, AUDIO_AAC_PROFILE.c_str(), static_cast<uint8_t>(audioEncoderOut.aac_profile));
+    cJSON_AddNumberToObject(jsonObject, AUDIO_AAC_STREAM_FORMAT.c_str(),
+        static_cast<uint8_t>(audioEncoderOut.aac_stm_fmt));
 }
 
-void FromJson(const nlohmann::json &jsonObject, AudioEncoderOut &audioEncoderOut)
+void FromJson(const cJSON *jsonObject, AudioEncoderOut &audioEncoderOut)
 {
+    if (jsonObject == nullptr) {
+        return;
+    }
     if (!IsString(jsonObject, MIME)) {
         AVTRANS_LOGE("AudioEncoderOut MIME is invalid!");
         return;
     }
-    audioEncoderOut.mime = jsonObject.at(MIME).get<std::string>();
-
+    cJSON *mimeObj = cJSON_GetObjectItemCaseSensitive(jsonObject, MIME.c_str());
+    if (mimeObj == nullptr || !cJSON_IsString(mimeObj)) {
+        return;
+    }
+    audioEncoderOut.mime = mimeObj->valuestring;
     if (!IsUInt32(jsonObject, AD_MPEG_VER)) {
         AVTRANS_LOGE("AudioEncoderOut AD_MPEG_VER is invalid");
         return;
     }
-    audioEncoderOut.ad_mpeg_ver = jsonObject.at(AD_MPEG_VER).get<uint32_t>();
+    cJSON *verObj = cJSON_GetObjectItemCaseSensitive(jsonObject, AD_MPEG_VER.c_str());
+    if (verObj == nullptr || !cJSON_IsNumber(verObj)) {
+        return;
+    }
+    audioEncoderOut.ad_mpeg_ver = verObj->valueint;
 
     if (!IsUInt8(jsonObject, AUDIO_AAC_PROFILE)) {
         AVTRANS_LOGE("AudioEncoderOut AUDIO_AAC_PROFILE is invalid");
         return;
     }
-    audioEncoderOut.aac_profile = (AudioAacProfile)jsonObject.at(AUDIO_AAC_PROFILE).get<uint8_t>();
-
+    cJSON *accObj = cJSON_GetObjectItemCaseSensitive(jsonObject, AUDIO_AAC_PROFILE.c_str());
+    if (accObj == nullptr || !cJSON_IsNumber(accObj)) {
+        return;
+    }
+    audioEncoderOut.aac_profile = static_cast<AudioAacProfile>(accObj->valueint);
     if (!IsUInt8(jsonObject, AUDIO_AAC_STREAM_FORMAT)) {
         AVTRANS_LOGE("AudioEncoderOut AUDIO_AAC_STREAM_FORMAT is invalid");
         return;
     }
-    audioEncoderOut.aac_stm_fmt = (AudioAacStreamFormat)jsonObject.at(AUDIO_AAC_STREAM_FORMAT).get<uint8_t>();
+    cJSON *formatObj = cJSON_GetObjectItemCaseSensitive(jsonObject, AUDIO_AAC_STREAM_FORMAT.c_str());
+    if (formatObj == nullptr || !cJSON_IsNumber(formatObj)) {
+        return;
+    }
+    audioEncoderOut.aac_stm_fmt = static_cast<AudioAacStreamFormat>(formatObj->valueint);
 }
 
-void ToJson(nlohmann::json &jsonObject, const AudioEncoder &audioEncoder)
+void ToJson(cJSON *jsonObject, const AudioEncoder &audioEncoder)
 {
-    jsonObject[NAME] = audioEncoder.name;
-
-    nlohmann::json audioEncoderInsJson;
+    if (jsonObject == nullptr) {
+        return;
+    }
+    cJSON_AddStringToObject(jsonObject, NAME.c_str(), audioEncoder.name.c_str());
+    cJSON *audioEncoderInsJson = cJSON_CreateArray();
+    if (audioEncoderInsJson == nullptr) {
+        return;
+    }
     for (const auto &in : audioEncoder.ins) {
-        nlohmann::json audioEncoderInJson;
+        cJSON *audioEncoderInJson = cJSON_CreateObject();
+        if (audioEncoderInJson == nullptr) {
+            cJSON_Delete(audioEncoderInsJson);
+            return;
+        }
         ToJson(audioEncoderInJson, in);
-        audioEncoderInsJson.push_back(audioEncoderInJson);
+        cJSON_AddItemToArray(audioEncoderInsJson, audioEncoderInJson);
     }
-    jsonObject[INS] = audioEncoderInsJson;
+    cJSON_AddItemToObject(jsonObject, INS.c_str(), audioEncoderInsJson);
 
-    nlohmann::json audioEncoderOutsJson;
-    for (const auto &out : audioEncoder.outs) {
-        nlohmann::json audioEncoderOutJson;
-        ToJson(audioEncoderOutJson, out);
-        audioEncoderOutsJson.push_back(audioEncoderOutJson);
+    cJSON *audioEncoderOutsJson = cJSON_CreateArray();
+    if (audioEncoderOutsJson == nullptr) {
+        return;
     }
-    jsonObject[OUTS] = audioEncoderOutsJson;
+    for (const auto &out : audioEncoder.outs) {
+        cJSON *audioEncoderOutJson = cJSON_CreateObject();
+        if (audioEncoderOutJson == nullptr) {
+            cJSON_Delete(audioEncoderOutsJson);
+            return;
+        }
+        ToJson(audioEncoderOutJson, out);
+        cJSON_AddItemToArray(audioEncoderOutsJson, audioEncoderOutJson);
+    }
+    cJSON_AddItemToObject(jsonObject, OUTS.c_str(), audioEncoderOutsJson);
 }
 
-void FromJson(const nlohmann::json &jsonObject, AudioEncoder &audioEncoder)
+void FromJson(const cJSON *jsonObject, AudioEncoder &audioEncoder)
 {
     if (!IsString(jsonObject, NAME)) {
         AVTRANS_LOGE("AudioEncoder NAME is invalid");
         return;
     }
-    audioEncoder.name = jsonObject.at(NAME).get<std::string>();
+    cJSON *nameObj = cJSON_GetObjectItemCaseSensitive(jsonObject, NAME.c_str());
+    if (nameObj == nullptr || !cJSON_IsString(nameObj)) {
+        return;
+    }
+    audioEncoder.name = nameObj->valuestring;
 
-    if (jsonObject.find(INS) == jsonObject.end()) {
+    cJSON *audioEncoderInsJson = cJSON_GetObjectItemCaseSensitive(jsonObject, INS.c_str());
+    if (audioEncoderInsJson == nullptr || !cJSON_IsArray(audioEncoderInsJson)) {
         AVTRANS_LOGE("AudioEncoder INS is invalid");
         return;
     }
-
-    nlohmann::json audioEncoderInsJson = jsonObject[INS];
-    for (const auto &inJson : audioEncoderInsJson) {
+    cJSON *inJson = nullptr;
+    cJSON_ArrayForEach(inJson, audioEncoderInsJson) {
         AudioEncoderIn in;
         FromJson(inJson, in);
         audioEncoder.ins.push_back(in);
     }
 
-    if (jsonObject.find(OUTS) == jsonObject.end()) {
+    cJSON *audioEncoderOutsJson = cJSON_GetObjectItemCaseSensitive(jsonObject, OUTS.c_str());
+    if (audioEncoderOutsJson == nullptr || !cJSON_IsArray(audioEncoderOutsJson)) {
         AVTRANS_LOGE("AudioEncoder OUTS is invalid");
         return;
     }
-    nlohmann::json audioEncoderOutsJson = jsonObject[OUTS];
-    for (const auto &outJson : audioEncoderOutsJson) {
+    cJSON *outJson = nullptr;
+    cJSON_ArrayForEach(outJson, audioEncoderOutsJson) {
         AudioEncoderOut out;
         FromJson(outJson, out);
         audioEncoder.outs.push_back(out);
@@ -302,108 +367,157 @@ std::vector<AudioDecoder> QueryAudioDecoderAbility()
     return audioDecoders;
 }
 
-void ToJson(nlohmann::json &jsonObject, const AudioDecoderIn &audioDecoderIn)
+void ToJson(cJSON *jsonObject, const AudioDecoderIn &audioDecoderIn)
 {
-    jsonObject[MIME] = audioDecoderIn.mime;
-    nlohmann::json channelLayoutJson;
-    for (auto &layout : audioDecoderIn.channel_layout) {
-        channelLayoutJson.push_back((uint64_t)layout);
+    if (jsonObject == nullptr) {
+        return;
     }
-    jsonObject[AUDIO_CHANNEL_LAYOUT] = channelLayoutJson;
+    cJSON_AddStringToObject(jsonObject, MIME.c_str(), audioDecoderIn.mime.c_str());
+    cJSON *channelLayoutJson = cJSON_CreateArray();
+    if (channelLayoutJson == nullptr) {
+        return;
+    }
+    for (auto &layout : audioDecoderIn.channel_layout) {
+        cJSON_AddItemToArray(channelLayoutJson, cJSON_CreateNumber(static_cast<uint64_t>(layout)));
+    }
+    cJSON_AddItemToObject(jsonObject, AUDIO_CHANNEL_LAYOUT.c_str(), channelLayoutJson);
 }
 
-void FromJson(const nlohmann::json &jsonObject, AudioDecoderIn &audioDecoderIn)
+void FromJson(const cJSON *jsonObject, AudioDecoderIn &audioDecoderIn)
 {
     if (!IsString(jsonObject, MIME)) {
         AVTRANS_LOGE("AudioDecoderIn MIME is invalid");
         return;
     }
-    audioDecoderIn.mime = jsonObject.at(MIME).get<std::string>();
+    cJSON *mimeObj = cJSON_GetObjectItemCaseSensitive(jsonObject, MIME.c_str());
+    if (mimeObj == nullptr || !cJSON_IsString(mimeObj)) {
+        return;
+    }
+    audioDecoderIn.mime = mimeObj->valuestring;
 
-    if (jsonObject.find(AUDIO_CHANNEL_LAYOUT) == jsonObject.end()) {
+    cJSON *channelLayoutJson = cJSON_GetObjectItemCaseSensitive(jsonObject, AUDIO_CHANNEL_LAYOUT.c_str());
+    if (channelLayoutJson == nullptr || !cJSON_IsArray(channelLayoutJson)) {
         AVTRANS_LOGE("AudioEncoder AUDIO_CHANNEL_LAYOUT is invalid");
         return;
     }
-    nlohmann::json channelLayoutJson = jsonObject[AUDIO_CHANNEL_LAYOUT];
-    for (auto layout : channelLayoutJson) {
-        audioDecoderIn.channel_layout.push_back((AudioChannelLayout)layout);
+    cJSON *layoutInfo = nullptr;
+    cJSON_ArrayForEach(layoutInfo, channelLayoutJson) {
+        if (layoutInfo->type == cJSON_Number) {
+            audioDecoderIn.channel_layout.push_back(static_cast<AudioChannelLayout>(layoutInfo->valueint));
+        }
     }
 }
 
-void ToJson(nlohmann::json &jsonObject, const AudioDecoderOut &audioDecoderOut)
+void ToJson(cJSON *jsonObject, const AudioDecoderOut &audioDecoderOut)
 {
-    jsonObject[MIME] = audioDecoderOut.mime;
-    nlohmann::json sampleFormatsJson;
-    for (auto &sampleFormat : audioDecoderOut.sample_fmt) {
-        sampleFormatsJson.push_back((uint8_t)sampleFormat);
+    if (jsonObject == nullptr) {
+        return;
     }
-    jsonObject[AUDIO_SAMPLE_FORMAT] = sampleFormatsJson;
+    cJSON_AddStringToObject(jsonObject, MIME.c_str(), audioDecoderOut.mime.c_str());
+    cJSON *sampleFormatsJson = cJSON_CreateArray();
+    if (sampleFormatsJson == nullptr) {
+        return;
+    }
+    for (auto &sampleFormat : audioDecoderOut.sample_fmt) {
+        cJSON_AddItemToArray(sampleFormatsJson, cJSON_CreateNumber(static_cast<uint8_t>(sampleFormat)));
+    }
+    cJSON_AddItemToObject(jsonObject, AUDIO_SAMPLE_FORMAT.c_str(), sampleFormatsJson);
 }
 
-void FromJson(const nlohmann::json &jsonObject, AudioDecoderOut &audioDecoderOut)
+void FromJson(const cJSON *jsonObject, AudioDecoderOut &audioDecoderOut)
 {
     if (!IsString(jsonObject, MIME)) {
         AVTRANS_LOGE("AudioDecoderOut MIME is invalid");
         return;
     }
-    audioDecoderOut.mime = jsonObject.at(MIME).get<std::string>();
+    cJSON *mimeObj = cJSON_GetObjectItemCaseSensitive(jsonObject, MIME.c_str());
+    if (mimeObj == nullptr || !cJSON_IsString(mimeObj)) {
+        return;
+    }
+    audioDecoderOut.mime = mimeObj->valuestring;
 
-    if (jsonObject.find(AUDIO_SAMPLE_FORMAT) == jsonObject.end()) {
+    cJSON *sampleFormatJson = cJSON_GetObjectItemCaseSensitive(jsonObject, AUDIO_SAMPLE_FORMAT.c_str());
+    if (sampleFormatJson == nullptr || !cJSON_IsArray(sampleFormatJson)) {
         AVTRANS_LOGE("AudioDecoderOut AUDIO_SAMPLE_FORMAT is invalid");
         return;
     }
 
-    for (auto sampleFormatJson : jsonObject[AUDIO_SAMPLE_FORMAT]) {
-        audioDecoderOut.sample_fmt.push_back((AudioSampleFormat)sampleFormatJson);
+    cJSON *sampleInfo = nullptr;
+    cJSON_ArrayForEach(sampleInfo, sampleFormatJson) {
+        if (sampleInfo->type == cJSON_Number) {
+            audioDecoderOut.sample_fmt.push_back(static_cast<AudioSampleFormat>(sampleInfo->valueint));
+        }
     }
 }
 
-void ToJson(nlohmann::json &jsonObject, const AudioDecoder &audioDecoder)
+void ToJson(cJSON *jsonObject, const AudioDecoder &audioDecoder)
 {
-    jsonObject[NAME] = audioDecoder.name;
-    nlohmann::json audioDecoderInsJson;
-    for (const auto &in : audioDecoder.ins) {
-        nlohmann::json audioDecoderInJson;
-        ToJson(audioDecoderInJson, in);
-        audioDecoderInsJson.push_back(audioDecoderInJson);
+    if (jsonObject == nullptr) {
+        return;
     }
-    jsonObject[INS] = audioDecoderInsJson;
+    cJSON_AddStringToObject(jsonObject, NAME.c_str(), audioDecoder.name.c_str());
+    cJSON *audioDecoderInsJson = cJSON_CreateArray();
+    if (audioDecoderInsJson == nullptr) {
+        return;
+    }
 
-    nlohmann::json audioDecoderOutsJson;
-    for (const auto &out : audioDecoder.outs) {
-        nlohmann::json audioDecoderOutJson;
-        ToJson(audioDecoderOutJson, out);
-        audioDecoderOutsJson.push_back(audioDecoderOutJson);
+    for (const auto &in : audioDecoder.ins) {
+        cJSON *audioDecoderInJson = cJSON_CreateObject();
+        if (audioDecoderInJson == nullptr) {
+            cJSON_Delete(audioDecoderInsJson);
+            return;
+        }
+        ToJson(audioDecoderInJson, in);
+        cJSON_AddItemToArray(audioDecoderInsJson, audioDecoderInJson);
     }
-    jsonObject[OUTS] = audioDecoderOutsJson;
+    cJSON_AddItemToObject(jsonObject, INS.c_str(), audioDecoderInsJson);
+
+    cJSON *audioDecoderOutsJson = cJSON_CreateArray();
+    if (audioDecoderOutsJson == nullptr) {
+        return;
+    }
+    for (const auto &out : audioDecoder.outs) {
+        cJSON *audioDecoderOutJson = cJSON_CreateObject();
+        if (audioDecoderOutJson == nullptr) {
+            cJSON_Delete(audioDecoderOutsJson);
+            return;
+        }
+        ToJson(audioDecoderOutJson, out);
+        cJSON_AddItemToArray(audioDecoderOutsJson, audioDecoderOutJson);
+    }
+    cJSON_AddItemToObject(jsonObject, OUTS.c_str(), audioDecoderOutsJson);
 }
 
-void FromJson(const nlohmann::json &jsonObject, AudioDecoder &audioDecoder)
+void FromJson(const cJSON *jsonObject, AudioDecoder &audioDecoder)
 {
     if (!IsString(jsonObject, NAME)) {
         AVTRANS_LOGE("AudioDecoder NAME is invalid");
         return;
     }
-    audioDecoder.name = jsonObject.at(NAME).get<std::string>();
+    cJSON *nameObj = cJSON_GetObjectItemCaseSensitive(jsonObject, NAME.c_str());
+    if (nameObj == nullptr || !cJSON_IsString(nameObj)) {
+        return;
+    }
+    audioDecoder.name = nameObj->valuestring;
 
-    if (jsonObject.find(INS) == jsonObject.end()) {
+    cJSON *audioDecoderInsJson = cJSON_GetObjectItemCaseSensitive(jsonObject, INS.c_str());
+    if (audioDecoderInsJson == nullptr || !cJSON_IsArray(audioDecoderInsJson)) {
         AVTRANS_LOGE("AudioDecoder INS is invalid");
         return;
     }
-
-    nlohmann::json audioDecoderInsJson = jsonObject[INS];
-    for (const auto &inJson : audioDecoderInsJson) {
+    cJSON *inJson = nullptr;
+    cJSON_ArrayForEach(inJson, audioDecoderInsJson) {
         AudioDecoderIn in;
         FromJson(inJson, in);
         audioDecoder.ins.push_back(in);
     }
-
-    if (jsonObject.find(OUTS) == jsonObject.end()) {
+    cJSON *audioDecoderOutsJson = cJSON_GetObjectItemCaseSensitive(jsonObject, OUTS.c_str());
+    if (audioDecoderOutsJson == nullptr || !cJSON_IsArray(audioDecoderOutsJson)) {
         AVTRANS_LOGE("AudioDecoder OUTS is invalid");
         return;
     }
-    nlohmann::json audioDecoderOutsJson = jsonObject[OUTS];
-    for (const auto &outJson : audioDecoderOutsJson) {
+    cJSON *outJson = nullptr;
+    cJSON_ArrayForEach(outJson, audioDecoderOutsJson) {
         AudioDecoderOut out;
         FromJson(outJson, out);
         audioDecoder.outs.push_back(out);
@@ -457,93 +571,145 @@ std::vector<VideoEncoder> QueryVideoEncoderAbility()
     return videoEncoders;
 }
 
-void ToJson(nlohmann::json &jsonObject, const VideoEncoderIn &videoEncoderIn)
+void ToJson(cJSON *jsonObject, const VideoEncoderIn &videoEncoderIn)
 {
-    jsonObject[MIME] = videoEncoderIn.mime;
-    nlohmann::json pixelFmtJson;
-    for (auto &fmt : videoEncoderIn.pixel_fmt) {
-        pixelFmtJson.push_back((uint32_t)fmt);
+    if (jsonObject == nullptr) {
+        return;
     }
-    jsonObject[VIDEO_PIXEL_FMT] = pixelFmtJson;
+    cJSON_AddStringToObject(jsonObject, MIME.c_str(), videoEncoderIn.mime.c_str());
+    cJSON *pixelFmtJson = cJSON_CreateArray();
+    if (pixelFmtJson == nullptr) {
+        return;
+    }
+    for (auto &fmt : videoEncoderIn.pixel_fmt) {
+        cJSON_AddItemToArray(pixelFmtJson, cJSON_CreateNumber(static_cast<uint32_t>(fmt)));
+    }
+    cJSON_AddItemToObject(jsonObject, VIDEO_PIXEL_FMT.c_str(), pixelFmtJson);
 }
 
-void FromJson(const nlohmann::json &jsonObject, VideoEncoderIn &videoEncoderIn)
+void FromJson(const cJSON *jsonObject, VideoEncoderIn &videoEncoderIn)
 {
+    if (jsonObject == nullptr) {
+        return;
+    }
     if (!IsString(jsonObject, MIME)) {
         AVTRANS_LOGE("VideoEncoderIn MIME is invalid");
         return;
     }
-    videoEncoderIn.mime = jsonObject.at(MIME).get<std::string>();
+    cJSON *mimeObj = cJSON_GetObjectItemCaseSensitive(jsonObject, MIME.c_str());
+    if (mimeObj == nullptr || !cJSON_IsString(mimeObj)) {
+        return;
+    }
+    videoEncoderIn.mime = mimeObj->valuestring;
 
-    if (jsonObject.find(VIDEO_PIXEL_FMT) == jsonObject.end()) {
+    cJSON *videoPixelFmtJson = cJSON_GetObjectItemCaseSensitive(jsonObject, VIDEO_PIXEL_FMT.c_str());
+    if (videoPixelFmtJson == nullptr || !cJSON_IsArray(videoPixelFmtJson)) {
         AVTRANS_LOGE("VideoEncoderIn VIDEO_PIXEL_FMT is invalid");
         return;
     }
-    for (auto fmt : jsonObject[VIDEO_PIXEL_FMT]) {
-        videoEncoderIn.pixel_fmt.push_back((VideoPixelFormat)fmt);
+    cJSON *fmt = nullptr;
+    cJSON_ArrayForEach(fmt, videoPixelFmtJson) {
+        if (fmt->type == cJSON_Number) {
+            videoEncoderIn.pixel_fmt.push_back(static_cast<VideoPixelFormat>(fmt->valueint));
+        }
     }
 }
 
-void ToJson(nlohmann::json &jsonObject, const VideoEncoderOut &videoEncoderOut)
+void ToJson(cJSON *jsonObject, const VideoEncoderOut &videoEncoderOut)
 {
-    jsonObject[MIME] = videoEncoderOut.mime;
+    if (jsonObject == nullptr) {
+        return;
+    }
+    cJSON_AddStringToObject(jsonObject, MIME.c_str(), videoEncoderOut.mime.c_str());
 }
 
-void FromJson(const nlohmann::json &jsonObject, VideoEncoderOut &videoEncoderOut)
+void FromJson(const cJSON *jsonObject, VideoEncoderOut &videoEncoderOut)
 {
+    if (jsonObject == nullptr) {
+        return;
+    }
     if (!IsString(jsonObject, MIME)) {
         AVTRANS_LOGE("VideoEncoderOut MIME is invalid");
         return;
     }
-    videoEncoderOut.mime = jsonObject[MIME].get<std::string>();
+    cJSON *mimeObj = cJSON_GetObjectItemCaseSensitive(jsonObject, MIME.c_str());
+    if (mimeObj == nullptr || !cJSON_IsString(mimeObj)) {
+        return;
+    }
+    videoEncoderOut.mime = mimeObj->valuestring;
 }
 
-void ToJson(nlohmann::json &jsonObject, const VideoEncoder &videoEncoder)
+void ToJson(cJSON *jsonObject, const VideoEncoder &videoEncoder)
 {
-    jsonObject[NAME] = videoEncoder.name;
-    nlohmann::json videoEncoderInsJson;
+    if (jsonObject == nullptr) {
+        return;
+    }
+    cJSON_AddStringToObject(jsonObject, NAME.c_str(), videoEncoder.name.c_str());
+    cJSON *videoEncoderInsJson = cJSON_CreateArray();
+    if (videoEncoderInsJson == nullptr) {
+        return;
+    }
     for (const auto &in : videoEncoder.ins) {
-        nlohmann::json videoEncoderInJson;
+        cJSON *videoEncoderInJson = cJSON_CreateObject();
+        if (videoEncoderInJson == nullptr) {
+            cJSON_Delete(videoEncoderInsJson);
+            return;
+        }
         ToJson(videoEncoderInJson, in);
-        videoEncoderInsJson.push_back(videoEncoderInJson);
+        cJSON_AddItemToArray(videoEncoderInsJson, videoEncoderInJson);
     }
-    jsonObject[INS] = videoEncoderInsJson;
+    cJSON_AddItemToObject(jsonObject, INS.c_str(), videoEncoderInsJson);
 
-    nlohmann::json videoEncoderOutsJson;
-    for (const auto &out : videoEncoder.outs) {
-        nlohmann::json videoEncoderOutJson;
-        ToJson(videoEncoderOutJson, out);
-        videoEncoderOutsJson.push_back(videoEncoderOutJson);
+    cJSON *videoEncoderOutsJson = cJSON_CreateArray();
+    if (videoEncoderOutsJson == nullptr) {
+        return;
     }
-    jsonObject[OUTS] = videoEncoderOutsJson;
+    for (const auto &out : videoEncoder.outs) {
+        cJSON *videoEncoderOutJson = cJSON_CreateObject();
+        if (videoEncoderOutJson == nullptr) {
+            cJSON_Delete(videoEncoderOutsJson);
+            return;
+        }
+        ToJson(videoEncoderOutJson, out);
+        cJSON_AddItemToArray(videoEncoderOutsJson, videoEncoderOutJson);
+    }
+    cJSON_AddItemToObject(jsonObject, OUTS.c_str(), videoEncoderOutsJson);
 }
 
-void FromJson(const nlohmann::json &jsonObject, VideoEncoder &videoEncoder)
+void FromJson(const cJSON *jsonObject, VideoEncoder &videoEncoder)
 {
+    if (jsonObject == nullptr) {
+        return;
+    }
     if (!IsString(jsonObject, NAME)) {
         AVTRANS_LOGE("VideoEncoder NAME is invalid");
         return;
     }
-    videoEncoder.name = jsonObject.at(NAME).get<std::string>();
+    cJSON *nameObj = cJSON_GetObjectItemCaseSensitive(jsonObject, NAME.c_str());
+    if (nameObj == nullptr || !cJSON_IsString(nameObj)) {
+        return;
+    }
+    videoEncoder.name = nameObj->valuestring;
 
-    if (jsonObject.find(INS) == jsonObject.end()) {
+    cJSON *videoEncoderInsJson = cJSON_GetObjectItemCaseSensitive(jsonObject, INS.c_str());
+    if (videoEncoderInsJson == nullptr || !cJSON_IsArray(videoEncoderInsJson)) {
         AVTRANS_LOGE("VideoEncoder INS is invalid");
         return;
     }
-
-    nlohmann::json videoEncoderInsJson = jsonObject[INS];
-    for (const auto &inJson : videoEncoderInsJson) {
+    cJSON *inJson = nullptr;
+    cJSON_ArrayForEach(inJson, videoEncoderInsJson) {
         VideoEncoderIn in;
         FromJson(inJson, in);
         videoEncoder.ins.push_back(in);
     }
 
-    if (jsonObject.find(OUTS) == jsonObject.end()) {
+    cJSON *videoEncoderOutsJson = cJSON_GetObjectItemCaseSensitive(jsonObject, OUTS.c_str());
+    if (videoEncoderOutsJson == nullptr || !cJSON_IsArray(videoEncoderOutsJson)) {
         AVTRANS_LOGE("VideoEncoder OUTS is invalid");
         return;
     }
-    nlohmann::json videoEncoderOutsJson = jsonObject[OUTS];
-    for (const auto &outJson : videoEncoderOutsJson) {
+    cJSON *outJson = nullptr;
+    cJSON_ArrayForEach(outJson, videoEncoderOutsJson) {
         VideoEncoderOut out;
         FromJson(outJson, out);
         videoEncoder.outs.push_back(out);
@@ -599,106 +765,166 @@ std::vector<VideoDecoder> QueryVideoDecoderAbility()
     return VideoDecoders;
 }
 
-void ToJson(nlohmann::json &jsonObject, const VideoDecoderIn &videoDecoderIn)
+void ToJson(cJSON *jsonObject, const VideoDecoderIn &videoDecoderIn)
 {
-    jsonObject[MIME] = videoDecoderIn.mime;
-    nlohmann::json fmtJson;
-    for (auto &fmt : videoDecoderIn.vd_bit_stream_fmt) {
-        fmtJson.push_back((uint32_t)fmt);
+    if (jsonObject == nullptr) {
+        return;
     }
-    jsonObject[VIDEO_BIT_STREAM_FMT] = fmtJson;
+    cJSON_AddStringToObject(jsonObject, MIME.c_str(), videoDecoderIn.mime.c_str());
+    cJSON *fmtJson = cJSON_CreateArray();
+    if (fmtJson == nullptr) {
+        return;
+    }
+    for (auto &fmt : videoDecoderIn.vd_bit_stream_fmt) {
+        cJSON_AddItemToArray(fmtJson, cJSON_CreateNumber(static_cast<uint32_t>(fmt)));
+    }
+    cJSON_AddItemToObject(jsonObject, VIDEO_BIT_STREAM_FMT.c_str(), fmtJson);
 }
 
-void FromJson(const nlohmann::json &jsonObject, VideoDecoderIn &videoDecoderIn)
+void FromJson(const cJSON *jsonObject, VideoDecoderIn &videoDecoderIn)
 {
+    if (jsonObject == nullptr) {
+        return;
+    }
     if (!IsString(jsonObject, MIME)) {
         AVTRANS_LOGE("VideoDecoderIn MIME is invalid");
         return;
     }
-    videoDecoderIn.mime = jsonObject.at(MIME).get<std::string>();
+    cJSON *mimeObj = cJSON_GetObjectItemCaseSensitive(jsonObject, MIME.c_str());
+    if (mimeObj == nullptr || !cJSON_IsString(mimeObj)) {
+        return;
+    }
+    videoDecoderIn.mime = mimeObj->valuestring;
 
-    if (jsonObject.find(VIDEO_BIT_STREAM_FMT) == jsonObject.end()) {
+    cJSON *videoBitStreamJson = cJSON_GetObjectItemCaseSensitive(jsonObject, VIDEO_BIT_STREAM_FMT.c_str());
+    if (videoBitStreamJson == nullptr || !cJSON_IsArray(videoBitStreamJson)) {
         AVTRANS_LOGE("VideoDecoderIn VIDEO_BIT_STREAM_FMT is invalid");
         return;
     }
-    for (auto fmt : jsonObject[VIDEO_BIT_STREAM_FMT]) {
-        videoDecoderIn.vd_bit_stream_fmt.push_back((VideoBitStreamFormat)fmt);
+    cJSON *fmt = nullptr;
+    cJSON_ArrayForEach(fmt, videoBitStreamJson) {
+        if (fmt->type == cJSON_Number) {
+            videoDecoderIn.vd_bit_stream_fmt.push_back(static_cast<VideoBitStreamFormat>(fmt->valueint));
+        }
     }
 }
 
-void ToJson(nlohmann::json &jsonObject, const VideoDecoderOut &videoDecoderOut)
+void ToJson(cJSON *jsonObject, const VideoDecoderOut &videoDecoderOut)
 {
-    jsonObject[MIME] = videoDecoderOut.mime;
-    nlohmann::json fmtJson;
+    if (jsonObject == nullptr) {
+        return;
+    }
+    cJSON_AddStringToObject(jsonObject, MIME.c_str(), videoDecoderOut.mime.c_str());
+    cJSON *fmtJson = cJSON_CreateArray();
+    if (fmtJson == nullptr) {
+        return;
+    }
     for (auto &fmt : videoDecoderOut.pixel_fmt) {
-        fmtJson.push_back((uint32_t)fmt);
+        cJSON_AddItemToArray(fmtJson, cJSON_CreateNumber(static_cast<uint32_t>(fmt)));
     }
-    jsonObject[VIDEO_PIXEL_FMT] = fmtJson;
+    cJSON_AddItemToObject(jsonObject, VIDEO_PIXEL_FMT.c_str(), fmtJson);
 }
 
-void FromJson(const nlohmann::json &jsonObject, VideoDecoderOut &videoDecoderOut)
+void FromJson(const cJSON *jsonObject, VideoDecoderOut &videoDecoderOut)
 {
+    if (jsonObject == nullptr) {
+        return;
+    }
     if (!IsString(jsonObject, MIME)) {
         AVTRANS_LOGE("VideoDecoderOut MIME is invalid");
         return;
     }
-    videoDecoderOut.mime = jsonObject.at(MIME).get<std::string>();
+    cJSON *mimeObj = cJSON_GetObjectItemCaseSensitive(jsonObject, MIME.c_str());
+    if (mimeObj == nullptr || !cJSON_IsString(mimeObj)) {
+        return;
+    }
+    videoDecoderOut.mime = mimeObj->valuestring;
 
-    if (jsonObject.find(VIDEO_PIXEL_FMT) == jsonObject.end()) {
+    cJSON *videoPixelFmtJson = cJSON_GetObjectItemCaseSensitive(jsonObject, VIDEO_PIXEL_FMT.c_str());
+    if (videoPixelFmtJson == nullptr || !cJSON_IsArray(videoPixelFmtJson)) {
         AVTRANS_LOGE("VideoDecoderOut VIDEO_PIXEL_FMT is invalid");
         return;
     }
-    for (auto fmt : jsonObject[VIDEO_PIXEL_FMT]) {
-        videoDecoderOut.pixel_fmt.push_back((VideoPixelFormat)fmt);
+    cJSON *fmtInfo = nullptr;
+    cJSON_ArrayForEach(fmtInfo, videoPixelFmtJson) {
+        if (fmtInfo->type == cJSON_Number) {
+            videoDecoderOut.pixel_fmt.push_back(static_cast<VideoPixelFormat>(fmtInfo->valueint));
+        }
     }
 }
 
-void ToJson(nlohmann::json &jsonObject, const VideoDecoder &videoDecoder)
+void ToJson(cJSON *jsonObject, const VideoDecoder &videoDecoder)
 {
-    jsonObject[NAME] = videoDecoder.name;
-    nlohmann::json videoDecoderInsJson;
+    if (jsonObject == nullptr) {
+        return;
+    }
+    cJSON_AddStringToObject(jsonObject, NAME.c_str(), videoDecoder.name.c_str());
+    cJSON *videoDecoderInsJson = cJSON_CreateArray();
+    if (videoDecoderInsJson == nullptr) {
+        return;
+    }
     for (const auto &in : videoDecoder.ins) {
-        nlohmann::json videoDecoderInJson;
+        cJSON *videoDecoderInJson = cJSON_CreateObject();
+        if (videoDecoderInJson == nullptr) {
+            cJSON_Delete(videoDecoderInsJson);
+            return;
+        }
         ToJson(videoDecoderInJson, in);
-        videoDecoderInsJson.push_back(videoDecoderInJson);
+        cJSON_AddItemToArray(videoDecoderInsJson, videoDecoderInJson);
     }
-    jsonObject[INS] = videoDecoderInsJson;
+    cJSON_AddItemToObject(jsonObject, INS.c_str(), videoDecoderInsJson);
 
-    nlohmann::json videoDecoderOutsJson;
-    for (const auto &out : videoDecoder.outs) {
-        nlohmann::json videoDecoderOutJson;
-        ToJson(videoDecoderOutJson, out);
-        videoDecoderOutsJson.push_back(videoDecoderOutJson);
+    cJSON *videoDecoderOutsJson = cJSON_CreateArray();
+    if (videoDecoderOutsJson == nullptr) {
+        return;
     }
-    jsonObject[OUTS] = videoDecoderOutsJson;
+    for (const auto &out : videoDecoder.outs) {
+        cJSON *videoDecoderOutJson = cJSON_CreateObject();
+        if (videoDecoderOutJson == nullptr) {
+            cJSON_Delete(videoDecoderOutsJson);
+            return;
+        }
+        ToJson(videoDecoderOutJson, out);
+        cJSON_AddItemToArray(videoDecoderOutsJson, videoDecoderOutJson);
+    }
+    cJSON_AddItemToObject(jsonObject, OUTS.c_str(), videoDecoderOutsJson);
 }
 
-void FromJson(const nlohmann::json &jsonObject, VideoDecoder &videoDecoder)
+void FromJson(const cJSON *jsonObject, VideoDecoder &videoDecoder)
 {
+    if (jsonObject == nullptr) {
+        return;
+    }
     if (!IsString(jsonObject, NAME)) {
         AVTRANS_LOGE("VideoDecoder NAME is invalid");
         return;
     }
-    videoDecoder.name = jsonObject.at(NAME).get<std::string>();
+    cJSON *nameObj = cJSON_GetObjectItemCaseSensitive(jsonObject, NAME.c_str());
+    if (nameObj == nullptr || !cJSON_IsString(nameObj)) {
+        return;
+    }
+    videoDecoder.name = nameObj->valuestring;
 
-    if (jsonObject.find(INS) == jsonObject.end()) {
+    cJSON *videoDecoderInsJson = cJSON_GetObjectItemCaseSensitive(jsonObject, INS.c_str());
+    if (videoDecoderInsJson == nullptr || !cJSON_IsArray(videoDecoderInsJson)) {
         AVTRANS_LOGE("VideoDecoder INS is invalid");
         return;
     }
 
-    nlohmann::json videoDecoderInsJson = jsonObject[INS];
-    for (const auto &inJson : videoDecoderInsJson) {
+    cJSON *inJson = nullptr;
+    cJSON_ArrayForEach(inJson, videoDecoderInsJson) {
         VideoDecoderIn in;
         FromJson(inJson, in);
         videoDecoder.ins.push_back(in);
     }
 
-    if (jsonObject.find(OUTS) == jsonObject.end()) {
+    cJSON *videoDecoderOutsJson = cJSON_GetObjectItemCaseSensitive(jsonObject, OUTS.c_str());
+    if (videoDecoderOutsJson == nullptr || !cJSON_IsArray(videoDecoderOutsJson)) {
         AVTRANS_LOGE("VideoDecoder OUTS is invalid");
         return;
     }
-    nlohmann::json videoDecoderOutsJson = jsonObject[OUTS];
-    for (const auto &outJson : videoDecoderOutsJson) {
+    cJSON *outJson = nullptr;
+    cJSON_ArrayForEach(outJson, videoDecoderOutsJson) {
         VideoDecoderOut out;
         FromJson(outJson, out);
         videoDecoder.outs.push_back(out);
@@ -706,25 +932,34 @@ void FromJson(const nlohmann::json &jsonObject, VideoDecoder &videoDecoder)
 }
 
 template<typename T>
-void ToJson(const std::string &key, nlohmann::json &jsonObject, std::vector<T> &objs)
+void ToJson(const std::string &key, cJSON *jsonObject, std::vector<T> &objs)
 {
-    nlohmann::json jsonObjs;
-    for (auto &obj : objs) {
-        nlohmann::json jsonObj;
-        ToJson(jsonObj, obj);
-        jsonObjs.push_back(jsonObj);
+    cJSON *jsonObjs = cJSON_CreateArray();
+    if (jsonObjs == nullptr) {
+        return;
     }
-    jsonObject[key] = jsonObjs;
+    for (auto &obj : objs) {
+        cJSON *jsonObj = cJSON_CreateObject();
+        if (jsonObj == nullptr) {
+            cJSON_Delete(jsonObjs);
+            return;
+        }
+        ToJson(jsonObj, obj);
+        cJSON_AddItemToArray(jsonObjs, jsonObj);
+    }
+    cJSON_AddItemToObject(jsonObject, key.c_str(), jsonObjs);
 }
 
 template<typename T>
-void FromJson(const std::string &key, const nlohmann::json &jsonObject, std::vector<T> &objs)
+void FromJson(const std::string &key, const cJSON *jsonObject, std::vector<T> &objs)
 {
-    if (jsonObject.find(key) == jsonObject.end()) {
+    cJSON *objJson = cJSON_GetObjectItemCaseSensitive(jsonObject, key.c_str());
+    if (objJson == nullptr) {
         AVTRANS_LOGE("JSONObject key invalid, key: %{public}s", key.c_str());
         return;
     }
-    for (const auto &json : jsonObject[key]) {
+    cJSON *json = nullptr;
+    cJSON_ArrayForEach(json, objJson) {
         T obj;
         FromJson(json, obj);
         objs.push_back(obj);
@@ -734,9 +969,19 @@ void FromJson(const std::string &key, const nlohmann::json &jsonObject, std::vec
 int32_t QueryAudioEncoderAbilityStr(char* res)
 {
     std::vector<AudioEncoder> audioEncoders = QueryAudioEncoderAbility();
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return 0;
+    }
     ToJson<AudioEncoder>(AUDIO_ENCODERS, jsonObject, audioEncoders);
-    std::string ret = jsonObject.dump();
+    char *jsonStr = cJSON_Print(jsonObject);
+    if (jsonStr == nullptr) {
+        cJSON_Delete(jsonObject);
+        return 0;
+    }
+    std::string ret = std::string(jsonStr);
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObject);
     AVTRANS_LOGI("QueryAudioEncoderAbilityStr ret: %{public}s", ret.c_str());
     if (ret.length() > MAX_MESSAGES_LEN) {
         AVTRANS_LOGE("QueryAudioEncoderAbilityStr too long");
@@ -751,9 +996,19 @@ int32_t QueryAudioEncoderAbilityStr(char* res)
 int32_t QueryAudioDecoderAbilityStr(char* res)
 {
     std::vector<AudioDecoder> audioDecoders = QueryAudioDecoderAbility();
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return 0;
+    }
     ToJson<AudioDecoder>(AUDIO_DECODERS, jsonObject, audioDecoders);
-    std::string ret = jsonObject.dump();
+    char *jsonStr = cJSON_Print(jsonObject);
+    if (jsonStr == nullptr) {
+        cJSON_Delete(jsonObject);
+        return 0;
+    }
+    std::string ret = std::string(jsonStr);
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObject);
     AVTRANS_LOGI("QueryAudioDecoderAbilityStr ret: %{public}s", ret.c_str());
     if (ret.length() > MAX_MESSAGES_LEN) {
         AVTRANS_LOGE("QueryAudioDecoderAbilityStr too long");
@@ -768,9 +1023,19 @@ int32_t QueryAudioDecoderAbilityStr(char* res)
 int32_t QueryVideoEncoderAbilityStr(char* res)
 {
     std::vector<VideoEncoder> viudeoEncoders = QueryVideoEncoderAbility();
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return 0;
+    }
     ToJson<VideoEncoder>(VIDEO_ENCODERS, jsonObject, viudeoEncoders);
-    std::string ret = jsonObject.dump();
+    char *jsonStr = cJSON_Print(jsonObject);
+    if (jsonStr == nullptr) {
+        cJSON_Delete(jsonObject);
+        return 0;
+    }
+    std::string ret = std::string(jsonStr);
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObject);
     AVTRANS_LOGI("QueryVideoEncoderAbilityStr ret: %{public}s", ret.c_str());
     if (ret.length() > MAX_MESSAGES_LEN) {
         AVTRANS_LOGE("QueryVideoEncoderAbilityStr too long");
@@ -785,9 +1050,19 @@ int32_t QueryVideoEncoderAbilityStr(char* res)
 int32_t QueryVideoDecoderAbilityStr(char* res)
 {
     std::vector<VideoDecoder> videoDecoders = QueryVideoDecoderAbility();
-    nlohmann::json jsonObject;
+    cJSON *jsonObject = cJSON_CreateObject();
+    if (jsonObject == nullptr) {
+        return 0;
+    }
     ToJson<VideoDecoder>(VIDEO_DECODERS, jsonObject, videoDecoders);
-    std::string ret = jsonObject.dump();
+    char *jsonStr = cJSON_Print(jsonObject);
+    if (jsonStr == nullptr) {
+        cJSON_Delete(jsonObject);
+        return 0;
+    }
+    std::string ret = std::string(jsonStr);
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObject);
     AVTRANS_LOGI("QueryVideoDecoderAbilityStr ret: %{public}s", ret.c_str());
     if (ret.length() > MAX_MESSAGES_LEN) {
         AVTRANS_LOGE("QueryVideoDecoderAbilityStr too long");

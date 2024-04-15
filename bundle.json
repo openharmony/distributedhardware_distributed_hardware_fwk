@@ -36,6 +36,7 @@
         "dsoftbus",
         "eventhandler",
         "hitrace",
+        "cJSON",
         "c_utils",
         "hilog",
         "cJSON",

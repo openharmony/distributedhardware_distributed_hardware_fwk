@@ -89,6 +89,7 @@ ohos_shared_library("distributed_av_sender") {
 
   external_deps += [
     "bounds_checking_function:libsec_shared",
+    "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "graphic_2d:libgraphic_utils",
@@ -97,7 +98,6 @@ ohos_shared_library("distributed_av_sender") {
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_core",
-    "json:nlohmann_json_static",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
