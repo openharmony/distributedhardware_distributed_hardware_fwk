@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+# Copyright (c) 2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,67 +14,46 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_input/distributedinput.gni")
+import("../../../../../distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("DistributedInputTransportBaseFuzzTest") {
-  module_out_path = fuzz_test_path
-
-  fuzz_config_file = "${distributedinput_path}/test/fuzztest/distributedinputtransportbase_fuzzer"
+ohos_fuzztest("DistributedHardwareFwkStubFuzzTest") {
+  module_out_path = fuzz_test_output_path
+  fuzz_config_file =
+      "${innerkits_path}/test/fuzztest/distributedhardwarefwkstub_fuzzer"
 
   include_dirs = [
-    "${av_transport_path}/common/include",
-    "${services_source_path}/transport/include",
-    "${distributedinput_path}/services/transportbase/include",
-    "${common_path}/include",
-    "${fwk_interfaces_path}/include",
-    "${service_common}/include",
-    "${services_source_path}/inputinject/include",
-    "${services_source_path}/transport/include",
-    "${dfx_utils_path}/include",
+    "${av_trans_path}/common/include",
+    "include",
     "${utils_path}/include",
-    "${frameworks_path}/include",
-    "${distributedinput_path}/inputdevicehandler/include",
+    "${utils_path}/include/log",
+    "${common_path}/utils/include",
+    "${common_path}/log/include",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/accessmanager",
+    "${innerkits_path}/include",
+    "${innerkits_path}/include/ipc",
   ]
-
   cflags = [
     "-g",
     "-O0",
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
+  sources = [ "distributedhardwarefwkstub_fuzzer.cpp" ]
 
-  sources = [
-    "${distributedinput_path}/services/transportbase/src/distributed_input_transport_base.cpp",
-    "distributed_input_transport_base_fuzzer.cpp",
-  ]
+  deps = [ "${innerkits_path}:libdhfwk_sdk" ]
 
-  deps = [
-    "${dfx_utils_path}:libdinput_dfx_utils",
-    "${distributedinput_path}/services/transportbase:libdinput_trans_base",
-    "${services_source_path}/inputinject:libdinput_inject",
-    "${utils_path}:libdinput_utils",
-    "//third_party/libevdev:libevdev",
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"DistributedHardwareFwkStubFuzzTest\"",
+    "LOG_DOMAIN=0xD004100",
   ]
 
   external_deps = [
     "c_utils:utils",
-    "distributed_hardware_fwk:distributedhardwareutils",
-    "distributed_hardware_fwk:libdhfwk_sdk",
-    "dsoftbus:softbus_client",
-    "eventhandler:libeventhandler",
-    "hilog:libhilog",
-    "hitrace:hitrace_meter",
     "ipc:ipc_core",
-    "json:nlohmann_json_static",
     "safwk:system_ability_fwk",
-  ]
-
-  defines = [
-    "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"DistributedInputTransportBaseFuzzTest\"",
-    "LOG_DOMAIN=0xD004120",
   ]
 }
 
@@ -82,6 +61,6 @@ ohos_fuzztest("DistributedInputTransportBaseFuzzTest") {
 group("fuzztest") {
   testonly = true
 
-  deps = [ ":DistributedInputTransportBaseFuzzTest" ]
+  deps = [ ":DistributedHardwareFwkStubFuzzTest" ]
 }
 ###############################################################################
