@@ -151,6 +151,8 @@ HWTEST_F(ComponentManagerTest, init_test_002, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, unInit_test_001, TestSize.Level0)
 {
+    ComponentManager::GetInstance().cameraCompPrivacy_ = std::make_shared<ComponentPrivacy>();
+    ComponentManager::GetInstance().cameraCompPrivacy_->SetPageFlagTrue();
     auto ret = ComponentManager::GetInstance().UnInit();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }

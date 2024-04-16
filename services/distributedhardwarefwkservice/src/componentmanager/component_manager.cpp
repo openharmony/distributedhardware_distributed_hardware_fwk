@@ -156,6 +156,16 @@ int32_t ComponentManager::UnInit()
     compSource_.clear();
     compSink_.clear();
 
+    if (cameraCompPrivacy_ != nullptr && cameraCompPrivacy_->GetPageFlag()) {
+        cameraCompPrivacy_->StopPrivacePage("camera");
+        cameraCompPrivacy_->SetPageFlagFalse();
+    }
+
+    if (audioCompPrivacy_ != nullptr  && audioCompPrivacy_->GetPageFlag()) {
+        audioCompPrivacy_->StopPrivacePage("mic");
+        audioCompPrivacy_->SetPageFlagFalse();
+    }
+
     if (monitorTaskTimer_ != nullptr) {
         monitorTaskTimer_->StopTimer();
     }

@@ -36,6 +36,9 @@ public:
         bool &isSensitive, bool &isSameAccout);
     int32_t StartPrivacePage(const std::string &subtype, const std::string &networkId);
     int32_t StopPrivacePage(const std::string &subtype);
+    void SetPageFlagTrue();
+    void SetPageFlagFalse();
+    bool GetPageFlag();
 
     class ComponentEventHandler : public AppExecFwk::EventHandler {
     public:
@@ -60,6 +63,7 @@ private:
     void HandlePullUpPage(const std::string &subtype, const std::string &networkId);
 
     std::shared_ptr<ComponentPrivacy::ComponentEventHandler> eventHandler_;
+    std::atomic<bool> isPrivacePageOpen_ = false;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
