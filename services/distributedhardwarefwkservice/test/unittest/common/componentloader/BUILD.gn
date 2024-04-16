@@ -58,6 +58,13 @@ ohos_unittest("ComponentLoaderTest") {
     "power_manager:powermgr_client",
   ]
 
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"ComponentLoaderTest\"",
