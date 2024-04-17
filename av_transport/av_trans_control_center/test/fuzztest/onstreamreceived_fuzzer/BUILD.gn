@@ -1,0 +1,171 @@
+# Copyright (c) 2024 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#####################hydra-fuzz###################
+import("//build/config/features.gni")
+import("//build/test.gni")
+import("../../../../distributed_av_transport.gni")
+
+##############################fuzztest##########################################
+ohos_fuzztest("OnStreamReceivedFuzzTest") {
+  module_out_path = fuzz_test_output_path
+  fuzz_config_file =
+      "${control_center_path}/test/fuzztest/onstreamreceived_fuzzer"
+
+  include_dirs = [
+    "include",
+    "${filters_path}/av_transport_input",
+    "${common_path}/include",
+    "${plugin_path}/core",
+    "${plugin_path}/interface",
+  ]
+  cflags = [
+    "-g",
+    "-O0",
+    "-Wno-unused-variable",
+    "-fno-omit-frame-pointer",
+  ]
+  sources = [ "onstreamreceived_fuzzer.cpp" ]
+
+  deps = [ "${engine_path}/av_sender:distributed_av_sender" ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"OnStreamReceivedFuzzTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+  ]
+}
+
+ohos_fuzztest("OnBytesReceivedFuzzTest") {
+  module_out_path = fuzz_test_output_path
+  fuzz_config_file =
+      "${control_center_path}/test/fuzztest/onstreamreceived_fuzzer"
+
+  include_dirs = [
+    "include",
+    "${filters_path}/av_transport_input",
+    "${common_path}/include",
+    "${plugin_path}/core",
+    "${plugin_path}/interface",
+  ]
+  cflags = [
+    "-g",
+    "-O0",
+    "-Wno-unused-variable",
+    "-fno-omit-frame-pointer",
+  ]
+  sources = [ "onbytesreceived_fuzzer.cpp" ]
+
+  deps = [ "${engine_path}/av_sender:distributed_av_sender" ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"OnBytesReceivedFuzzTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+  ]
+}
+
+ohos_fuzztest("OnSoftbusTimeSyncResultFuzzTest") {
+  module_out_path = fuzz_test_output_path
+  fuzz_config_file =
+      "${control_center_path}/test/fuzztest/onstreamreceived_fuzzer"
+
+  include_dirs = [
+    "include",
+    "${filters_path}/av_transport_input",
+    "${common_path}/include",
+    "${plugin_path}/core",
+    "${plugin_path}/interface",
+  ]
+  cflags = [
+    "-g",
+    "-O0",
+    "-Wno-unused-variable",
+    "-fno-omit-frame-pointer",
+  ]
+  sources = [ "onsoftbustimesyncresult_fuzzer.cpp" ]
+
+  deps = [ "${engine_path}/av_sender:distributed_av_sender" ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"OnSoftbusTimeSyncResultFuzzTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+  ]
+}
+
+ohos_fuzztest("AVTransOnSessionClosedFuzzTest") {
+  module_out_path = fuzz_test_output_path
+  fuzz_config_file =
+      "${control_center_path}/test/fuzztest/onstreamreceived_fuzzer"
+
+  include_dirs = [
+    "include",
+    "${filters_path}/av_transport_input",
+    "${common_path}/include",
+    "${plugin_path}/core",
+    "${plugin_path}/interface",
+  ]
+  cflags = [
+    "-g",
+    "-O0",
+    "-Wno-unused-variable",
+    "-fno-omit-frame-pointer",
+  ]
+  sources = [ "avtransOnSessionClosed_fuzzer.cpp" ]
+
+  deps = [ "${engine_path}/av_sender:distributed_av_sender" ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"AVTransOnSessionClosedFuzzTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+  ]
+}
+
+###############################################################################
+group("fuzztest") {
+  testonly = true
+
+  deps = [
+    ":AVTransOnSessionClosedFuzzTest",
+    ":OnBytesReceivedFuzzTest",
+    ":OnSoftbusTimeSyncResultFuzzTest",
+    ":OnStreamReceivedFuzzTest",
+  ]
+}
+###############################################################################
