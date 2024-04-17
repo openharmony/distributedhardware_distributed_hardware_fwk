@@ -23,6 +23,7 @@ group("fuzztest") {
     "componentloader_fuzzer:fuzztest",
     "componentmanager_fuzzer:fuzztest",
     "dhmanagerfactory_fuzzer:fuzztest",
+    "distributedfwkservices_fuzzer:fuzztest",
     "enabledcompsdump_fuzzer:fuzztest",
     "publisher_fuzzer:fuzztest",
     "publisheritem_fuzzer:fuzztest",
