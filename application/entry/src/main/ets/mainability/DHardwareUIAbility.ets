@@ -25,17 +25,17 @@ const TAG = '[testTag_DHardwareUIAbility] : '
 
 PersistentStorage.persistProp('camera', 0);
 AppStorage.setOrCreate('camera', 0);
-console.log(TAG + "OUT : AppStorage.get<number>('camera') : " + AppStorage.get<number>('camera'));
+console.log(TAG + 'OUT : AppStorage.get<number>(camera) : ' + AppStorage.get<number>('camera'));
 
 PersistentStorage.persistProp('mic', 0);
 AppStorage.setOrCreate('mic', 0);
-console.log(TAG + "OUT : AppStorage.get<number>('mic') : " + AppStorage.get<number>('mic'));
+console.log(TAG + 'OUT : AppStorage.get<number>(mic) : ' + AppStorage.get<number>('mic'));
 
 export default class DHardwareUIAbility extends UIAbility {
-  isInit: boolean = true;
+  private isInit: boolean = true;
   //是否是第一次初始化
-  isStopAbility: boolean = false;
-  cameraCount: number = 0;
+  private isStopAbility: boolean = false;
+  private cameraCount: number = 0;
 
   stop() {
     console.info(TAG + 'stop');
@@ -105,17 +105,17 @@ export default class DHardwareUIAbility extends UIAbility {
       AppStorage.setOrCreate('deviceName', want.parameters['deviceName']);
       AppStorage.setOrCreate('deviceType', want.parameters['deviceType']);
 
-      console.log(TAG + "oncreate : after set want -- type --");
+      console.log(TAG + 'oncreate : after set want -- type --');
 
       // startAbility时，每次修改type的值+1
       if (want.parameters['type'] == 1) {
         let camera: number = AppStorage.get<number>('camera') as number + 1;
         AppStorage.set('camera', camera);
-        console.log(TAG + "onCreate : " + "AppStorage.get<number>('camera') : " + AppStorage.get<number>('camera'));
+        console.log(TAG + 'onCreate : ' + 'AppStorage.get<number>(camera) : ' + AppStorage.get<number>('camera'));
       } else if (want.parameters['type'] == 1024) {
         let mic: number = AppStorage.get<number>('mic') as number + 1;
         AppStorage.set('mic', mic);
-        console.log(TAG + "onCreate : " + "AppStorage.get<number>('mic') : " + AppStorage.get<number>('mic'));
+        console.log(TAG + 'onCreate : ' + 'AppStorage.get<number>(mic) : ' + AppStorage.get<number>('mic'));
       }
 
       if (want.parameters['returnCode'] == 24200102) {
@@ -155,17 +155,17 @@ export default class DHardwareUIAbility extends UIAbility {
       if (returnCode == undefined) {
         // 切换前后置后刷新按钮文本为‘暂停’
         AppStorage.setOrCreate('isPause', true);
-        console.log(TAG + "onNewWant : refresh Btn Text : " + "AppStorage.get<boolean>('isPause') : " + AppStorage.get<boolean>('isPause'));
+        console.log(TAG + 'onNewWant : refresh Btn Text : ' + 'AppStorage.get<boolean>(isPause) : ' + AppStorage.get<boolean>('isPause'));
 
         if (want.parameters['type'] == 1) {
           let camera: number = AppStorage.get<number>('camera') as number + 1;
           AppStorage.set('camera', camera);
           AppStorage.setOrCreate('switchedCamera', camera);
-          console.log(TAG + "onNewWant : " + "[returnCode==undefined]--[stop camera]--AppStorage.get<number>('camera') : " + AppStorage.get<number>('camera'));
+          console.log(TAG + 'onNewWant : ' + '[returnCode==undefined]--[stop camera]--AppStorage.get<number>(camera) : ' + AppStorage.get<number>('camera'));
         } else if (want.parameters['type'] == 1024) {
           let mic: number = AppStorage.get<number>('mic') as number + 1;
           AppStorage.set('mic', mic);
-          console.log(TAG + "onNewWant : " + "[returnCode==undefined]--[stop mic]--AppStorage.get<number>('mic') : " + AppStorage.get<number>('mic'));
+          console.log(TAG + 'onNewWant : ' + '[returnCode==undefined]--[stop mic]--AppStorage.get<number>(mic) : ' + AppStorage.get<number>('mic'));
         }
       }
 
@@ -178,11 +178,11 @@ export default class DHardwareUIAbility extends UIAbility {
         if (want.parameters['type'] == 1) {
           let camera: number = AppStorage.get<number>('camera') as number - 1;
           AppStorage.set('camera', camera);
-          console.log(TAG + "onNewWant : " + "[returnCode==24200102]--[stop camera]--AppStorage.get<number>('camera') : " + AppStorage.get<number>('camera'));
+          console.log(TAG + 'onNewWant : ' + '[returnCode==24200102]--[stop camera]--AppStorage.get<number>(camera) : ' + AppStorage.get<number>('camera'));
         } else if (want.parameters['type'] == 1024) {
           let mic: number = AppStorage.get<number>('mic') as number - 1;
           AppStorage.set('mic', mic);
-          console.log(TAG + "onNewWant : " + "[returnCode==24200102]--[stop mic]--AppStorage.get<number>('mic') : " + AppStorage.get<number>('mic'));
+          console.log(TAG + 'onNewWant : ' + '[returnCode==24200102]--[stop mic]--AppStorage.get<number>(mic) : ' + AppStorage.get<number>('mic'));
         }
 
         if (AppStorage.get<number>('camera') == 0 && AppStorage.get<number>('mic') == 0) {
@@ -261,8 +261,8 @@ export default class DHardwareUIAbility extends UIAbility {
       console.info(TAG + 'onForeground : ' + 'this.isInit : ' + this.isInit);
 
       if (AppStorage.get<number>('camera') != 0 || AppStorage.get<number>('mic') != 0) {
-        console.log(TAG + "onForeground : " + "AppStorage.get<number>('camera') : " + AppStorage.get<number>('camera'));
-        console.log(TAG + "onForeground : " + "AppStorage.get<number>('mic') : " + AppStorage.get<number>('mic'));
+        console.log(TAG + 'onForeground : ' + 'AppStorage.get<number>(camera) : ' + AppStorage.get<number>('camera'));
+        console.log(TAG + 'onForeground : ' + 'AppStorage.get<number>(mic) : ' + AppStorage.get<number>('mic'));
 
         this.resume();
       }
