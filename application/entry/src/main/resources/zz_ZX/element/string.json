@@ -1,0 +1,44 @@
+{
+    "string":[
+        {
+            "name":"EntryAbility_label",
+            "value":"[TS_867710]_DHardwareUI"
+        },
+        {
+            "name":"DHTypeName_Camera",
+            "value":"[TS_894802]_camera"
+        },
+        {
+            "name":"EntryAbility_desc",
+            "value":"[TS_867705]_description"
+        },
+        {
+            "name":"pause",
+            "value":"[TS_867692]_Pause"
+        },
+        {
+            "name":"disconnect",
+            "value":"[TS_867695]_Disconnect"
+        },
+        {
+            "name":"connected_to",
+            "value":"[TS_867693]_Connected to %1$s"
+        },
+        {
+            "name":"stop_device",
+            "value":"[TS_867698]_Disconnect to stop using this device's %1$s."
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"[TS_894803]_microphone"
+        },
+        {
+            "name":"module_desc",
+            "value":"[TS_867699]_module description"
+        },
+        {
+            "name":"continue",
+            "value":"[TS_867711]_Resume"
+        }
+    ]
+}
