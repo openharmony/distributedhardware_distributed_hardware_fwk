@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,9 +20,7 @@
 
 #include <vector>
 
-#define private public
 #include "av_trans_control_center_callback.h"
-#undef private
 #include "av_trans_types.h"
 #include "av_sync_utils.h"
 #include "i_av_receiver_engine.h"

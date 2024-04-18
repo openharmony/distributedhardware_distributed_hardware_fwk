@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,14 +26,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-
-#define REMOVE_NO_USE_CONSTRUCTOR(className)            \
-private:                                                \
-    className(const className&) = delete;               \
-    className& operator= (const className&) = delete;   \
-    className(className&&) = delete;                    \
-    className& operator= (className&&) = delete;        \
-
 class MockPublisherItemListener : public IRemoteStub<IPublisherListener> {
 public:
     MockPublisherItemListener() = default;
