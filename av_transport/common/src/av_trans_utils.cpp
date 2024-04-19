@@ -299,16 +299,29 @@ void GenerateAdtsHeader(unsigned char* adtsHeader, uint32_t packetLen, uint32_t 
     };
     // profile only support AAC LC: 1
     uint32_t freqIdx = mapSampleRateToFreIndex[sampleRate]; // 48KHz : 3
-    adtsHeader[0] = (unsigned char) 0xFF;
-    adtsHeader[1] = (unsigned char) 0xF9;
+    int8_t arrZero = 0;
+    int8_t arrOne = 1;
+    int8_t arrTwo = 2;
+    int8_t arrThree = 3;
+    int8_t arrFour = 4;
+    int8_t arrFive = 5;
+    int8_t arrSix = 6;
+    uint8_t calSix = 6;
+    uint8_t calThree = 3;
+    uint8_t calSeven = 7;
+    uint8_t calFive = 5;
+    uint8_t calEleven = 11;
+    uint8_t calTwo = 2;
+    adtsHeader[arrZero] = (unsigned char) 0xFF;
+    adtsHeader[arrOne] = (unsigned char) 0xF9;
     if (profile < 1) {
         return;
     }
-    adtsHeader[2] = (unsigned char) (((profile - 1) << 6) + (freqIdx << 2) + (channels >> 2));
-    adtsHeader[3] = (unsigned char) (((channels & 3) << 6) + (packetLen >> 11));
-    adtsHeader[4] = (unsigned char) ((packetLen & 0x7FF) >> 3);
-    adtsHeader[5] = (unsigned char) (((packetLen & 7) << 5) + 0x1F);
-    adtsHeader[6] = (unsigned char) 0xFC;
+    adtsHeader[arrTwo] = (unsigned char) (((profile - 1) << calSix) + (freqIdx << calTwo) + (channels >> calTwo));
+    adtsHeader[arrThree] = (unsigned char) (((channels & calThree) << calSix) + (packetLen >> calEleven));
+    adtsHeader[arrFour] = (unsigned char) ((packetLen & 0x7FF) >> calThree);
+    adtsHeader[arrFive] = (unsigned char) (((packetLen & calSeven) << calFive) + 0x1F);
+    adtsHeader[arrSix] = (unsigned char) 0xFC;
 }
 } // namespace DistributedHardware
 } // namespace OHOS
