@@ -52,16 +52,16 @@ struct DHardwareUI {
     // 2.Subscribe to environment variable changes through applicationContext
     let environmentCallback: EnvironmentCallback = {
       onConfigurationUpdated(newConfig: Configuration) {
-        console.info(TAG+`onConfigurationUpdated systemLanguage is ${systemLanguage}, newConfig: ${JSON.stringify(newConfig)}`);
+        console.info(TAG + `onConfigurationUpdated systemLanguage is ${systemLanguage}, newConfig: ${JSON.stringify(newConfig)}`);
 
         if (this.systemLanguage !== newConfig.language) {
-          console.info(TAG+`systemLanguage from ${systemLanguage} changed to ${newConfig.language}`);
+          console.info(TAG + `systemLanguage from ${systemLanguage} changed to ${newConfig.language}`);
           systemLanguage = newConfig.language;
           that.getDHTypeStringValue();
         }
       },
       onMemoryLevel(level) {
-        console.info(TAG+`onMemoryLevel level: ${level}`);
+        console.info(TAG + `onMemoryLevel level: ${level}`);
       }
     }
 
@@ -77,7 +77,7 @@ struct DHardwareUI {
       try {
         this.context.terminateSelf((err: BusinessError) => {
           if (err.code) {
-            console.error(TAG+`terminateSelf failed,code is ${err.code},message is ${err.message}`);
+            console.error(TAG + `terminateSelf failed,code is ${err.code},message is ${err.message}`);
             return;
           }
           console.log(TAG + 'aboutToAppear() : ' + 'terminateSelf succeed');
@@ -85,7 +85,7 @@ struct DHardwareUI {
       } catch (err) {
         let code = (err as BusinessError).code;
         let message = (err as BusinessError).message;
-        console.error(TAG+`terminateSelf failed,code is ${code},message is ${message}`);
+        console.error(TAG + `terminateSelf failed,code is ${code},message is ${message}`);
       }
     }
 
@@ -96,12 +96,12 @@ struct DHardwareUI {
     console.info(TAG + 'aboutToAppear : this.description.srcNetworkId : ' + this.description.srcNetworkId);
   }
 
-  getDHTypeStringValue(){
-    console.log(TAG+'getDHTypeStringValue in');
+  getDHTypeStringValue() {
+    console.log(TAG + 'getDHTypeStringValue in');
     if (this.type == 1024) {
       this.context.resourceManager.getStringValue($r('app.string.DHTypeName_Mic').id, (error, value) => {
         if (error != null) {
-          console.log(TAG+'error is ' + error);
+          console.log(TAG + 'error is ' + error);
         } else {
           this.dhTypeName = value;
           console.info(TAG + 'getDHTypeStringValue : this.dhTypeName : ' + this.dhTypeName);
@@ -110,14 +110,14 @@ struct DHardwareUI {
     } else {
       this.context.resourceManager.getStringValue($r('app.string.DHTypeName_Camera').id, (error, value) => {
         if (error != null) {
-          console.log(TAG+'error is ' + error);
+          console.log(TAG + 'error is ' + error);
         } else {
           this.dhTypeName = value;
           console.info(TAG + 'getDHTypeStringValue : this.dhTypeName : ' + this.dhTypeName);
         }
       });
     }
-    console.log(TAG+'getDHTypeStringValue end');
+    console.log(TAG + 'getDHTypeStringValue end');
   }
 
   onPageShow() {
