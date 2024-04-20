@@ -1,0 +1,32 @@
+{
+    "string":[
+        {
+            "name":"DHTypeName_Camera",
+            "value":"相機"
+        },
+        {
+            "name":"pause",
+            "value":"暫停"
+        },
+        {
+            "name":"disconnect",
+            "value":"中斷連接"
+        },
+        {
+            "name":"connected_to",
+            "value":"已連接至%1$s"
+        },
+        {
+            "name":"stop_device",
+            "value":"您可以中斷連線以停止使用此裝置的%1$s"
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"麥克風"
+        },
+        {
+            "name":"continue",
+            "value":"繼續"
+        }
+    ]
+}

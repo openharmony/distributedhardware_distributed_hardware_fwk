@@ -16,7 +16,8 @@ import { BusinessError } from '@ohos.base';
 import hardwareManager from '@ohos.distributedHardware.hardwareManager';
 import common from '@ohos.app.ability.common';
 import router from '@ohos.router';
-import CommonConstants from '../constants/CommonConstants';
+import { Configuration } from '@ohos.app.ability.Configuration';
+import EnvironmentCallback from '@ohos.app.ability.EnvironmentCallback';
 
 const TAG = '[testTag_DHardwareUI] : ';
 PersistentStorage.persistProp('sign', '');
@@ -40,16 +41,43 @@ struct DHardwareUI {
     srcNetworkId: this.srcNetworkId
   }
   private context = getContext(this) as common.UIAbilityContext;
+  private callbackId: number = 0;
+
+  subscribeConfigurationUpdate() {
+    let systemLanguage: string | undefined = this.context.config.language;
+    let that = this;
+    // 1.get ApplicationContext
+    let applicationContext = this.context.getApplicationContext();
+
+    // 2.Subscribe to environment variable changes through applicationContext
+    let environmentCallback: EnvironmentCallback = {
+      onConfigurationUpdated(newConfig: Configuration) {
+        console.info(TAG+`onConfigurationUpdated systemLanguage is ${systemLanguage}, newConfig: ${JSON.stringify(newConfig)}`);
+
+        if (this.systemLanguage !== newConfig.language) {
+          console.info(TAG+`systemLanguage from ${systemLanguage} changed to ${newConfig.language}`);
+          systemLanguage = newConfig.language;
+          that.getDHTypeStringValue();
+        }
+      },
+      onMemoryLevel(level) {
+        console.info(TAG+`onMemoryLevel level: ${level}`);
+      }
+    }
+
+    this.callbackId = applicationContext.on('environment', environmentCallback);
+  }
 
   aboutToAppear() {
     console.info(TAG + 'aboutToAppear() ');
     this.sign = '';
+    this.subscribeConfigurationUpdate();
 
     if (this.camera == 0 && this.mic == 0) {
       try {
         this.context.terminateSelf((err: BusinessError) => {
           if (err.code) {
-            console.error(`terminateSelf failed,code is ${err.code},message is ${err.message}`);
+            console.error(TAG+`terminateSelf failed,code is ${err.code},message is ${err.message}`);
             return;
           }
           console.log(TAG + 'aboutToAppear() : ' + 'terminateSelf succeed');
@@ -57,7 +85,7 @@ struct DHardwareUI {
       } catch (err) {
         let code = (err as BusinessError).code;
         let message = (err as BusinessError).message;
-        console.error(`terminateSelf failed,code is ${code},message is ${message}`);
+        console.error(TAG+`terminateSelf failed,code is ${code},message is ${message}`);
       }
     }
 
@@ -68,6 +96,30 @@ struct DHardwareUI {
     console.info(TAG + 'aboutToAppear : this.description.srcNetworkId : ' + this.description.srcNetworkId);
   }
 
+  getDHTypeStringValue(){
+    console.log(TAG+'getDHTypeStringValue in');
+    if (this.type == 1024) {
+      this.context.resourceManager.getStringValue($r('app.string.DHTypeName_Mic').id, (error, value) => {
+        if (error != null) {
+          console.log(TAG+'error is ' + error);
+        } else {
+          this.dhTypeName = value;
+          console.info(TAG + 'getDHTypeStringValue : this.dhTypeName : ' + this.dhTypeName);
+        }
+      });
+    } else {
+      this.context.resourceManager.getStringValue($r('app.string.DHTypeName_Camera').id, (error, value) => {
+        if (error != null) {
+          console.log(TAG+'error is ' + error);
+        } else {
+          this.dhTypeName = value;
+          console.info(TAG + 'getDHTypeStringValue : this.dhTypeName : ' + this.dhTypeName);
+        }
+      });
+    }
+    console.log(TAG+'getDHTypeStringValue end');
+  }
+
   onPageShow() {
     console.log(TAG + 'onPageShow() ');
     if (this.isPause === false && this.camera === 2) {
@@ -75,26 +127,7 @@ struct DHardwareUI {
       console.info(TAG + 'onPageShow : this.camera ' + this.camera);
       console.info(TAG + 'onPageShow : this.isPause ' + this.isPause);
     }
-
-    if (this.type == 1024) {
-      this.context.resourceManager.getStringValue($r('app.string.DHTypeName_Mic').id, (error, value) => {
-        if (error != null) {
-          console.log('error is ' + error);
-        } else {
-          this.dhTypeName = value;
-          console.info(TAG + 'aboutToAppear : this.dhTypeName : ' + this.dhTypeName);
-        }
-      });
-    } else {
-      this.context.resourceManager.getStringValue($r('app.string.DHTypeName_Camera').id, (error, value) => {
-        if (error != null) {
-          console.log('error is ' + error);
-        } else {
-          this.dhTypeName = value;
-          console.info(TAG + 'aboutToAppear : this.dhTypeName : ' + this.dhTypeName);
-        }
-      });
-    }
+    this.getDHTypeStringValue();
   }
 
   changePauseOrResumeStatus() {

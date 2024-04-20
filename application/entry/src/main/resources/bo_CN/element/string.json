@@ -1,0 +1,32 @@
+{
+    "string":[
+        {
+            "name":"DHTypeName_Camera",
+            "value":"པར་ཆས་"
+        },
+        {
+            "name":"pause",
+            "value":"སྐབས་སྡོད།"
+        },
+        {
+            "name":"disconnect",
+            "value":"སྦྲེལ་ལམ་གཅོད་པ།"
+        },
+        {
+            "name":"connected_to",
+            "value":"%1$sལ་སྦྲེལ་མཐུད་བྱུང་ཟིན།"
+        },
+        {
+            "name":"stop_device",
+            "value":"སྒྲིག་ཆས་འདིའི་%1$sབཀོལ་མཚམས་འཇོག་པའི་ཆེད་དུ་སྦྲེལ་མཐུད་གཅད་ཆོག"
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"སྐད་སྦུག་"
+        },
+        {
+            "name":"continue",
+            "value":"མུ་མཐུད།"
+        }
+    ]
+}

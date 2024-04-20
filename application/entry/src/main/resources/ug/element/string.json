@@ -1,0 +1,32 @@
+{
+    "string":[
+        {
+            "name":"DHTypeName_Camera",
+            "value":"كامېرا"
+        },
+        {
+            "name":"pause",
+            "value":"تورمۇزلاش"
+        },
+        {
+            "name":"disconnect",
+            "value":"ئۈزۈش"
+        },
+        {
+            "name":"connected_to",
+            "value":"نۆۋەتتە %1$s ئۇلاق"
+        },
+        {
+            "name":"stop_device",
+            "value":"ئۈزسىڭىز، بۇ ئۈسكۈنىدىن %1$s ئىشلىتىش توختايدۇ."
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"مىكروفون"
+        },
+        {
+            "name":"continue",
+            "value":"داۋاملاشتۇرۇش"
+        }
+    ]
+}
