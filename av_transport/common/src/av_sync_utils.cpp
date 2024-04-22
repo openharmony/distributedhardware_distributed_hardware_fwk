@@ -310,42 +310,86 @@ AVTransSharedMemory UnmarshalSharedMemory(const std::string &jsonStr)
 
 void U32ToU8(uint8_t *ptr, uint32_t value)
 {
-    ptr[0] = (uint8_t)((value) & 0xff);
-    ptr[1] = (uint8_t)((value >> 8) & 0xff);
-    ptr[2] = (uint8_t)((value >> 16) & 0xff);
-    ptr[3] = (uint8_t)((value >> 24) & 0xff);
+    int8_t arrZero = 0;
+    int8_t arrOne = 1;
+    int8_t arrTwo = 2;
+    int8_t arrThree = 3;
+    uint8_t cal = 8;
+    uint8_t calTwo = 16;
+    uint8_t calThree = 24;
+    ptr[arrZero] = (uint8_t)((value) & 0xff);
+    ptr[arrOne] = (uint8_t)((value >> cal) & 0xff);
+    ptr[arrTwo] = (uint8_t)((value >> calTwo) & 0xff);
+    ptr[arrThree] = (uint8_t)((value >> calThree) & 0xff);
 }
 
 void U64ToU8(uint8_t *ptr, uint64_t value)
 {
-    ptr[0] = (uint8_t)((value) & 0xff);
-    ptr[1] = (uint8_t)((value >> 8) & 0xff);
-    ptr[2] = (uint8_t)((value >> 16) & 0xff);
-    ptr[3] = (uint8_t)((value >> 24) & 0xff);
-    ptr[4] = (uint8_t)((value >> 32) & 0xff);
-    ptr[5] = (uint8_t)((value >> 40) & 0xff);
-    ptr[6] = (uint8_t)((value >> 48) & 0xff);
-    ptr[7] = (uint8_t)((value >> 56) & 0xff);
+    int8_t arrZero = 0;
+    int8_t arrOne = 1;
+    int8_t arrTwo = 2;
+    int8_t arrThree = 3;
+    int8_t arrFour = 4;
+    int8_t arrFive = 5;
+    int8_t arrSix = 6;
+    int8_t arrSeven = 7;
+    uint8_t calOne = 8;
+    uint8_t calTwo = 16;
+    uint8_t calThree = 24;
+    uint8_t calFour = 32;
+    uint8_t calFive = 40;
+    uint8_t calSix = 48;
+    uint8_t calSeven = 56;
+    ptr[arrZero] = (uint8_t)((value) & 0xff);
+    ptr[arrOne] = (uint8_t)((value >> calOne) & 0xff);
+    ptr[arrTwo] = (uint8_t)((value >> calTwo) & 0xff);
+    ptr[arrThree] = (uint8_t)((value >> calThree) & 0xff);
+    ptr[arrFour] = (uint8_t)((value >> calFour) & 0xff);
+    ptr[arrFive] = (uint8_t)((value >> calFive) & 0xff);
+    ptr[arrSix] = (uint8_t)((value >> calSix) & 0xff);
+    ptr[arrSeven] = (uint8_t)((value >> calSeven) & 0xff);
 }
 
 uint32_t U8ToU32(const uint8_t *ptr)
 {
-    return (((uint32_t)(ptr[0] & 0xff)) |
-            ((uint32_t)(ptr[1] & 0xff) << 8) |
-            ((uint32_t)(ptr[2] & 0xff) << 16) |
-            ((uint32_t)(ptr[3] & 0xff) << 24));
+    int8_t arrZero = 0;
+    int8_t arrOne = 1;
+    int8_t arrTwo = 2;
+    int8_t arrThree = 3;
+    uint8_t calOne = 8;
+    uint8_t calTwo = 16;
+    uint8_t calThree = 24;
+    return (((uint32_t)(ptr[arrZero] & 0xff)) |
+            ((uint32_t)(ptr[arrOne] & 0xff) << calOne) |
+            ((uint32_t)(ptr[arrTwo] & 0xff) << calTwo) |
+            ((uint32_t)(ptr[arrThree] & 0xff) << calThree));
 }
 
 uint64_t U8ToU64(const uint8_t *ptr)
 {
-    return (((uint64_t)(ptr[0] & 0xff)) |
-            ((uint64_t)(ptr[1] & 0xff) << 8) |
-            ((uint64_t)(ptr[2] & 0xff) << 16) |
-            ((uint64_t)(ptr[3] & 0xff) << 24) |
-            ((uint64_t)(ptr[4] & 0xff) << 32) |
-            ((uint64_t)(ptr[5] & 0xff) << 40) |
-            ((uint64_t)(ptr[6] & 0xff) << 48) |
-            ((uint64_t)(ptr[7] & 0xff) << 56));
+    int8_t arrZero = 0;
+    int8_t arrOne = 1;
+    int8_t arrTwo = 2;
+    int8_t arrThree = 3;
+    int8_t arrFour = 4;
+    int8_t arrFive = 5;
+    int8_t arrSix = 6;
+    int8_t arrSeven = 7;
+    uint8_t calOne = 8;
+    uint8_t calTwo = 16;
+    uint8_t calThree = 24;
+    uint8_t calFour = 32;
+    uint8_t calFive = 40;
+    uint8_t calSix = 48;
+    uint8_t calSeven = 56;
+    return (((uint64_t)(ptr[arrZero] & 0xff)) |
+            ((uint64_t)(ptr[arrOne] & 0xff) << calOne) |
+            ((uint64_t)(ptr[arrTwo] & 0xff) << calTwo) |
+            ((uint64_t)(ptr[arrThree] & 0xff) << calThree) |
+            ((uint64_t)(ptr[arrFour] & 0xff) << calFour) |
+            ((uint64_t)(ptr[arrFive] & 0xff) << calFive) |
+            ((uint64_t)(ptr[arrSix] & 0xff) << calSix) |
+            ((uint64_t)(ptr[arrSeven] & 0xff) << calSeven));
 }
 } // namespace DistributedHardware
 } // namespace OHOS
