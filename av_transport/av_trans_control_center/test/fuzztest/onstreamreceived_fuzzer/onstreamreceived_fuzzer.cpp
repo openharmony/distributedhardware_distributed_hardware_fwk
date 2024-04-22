@@ -30,16 +30,25 @@ namespace DistributedHardware {
 
 void OnStreamReceivedFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(int64_t))) {
         return;
     }
 
     int32_t sessionId = *(reinterpret_cast<const int32_t*>(data));
-    const StreamData *streamData = reinterpret_cast<const StreamData*>(data);
-    const StreamData *extData = reinterpret_cast<const StreamData*>(data);
-    const StreamFrameInfo *frameInfo = reinterpret_cast<const StreamFrameInfo*>(data);
+    const StreamData streamData = {
+        const_cast<char*>(reinterpret_cast<const char*>(data)), static_cast<int>(size)
+    };
+    const StreamData extData = {
+        const_cast<char*>(reinterpret_cast<const char*>(data)), static_cast<int>(size)
+    };
+    const StreamFrameInfo frameInfo = {
+        *(reinterpret_cast<const int*>(data)), *(reinterpret_cast<const int64_t*>(data)),
+        *(reinterpret_cast<const int*>(data)), *(reinterpret_cast<const int*>(data)),
+        *(reinterpret_cast<const int*>(data)), *(reinterpret_cast<const int*>(data)),
+        *(reinterpret_cast<const int*>(data)), nullptr
+    };
 
-    SoftbusChannelAdapter::GetInstance().OnSoftbusStreamReceived(sessionId, streamData, extData, frameInfo);
+    SoftbusChannelAdapter::GetInstance().OnSoftbusStreamReceived(sessionId, &streamData, &extData, &frameInfo);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
