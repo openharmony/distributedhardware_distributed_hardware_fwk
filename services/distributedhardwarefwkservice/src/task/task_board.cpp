@@ -94,10 +94,12 @@ void TaskBoard::DumpAllTasks(std::vector<TaskDump> &taskInfos)
         TaskDump taskInfo = {
             .id = t.second->GetId(),
             .taskType = t.second->GetTaskType(),
-            .taskParm.networkId = t.second->GetNetworkId(),
-            .taskParm.uuid = t.second->GetUUID(),
-            .taskParm.dhId = t.second->GetDhId(),
-            .taskParm.dhType = t.second->GetDhType(),
+            .taskParm = {
+                .networkId = t.second->GetNetworkId(),
+                .uuid = t.second->GetUUID(),
+                .dhId = t.second->GetDhId(),
+                .dhType = t.second->GetDhType(),
+            },
             .taskSteps = t.second->GetTaskSteps()
         };
         taskInfos.emplace_back(taskInfo);
