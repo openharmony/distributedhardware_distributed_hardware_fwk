@@ -175,6 +175,7 @@ int32_t ComponentPrivacy::StartPrivacePage(const std::string &subtype, const std
     }
     int32_t result = abilityManager->StartAbility(want);
     DHLOGI("performance time: StartPrivacePage result = %{public}d", result);
+    SetPageFlagTrue();
     return result;
 }
 
@@ -201,6 +202,7 @@ int32_t ComponentPrivacy::StopPrivacePage(const std::string &subtype)
     }
     int32_t result = abilityManager->StartAbility(want);
     DHLOGI("performance time: StopPrivacePage result = %{public}d", result);
+    SetPageFlagFalse();
     return result;
 }
 
@@ -232,6 +234,21 @@ std::string ComponentPrivacy::DeviceTypeToString(uint16_t deviceTypeId)
         default:
             return "unknown";
     }
+}
+
+void ComponentPrivacy::SetPageFlagTrue()
+{
+    isPrivacePageOpen_.store(true);
+}
+
+void ComponentPrivacy::SetPageFlagFalse()
+{
+    isPrivacePageOpen_.store(false);
+}
+
+bool ComponentPrivacy::GetPageFlag()
+{
+    return isPrivacePageOpen_.load();
 }
 
 void ComponentPrivacy::ComponentEventHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
