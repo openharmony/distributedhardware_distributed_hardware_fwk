@@ -30,14 +30,16 @@ namespace DistributedHardware {
 
 void OnSoftbusTimeSyncResultFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(int64_t))) {
         return;
     }
 
     int32_t result = *(reinterpret_cast<const int32_t*>(data));
-    const TimeSyncResultInfo *info = reinterpret_cast<const TimeSyncResultInfo*>(data);
+    TimeSyncResultInfo info = {};
+    info.result.millisecond = *(reinterpret_cast<const int32_t*>(data));
+    info.result.microsecond = *(reinterpret_cast<const int32_t*>(data));
 
-    SoftbusChannelAdapter::GetInstance().OnSoftbusTimeSyncResult(info, result);
+    SoftbusChannelAdapter::GetInstance().OnSoftbusTimeSyncResult(&info, result);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
