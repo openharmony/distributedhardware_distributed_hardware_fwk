@@ -61,7 +61,6 @@ public:
     void UnRegisterDataSyncTriggerListener()
     {
     }
-
 };
 } // namespace DistributedHardware
 } // namespace OHOS
