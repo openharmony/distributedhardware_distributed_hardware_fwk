@@ -39,6 +39,7 @@ public:
 class IHardwareHandler {
 public:
     virtual int32_t Initialize() = 0;
+    virtual std::vector<DHItem> QueryMeta() = 0;
     virtual std::vector<DHItem> Query() = 0;
     virtual std::map<std::string, std::string> QueryExtraInfo() = 0;
     virtual bool IsSupportPlugin() = 0;
