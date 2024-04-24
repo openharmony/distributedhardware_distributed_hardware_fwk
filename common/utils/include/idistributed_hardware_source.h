@@ -64,7 +64,7 @@ class DataSyncTriggerListener {
     /**
      * @brief trigger local distributed hardware open session with remote device with uuid
      * 
-     * @param networkId 
+     * @param uuid the remote device uuid
      */
     virtual void OnDataSyncTrigger(const std::string &uuid) = 0;
 };
