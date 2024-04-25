@@ -42,6 +42,34 @@ struct EnableParam {
     std::string subtype;
 };
 
+enum class BusinessState : uint32_t {
+    UNKNOWN,
+    IDLE,
+    RUNNING,
+    PAUSING
+};
+
+class DistributedHardwareStateListener {
+    /**
+     * @brief report the business state of local virtual driver
+     *        corresponding the remote device with the device id and dhid.
+     * 
+     * @param uuid the remote device uuid.
+     * @param dhId the remote device peripheral dhId.
+     * @param state business state.
+     */
+    virtual void OnStateChanged(const std::string &uuid, const std::string &dhId, const BusinessState state) = 0;
+};
+
+class DataSyncTriggerListener {
+    /**
+     * @brief trigger local distributed hardware open session with remote device with uuid
+     * 
+     * @param uuid the remote device uuid
+     */
+    virtual void OnDataSyncTrigger(const std::string &uuid) = 0;
+};
+
 class IDistributedHardwareSource {
 public:
     virtual int32_t InitSource(const std::string &params) = 0;
@@ -52,6 +80,11 @@ public:
         std::shared_ptr<UnregisterCallback> callback) = 0;
     virtual int32_t ConfigDistributedHardware(const std::string &uuid, const std::string &dhId, const std::string &key,
         const std::string &value) = 0;
+    virtual void RegisterDistributedHardwareStateListener(
+        std::shared_ptr<DistributedHardwareStateListener> listener) = 0;
+    virtual void UnregisterDistributedHardwareStateListener() = 0;
+    virtual void RegisterDataSyncTriggerListener(std::shared_ptr<DataSyncTriggerListener> listener) = 0;
+    virtual void UnregisterDataSyncTriggerListener() = 0;
 };
 extern "C" __attribute__((visibility("default"))) IDistributedHardwareSource* GetSourceHardwareHandler();
 } // namespace DistributedHardware

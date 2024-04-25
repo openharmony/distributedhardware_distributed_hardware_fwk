@@ -47,6 +47,20 @@ public:
     {
         return 0;
     }
+    void RegisterDistributedHardwareStateListener(std::shared_ptr<DistributedHardwareStateListener> listener)
+    {
+        (void)listener;
+    }
+    void UnregisterDistributedHardwareStateListener()
+    {
+    }
+    void RegisterDataSyncTriggerListener(std::shared_ptr<DataSyncTriggerListener> listener)
+    {
+        (void)listener;
+    }
+    void UnregisterDataSyncTriggerListener()
+    {
+    }
 };
 } // namespace DistributedHardware
 } // namespace OHOS

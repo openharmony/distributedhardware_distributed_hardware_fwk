@@ -24,6 +24,12 @@ int32_t MockHardwareHandler::Initialize()
     return DH_FWK_SUCCESS;
 }
 
+std::vector<DHItem> MockHardwareHandler::QueryMeta()
+{
+    DHItem item;
+    return std::vector<DHItem> { item };
+}
+
 std::vector<DHItem> MockHardwareHandler::Query()
 {
     DHItem item;
