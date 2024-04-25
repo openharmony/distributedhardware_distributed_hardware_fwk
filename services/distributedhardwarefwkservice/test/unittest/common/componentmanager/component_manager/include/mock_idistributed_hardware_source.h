@@ -47,18 +47,18 @@ public:
     {
         return 0;
     }
-    void RegisterBusinessStateListener(std::shared_ptr<BusinessStateListener> listener)
+    void RegisterDistributedHardwareStateListener(std::shared_ptr<BusinessStateListener> listener)
     {
         (void)listener;
     }
-    void UnRegisterBusinessStateListener()
+    void UnregisterDistributedHardwareStateListener()
     {
     }
     void RegisterDataSyncTriggerListener(std::shared_ptr<DataSyncTriggerListener> listener)
     {
         (void)listener;
     }
-    void UnRegisterDataSyncTriggerListener()
+    void UnregisterDataSyncTriggerListener()
     {
     }
 };

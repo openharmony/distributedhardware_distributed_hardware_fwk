@@ -45,7 +45,8 @@ struct EnableParam {
 enum class BusinessState : uint32_t {
     UNKNOWN,
     IDLE,
-    BUSY
+    RUNNING,
+    PAUSING
 };
 
 class BusinessStateListener {
@@ -79,10 +80,10 @@ public:
         std::shared_ptr<UnregisterCallback> callback) = 0;
     virtual int32_t ConfigDistributedHardware(const std::string &uuid, const std::string &dhId, const std::string &key,
         const std::string &value) = 0;
-    virtual void RegisterBusinessStateListener(std::shared_ptr<BusinessStateListener> listener) = 0;
-    virtual void UnRegisterBusinessStateListener() = 0;
+    virtual void RegisterDistributedHardwareStateListener(std::shared_ptr<BusinessStateListener> listener) = 0;
+    virtual void UnregisterDistributedHardwareStateListener() = 0;
     virtual void RegisterDataSyncTriggerListener(std::shared_ptr<DataSyncTriggerListener> listener) = 0;
-    virtual void UnRegisterDataSyncTriggerListener() = 0;
+    virtual void UnregisterDataSyncTriggerListener() = 0;
 };
 extern "C" __attribute__((visibility("default"))) IDistributedHardwareSource* GetSourceHardwareHandler();
 } // namespace DistributedHardware
