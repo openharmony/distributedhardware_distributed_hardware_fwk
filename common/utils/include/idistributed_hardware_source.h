@@ -49,7 +49,7 @@ enum class BusinessState : uint32_t {
     PAUSING
 };
 
-class BusinessStateListener {
+class DistributedHardwareStateListener {
     /**
      * @brief report the business state of local virtual driver
      *        corresponding the remote device with the device id and dhid.
@@ -80,7 +80,8 @@ public:
         std::shared_ptr<UnregisterCallback> callback) = 0;
     virtual int32_t ConfigDistributedHardware(const std::string &uuid, const std::string &dhId, const std::string &key,
         const std::string &value) = 0;
-    virtual void RegisterDistributedHardwareStateListener(std::shared_ptr<BusinessStateListener> listener) = 0;
+    virtual void RegisterDistributedHardwareStateListener(
+        std::shared_ptr<DistributedHardwareStateListener> listener) = 0;
     virtual void UnregisterDistributedHardwareStateListener() = 0;
     virtual void RegisterDataSyncTriggerListener(std::shared_ptr<DataSyncTriggerListener> listener) = 0;
     virtual void UnregisterDataSyncTriggerListener() = 0;

@@ -47,7 +47,7 @@ public:
     {
         return 0;
     }
-    void RegisterDistributedHardwareStateListener(std::shared_ptr<BusinessStateListener> listener)
+    void RegisterDistributedHardwareStateListener(std::shared_ptr<DistributedHardwareStateListener> listener)
     {
         (void)listener;
     }
