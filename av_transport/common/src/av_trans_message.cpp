@@ -73,7 +73,7 @@ bool AVTransMessage::UnmarshalMessage(const std::string& jsonStr, const std::str
         return false;
     }
 
-    type_ = typeObj->valueint;
+    type_ = static_cast<uint32_t>(typeObj->valueint);
     cJSON *contentObj = cJSON_GetObjectItemCaseSensitive(metaJson, KEY_CONTENT.c_str());
     if (contentObj == nullptr || !cJSON_IsString(contentObj)) {
         cJSON_Delete(metaJson);
