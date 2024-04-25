@@ -23,6 +23,7 @@
 #include "device_manager.h"
 #include "dm_device_info.h"
 #include "device_type.h"
+#include "dh_utils_tool.h"
 #include "event_handler.h"
 #include "cJSON.h"
 
@@ -283,7 +284,15 @@ void ComponentPrivacy::ComponentEventHandler::ProcessStartPage(const AppExecFwk:
     DHLOGI("ProcessStartPage enter.");
     std::shared_ptr<cJSON> dataMsg = event->GetSharedObject<cJSON>();
     cJSON *innerMsg = cJSON_GetArrayItem(dataMsg.get(), 0);
+    if (!IsString(innerMsg, PRIVACY_SUBTYPE)) {
+        DHLOGE("PRIVACY_SUBTYPE is invalid");
+        return;
+    }
     std::string subtype = cJSON_GetObjectItem(innerMsg, PRIVACY_SUBTYPE.c_str())->valuestring;
+    if (!IsString(innerMsg, PRIVACY_NETWORKID)) {
+        DHLOGE("PRIVACY_NETWORKID is invalid");
+        return;
+    }
     std::string networkId = cJSON_GetObjectItem(innerMsg, PRIVACY_NETWORKID.c_str())->valuestring;
     comPrivacyObj_->StartPrivacePage(subtype, networkId);
 }
@@ -293,6 +302,10 @@ void ComponentPrivacy::ComponentEventHandler::ProcessStopPage(const AppExecFwk::
     DHLOGI("ProcessStopPage enter.");
     std::shared_ptr<cJSON> dataMsg = event->GetSharedObject<cJSON>();
     cJSON *innerMsg = cJSON_GetArrayItem(dataMsg.get(), 0);
+    if (!IsString(innerMsg, PRIVACY_SUBTYPE)) {
+        DHLOGE("PRIVACY_SUBTYPE is invalid");
+        return;
+    }
     std::string subtype = cJSON_GetObjectItem(innerMsg, PRIVACY_SUBTYPE.c_str())->valuestring;
     comPrivacyObj_->StopPrivacePage(subtype);
 }

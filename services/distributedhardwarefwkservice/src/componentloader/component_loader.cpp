@@ -145,7 +145,7 @@ int32_t ParseSource(const cJSON *json, CompConfig &cfg)
         DHLOGE("COMP_SOURCE_SA_ID is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compSourceSaId = (uint32_t)cJSON_GetObjectItem(json, COMP_SOURCE_SA_ID.c_str())->valuedouble;
+    cfg.compSourceSaId = static_cast<int32_t>(cJSON_GetObjectItem(json, COMP_SOURCE_SA_ID.c_str())->valuedouble);
     return DH_FWK_SUCCESS;
 }
 
@@ -165,7 +165,7 @@ int32_t ParseSink(const cJSON *json, CompConfig &cfg)
         DHLOGE("COMP_SINK_SA_ID is invalid");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cfg.compSinkSaId = (uint32_t)cJSON_GetObjectItem(json, COMP_SINK_SA_ID.c_str())->valuedouble;
+    cfg.compSinkSaId = static_cast<int32_t>(cJSON_GetObjectItem(json, COMP_SINK_SA_ID.c_str())->valuedouble);
     return DH_FWK_SUCCESS;
 }
 
@@ -179,6 +179,10 @@ int32_t ParseResourceDesc(const cJSON *json, CompConfig &cfg)
     cJSON *element;
     cJSON_ArrayForEach(element, resourceDescArray) {
         ResourceDesc desc;
+        if (!IsString(element, COMP_SUBTYPE)) {
+            DHLOGE("COMP_SUBTYPE is invalid");
+            return ERR_DH_FWK_JSON_PARSE_FAILED;
+        }
         desc.subtype = cJSON_GetObjectItem(element, COMP_SUBTYPE.c_str())->valuestring;
         cJSON *sensitive = cJSON_GetObjectItem(element, COMP_SENSITIVE.c_str());
         if (cJSON_IsTrue(sensitive)) {
@@ -236,7 +240,7 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
     }
     cJSON *components = cJSON_GetObjectItem(root, COMPONENTSLOAD_DISTRIBUTED_COMPONENTS.c_str());
 
-    size_t compSize = cJSON_GetArraySize(components);
+    size_t compSize = static_cast<size_t>(cJSON_GetArraySize(components));
     if (compSize == 0 || compSize > MAX_COMP_SIZE) {
         DHLOGE("CompConfig size is invalid!");
         cJSON_Delete(root);
@@ -276,7 +280,8 @@ void ComponentLoader::ParseCompConfigFromJson(cJSON *component, CompConfig &conf
         config.compSourceVersion = cJSON_GetObjectItem(component, COMP_SOURCE_VERSION.c_str())->valuestring;
     }
     if (IsInt32(component, COMP_SOURCE_SA_ID.c_str())) {
-        config.compSourceSaId = (uint32_t)cJSON_GetObjectItem(component, COMP_SOURCE_SA_ID.c_str())->valuedouble;
+        config.compSourceSaId =
+            static_cast<int32_t>(cJSON_GetObjectItem(component, COMP_SOURCE_SA_ID.c_str())->valuedouble);
     }
     if (IsString(component, COMP_SINK_LOC.c_str())) {
         config.compSinkLoc = cJSON_GetObjectItem(component, COMP_SINK_LOC.c_str())->valuestring;
@@ -285,7 +290,8 @@ void ComponentLoader::ParseCompConfigFromJson(cJSON *component, CompConfig &conf
         config.compSinkVersion = cJSON_GetObjectItem(component, COMP_SINK_VERSION.c_str())->valuestring;
     }
     if (IsInt32(component, COMP_SINK_SA_ID.c_str())) {
-        config.compSinkSaId = (uint32_t)cJSON_GetObjectItem(component, COMP_SINK_SA_ID.c_str())->valuedouble;
+        config.compSinkSaId =
+            static_cast<int32_t>(cJSON_GetObjectItem(component, COMP_SINK_SA_ID.c_str())->valuedouble);
     }
     if (IsArray(component, COMP_RESOURCE_DESC.c_str())) {
         cJSON *resourceDescs = cJSON_GetObjectItem(component, COMP_RESOURCE_DESC.c_str());
@@ -305,6 +311,10 @@ void ComponentLoader::ParseResourceDescFromJson(cJSON *resourceDescs, CompConfig
             sensitiveValue = false;
         }
         ResourceDesc resource;
+        if (!IsString(resourceDesc, COMP_SUBTYPE)) {
+            DHLOGE("COMP_SUBTYPE is invalid");
+            return;
+        }
         resource.subtype = cJSON_GetObjectItem(resourceDesc, COMP_SUBTYPE.c_str())->valuestring;
         resource.sensitiveValue = sensitiveValue;
         config.compResourceDesc.push_back(resource);
