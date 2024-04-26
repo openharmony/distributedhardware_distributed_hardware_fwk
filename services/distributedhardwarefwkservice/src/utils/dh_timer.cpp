@@ -111,6 +111,7 @@ void DHTimer::StopTimer()
 void DHTimer::Execute()
 {
     DHLOGI("start");
+    std::lock_guard<std::mutex> lock(timerMutex_);
     if (eventHandler_ == nullptr) {
         DHLOGE("eventHandler is nullptr!");
         return;
