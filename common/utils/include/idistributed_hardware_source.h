@@ -50,6 +50,7 @@ enum class BusinessState : uint32_t {
 };
 
 class DistributedHardwareStateListener {
+public:
     /**
      * @brief report the business state of local virtual driver
      *        corresponding the remote device with the device id and dhid.
@@ -62,6 +63,7 @@ class DistributedHardwareStateListener {
 };
 
 class DataSyncTriggerListener {
+public:
     /**
      * @brief trigger local distributed hardware open session with remote device with uuid
      * 
