@@ -341,7 +341,7 @@ void CapabilityInfoManager::OnChange(const DistributedKv::ChangeNotification &ch
     }
 }
 
-void CapabilityInfoManager::OnChange(const DistributedKv::DataOrigin& origin, Keys &&keys)
+void CapabilityInfoManager::OnChange(const DistributedKv::DataOrigin &origin, Keys &&keys)
 {
     DHLOGI("CapabilityInfoManager: Cloud data OnChange.");
     std::vector<DistributedKv::Entry> insertRecords = GetEntriesByKeys(keys[ChangeOp::OP_INSERT]);

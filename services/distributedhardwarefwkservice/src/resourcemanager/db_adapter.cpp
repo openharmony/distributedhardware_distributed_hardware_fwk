@@ -274,7 +274,7 @@ int32_t DBAdapter::UnRegisterChangeListener()
     if (status == DistributedKv::Status::IPC_ERROR) {
         DHLOGE("UnRegister db data change listener failed, ret: %{public}d", status);
         return ERR_DH_FWK_RESOURCE_UNREGISTER_DB_FAILED;
-    } 
+    }
     status = kvStoragePtr_->UnSubscribeKvStore(
         DistributedKv::SubscribeType::SUBSCRIBE_TYPE_CLOUD, dataChangeListener_);
     if (status == DistributedKv::Status::IPC_ERROR) {

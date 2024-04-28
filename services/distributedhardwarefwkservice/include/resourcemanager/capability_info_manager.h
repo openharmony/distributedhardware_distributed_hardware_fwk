@@ -77,7 +77,7 @@ public:
     /* Database data changes callback */
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     /* Cloud data changes callback */
-    void OnChange(const DistributedKv::DataOrigin& origin, Keys &&keys) override;
+    void OnChange(const DistributedKv::DataOrigin &origin, Keys &&keys) override;
 
     class CapabilityInfoManagerEventHandler : public AppExecFwk::EventHandler {
         public:
