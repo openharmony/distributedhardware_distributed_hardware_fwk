@@ -259,11 +259,11 @@ void DsoftbusInputPlugin::OnStreamReceived(const StreamData *data, const StreamD
         return;
     }
     cJSON *typeItem = cJSON_GetObjectItem(resMsg, AVT_DATA_META_TYPE.c_str());
-    if (typeItem == NULL) {
+    if (typeItem == NULL || !cJSON_IsNumber(typeItem)) {
         cJSON_Delete(resMsg);
         return;
     }
-    uint32_t metaType = typeItem->valueint;
+    uint32_t metaType = static_cast<uint32_t>(typeItem->valueint);
     auto buffer = CreateBuffer(metaType, data, resMsg);
     if (buffer != nullptr) {
         DataEnqueue(buffer);

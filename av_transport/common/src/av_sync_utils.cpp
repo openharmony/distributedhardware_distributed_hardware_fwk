@@ -293,7 +293,7 @@ AVTransSharedMemory UnmarshalSharedMemory(const std::string &jsonStr)
     }
     int32_t fd = fdObj->valueint;
     cJSON *sizeObj = cJSON_GetObjectItemCaseSensitive(paramJson, KEY_SHARED_MEM_SIZE.c_str());
-    if (sizeObj == nullptr || !cJSON_IsNumber(sizeObj)) {
+    if (sizeObj == nullptr || !cJSON_IsString(sizeObj)) {
         cJSON_Delete(paramJson);
         return AVTransSharedMemory{0, 0, ""};
     }

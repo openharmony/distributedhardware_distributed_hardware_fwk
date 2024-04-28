@@ -244,11 +244,11 @@ void DsoftbusInputAudioPlugin::OnStreamReceived(const StreamData *data, const St
         return;
     }
     cJSON *typeItem = cJSON_GetObjectItem(resMsg, AVT_DATA_META_TYPE.c_str());
-    if (typeItem == nullptr) {
+    if (typeItem == nullptr || !cJSON_IsNumber(typeItem)) {
         cJSON_Delete(resMsg);
         return;
     }
-    uint32_t metaType = typeItem->valueint;
+    uint32_t metaType = static_cast<uint32_t>(typeItem->valueint);
     auto buffer = CreateBuffer(metaType, data, resMsg);
     DataEnqueue(buffer);
     cJSON_Delete(resMsg);
@@ -266,7 +266,7 @@ std::shared_ptr<Buffer> DsoftbusInputAudioPlugin::CreateBuffer(uint32_t metaType
         return buffer;
     }
     cJSON *paramItem = cJSON_GetObjectItem(resMsg, AVT_DATA_PARAM.c_str());
-    if (paramItem == NULL) {
+    if (paramItem == NULL || !cJSON_IsString(paramItem)) {
         return nullptr;
     }
     auto meta = std::make_shared<AVTransAudioBufferMeta>();
