@@ -135,7 +135,7 @@ struct ContinueSwitch {
   onBackPress() {
     console.log(TAG + 'Navigation: onBackPress in');
     if (this.continueSession) {
-      this.continueSession.sendData({ 'action:': 'pop' })
+      this.continueSession.sendData({ 'action': 'pop' })
     } else {
       console.error(TAG + 'continueSession is undefined');
     }
