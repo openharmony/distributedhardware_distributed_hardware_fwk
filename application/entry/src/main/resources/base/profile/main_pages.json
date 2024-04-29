@@ -1,5 +1,6 @@
 {
   "src": [
-    "pages/DHardwareUI"
+    "pages/DHardwareUI",
+    "pages/ContinueSwitch"
   ]
 }
