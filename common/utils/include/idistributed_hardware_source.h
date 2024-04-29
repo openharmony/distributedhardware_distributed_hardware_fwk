@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,7 +54,7 @@ public:
     /**
      * @brief report the business state of local virtual driver
      *        corresponding the remote device with the device id and dhid.
-     * 
+     *
      * @param uuid the remote device uuid.
      * @param dhId the remote device peripheral dhId.
      * @param state business state.
@@ -66,7 +66,7 @@ class DataSyncTriggerListener {
 public:
     /**
      * @brief trigger local distributed hardware open session with remote device with uuid
-     * 
+     *
      * @param uuid the remote device uuid
      */
     virtual void OnDataSyncTrigger(const std::string &uuid) = 0;
