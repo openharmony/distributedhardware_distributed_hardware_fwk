@@ -41,6 +41,7 @@ export default class ContinueSwitchAbility extends UIExtensionAbility {
       'session': session
     };
     let storage: LocalStorage = new LocalStorage(param);
+    AppStorage.setOrCreate('continueSession', session);
     session.loadContent('pages/ContinueSwitch', storage);
   }
 
