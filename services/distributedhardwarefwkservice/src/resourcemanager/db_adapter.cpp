@@ -61,6 +61,7 @@ DistributedKv::Status DBAdapter::GetKvStorePtr()
         .createIfMissing = true,
         .encrypt = false,
         .autoSync = true,
+        .isPublic = true,
         .securityLevel = DistributedKv::SecurityLevel::S1,
         .area = DistributedKv::EL1,
         .kvStoreType = DistributedKv::KvStoreType::SINGLE_VERSION,
@@ -252,6 +253,12 @@ int32_t DBAdapter::RegisterChangeListener()
         DHLOGE("Register db data change listener failed, ret: %{public}d", status);
         return ERR_DH_FWK_RESOURCE_REGISTER_DB_FAILED;
     }
+    status = kvStoragePtr_->SubscribeKvStore(DistributedKv::SubscribeType::SUBSCRIBE_TYPE_CLOUD,
+        dataChangeListener_);
+    if (status == DistributedKv::Status::IPC_ERROR) {
+        DHLOGE("Register db cloud data change listener failed, ret: %{public}d", status);
+        return ERR_DH_FWK_RESOURCE_REGISTER_DB_FAILED;
+    }
     return DH_FWK_SUCCESS;
 }
 
@@ -266,6 +273,12 @@ int32_t DBAdapter::UnRegisterChangeListener()
         DistributedKv::SubscribeType::SUBSCRIBE_TYPE_REMOTE, dataChangeListener_);
     if (status == DistributedKv::Status::IPC_ERROR) {
         DHLOGE("UnRegister db data change listener failed, ret: %{public}d", status);
+        return ERR_DH_FWK_RESOURCE_UNREGISTER_DB_FAILED;
+    }
+    status = kvStoragePtr_->UnSubscribeKvStore(
+        DistributedKv::SubscribeType::SUBSCRIBE_TYPE_CLOUD, dataChangeListener_);
+    if (status == DistributedKv::Status::IPC_ERROR) {
+        DHLOGE("UnRegister db cloud data change listener failed, ret: %{public}d", status);
         return ERR_DH_FWK_RESOURCE_UNREGISTER_DB_FAILED;
     }
     return DH_FWK_SUCCESS;
@@ -348,6 +361,35 @@ int32_t DBAdapter::RemoveDataByKey(const std::string &key)
     }
     DHLOGD("Remove data by key success");
     return DH_FWK_SUCCESS;
+}
+
+std::vector<DistributedKv::Entry> DBAdapter::GetEntriesByKeys(const std::vector<std::string> &keys)
+{
+    DHLOGI("call");
+    std::vector<DistributedKv::Entry> entries;
+    if (keys.empty()) {
+        DHLOGE("keys empty.");
+        return entries;
+    }
+    {
+        std::lock_guard<std::mutex> lock(dbAdapterMutex_);
+        if (kvStoragePtr_ == nullptr) {
+            DHLOGE("kvStoragePtr_ is nullptr!");
+            return entries;
+        }
+        for (const auto &key : keys) {
+            DistributedKv::Key kvKey(key);
+            DistributedKv::Value kvValue;
+            if (kvStoragePtr_->Get(kvKey, kvValue) != DistributedKv::Status::SUCCESS) {
+                continue;
+            }
+            DistributedKv::Entry entry;
+            entry.key = kvKey;
+            entry.value = kvValue;
+            entries.emplace_back(entry);
+        }
+    }
+    return entries;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -512,6 +512,25 @@ HWTEST_F(ResourceManagerTest, OnChange_001, TestSize.Level0)
 }
 
 /**
+ * @tc.name: OnChange_002
+ * @tc.desc: Verify the OnChange function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, OnChange_002, TestSize.Level0)
+{
+    DistributedKv::DataOrigin origin;
+    origin.id = {};
+    origin.store = "";
+    CapabilityInfoManager::Keys keys;
+    keys[CapabilityInfoManager::OP_INSERT] = {"strBase"};
+    keys[CapabilityInfoManager::OP_UPDATE] = {"strBase"};
+    keys[CapabilityInfoManager::OP_DELETE] = {"strBase"};
+    CapabilityInfoManager::GetInstance()->OnChange(origin, std::move(keys));
+    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+}
+
+/**
  * @tc.name: HandleCapabilityAddChange_001
  * @tc.desc: Verify the HandleCapabilityAddChange function
  * @tc.type: FUNC
@@ -847,6 +866,19 @@ HWTEST_F(ResourceManagerTest, FromJson_001, TestSize.Level0)
     cJSON_free(cjson);
     cJSON_Delete(json);
     EXPECT_EQ(DH_FWK_SUCCESS, info.FromJsonString(jsonStr));
+}
+
+/**
+ * @tc.name: GetEntriesByKeys_001
+ * @tc.desc: Verify the GetEntriesByKeys function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJE
+ */
+HWTEST_F(ResourceManagerTest, GetEntriesByKeys_001, TestSize.Level0)
+{
+    std::vector<std::string> keys {};
+    auto entries = CapabilityInfoManager::GetInstance()->GetEntriesByKeys(keys);
+    EXPECT_EQ(0, entries.size());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

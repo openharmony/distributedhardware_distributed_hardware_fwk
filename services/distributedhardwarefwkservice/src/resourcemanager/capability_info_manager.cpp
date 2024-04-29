@@ -341,6 +341,33 @@ void CapabilityInfoManager::OnChange(const DistributedKv::ChangeNotification &ch
     }
 }
 
+void CapabilityInfoManager::OnChange(const DistributedKv::DataOrigin &origin, Keys &&keys)
+{
+    DHLOGI("CapabilityInfoManager: Cloud data OnChange.");
+    std::vector<DistributedKv::Entry> insertRecords = GetEntriesByKeys(keys[ChangeOp::OP_INSERT]);
+    if (!insertRecords.empty() && insertRecords.size() <= MAX_DB_RECORD_SIZE) {
+        DHLOGI("Handle capability data add change");
+        HandleCapabilityAddChange(insertRecords);
+    }
+    std::vector<DistributedKv::Entry> updateRecords = GetEntriesByKeys(keys[ChangeOp::OP_UPDATE]);
+    if (!updateRecords.empty() && updateRecords.size() <= MAX_DB_RECORD_SIZE) {
+        DHLOGI("Handle capability data update change");
+        HandleCapabilityUpdateChange(updateRecords);
+    }
+    std::vector<std::string> delKeys = keys[ChangeOp::OP_DELETE];
+    if (!delKeys.empty() && delKeys.size() <= MAX_DB_RECORD_SIZE) {
+        std::vector<DistributedKv::Entry> deleteRecords;
+        for (const auto &key : delKeys) {
+            DistributedKv::Entry entry;
+            DistributedKv::Key kvKey(key);
+            entry.key = kvKey;
+            deleteRecords.emplace_back(entry);
+        }
+        DHLOGI("Handle capability data delete change");
+        HandleCapabilityDeleteChange(deleteRecords);
+    }
+}
+
 void CapabilityInfoManager::HandleCapabilityAddChange(const std::vector<DistributedKv::Entry> &insertRecords)
 {
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
@@ -567,6 +594,21 @@ void CapabilityInfoManager::DumpCapabilityInfos(std::vector<CapabilityInfo> &cap
         CapabilityInfo capInfo = *(info.second);
         capInfos.emplace_back(capInfo);
     }
+}
+
+std::vector<DistributedKv::Entry> CapabilityInfoManager::GetEntriesByKeys(const std::vector<std::string> &keys)
+{
+    DHLOGI("call");
+    if (keys.empty()) {
+        DHLOGE("keys empty.");
+        return {};
+    }
+    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr_ is null");
+        return {};
+    }
+    return dbAdapterPtr_->GetEntriesByKeys(keys);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

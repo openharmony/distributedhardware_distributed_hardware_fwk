@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -76,6 +76,8 @@ public:
     int32_t GetDataByKeyPrefix(const std::string &keyPrefix, CapabilityInfoMap &capabilityMap);
     /* Database data changes callback */
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
+    /* Cloud data changes callback */
+    void OnChange(const DistributedKv::DataOrigin &origin, Keys &&keys) override;
 
     class CapabilityInfoManagerEventHandler : public AppExecFwk::EventHandler {
         public:
@@ -95,6 +97,7 @@ private:
     void HandleCapabilityAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
     void HandleCapabilityUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
     void HandleCapabilityDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords);
+    std::vector<DistributedKv::Entry> GetEntriesByKeys(const std::vector<std::string> &keys);
 
 private:
     mutable std::mutex capInfoMgrMutex_;
