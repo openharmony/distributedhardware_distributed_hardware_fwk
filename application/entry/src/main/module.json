@@ -54,6 +54,12 @@
         "type": "sys/commonUI",
         "exported": true
       }
+    ],
+    "metadata": [
+      {
+        "name": "action.settings.search.path",
+        "value": "searchConfig/searchPage.json"
+      }
     ]
   }
 }
