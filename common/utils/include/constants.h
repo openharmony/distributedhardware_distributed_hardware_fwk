@@ -30,6 +30,7 @@ namespace DistributedHardware {
     constexpr uint32_t MAX_TOPIC_SIZE = 128;
     constexpr uint32_t MAX_LISTENER_SIZE = 256;
     constexpr uint32_t MAX_COMP_SIZE = 128;
+    constexpr uint32_t MAX_ARR_SIZE = 10000;
     constexpr uint32_t MAX_DB_RECORD_SIZE = 10000;
     constexpr uint32_t MAX_ONLINE_DEVICE_SIZE = 10000;
     constexpr int32_t MODE_ENABLE = 0;
@@ -40,6 +41,7 @@ namespace DistributedHardware {
     const std::string APP_ID = "dtbhardware_manager_service";
     const std::string GLOBAL_CAPABILITY_ID = "global_capability_info";
     const std::string GLOBAL_VERSION_ID = "global_version_info";
+    const std::string LOCAL_CAPABILITY_ID = "local_capability_info";
     const std::string RESOURCE_SEPARATOR = "###";
     const std::string DH_ID = "dh_id";
     const std::string DEV_ID = "dev_id";
@@ -58,6 +60,7 @@ namespace DistributedHardware {
     const std::string SINK_VER = "sink_ver";
     const std::string DH_TASK_NAME_PREFIX = "Task_";
     const std::string DH_FWK_PKG_NAME = "ohos.dhardware";
+    const std::string DH_FWK_SESSION_NAME = "ohos.dhardware.session_";
     const std::string DH_COMPONENT_VERSIONS = "componentVersions";
     const std::string DH_COMPONENT_TYPE = "dhType";
     const std::string DH_COMPONENT_SINK_VER = "version";
@@ -76,6 +79,7 @@ namespace DistributedHardware {
 
     const uint32_t EVENT_VERSION_INFO_DB_RECOVER = 101;
     const uint32_t EVENT_CAPABILITY_INFO_DB_RECOVER = 201;
+    const uint32_t EVENT_DATA_SYNC_MANUAL = 301;
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

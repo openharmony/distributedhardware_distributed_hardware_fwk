@@ -16,7 +16,6 @@
 #include "capability_info_manager.h"
 
 #include "anonymous_string.h"
-#include "capability_info_event.h"
 #include "capability_utils.h"
 #include "constants.h"
 #include "dh_context.h"
