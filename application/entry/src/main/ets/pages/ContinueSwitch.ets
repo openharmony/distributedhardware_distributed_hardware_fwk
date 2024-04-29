@@ -173,16 +173,12 @@ struct ContinueSwitch {
                   AppStorage.setAndLink('isSwitchOn', isOn);
                   if (isOn) {
                     // open
-                    if (canIUse('SystemCapability.Applications.settings.Core')) {
-                      let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open);
-                      console.log(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is on');
-                    }
+                    let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open);
+                    console.log(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is on');
                   } else {
                     // close
-                    if (canIUse('SystemCapability.Applications.settings.Core')) {
-                      let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.close);
-                      console.log(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
-                    }
+                    let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.close);
+                    console.log(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
                   }
                 })
             }
