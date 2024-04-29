@@ -38,7 +38,6 @@ let switchState: switchStatus = {
 struct ContinueSwitch {
   @StorageLink('isSwitchOn') isSwitchOn: boolean | undefined = true;
   @State title: string = '';
-  @Provide('pathInfos') pathInfos: NavPathStack = new NavPathStack();
   @StorageLink('continueSession') continueSession: UIExtensionContentSession | undefined = undefined;
   @State screenHeight: number = 0;
   @State screenWidth: number = 0;
@@ -82,7 +81,7 @@ struct ContinueSwitch {
       context.resourceManager.getStringValue($r('app.string.continue_title')
         .id, (error: BusinessError, value: string) => {
         if (error != null) {
-          console.error(TAG + "error is " + error);
+          console.error(TAG + 'rror is ' + error);
         } else {
           this.title = value;
           console.info(TAG + '<aboutToAppear> this.title : ' + this.title);
@@ -143,7 +142,7 @@ struct ContinueSwitch {
   }
 
   build() {
-    Navigation(this.pathInfos) {
+    Navigation() {
       Row() {
         Column() {
           Image($r('app.media.continueImg'))
@@ -175,14 +174,14 @@ struct ContinueSwitch {
                   if (isOn) {
                     // open
                     if (canIUse('SystemCapability.Applications.settings.Core')) {
-                      let status:boolean = settings.setValueSync(context,'Continue_Switch_Status',switchState.open);
-                      console.log(TAG + 'is set success :'+status + "; set:Continue_Switch_Status is on");
+                      let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open);
+                      console.log(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is on');
                     }
-                  }else {
+                  } else {
                     // close
                     if (canIUse('SystemCapability.Applications.settings.Core')) {
-                      let status:boolean = settings.setValueSync(context,'Continue_Switch_Status',switchState.close);
-                      console.log(TAG + 'is set success :'+status + "; set:Continue_Switch_Status is close");
+                      let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.close);
+                      console.log(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
                     }
                   }
                 })
