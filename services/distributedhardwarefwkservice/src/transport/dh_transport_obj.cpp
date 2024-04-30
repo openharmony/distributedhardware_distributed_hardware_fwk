@@ -63,5 +63,17 @@ void FromJson(const cJSON *jsonObject, CommMsg &commMsg)
         commMsg.msg = cJSON_GetObjectItem(jsonObject, COMM_MSG_MSG_KEY.c_str())->valuestring;
     }
 }
+
+std::string GetCommMsgString(const CommMsg &commMsg)
+{
+    cJSON *rootMsg = cJSON_CreateObject();
+    ToJson(rootMsg, commMsg);
+    char *msg = cJSON_PrintUnformatted(rootMsg);
+    std::string msgStr = std::string(msg);
+    cJSON_free(msg);
+    cJSON_Delete(rootMsg);
+
+    return msgStr;
+}
 }
 }

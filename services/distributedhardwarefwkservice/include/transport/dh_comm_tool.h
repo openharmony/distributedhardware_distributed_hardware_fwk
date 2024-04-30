@@ -26,10 +26,10 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-// request remote dh send back full dh attributes
-constexpr uint32_t DH_COMM_REQ_FULL_ATTRS = 1;
+// request remote dh send back full dh capabilities
+constexpr uint32_t DH_COMM_REQ_FULL_CAPS = 1;
 // send back full dh attributes to the requester
-constexpr uint32_t DH_COMM_RSP_FULL_ATTRS = 2;
+constexpr uint32_t DH_COMM_RSP_FULL_CAPS = 2;
 
 class DHCommTool : public enable_shared_from_this<DHCommTool> {
 public:
@@ -37,14 +37,14 @@ public:
     virtual ~DHCommTool() = default;
     void Init();
     /**
-     * @brief trigger request remote dh send back full attrs.
-     *        payload: {code: DH_COMM_REQ_FULL_ATTRS, msg: localNetworkId}.
-     *        msg means the device need the dh attrs, the remote side should use
-     *        localNetworkId to send dh attrs msg back.
+     * @brief trigger request remote dh send back full capatilities.
+     *        payload: {code: DH_COMM_REQ_FULL_CAPS, msg: localNetworkId}.
+     *        msg means the device need the dh capatilities, the remote side should use
+     *        localNetworkId to send dh capatilities msg back.
      *
      * @param remoteNetworkId the target device network id
      */
-    void TriggerReqFullDHAttrs(const std::string &remoteNetworkId);
+    void TriggerReqFullDHCaps(const std::string &remoteNetworkId);
 
     class DHCommToolEventHandler : public AppExecFwk::EventHandler {
         public:
@@ -55,15 +55,12 @@ public:
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> GetEventHandler();
 
 private:
-    void RegMemberFuncs();
-    void DealReqFullDHAttrs(const std::string &msg);
-    void DealRspFullDHAttrs(const std::string &msg);
-    void GetAndSendLocalFullAttrs(const std::string &reqNetworkId);
-    void ParseAndSaveRemoteDHAttrs(const std::string &remoteAttrs);
+    void DealReqFullDHCaps(const std::string &msg);
+    void DealRspFullDHCaps(const std::string &msg);
+    void GetAndSendLocalFullCaps(const std::string &reqNetworkId);
+    void ParseAndSaveRemoteDHCaps(const std::string &remoteCaps);
 
 private:
-    using CommFunc = void (DHCommTool::*)(const std::string &msg);
-    std::map<int32_t, CommFunc> memberFuncMap_;
     std::shared_ptr<DHTransport> dhTransportPtr_;
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> eventHandler_;
 };

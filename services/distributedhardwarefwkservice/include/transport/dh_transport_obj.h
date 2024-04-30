@@ -49,6 +49,8 @@ struct CommMsg {
 void ToJson(cJSON *jsonObject, const CommMsg &commMsg);
 void FromJson(const cJSON *jsonObject, CommMsg &commMsg);
 
+std::string GetCommMsgString(const CommMsg &commMsg);
+
 } // DistributedHardware
 } // OHOS
 #endif
