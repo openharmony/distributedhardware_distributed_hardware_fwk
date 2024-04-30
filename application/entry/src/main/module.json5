@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 {
   "module": {
     "name": "entry",
@@ -55,6 +54,25 @@
     "requestPermissions": [
       {
         "name": "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE"
+      },
+      {
+        "name": "ohos.permission.MANAGE_SECURE_SETTINGS"
+      }
+    ],
+    "extensionAbilities": [
+      {
+        "name": "ContinueSwitchAbility",
+        "srcEntry": "./ets/continueswitchability/ContinueSwitchAbility.ets",
+        "description": "$string:ContinueSwitchAbility_desc",
+        "label": "$string:ContinueSwitchAbility_label",
+        "type": "sys/commonUI",
+        "exported": true
+      }
+    ],
+    "metadata": [
+      {
+        "name": "action.settings.search.path",
+        "value": "searchConfig/searchPage.json"
       }
     ]
   }
