@@ -22,7 +22,7 @@ namespace OHOS {
 namespace DistributedHardware {
 class DHDataSyncTriggerListener : public DataSyncTriggerListener {
 public:
-    explict DHDataSyncTriggerListener();
+    DHDataSyncTriggerListener();
     virtual ~DHDataSyncTriggerListener();
     void OnDataSyncTrigger(const std::string &uuid) override;
 };

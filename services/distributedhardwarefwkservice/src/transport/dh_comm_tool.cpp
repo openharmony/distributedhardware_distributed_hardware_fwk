@@ -37,7 +37,7 @@ DHCommTool::DHCommTool() : dhTransportPtr_(nullptr)
 void DHCommTool::Init()
 {
     DHLOGI("Init DHCommTool");
-    dhTransportPtr_ = std::make_shared<DHTransport>(shared_from_this());
+    dhTransportPtr_ = std::make_shared<DHTransport>();
     RegMemberFuncs();
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
     eventHandler_ = std::make_shared<DHCommTool::DHCommToolEventHandler>(runner);

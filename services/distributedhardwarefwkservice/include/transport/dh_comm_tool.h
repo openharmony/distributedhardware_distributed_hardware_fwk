@@ -31,7 +31,7 @@ constexpr uint32_t DH_COMM_REQ_FULL_CAPS = 1;
 // send back full dh attributes to the requester
 constexpr uint32_t DH_COMM_RSP_FULL_CAPS = 2;
 
-class DHCommTool : public enable_shared_from_this<DHCommTool> {
+class DHCommTool {
 public:
     explicit DHCommTool();
     virtual ~DHCommTool() = default;

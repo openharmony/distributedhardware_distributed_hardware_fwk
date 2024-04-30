@@ -22,7 +22,7 @@ namespace OHOS {
 namespace DistributedHardware {
 class DHStateListener : public DistributedHardwareStateListener {
 public:
-    explict DHStateListener();
+    DHStateListener();
     virtual ~DHStateListener();
     void OnStateChanged(const std::string &uuid, const std::string &dhId, const BusinessState state) override;
 };

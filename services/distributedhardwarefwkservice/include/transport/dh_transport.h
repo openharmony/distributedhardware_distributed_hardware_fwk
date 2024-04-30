@@ -56,7 +56,6 @@ private:
     std::atomic<int32_t> localServerSocket_;
     std::string localSessionName_;
     std::atomic<bool> isSocketSvrCreateFlag_;
-    std::weak_ptr<DHCommTool> dhCommToolWPtr_;
 };
 } // DistributedHardware
 } // OHOS

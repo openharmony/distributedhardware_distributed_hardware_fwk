@@ -41,8 +41,8 @@ static QosTV g_qosInfo[] = {
 static uint32_t g_QosTV_Param_Index = static_cast<uint32_t>(sizeof(g_qosInfo) / sizeof(g_qosInfo[0]));
 }
 
-DHTransport::DHTransport(std::shared_ptr<DHCommTool> dhCommToolPtr) : remoteDevSocketIds_({}), localServerSocket_(-1),
-    localSessionName_(""), isSocketSvrCreateFlag_(false), dhCommToolWPtr_(dhCommToolPtr)
+DHTransport::DHTransport() : remoteDevSocketIds_({}), localServerSocket_(-1),
+    localSessionName_(""), isSocketSvrCreateFlag_(false)
 {
     DHLOGI("Ctor DHTransport");
 }
