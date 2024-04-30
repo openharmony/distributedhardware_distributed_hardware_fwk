@@ -794,11 +794,12 @@ void ComponentManager::ComponentManagerEventHandler::ProcessEvent(
 {
     uint32_t eventId = event->GetInnerEventId();
     switch (eventId) {
-        case EVENT_DATA_SYNC_MANUAL:
-            //TODO: do muanul sync with remote
-            std::string uuid = *(event->GetSharedObject<std::string>());
+        case EVENT_DATA_SYNC_MANUAL: {
+            // do muanul sync with remote
+            std::string uuid = (*(event->GetSharedObject<std::string>()));
             DHLOGI("Try receive full capabiliy info from uuid: %{public}s", GetAnonyString(uuid).c_str());
             break;
+        }
         default:
             DHLOGE("event is undefined, id is %{public}d", eventId);
             break;
