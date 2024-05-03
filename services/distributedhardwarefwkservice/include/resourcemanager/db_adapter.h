@@ -65,7 +65,7 @@ private:
     DistributedKv::Status GetKvStorePtr();
     // get local kv store with no sync with other devices
     DistributedKv::Status GetLocalKvStorePtr();
-    void DBDiedOpt(int32_t &times);
+    bool DBDiedOpt(int32_t &times);
 
 private:
     DistributedKv::AppId appId_;
