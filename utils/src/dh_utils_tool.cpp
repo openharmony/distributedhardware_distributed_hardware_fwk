@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 
-
-
-
 #include "dh_utils_tool.h"
 
 #include <algorithm>
