@@ -35,8 +35,8 @@ struct FullCapsRsp {
     // the full dh caps
     std::vector<std::shared_ptr<CapabilityInfo>> caps;
     FullCapsRsp() : networkId(""), caps({}) {}
-    FullCapsRsp(std::string networkId, std::vector<std::shared_ptr<CapabilityInfo>> caps) :
-        networkId(networkId), caps(caps) {}
+    FullCapsRsp(std::string networkId, std::vector<std::shared_ptr<CapabilityInfo>> caps) : networkId(networkId),
+        caps(caps) {}
 };
 
 void ToJson(cJSON *jsonObject, const FullCapsRsp &capsRsp);

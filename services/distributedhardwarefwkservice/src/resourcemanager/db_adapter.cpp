@@ -343,22 +343,27 @@ void DBAdapter::OnRemoteDied()
     auto reInitTask = [this] {
         int32_t times = 0;
         while (times < DIED_CHECK_MAX_TIMES) {
-            // init kvStore.
-            if (this->ReInit() == DH_FWK_SUCCESS) {
-                // register data change listener again.
-                if (this->isAutoSync) {
-                    this->RegisterChangeListener();
-                }
-                this->SyncDBForRecover();
-                DHLOGE("Current times is %{public}d", times);
-                break;
-            }
-            times++;
-            usleep(DIED_CHECK_INTERVAL);
+            DBDiedOpt(times);
         }
     };
     DHContext::GetInstance().GetEventHandler()->PostTask(reInitTask, "reInitTask", 0);
     DHLOGI("OnRemoteDied, recover db end");
+}
+
+void DBAdapter::DBDiedOpt(int32_t &times)
+{
+    // init kvStore.
+    if (this->ReInit() == DH_FWK_SUCCESS) {
+        // register data change listener again.
+        if (this->isAutoSync) {
+            this->RegisterChangeListener();
+        }
+        this->SyncDBForRecover();
+        DHLOGE("Current times is %{public}d", times);
+        break;
+    }
+    times++;
+    usleep(DIED_CHECK_INTERVAL);
 }
 
 void DBAdapter::DeleteKvStore()

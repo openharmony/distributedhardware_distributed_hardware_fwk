@@ -204,7 +204,8 @@ bool IsArray(const cJSON* jsonObj, const std::string& key)
     return ((uint32_t)cJSON_GetArraySize(value) >= 0 && (uint32_t)cJSON_GetArraySize(value) <= MAX_ARR_SIZE);
 }
 
-std::string Compress(const std::string& data) {
+std::string Compress(const std::string& data)
+{
     z_stream strm;
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
@@ -213,22 +214,22 @@ std::string Compress(const std::string& data) {
  
     strm.next_in = (Bytef*)data.data();
     strm.avail_in = data.size();
-    int total_out = COMPRESS_SLICE_SIZE;
     std::string out;
     std::vector<Bytef> temp_out(COMPRESS_SLICE_SIZE, 0);
  
     do {
         strm.next_out = temp_out.data();
-        strm.avail_out = total_out;
+        strm.avail_out = COMPRESS_SLICE_SIZE;
         deflate(&strm, Z_FINISH);
-        out.append(reinterpret_cast<char*>(temp_out.data()), total_out - strm.avail_out);
+        out.append(reinterpret_cast<char*>(temp_out.data()), COMPRESS_SLICE_SIZE - strm.avail_out);
     } while (strm.avail_out == 0);
  
     deflateEnd(&strm);
     return out;
 }
  
-std::string Decompress(const std::string& data) {
+std::string Decompress(const std::string& data)
+{
     z_stream strm;
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
@@ -239,15 +240,14 @@ std::string Decompress(const std::string& data) {
  
     strm.next_in = (Bytef*)data.data();
     strm.avail_in = data.size();
-    int total_out = COMPRESS_SLICE_SIZE;
     std::string out;
     std::vector<Bytef> temp_out(COMPRESS_SLICE_SIZE, 0);
  
     do {
         strm.next_out = temp_out.data();
-        strm.avail_out = total_out;
+        strm.avail_out = COMPRESS_SLICE_SIZE;
         inflate(&strm, Z_NO_FLUSH);
-        out.append(reinterpret_cast<char*>(temp_out.data()), total_out - strm.avail_out);
+        out.append(reinterpret_cast<char*>(temp_out.data()), COMPRESS_SLICE_SIZE - strm.avail_out);
     } while (strm.avail_out == 0);
  
     inflateEnd(&strm);
