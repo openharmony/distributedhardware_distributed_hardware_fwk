@@ -57,7 +57,7 @@ private:
     // record the socket id for the connection with remote devices, <remote networkId, socketId>
     std::map<std::string, int32_t> remoteDevSocketIds_;
     std::atomic<int32_t> localServerSocket_;
-    std::string localSessionName_;
+    std::string localSocketName_;
     std::atomic<bool> isSocketSvrCreateFlag_;
     std::weak_ptr<DHCommTool> dhCommToolWPtr_;
 };

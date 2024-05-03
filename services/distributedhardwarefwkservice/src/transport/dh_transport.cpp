@@ -46,7 +46,7 @@ static uint32_t g_QosTV_Param_Index = static_cast<uint32_t>(sizeof(g_qosInfo) / 
 }
 
 DHTransport::DHTransport(std::shared_ptr<DHCommTool> dhCommToolPtr) : remoteDevSocketIds_({}), localServerSocket_(-1),
-    localSessionName_(""), isSocketSvrCreateFlag_(false), dhCommToolWPtr_(dhCommToolPtr)
+    localSocketName_(""), isSocketSvrCreateFlag_(false), dhCommToolWPtr_(dhCommToolPtr)
 {
     DHLOGI("Ctor DHTransport");
 }
@@ -74,7 +74,7 @@ void DHTransport::OnSocketClosed(int32_t socketId, ShutdownReason reason)
 
 void DHTransport::OnBytesReceived(int32_t socketId, const void *data, uint32_t dataLen)
 {
-    if (socketId < 0 || data == nullptr || dataLen <= 0) {
+    if (socketId < 0 || data == nullptr || dataLen == 0) {
         DHLOGE("OnBytesReceived param check failed");
         return;
     }
@@ -98,7 +98,7 @@ void DHTransport::OnBytesReceived(int32_t socketId, const void *data, uint32_t d
     }
 
     std::string message(buf, buf + dataLen);
-    DHLOGI("Receive message size: %{public}u", dataLen);
+    DHLOGI("Receive message size: %{public}" PRIu32, dataLen);
     HandleReceiveMessage(message);
     free(buf);
     return;
@@ -159,7 +159,7 @@ void OnMessage(int32_t socket, const void *data, uint32_t dataLen)
     (void)socket;
     (void)data;
     (void)dataLen;
-    DHLOGI("socket: %{public}d, dataLen:%{public}d", socket, dataLen);
+    DHLOGI("socket: %{public}d, dataLen:%{public}" PRIu32, socket, dataLen);
 }
 
 void OnStream(int32_t socket, const StreamData *data, const StreamData *ext,
@@ -180,7 +180,7 @@ void OnFile(int32_t socket, FileEvent *event)
 
 void OnQos(int32_t socket, QoSEvent eventId, const QosTV *qos, uint32_t qosCount)
 {
-    DHLOGI("OnQos, socket: %{public}d, QoSEvent: %{public}d, qosCount: %{public}u",
+    DHLOGI("OnQos, socket: %{public}d, QoSEvent: %{public}d, qosCount: %{public}" PRIu32,
         socket, (int32_t)eventId, qosCount);
     for (uint32_t idx = 0; idx < qosCount; idx++) {
         DHLOGI("QosTV: type: %{public}d, value: %{public}d", (int32_t)qos[idx].qos, qos[idx].value);
@@ -201,11 +201,11 @@ int32_t DHTransport::CreateServerSocket()
 {
     DHLOGI("CreateServerSocket start");
     std::string networkId = GetLocalNetworkId();
-    localSessionName_ = DH_FWK_SESSION_NAME + networkId.substr(0, INTERCEPT_STRING_LENGTH);
+    localSocketName_ = DH_FWK_SESSION_NAME + networkId.substr(0, INTERCEPT_STRING_LENGTH);
     DHLOGI("CreateServerSocket local networkId is %{public}s, local socketName: %{public}s",
-        GetAnonyString(networkId).c_str(), localSessionName_.c_str());
+        GetAnonyString(networkId).c_str(), localSocketName_.c_str());
     SocketInfo info = {
-        .name = const_cast<char*>(localSessionName_.c_str()),
+        .name = const_cast<char*>(localSocketName_.c_str()),
         .pkgName = const_cast<char*>(DH_FWK_PKG_NAME.c_str()),
         .dataType = DATA_TYPE_BYTES
     };
@@ -217,17 +217,17 @@ int32_t DHTransport::CreateServerSocket()
 int32_t DHTransport::CreateClientSocket(const std::string &remoteNetworkId)
 {
     DHLOGI("CreateClientSocket start, peerNetworkId: %{public}s", GetAnonyString(remoteNetworkId).c_str());
-    std::string peerSessionName = DH_FWK_SESSION_NAME + remoteNetworkId.substr(0, INTERCEPT_STRING_LENGTH);
+    std::string peerSocketName = DH_FWK_SESSION_NAME + remoteNetworkId.substr(0, INTERCEPT_STRING_LENGTH);
     SocketInfo info = {
-        .name = const_cast<char*>(localSessionName_.c_str()),
-        .peerName = const_cast<char*>(peerSessionName.c_str()),
+        .name = const_cast<char*>(localSocketName_.c_str()),
+        .peerName = const_cast<char*>(peerSocketName.c_str()),
         .peerNetworkId = const_cast<char*>(remoteNetworkId.c_str()),
         .pkgName = const_cast<char*>(DH_FWK_PKG_NAME.c_str()),
         .dataType = DATA_TYPE_BYTES
     };
     int32_t socket = Socket(info);
-    DHLOGI("Bind Socket server, socket: %{public}d, localSessionName: %{public}s, peerSessionName: %{public}s",
-        socket, localSessionName_.c_str(), peerSessionName.c_str());
+    DHLOGI("Bind Socket server, socket: %{public}d, localSocketName: %{public}s, peerSocketName: %{public}s",
+        socket, localSocketName_.c_str(), peerSocketName.c_str());
     return socket;
 }
 
@@ -333,9 +333,9 @@ int32_t DHTransport::StartSocket(const std::string &remoteNetworkId)
 
     DHLOGI("Bind Socket success, remoteNetworkId:%{public}s, socketId: %{public}d",
         GetAnonyString(remoteNetworkId).c_str(), socket);
-    std::string peerSessionName = DH_FWK_SESSION_NAME + remoteNetworkId.substr(0, INTERCEPT_STRING_LENGTH);
+    std::string peerSocketName = DH_FWK_SESSION_NAME + remoteNetworkId.substr(0, INTERCEPT_STRING_LENGTH);
     PeerSocketInfo peerSocketInfo = {
-        .name = const_cast<char*>(peerSessionName.c_str()),
+        .name = const_cast<char*>(peerSocketName.c_str()),
         .networkId = const_cast<char*>(remoteNetworkId.c_str()),
         .pkgName = const_cast<char*>(DH_FWK_PKG_NAME.c_str()),
         .dataType = DATA_TYPE_BYTES

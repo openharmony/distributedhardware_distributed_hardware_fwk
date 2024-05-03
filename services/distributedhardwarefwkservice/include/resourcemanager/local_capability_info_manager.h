@@ -30,7 +30,7 @@ class DBAdapter;
 namespace OHOS {
 namespace DistributedHardware {
 class LocalCapabilityInfoManager : public std::enable_shared_from_this<LocalCapabilityInfoManager>,
-                              public DistributedKv::KvStoreObserver {
+    public DistributedKv::KvStoreObserver {
 public:
     LocalCapabilityInfoManager(const LocalCapabilityInfoManager &) = delete;
     LocalCapabilityInfoManager &operator = (const LocalCapabilityInfoManager &) = delete;

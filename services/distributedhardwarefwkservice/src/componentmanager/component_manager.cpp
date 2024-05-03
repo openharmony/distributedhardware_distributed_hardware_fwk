@@ -170,6 +170,10 @@ void ComponentManager::RegisterDHStateListener()
 {
     for (const auto &item : compSource_) {
         DHLOGI("Register DH State listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
+        if (item.second == nullptr) {
+            DHLOGE("comp source ptr is null");
+            continue;
+        }
         item.second->RegisterDistributedHardwareStateListener(dhStateListener_);
     }
 }
@@ -181,6 +185,10 @@ void ComponentManager::RegisterDataSyncTriggerListener()
 
     for (const auto &item : compSource_) {
         DHLOGI("Register Data Sync Trigger listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
+        if (item.second == nullptr) {
+            DHLOGE("comp source ptr is null");
+            continue;
+        }
         item.second->RegisterDataSyncTriggerListener(dataSyncTriggerListener_);
     }
 }
@@ -766,7 +774,7 @@ bool ComponentManager::IsIdenticalAccount(const std::string &networkId)
 
 void ComponentManager::UpdateBusinessState(const std::string &uuid, const std::string &dhId, BusinessState state)
 {
-    DHLOGI("UpdateBusinessState, uuid: %{public}s, dhId: %{public}s, state: %u",
+    DHLOGI("UpdateBusinessState, uuid: %{public}s, dhId: %{public}s, state: %{public}" PRIu32,
         GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
     std::lock_guard<std::mutex> lock(bizStateMtx_);
     dhBizStates_[{uuid, dhId}] = state;
