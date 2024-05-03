@@ -223,7 +223,7 @@ void FromJson(const cJSON *jsonObject, AudioEncoderOut &audioEncoderOut)
     if (verObj == nullptr || !cJSON_IsNumber(verObj)) {
         return;
     }
-    audioEncoderOut.ad_mpeg_ver = verObj->valueint;
+    audioEncoderOut.ad_mpeg_ver = static_cast<uint32_t>(verObj->valueint);
 
     if (!IsUInt8(jsonObject, AUDIO_AAC_PROFILE)) {
         AVTRANS_LOGE("AudioEncoderOut AUDIO_AAC_PROFILE is invalid");

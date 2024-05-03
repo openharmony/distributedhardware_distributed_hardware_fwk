@@ -232,7 +232,7 @@ EventType CastEventType(Plugin::PluginEventType type, bool isAbnormal)
     return EventType::EVENT_ENGINE_ERROR;
 }
 
-void DumpBufferToFile(std::string fileName, uint8_t *buffer, int32_t bufSize)
+void DumpBufferToFile(const std::string fileName, uint8_t *buffer, int32_t bufSize)
 {
     if (fileName.empty()) {
         AVTRANS_LOGE("input fileName is empty.");
