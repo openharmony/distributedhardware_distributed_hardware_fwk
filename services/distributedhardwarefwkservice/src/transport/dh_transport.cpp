@@ -74,7 +74,7 @@ void DHTransport::OnSocketClosed(int32_t socketId, ShutdownReason reason)
 
 void DHTransport::OnBytesReceived(int32_t socketId, const void *data, uint32_t dataLen)
 {
-    if (socketId < 0 || data == nullptr || dataLen == 0) {
+    if (socketId < 0 || data == nullptr || dataLen == 0 || dataLen > MAX_SEND_MSG_LENGTH) {
         DHLOGE("OnBytesReceived param check failed");
         return;
     }
