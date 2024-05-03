@@ -23,11 +23,9 @@
 #include "kvstore_observer.h"
 
 #include "capability_info.h"
-#include "capability_info_event.h"
 #include "capability_utils.h"
 #include "db_adapter.h"
 #include "event_handler.h"
-#include "single_instance.h"
 
 class DBAdapter;
 namespace OHOS {
@@ -82,7 +80,7 @@ public:
     class CapabilityInfoManagerEventHandler : public AppExecFwk::EventHandler {
         public:
             CapabilityInfoManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
-                std::shared_ptr<CapabilityInfoManager> versionInfoMgrPtr);
+                std::shared_ptr<CapabilityInfoManager> capabilityInfoMgrPtr);
             ~CapabilityInfoManagerEventHandler() override = default;
             void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
         private:

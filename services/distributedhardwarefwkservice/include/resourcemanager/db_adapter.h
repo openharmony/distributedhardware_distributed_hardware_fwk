@@ -39,8 +39,10 @@ public:
         const std::shared_ptr<DistributedKv::KvStoreObserver> &changeListener);
 
     virtual ~DBAdapter();
-
+    // default init auto-sync kv store
     int32_t Init();
+    // init local kv store
+    int32_t InitLocal();
     void UnInit();
     int32_t ReInit();
     int32_t GetDataByKey(const std::string &key, std::string &data);
@@ -59,7 +61,11 @@ private:
     int32_t UnRegisterChangeListener();
     void RegisterKvStoreDeathListener();
     void UnRegisterKvStoreDeathListener();
+    // get default kv store with auto sync
     DistributedKv::Status GetKvStorePtr();
+    // get local kv store with no sync with other devices
+    DistributedKv::Status GetLocalKvStorePtr();
+    bool DBDiedOpt(int32_t &times);
 
 private:
     DistributedKv::AppId appId_;
@@ -68,6 +74,7 @@ private:
     std::shared_ptr<DistributedKv::SingleKvStore> kvStoragePtr_;
     std::shared_ptr<DistributedKv::KvStoreObserver> dataChangeListener_;
     std::mutex dbAdapterMutex_;
+    bool isAutoSync {false};
 };
 } // namespace DistributedHardware
 } // namespace OHOS

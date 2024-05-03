@@ -19,6 +19,7 @@
 #include "capability_info.h"
 #include "capability_info_manager.h"
 #include "distributed_hardware_errno.h"
+#include "distributed_hardware_log.h"
 #include "dh_timer.h"
 #include "task_board.h"
 #include "task_executor.h"

@@ -38,6 +38,8 @@ std::string GetUUIDBySoftBus(const std::string &networkId);
 
 DeviceInfo GetLocalDeviceInfo();
 
+std::string GetLocalNetworkId();
+
 /* Convert uuid to deviceId by sha256 encode */
 std::string GetDeviceIdByUUID(const std::string &uuid);
 
@@ -56,6 +58,9 @@ bool IsBool(const cJSON* jsonObj, const std::string& key);
 bool IsString(const cJSON* jsonObj, const std::string& key);
 
 bool IsArray(const cJSON* jsonObj, const std::string& key);
+
+std::string Compress(const std::string& data);
+std::string Decompress(const std::string& data);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

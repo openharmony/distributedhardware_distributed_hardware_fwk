@@ -68,6 +68,7 @@ ohos_shared_library("distributedhardwareutils") {
     "json:nlohmann_json_static",
     "openssl:libcrypto_shared",
     "safwk:system_ability_fwk",
+    "zlib:shared_libz",
   ]
 
   innerapi_tags = [ "platformsdk" ]

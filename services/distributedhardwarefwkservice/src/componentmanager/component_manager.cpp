@@ -33,6 +33,8 @@
 #include "constants.h"
 #include "device_manager.h"
 #include "dh_context.h"
+#include "dh_data_sync_trigger_listener.h"
+#include "dh_state_listener.h"
 #include "dh_utils_hitrace.h"
 #include "dh_utils_hisysevent.h"
 #include "dh_utils_tool.h"
@@ -66,7 +68,8 @@ namespace {
 ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
     compMonitorPtr_(std::make_shared<ComponentMonitor>()), lowLatencyListener_(new(std::nothrow) LowLatencyListener),
     monitorTaskTimer_(std::make_shared<MonitorTaskTimer>(MONITOR_TASK_TIMER_ID, MONITOR_TASK_DELAY_MS)),
-    isUnInitTimeOut_(false)
+    isUnInitTimeOut_(false), dhBizStates_({}), dhStateListener_(std::make_shared<DHStateListener>()),
+    dataSyncTriggerListener_(std::make_shared<DHDataSyncTriggerListener>())
 {
     DHLOGI("Ctor ComponentManager");
 }
@@ -83,7 +86,33 @@ int32_t ComponentManager::Init()
 {
     DHLOGI("start.");
     DHTraceStart(COMPONENT_INIT_START);
-    if (!InitCompSource()) {
+    int32_t ret = InitComponentHandler();
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Init Component Handler failed, ret: %d", ret);
+        return ret;
+    }
+
+    ret = InitSAMonitor();
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Init SA monitor failed, ret: %d", ret);
+        return ret;
+    }
+
+    StartComponent();
+    StartTaskMonitor();
+    RegisterDHStateListener();
+    RegisterDataSyncTriggerListener();
+#ifdef DHARDWARE_LOW_LATENCY
+    Publisher::GetInstance().RegisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
+#endif
+    DHLOGI("Init component success");
+    DHTraceEnd();
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::InitComponentHandler()
+{
+if (!InitCompSource()) {
         DHLOGE("InitCompSource failed.");
         DHTraceEnd();
         return ERR_DH_FWK_COMPONENT_INIT_SOURCE_FAILED;
@@ -95,6 +124,11 @@ int32_t ComponentManager::Init()
         return ERR_DH_FWK_COMPONENT_INIT_SINK_FAILED;
     }
 
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::InitSAMonitor()
+{
     if (compMonitorPtr_ == nullptr) {
         DHLOGE("compMonitorPtr_ is null.");
         return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
@@ -105,7 +139,11 @@ int32_t ComponentManager::Init()
         }
         compMonitorPtr_->AddSAMonitor(compSrcSaId_.at(comp.first));
     }
+    return DH_FWK_SUCCESS;
+}
 
+void ComponentManager::StartComponent()
+{
     auto sourceResult = StartSource();
     auto sinkResult = StartSink();
 
@@ -119,15 +157,40 @@ int32_t ComponentManager::Init()
         HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             "dhfwk start sink failed.");
     }
+}
+
+void ComponentManager::StartTaskMonitor()
+{
     if (monitorTaskTimer_ != nullptr) {
         monitorTaskTimer_->StartTimer();
     }
-#ifdef DHARDWARE_LOW_LATENCY
-    Publisher::GetInstance().RegisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
-#endif
-    DHLOGI("Init component success");
-    DHTraceEnd();
-    return DH_FWK_SUCCESS;
+}
+
+void ComponentManager::RegisterDHStateListener()
+{
+    for (const auto &item : compSource_) {
+        DHLOGI("Register DH State listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
+        if (item.second == nullptr) {
+            DHLOGE("comp source ptr is null");
+            continue;
+        }
+        item.second->RegisterDistributedHardwareStateListener(dhStateListener_);
+    }
+}
+
+void ComponentManager::RegisterDataSyncTriggerListener()
+{
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    eventHandler_ = std::make_shared<ComponentManager::ComponentManagerEventHandler>(runner);
+
+    for (const auto &item : compSource_) {
+        DHLOGI("Register Data Sync Trigger listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
+        if (item.second == nullptr) {
+            DHLOGE("comp source ptr is null");
+            continue;
+        }
+        item.second->RegisterDataSyncTriggerListener(dataSyncTriggerListener_);
+    }
 }
 
 int32_t ComponentManager::UnInit()
@@ -708,5 +771,53 @@ bool ComponentManager::IsIdenticalAccount(const std::string &networkId)
     }
     return false;
 }
+
+void ComponentManager::UpdateBusinessState(const std::string &uuid, const std::string &dhId, BusinessState state)
+{
+    DHLOGI("UpdateBusinessState, uuid: %{public}s, dhId: %{public}s, state: %{public}" PRIu32,
+        GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
+    std::lock_guard<std::mutex> lock(bizStateMtx_);
+    dhBizStates_[{uuid, dhId}] = state;
+}
+
+BusinessState ComponentManager::QueryBusinessState(const std::string &uuid, const std::string &dhId)
+{
+    std::lock_guard<std::mutex> lock(bizStateMtx_);
+    std::pair<std::string, std::string> key = {uuid, dhId};
+    if (dhBizStates_.find(key) == dhBizStates_.end()) {
+        return BusinessState::UNKNOWN;
+    }
+
+    return dhBizStates_.at(key);
+}
+
+ComponentManager::ComponentManagerEventHandler::ComponentManagerEventHandler(
+    const std::shared_ptr<AppExecFwk::EventRunner> &runner) : AppExecFwk::EventHandler(runner)
+{
+    DHLOGI("Ctor ComponentManagerEventHandler");
+}
+
+void ComponentManager::ComponentManagerEventHandler::ProcessEvent(
+    const AppExecFwk::InnerEvent::Pointer &event)
+{
+    uint32_t eventId = event->GetInnerEventId();
+    switch (eventId) {
+        case EVENT_DATA_SYNC_MANUAL: {
+            // do muanul sync with remote
+            std::string uuid = (*(event->GetSharedObject<std::string>()));
+            DHLOGI("Try receive full capabiliy info from uuid: %{public}s", GetAnonyString(uuid).c_str());
+            break;
+        }
+        default:
+            DHLOGE("event is undefined, id is %{public}d", eventId);
+            break;
+    }
+}
+
+std::shared_ptr<ComponentManager::ComponentManagerEventHandler> ComponentManager::GetEventHandler()
+{
+    return this->eventHandler_;
+}
+
 } // namespace DistributedHardware
 } // namespace OHOS

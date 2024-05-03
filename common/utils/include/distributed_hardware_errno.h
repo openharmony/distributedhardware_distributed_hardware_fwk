@@ -48,6 +48,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED = -10009;
     constexpr int32_t ERR_DH_FWK_COMPONENT_DHTYPE_NOT_FOUND = -10010;
     constexpr int32_t ERR_DH_FWK_COMPONENT_MONITOR_NULL = -10011;
+    constexpr int32_t ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED = -10012;
 
     /* ResourceManager errno, range: [-10400, -10499] */
     constexpr int32_t ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL = -10400;

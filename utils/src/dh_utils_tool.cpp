@@ -19,7 +19,10 @@
 #include <iomanip>
 #include <random>
 #include <sstream>
+#include <string>
 #include <sys/time.h>
+#include <vector>
+#include <zlib.h>
 
 #include "openssl/sha.h"
 #include "softbus_common.h"
@@ -38,6 +41,7 @@ namespace {
     constexpr int32_t WIDTH = 4;
     constexpr unsigned char MASK = 0x0F;
     constexpr int32_t DOUBLE_TIMES = 2;
+    constexpr int32_t COMPRESS_SLICE_SIZE = 1024;
 }
 
 int64_t GetCurrentTime()
@@ -129,6 +133,17 @@ DeviceInfo GetLocalDeviceInfo()
     return devInfo;
 }
 
+std::string GetLocalNetworkId()
+{
+    auto info = std::make_unique<NodeBasicInfo>();
+    auto ret = GetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("GetLocalNodeDeviceInfo failed, errCode = %{public}d", ret);
+        return "";
+    }
+    return info->networkId;
+}
+
 bool IsUInt8(const cJSON* jsonObj, const std::string& key)
 {
     const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
@@ -186,7 +201,57 @@ bool IsArray(const cJSON* jsonObj, const std::string& key)
     if (value == NULL || !cJSON_IsArray(value)) {
         return false;
     }
-    return ((uint32_t)cJSON_GetArraySize(value) > 0 && (uint32_t)cJSON_GetArraySize(value) <= MAX_COMP_SIZE);
+    return ((uint32_t)cJSON_GetArraySize(value) >= 0 && (uint32_t)cJSON_GetArraySize(value) <= MAX_ARR_SIZE);
+}
+
+std::string Compress(const std::string& data)
+{
+    z_stream strm;
+    strm.zalloc = Z_NULL;
+    strm.zfree = Z_NULL;
+    strm.opaque = Z_NULL;
+    deflateInit(&strm, Z_DEFAULT_COMPRESSION);
+ 
+    strm.next_in = (Bytef*)data.data();
+    strm.avail_in = data.size();
+    std::string out;
+    std::vector<Bytef> temp_out(COMPRESS_SLICE_SIZE, 0);
+ 
+    do {
+        strm.next_out = temp_out.data();
+        strm.avail_out = COMPRESS_SLICE_SIZE;
+        deflate(&strm, Z_FINISH);
+        out.append(reinterpret_cast<char*>(temp_out.data()), COMPRESS_SLICE_SIZE - strm.avail_out);
+    } while (strm.avail_out == 0);
+ 
+    deflateEnd(&strm);
+    return out;
+}
+ 
+std::string Decompress(const std::string& data)
+{
+    z_stream strm;
+    strm.zalloc = Z_NULL;
+    strm.zfree = Z_NULL;
+    strm.opaque = Z_NULL;
+    strm.avail_in = 0;
+    strm.next_in = Z_NULL;
+    inflateInit(&strm);
+ 
+    strm.next_in = (Bytef*)data.data();
+    strm.avail_in = data.size();
+    std::string out;
+    std::vector<Bytef> temp_out(COMPRESS_SLICE_SIZE, 0);
+ 
+    do {
+        strm.next_out = temp_out.data();
+        strm.avail_out = COMPRESS_SLICE_SIZE;
+        inflate(&strm, Z_NO_FLUSH);
+        out.append(reinterpret_cast<char*>(temp_out.data()), COMPRESS_SLICE_SIZE - strm.avail_out);
+    } while (strm.avail_out == 0);
+ 
+    inflateEnd(&strm);
+    return out;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

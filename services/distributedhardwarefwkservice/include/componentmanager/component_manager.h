@@ -26,6 +26,7 @@
 #include "single_instance.h"
 #include "component_monitor.h"
 #include "device_type.h"
+#include "event_handler.h"
 #include "idistributed_hardware.h"
 #include "idistributed_hardware_sink.h"
 #include "idistributed_hardware_source.h"
@@ -51,10 +52,19 @@ public:
         const DHType dhType);
     int32_t Disable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
         const DHType dhType);
-
+    void UpdateBusinessState(const std::string &uuid, const std::string &dhId, BusinessState state);
+    BusinessState QueryBusinessState(const std::string &uuid, const std::string &dhId);
     void DumpLoadedComps(std::set<DHType> &compSourceType, std::set<DHType> &compSinkType);
     void Recover(DHType dhType);
     std::map<DHType, IDistributedHardwareSink*> GetDHSinkInstance();
+
+    class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
+        public:
+            ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
+            ~ComponentManagerEventHandler() override = default;
+            void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+    };
+    std::shared_ptr<ComponentManager::ComponentManagerEventHandler> GetEventHandler();
 
 private:
     enum class Action : int32_t {
@@ -88,6 +98,12 @@ private:
     bool IsIdenticalAccount(const std::string &networkId);
     int32_t RetryGetEnableParam(const std::string &networkId, const std::string &uuid,
         const std::string &dhId, const DHType dhType, EnableParam &param);
+    int32_t InitComponentHandler();
+    int32_t InitSAMonitor();
+    void StartComponent();
+    void StartTaskMonitor();
+    void RegisterDHStateListener();
+    void RegisterDataSyncTriggerListener();
 
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
@@ -100,6 +116,13 @@ private:
     std::shared_ptr<DHTimer> monitorTaskTimer_ = nullptr;
 
     std::atomic<bool> isUnInitTimeOut_;
+    // record the remote device business state, {{deviceUUID, dhId}, BusinessState};
+    std::mutex bizStateMtx_;
+    std::map<std::pair<std::string, std::string>, BusinessState> dhBizStates_;
+    std::shared_ptr<DistributedHardwareStateListener> dhStateListener_;
+    std::shared_ptr<DataSyncTriggerListener> dataSyncTriggerListener_;
+
+    std::shared_ptr<ComponentManager::ComponentManagerEventHandler> eventHandler_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
