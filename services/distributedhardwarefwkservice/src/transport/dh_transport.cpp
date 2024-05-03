@@ -15,6 +15,8 @@
 
 #include "dh_transport.h"
 
+#include <cinttypes>
+
 #include "cJSON.h"
 #include <securec.h>
 
@@ -261,8 +263,8 @@ int32_t DHTransport::UnInit()
             DHLOGI("Shutdown client socket: %{public}d to remote dev: %{public}s", iter->second,
                 GetAnonyString(iter->first).c_str());
             Shutdown(iter->second);
-            remoteDevSocketIds_.clear();
         }
+        remoteDevSocketIds_.clear();
     }
 
     if (!isSocketSvrCreateFlag_.load()) {
@@ -315,7 +317,7 @@ int32_t DHTransport::StartSocket(const std::string &remoteNetworkId)
         return DH_FWK_SUCCESS;
     }
 
-    int socket = CreateClientSocket(remoteNetworkId);
+    int32_t socket = CreateClientSocket(remoteNetworkId);
     if (socket < DH_FWK_SUCCESS) {
         DHLOGE("StartSocket failed, ret: %{public}d", socket);
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
@@ -365,13 +367,13 @@ int32_t DHTransport::Send(const std::string &remoteNetworkId, const std::string 
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
     std::string compressedPayLoad = Compress(payload);
-    DHLOGI("Send payload size: %{puablic}d, after compressed size: %{public}d, "
-        "target networkId: %{public}s, socketId: %{public}d", payload.size(), compressedPayLoad.size(),
+    uint32_t compressedPayLoadSize = compressedPayLoad.size();
+    DHLOGI("Send payload size: %{puablic}" PRIu32 ", after compressed size: %{public}" PRIu32
+        ", target networkId: %{public}s, socketId: %{public}d", payload.size(), compressedPayLoadSize,
         GetAnonyString(remoteNetworkId).c_str(), socketId);
 
-    uint32_t compressedPayLoadSize = compressedPayLoad.size();
-    if (compressedPayLoad.size() > MAX_SEND_MSG_LENGTH) {
-        DHLOGE("Send error: msg size: %{public}zu too long", compressedPayLoadSize);
+    if (compressedPayLoadSize > MAX_SEND_MSG_LENGTH) {
+        DHLOGE("Send error: msg size: %{public}" PRIu32 " too long", compressedPayLoadSize);
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
     uint8_t *buf = reinterpret_cast<uint8_t *>(calloc((compressedPayLoadSize), sizeof(uint8_t)));
@@ -379,15 +381,15 @@ int32_t DHTransport::Send(const std::string &remoteNetworkId, const std::string 
         DHLOGE("Send: malloc memory failed");
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
-    uint32_t outLen = 0;
+
     if (memcpy_s(buf, compressedPayLoadSize,
-        reinterpret_cast<const uint8_t *>(compressedPayLoad.c_str()), compressedPayLoadSize) != EOK) {
+            reinterpret_cast<const uint8_t *>(compressedPayLoad.c_str()), compressedPayLoadSize) != EOK) {
         DHLOGE("Send: memcpy memory failed");
         free(buf);
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
-    outLen = static_cast<uint32_t>(compressedPayLoadSize);
-    int32_t ret = SendBytes(socketId, buf, outLen);
+
+    int32_t ret = SendBytes(socketId, buf, compressedPayLoadSize);
     free(buf);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("dsoftbus send error, ret: %{public}d", ret);

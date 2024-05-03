@@ -63,8 +63,6 @@ public:
     bool HasCapability(const std::string &deviceId, const std::string &dhId);
     void GetCapabilitiesByDeviceId(const std::string &deviceId,
         std::vector<std::shared_ptr<CapabilityInfo>> &resInfos);
-    void GetCapabilitiesByDeviceId(const std::string &deviceId,
-        std::vector<std::pair<std::string, std::shared_ptr<CapabilityInfo>>> &resInfos);
 
     /* Queries capability information based on deviceId and dhId. */
     int32_t GetCapability(const std::string &deviceId, const std::string &dhId,
