@@ -175,17 +175,6 @@ void LocalCapabilityInfoManager::GetCapabilitiesByDeviceId(const std::string &de
     }
 }
 
-void LocalCapabilityInfoManager::GetCapabilitiesByDeviceId(const std::string &deviceId,
-    std::vector<std::pair<std::string, std::shared_ptr<CapabilityInfo>>> &resInfos)
-{
-    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
-    for (auto &capabilityInfo : globalCapInfoMap_) {
-        if (CapabilityUtils::IsCapKeyMatchDeviceId(capabilityInfo.first, deviceId)) {
-            resInfos.emplace_back({capabilityInfo.first, capabilityInfo.second});
-        }
-    }
-}
-
 int32_t LocalCapabilityInfoManager::GetCapability(const std::string &deviceId, const std::string &dhId,
     std::shared_ptr<CapabilityInfo> &capPtr)
 {

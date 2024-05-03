@@ -20,7 +20,9 @@
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
 #include "dh_context.h"
+#include "dh_transport_obj.h"
 #include "dh_utils_tool.h"
+#include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "local_capability_info_manager.h"
 
@@ -37,42 +39,38 @@ DHCommTool::DHCommTool() : dhTransportPtr_(nullptr)
 void DHCommTool::Init()
 {
     DHLOGI("Init DHCommTool");
-    dhTransportPtr_ = std::make_shared<DHTransport>();
-    RegMemberFuncs();
+    dhTransportPtr_ = std::make_shared<DHTransport>(shared_from_this());
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
     eventHandler_ = std::make_shared<DHCommTool::DHCommToolEventHandler>(runner);
 }
 
-void DHCommTool::DealReqFullDHCaps(const std::string &msg)
+std::shared_ptr<DHCommTool> DHCommTool::GetInstance()
 {
-
-}
-
-void DHCommTool::DealRspFullDHCaps(const std::string &msg)
-{
-
+    static std::shared_ptr<DHCommTool> instance(new(std::nothrow) DHCommTool);
+    if (instance == nullptr) {
+        DHLOGE("instance is nullptr, because applying memory fail!");
+        return nullptr;
+    }
+    return instance;
 }
 
 void DHCommTool::TriggerReqFullDHCaps(const std::string &remoteNetworkId)
 {
     DHLOGI("TriggerReqFullDHCaps, remote networkId: %{public}s", GetAnonyString(remoteNetworkId).c_str());
     if (dhTransportPtr_ == nullptr) {
-        DHLOGE("transport is null")
+        DHLOGE("transport is null");
         return;
     }
     std::string localNetworkId = GetLocalNetworkId();
     if (localNetworkId.empty()) {
-        DHLOGE("Get local network id error")
+        DHLOGE("Get local network id error");
         return;
     }
     if (dhTransportPtr_->StartSocket(remoteNetworkId) != DH_FWK_SUCCESS) {
         DHLOGE("Start socket error");
         return;
     }
-    CommMsg commMsg = {
-        .code = DH_COMM_REQ_FULL_CAPS,
-        .msg = localNetworkId;
-    };
+    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, localNetworkId);
     std::string payload = GetCommMsgString(commMsg);
 
     int32_t ret = dhTransportPtr_->Send(remoteNetworkId, payload);
@@ -83,59 +81,15 @@ void DHCommTool::TriggerReqFullDHCaps(const std::string &remoteNetworkId)
     DHLOGI("Trigger req remote full attrs success");
 }
 
-DHCommTool::DHCommToolEventHandler : public AppExecFwk::EventHandler {
-        public:
-            DHCommToolEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
-            ~DHCommToolEventHandler() override = default;
-            void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
-    };
-    std::shared_ptr<DHCommTool::DHCommToolEventHandler> GetEventHandler();
-
-
-DHCommTool::DHCommToolEventHandler::DHCommToolEventHandler(
-    const std::shared_ptr<AppExecFwk::EventRunner> &runner) : AppExecFwk::EventHandler(runner)
-{
-    DHLOGI("Ctor DHCommToolEventHandler");
-}
-
-void DHCommTool::DHCommToolEventHandler::ProcessEvent(
-    const AppExecFwk::InnerEvent::Pointer &event)
-{
-    uint32_t eventId = event->GetInnerEventId();
-    switch (eventId) {
-        case DH_COMM_REQ_FULL_CAPS:
-            std::shared_ptr<CommMsg> commMsg = event->GetSharedObject<CommMsg>();
-            GetAndSendLocalFullCaps(commMsg->msg);
-            break;
-        case DH_COMM_RSP_FULL_CAPS:
-            std::shared_ptr<CommMsg> commMsg = event->GetSharedObject<CommMsg>();
-            // parse remote rsp full attrs and save to local db
-            FullCapsRsp capsRsp = ParseAndSaveRemoteDHCaps(commMsg->msg);
-            if (!capsRsp.networkId.empty()) {
-                // after receive rsp, close dsoftbus channel
-                DHLOGI("we receive full remote capabilities, close channel, remote networkId: %{public}s",
-                    GetAnonyString(capsRsp.networkId).c_str());
-            }
-            if (!capsRsp.caps.empty()) {
-                // trigger register dh by full attrs
-                DHLOGI("Trigger Register by full capabilities");
-            }
-            break;
-        default:
-            DHLOGE("event is undefined, id is %{public}d", eventId);
-            break;
-    }
-}
-
 void DHCommTool::GetAndSendLocalFullCaps(const std::string &reqNetworkId)
 {
     DHLOGI("GetAndSendLocalFullCaps, reqNetworkId: %{public}s", GetAnonyString(reqNetworkId).c_str());
     if (dhTransportPtr_ == nullptr) {
-        DHLOGE("transport is null")
+        DHLOGE("transport is null");
         return;
     }
     std::string localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
-    std::vector<std::shared_ptr<CapabilityInfo>> resInfos
+    std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
     CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(localDeviceId, resInfos);
     FullCapsRsp capsRsp;
     capsRsp.networkId = GetLocalNetworkId();
@@ -147,10 +101,7 @@ void DHCommTool::GetAndSendLocalFullCaps(const std::string &reqNetworkId)
     cJSON_free(msg);
     cJSON_Delete(root);
 
-    CommMsg commMsg = {
-        .code = DH_COMM_RSP_FULL_CAPS,
-        .msg = fullCapsMsg;
-    };
+    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, fullCapsMsg);
     std::string payload = GetCommMsgString(commMsg);
 
     int32_t ret = dhTransportPtr_->Send(reqNetworkId, payload);
@@ -173,7 +124,7 @@ FullCapsRsp DHCommTool::ParseAndSaveRemoteDHCaps(const std::string &remoteCaps)
 
     FromJson(root, capsRsp);
     cJSON_Delete(root);
-    int32_t ret = LocalCapabilityInfoManager::GetInstance().AddCapability(capsRsp.caps);
+    int32_t ret = LocalCapabilityInfoManager::GetInstance()->AddCapability(capsRsp.caps);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Save local capabilities error, ret: %{public}d", ret);
         return capsRsp;
@@ -182,9 +133,52 @@ FullCapsRsp DHCommTool::ParseAndSaveRemoteDHCaps(const std::string &remoteCaps)
     return capsRsp;
 }
 
+DHCommTool::DHCommToolEventHandler::DHCommToolEventHandler(
+    const std::shared_ptr<AppExecFwk::EventRunner> &runner) : AppExecFwk::EventHandler(runner)
+{
+    DHLOGI("Ctor DHCommToolEventHandler");
+}
+
+void DHCommTool::DHCommToolEventHandler::ProcessEvent(
+    const AppExecFwk::InnerEvent::Pointer &event)
+{
+    uint32_t eventId = event->GetInnerEventId();
+    std::shared_ptr<CommMsg> commMsg = nullptr;
+    switch (eventId) {
+        case DH_COMM_REQ_FULL_CAPS: {
+            commMsg = event->GetSharedObject<CommMsg>();
+            DHCommTool::GetInstance()->GetAndSendLocalFullCaps(commMsg->msg);
+            break;
+        }
+        case DH_COMM_RSP_FULL_CAPS: {
+            commMsg = event->GetSharedObject<CommMsg>();
+            // parse remote rsp full attrs and save to local db
+            FullCapsRsp capsRsp = DHCommTool::GetInstance()->ParseAndSaveRemoteDHCaps(commMsg->msg);
+            if (!capsRsp.networkId.empty()) {
+                // after receive rsp, close dsoftbus channel
+                DHLOGI("we receive full remote capabilities, close channel, remote networkId: %{public}s",
+                    GetAnonyString(capsRsp.networkId).c_str());
+            }
+            if (!capsRsp.caps.empty()) {
+                // trigger register dh by full attrs
+                DHLOGI("Trigger Register by full capabilities");
+            }
+            break;
+        }
+        default:
+            DHLOGE("event is undefined, id is %{public}d", eventId);
+            break;
+    }
+}
+
 std::shared_ptr<DHCommTool::DHCommToolEventHandler> DHCommTool::GetEventHandler()
 {
     return this->eventHandler_;
+}
+
+const std::shared_ptr<DHTransport> DHCommTool::GetDHTransportPtr()
+{
+    return this->dhTransportPtr_;
 }
 
 } // DistributedHardware

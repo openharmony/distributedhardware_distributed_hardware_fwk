@@ -42,6 +42,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "include/versionmanager",
     "include/componentmanager",
     "include/task",
+    "include/transport",
     "include/utils",
     "include/localhardwaremanager",
     "include/publisher",

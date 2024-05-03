@@ -112,7 +112,7 @@ int32_t DBAdapter::Init()
     return DH_FWK_SUCCESS;
 }
 
-int32_t InitLocal()
+int32_t DBAdapter::InitLocal()
 {
     DHLOGI("Init local DB, storeId: %{public}s", storeId_.storeId.c_str());
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);

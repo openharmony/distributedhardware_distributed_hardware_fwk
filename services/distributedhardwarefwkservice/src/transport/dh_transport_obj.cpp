@@ -22,45 +22,52 @@ namespace DistributedHardware {
 
 void ToJson(cJSON *jsonObject, const FullCapsRsp &capsRsp)
 {
-    cJSON_AddStringToObject(jsonObject, CAPS_RSP_NETWORKID_KEY.c_str(), capsRsp.networkId);
+    const char *networkId = capsRsp.networkId.c_str();
+    cJSON_AddStringToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, networkId);
     cJSON *capArr = cJSON_CreateArray();
     for (auto const &cap : capsRsp.caps) {
         cJSON *capValJson = cJSON_CreateObject();
         ToJson(capValJson, *cap);
         cJSON_AddItemToArray(capArr, capValJson);
     }
-    cJSON_AddItemToObject(jsonObject, CAPS_RSP_CAPS_KEY.c_str(), capArr);
+    cJSON_AddItemToObject(jsonObject, CAPS_RSP_CAPS_KEY, capArr);
 }
 
 void FromJson(const cJSON *jsonObject, FullCapsRsp &capsRsp)
 {
-    if (IsString(jsonObject, CAPS_RSP_NETWORKID_KEY)) {
-        capsRsp.networkId = cJSON_GetObjectItem(jsonObject, CAPS_RSP_NETWORKID_KEY.c_str())->valuestring;
+    std::string keyNetworkId(CAPS_RSP_NETWORKID_KEY);
+    if (IsString(jsonObject, keyNetworkId)) {
+        capsRsp.networkId = cJSON_GetObjectItem(jsonObject, CAPS_RSP_NETWORKID_KEY)->valuestring;
     }
-    if (IsArray(jsonObject, CAPS_RSP_CAPS_KEY)) {
-        cJSON *capsArr = cJSON_GetObjectItem(jsonObj, CAPS_RSP_CAPS_KEY.c_str());
+    std::string keyCaps(CAPS_RSP_CAPS_KEY);
+    if (IsArray(jsonObject, keyCaps)) {
+        cJSON *capsArr = cJSON_GetObjectItem(jsonObject, CAPS_RSP_CAPS_KEY);
         int32_t arrSize = cJSON_GetArraySize(capsArr);
         for (int32_t i = 0; i < arrSize; i++) {
-        cJSON *cap = cJSON_GetArrayItem(capsArr, i);
-        std::shared_ptr<CapabilityInfo> capPtr = std::make_shared<CapabilityInfo>();
-        FromJson(cap, *capPtr);
-        capsRsp.caps.push_back(capPtr);
+            cJSON *cap = cJSON_GetArrayItem(capsArr, i);
+            std::shared_ptr<CapabilityInfo> capPtr = std::make_shared<CapabilityInfo>();
+            FromJson(cap, *capPtr);
+            capsRsp.caps.push_back(capPtr);
+        }
     }
 }
 
 void ToJson(cJSON *jsonObject, const CommMsg &commMsg)
 {
-    cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY.c_str(), commMsg.code);
-    cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY.c_str(), commMsg.msg);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, commMsg.code);
+    const char *msg = commMsg.msg.c_str();
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY, msg);
 }
 
 void FromJson(const cJSON *jsonObject, CommMsg &commMsg)
 {
-    if (IsInt32(jsonObject, COMM_MSG_CODE_KEY)) {
-        commMsg.code = cJSON_GetObjectItem(jsonObject, COMM_MSG_CODE_KEY.c_str())->valueint;
+    std::string keyCode(COMM_MSG_CODE_KEY);
+    if (IsInt32(jsonObject, keyCode)) {
+        commMsg.code = cJSON_GetObjectItem(jsonObject, COMM_MSG_CODE_KEY)->valueint;
     }
-    if (IsString(jsonObject, COMM_MSG_MSG_KEY)) {
-        commMsg.msg = cJSON_GetObjectItem(jsonObject, COMM_MSG_MSG_KEY.c_str())->valuestring;
+    std::string keyMsg(COMM_MSG_MSG_KEY);
+    if (IsString(jsonObject, keyMsg)) {
+        commMsg.msg = cJSON_GetObjectItem(jsonObject, COMM_MSG_MSG_KEY)->valuestring;
     }
 }
 
@@ -75,5 +82,5 @@ std::string GetCommMsgString(const CommMsg &commMsg)
 
     return msgStr;
 }
-}
-}
+} // DistributedHardware
+} // OHOS

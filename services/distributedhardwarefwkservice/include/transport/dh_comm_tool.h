@@ -22,19 +22,21 @@
 #include <memory>
 
 #include "dh_transport.h"
+#include "dh_transport_obj.h"
 #include "event_handler.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 // request remote dh send back full dh capabilities
-constexpr uint32_t DH_COMM_REQ_FULL_CAPS = 1;
+constexpr int32_t DH_COMM_REQ_FULL_CAPS = 1;
 // send back full dh attributes to the requester
-constexpr uint32_t DH_COMM_RSP_FULL_CAPS = 2;
+constexpr int32_t DH_COMM_RSP_FULL_CAPS = 2;
 
-class DHCommTool {
+class DHCommTool : public std::enable_shared_from_this<DHCommTool> {
 public:
-    explicit DHCommTool();
+    DHCommTool();
     virtual ~DHCommTool() = default;
+    static std::shared_ptr<DHCommTool> GetInstance();
     void Init();
     /**
      * @brief trigger request remote dh send back full capatilities.
@@ -45,6 +47,8 @@ public:
      * @param remoteNetworkId the target device network id
      */
     void TriggerReqFullDHCaps(const std::string &remoteNetworkId);
+    void GetAndSendLocalFullCaps(const std::string &reqNetworkId);
+    FullCapsRsp ParseAndSaveRemoteDHCaps(const std::string &remoteCaps);
 
     class DHCommToolEventHandler : public AppExecFwk::EventHandler {
         public:
@@ -53,12 +57,7 @@ public:
             void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
     };
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> GetEventHandler();
-
-private:
-    void DealReqFullDHCaps(const std::string &msg);
-    void DealRspFullDHCaps(const std::string &msg);
-    void GetAndSendLocalFullCaps(const std::string &reqNetworkId);
-    void ParseAndSaveRemoteDHCaps(const std::string &remoteCaps);
+    const std::shared_ptr<DHTransport> GetDHTransportPtr();
 
 private:
     std::shared_ptr<DHTransport> dhTransportPtr_;

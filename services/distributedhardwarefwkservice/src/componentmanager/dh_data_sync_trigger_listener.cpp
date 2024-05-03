@@ -42,7 +42,7 @@ void DHDataSyncTriggerListener::OnDataSyncTrigger(const std::string &uuid)
     DHLOGI("Receive data sync trigger, uuid: %{public}s", GetAnonyString(uuid).c_str());
     std::shared_ptr<std::string> uuidPtr = std::make_shared<std::string>(uuid);
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_DATA_SYNC_MANUAL, uuidPtr);
-    ComponentManager::GetInstance()->GetEventHandler()->SendEvent(msgEvent,
+    ComponentManager::GetInstance().GetEventHandler()->SendEvent(msgEvent,
         0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
 }
 } // namespace DistributedHardware

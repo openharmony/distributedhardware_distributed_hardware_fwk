@@ -16,6 +16,7 @@
 #include "dh_transport.h"
 
 #include "cJSON.h"
+#include <securec.h>
 
 #include "anonymous_string.h"
 #include "constants.h"
@@ -23,6 +24,7 @@
 #include "dh_context.h"
 #include "dh_transport_obj.h"
 #include "dh_utils_tool.h"
+#include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
 namespace OHOS {
@@ -41,8 +43,8 @@ static QosTV g_qosInfo[] = {
 static uint32_t g_QosTV_Param_Index = static_cast<uint32_t>(sizeof(g_qosInfo) / sizeof(g_qosInfo[0]));
 }
 
-DHTransport::DHTransport() : remoteDevSocketIds_({}), localServerSocket_(-1),
-    localSessionName_(""), isSocketSvrCreateFlag_(false)
+DHTransport::DHTransport(std::shared_ptr<DHCommTool> dhCommToolPtr) : remoteDevSocketIds_({}), localServerSocket_(-1),
+    localSessionName_(""), isSocketSvrCreateFlag_(false), dhCommToolWPtr_(dhCommToolPtr)
 {
     DHLOGI("Ctor DHTransport");
 }
@@ -50,14 +52,15 @@ DHTransport::DHTransport() : remoteDevSocketIds_({}), localServerSocket_(-1),
 int32_t DHTransport::OnSocketOpened(int32_t socketId, const PeerSocketInfo &info)
 {
     DHLOGI("OnSocketOpened, socket: %{public}d, peerSocketName: %{public}s, peerNetworkId: %{public}s, "
-        "peerPkgName: %{public}s", sessionId, info.name, GetAnonyString(peerDevId).c_str(), info.pkgName);
+        "peerPkgName: %{public}s", socketId, info.name, GetAnonyString(info.networkId).c_str(), info.pkgName);
     std::lock_guard<std::mutex> lock(rmtSocketIdMtx_);
-    remoteDevSocketIds_[info->networkId] = socketId;
+    remoteDevSocketIds_[info.networkId] = socketId;
+    return DH_FWK_SUCCESS;
 }
 
 void DHTransport::OnSocketClosed(int32_t socketId, ShutdownReason reason)
 {
-    DHLOGI("OnSocketClosed, socket: %{public}d, reason: %{public}d", sessionId, (int32_t)reason);
+    DHLOGI("OnSocketClosed, socket: %{public}d, reason: %{public}d", socketId, (int32_t)reason);
     std::lock_guard<std::mutex> lock(rmtSocketIdMtx_);
     for (auto iter = remoteDevSocketIds_.begin(); iter != remoteDevSocketIds_.end(); ++iter) {
         if (iter->second == socketId) {
@@ -103,7 +106,7 @@ void DHTransport::HandleReceiveMessage(const std::string &payload)
 {
     std::string rawPayload = Decompress(payload);
 
-    cJSON *root = cJSON_Parse(rawPayload);
+    cJSON *root = cJSON_Parse(rawPayload.c_str());
     if (root == NULL) {
         DHLOGE("the msg is not json format");
         return;
@@ -114,22 +117,39 @@ void DHTransport::HandleReceiveMessage(const std::string &payload)
 
     DHLOGI("Receive DH msg, code: %{public}d, msg: %{public}s", commMsg->code, GetAnonyString(commMsg->msg).c_str());
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(commMsg->code, commMsg);
-    DHCommTool::GetInstance()->GetEventHandler()->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+    std::shared_ptr<DHCommTool> dhCommToolSPtr = dhCommToolWPtr_.lock();
+    if (dhCommToolSPtr == nullptr) {
+        DHLOGE("Can not get DHCommTool ptr");
+        return;
+    }
+    dhCommToolSPtr->GetEventHandler()->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
 }
 
 void OnBind(int32_t socket, PeerSocketInfo info)
 {
-    DHTransport::OnSocketOpened(socket, info);
+    if (DHCommTool::GetInstance()->GetDHTransportPtr() == nullptr) {
+        DHLOGE("get DHTransport ptr return null");
+        return;
+    }
+    DHCommTool::GetInstance()->GetDHTransportPtr()->OnSocketOpened(socket, info);
 }
 
 void OnShutdown(int32_t socket, ShutdownReason reason)
 {
-    DHTransport::OnSocketClosed(socket, reason);
+    if (DHCommTool::GetInstance()->GetDHTransportPtr() == nullptr) {
+        DHLOGE("get DHTransport ptr return null");
+        return;
+    }
+    DHCommTool::GetInstance()->GetDHTransportPtr()->OnSocketClosed(socket, reason);
 }
 
 void OnBytes(int32_t socket, const void *data, uint32_t dataLen)
 {
-    DHTransport::OnBytesReceived(socket, data, dataLen);
+    if (DHCommTool::GetInstance()->GetDHTransportPtr() == nullptr) {
+        DHLOGE("get DHTransport ptr return null");
+        return;
+    }
+    DHCommTool::GetInstance()->GetDHTransportPtr()->OnBytesReceived(socket, data, dataLen);
 }
 
 void OnMessage(int32_t socket, const void *data, uint32_t dataLen)
@@ -205,7 +225,7 @@ int32_t DHTransport::CreateClientSocket(const std::string &remoteNetworkId)
     };
     int32_t socket = Socket(info);
     DHLOGI("Bind Socket server, socket: %{public}d, localSessionName: %{public}s, peerSessionName: %{public}s",
-        socket, localSesionName.c_str(), peerSessionName.c_str());
+        socket, localSessionName_.c_str(), peerSessionName.c_str());
     return socket;
 }
 
@@ -227,7 +247,7 @@ int32_t DHTransport::Init()
         DHLOGE("Socket Listen failed, error code %{public}d.", ret);
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
-    isSessSerCreateFlag_.store(true);
+    isSocketSvrCreateFlag_.store(true);
     localServerSocket_ = socket;
     DHLOGI("Finish Init DSoftBus Server Socket, socket: %{public}d", socket);
     return DH_FWK_SUCCESS;
@@ -245,13 +265,13 @@ int32_t DHTransport::UnInit()
         }
     }
 
-    if (!isSessSerCreateFlag_.load()) {
+    if (!isSocketSvrCreateFlag_.load()) {
         DHLOGI("DSoftBus Server Socket already remove success.");
     } else {
         DHLOGI("Shutdown DSoftBus Server Socket, socket: %{public}d", localServerSocket_.load());
         Shutdown(localServerSocket_.load());
         localServerSocket_ = -1;
-        isSessSerCreateFlag_.store(false);
+        isSocketSvrCreateFlag_.store(false);
     }
     return DH_FWK_SUCCESS;
 }
@@ -301,10 +321,10 @@ int32_t DHTransport::StartSocket(const std::string &remoteNetworkId)
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
 
-    ret = Bind(socket, g_qosInfo, g_QosTV_Param_Index, &iSocketListener);
+    int32_t ret = Bind(socket, g_qosInfo, g_QosTV_Param_Index, &iSocketListener);
     if (ret < DH_FWK_SUCCESS) {
-        DHLOGE("OpenSession fail, remoteNetworkId: %{public}s, socket: %{public}d",
-            GetAnonyString(remoteNetworkId).c_str(), socket);
+        DHLOGE("OpenSession fail, remoteNetworkId: %{public}s, socket: %{public}d, ret: %{public}d",
+            GetAnonyString(remoteNetworkId).c_str(), socket, ret);
         Shutdown(socket);
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
@@ -315,7 +335,7 @@ int32_t DHTransport::StartSocket(const std::string &remoteNetworkId)
     PeerSocketInfo peerSocketInfo = {
         .name = const_cast<char*>(peerSessionName.c_str()),
         .networkId = const_cast<char*>(remoteNetworkId.c_str()),
-        .pkgName = const_cast<char*>(DINPUT_PKG_NAME.c_str()),
+        .pkgName = const_cast<char*>(DH_FWK_PKG_NAME.c_str()),
         .dataType = DATA_TYPE_BYTES
     };
     OnSocketOpened(socket, peerSocketInfo);
@@ -327,13 +347,14 @@ int32_t DHTransport::StopSocket(const std::string &remoteNetworkId)
     int32_t socketId = -1;
     if (!IsDeviceSessionOpened(remoteNetworkId, socketId)) {
         DHLOGI("remote dev may be not opened, remoteNetworkId: %{public}s", GetAnonyString(remoteNetworkId).c_str());
-        return;
+        return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
 
     DHLOGI("StopSocket remoteNetworkId: %{public}s, socketId: %{public}d",
         GetAnonyString(remoteNetworkId).c_str(), socketId);
     Shutdown(socketId);
     ClearDeviceSocketOpened(remoteNetworkId);
+    return DH_FWK_SUCCESS;
 }
 
 int32_t DHTransport::Send(const std::string &remoteNetworkId, const std::string &payload)

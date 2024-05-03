@@ -25,6 +25,7 @@
 #include "dh_context.h"
 #include "dh_utils_hitrace.h"
 #include "distributed_hardware_errno.h"
+#include "distributed_hardware_log.h"
 #include "plugin_listener_impl.h"
 #include "dh_utils_tool.h"
 

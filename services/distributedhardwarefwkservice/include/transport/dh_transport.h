@@ -18,6 +18,9 @@
 
 #include <atomic>
 #include <cstdint>
+#include <map>
+#include <memory>
+#include <mutex>
 #include <string>
 
 #include "socket.h"
@@ -28,7 +31,7 @@ namespace DistributedHardware {
 class DHCommTool;
 class DHTransport {
 public:
-    explict DHTransport(std::shared_ptr<DHCommTool> dhCommToolPtr);
+    explicit DHTransport(std::shared_ptr<DHCommTool> dhCommToolPtr);
     int32_t Init();
     int32_t UnInit();
     virtual ~DHTransport() = default;
@@ -56,6 +59,8 @@ private:
     std::atomic<int32_t> localServerSocket_;
     std::string localSessionName_;
     std::atomic<bool> isSocketSvrCreateFlag_;
+    std::weak_ptr<DHCommTool> dhCommToolWPtr_;
 };
 } // DistributedHardware
 } // OHOS
+#endif
