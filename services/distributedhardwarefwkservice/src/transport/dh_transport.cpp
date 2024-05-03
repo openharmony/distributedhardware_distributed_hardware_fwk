@@ -382,8 +382,8 @@ int32_t DHTransport::Send(const std::string &remoteNetworkId, const std::string 
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
 
-    if (memcpy_s(buf, compressedPayLoadSize,
-            reinterpret_cast<const uint8_t *>(compressedPayLoad.c_str()), compressedPayLoadSize) != EOK) {
+    if (memcpy_s(buf, compressedPayLoadSize, reinterpret_cast<const uint8_t *>(compressedPayLoad.c_str()),
+                 compressedPayLoadSize) != EOK) {
         DHLOGE("Send: memcpy memory failed");
         free(buf);
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
