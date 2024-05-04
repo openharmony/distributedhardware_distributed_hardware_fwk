@@ -368,7 +368,7 @@ int32_t DHTransport::Send(const std::string &remoteNetworkId, const std::string 
     }
     std::string compressedPayLoad = Compress(payload);
     uint32_t compressedPayLoadSize = compressedPayLoad.size();
-    DHLOGI("Send payload size: %{puablic}" PRIu32 ", after compressed size: %{public}" PRIu32
+    DHLOGI("Send payload size: %{public}" PRIu32 ", after compressed size: %{public}" PRIu32
         ", target networkId: %{public}s, socketId: %{public}d", payload.size(), compressedPayLoadSize,
         GetAnonyString(remoteNetworkId).c_str(), socketId);
 

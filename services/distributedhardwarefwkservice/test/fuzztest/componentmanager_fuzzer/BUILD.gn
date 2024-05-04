@@ -33,6 +33,7 @@ ohos_fuzztest("ComponentmanagerFuzzTest") {
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${services_path}/distributedhardwarefwkservice/include/task",
+    "${services_path}/distributedhardwarefwkservice/include/transport",
     "${common_path}/utils/include",
     "${common_path}/log/include",
   ]

@@ -34,6 +34,7 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/versionmanager",
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${services_path}/distributedhardwarefwkservice/include/task",
+    "${services_path}/distributedhardwarefwkservice/include/transport",
     "${common_path}/utils/include",
     "${common_path}/log/include",
   ]

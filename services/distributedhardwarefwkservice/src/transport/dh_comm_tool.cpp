@@ -157,7 +157,7 @@ void DHCommTool::DHCommToolEventHandler::ProcessEvent(
             // parse remote rsp full attrs and save to local db
             FullCapsRsp capsRsp = DHCommTool::GetInstance()->ParseAndSaveRemoteDHCaps(commMsg->msg);
             DHLOGI("Receive full remote capabilities, remote networkid: %{public}s, caps size: %{public}" PRIu32,
-                capsRsp.networkId.c_str(), capsRsp.caps.size());
+                GetAnonyString(capsRsp.networkId).c_str(), capsRsp.caps.size());
             ProcessFullCapsRsp(capsRsp);
             break;
         }
@@ -181,7 +181,7 @@ void DHCommTool::DHCommToolEventHandler::ProcessFullCapsRsp(const FullCapsRsp &c
     // trigger register dh by full attrs
     std::string uuid = DHContext::GetInstance().GetUUIDByNetworkId(capsRsp.networkId);
     if (uuid.empty()) {
-        DHLOGE("Can not find remote device uuid by networkid: %{public}s", capsRsp.networkId.c_str());
+        DHLOGE("Can not find remote device uuid by networkid: %{public}s", GetAnonyString(capsRsp.networkId).c_str());
         return;
     }
 
