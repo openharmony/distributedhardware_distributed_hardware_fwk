@@ -74,7 +74,7 @@ public:
      * @return true if the task param exist, return true.
      * @return false if the task param not exist, return false.
      */
-    bool FetchNeedRefreshTask(std::pair<std::string, std::string> taskKey, TaskParam &taskParam);
+    bool FetchNeedRefreshTask(const std::pair<std::string, std::string> &taskKey, TaskParam &taskParam);
 
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
         public:

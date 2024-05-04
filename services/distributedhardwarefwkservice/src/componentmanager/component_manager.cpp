@@ -831,7 +831,7 @@ void ComponentManager::SaveNeedRefreshTask(const TaskParam &taskParam)
     needRefreshTaskParams_[{taskParam.uuid, taskParam.dhId}] = taskParam;
 }
 
-bool ComponentManager::FetchNeedRefreshTask(std::pair<std::string, std::string> taskKey, TaskParam &taskParam)
+bool ComponentManager::FetchNeedRefreshTask(const std::pair<std::string, std::string> &taskKey, TaskParam &taskParam)
 {
     std::lock_guard<std::mutex> lock(needRefreshTaskParamsMtx_);
     if (needRefreshTaskParams_.find(taskKey) == needRefreshTaskParams_.end()) {
