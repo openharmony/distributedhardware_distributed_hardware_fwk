@@ -62,7 +62,7 @@ public:
     void Recover(DHType dhType);
     std::map<DHType, IDistributedHardwareSink*> GetDHSinkInstance();
     void TriggerFullCapsSync(const std::string &networkId);
-    void SaveNeedRefreshTask(const TaskParam &task);
+    void SaveNeedRefreshTask(const TaskParam &taskParam);
     /**
      * @brief find the task and return it.
      *        If the task exist, get and remove from the cached tasks,

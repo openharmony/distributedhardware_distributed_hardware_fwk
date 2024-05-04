@@ -794,8 +794,8 @@ void ComponentManager::UpdateBusinessState(const std::string &uuid, const std::s
     }
 
     if (state == BusinessState::IDLE) {
-        TaskParam task;
-        if (!FetchNeedRefreshTask({uuid, dhId}, task)) {
+        TaskParam taskParam;
+        if (!FetchNeedRefreshTask({uuid, dhId}, taskParam)) {
             return;
         }
         DHLOGI("The dh need refresh, uuid: %{public}s, dhId: %{public}s",
@@ -825,7 +825,7 @@ void ComponentManager::TriggerFullCapsSync(const std::string &networkId)
     dhCommToolPtr_->TriggerReqFullDHCaps(networkId);
 }
 
-void ComponentManager::SaveNeedRefreshTask(const TaskParam &task)
+void ComponentManager::SaveNeedRefreshTask(const TaskParam &taskParam)
 {
     std::lock_guard<std::mutex> lock(needRefreshTasksMtx_);
     needRefreshTasks_[{task.uuid, task.dhId}] = task;
@@ -839,7 +839,7 @@ bool ComponentManager::FetchNeedRefreshTask(std::pair<std::string, std::string> 
     }
 
     task = needRefreshTasks_.at(taskKey);
-    needRefreshTasks_.remove(taskKey);
+    needRefreshTasks_.erase(taskKey);
     return true;
 }
 
