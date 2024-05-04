@@ -70,7 +70,7 @@ ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSa
     monitorTaskTimer_(std::make_shared<MonitorTaskTimer>(MONITOR_TASK_TIMER_ID, MONITOR_TASK_DELAY_MS)),
     isUnInitTimeOut_(false), dhBizStates_({}), dhStateListener_(std::make_shared<DHStateListener>()),
     dataSyncTriggerListener_(std::make_shared<DHDataSyncTriggerListener>()),
-    dhCommToolPtr_(std::make_shared<DHCommTool>()), needRefreshTasks_({})
+    dhCommToolPtr_(std::make_shared<DHCommTool>()), needRefreshTaskParams_({})
 {
     DHLOGI("Ctor ComponentManager");
 }
@@ -827,19 +827,19 @@ void ComponentManager::TriggerFullCapsSync(const std::string &networkId)
 
 void ComponentManager::SaveNeedRefreshTask(const TaskParam &taskParam)
 {
-    std::lock_guard<std::mutex> lock(needRefreshTasksMtx_);
-    needRefreshTasks_[{task.uuid, task.dhId}] = task;
+    std::lock_guard<std::mutex> lock(needRefreshTaskParamsMtx_);
+    needRefreshTaskParams_[{task.uuid, task.dhId}] = task;
 }
 
-bool ComponentManager::FetchNeedRefreshTask(std::pair<std::string, std::string> taskKey, TaskParam &task)
+bool ComponentManager::FetchNeedRefreshTask(std::pair<std::string, std::string> taskKey, TaskParam &taskParam)
 {
-    std::lock_guard<std::mutex> lock(needRefreshTasksMtx_);
-    if (needRefreshTasks_.find(taskKey) == needRefreshTasks_.end()) {
+    std::lock_guard<std::mutex> lock(needRefreshTaskParamsMtx_);
+    if (needRefreshTaskParams_.find(taskKey) == needRefreshTaskParams_.end()) {
         return false;
     }
 
-    task = needRefreshTasks_.at(taskKey);
-    needRefreshTasks_.erase(taskKey);
+    taskParam = needRefreshTaskParams_.at(taskKey);
+    needRefreshTaskParams_.erase(taskKey);
     return true;
 }
 

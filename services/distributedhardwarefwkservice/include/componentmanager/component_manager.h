@@ -64,17 +64,17 @@ public:
     void TriggerFullCapsSync(const std::string &networkId);
     void SaveNeedRefreshTask(const TaskParam &taskParam);
     /**
-     * @brief find the task and return it.
-     *        If the task exist, get and remove from the cached tasks,
-     *        save it at the second param task, then return true.
-     *        If the task not exit, return false.
+     * @brief find the task param and return it.
+     *        If the task param exist, get and remove from the cached task params,
+     *        save it at the second task param, then return true.
+     *        If the task param not exist, return false.
      *
-     * @param taskKey the task uuid and dhid pair
-     * @param task if the task exist, save it.
-     * @return true if the task exist, return true.
-     * @return false if the task not exit, return false.
+     * @param taskKey the task param uuid and dhid pair.
+     * @param taskParam if the task param exist, save it.
+     * @return true if the task param exist, return true.
+     * @return false if the task param not exist, return false.
      */
-    bool FetchNeedRefreshTask(std::pair<std::string, std::string> taskKey, TaskParam &task);
+    bool FetchNeedRefreshTask(std::pair<std::string, std::string> taskKey, TaskParam &taskParam);
 
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
         public:
@@ -145,8 +145,8 @@ private:
     std::shared_ptr<DHCommTool> dhCommToolPtr_;
 
     // save those remote dh that need refresh by full capability, {{deviceUUID, dhId}, TaskParam}.
-    std::map<std::pair<std::string, std::string>, TaskParam> needRefreshTasks_;
-    std::mutex needRefreshTasksMtx_;
+    std::map<std::pair<std::string, std::string>, TaskParam> needRefreshTaskParams_;
+    std::mutex needRefreshTaskParamsMtx_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
