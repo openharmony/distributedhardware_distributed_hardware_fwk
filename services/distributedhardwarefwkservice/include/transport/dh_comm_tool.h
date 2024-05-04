@@ -55,12 +55,11 @@ public:
             DHCommToolEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
             ~DHCommToolEventHandler() override = default;
             void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+        private:
+            void ProcessFullCapsRsp(const FullCapsRsp &capsRsp);
     };
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> GetEventHandler();
     const std::shared_ptr<DHTransport> GetDHTransportPtr();
-
-private:
-    void ProcessFullCapsRsp(const FullCapsRsp &capsRsp);
 
 private:
     std::shared_ptr<DHTransport> dhTransportPtr_;

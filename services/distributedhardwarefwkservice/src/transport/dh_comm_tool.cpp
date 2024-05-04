@@ -26,6 +26,7 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "local_capability_info_manager.h"
+#include "task_executor.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -166,7 +167,7 @@ void DHCommTool::DHCommToolEventHandler::ProcessEvent(
     }
 }
 
-void DHCommTool::ProcessFullCapsRsp(const FullCapsRsp &capsRsp)
+void DHCommTool::DHCommToolEventHandler::ProcessFullCapsRsp(const FullCapsRsp &capsRsp)
 {
     if (capsRsp.networkId.empty() || capsRsp.caps.empty()) {
         DHLOGE("Receive remote caps info invalid");
@@ -185,13 +186,13 @@ void DHCommTool::ProcessFullCapsRsp(const FullCapsRsp &capsRsp)
     }
 
     for (auto const &cap : capsRsp.caps) {
-        BusinessState curState = ComponentManager::GetInstance().QueryBusinessState(uuid, cap->GetDhId());
+        BusinessState curState = ComponentManager::GetInstance().QueryBusinessState(uuid, cap->GetDHId());
         DHLOGI("DH state: %{public}" PRIu32 ", uuid: %{public}s, dhId: %{public}s",
-            (uint32_t)curState, GetAnonyString(uuid).c_str(), GetAnonyString(cap->GetDhId()).c_str());
+            (uint32_t)curState, GetAnonyString(uuid).c_str(), GetAnonyString(cap->GetDHId()).c_str());
         TaskParam taskParam = {
             .networkId = capsRsp.networkId,
             .uuid = uuid,
-            .dhId = cap->GetDhId(),
+            .dhId = cap->GetDHId(),
             .dhType = cap->GetDHType()
         };
         if (curState != BusinessState::RUNNING && curState != BusinessState::PAUSING) {
