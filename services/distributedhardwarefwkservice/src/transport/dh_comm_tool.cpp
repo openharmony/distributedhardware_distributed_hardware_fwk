@@ -19,6 +19,7 @@
 
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
+#include "component_manager.h"
 #include "dh_context.h"
 #include "dh_transport_obj.h"
 #include "dh_utils_tool.h"
@@ -57,8 +58,8 @@ std::shared_ptr<DHCommTool> DHCommTool::GetInstance()
 void DHCommTool::TriggerReqFullDHCaps(const std::string &remoteNetworkId)
 {
     DHLOGI("TriggerReqFullDHCaps, remote networkId: %{public}s", GetAnonyString(remoteNetworkId).c_str());
-    if (dhTransportPtr_ == nullptr) {
-        DHLOGE("transport is null");
+    if (remoteNetworkId.empty() || dhTransportPtr_ == nullptr) {
+        DHLOGE("remoteNetworkId or transport is null");
         return;
     }
     std::string localNetworkId = GetLocalNetworkId();
@@ -154,20 +155,53 @@ void DHCommTool::DHCommToolEventHandler::ProcessEvent(
             commMsg = event->GetSharedObject<CommMsg>();
             // parse remote rsp full attrs and save to local db
             FullCapsRsp capsRsp = DHCommTool::GetInstance()->ParseAndSaveRemoteDHCaps(commMsg->msg);
-            if (!capsRsp.networkId.empty()) {
-                // after receive rsp, close dsoftbus channel
-                DHLOGI("we receive full remote capabilities, close channel, remote networkId: %{public}s",
-                    GetAnonyString(capsRsp.networkId).c_str());
-            }
-            if (!capsRsp.caps.empty()) {
-                // trigger register dh by full attrs
-                DHLOGI("Trigger Register by full capabilities");
-            }
+            DHLOGI("Receive full remote capabilities, remote networkid: %{public}s, caps size: %{public}" PRIu32,
+                capsRsp.networkId.c_str(), capsRsp.caps.size());
+            ProcessFullCapsRsp(capsRsp);
             break;
         }
         default:
             DHLOGE("event is undefined, id is %{public}d", eventId);
             break;
+    }
+}
+
+void  DHCommTool::ProcessFullCapsRsp(const FullCapsRsp &capsRsp)
+{
+    if (capsRsp.networkId.empty() || capsRsp.caps.empty()) {
+        DHLOGE("Receive remote caps info invalid");
+        return;
+    }
+    // after receive rsp, close dsoftbus channel
+    DHLOGI("we receive full remote capabilities, close channel, remote networkId: %{public}s",
+        GetAnonyString(capsRsp.networkId).c_str());
+    DHCommTool::GetInstance()->GetDHTransportPtr()->StopSocket(capsRsp.networkId);
+
+    // trigger register dh by full attrs
+    std::string uuid = DHContext::GetInstance().GetUUIDByNetworkId(capsRsp.networkId);
+    if (uuid.empty()) {
+        DHLOGE("Can not find remote device uuid by networkid: %{public}s", capsRsp.networkId.c_str());
+        return;
+    }
+
+    for (auto const &cap : capsRsp.caps) {
+        BusinessState curState = ComponentManager::GetInstance().QueryBusinessState(uuid, cap->GetDhId());
+        DHLOGI("DH state: %{public}" PRIu32 ", uuid: %{public}s, dhId: %{public}s",
+            (uint32_t)curState, GetAnonyString(uuid).c_str(), GetAnonyString(cap->GetDhId()).c_str());
+        TaskParam taskParam = {
+            .networkId = capsRsp.networkId,
+            .uuid = uuid,
+            .dhId = cap->GetDhId(),
+            .dhType = cap->GetDHType()
+        };
+        if (curState != BusinessState::RUNNING && curState != BusinessState::PAUSING) {
+            DHLOGI("The dh not busy, refresh it");
+            auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
+            TaskExecutor::GetInstance().PushTask(task);
+        } else {
+            DHLOGI("The dh busy, save and refresh after idle");
+            ComponentManager::GetInstance().SaveNeedRefreshTask(taskParam);
+        }
     }
 }
 

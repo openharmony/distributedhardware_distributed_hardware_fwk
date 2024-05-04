@@ -26,12 +26,16 @@
 #include "single_instance.h"
 #include "component_monitor.h"
 #include "device_type.h"
+#include "dh_comm_tool.h"
 #include "event_handler.h"
 #include "idistributed_hardware.h"
 #include "idistributed_hardware_sink.h"
 #include "idistributed_hardware_source.h"
+#include "impl_utils.h"
 #include "low_latency_listener.h"
 #include "monitor_task_timer.h"
+#include "task_board.h"
+#include "task_factory.h"
 #include "version_info.h"
 #include "component_privacy.h"
 
@@ -57,6 +61,20 @@ public:
     void DumpLoadedComps(std::set<DHType> &compSourceType, std::set<DHType> &compSinkType);
     void Recover(DHType dhType);
     std::map<DHType, IDistributedHardwareSink*> GetDHSinkInstance();
+    void TriggerFullCapsSync(const std::string &networkId);
+    void SaveNeedRefreshTask(const TaskParam &task);
+    /**
+     * @brief find the task and return it.
+     *        If the task exist, get and remove from the cached tasks,
+     *        save it at the second param task, then return true.
+     *        If the task not exit, return false.
+     *
+     * @param taskKey the task uuid and dhid pair
+     * @param task if the task exist, save it.
+     * @return true if the task exist, return true.
+     * @return false if the task not exit, return false.
+     */
+    bool FetchNeedRefreshTask(std::pair<std::string, std::string> taskKey, TaskParam &task);
 
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
         public:
@@ -104,6 +122,7 @@ private:
     void StartTaskMonitor();
     void RegisterDHStateListener();
     void RegisterDataSyncTriggerListener();
+    void InitDHCommTool();
 
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
@@ -116,13 +135,18 @@ private:
     std::shared_ptr<DHTimer> monitorTaskTimer_ = nullptr;
 
     std::atomic<bool> isUnInitTimeOut_;
-    // record the remote device business state, {{deviceUUID, dhId}, BusinessState};
-    std::mutex bizStateMtx_;
+    // record the remote device business state, {{deviceUUID, dhId}, BusinessState}.
     std::map<std::pair<std::string, std::string>, BusinessState> dhBizStates_;
+    std::mutex bizStateMtx_;
     std::shared_ptr<DistributedHardwareStateListener> dhStateListener_;
     std::shared_ptr<DataSyncTriggerListener> dataSyncTriggerListener_;
 
     std::shared_ptr<ComponentManager::ComponentManagerEventHandler> eventHandler_;
+    std::shared_ptr<DHCommTool> dhCommToolPtr_;
+
+    // save those remote dh that need refresh by full capability, {{deviceUUID, dhId}, TaskParam}.
+    std::map<std::pair<std::string, std::string>, TaskParam> needRefreshTasks_;
+    std::mutex needRefreshTasksMtx_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -60,6 +60,9 @@ public:
     const std::shared_ptr<DHTransport> GetDHTransportPtr();
 
 private:
+    void ProcessFullCapsRsp(const FullCapsRsp &capsRsp);
+
+private:
     std::shared_ptr<DHTransport> dhTransportPtr_;
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> eventHandler_;
 };
