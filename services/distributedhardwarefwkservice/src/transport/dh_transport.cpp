@@ -42,7 +42,7 @@ static QosTV g_qosInfo[] = {
     { .qos = QOS_TYPE_MAX_LATENCY, .value = 8000 },
     { .qos = QOS_TYPE_MIN_LATENCY, .value = 2000 }
 };
-static uint32_t g_QosTV_Param_Index = static_cast<uint32_t>(sizeof(g_qosInfo) / sizeof(g_qosInfo[0]));
+static uint32_t g_qosTvParamIndex = static_cast<uint32_t>(sizeof(g_qosInfo) / sizeof(g_qosInfo[0]));
 }
 
 DHTransport::DHTransport(std::shared_ptr<DHCommTool> dhCommToolPtr) : remoteDevSocketIds_({}), localServerSocket_(-1),
@@ -244,7 +244,7 @@ int32_t DHTransport::Init()
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
 
-    int32_t ret = Listen(socket, g_qosInfo, g_QosTV_Param_Index, &iSocketListener);
+    int32_t ret = Listen(socket, g_qosInfo, g_qosTvParamIndex, &iSocketListener);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Socket Listen failed, error code %{public}d.", ret);
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
@@ -323,7 +323,7 @@ int32_t DHTransport::StartSocket(const std::string &remoteNetworkId)
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
 
-    int32_t ret = Bind(socket, g_qosInfo, g_QosTV_Param_Index, &iSocketListener);
+    int32_t ret = Bind(socket, g_qosInfo, g_qosTvParamIndex, &iSocketListener);
     if (ret < DH_FWK_SUCCESS) {
         DHLOGE("OpenSession fail, remoteNetworkId: %{public}s, socket: %{public}d, ret: %{public}d",
             GetAnonyString(remoteNetworkId).c_str(), socket, ret);
@@ -369,8 +369,8 @@ int32_t DHTransport::Send(const std::string &remoteNetworkId, const std::string 
     std::string compressedPayLoad = Compress(payload);
     uint32_t compressedPayLoadSize = compressedPayLoad.size();
     DHLOGI("Send payload size: %{public}" PRIu32 ", after compressed size: %{public}" PRIu32
-        ", target networkId: %{public}s, socketId: %{public}d", payload.size(), compressedPayLoadSize,
-        GetAnonyString(remoteNetworkId).c_str(), socketId);
+        ", target networkId: %{public}s, socketId: %{public}d", static_cast<uint32_t>(payload.size()),
+        compressedPayLoadSize, GetAnonyString(remoteNetworkId).c_str(), socketId);
 
     if (compressedPayLoadSize > MAX_SEND_MSG_LENGTH) {
         DHLOGE("Send error: msg size: %{public}" PRIu32 " too long", compressedPayLoadSize);

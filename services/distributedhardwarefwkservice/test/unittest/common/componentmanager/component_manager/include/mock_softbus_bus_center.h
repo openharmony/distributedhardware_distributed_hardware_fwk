@@ -33,11 +33,11 @@ typedef struct {
     char networkId[MOCK_NETWORK_ID_BUF_LEN];
     char deviceName[MOCK_DEVICE_NAME_BUF_LEN];
     uint16_t deviceTypeId;
-} NodeBasicInfo;
+} MockNodeBasicInfo;
 
-int32_t GetLocalNodeDeviceInfo(const char *pkgName, NodeBasicInfo *info)
+int32_t MockGetLocalNodeDeviceInfo(const char *pkgName, MockNodeBasicInfo *info)
 {
-    NodeBasicInfo nodeBasicInfo = {
+    MockNodeBasicInfo nodeBasicInfo = {
         .networkId = "nt36a637105409e904d4da83790a4a8",
         .deviceName = "distributed_camera",
         .deviceTypeId = 1};
