@@ -828,7 +828,7 @@ void ComponentManager::TriggerFullCapsSync(const std::string &networkId)
 void ComponentManager::SaveNeedRefreshTask(const TaskParam &taskParam)
 {
     std::lock_guard<std::mutex> lock(needRefreshTaskParamsMtx_);
-    needRefreshTaskParams_[{task.uuid, task.dhId}] = task;
+    needRefreshTaskParams_[{taskParam.uuid, taskParam.dhId}] = task;
 }
 
 bool ComponentManager::FetchNeedRefreshTask(std::pair<std::string, std::string> taskKey, TaskParam &taskParam)
