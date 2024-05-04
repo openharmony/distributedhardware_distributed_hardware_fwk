@@ -80,7 +80,7 @@ void DHCommTool::TriggerReqFullDHCaps(const std::string &remoteNetworkId)
         DHLOGE("Trigger req remote full attrs error");
         return;
     }
-    DHLOGI("Trigger req remote full attrs success");
+    DHLOGI("Trigger req remote full attrs success.");
 }
 
 void DHCommTool::GetAndSendLocalFullCaps(const std::string &reqNetworkId)
