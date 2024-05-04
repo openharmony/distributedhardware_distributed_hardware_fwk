@@ -166,7 +166,7 @@ void DHCommTool::DHCommToolEventHandler::ProcessEvent(
     }
 }
 
-void  DHCommTool::ProcessFullCapsRsp(const FullCapsRsp &capsRsp)
+void DHCommTool::ProcessFullCapsRsp(const FullCapsRsp &capsRsp)
 {
     if (capsRsp.networkId.empty() || capsRsp.caps.empty()) {
         DHLOGE("Receive remote caps info invalid");
