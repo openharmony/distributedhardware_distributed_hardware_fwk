@@ -145,15 +145,17 @@ void DHCommTool::DHCommToolEventHandler::ProcessEvent(
     const AppExecFwk::InnerEvent::Pointer &event)
 {
     uint32_t eventId = event->GetInnerEventId();
-    std::shared_ptr<CommMsg> commMsg = nullptr;
+    std::shared_ptr<CommMsg> commMsg = event->GetSharedObject<CommMsg>();
+    if (commMsg == nullptr) {
+        DHLOGE("ProcessEvent commMsg is null");
+        return;
+    }
     switch (eventId) {
         case DH_COMM_REQ_FULL_CAPS: {
-            commMsg = event->GetSharedObject<CommMsg>();
             DHCommTool::GetInstance()->GetAndSendLocalFullCaps(commMsg->msg);
             break;
         }
         case DH_COMM_RSP_FULL_CAPS: {
-            commMsg = event->GetSharedObject<CommMsg>();
             // parse remote rsp full attrs and save to local db
             FullCapsRsp capsRsp = DHCommTool::GetInstance()->ParseAndSaveRemoteDHCaps(commMsg->msg);
             DHLOGI("Receive full remote capabilities, remote networkid: %{public}s, caps size: %{public}" PRIu32,
