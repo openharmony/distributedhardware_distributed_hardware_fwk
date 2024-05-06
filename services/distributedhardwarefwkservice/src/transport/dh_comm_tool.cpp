@@ -44,6 +44,17 @@ void DHCommTool::Init()
     dhTransportPtr_ = std::make_shared<DHTransport>(shared_from_this());
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
     eventHandler_ = std::make_shared<DHCommTool::DHCommToolEventHandler>(runner);
+    dhTransportPtr_->Init();
+}
+
+void DHCommTool::UnInit()
+{
+    DHLOGI("UnInit DHCommTool");
+    if (dhTransportPtr_ == nullptr) {
+        DHLOGI("dhTransportPtr_ is null");
+        return;
+    }
+    dhTransportPtr_->UnInit();
 }
 
 std::shared_ptr<DHCommTool> DHCommTool::GetInstance()

@@ -124,6 +124,14 @@ private:
     void RegisterDataSyncTriggerListener();
     void InitDHCommTool();
 
+    void UnInitSAMonitor();
+    void UnregisterDHStateListener();
+    void UnregisterDataSyncTriggerListener();
+    void UnInitDHCommTool();
+    void StopTaskMonitor();
+    void StopComponent();
+    void StopPrivacy();
+
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::map<DHType, IDistributedHardwareSink*> compSink_;

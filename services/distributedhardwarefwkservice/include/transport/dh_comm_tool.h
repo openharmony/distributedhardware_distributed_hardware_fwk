@@ -38,6 +38,7 @@ public:
     virtual ~DHCommTool() = default;
     static std::shared_ptr<DHCommTool> GetInstance();
     void Init();
+    void UnInit();
     /**
      * @brief trigger request remote dh send back full capatilities.
      *        payload: {code: DH_COMM_REQ_FULL_CAPS, msg: localNetworkId}.

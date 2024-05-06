@@ -114,7 +114,7 @@ int32_t ComponentManager::Init()
 
 int32_t ComponentManager::InitComponentHandler()
 {
-if (!InitCompSource()) {
+    if (!InitCompSource()) {
         DHLOGE("InitCompSource failed.");
         DHTraceEnd();
         return ERR_DH_FWK_COMPONENT_INIT_SOURCE_FAILED;
@@ -208,42 +208,14 @@ void ComponentManager::InitDHCommTool()
 int32_t ComponentManager::UnInit()
 {
     DHLOGI("start.");
-    if (compMonitorPtr_ == nullptr) {
-        DHLOGE("compMonitorPtr_ is null.");
-        return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
-    }
-    for (const auto &comp : compSource_) {
-        if (compSrcSaId_.find(comp.first) == compSrcSaId_.end()) {
-            continue;
-        }
-        compMonitorPtr_->RemoveSAMonitor(compSrcSaId_.at(comp.first));
-    }
-    auto sourceResult = StopSource();
-    auto sinkResult = StopSink();
+    UnregisterDHStateListener();
+    UnregisterDataSyncTriggerListener();
+    UnInitDHCommTool();
+    StopTaskMonitor();
+    StopPrivacy();
+    UnInitSAMonitor();
+    StopComponent();
 
-    if (!WaitForResult(Action::STOP_SOURCE, sourceResult)) {
-        DHLOGE("StopSource failed, but want to continue");
-    }
-    if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
-        DHLOGE("StopSource failed, but want to continue");
-    }
-
-    compSource_.clear();
-    compSink_.clear();
-
-    if (cameraCompPrivacy_ != nullptr && cameraCompPrivacy_->GetPageFlag()) {
-        cameraCompPrivacy_->StopPrivacePage("camera");
-        cameraCompPrivacy_->SetPageFlagFalse();
-    }
-
-    if (audioCompPrivacy_ != nullptr  && audioCompPrivacy_->GetPageFlag()) {
-        audioCompPrivacy_->StopPrivacePage("mic");
-        audioCompPrivacy_->SetPageFlagFalse();
-    }
-
-    if (monitorTaskTimer_ != nullptr) {
-        monitorTaskTimer_->StopTimer();
-    }
 #ifdef DHARDWARE_LOW_LATENCY
     Publisher::GetInstance().UnregisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
     LowLatency::GetInstance().CloseLowLatency();
@@ -256,6 +228,94 @@ int32_t ComponentManager::UnInit()
     }
 
     return DH_FWK_SUCCESS;
+}
+
+void ComponentManager::UnInitSAMonitor()
+{
+    // clear SA monitor
+    if (compMonitorPtr_ == nullptr) {
+        DHLOGE("compMonitorPtr_ is null.");
+        return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
+    }
+    for (const auto &comp : compSource_) {
+        if (compSrcSaId_.find(comp.first) == compSrcSaId_.end()) {
+            continue;
+        }
+        compMonitorPtr_->RemoveSAMonitor(compSrcSaId_.at(comp.first));
+    }
+}
+
+void ComponentManager::UnregisterDHStateListener()
+{
+    for (const auto &item : compSource_) {
+        DHLOGI("Unregister DH State listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
+        if (item.second == nullptr) {
+            DHLOGE("comp source ptr is null");
+            continue;
+        }
+        item.second->UnregisterDistributedHardwareStateListener();
+    }
+}
+
+void ComponentManager::UnregisterDataSyncTriggerListener()
+{
+    for (const auto &item : compSource_) {
+        DHLOGI("Unregister Data Sync Trigger listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
+        if (item.second == nullptr) {
+            DHLOGE("comp source ptr is null");
+            continue;
+        }
+        item.second->UnregisterDataSyncTriggerListener(dataSyncTriggerListener_);
+    }
+}
+
+void ComponentManager::UnInitDHCommTool()
+{
+    if (dhCommToolPtr_ == nullptr) {
+        DHLOGE("DH communication tool ptr is null");
+        return;
+    }
+    DHLOGI("UnInit DH communication tool");
+    dhCommToolPtr_->UnInit();
+}
+
+void ComponentManager::StopTaskMonitor()
+{
+    // stop monitor task timer
+    if (monitorTaskTimer_ != nullptr) {
+        monitorTaskTimer_->StopTimer();
+    }
+}
+
+void ComponentManager::StopComponent()
+{
+    // stop source and sink sa
+    auto sourceResult = StopSource();
+    auto sinkResult = StopSink();
+
+    if (!WaitForResult(Action::STOP_SOURCE, sourceResult)) {
+        DHLOGE("StopSource failed, but want to continue");
+    }
+    if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
+        DHLOGE("StopSource failed, but want to continue");
+    }
+
+    compSource_.clear();
+    compSink_.clear();
+}
+
+void ComponentManager::StopPrivacy()
+{
+    // stop privacy
+    if (cameraCompPrivacy_ != nullptr && cameraCompPrivacy_->GetPageFlag()) {
+        cameraCompPrivacy_->StopPrivacePage("camera");
+        cameraCompPrivacy_->SetPageFlagFalse();
+    }
+
+    if (audioCompPrivacy_ != nullptr  && audioCompPrivacy_->GetPageFlag()) {
+        audioCompPrivacy_->StopPrivacePage("mic");
+        audioCompPrivacy_->SetPageFlagFalse();
+    }
 }
 
 ActionResult ComponentManager::StartSource()
