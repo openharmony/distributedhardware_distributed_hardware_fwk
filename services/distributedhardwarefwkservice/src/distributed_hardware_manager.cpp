@@ -58,12 +58,12 @@ int32_t DistributedHardwareManager::Initialize()
 {
     DHLOGI("start");
     VersionInfoManager::GetInstance()->Init();
+    CapabilityInfoManager::GetInstance()->Init();
+    LocalCapabilityInfoManager::GetInstance()->Init();
     ComponentLoader::GetInstance().Init();
     VersionManager::GetInstance().Init();
     ComponentManager::GetInstance().Init();
-    CapabilityInfoManager::GetInstance()->Init();
     LocalHardwareManager::GetInstance().Init();
-    LocalCapabilityInfoManager::GetInstance()->Init();
     return DH_FWK_SUCCESS;
 }
 
@@ -72,11 +72,11 @@ int32_t DistributedHardwareManager::Release()
     DHLOGI("start");
     TaskBoard::GetInstance().WaitForALLTaskFinish();
     LocalHardwareManager::GetInstance().UnInit();
-    CapabilityInfoManager::GetInstance()->UnInit();
     ComponentManager::GetInstance().UnInit();
     VersionManager::GetInstance().UnInit();
     ComponentLoader::GetInstance().UnInit();
     VersionInfoManager::GetInstance()->UnInit();
+    CapabilityInfoManager::GetInstance()->UnInit();
     LocalCapabilityInfoManager::GetInstance()->UnInit();
     return DH_FWK_SUCCESS;
 }
