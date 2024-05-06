@@ -38,6 +38,7 @@ public:
     virtual ~DHCommTool() = default;
     static std::shared_ptr<DHCommTool> GetInstance();
     void Init();
+    void UnInit();
     /**
      * @brief trigger request remote dh send back full capatilities.
      *        payload: {code: DH_COMM_REQ_FULL_CAPS, msg: localNetworkId}.
@@ -55,6 +56,8 @@ public:
             DHCommToolEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
             ~DHCommToolEventHandler() override = default;
             void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+        private:
+            void ProcessFullCapsRsp(const FullCapsRsp &capsRsp);
     };
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> GetEventHandler();
     const std::shared_ptr<DHTransport> GetDHTransportPtr();

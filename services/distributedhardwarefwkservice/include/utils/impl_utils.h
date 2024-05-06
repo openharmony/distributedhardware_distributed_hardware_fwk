@@ -63,9 +63,13 @@ struct DHVersion {
 };
 
 struct TaskParam {
+    // remote device networkid
     std::string networkId;
+    // remote device uuid
     std::string uuid;
+    // remote device dhid
     std::string dhId;
+    // remote device dh type
     DHType dhType;
 };
 

@@ -54,9 +54,13 @@ public:
 
 private:
     std::string id_;
+    // the remote device networkid
     std::string networkId_;
+    // the remote device uuid
     std::string uuid_;
+    // the remote device dhid
     std::string dhId_;
+    // the remote device dh type
     DHType dhType_;
     TaskType taskType_ { TaskType::UNKNOWN };
     std::vector<TaskStep> taskSteps_;

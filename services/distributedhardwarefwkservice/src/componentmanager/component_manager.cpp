@@ -69,7 +69,8 @@ ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSa
     compMonitorPtr_(std::make_shared<ComponentMonitor>()), lowLatencyListener_(new(std::nothrow) LowLatencyListener),
     monitorTaskTimer_(std::make_shared<MonitorTaskTimer>(MONITOR_TASK_TIMER_ID, MONITOR_TASK_DELAY_MS)),
     isUnInitTimeOut_(false), dhBizStates_({}), dhStateListener_(std::make_shared<DHStateListener>()),
-    dataSyncTriggerListener_(std::make_shared<DHDataSyncTriggerListener>())
+    dataSyncTriggerListener_(std::make_shared<DHDataSyncTriggerListener>()),
+    dhCommToolPtr_(std::make_shared<DHCommTool>()), needRefreshTaskParams_({})
 {
     DHLOGI("Ctor ComponentManager");
 }
@@ -102,6 +103,7 @@ int32_t ComponentManager::Init()
     StartTaskMonitor();
     RegisterDHStateListener();
     RegisterDataSyncTriggerListener();
+    InitDHCommTool();
 #ifdef DHARDWARE_LOW_LATENCY
     Publisher::GetInstance().RegisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
 #endif
@@ -112,7 +114,7 @@ int32_t ComponentManager::Init()
 
 int32_t ComponentManager::InitComponentHandler()
 {
-if (!InitCompSource()) {
+    if (!InitCompSource()) {
         DHLOGE("InitCompSource failed.");
         DHTraceEnd();
         return ERR_DH_FWK_COMPONENT_INIT_SOURCE_FAILED;
@@ -193,45 +195,27 @@ void ComponentManager::RegisterDataSyncTriggerListener()
     }
 }
 
+void ComponentManager::InitDHCommTool()
+{
+    if (dhCommToolPtr_ == nullptr) {
+        DHLOGE("DH communication tool ptr is null");
+        return;
+    }
+    DHLOGI("Init DH communication tool");
+    dhCommToolPtr_->Init();
+}
+
 int32_t ComponentManager::UnInit()
 {
     DHLOGI("start.");
-    if (compMonitorPtr_ == nullptr) {
-        DHLOGE("compMonitorPtr_ is null.");
-        return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
-    }
-    for (const auto &comp : compSource_) {
-        if (compSrcSaId_.find(comp.first) == compSrcSaId_.end()) {
-            continue;
-        }
-        compMonitorPtr_->RemoveSAMonitor(compSrcSaId_.at(comp.first));
-    }
-    auto sourceResult = StopSource();
-    auto sinkResult = StopSink();
+    UnregisterDHStateListener();
+    UnregisterDataSyncTriggerListener();
+    UnInitDHCommTool();
+    StopTaskMonitor();
+    StopPrivacy();
+    UnInitSAMonitor();
+    StopComponent();
 
-    if (!WaitForResult(Action::STOP_SOURCE, sourceResult)) {
-        DHLOGE("StopSource failed, but want to continue");
-    }
-    if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
-        DHLOGE("StopSource failed, but want to continue");
-    }
-
-    compSource_.clear();
-    compSink_.clear();
-
-    if (cameraCompPrivacy_ != nullptr && cameraCompPrivacy_->GetPageFlag()) {
-        cameraCompPrivacy_->StopPrivacePage("camera");
-        cameraCompPrivacy_->SetPageFlagFalse();
-    }
-
-    if (audioCompPrivacy_ != nullptr  && audioCompPrivacy_->GetPageFlag()) {
-        audioCompPrivacy_->StopPrivacePage("mic");
-        audioCompPrivacy_->SetPageFlagFalse();
-    }
-
-    if (monitorTaskTimer_ != nullptr) {
-        monitorTaskTimer_->StopTimer();
-    }
 #ifdef DHARDWARE_LOW_LATENCY
     Publisher::GetInstance().UnregisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
     LowLatency::GetInstance().CloseLowLatency();
@@ -244,6 +228,94 @@ int32_t ComponentManager::UnInit()
     }
 
     return DH_FWK_SUCCESS;
+}
+
+void ComponentManager::UnInitSAMonitor()
+{
+    // clear SA monitor
+    if (compMonitorPtr_ == nullptr) {
+        DHLOGE("compMonitorPtr_ is null.");
+        return;
+    }
+    for (const auto &comp : compSource_) {
+        if (compSrcSaId_.find(comp.first) == compSrcSaId_.end()) {
+            continue;
+        }
+        compMonitorPtr_->RemoveSAMonitor(compSrcSaId_.at(comp.first));
+    }
+}
+
+void ComponentManager::UnregisterDHStateListener()
+{
+    for (const auto &item : compSource_) {
+        DHLOGI("Unregister DH State listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
+        if (item.second == nullptr) {
+            DHLOGE("comp source ptr is null");
+            continue;
+        }
+        item.second->UnregisterDistributedHardwareStateListener();
+    }
+}
+
+void ComponentManager::UnregisterDataSyncTriggerListener()
+{
+    for (const auto &item : compSource_) {
+        DHLOGI("Unregister Data Sync Trigger listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
+        if (item.second == nullptr) {
+            DHLOGE("comp source ptr is null");
+            continue;
+        }
+        item.second->UnregisterDataSyncTriggerListener();
+    }
+}
+
+void ComponentManager::UnInitDHCommTool()
+{
+    if (dhCommToolPtr_ == nullptr) {
+        DHLOGE("DH communication tool ptr is null");
+        return;
+    }
+    DHLOGI("UnInit DH communication tool");
+    dhCommToolPtr_->UnInit();
+}
+
+void ComponentManager::StopTaskMonitor()
+{
+    // stop monitor task timer
+    if (monitorTaskTimer_ != nullptr) {
+        monitorTaskTimer_->StopTimer();
+    }
+}
+
+void ComponentManager::StopComponent()
+{
+    // stop source and sink sa
+    auto sourceResult = StopSource();
+    auto sinkResult = StopSink();
+
+    if (!WaitForResult(Action::STOP_SOURCE, sourceResult)) {
+        DHLOGE("StopSource failed, but want to continue");
+    }
+    if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
+        DHLOGE("StopSource failed, but want to continue");
+    }
+
+    compSource_.clear();
+    compSink_.clear();
+}
+
+void ComponentManager::StopPrivacy()
+{
+    // stop privacy
+    if (cameraCompPrivacy_ != nullptr && cameraCompPrivacy_->GetPageFlag()) {
+        cameraCompPrivacy_->StopPrivacePage("camera");
+        cameraCompPrivacy_->SetPageFlagFalse();
+    }
+
+    if (audioCompPrivacy_ != nullptr  && audioCompPrivacy_->GetPageFlag()) {
+        audioCompPrivacy_->StopPrivacePage("mic");
+        audioCompPrivacy_->SetPageFlagFalse();
+    }
 }
 
 ActionResult ComponentManager::StartSource()
@@ -776,8 +848,21 @@ void ComponentManager::UpdateBusinessState(const std::string &uuid, const std::s
 {
     DHLOGI("UpdateBusinessState, uuid: %{public}s, dhId: %{public}s, state: %{public}" PRIu32,
         GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
-    std::lock_guard<std::mutex> lock(bizStateMtx_);
-    dhBizStates_[{uuid, dhId}] = state;
+    {
+        std::lock_guard<std::mutex> lock(bizStateMtx_);
+        dhBizStates_[{uuid, dhId}] = state;
+    }
+
+    if (state == BusinessState::IDLE) {
+        TaskParam taskParam;
+        if (!FetchNeedRefreshTask({uuid, dhId}, taskParam)) {
+            return;
+        }
+        DHLOGI("The dh need refresh, uuid: %{public}s, dhId: %{public}s",
+            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str());
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
+        TaskExecutor::GetInstance().PushTask(task);
+    }
 }
 
 BusinessState ComponentManager::QueryBusinessState(const std::string &uuid, const std::string &dhId)
@@ -789,6 +874,33 @@ BusinessState ComponentManager::QueryBusinessState(const std::string &uuid, cons
     }
 
     return dhBizStates_.at(key);
+}
+
+void ComponentManager::TriggerFullCapsSync(const std::string &networkId)
+{
+    if (networkId.empty()) {
+        DHLOGE("Remote networkid is null");
+        return;
+    }
+    dhCommToolPtr_->TriggerReqFullDHCaps(networkId);
+}
+
+void ComponentManager::SaveNeedRefreshTask(const TaskParam &taskParam)
+{
+    std::lock_guard<std::mutex> lock(needRefreshTaskParamsMtx_);
+    needRefreshTaskParams_[{taskParam.uuid, taskParam.dhId}] = taskParam;
+}
+
+bool ComponentManager::FetchNeedRefreshTask(const std::pair<std::string, std::string> &taskKey, TaskParam &taskParam)
+{
+    std::lock_guard<std::mutex> lock(needRefreshTaskParamsMtx_);
+    if (needRefreshTaskParams_.find(taskKey) == needRefreshTaskParams_.end()) {
+        return false;
+    }
+
+    taskParam = needRefreshTaskParams_.at(taskKey);
+    needRefreshTaskParams_.erase(taskKey);
+    return true;
 }
 
 ComponentManager::ComponentManagerEventHandler::ComponentManagerEventHandler(
@@ -804,8 +916,20 @@ void ComponentManager::ComponentManagerEventHandler::ProcessEvent(
     switch (eventId) {
         case EVENT_DATA_SYNC_MANUAL: {
             // do muanul sync with remote
-            std::string uuid = (*(event->GetSharedObject<std::string>()));
-            DHLOGI("Try receive full capabiliy info from uuid: %{public}s", GetAnonyString(uuid).c_str());
+            auto sharedObjPtr = event->GetSharedObject<std::string>();
+            if (sharedObjPtr == nullptr) {
+                DHLOGE("The data sync param invalid");
+                break;
+            }
+            std::string uuid = *sharedObjPtr;
+            std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
+            DHLOGI("Try receive full capabiliy info from uuid: %{public}s, networkId: %{public}s",
+                GetAnonyString(uuid).c_str(), GetAnonyString(networkId).c_str());
+            if (networkId.empty()) {
+                DHLOGE("Can not get device networkid by uuid: %{public}s", GetAnonyString(uuid).c_str());
+                break;
+            }
+            ComponentManager::GetInstance().TriggerFullCapsSync(networkId);
             break;
         }
         default:
