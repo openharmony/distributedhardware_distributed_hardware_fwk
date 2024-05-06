@@ -235,7 +235,7 @@ void ComponentManager::UnInitSAMonitor()
     // clear SA monitor
     if (compMonitorPtr_ == nullptr) {
         DHLOGE("compMonitorPtr_ is null.");
-        return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
+        return;
     }
     for (const auto &comp : compSource_) {
         if (compSrcSaId_.find(comp.first) == compSrcSaId_.end()) {
@@ -265,7 +265,7 @@ void ComponentManager::UnregisterDataSyncTriggerListener()
             DHLOGE("comp source ptr is null");
             continue;
         }
-        item.second->UnregisterDataSyncTriggerListener(dataSyncTriggerListener_);
+        item.second->UnregisterDataSyncTriggerListener();
     }
 }
 
