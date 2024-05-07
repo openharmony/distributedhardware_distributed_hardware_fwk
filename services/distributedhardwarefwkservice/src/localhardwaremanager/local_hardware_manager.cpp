@@ -26,8 +26,10 @@
 #include "dh_utils_hitrace.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#include "plugin_listener_impl.h"
 #include "dh_utils_tool.h"
+#include "meta_info_manager.h"
+#include "plugin_listener_impl.h"
+#include "version_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -48,6 +50,7 @@ void LocalHardwareManager::Init()
     DHLOGI("start");
     std::vector<DHType> allCompTypes = ComponentLoader::GetInstance().GetAllCompTypes();
     localDHItemsMap_.clear();
+    metaDHItemsMap_.clear();
     int64_t allQueryStartTime = GetCurrentTime();
     for (auto dhType : allCompTypes) {
         int64_t singleQueryStartTime = GetCurrentTime();
@@ -64,6 +67,7 @@ void LocalHardwareManager::Init()
 
         DHQueryTraceStart(dhType);
         QueryLocalHardware(dhType, hardwareHandler);
+        QueryMetaHardware(dhType, hardwareHandler);
         DHTraceEnd();
         if (!hardwareHandler->IsSupportPlugin()) {
             DHLOGI("hardwareHandler is not support hot swap plugin, release!");
@@ -86,6 +90,12 @@ void LocalHardwareManager::Init()
         AddLocalCapabilityInfo(localDHItems.second, localDHItems.first, capabilityInfos);
     }
     CapabilityInfoManager::GetInstance()->AddCapability(capabilityInfos);
+
+    std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
+    for (const auto &metaDHItems : metaDHItemsMap_) {
+        AddLocalMetaCapInfo(metaDHItems.second, metaDHItems.first, metaCapInfos);
+    }
+    MetaInfoManager::GetInstance()->AddMetaCapInfos(metaCapInfos);
 }
 
 void LocalHardwareManager::UnInit()
@@ -120,8 +130,27 @@ void LocalHardwareManager::QueryLocalHardware(const DHType dhType, IHardwareHand
     }
 }
 
+void LocalHardwareManager::QueryMetaHardware(const DHType dhType, IHardwareHandler *hardwareHandler)
+{
+    std::vector<DHItem> metaDhItems;
+    int32_t retryTimes = QUERY_RETRY_MAX_TIMES;
+    while (retryTimes > 0) {
+        DHLOGI("Query metahardwareHandler retry times left: %{public}d, dhType: %{public}#X", retryTimes, dhType);
+        metaDhItems = hardwareHandler->QueryMeta();
+        if (metaDhItems.empty()) {
+            DHLOGE("Query metahardwareHandler and obtain empty, dhType: %{public}#X", dhType);
+            usleep(QUERY_INTERVAL_TIME);
+        } else {
+            DHLOGI("Query metahardwareHandler success, dhType: %{public}#X!", dhType);
+            metaDHItemsMap_[dhType] = metaDhItems;
+            break;
+        }
+        retryTimes--;
+    }
+}
+
 void LocalHardwareManager::AddLocalCapabilityInfo(const std::vector<DHItem> &dhItems, const DHType dhType,
-                                                  std::vector<std::shared_ptr<CapabilityInfo>> &capabilityInfos)
+    std::vector<std::shared_ptr<CapabilityInfo>> &capabilityInfos)
 {
     DHLOGI("start!");
     std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
@@ -131,6 +160,23 @@ void LocalHardwareManager::AddLocalCapabilityInfo(const std::vector<DHItem> &dhI
         std::shared_ptr<CapabilityInfo> dhCapabilityInfo = std::make_shared<CapabilityInfo>(
             dhItem.dhId, deviceId, devName, devType, dhType, dhItem.attrs, dhItem.subtype);
         capabilityInfos.push_back(dhCapabilityInfo);
+    }
+}
+
+void LocalHardwareManager::AddLocalMetaCapInfo(const std::vector<DHItem> &dhItems, const DHType dhType,
+    std::vector<std::shared_ptr<MetaCapabilityInfo>> &metaCapInfos)
+{
+    DHLOGI("start!");
+    std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+    std::string devName = DHContext::GetInstance().GetDeviceInfo().deviceName;
+    uint16_t devType = DHContext::GetInstance().GetDeviceInfo().deviceType;
+    std::string strUUID = DHContext::GetInstance().GetDeviceInfo().uuid;
+    CompVersion compversion;
+    VersionManager::GetInstance().GetCompVersion(strUUID, dhType, compversion);
+    for (auto dhItem : dhItems) {
+        std::shared_ptr<MetaCapabilityInfo> dhMetaCapInfo = std::make_shared<MetaCapabilityInfo>(
+            dhItem.dhId, deviceId, devName, devType, dhType, dhItem.attrs, dhItem.subtype, compversion.sinkVersion);
+        metaCapInfos.push_back(dhMetaCapInfo);
     }
 }
 
