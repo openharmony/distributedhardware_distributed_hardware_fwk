@@ -170,7 +170,7 @@ void DHCommTool::DHCommToolEventHandler::ProcessEvent(
             // parse remote rsp full attrs and save to local db
             FullCapsRsp capsRsp = DHCommTool::GetInstance()->ParseAndSaveRemoteDHCaps(commMsg->msg);
             DHLOGI("Receive full remote capabilities, remote networkid: %{public}s, caps size: %{public}" PRIu32,
-                GetAnonyString(capsRsp.networkId).c_str(), capsRsp.caps.size());
+                GetAnonyString(capsRsp.networkId).c_str(), static_cast<uint32_t>(capsRsp.caps.size()));
             ProcessFullCapsRsp(capsRsp);
             break;
         }
