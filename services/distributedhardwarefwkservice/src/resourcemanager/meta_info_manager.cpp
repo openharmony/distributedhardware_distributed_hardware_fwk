@@ -91,7 +91,7 @@ int32_t MetaInfoManager::Init()
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
     }
-    if (dbAdapterPtr_->Init() != DH_FWK_SUCCESS) {
+    if (dbAdapterPtr_->Init(true) != DH_FWK_SUCCESS) {
         DHLOGE("Init dbAdapterPtr_ failed");
         return ERR_DH_FWK_RESOURCE_INIT_DB_FAILED;
     }
