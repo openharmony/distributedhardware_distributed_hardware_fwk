@@ -212,7 +212,7 @@ std::string Compress(const std::string& data)
     strm.opaque = Z_NULL;
     deflateInit(&strm, Z_DEFAULT_COMPRESSION);
  
-    strm.next_in = (Bytef*)data.data();
+    strm.next_in = reinterpret_cast<Bytef*>(const_cast<char *>(data.data()));
     strm.avail_in = data.size();
     std::string out;
     std::vector<Bytef> temp_out(COMPRESS_SLICE_SIZE, 0);
@@ -238,7 +238,7 @@ std::string Decompress(const std::string& data)
     strm.next_in = Z_NULL;
     inflateInit(&strm);
  
-    strm.next_in = (Bytef*)data.data();
+    strm.next_in = reinterpret_cast<Bytef*>(const_cast<char *>(data.data()));
     strm.avail_in = data.size();
     std::string out;
     std::vector<Bytef> temp_out(COMPRESS_SLICE_SIZE, 0);
