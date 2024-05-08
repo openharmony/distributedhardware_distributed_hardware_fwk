@@ -42,6 +42,7 @@
 #include "distributed_hardware_log.h"
 #include "enabled_comps_dump.h"
 #include "low_latency.h"
+#include "meta_info_manager.h"
 #include "publisher.h"
 #include "task_executor.h"
 #include "task_factory.h"
@@ -633,16 +634,9 @@ DHType ComponentManager::GetDHType(const std::string &uuid, const std::string &d
     return DHType::UNKNOWN;
 }
 
-int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std::string &uuid,
-    const std::string &dhId, DHType dhType, EnableParam &param)
+int32_t ComponentManager::GetEnableCapParam(const std::string &networkId, const std::string &uuid,
+    DHType dhType, EnableParam &param, std::shared_ptr<CapabilityInfo> &capability)
 {
-    std::shared_ptr<CapabilityInfo> capability = nullptr;
-    auto ret = CapabilityInfoManager::GetInstance()->GetCapability(GetDeviceIdByUUID(uuid), dhId, capability);
-    if ((ret != DH_FWK_SUCCESS) || (capability == nullptr)) {
-        DHLOGE("GetCapability failed, uuid =%{public}s, dhId = %{public}s, errCode = %{public}d",
-            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
-        return ret;
-    }
     DeviceInfo sourceDeviceInfo = GetLocalDeviceInfo();
     std::string sourceNetworkId = DHContext::GetInstance().GetNetworkIdByUUID(sourceDeviceInfo.uuid);
     std::vector<std::shared_ptr<CapabilityInfo>> sourceCapInfos;
@@ -655,30 +649,111 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
         }
     }
     std::string sourceVersion("");
-    ret = GetVersion(sourceNetworkId, sourceDeviceInfo.uuid, dhType, sourceVersion, false);
+    auto ret = GetVersion(sourceNetworkId, sourceDeviceInfo.uuid, dhType, sourceVersion, false);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Get source version failed, uuid = %{public}s, dhId = %{public}s, dhType = %{public}#X,",
-            GetAnonyString(sourceDeviceInfo.uuid).c_str(), GetAnonyString(sourceDHId).c_str(), dhType);
+        DHLOGE("Get source version failed.");
         return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
     }
     param.sourceVersion = sourceVersion;
+
     param.sinkAttrs = capability->GetDHAttrs();
     std::string sinkVersion("");
     ret = GetVersion(networkId, uuid, dhType, sinkVersion, true);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Get sink version failed, uuid = %{public}s, dhId = %{public}s, dhType = %{public}#X,",
-            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), dhType);
+        DHLOGE("Get sink version failed.");
         return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
     }
     param.sinkVersion = sinkVersion;
     param.subtype = capability->GetDHSubtype();
-    DHLOGI("success. dhType = %{public}#X, sink uuid =%{public}s, sink dhId = %{public}s, sinVersion = %{public}s, "
-        "source uuid =%{public}s, source dhId = %{public}s, sourceVersion = %{public}s, subtype = %{public}s", dhType,
-        GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), param.sinkVersion.c_str(),
-        GetAnonyString(sourceDeviceInfo.uuid).c_str(), GetAnonyString(sourceDHId).c_str(), param.sourceVersion.c_str(),
-        param.subtype.c_str());
-
+    DHLOGI("GetEnableCapParam success. dhType = %{public}#X, sink uuid =%{public}s,"
+        "sinVersion = %{public}s, source uuid =%{public}s, source dhId = %{public}s, sourceVersion = %{public}s,"
+        "subtype = %{public}s", dhType, GetAnonyString(uuid).c_str(),
+        param.sinkVersion.c_str(), GetAnonyString(sourceDeviceInfo.uuid).c_str(), GetAnonyString(sourceDHId).c_str(),
+        param.sourceVersion.c_str(), param.subtype.c_str());
     return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::GetEnableMetaParam(const std::string &networkId, const std::string &uuid,
+    DHType dhType, EnableParam &param, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
+{
+    DeviceInfo sourceDeviceInfo = GetLocalDeviceInfo();
+    std::string sourceNetworkId = DHContext::GetInstance().GetNetworkIdByUUID(sourceDeviceInfo.uuid);
+    std::vector<std::shared_ptr<MetaCapabilityInfo>> sourceMetaInfos;
+    std::string sourceDHId;
+    MetaInfoManager::GetInstance()->GetMetaCapInfosByDeviceId(sourceDeviceInfo.deviceId, sourceMetaInfos);
+    for (const auto &metaInfo : sourceMetaInfos) {
+        if (dhType == metaInfo->GetDHType()) {
+            param.sourceAttrs = metaInfo->GetDHAttrs();
+            sourceDHId = metaInfo->GetDHId();
+        }
+    }
+    std::string sourceVersion("");
+    auto ret = GetVersion(sourceNetworkId, sourceDeviceInfo.uuid, dhType, sourceVersion, false);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Get source version failed.");
+        return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
+    }
+    param.sourceVersion = sourceVersion;
+
+    param.sinkAttrs = metaCapPtr->GetDHAttrs();
+    param.sinkVersion = metaCapPtr->GetSinkVersion();
+    param.subtype = metaCapPtr->GetDHSubtype();
+    DHLOGI("GetEnableCapParam success. dhType = %{public}#X, sink uuid =%{public}s,"
+        "sinVersion = %{public}s, source uuid =%{public}s, source dhId = %{public}s, sourceVersion = %{public}s,"
+        "subtype = %{public}s", dhType, GetAnonyString(uuid).c_str(),
+        param.sinkVersion.c_str(), GetAnonyString(sourceDeviceInfo.uuid).c_str(), GetAnonyString(sourceDHId).c_str(),
+        param.sourceVersion.c_str(), param.subtype.c_str());
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::GetCapParam(const std::string &uuid, const std::string &dhId,
+    std::shared_ptr<CapabilityInfo> &capability)
+{
+    auto ret = CapabilityInfoManager::GetInstance()->GetCapability(GetDeviceIdByUUID(uuid), dhId, capability);
+    if ((ret == DH_FWK_SUCCESS) && (capability != nullptr)) {
+        DHLOGE("GetCapability success, uuid =%{public}s, dhId = %{public}s, errCode = %{public}d",
+            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
+        return ret;
+    }
+    return ret;
+}
+
+int32_t ComponentManager::GetMetaParam(const std::string &uuid, const std::string &dhId,
+    std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
+{
+    auto ret = MetaInfoManager::GetInstance()->GetMetaCapInfo(GetDeviceIdByUUID(uuid), dhId, metaCapPtr);
+    if ((ret == DH_FWK_SUCCESS) && (metaCapPtr != nullptr)) {
+        DHLOGE("GetCapability success, uuid =%{public}s, dhId = %{public}s, errCode = %{public}d",
+            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
+        return ret;
+    }
+    return ret;
+}
+
+int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std::string &uuid,
+    const std::string &dhId, DHType dhType, EnableParam &param)
+{
+    DHLOGI("GetEnableParam start, networkId= %{public}s, uuid = %{public}s, dhId = %{public}s, dhType = %{public}#X,",
+        GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), dhType);
+    std::shared_ptr<CapabilityInfo> capability = nullptr;
+    if (GetCapParam(uuid, dhId, capability) == DH_FWK_SUCCESS) {
+        auto ret = GetEnableCapParam(networkId, uuid, dhType, param, capability);
+        if (ret == DH_FWK_SUCCESS) {
+            return ret;
+        }
+        DHLOGE("GetEnableCapParam failed.");
+    }
+
+    std::shared_ptr<MetaCapabilityInfo> metaCapPtr = nullptr;
+    if (GetMetaParam(uuid, dhId, metaCapPtr) == DH_FWK_SUCCESS) {
+        auto ret = GetEnableMetaParam(networkId, uuid, dhType, param, metaCapPtr);
+        if (ret == DH_FWK_SUCCESS) {
+            return ret;
+        }
+        DHLOGE("GetEnableMetaParam failed.");
+    }
+    DHLOGE("GetEnableParam is failed.");
+    return ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED;
 }
 
 int32_t ComponentManager::GetVersionFromVerMgr(const std::string &uuid, const DHType dhType,
