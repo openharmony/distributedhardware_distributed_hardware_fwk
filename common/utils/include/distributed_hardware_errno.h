@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,6 +49,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_COMPONENT_DHTYPE_NOT_FOUND = -10010;
     constexpr int32_t ERR_DH_FWK_COMPONENT_MONITOR_NULL = -10011;
     constexpr int32_t ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED = -10012;
+    constexpr int32_t ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED = -10013;
 
     /* ResourceManager errno, range: [-10400, -10499] */
     constexpr int32_t ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL = -10400;

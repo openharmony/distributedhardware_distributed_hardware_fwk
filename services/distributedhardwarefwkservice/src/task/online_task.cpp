@@ -20,6 +20,7 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "meta_info_manager.h"
 #include "task_board.h"
 #include "task_executor.h"
 #include "task_factory.h"
@@ -78,6 +79,12 @@ void OnLineTask::DoSyncInfo()
     ret = VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(GetDeviceIdByUUID(GetUUID()));
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("SyncVersionInfoFromDB failed, uuid = %{public}s, errCode = %{public}d",
+            GetAnonyString(GetUUID()).c_str(), ret);
+    }
+
+    ret = MetaInfoManager::GetInstance()->SyncMetaInfoFromDB(GetDeviceIdByUUID(GetUUID()));
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("SyncMetaInfoFromDB failed, uuid = %{public}s, errCode = %{public}d",
             GetAnonyString(GetUUID()).c_str(), ret);
     }
 }

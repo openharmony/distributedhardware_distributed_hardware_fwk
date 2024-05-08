@@ -89,6 +89,8 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/resourcemanager/capability_utils.cpp",
     "src/resourcemanager/db_adapter.cpp",
     "src/resourcemanager/local_capability_info_manager.cpp",
+    "src/resourcemanager/meta_capability_info.cpp",
+    "src/resourcemanager/meta_info_manager.cpp",
     "src/resourcemanager/version_info.cpp",
     "src/resourcemanager/version_info_manager.cpp",
     "src/task/disable_task.cpp",

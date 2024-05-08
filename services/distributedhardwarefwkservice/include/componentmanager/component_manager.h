@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,7 @@
 
 #include "single_instance.h"
 #include "component_monitor.h"
+#include "capability_info.h"
 #include "device_type.h"
 #include "dh_comm_tool.h"
 #include "event_handler.h"
@@ -34,6 +35,7 @@
 #include "impl_utils.h"
 #include "low_latency_listener.h"
 #include "monitor_task_timer.h"
+#include "meta_capability_info.h"
 #include "task_board.h"
 #include "task_factory.h"
 #include "version_info.h"
@@ -131,6 +133,13 @@ private:
     void StopTaskMonitor();
     void StopComponent();
     void StopPrivacy();
+    int32_t GetEnableCapParam(const std::string &networkId, const std::string &uuid, DHType dhType, EnableParam &param,
+        std::shared_ptr<CapabilityInfo> &capability);
+    int32_t GetEnableMetaParam(const std::string &networkId, const std::string &uuid, DHType dhType, EnableParam &param,
+        std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
+    int32_t GetCapParam(const std::string &uuid, const std::string &dhId, std::shared_ptr<CapabilityInfo> &capability);
+    int32_t GetMetaParam(const std::string &uuid, const std::string &dhId,
+        std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
 
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;

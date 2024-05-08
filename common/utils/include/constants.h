@@ -42,6 +42,7 @@ namespace DistributedHardware {
     const std::string GLOBAL_CAPABILITY_ID = "global_capability_info";
     const std::string GLOBAL_VERSION_ID = "global_version_info";
     const std::string LOCAL_CAPABILITY_ID = "local_capability_info";
+    const std::string GLOBAL_META_INFO = "global_meta_info";
     const std::string RESOURCE_SEPARATOR = "###";
     const std::string DH_ID = "dh_id";
     const std::string DEV_ID = "dev_id";
@@ -80,6 +81,7 @@ namespace DistributedHardware {
     const uint32_t EVENT_VERSION_INFO_DB_RECOVER = 101;
     const uint32_t EVENT_CAPABILITY_INFO_DB_RECOVER = 201;
     const uint32_t EVENT_DATA_SYNC_MANUAL = 301;
+    const uint32_t EVENT_META_INFO_DB_RECOVER = 401;
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
