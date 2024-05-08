@@ -347,7 +347,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_015, TestSize.Level0)
 HWTEST_F(DbAdapterTest, ReInit_001, TestSize.Level0)
 {
     g_dbAdapterPtr->GetKvStorePtr();
-    EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->ReInit());
+    EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->ReInit(true));
 }
 
 /**

@@ -86,7 +86,7 @@ int32_t VersionInfoManager::Init()
     DHLOGI("VersionInfoManager instance init!");
     std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, GLOBAL_VERSION_ID, shared_from_this());
-    if (dbAdapterPtr_->Init() != DH_FWK_SUCCESS) {
+    if (dbAdapterPtr_->Init(true) != DH_FWK_SUCCESS) {
         DHLOGE("Init dbAdapterPtr_ failed");
         return ERR_DH_FWK_RESOURCE_INIT_DB_FAILED;
     }
