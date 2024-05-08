@@ -137,7 +137,7 @@ void DbAdapterTest::TearDown()
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_000, TestSize.Level0)
 {
-    EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->Init());
+    EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->Init(true));
 }
 
 /**
