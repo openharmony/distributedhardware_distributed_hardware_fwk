@@ -25,8 +25,15 @@ void ToJson(cJSON *jsonObject, const FullCapsRsp &capsRsp)
     const char *networkId = capsRsp.networkId.c_str();
     cJSON_AddStringToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, networkId);
     cJSON *capArr = cJSON_CreateArray();
+    if (capArr == nullptr) {
+        return;
+    }
     for (auto const &cap : capsRsp.caps) {
         cJSON *capValJson = cJSON_CreateObject();
+        if (capValJson == nullptr) {
+            cJSON_Delete(capArr);
+            return;
+        }
         ToJson(capValJson, *cap);
         cJSON_AddItemToArray(capArr, capValJson);
     }
