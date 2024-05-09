@@ -56,12 +56,12 @@ DBAdapter::~DBAdapter()
     DHLOGI("DBAdapter Destruction");
 }
 
-DistributedKv::Status DBAdapter::GetKvStorePtr()
+DistributedKv::Status DBAdapter::GetKvStorePtr(bool isAutoSync)
 {
     DistributedKv::Options options = {
         .createIfMissing = true,
         .encrypt = false,
-        .autoSync = true,
+        .autoSync = isAutoSync,
         .isPublic = true,
         .securityLevel = DistributedKv::SecurityLevel::S1,
         .area = DistributedKv::EL1,
@@ -89,13 +89,13 @@ DistributedKv::Status DBAdapter::GetLocalKvStorePtr()
     return kvDataMgr_.GetSingleKvStore(options, appId_, storeId_, kvStoragePtr_);
 }
 
-int32_t DBAdapter::Init()
+int32_t DBAdapter::Init(bool isAutoSync)
 {
     DHLOGI("Init DB, storeId: %{public}s", storeId_.storeId.c_str());
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     int32_t tryTimes = MAX_INIT_RETRY_TIMES;
     while (tryTimes > 0) {
-        DistributedKv::Status status = GetKvStorePtr();
+        DistributedKv::Status status = GetKvStorePtr(isAutoSync);
         if (status == DistributedKv::Status::SUCCESS && kvStoragePtr_) {
             DHLOGI("Init KvStorePtr Success");
             RegisterChangeListener();
@@ -110,7 +110,7 @@ int32_t DBAdapter::Init()
         DHLOGE("Init KvStorePtr failed");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    isAutoSync = true;
+    this->isAutoSync = isAutoSync;
     return DH_FWK_SUCCESS;
 }
 
@@ -134,7 +134,7 @@ int32_t DBAdapter::InitLocal()
         DHLOGE("Init KvStorePtr failed");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    isAutoSync = false;
+    this->isAutoSync = false;
     return DH_FWK_SUCCESS;
 }
 
@@ -153,7 +153,7 @@ void DBAdapter::UnInit()
     kvStoragePtr_.reset();
 }
 
-int32_t DBAdapter::ReInit()
+int32_t DBAdapter::ReInit(bool isAutoSync)
 {
     DHLOGI("ReInit DB, storeId: %{public}s", storeId_.storeId.c_str());
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
@@ -162,7 +162,7 @@ int32_t DBAdapter::ReInit()
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
     kvStoragePtr_.reset();
-    DistributedKv::Status status = this->isAutoSync ? GetKvStorePtr() : GetLocalKvStorePtr();
+    DistributedKv::Status status = this->isAutoSync ? GetKvStorePtr(isAutoSync) : GetLocalKvStorePtr();
     if (status != DistributedKv::Status::SUCCESS || !kvStoragePtr_) {
         DHLOGW("Get kvStoragePtr_ failed, status: %{public}d", status);
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
@@ -363,7 +363,7 @@ void DBAdapter::OnRemoteDied()
 bool DBAdapter::DBDiedOpt(int32_t &times)
 {
     // init kvStore.
-    if (this->ReInit() == DH_FWK_SUCCESS) {
+    if (this->ReInit(this->isAutoSync) == DH_FWK_SUCCESS) {
         // register data change listener again.
         if (this->isAutoSync) {
             this->RegisterChangeListener();

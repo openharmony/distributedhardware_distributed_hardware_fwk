@@ -40,11 +40,11 @@ public:
 
     virtual ~DBAdapter();
     // default init auto-sync kv store
-    int32_t Init();
+    int32_t Init(bool isAutoSync);
     // init local kv store
     int32_t InitLocal();
     void UnInit();
-    int32_t ReInit();
+    int32_t ReInit(bool isAutoSync);
     int32_t GetDataByKey(const std::string &key, std::string &data);
     int32_t GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<std::string> &values);
     int32_t PutData(const std::string &key, const std::string &value);
@@ -62,7 +62,7 @@ private:
     void RegisterKvStoreDeathListener();
     void UnRegisterKvStoreDeathListener();
     // get default kv store with auto sync
-    DistributedKv::Status GetKvStorePtr();
+    DistributedKv::Status GetKvStorePtr(bool isAutoSync);
     // get local kv store with no sync with other devices
     DistributedKv::Status GetLocalKvStorePtr();
     bool DBDiedOpt(int32_t &times);
