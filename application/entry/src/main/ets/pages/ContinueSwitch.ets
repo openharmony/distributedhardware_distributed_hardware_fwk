@@ -58,7 +58,6 @@ struct ContinueSwitch {
 
   onPageShow() {
     console.log(TAG + 'onPageShow in');
-    this.getTextWidth();
     this.getGapLength();
     display.getAllDisplays((err, data) => {
       this.screenWidth = px2vp(data[0].width);
@@ -101,27 +100,6 @@ struct ContinueSwitch {
     console.log(TAG + 'this.imageHeight' + this.imageHeight);
   }
 
-  getTextWidth() {
-    console.log(TAG + 'getTextWidth in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
-    let ret: boolean = false;
-    try {
-      ret = display.isFoldable();
-      console.log(TAG + 'display.isFoldable()' + ret);
-    } catch (exception) {
-      console.error(TAG + 'Failed to check is foldable or not. Code: ' + JSON.stringify(exception));
-    }
-    if (deviceInfo.deviceType == 'phone' && !ret) {
-      this.textWidth = 312;
-    } else if (deviceInfo.deviceType == 'phone' && ret) {
-      this.textWidth = 400;
-    } else if (deviceInfo.deviceType == 'tablet') {
-      this.textWidth = 693;
-    } else if (deviceInfo.deviceType == '2in1') {
-      this.textWidth = 732;
-    }
-    console.log(TAG + 'this.textWidth : ' + this.textWidth);
-  }
-
   getGapLength() {
     console.log(TAG + 'getGapLength in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
     if (deviceInfo.deviceType == 'phone') {
@@ -154,10 +132,10 @@ struct ContinueSwitch {
           Text($r('app.string.continue_desc'))
             .fontSize($r('sys.float.ohos_id_text_size_body2'))
             .fontWeight(FontWeight.Regular)
-            .margin({ left: 24, right: 24, bottom: 32 })
+            .margin({ bottom: 32 })
             .fontColor($r('sys.color.ohos_id_color_text_secondary'))
             .textAlign(TextAlign.Center)
-            .width(this.textWidth)
+            .width('100%')
 
           Column() {
             Row() {
