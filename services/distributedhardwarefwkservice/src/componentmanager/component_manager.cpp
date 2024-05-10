@@ -662,7 +662,7 @@ int32_t ComponentManager::GetEnableCapParam(const std::string &networkId, const 
     ret = GetVersion(networkId, uuid, dhType, sinkVersion, true);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Get sink version failed.");
-        //If Version DB not sync, try get sink version from meta info
+        // If Version DB not sync, try get sink version from meta info
         std::shared_ptr<MetaCapabilityInfo> metaCapPtr = nullptr;
         ret = MetaInfoManager::GetInstance()->GetMetaCapInfo(GetDeviceIdByUUID(uuid),
             capability->GetDHId(), metaCapPtr);

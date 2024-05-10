@@ -23,6 +23,9 @@
 #include "capability_info.h"
 #include "distributed_hardware_log.h"
 
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "CapabilityUtils"
+
 namespace OHOS {
 namespace DistributedHardware {
 class CapabilityInfo;
