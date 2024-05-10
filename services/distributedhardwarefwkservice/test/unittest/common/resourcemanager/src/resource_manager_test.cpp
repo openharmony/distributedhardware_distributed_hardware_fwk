@@ -413,7 +413,7 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_015, TestSize.Level0)
 {
     std::string value = "";
     std::shared_ptr<CapabilityInfo> capPtr = nullptr;
-    int32_t ret = CapabilityUtils::GetCapabilityByValue(value, capPtr);
+    int32_t ret = GetCapabilityByValue<CapabilityInfo>(value, capPtr);
     EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
 }
 
@@ -427,7 +427,7 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_016, TestSize.Level0)
 {
     std::string deviceId = "deviceIdtest";
     std::string dhId = "dhIdtest";
-    std::string str = CapabilityUtils::GetCapabilityKey(deviceId, dhId);
+    std::string str = GetCapabilityKey(deviceId, dhId);
     EXPECT_EQ("deviceIdtest###dhIdtest", str);
 }
 
@@ -440,7 +440,7 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_016, TestSize.Level0)
 HWTEST_F(ResourceManagerTest, resource_manager_test_017, TestSize.Level0)
 {
     std::string key = "keytest";
-    bool ret = CapabilityUtils::IsCapKeyMatchDeviceId(key, DEV_ID_0);
+    bool ret = IsCapKeyMatchDeviceId(key, DEV_ID_0);
     EXPECT_EQ(false, ret);
 }
 
@@ -453,7 +453,7 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_017, TestSize.Level0)
 HWTEST_F(ResourceManagerTest, resource_manager_test_018, TestSize.Level0)
 {
     std::string key = "bb536a637105409e904d4da83790a4a7###keytest";
-    bool ret = CapabilityUtils::IsCapKeyMatchDeviceId(key, DEV_ID_0);
+    bool ret = IsCapKeyMatchDeviceId(key, DEV_ID_0);
     EXPECT_EQ(true, ret);
 }
 
@@ -861,7 +861,7 @@ HWTEST_F(ResourceManagerTest, FromJson_001, TestSize.Level0)
     cJSON_AddStringToObject(json, DH_ATTRS, "dh_attrs");
     cJSON_AddStringToObject(json, DH_SUBTYPE, "dh_subtype");
 
-    char* cjson = cJSON_Print(json);
+    char* cjson = cJSON_PrintUnformatted(json);
     std::string jsonStr(cjson);
     cJSON_free(cjson);
     cJSON_Delete(json);

@@ -43,6 +43,10 @@
 namespace OHOS {
 namespace DistributedHardware {
 REGISTER_SYSTEM_ABILITY_BY_ID(DistributedHardwareService, DISTRIBUTED_HARDWARE_SA_ID, true);
+namespace {
+    constexpr int32_t INIT_BUSINESS_DELAY_TIME_MS = 5 * 100;
+    const std::string INIT_TASK_ID = "CheckAndInitDH";
+}
 
 DistributedHardwareService::DistributedHardwareService(int32_t saId, bool runOnCreate)
     : SystemAbility(saId, runOnCreate)
@@ -80,15 +84,11 @@ bool DistributedHardwareService::Init()
         }
         registerToService_ = true;
     }
-    auto ret = AccessManager::GetInstance()->Init();
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("DistributedHardwareService::Init failed.");
-        HiSysEventWriteErrCodeMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
-            ret, "dhfwk sa AccessManager init fail.");
-        return false;
-    }
-    InitLocalDevInfo();
-    DHLOGI("DistributedHardwareService::Init init success.");
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    eventHandler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
+    auto executeInnerFunc = [this] { DoBusinessInit(); };
+    eventHandler_->PostTask(executeInnerFunc, INIT_TASK_ID, 0);
+    DHLOGI("DistributedHardwareService::Init success.");
     HiSysEventWriteMsg(DHFWK_INIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "dhfwk sa init success.");
     return true;
@@ -98,6 +98,53 @@ void DistributedHardwareService::InitLocalDevInfo()
 {
     DHLOGI("Init Local device info in DB");
     DistributedHardwareManagerFactory::GetInstance().InitLocalDevInfo();
+}
+
+bool DistributedHardwareService::DoBusinessInit()
+{
+    if (!IsDepSAStart()) {
+        DHLOGW("Depend sa not start");
+        auto executeInnerFunc = [this] { DoBusinessInit(); };
+        eventHandler_->PostTask(executeInnerFunc, INIT_TASK_ID, INIT_BUSINESS_DELAY_TIME_MS);
+        return false;
+    }
+    DHLOGI("Init AccessManager");
+    auto ret = AccessManager::GetInstance()->Init();
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("DistributedHardwareService::Init failed.");
+        HiSysEventWriteErrCodeMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            ret, "dhfwk sa AccessManager init fail.");
+    }
+    InitLocalDevInfo();
+    return true;
+}
+
+bool DistributedHardwareService::IsDepSAStart()
+{
+    sptr<ISystemAbilityManager> saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (saMgr == nullptr) {
+        DHLOGE("Get System Ability Manager failed");
+        return false;
+    }
+    DHLOGI("Check DSoftbus sa");
+    sptr<IRemoteObject> remoteObject = saMgr->CheckSystemAbility(SOFTBUS_SERVER_SA_ID);
+    if (remoteObject == nullptr) {
+        DHLOGW("DSoftbus not start");
+        return false;
+    }
+    DHLOGI("Check KVDB sa");
+    remoteObject = saMgr->CheckSystemAbility(DISTRIBUTED_KV_DATA_SERVICE_ABILITY_ID);
+    if (remoteObject == nullptr) {
+        DHLOGW("KVDB not start");
+        return false;
+    }
+    DHLOGI("Check DM sa");
+    remoteObject = saMgr->CheckSystemAbility(DISTRIBUTED_HARDWARE_DEVICEMANAGER_SA_ID);
+    if (remoteObject == nullptr) {
+        DHLOGW("DM not start");
+        return false;
+    }
+    return true;
 }
 
 void DistributedHardwareService::OnStop()

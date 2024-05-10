@@ -41,24 +41,6 @@ void MetaCapabilityInfo::SetSinkVersion(const std::string &sinkVersion)
     this->sinkVersion_ = sinkVersion;
 }
 
-std::string MetaCapabilityInfo::GetKey() const
-{
-    std::string kvStoreKey;
-    kvStoreKey.append(deviceId_);
-    kvStoreKey.append(RESOURCE_SEPARATOR);
-    kvStoreKey.append(dhId_);
-    return kvStoreKey;
-}
-
-std::string MetaCapabilityInfo::GetAnonymousKey() const
-{
-    std::string kvStoreKey;
-    kvStoreKey.append(GetAnonyString(deviceId_));
-    kvStoreKey.append(RESOURCE_SEPARATOR);
-    kvStoreKey.append(GetAnonyString(dhId_));
-    return kvStoreKey;
-}
-
 int32_t MetaCapabilityInfo::FromJsonString(const std::string &jsonStr)
 {
     cJSON *jsonObj = cJSON_Parse(jsonStr.c_str());
@@ -80,7 +62,7 @@ std::string MetaCapabilityInfo::ToJsonString()
         return "";
     }
     ToJson(jsonObj, *this);
-    char *cjson = cJSON_Print(jsonObj);
+    char *cjson = cJSON_PrintUnformatted(jsonObj);
     std::string jsonString(cjson);
     cJSON_free(cjson);
     cJSON_Delete(jsonObj);
@@ -89,35 +71,35 @@ std::string MetaCapabilityInfo::ToJsonString()
 
 bool MetaCapabilityInfo::Compare(const MetaCapabilityInfo& metaCapInfo)
 {
-    if (strcmp(this->deviceId_.c_str(), metaCapInfo.deviceId_.c_str()) != 0) {
+    if (strcmp(this->GetDeviceId().c_str(), metaCapInfo.GetDeviceId().c_str()) != 0) {
         DHLOGE("deviceId is not equal");
         return false;
     }
-    if (strcmp(this->dhId_.c_str(), metaCapInfo.dhId_.c_str()) != 0) {
+    if (strcmp(this->GetDHId().c_str(), metaCapInfo.GetDHId().c_str()) != 0) {
         DHLOGE("dhId is not equal");
         return false;
     }
-    if (strcmp(this->deviceName_.c_str(), metaCapInfo.deviceName_.c_str()) != 0) {
+    if (strcmp(this->GetDeviceName().c_str(), metaCapInfo.GetDeviceName().c_str()) != 0) {
         DHLOGE("deviceName is not equal");
         return false;
     }
-    if (this->deviceType_ != metaCapInfo.deviceType_) {
+    if (this->GetDeviceType() != metaCapInfo.GetDeviceType()) {
         DHLOGE("deviceType is not equal");
         return false;
     }
-    if (this->dhType_ != metaCapInfo.dhType_) {
+    if (this->GetDHType() != metaCapInfo.GetDHType()) {
         DHLOGE("dhType is not equal");
         return false;
     }
-    if (strcmp(this->dhAttrs_.c_str(), metaCapInfo.dhAttrs_.c_str()) != 0) {
+    if (strcmp(this->GetDHAttrs().c_str(), metaCapInfo.GetDHAttrs().c_str()) != 0) {
         DHLOGE("dhAttrs is not equal");
         return false;
     }
-    if (strcmp(this->dhSubtype_.c_str(), metaCapInfo.dhSubtype_.c_str()) != 0) {
+    if (strcmp(this->GetDHSubtype().c_str(), metaCapInfo.GetDHSubtype().c_str()) != 0) {
         DHLOGE("dhSubtype is not equal");
         return false;
     }
-    if (strcmp(this->sinkVersion_.c_str(), metaCapInfo.sinkVersion_.c_str()) != 0) {
+    if (strcmp(this->GetSinkVersion().c_str(), metaCapInfo.GetSinkVersion().c_str()) != 0) {
         DHLOGE("sinkVersion is not equal");
         return false;
     }

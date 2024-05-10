@@ -46,7 +46,7 @@ std::string AVTransMessage::MarshalMessage()
     cJSON_AddNumberToObject(msgJson, KEY_TYPE.c_str(), type_);
     cJSON_AddStringToObject(msgJson, KEY_CONTENT.c_str(), content_.c_str());
     cJSON_AddStringToObject(msgJson, KEY_DST_DEVID.c_str(), dstDevId_.c_str());
-    char *data = cJSON_Print(msgJson);
+    char *data = cJSON_PrintUnformatted(msgJson);
     if (data == nullptr) {
         cJSON_Delete(msgJson);
         return "";

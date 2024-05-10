@@ -75,7 +75,7 @@ void DisableTask::DoTaskInner()
     DHLOGD("finish disable task, remove it, id = %{public}s", GetId().c_str());
     TaskBoard::GetInstance().RemoveTask(GetId());
     if (result == DH_FWK_SUCCESS) {
-        std::string enabledDeviceKey = CapabilityUtils::GetCapabilityKey(GetDeviceIdByUUID(GetUUID()), GetDhId());
+        std::string enabledDeviceKey = GetCapabilityKey(GetDeviceIdByUUID(GetUUID()), GetDhId());
         TaskBoard::GetInstance().RemoveEnabledDevice(enabledDeviceKey);
     }
 }

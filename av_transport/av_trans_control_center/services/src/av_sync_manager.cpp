@@ -190,7 +190,7 @@ bool AVSyncManager::MergeGroupInfoInner(std::set<std::string> &groupInfoSet)
             cJSON_AddStringToObject(masterStr, KEY_PEER_DEV_ID.c_str(), item.peerDevId.c_str());
             cJSON_AddNumberToObject(masterStr, KEY_START_FRAME_NUM.c_str(), 0);
             cJSON_AddNumberToObject(masterStr, KEY_AV_SYNC_FLAG.c_str(), static_cast<uint32_t>(AvSyncFlag::MASTER));
-            char *jsonstr = cJSON_Print(masterStr);
+            char *jsonstr = cJSON_PrintUnformatted(masterStr);
             if (jsonstr == nullptr) {
                 cJSON_Delete(masterStr);
                 return false;
@@ -207,7 +207,7 @@ bool AVSyncManager::MergeGroupInfoInner(std::set<std::string> &groupInfoSet)
             cJSON_AddStringToObject(slaveStr, KEY_PEER_DEV_ID.c_str(), item.peerDevId.c_str());
             cJSON_AddNumberToObject(slaveStr, KEY_START_FRAME_NUM.c_str(), 0);
             cJSON_AddNumberToObject(slaveStr, KEY_AV_SYNC_FLAG.c_str(), static_cast<uint32_t>(AvSyncFlag::SLAVE));
-            char *jsonstr = cJSON_Print(slaveStr);
+            char *jsonstr = cJSON_PrintUnformatted(slaveStr);
             if (jsonstr == nullptr) {
                 cJSON_Delete(slaveStr);
                 return false;
@@ -238,7 +238,7 @@ std::string AVSyncManager::GetsyncGroupInfo(std::set<std::string> &groupInfoSet)
         cJSON_AddItemToArray(array, cJSON_CreateString(info.c_str()));
     }
     cJSON_AddItemToObject(jsonStr, KEY_GROUP_INFO_ARRAY.c_str(), array);
-    char *data = cJSON_Print(jsonStr);
+    char *data = cJSON_PrintUnformatted(jsonStr);
     if (data == nullptr) {
         cJSON_Delete(jsonStr);
         return "";

@@ -322,7 +322,7 @@ void DsoftbusOutputPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffer)
     }
     cJSON_AddStringToObject(jsonObj, AVT_DATA_PARAM.c_str(), hisAMeta->MarshalVideoMeta().c_str());
 
-    char *str = cJSON_Print(jsonObj);
+    char *str = cJSON_PrintUnformatted(jsonObj);
     if (str == nullptr) {
         cJSON_Delete(jsonObj);
         return;

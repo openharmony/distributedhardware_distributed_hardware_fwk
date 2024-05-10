@@ -269,7 +269,7 @@ std::string MarshalSharedMemory(const AVTransSharedMemory &memory)
     cJSON_AddNumberToObject(memoryJson, KEY_SHARED_MEM_SIZE.c_str(), memory.size);
     cJSON_AddStringToObject(memoryJson, KEY_SHARED_MEM_NAME.c_str(), memory.name.c_str());
 
-    char *data = cJSON_Print(memoryJson);
+    char *data = cJSON_PrintUnformatted(memoryJson);
     if (data == nullptr) {
         cJSON_Delete(memoryJson);
         return "";

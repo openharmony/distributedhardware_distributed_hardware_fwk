@@ -139,7 +139,7 @@ std::string CapabilityInfo::ToJsonString()
         return "";
     }
     ToJson(jsonObj, *this);
-    char *cjson = cJSON_Print(jsonObj);
+    char *cjson = cJSON_PrintUnformatted(jsonObj);
     std::string jsonString(cjson);
     cJSON_free(cjson);
     cJSON_Delete(jsonObj);

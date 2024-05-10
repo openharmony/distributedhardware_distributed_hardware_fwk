@@ -136,8 +136,8 @@ int32_t MetaInfoManager::AddMetaCapInfos(const std::vector<std::shared_ptr<MetaC
         key = metaCapInfo->GetKey();
         globalMetaInfoMap_[key] = metaCapInfo;
         if (dbAdapterPtr_->GetDataByKey(key, data) == DH_FWK_SUCCESS &&
-            CapabilityUtils::IsCapInfoJsonEqual(data, metaCapInfo->ToJsonString())) {
-            DHLOGD("this record is exist, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
+            IsCapInfoJsonEqual<MetaCapabilityInfo>(data, metaCapInfo->ToJsonString())) {
+            DHLOGI("this record is exist, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
             continue;
         }
         DHLOGI("AddCapability, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
@@ -273,7 +273,7 @@ int32_t MetaInfoManager::GetMetaCapInfo(const std::string &deviceId,
     const std::string &dhId, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
 {
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
-    std::string key = CapabilityUtils::GetCapabilityKey(deviceId, dhId);
+    std::string key = GetCapabilityKey(deviceId, dhId);
     if (globalMetaInfoMap_.find(key) == globalMetaInfoMap_.end()) {
         DHLOGE("Can not find capability In globalMetaInfoMap_: %{public}s", GetAnonyString(deviceId).c_str());
         return ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND;
@@ -287,7 +287,7 @@ void MetaInfoManager::GetMetaCapInfosByDeviceId(const std::string &deviceId,
 {
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     for (auto &metaCapInfo : globalMetaInfoMap_) {
-        if (CapabilityUtils::IsCapKeyMatchDeviceId(metaCapInfo.first, deviceId)) {
+        if (IsCapKeyMatchDeviceId(metaCapInfo.first, deviceId)) {
             metaCapInfos.emplace_back(metaCapInfo.second);
         }
     }
