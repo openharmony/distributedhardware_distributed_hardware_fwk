@@ -41,6 +41,7 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "enabled_comps_dump.h"
+#include "local_capability_info_manager.h"
 #include "low_latency.h"
 #include "meta_info_manager.h"
 #include "publisher.h"
@@ -661,7 +662,15 @@ int32_t ComponentManager::GetEnableCapParam(const std::string &networkId, const 
     ret = GetVersion(networkId, uuid, dhType, sinkVersion, true);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Get sink version failed.");
-        return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
+        // If Version DB not sync, try get sink version from meta info
+        std::shared_ptr<MetaCapabilityInfo> metaCapPtr = nullptr;
+        ret = MetaInfoManager::GetInstance()->GetMetaCapInfo(GetDeviceIdByUUID(uuid),
+            capability->GetDHId(), metaCapPtr);
+        if ((ret == DH_FWK_SUCCESS) && (metaCapPtr != nullptr)) {
+            sinkVersion = metaCapPtr->GetSinkVersion();
+        } else {
+            return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
+        }
     }
     param.sinkVersion = sinkVersion;
     param.subtype = capability->GetDHSubtype();
@@ -715,6 +724,14 @@ int32_t ComponentManager::GetCapParam(const std::string &uuid, const std::string
             GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
         return ret;
     }
+
+    ret = LocalCapabilityInfoManager::GetInstance()->GetCapability(GetDeviceIdByUUID(uuid), dhId, capability);
+    if ((ret == DH_FWK_SUCCESS) && (capability != nullptr)) {
+        DHLOGE("Local GetCapability success, uuid =%{public}s, dhId = %{public}s, errCode = %{public}d",
+            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
+        return ret;
+    }
+
     return ret;
 }
 

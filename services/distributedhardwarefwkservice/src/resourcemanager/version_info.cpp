@@ -50,7 +50,7 @@ std::string VersionInfo::ToJsonString() const
         return "";
     }
     ToJson(jsonObj, *this);
-    char *cjson = cJSON_Print(jsonObj);
+    char *cjson = cJSON_PrintUnformatted(jsonObj);
     std::string result(cjson);
     cJSON_free(cjson);
     cJSON_Delete(jsonObj);

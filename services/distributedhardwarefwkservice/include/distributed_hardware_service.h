@@ -16,8 +16,9 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_SERVICE_H
 #define OHOS_DISTRIBUTED_HARDWARE_SERVICE_H
 
-#include "system_ability.h"
+#include "event_handler.h"
 #include "ipc_object_stub.h"
+#include "system_ability.h"
 
 #include "distributed_hardware_fwk_kit.h"
 #include "distributed_hardware_fwk_kit_paras.h"
@@ -60,10 +61,13 @@ private:
     bool Init();
     std::string QueryDhSysSpec(const std::string &targetKey, std::string &attrs);
     void InitLocalDevInfo();
+    bool DoBusinessInit();
+    bool IsDepSAStart();
 
 private:
     bool registerToService_ = false;
     ServiceRunningState state_ = ServiceRunningState::STATE_NOT_START;
+    std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler_ = nullptr;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

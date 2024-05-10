@@ -76,7 +76,7 @@ std::string BuildChannelDescription(const std::string &ownerName, const std::str
     }
     cJSON_AddStringToObject(descJson, KEY_OWNER_NAME.c_str(), ownerName.c_str());
     cJSON_AddStringToObject(descJson, KEY_PEER_DEVID.c_str(), peerDevId.c_str());
-    char *data = cJSON_Print(descJson);
+    char *data = cJSON_PrintUnformatted(descJson);
     if (data == nullptr) {
         cJSON_Delete(descJson);
         return "";

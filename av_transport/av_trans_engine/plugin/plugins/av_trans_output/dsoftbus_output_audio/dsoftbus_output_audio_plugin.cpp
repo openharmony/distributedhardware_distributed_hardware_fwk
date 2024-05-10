@@ -316,7 +316,7 @@ void DsoftbusOutputAudioPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffe
     cJSON_AddStringToObject(jsonObj, AVT_DATA_PARAM.c_str(), hisAMeta->MarshalAudioMeta().c_str());
 
     auto bufferData = buffer->GetMemory();
-    char *str = cJSON_Print(jsonObj);
+    char *str = cJSON_PrintUnformatted(jsonObj);
     if (str == nullptr) {
         cJSON_Delete(jsonObj);
         return;

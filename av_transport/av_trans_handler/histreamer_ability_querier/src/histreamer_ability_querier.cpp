@@ -974,7 +974,7 @@ int32_t QueryAudioEncoderAbilityStr(char* res)
         return 0;
     }
     ToJson<AudioEncoder>(AUDIO_ENCODERS, jsonObject, audioEncoders);
-    char *jsonStr = cJSON_Print(jsonObject);
+    char *jsonStr = cJSON_PrintUnformatted(jsonObject);
     if (jsonStr == nullptr) {
         cJSON_Delete(jsonObject);
         return 0;
@@ -1001,7 +1001,7 @@ int32_t QueryAudioDecoderAbilityStr(char* res)
         return 0;
     }
     ToJson<AudioDecoder>(AUDIO_DECODERS, jsonObject, audioDecoders);
-    char *jsonStr = cJSON_Print(jsonObject);
+    char *jsonStr = cJSON_PrintUnformatted(jsonObject);
     if (jsonStr == nullptr) {
         cJSON_Delete(jsonObject);
         return 0;
@@ -1028,7 +1028,7 @@ int32_t QueryVideoEncoderAbilityStr(char* res)
         return 0;
     }
     ToJson<VideoEncoder>(VIDEO_ENCODERS, jsonObject, viudeoEncoders);
-    char *jsonStr = cJSON_Print(jsonObject);
+    char *jsonStr = cJSON_PrintUnformatted(jsonObject);
     if (jsonStr == nullptr) {
         cJSON_Delete(jsonObject);
         return 0;
@@ -1055,7 +1055,7 @@ int32_t QueryVideoDecoderAbilityStr(char* res)
         return 0;
     }
     ToJson<VideoDecoder>(VIDEO_DECODERS, jsonObject, videoDecoders);
-    char *jsonStr = cJSON_Print(jsonObject);
+    char *jsonStr = cJSON_PrintUnformatted(jsonObject);
     if (jsonStr == nullptr) {
         cJSON_Delete(jsonObject);
         return 0;

@@ -141,7 +141,8 @@ void LocalHardwareManager::QueryMetaHardware(const DHType dhType, IHardwareHandl
             DHLOGE("Query metahardwareHandler and obtain empty, dhType: %{public}#X", dhType);
             usleep(QUERY_INTERVAL_TIME);
         } else {
-            DHLOGI("Query metahardwareHandler success, dhType: %{public}#X!", dhType);
+            DHLOGI("Query metahardwareHandler success, dhType: %{public}#X!, size: %d",
+                dhType, static_cast<int32_t>(metaDhItems.size()));
             metaDHItemsMap_[dhType] = metaDhItems;
             break;
         }

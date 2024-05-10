@@ -100,7 +100,7 @@ int32_t LocalCapabilityInfoManager::SyncDeviceInfoFromDB(const std::string &devi
     }
     for (const auto &data : dataVector) {
         std::shared_ptr<CapabilityInfo> capabilityInfo;
-        if (CapabilityUtils::GetCapabilityByValue(data, capabilityInfo) != DH_FWK_SUCCESS) {
+        if (GetCapabilityByValue<CapabilityInfo>(data, capabilityInfo) != DH_FWK_SUCCESS) {
             DHLOGE("Get capability ptr by value failed");
             continue;
         }
@@ -169,7 +169,7 @@ void LocalCapabilityInfoManager::GetCapabilitiesByDeviceId(const std::string &de
 {
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     for (auto &capabilityInfo : globalCapInfoMap_) {
-        if (CapabilityUtils::IsCapKeyMatchDeviceId(capabilityInfo.first, deviceId)) {
+        if (IsCapKeyMatchDeviceId(capabilityInfo.first, deviceId)) {
             resInfos.emplace_back(capabilityInfo.second);
         }
     }
@@ -179,7 +179,7 @@ int32_t LocalCapabilityInfoManager::GetCapability(const std::string &deviceId, c
     std::shared_ptr<CapabilityInfo> &capPtr)
 {
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
-    std::string key = CapabilityUtils::GetCapabilityKey(deviceId, dhId);
+    std::string key = GetCapabilityKey(deviceId, dhId);
     if (globalCapInfoMap_.find(key) == globalCapInfoMap_.end()) {
         DHLOGE("Can not find capability In globalCapInfoMap_: %{public}s", GetAnonyString(deviceId).c_str());
         return ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND;
@@ -200,7 +200,7 @@ int32_t LocalCapabilityInfoManager::GetDataByKey(const std::string &key, std::sh
         DHLOGE("Query capability info from db failed, key: %{public}s", GetAnonyString(key).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    return CapabilityUtils::GetCapabilityByValue(data, capInfoPtr);
+    return GetCapabilityByValue<CapabilityInfo>(data, capInfoPtr);
 }
 
 int32_t LocalCapabilityInfoManager::GetDataByDHType(const DHType dhType, CapabilityInfoMap &capabilityMap)
@@ -233,7 +233,7 @@ int32_t LocalCapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPre
     }
     for (const auto &data : dataVector) {
         std::shared_ptr<CapabilityInfo> capabilityInfo;
-        if (CapabilityUtils::GetCapabilityByValue(data, capabilityInfo) != DH_FWK_SUCCESS) {
+        if (GetCapabilityByValue<CapabilityInfo>(data, capabilityInfo) != DH_FWK_SUCCESS) {
             DHLOGE("Get capability ptr by value failed");
             continue;
         }

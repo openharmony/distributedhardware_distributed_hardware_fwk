@@ -316,7 +316,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_018, TestSize.Level0)
     cJSON_AddStringToObject(compVers, NAME, "name");
     cJSON_AddNumberToObject(compVers, TYPE, 1111);
     cJSON_AddItemToObject(json0bject, PATH, compVers);
-    char* cjson = cJSON_Print(json0bject);
+    char* cjson = cJSON_PrintUnformatted(json0bject);
     std::string jsonStr(cjson);
     std::map<DHType, CompConfig> dhtypeMap;
     int32_t ret = ComponentLoader::GetInstance().GetCompPathAndVersion(jsonStr, dhtypeMap);

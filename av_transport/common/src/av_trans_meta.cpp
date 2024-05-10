@@ -49,7 +49,7 @@ std::string AVTransAudioBufferMeta::MarshalAudioMeta()
     cJSON_AddNumberToObject(metaJson, META_DATA_TYPE.c_str(), static_cast<uint32_t>(dataType_));
     cJSON_AddNumberToObject(metaJson, META_TIMESTAMP.c_str(), pts_);
     cJSON_AddNumberToObject(metaJson, META_FRAME_NUMBER.c_str(), frameNum_);
-    char *data = cJSON_Print(metaJson);
+    char *data = cJSON_PrintUnformatted(metaJson);
     if (data == nullptr) {
         cJSON_Delete(metaJson);
         return "";
@@ -124,7 +124,7 @@ std::string AVTransVideoBufferMeta::MarshalVideoMeta()
     if (extFrameNum_ > 0) {
         cJSON_AddNumberToObject(metaJson, META_EXT_FRAME_NUMBER.c_str(), extFrameNum_);
     }
-    char *data = cJSON_Print(metaJson);
+    char *data = cJSON_PrintUnformatted(metaJson);
     if (data == nullptr) {
         cJSON_Delete(metaJson);
         return "";

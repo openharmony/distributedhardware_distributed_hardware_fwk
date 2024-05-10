@@ -21,6 +21,10 @@
 #include <string>
 
 #include "capability_info.h"
+#include "distributed_hardware_log.h"
+
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "CapabilityUtils"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -33,13 +37,41 @@ enum class CapabilityInfoFilter : uint32_t {
     FILTER_DH_TYPE = 4,
     FILTER_DH_ATTRS = 5
 };
-class CapabilityUtils {
-public:
-    static int32_t GetCapabilityByValue(const std::string &value, std::shared_ptr<CapabilityInfo> &capPtr);
-    static std::string GetCapabilityKey(const std::string &deviceId, const std::string &dhId);
-    static bool IsCapKeyMatchDeviceId(const std::string &key, const std::string &deviceId);
-    static bool IsCapInfoJsonEqual(const std::string& firstData, const std::string& lastData);
-};
+
+template<typename T>
+int32_t GetCapabilityByValue(const std::string &value, std::shared_ptr<T> &capPtr)
+{
+    if (capPtr == nullptr) {
+        capPtr = std::make_shared<T>();
+    }
+    return capPtr->FromJsonString(value);
+}
+
+std::string GetCapabilityKey(const std::string &deviceId, const std::string &dhId);
+bool IsCapKeyMatchDeviceId(const std::string &key, const std::string &deviceId);
+
+template<typename T>
+bool IsCapInfoJsonEqual(const std::string &firstData, const std::string &lastData)
+{
+    cJSON *firstJson = cJSON_Parse(firstData.c_str());
+    if (firstJson == NULL) {
+        DHLOGE("firstData parse failed");
+        return false;
+    }
+    T firstCapInfo;
+    FromJson(firstJson, firstCapInfo);
+    cJSON *lastJson = cJSON_Parse(lastData.c_str());
+    if (lastJson == NULL) {
+        DHLOGE("lastData parse failed");
+        cJSON_Delete(firstJson);
+        return false;
+    }
+    T lastCapInfo;
+    FromJson(lastJson, lastCapInfo);
+    cJSON_Delete(firstJson);
+    cJSON_Delete(lastJson);
+    return firstCapInfo.Compare(lastCapInfo);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

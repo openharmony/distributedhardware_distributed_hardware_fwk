@@ -30,20 +30,12 @@ namespace DistributedHardware {
 class MetaCapabilityInfo : public CapabilityInfo {
 public:
     MetaCapabilityInfo()
-        : dhId_(""),
-          deviceId_(""),
-          deviceName_(""),
-          deviceType_(0),
-          dhType_(DHType::UNKNOWN),
-          dhAttrs_(""),
-          dhSubtype_(""),
-          sinkVersion_("")
+        : CapabilityInfo("", "", "", 0, DHType::UNKNOWN, "", ""), sinkVersion_("")
     {}
 
     MetaCapabilityInfo(std::string dhId, std::string devId, std::string devName, uint16_t devType, DHType dhType,
                    std::string dhAttrs, std::string dhSubtype, std::string sinkVersion)
-        : dhId_(dhId), deviceId_(devId), deviceName_(devName), deviceType_(devType), dhType_(dhType), dhAttrs_(dhAttrs),
-          dhSubtype_(dhSubtype), sinkVersion_(sinkVersion)
+        : CapabilityInfo(dhId, devId, devName, devType, dhType, dhAttrs, dhSubtype), sinkVersion_(sinkVersion)
     {}
 
     virtual ~MetaCapabilityInfo() {}
@@ -51,20 +43,11 @@ public:
     std::string GetSinkVersion() const;
     void SetSinkVersion(const std::string &sinkVersion);
 
-    virtual std::string GetKey() const;
-    virtual std::string GetAnonymousKey() const;
     virtual int32_t FromJsonString(const std::string &jsonStr);
     virtual std::string ToJsonString();
     bool Compare(const MetaCapabilityInfo& metaCapInfo);
 
 private:
-    std::string dhId_;
-    std::string deviceId_;
-    std::string deviceName_;
-    uint16_t deviceType_;
-    DHType dhType_;
-    std::string dhAttrs_;
-    std::string dhSubtype_;
     std::string sinkVersion_;
 };
 

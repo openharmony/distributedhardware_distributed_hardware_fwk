@@ -70,7 +70,7 @@ void EnableTask::DoTaskInner()
             .dhId = GetDhId(),
             .dhType = GetDhType()
         };
-        std::string enabledDeviceKey = CapabilityUtils::GetCapabilityKey(GetDeviceIdByUUID(GetUUID()), GetDhId());
+        std::string enabledDeviceKey = GetCapabilityKey(GetDeviceIdByUUID(GetUUID()), GetDhId());
         TaskBoard::GetInstance().SaveEnabledDevice(enabledDeviceKey, taskParam);
     }
     TaskBoard::GetInstance().RemoveTask(GetId());
