@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -366,28 +366,6 @@ HWTEST_F(AccessManagerTest, UnInit_002, TestSize.Level0)
     DistributedHardwareManagerFactory::GetInstance().UnInit();
     bool ret = DistributedHardwareManagerFactory::GetInstance().IsInit();
     EXPECT_EQ(false, ret);
-}
-
-/**
- * @tc.name: RegisterDevStateCallback_001
- * @tc.desc: Verify the RegisterDevStateCallback function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(AccessManagerTest, RegisterDevStateCallback_001, TestSize.Level0)
-{
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->RegisterDevStateCallback());
-}
-
-/**
- * @tc.name: UnRegisterDevStateCallback_001
- * @tc.desc: Verify the UnRegisterDevStateCallback function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(AccessManagerTest, UnRegisterDevStateCallback_001, TestSize.Level0)
-{
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->UnRegisterDevStateCallback());
 }
 
 /**

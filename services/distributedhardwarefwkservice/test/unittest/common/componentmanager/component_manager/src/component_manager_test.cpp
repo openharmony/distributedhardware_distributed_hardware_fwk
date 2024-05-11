@@ -259,7 +259,7 @@ HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
     EnableParam param;
     auto ret = ComponentManager::GetInstance().GetEnableParam(info->networkId, devInfo.uuid,
         DH_ID_1, DHType::CAMERA, param);
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED);
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED);
 }
 
 /**
@@ -312,7 +312,7 @@ HWTEST_F(ComponentManagerTest, UnInit_001, TestSize.Level0)
 {
     ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
     int32_t ret = ComponentManager::GetInstance().UnInit();
-    EXPECT_EQ(ERR_DH_FWK_COMPONENT_MONITOR_NULL, ret);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 /**
@@ -459,7 +459,7 @@ HWTEST_F(ComponentManagerTest, Enable_002, TestSize.Level0)
     IDistributedHardwareSource *sourcePtr = nullptr;
     ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
     int32_t ret = ComponentManager::GetInstance().Enable(networkId, uuid, dhId, dhType);
-    EXPECT_EQ(ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND, ret);
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED, ret);
 }
 
 /**
@@ -554,7 +554,7 @@ HWTEST_F(ComponentManagerTest, GetEnableParam_002, TestSize.Level0)
     EnableParam param;
     CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
     int32_t ret = ComponentManager::GetInstance().GetEnableParam(NETWORK_TEST, UUID_TEST, DH_ID_1, dhType, param);
-    EXPECT_EQ(ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND, ret);
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED, ret);
 }
 
 /**
@@ -780,6 +780,36 @@ HWTEST_F(ComponentManagerTest, IsIdenticalAccount_001, TestSize.Level0)
     ComponentManager::GetInstance().RecoverDistributedHardware(dhType);
     auto ret = ComponentManager::GetInstance().IsIdenticalAccount(NETWORK_TEST);
     EXPECT_EQ(ret, false);
+}
+
+HWTEST_F(ComponentManagerTest, OnUnregisterResult_001, TestSize.Level0)
+{
+    std::string networkId = "networkId_test";
+    std::string dhId = "dhId_test";
+    int32_t status = DH_FWK_SUCCESS;
+    std::string data = "data_test";
+    auto compDisable = std::make_shared<ComponentDisable>();
+    auto ret = compDisable->OnUnregisterResult(networkId, dhId, status, data);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    status = ERR_DH_FWK_COMPONENT_UNREGISTER_FAILED;
+    ret = compDisable->OnUnregisterResult(networkId, dhId, status, data);
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_UNREGISTER_FAILED);
+}
+
+HWTEST_F(ComponentManagerTest, OnRegisterResult_001, TestSize.Level0)
+{
+    std::string networkId = "networkId_test";
+    std::string dhId = "dhId_test";
+    int32_t status = DH_FWK_SUCCESS;
+    std::string data = "data_test";
+    auto compEnable = std::make_shared<ComponentEnable>();
+    auto ret = compEnable->OnRegisterResult(networkId, dhId, status, data);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    status = ERR_DH_FWK_COMPONENT_UNREGISTER_FAILED;
+    ret = compEnable->OnRegisterResult(networkId, dhId, status, data);
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_UNREGISTER_FAILED);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

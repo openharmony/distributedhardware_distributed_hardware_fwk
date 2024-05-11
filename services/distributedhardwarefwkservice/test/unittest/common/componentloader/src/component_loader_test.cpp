@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -692,6 +692,50 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_039, TestSize.Level0)
     from_json(json, cfg);
     cJSON_Delete(json);
     EXPECT_EQ(4802, cfg.compSinkSaId);
+}
+
+HWTEST_F(ComponentLoaderTest, ParseSink_001, TestSize.Level0)
+{
+    CompConfig cfg;
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, COMP_SINK_VERSION.c_str(), "comp_sink_version");
+    cJSON_AddStringToObject(json, COMP_SINK_SA_ID.c_str(), "4801");
+    cJSON_AddNumberToObject(json, COMP_SINK_LOC.c_str(), 4802);
+
+    auto ret = ParseSink(json, cfg);
+    cJSON_Delete(json);
+    EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
+}
+
+HWTEST_F(ComponentLoaderTest, ParseResourceDesc_001, TestSize.Level0)
+{
+    CompConfig cfg;
+    cJSON *array = cJSON_CreateArray();
+    cJSON *obj = cJSON_CreateObject();
+    cJSON_AddStringToObject(obj, COMP_SUBTYPE.c_str(), "comp_subtype");
+    cJSON_AddBoolToObject(obj, COMP_SENSITIVE.c_str(), true);
+    cJSON_AddItemToArray(array, obj);
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddItemToObject(json, COMP_RESOURCE_DESC.c_str(), array);
+    auto ret = ParseResourceDesc(json, cfg);
+    cJSON_Delete(json);
+
+    CompConfig config;
+    cJSON *component = cJSON_CreateObject();
+    cJSON_AddNumberToObject(component, COMP_NAME.c_str(), 1);
+    cJSON_AddNumberToObject(component, COMP_TYPE.c_str(), 1);
+    cJSON_AddNumberToObject(component, COMP_HANDLER_LOC.c_str(), 1);
+    cJSON_AddNumberToObject(component, COMP_HANDLER_VERSION.c_str(), 1.0);
+    cJSON_AddNumberToObject(component, COMP_SOURCE_LOC.c_str(), 1);
+    cJSON_AddNumberToObject(component, COMP_SOURCE_VERSION.c_str(), 1.0);
+    cJSON_AddStringToObject(component, COMP_SOURCE_SA_ID.c_str(), "4801");
+    cJSON_AddNumberToObject(component, COMP_SINK_LOC.c_str(), 1);
+    cJSON_AddNumberToObject(component, COMP_SINK_VERSION.c_str(), 1.0);
+    cJSON_AddStringToObject(component, COMP_SINK_SA_ID.c_str(), "4802");
+    cJSON_AddStringToObject(component, COMP_RESOURCE_DESC.c_str(), "comp_resource_desc");
+    ComponentLoader::GetInstance().ParseCompConfigFromJson(component, config);
+    cJSON_Delete(component);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
