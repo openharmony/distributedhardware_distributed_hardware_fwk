@@ -108,8 +108,7 @@ private:
         DHType dhType, EnableParam &param);
     int32_t GetVersionFromVerMgr(const std::string &uuid, const DHType dhType, std::string &version, bool isSink);
     int32_t GetVersionFromVerInfoMgr(const std::string &uuid, const DHType dhType, std::string &version, bool isSink);
-    int32_t GetVersion(const std::string &networkId, const std::string &uuid,
-        DHType dhType, std::string &version, bool isSink);
+    int32_t GetVersion(const std::string &uuid, DHType dhType, std::string &version, bool isSink);
     void UpdateVersionCache(const std::string &uuid, const VersionInfo &versionInfo);
 
     void DoRecover(DHType dhType);
@@ -161,7 +160,7 @@ private:
     std::shared_ptr<ComponentManager::ComponentManagerEventHandler> eventHandler_;
     std::shared_ptr<DHCommTool> dhCommToolPtr_;
 
-    // save those remote dh that need refresh by full capability, {{deviceUUID, dhId}, TaskParam}.
+    // save those remote dh that need refresh by full capability, {{device networkId, dhId}, TaskParam}.
     std::map<std::pair<std::string, std::string>, TaskParam> needRefreshTaskParams_;
     std::mutex needRefreshTaskParamsMtx_;
 };

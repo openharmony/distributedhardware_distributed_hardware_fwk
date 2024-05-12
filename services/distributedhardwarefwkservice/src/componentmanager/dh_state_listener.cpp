@@ -36,11 +36,11 @@ DHStateListener::~DHStateListener()
     DHLOGI("Dtor DHStateListener");
 }
 
-void DHStateListener::OnStateChanged(const std::string &uuid, const std::string &dhId, const BusinessState state)
+void DHStateListener::OnStateChanged(const std::string &networkId, const std::string &dhId, const BusinessState state)
 {
-    DHLOGI("Receive business state change, uuid: %{public}s, dhId: %{public}s, state: %{public}" PRIu32,
-        GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
-    ComponentManager::GetInstance().UpdateBusinessState(uuid, dhId, state);
+    DHLOGI("Receive business state change, networkId: %{public}s, dhId: %{public}s, state: %{public}" PRIu32,
+        GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
+    ComponentManager::GetInstance().UpdateBusinessState(networkId, dhId, state);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

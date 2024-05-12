@@ -24,6 +24,7 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "meta_info_manager.h"
 #include "task_board.h"
 #include "task_executor.h"
 #include "task_factory.h"
@@ -90,23 +91,34 @@ void OffLineTask::CreateDisableTask()
 {
     DHLOGI("networkId = %{public}s, uuid = %{public}s", GetAnonyString(GetNetworkId()).c_str(),
         GetAnonyString(GetUUID()).c_str());
+    std::string deviceId = GetDeviceIdByUUID(GetUUID());
+    std::vector<std::pair<std::string, DHType>> devDhInfos;
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
-    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(GetDeviceIdByUUID(GetUUID()), capabilityInfos);
-    if (capabilityInfos.empty()) {
-        DHLOGE("capabilityInfos is empty, can not create disableTask, uuid = %{public}s",
-            GetAnonyString(GetUUID()).c_str());
-        return;
+    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, capabilityInfos);
+    std::for_each(capabilityInfos.begin(), capabilityInfos.end(), [&](std::shared_ptr<CapabilityInfo> cap) {
+        devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
+    });
+
+    if (devDhInfos.empty()) {
+        DHLOGW("Can not get cap info from CapabilityInfo, try use meta info");
+        std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
+        MetaInfoManager::GetInstance()->GetMetaCapInfosByDeviceId(deviceId, metaCapInfos);
+        std::for_each(metaCapInfos.begin(), metaCapInfos.end(), [&](std::shared_ptr<MetaCapabilityInfo> cap) {
+            devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
+        });
     }
-    for (const auto &iter : capabilityInfos) {
-        if (iter == nullptr) {
-            DHLOGE("capabilityInfo is null");
-            continue;
-        }
+
+    if (devDhInfos.empty()) {
+        DHLOGE("Can not get cap info, uuid = %{public}s, deviceId = %{public}s", GetAnonyString(GetUUID()).c_str(),
+            GetAnonyString(deviceId).c_str());
+    }
+
+    for (const auto &info : devDhInfos) {
         TaskParam taskParam = {
             .networkId = GetNetworkId(),
             .uuid = GetUUID(),
-            .dhId = iter->GetDHId(),
-            .dhType = iter->GetDHType()
+            .dhId = info.first,
+            .dhType = info.second
         };
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, shared_from_this());
         TaskExecutor::GetInstance().PushTask(task);
