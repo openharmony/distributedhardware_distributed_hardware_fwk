@@ -649,7 +649,7 @@ HWTEST_F(ComponentManagerTest, GetSinkVersion_001, TestSize.Level0)
     std::string uuid;
     DHType dhType = DHType::CAMERA;
     std::string sinkVersion;
-    int32_t ret = ComponentManager::GetInstance().GetVersion(networkId, uuid, dhType, sinkVersion, true);
+    int32_t ret = ComponentManager::GetInstance().GetVersion(uuid, dhType, sinkVersion, true);
     EXPECT_NE(DH_FWK_SUCCESS, ret);
 }
 
