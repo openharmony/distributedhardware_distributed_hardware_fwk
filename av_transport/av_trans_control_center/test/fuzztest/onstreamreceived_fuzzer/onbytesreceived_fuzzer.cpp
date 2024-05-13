@@ -35,10 +35,7 @@ void OnBytesReceivedFuzzTest(const uint8_t *data, size_t size)
     }
 
     int32_t sessionId = *(reinterpret_cast<const int32_t*>(data));
-    const void *byteData = reinterpret_cast<const void*>(data);
-    uint32_t dataLen = *(reinterpret_cast<const uint32_t*>(data));
-
-    SoftbusChannelAdapter::GetInstance().OnSoftbusBytesReceived(sessionId, byteData, dataLen);
+    SoftbusChannelAdapter::GetInstance().OnSoftbusBytesReceived(sessionId, data, size);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -523,6 +523,7 @@ void SoftbusChannelAdapter::OnSoftbusBytesReceived(int32_t sessionId, const void
     AVTRANS_LOGI("On softbus channel bytes received, sessionId:%{public}" PRId32, sessionId);
     TRUE_RETURN(data == nullptr, "input data is nullptr.");
     TRUE_RETURN(dataLen == 0, "input dataLen is 0.");
+    TRUE_RETURN(dataLen > DSOFTBUS_INPUT_MAX_RECV_DATA_LEN, "input dataLen is over size.");
 
     std::string peerDevId = GetPeerDevIdBySessId(sessionId);
     AVTRANS_LOGI("OnSoftbusBytesReceived peerDevId:%{public}s.", GetAnonyString(peerDevId).c_str());
