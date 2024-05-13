@@ -119,13 +119,14 @@ std::string Sha256(const std::string& in)
 
 DeviceInfo GetLocalDeviceInfo()
 {
-    DeviceInfo devInfo { "", "", "", 0 };
+    DeviceInfo devInfo { "", "", "", "", 0 };
     auto info = std::make_unique<NodeBasicInfo>();
     auto ret = GetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("GetLocalNodeDeviceInfo failed, errCode = %{public}d", ret);
         return devInfo;
     }
+    devInfo.networkId = info->networkId;
     devInfo.uuid = GetUUIDBySoftBus(info->networkId);
     devInfo.deviceId = GetDeviceIdByUUID(devInfo.uuid);
     devInfo.deviceName = info->deviceName;

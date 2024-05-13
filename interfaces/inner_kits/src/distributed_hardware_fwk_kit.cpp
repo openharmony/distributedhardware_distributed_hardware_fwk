@@ -158,7 +158,7 @@ int32_t DistributedHardwareFwkKit::ReleaseAVCenter(int32_t engineId)
         DHLOGI("DHFWK not online or get proxy failed, can not release av control center");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-    
+
     DHFWKSAManager::GetInstance().RemoveAVTransControlCenterCbFromCache(engineId);
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->ReleaseAVCenter(engineId);
 }

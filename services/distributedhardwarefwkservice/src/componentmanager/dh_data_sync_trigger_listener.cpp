@@ -37,11 +37,15 @@ DHDataSyncTriggerListener::~DHDataSyncTriggerListener()
     DHLOGI("Dtor DHDataSyncTriggerListener");
 }
 
-void DHDataSyncTriggerListener::OnDataSyncTrigger(const std::string &uuid)
+void DHDataSyncTriggerListener::OnDataSyncTrigger(const std::string &networkId)
 {
-    DHLOGI("Receive data sync trigger, uuid: %{public}s", GetAnonyString(uuid).c_str());
-    std::shared_ptr<std::string> uuidPtr = std::make_shared<std::string>(uuid);
-    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_DATA_SYNC_MANUAL, uuidPtr);
+    DHLOGI("Receive data sync trigger, networkId: %{public}s", GetAnonyString(networkId).c_str());
+    if (networkId.empty()) {
+        DHLOGE("OnDataSyncTrigger networkId is empty");
+        return;
+    }
+    std::shared_ptr<std::string> networkIdPtr = std::make_shared<std::string>(networkId);
+    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_DATA_SYNC_MANUAL, networkIdPtr);
     ComponentManager::GetInstance().GetEventHandler()->SendEvent(msgEvent,
         0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
 }

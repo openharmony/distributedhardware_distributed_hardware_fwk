@@ -639,7 +639,6 @@ int32_t ComponentManager::GetEnableCapParam(const std::string &networkId, const 
     DHType dhType, EnableParam &param, std::shared_ptr<CapabilityInfo> &capability)
 {
     DeviceInfo sourceDeviceInfo = GetLocalDeviceInfo();
-    std::string sourceNetworkId = DHContext::GetInstance().GetNetworkIdByUUID(sourceDeviceInfo.uuid);
     std::vector<std::shared_ptr<CapabilityInfo>> sourceCapInfos;
     std::string sourceDHId;
     CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(sourceDeviceInfo.deviceId, sourceCapInfos);
@@ -650,7 +649,7 @@ int32_t ComponentManager::GetEnableCapParam(const std::string &networkId, const 
         }
     }
     std::string sourceVersion("");
-    auto ret = GetVersion(sourceNetworkId, sourceDeviceInfo.uuid, dhType, sourceVersion, false);
+    auto ret = GetVersion(sourceDeviceInfo.uuid, dhType, sourceVersion, false);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Get source version failed.");
         return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
@@ -659,7 +658,7 @@ int32_t ComponentManager::GetEnableCapParam(const std::string &networkId, const 
 
     param.sinkAttrs = capability->GetDHAttrs();
     std::string sinkVersion("");
-    ret = GetVersion(networkId, uuid, dhType, sinkVersion, true);
+    ret = GetVersion(uuid, dhType, sinkVersion, true);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Get sink version failed.");
         // If Version DB not sync, try get sink version from meta info
@@ -686,7 +685,6 @@ int32_t ComponentManager::GetEnableMetaParam(const std::string &networkId, const
     DHType dhType, EnableParam &param, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
 {
     DeviceInfo sourceDeviceInfo = GetLocalDeviceInfo();
-    std::string sourceNetworkId = DHContext::GetInstance().GetNetworkIdByUUID(sourceDeviceInfo.uuid);
     std::vector<std::shared_ptr<MetaCapabilityInfo>> sourceMetaInfos;
     std::string sourceDHId;
     MetaInfoManager::GetInstance()->GetMetaCapInfosByDeviceId(sourceDeviceInfo.deviceId, sourceMetaInfos);
@@ -697,7 +695,7 @@ int32_t ComponentManager::GetEnableMetaParam(const std::string &networkId, const
         }
     }
     std::string sourceVersion("");
-    auto ret = GetVersion(sourceNetworkId, sourceDeviceInfo.uuid, dhType, sourceVersion, false);
+    auto ret = GetVersion(sourceDeviceInfo.uuid, dhType, sourceVersion, false);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Get source version failed.");
         return ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED;
@@ -718,17 +716,18 @@ int32_t ComponentManager::GetEnableMetaParam(const std::string &networkId, const
 int32_t ComponentManager::GetCapParam(const std::string &uuid, const std::string &dhId,
     std::shared_ptr<CapabilityInfo> &capability)
 {
-    auto ret = CapabilityInfoManager::GetInstance()->GetCapability(GetDeviceIdByUUID(uuid), dhId, capability);
+    std::string deviceId = GetDeviceIdByUUID(uuid);
+    auto ret = CapabilityInfoManager::GetInstance()->GetCapability(deviceId, dhId, capability);
     if ((ret == DH_FWK_SUCCESS) && (capability != nullptr)) {
-        DHLOGE("GetCapability success, uuid =%{public}s, dhId = %{public}s, errCode = %{public}d",
-            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
+        DHLOGE("GetCapability success, deviceId: %{public}s, uuid: %{public}s, dhId: %{public}s, ret: %{public}d",
+            GetAnonyString(deviceId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
         return ret;
     }
 
-    ret = LocalCapabilityInfoManager::GetInstance()->GetCapability(GetDeviceIdByUUID(uuid), dhId, capability);
+    ret = LocalCapabilityInfoManager::GetInstance()->GetCapability(deviceId, dhId, capability);
     if ((ret == DH_FWK_SUCCESS) && (capability != nullptr)) {
-        DHLOGE("Local GetCapability success, uuid =%{public}s, dhId = %{public}s, errCode = %{public}d",
-            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
+        DHLOGE("Local GetCaps success, deviceId: %{public}s, uuid: %{public}s, dhId: %{public}s, ret: %{public}d",
+            GetAnonyString(deviceId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
         return ret;
     }
 
@@ -813,8 +812,7 @@ int32_t ComponentManager::GetVersionFromVerInfoMgr(const std::string &uuid, cons
     return DH_FWK_SUCCESS;
 }
 
-int32_t ComponentManager::GetVersion(const std::string &networkId, const std::string &uuid,
-    DHType dhType, std::string &version, bool isSink)
+int32_t ComponentManager::GetVersion(const std::string &uuid, DHType dhType, std::string &version, bool isSink)
 {
     int32_t ret = GetVersionFromVerMgr(uuid, dhType, version, isSink);
     if ((ret == DH_FWK_SUCCESS) && (!version.empty())) {
@@ -936,22 +934,22 @@ bool ComponentManager::IsIdenticalAccount(const std::string &networkId)
     return false;
 }
 
-void ComponentManager::UpdateBusinessState(const std::string &uuid, const std::string &dhId, BusinessState state)
+void ComponentManager::UpdateBusinessState(const std::string &networkId, const std::string &dhId, BusinessState state)
 {
-    DHLOGI("UpdateBusinessState, uuid: %{public}s, dhId: %{public}s, state: %{public}" PRIu32,
-        GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
+    DHLOGI("UpdateBusinessState, networkId: %{public}s, dhId: %{public}s, state: %{public}" PRIu32,
+        GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
     {
         std::lock_guard<std::mutex> lock(bizStateMtx_);
-        dhBizStates_[{uuid, dhId}] = state;
+        dhBizStates_[{networkId, dhId}] = state;
     }
 
     if (state == BusinessState::IDLE) {
         TaskParam taskParam;
-        if (!FetchNeedRefreshTask({uuid, dhId}, taskParam)) {
+        if (!FetchNeedRefreshTask({networkId, dhId}, taskParam)) {
             return;
         }
-        DHLOGI("The dh need refresh, uuid: %{public}s, dhId: %{public}s",
-            GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str());
+        DHLOGI("The dh need refresh, networkId: %{public}s, dhId: %{public}s",
+            GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str());
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
         TaskExecutor::GetInstance().PushTask(task);
     }
@@ -980,7 +978,7 @@ void ComponentManager::TriggerFullCapsSync(const std::string &networkId)
 void ComponentManager::SaveNeedRefreshTask(const TaskParam &taskParam)
 {
     std::lock_guard<std::mutex> lock(needRefreshTaskParamsMtx_);
-    needRefreshTaskParams_[{taskParam.uuid, taskParam.dhId}] = taskParam;
+    needRefreshTaskParams_[{taskParam.networkId, taskParam.dhId}] = taskParam;
 }
 
 bool ComponentManager::FetchNeedRefreshTask(const std::pair<std::string, std::string> &taskKey, TaskParam &taskParam)
@@ -1013,12 +1011,10 @@ void ComponentManager::ComponentManagerEventHandler::ProcessEvent(
                 DHLOGE("The data sync param invalid");
                 break;
             }
-            std::string uuid = *sharedObjPtr;
-            std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
-            DHLOGI("Try receive full capabiliy info from uuid: %{public}s, networkId: %{public}s",
-                GetAnonyString(uuid).c_str(), GetAnonyString(networkId).c_str());
+            std::string networkId = *sharedObjPtr;
+            DHLOGI("Try receive full capabiliy info from networkId: %{public}s", GetAnonyString(networkId).c_str());
             if (networkId.empty()) {
-                DHLOGE("Can not get device networkid by uuid: %{public}s", GetAnonyString(uuid).c_str());
+                DHLOGE("Can not get device uuid by networkId: %{public}s", GetAnonyString(networkId).c_str());
                 break;
             }
             ComponentManager::GetInstance().TriggerFullCapsSync(networkId);

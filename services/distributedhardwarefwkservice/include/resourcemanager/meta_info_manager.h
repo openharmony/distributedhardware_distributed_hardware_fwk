@@ -48,6 +48,10 @@ public:
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
     void GetMetaCapInfosByDeviceId(const std::string &deviceId,
         std::vector<std::shared_ptr<MetaCapabilityInfo>> &metaCapInfos);
+    /* Database data changes callback */
+    virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
+    /* Cloud data changes callback */
+    void OnChange(const DistributedKv::DataOrigin &origin, Keys &&keys) override;
 
     class MetaInfoManagerEventHandler : public AppExecFwk::EventHandler {
         public:
@@ -63,6 +67,10 @@ public:
 private:
     MetaInfoManager();
     int32_t GetMetaCapByValue(const std::string &value, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
+    void HandleMetaCapabilityAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
+    void HandleMetaCapabilityUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
+    void HandleMetaCapabilityDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords);
+    std::vector<DistributedKv::Entry> GetEntriesByKeys(const std::vector<std::string> &keys);
 private:
     mutable std::mutex metaInfoMgrMutex_;
     std::shared_ptr<DBAdapter> dbAdapterPtr_;

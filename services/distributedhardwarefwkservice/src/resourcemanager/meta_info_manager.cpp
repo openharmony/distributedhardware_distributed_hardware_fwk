@@ -140,7 +140,7 @@ int32_t MetaInfoManager::AddMetaCapInfos(const std::vector<std::shared_ptr<MetaC
             DHLOGI("this record is exist, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
             continue;
         }
-        DHLOGI("AddCapability, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
+        DHLOGI("AddMetaCapability, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
         keys.push_back(key);
         values.push_back(metaCapInfo->ToJsonString());
     }
@@ -299,6 +299,134 @@ int32_t MetaInfoManager::GetMetaCapByValue(const std::string &value, std::shared
         metaCapPtr = std::make_shared<MetaCapabilityInfo>();
     }
     return metaCapPtr->FromJsonString(value);
+}
+
+void MetaInfoManager::OnChange(const DistributedKv::ChangeNotification &changeNotification)
+{
+    DHLOGI("MetaInfoManager: DB data OnChange");
+    if (!changeNotification.GetInsertEntries().empty() &&
+        changeNotification.GetInsertEntries().size() <= MAX_DB_RECORD_SIZE) {
+        DHLOGI("MetaInfoManager Handle capability data add change");
+        HandleMetaCapabilityAddChange(changeNotification.GetInsertEntries());
+    }
+    if (!changeNotification.GetUpdateEntries().empty() &&
+        changeNotification.GetUpdateEntries().size() <= MAX_DB_RECORD_SIZE) {
+        DHLOGI("MetaInfoManager Handle capability data update change");
+        HandleMetaCapabilityUpdateChange(changeNotification.GetUpdateEntries());
+    }
+    if (!changeNotification.GetDeleteEntries().empty() &&
+        changeNotification.GetDeleteEntries().size() <= MAX_DB_RECORD_SIZE) {
+        DHLOGI("MetaInfoManager Handle capability data delete change");
+        HandleMetaCapabilityDeleteChange(changeNotification.GetDeleteEntries());
+    }
+}
+
+void MetaInfoManager::OnChange(const DistributedKv::DataOrigin &origin, Keys &&keys)
+{
+    DHLOGI("MetaInfoManager: Cloud data OnChange.");
+    std::vector<DistributedKv::Entry> insertRecords = GetEntriesByKeys(keys[ChangeOp::OP_INSERT]);
+    if (!insertRecords.empty() && insertRecords.size() <= MAX_DB_RECORD_SIZE) {
+        DHLOGI("MetaInfoManager Handle capability data add change");
+        HandleMetaCapabilityAddChange(insertRecords);
+    }
+    std::vector<DistributedKv::Entry> updateRecords = GetEntriesByKeys(keys[ChangeOp::OP_UPDATE]);
+    if (!updateRecords.empty() && updateRecords.size() <= MAX_DB_RECORD_SIZE) {
+        DHLOGI("MetaInfoManager Handle capability data update change");
+        HandleMetaCapabilityUpdateChange(updateRecords);
+    }
+    std::vector<std::string> delKeys = keys[ChangeOp::OP_DELETE];
+    if (!delKeys.empty() && delKeys.size() <= MAX_DB_RECORD_SIZE) {
+        std::vector<DistributedKv::Entry> deleteRecords;
+        for (const auto &key : delKeys) {
+            DistributedKv::Entry entry;
+            DistributedKv::Key kvKey(key);
+            entry.key = kvKey;
+            deleteRecords.emplace_back(entry);
+        }
+        DHLOGI("MetaInfoManager Handle capability data delete change");
+        HandleMetaCapabilityDeleteChange(deleteRecords);
+    }
+}
+
+void MetaInfoManager::HandleMetaCapabilityAddChange(const std::vector<DistributedKv::Entry> &insertRecords)
+{
+    std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
+    for (const auto &item : insertRecords) {
+        const std::string value = item.value.ToString();
+        std::shared_ptr<MetaCapabilityInfo> capPtr;
+        if (GetCapabilityByValue<MetaCapabilityInfo>(value, capPtr) != DH_FWK_SUCCESS) {
+            DHLOGE("Get Meta capability by value failed");
+            continue;
+        }
+        const auto keyString = capPtr->GetKey();
+        DHLOGI("Add MetaCapability key: %{public}s", capPtr->GetAnonymousKey().c_str());
+        globalMetaInfoMap_[keyString] = capPtr;
+        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(capPtr->GetDeviceId());
+        if (uuid.empty()) {
+            DHLOGI("Find uuid failed and never enable");
+            continue;
+        }
+        std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
+        if (networkId.empty()) {
+            DHLOGI("Find network failed and never enable, uuid: %{public}s", GetAnonyString(uuid).c_str());
+            continue;
+        }
+        TaskParam taskParam = {
+            .networkId = networkId,
+            .uuid = uuid,
+            .dhId = capPtr->GetDHId(),
+            .dhType = capPtr->GetDHType()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
+        TaskExecutor::GetInstance().PushTask(task);
+    }
+}
+
+void MetaInfoManager::HandleMetaCapabilityUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords)
+{
+    std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
+    for (const auto &item : updateRecords) {
+        const std::string value = item.value.ToString();
+        std::shared_ptr<MetaCapabilityInfo> capPtr;
+        if (GetCapabilityByValue<MetaCapabilityInfo>(value, capPtr) != DH_FWK_SUCCESS) {
+            DHLOGE("Get Meta capability by value failed");
+            continue;
+        }
+        const auto keyString = capPtr->GetKey();
+        DHLOGI("Update MetaCapability key: %{public}s", capPtr->GetAnonymousKey().c_str());
+        globalMetaInfoMap_[keyString] = capPtr;
+    }
+}
+
+void MetaInfoManager::HandleMetaCapabilityDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords)
+{
+    std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
+    for (const auto &item : deleteRecords) {
+        const std::string value = item.value.ToString();
+        std::shared_ptr<MetaCapabilityInfo> capPtr;
+        if (GetCapabilityByValue<MetaCapabilityInfo>(value, capPtr) != DH_FWK_SUCCESS) {
+            DHLOGE("Get Meta capability by value failed");
+            continue;
+        }
+        const auto keyString = capPtr->GetKey();
+        DHLOGI("Delete MetaCapability key: %{public}s", capPtr->GetAnonymousKey().c_str());
+        globalMetaInfoMap_.erase(keyString);
+    }
+}
+
+std::vector<DistributedKv::Entry> MetaInfoManager::GetEntriesByKeys(const std::vector<std::string> &keys)
+{
+    DHLOGI("call");
+    if (keys.empty()) {
+        DHLOGE("keys empty.");
+        return {};
+    }
+    std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr_ is null");
+        return {};
+    }
+    return dbAdapterPtr_->GetEntriesByKeys(keys);
 }
 }
 }

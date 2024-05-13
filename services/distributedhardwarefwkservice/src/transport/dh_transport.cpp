@@ -43,12 +43,14 @@ static QosTV g_qosInfo[] = {
     { .qos = QOS_TYPE_MIN_LATENCY, .value = 2000 }
 };
 static uint32_t g_qosTvParamIndex = static_cast<uint32_t>(sizeof(g_qosInfo) / sizeof(g_qosInfo[0]));
+static std::weak_ptr<DHCommTool> g_dhCommToolWPtr_;
 }
 
 DHTransport::DHTransport(std::shared_ptr<DHCommTool> dhCommToolPtr) : remoteDevSocketIds_({}), localServerSocket_(-1),
     localSocketName_(""), isSocketSvrCreateFlag_(false), dhCommToolWPtr_(dhCommToolPtr)
 {
     DHLOGI("Ctor DHTransport");
+    g_dhCommToolWPtr_ = dhCommToolPtr;
 }
 
 int32_t DHTransport::OnSocketOpened(int32_t socketId, const PeerSocketInfo &info)
@@ -127,31 +129,50 @@ void DHTransport::HandleReceiveMessage(const std::string &payload)
     dhCommToolSPtr->GetEventHandler()->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
 }
 
+std::shared_ptr<DHCommTool> GetDHCommToolPtr()
+{
+    if (g_dhCommToolWPtr_.expired()) {
+        DHLOGE("DHCommTool Weak ptr expired");
+        return nullptr;
+    }
+
+    std::shared_ptr<DHCommTool> dhCommToolSPtr = g_dhCommToolWPtr_.lock();
+    if (dhCommToolSPtr == nullptr) {
+        DHLOGE("Can not get DHCommTool ptr");
+        return nullptr;
+    }
+
+    return dhCommToolSPtr;
+}
+
 void OnBind(int32_t socket, PeerSocketInfo info)
 {
-    if (DHCommTool::GetInstance()->GetDHTransportPtr() == nullptr) {
-        DHLOGE("get DHTransport ptr return null");
+    std::shared_ptr<DHCommTool> dhCommToolSPtr = GetDHCommToolPtr();
+    if (dhCommToolSPtr == nullptr) {
+        DHLOGE("Can not get DHCommTool ptr");
         return;
     }
-    DHCommTool::GetInstance()->GetDHTransportPtr()->OnSocketOpened(socket, info);
+    dhCommToolSPtr->GetDHTransportPtr()->OnSocketOpened(socket, info);
 }
 
 void OnShutdown(int32_t socket, ShutdownReason reason)
 {
-    if (DHCommTool::GetInstance()->GetDHTransportPtr() == nullptr) {
-        DHLOGE("get DHTransport ptr return null");
+    std::shared_ptr<DHCommTool> dhCommToolSPtr = GetDHCommToolPtr();
+    if (dhCommToolSPtr == nullptr) {
+        DHLOGE("Can not get DHCommTool ptr");
         return;
     }
-    DHCommTool::GetInstance()->GetDHTransportPtr()->OnSocketClosed(socket, reason);
+    dhCommToolSPtr->GetDHTransportPtr()->OnSocketClosed(socket, reason);
 }
 
 void OnBytes(int32_t socket, const void *data, uint32_t dataLen)
 {
-    if (DHCommTool::GetInstance()->GetDHTransportPtr() == nullptr) {
-        DHLOGE("get DHTransport ptr return null");
+    std::shared_ptr<DHCommTool> dhCommToolSPtr = GetDHCommToolPtr();
+    if (dhCommToolSPtr == nullptr) {
+        DHLOGE("Can not get DHCommTool ptr");
         return;
     }
-    DHCommTool::GetInstance()->GetDHTransportPtr()->OnBytesReceived(socket, data, dataLen);
+    dhCommToolSPtr->GetDHTransportPtr()->OnBytesReceived(socket, data, dataLen);
 }
 
 void OnMessage(int32_t socket, const void *data, uint32_t dataLen)

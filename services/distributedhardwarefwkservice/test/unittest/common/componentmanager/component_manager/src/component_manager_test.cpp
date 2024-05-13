@@ -225,7 +225,7 @@ HWTEST_F(ComponentManagerTest, init_compSink_test_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
 {
-    DeviceInfo devInfo { "", "", "", 0 };
+    DeviceInfo devInfo { "", "", "", "", 0 };
     auto info = std::make_unique<MockNodeBasicInfo>();
     MockGetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
     devInfo.uuid = GetUUIDBySoftBus(info->networkId);
@@ -649,7 +649,7 @@ HWTEST_F(ComponentManagerTest, GetSinkVersion_001, TestSize.Level0)
     std::string uuid;
     DHType dhType = DHType::CAMERA;
     std::string sinkVersion;
-    int32_t ret = ComponentManager::GetInstance().GetVersion(networkId, uuid, dhType, sinkVersion, true);
+    int32_t ret = ComponentManager::GetInstance().GetVersion(uuid, dhType, sinkVersion, true);
     EXPECT_NE(DH_FWK_SUCCESS, ret);
 }
 

@@ -20,6 +20,7 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "local_capability_info_manager.h"
 #include "meta_info_manager.h"
 #include "task_board.h"
 #include "task_executor.h"
@@ -70,22 +71,29 @@ void OnLineTask::DoTask()
 
 void OnLineTask::DoSyncInfo()
 {
-    auto ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(GetDeviceIdByUUID(GetUUID()));
+    std::string deviceId = GetDeviceIdByUUID(GetUUID());
+    auto ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("SyncDeviceInfoFromDB failed, uuid = %{public}s, errCode = %{public}d",
-            GetAnonyString(GetUUID()).c_str(), ret);
+        DHLOGE("SyncDeviceInfoFromDB failed, deviceId = %{public}s, uuid = %{public}s, errCode = %{public}d",
+            GetAnonyString(deviceId).c_str(), GetAnonyString(GetUUID()).c_str(), ret);
     }
 
-    ret = VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(GetDeviceIdByUUID(GetUUID()));
+    ret = VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(deviceId);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("SyncVersionInfoFromDB failed, uuid = %{public}s, errCode = %{public}d",
-            GetAnonyString(GetUUID()).c_str(), ret);
+        DHLOGE("SyncVersionInfoFromDB failed, deviceId = %{public}s, uuid = %{public}s, errCode = %{public}d",
+            GetAnonyString(deviceId).c_str(), GetAnonyString(GetUUID()).c_str(), ret);
     }
 
-    ret = MetaInfoManager::GetInstance()->SyncMetaInfoFromDB(GetDeviceIdByUUID(GetUUID()));
+    ret = LocalCapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("SyncMetaInfoFromDB failed, uuid = %{public}s, errCode = %{public}d",
-            GetAnonyString(GetUUID()).c_str(), ret);
+        DHLOGE("SyncLocalCapabilityInfoFromDB failed, deviceId = %{public}s, uuid = %{public}s, errCode = %{public}d",
+            GetAnonyString(deviceId).c_str(), GetAnonyString(GetUUID()).c_str(), ret);
+    }
+
+    ret = MetaInfoManager::GetInstance()->SyncMetaInfoFromDB(deviceId);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("SyncMetaInfoFromDB failed, deviceId = %{public}s, uuid = %{public}s, errCode = %{public}d",
+            GetAnonyString(deviceId).c_str(), GetAnonyString(GetUUID()).c_str(), ret);
     }
 }
 
@@ -93,23 +101,42 @@ void OnLineTask::CreateEnableTask()
 {
     DHLOGI("networkId = %{public}s, uuid = %{public}s", GetAnonyString(GetNetworkId()).c_str(),
         GetAnonyString(GetUUID()).c_str());
+    std::string deviceId = GetDeviceIdByUUID(GetUUID());
+    std::vector<std::pair<std::string, DHType>> devDhInfos;
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
-    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(GetDeviceIdByUUID(GetUUID()), capabilityInfos);
-    if (capabilityInfos.empty()) {
-        DHLOGE("capabilityInfos is empty, can not create enableTask, uuid = %{public}s",
-            GetAnonyString(GetUUID()).c_str());
-        return;
+    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, capabilityInfos);
+    std::for_each(capabilityInfos.begin(), capabilityInfos.end(), [&](std::shared_ptr<CapabilityInfo> cap) {
+        devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
+    });
+
+    if (devDhInfos.empty()) {
+        DHLOGW("Can not get cap info from CapabilityInfo, try use local Capability info");
+        LocalCapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, capabilityInfos);
+        std::for_each(capabilityInfos.begin(), capabilityInfos.end(), [&](std::shared_ptr<CapabilityInfo> cap) {
+            devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
+        });
     }
-    for (const auto &iter : capabilityInfos) {
-        if (iter == nullptr) {
-            DHLOGE("capabilityInfo is null");
-            continue;
-        }
+
+    if (devDhInfos.empty()) {
+        DHLOGW("Can not get cap info from local Capbility, try use meta info");
+        std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
+        MetaInfoManager::GetInstance()->GetMetaCapInfosByDeviceId(deviceId, metaCapInfos);
+        std::for_each(metaCapInfos.begin(), metaCapInfos.end(), [&](std::shared_ptr<MetaCapabilityInfo> cap) {
+            devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
+        });
+    }
+
+    if (devDhInfos.empty()) {
+        DHLOGE("Can not get cap info, uuid = %{public}s, deviceId = %{public}s", GetAnonyString(GetUUID()).c_str(),
+            GetAnonyString(deviceId).c_str());
+    }
+
+    for (const auto &info : devDhInfos) {
         TaskParam taskParam = {
             .networkId = GetNetworkId(),
             .uuid = GetUUID(),
-            .dhId = iter->GetDHId(),
-            .dhType = iter->GetDHType()
+            .dhId = info.first,
+            .dhType = info.second
         };
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, shared_from_this());
         TaskExecutor::GetInstance().PushTask(task);

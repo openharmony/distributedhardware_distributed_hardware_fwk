@@ -70,7 +70,7 @@ private:
     void RegisterPowerStateLinstener();
 
 private:
-    DeviceInfo devInfo_ { "", "", "", 0 };
+    DeviceInfo devInfo_ { "", "", "", "", 0 };
     std::mutex devMutex_;
 
     /* Save online device uuid and networkId */

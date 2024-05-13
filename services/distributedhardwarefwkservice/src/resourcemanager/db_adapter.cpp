@@ -68,10 +68,12 @@ DistributedKv::Status DBAdapter::GetKvStorePtr(bool isAutoSync)
         .kvStoreType = DistributedKv::KvStoreType::SINGLE_VERSION,
         .baseDir = DATABASE_DIR + appId_.appId
     };
-    DistributedKv::SyncPolicy syncPolicyOnline {
-        .type = DistributedKv::IMMEDIATE_SYNC_ON_ONLINE
-    };
-    options.policies.emplace_back(syncPolicyOnline);
+    if (isAutoSync) {
+        DistributedKv::SyncPolicy syncPolicyOnline {
+            .type = DistributedKv::IMMEDIATE_SYNC_ON_ONLINE
+        };
+        options.policies.emplace_back(syncPolicyOnline);
+    }
     return kvDataMgr_.GetSingleKvStore(options, appId_, storeId_, kvStoragePtr_);
 }
 
