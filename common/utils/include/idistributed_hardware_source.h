@@ -80,8 +80,8 @@ public:
         const EnableParam &param, std::shared_ptr<RegisterCallback> callback) = 0;
     virtual int32_t UnregisterDistributedHardware(const std::string &networkId, const std::string &dhId,
         std::shared_ptr<UnregisterCallback> callback) = 0;
-    virtual int32_t ConfigDistributedHardware(const std::string &networkId, const std::string &dhId, const std::string &key,
-        const std::string &value) = 0;
+    virtual int32_t ConfigDistributedHardware(const std::string &networkId, const std::string &dhId,
+        const std::string &key, const std::string &value) = 0;
     virtual void RegisterDistributedHardwareStateListener(
         std::shared_ptr<DistributedHardwareStateListener> listener) = 0;
     virtual void UnregisterDistributedHardwareStateListener() = 0;
