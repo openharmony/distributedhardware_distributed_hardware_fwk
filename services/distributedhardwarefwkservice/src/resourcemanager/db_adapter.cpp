@@ -66,7 +66,11 @@ DistributedKv::Status DBAdapter::GetKvStorePtr(bool isAutoSync)
         .securityLevel = DistributedKv::SecurityLevel::S1,
         .area = DistributedKv::EL1,
         .kvStoreType = DistributedKv::KvStoreType::SINGLE_VERSION,
-        .baseDir = DATABASE_DIR + appId_.appId
+        .baseDir = DATABASE_DIR + appId_.appId,
+        .cloudConfig = {
+            .enableCloud = true,
+            .autoSync  = true,
+        }
     };
     if (isAutoSync) {
         DistributedKv::SyncPolicy syncPolicyOnline {
