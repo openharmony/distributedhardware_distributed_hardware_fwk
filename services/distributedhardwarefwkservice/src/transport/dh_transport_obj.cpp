@@ -83,6 +83,10 @@ std::string GetCommMsgString(const CommMsg &commMsg)
     cJSON *rootMsg = cJSON_CreateObject();
     ToJson(rootMsg, commMsg);
     char *msg = cJSON_PrintUnformatted(rootMsg);
+    if (msg == nullptr) {
+        cJSON_Delete(rootMsg);
+        return "";
+    }
     std::string msgStr = std::string(msg);
     cJSON_free(msg);
     cJSON_Delete(rootMsg);

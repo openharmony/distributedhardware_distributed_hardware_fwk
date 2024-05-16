@@ -63,6 +63,10 @@ std::string MetaCapabilityInfo::ToJsonString()
     }
     ToJson(jsonObj, *this);
     char *cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return "";
+    }
     std::string jsonString(cjson);
     cJSON_free(cjson);
     cJSON_Delete(jsonObj);
