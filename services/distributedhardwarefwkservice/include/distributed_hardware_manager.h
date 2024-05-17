@@ -19,9 +19,8 @@
 #include "idistributed_hardware_manager.h"
 
 #include <atomic>
-
-#include "single_instance.h"
 #include "device_type.h"
+#include "single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {

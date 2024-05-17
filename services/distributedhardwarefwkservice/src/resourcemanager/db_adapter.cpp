@@ -191,29 +191,29 @@ void DBAdapter::TriggerDynamicQuery(const std::string &key)
     DHLOGI("Trigger DynamicQuery, key: %{public}s", GetAnonyString(key).c_str());
     std::string deviceId = DHContext::GetInstance().GetDeviceIdByDBGetPrefix(key);
     if (deviceId.empty()) {
-        DHLOGI("Get deviceId empty, key: %{public}s", GetAnonyString(key).c_str());
+        DHLOGW("Get deviceId empty, key: %{public}s", GetAnonyString(key).c_str());
         return;
     }
 
     if (deviceId == DHContext::GetInstance().GetDeviceInfo().deviceId) {
-        DHLOGI("Query local db info, no need dynamic sync");
+        DHLOGD("Query local db info, no need dynamic sync");
         return;
     }
 
     std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
     if (uuid.empty()) {
-        DHLOGI("Get uuid empty, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
+        DHLOGW("Get uuid empty, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
         return;
     }
     if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
-        DHLOGI("The device not online, no need dynamic sync, uuid: %{public}s, deviceId: %{public}s",
+        DHLOGW("The device not online, no need dynamic sync, uuid: %{public}s, deviceId: %{public}s",
             GetAnonyString(uuid).c_str(), GetAnonyString(deviceId).c_str());
         return;
     }
 
     std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
     if (networkId.empty()) {
-        DHLOGI("The networkId emtpy, uuid: %{public}s", GetAnonyString(uuid).c_str());
+        DHLOGW("The networkId emtpy, uuid: %{public}s", GetAnonyString(uuid).c_str());
         return;
     }
 
