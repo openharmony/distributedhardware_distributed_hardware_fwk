@@ -56,7 +56,7 @@ DBAdapter::~DBAdapter()
     DHLOGI("DBAdapter Destruction");
 }
 
-DistributedKv::Status DBAdapter::GetKvStorePtr(bool isAutoSync)
+DistributedKv::Status DBAdapter::GetKvStorePtr(bool isAutoSync, DataType dataType)
 {
     DistributedKv::Options options = {
         .createIfMissing = true,
@@ -70,7 +70,8 @@ DistributedKv::Status DBAdapter::GetKvStorePtr(bool isAutoSync)
         .cloudConfig = {
             .enableCloud = true,
             .autoSync  = true,
-        }
+        },
+        .dataType = dataType
     };
     if (isAutoSync) {
         DistributedKv::SyncPolicy syncPolicyOnline {
@@ -95,13 +96,13 @@ DistributedKv::Status DBAdapter::GetLocalKvStorePtr()
     return kvDataMgr_.GetSingleKvStore(options, appId_, storeId_, kvStoragePtr_);
 }
 
-int32_t DBAdapter::Init(bool isAutoSync)
+int32_t DBAdapter::Init(bool isAutoSync, DataType dataType)
 {
     DHLOGI("Init DB, storeId: %{public}s", storeId_.storeId.c_str());
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     int32_t tryTimes = MAX_INIT_RETRY_TIMES;
     while (tryTimes > 0) {
-        DistributedKv::Status status = GetKvStorePtr(isAutoSync);
+        DistributedKv::Status status = GetKvStorePtr(isAutoSync, dataType);
         if (status == DistributedKv::Status::SUCCESS && kvStoragePtr_) {
             DHLOGI("Init KvStorePtr Success");
             RegisterChangeListener();
@@ -117,6 +118,7 @@ int32_t DBAdapter::Init(bool isAutoSync)
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
     this->isAutoSync = isAutoSync;
+    this->dataType = dataType;
     return DH_FWK_SUCCESS;
 }
 
@@ -168,13 +170,48 @@ int32_t DBAdapter::ReInit(bool isAutoSync)
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
     kvStoragePtr_.reset();
-    DistributedKv::Status status = this->isAutoSync ? GetKvStorePtr(isAutoSync) : GetLocalKvStorePtr();
+    DistributedKv::Status status = this->isAutoSync ?
+        GetKvStorePtr(isAutoSync, this->dataType) : GetLocalKvStorePtr();
     if (status != DistributedKv::Status::SUCCESS || !kvStoragePtr_) {
         DHLOGW("Get kvStoragePtr_ failed, status: %{public}d", status);
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
     RegisterKvStoreDeathListener();
     return DH_FWK_SUCCESS;
+}
+
+void DBAdapter::TriggerDynamicQuery(const std::string &key)
+{
+    DHLOGI("Trigger DynamicQuery, key: %{public}s", GetAnonyString(key).c_str());
+    std::string deviceId = DHContext::GetInstance().GetDeviceIdByDBGetPrefix(key);
+    if (deviceId.empty()) {
+        DHLOGI("Get deviceId empty, key: %{public}s", GetAnonyString(key).c_str());
+        return;
+    }
+    std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
+    if (uuid.empty()) {
+        DHLOGI("Get uuid empty, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
+        return;
+    }
+    if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
+        DHLOGI("The device not online, no need dynamic sync, uuid: %{public}s, deviceId: %{public}s",
+            GetAnonyString(uuid).c_str(), GetAnonyString(deviceId).c_str());
+        return;
+    }
+
+    std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
+    if (networkId.empty()) {
+        DHLOGI("The networkId emtpy, uuid: %{public}s", GetAnonyString(uuid).c_str());
+        return;
+    }
+
+    DHLOGI("Try Sync DYNAMIC data with remote dev, networkId: %{public}s", GetAnonyString(networkId).c_str());
+    std::function<void(Status, std::vector<Entry>&&)> call =
+        [](Status status, std::vector<Entry>&& values) {
+            (void)status;
+            (void)values;
+        };
+    kvStoragePtr_->Get(key, networkId, call);
 }
 
 int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
@@ -184,6 +221,9 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
+    }
+    if (this->dataType == DataType::TYPE_DYNAMICAL) {
+        TriggerDynamicQuery(key);
     }
     DistributedKv::Key kvKey(key);
     DistributedKv::Value kvValue;
@@ -203,6 +243,9 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
+    }
+    if (this->dataType == DataType::TYPE_DYNAMICAL) {
+        TriggerDynamicQuery(key);
     }
 
     // if prefix is empty, get all entries.
