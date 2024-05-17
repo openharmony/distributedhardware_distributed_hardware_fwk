@@ -18,6 +18,7 @@
 
 #include "ability_manager_errors.h"
 #include "component_privacy.h"
+#include "component_loader.h"
 #include "distributed_hardware_errno.h"
 #include "idistributed_hardware_sink.h"
 
@@ -64,6 +65,60 @@ HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_001, TestSize.Level0)
     bool isSameAccout = true;
     int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, subtype, networkId, isSensitive, isSameAccout);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY, ret);
+}
+
+HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_002, TestSize.Level0)
+{
+    ResourceEventType type = ResourceEventType::EVENT_TYPE_PULL_UP_PAGE;
+    std::string subtype = "mic";
+    std::string networkId = "networkId_test";
+    bool isSensitive = true;
+    bool isSameAccout = true;
+    int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, subtype, networkId, isSensitive, isSameAccout);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_003, TestSize.Level0)
+{
+    ResourceEventType type = ResourceEventType::EVENT_TYPE_CLOSE_PAGE;
+    std::string subtype = "mic";
+    std::string networkId = "networkId_test";
+    bool isSensitive = true;
+    bool isSameAccout = true;
+    int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, subtype, networkId, isSensitive, isSameAccout);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(ComponentPrivacyTest, OnResourceInfoCallback_001, TestSize.Level0)
+{
+    std::string subtype = "mic";
+    std::string networkId = "networkId_test";
+    bool isSensitive = true;
+    bool isSameAccout = true;
+    ComponentLoader::GetInstance().resDescMap_[subtype] = true;
+    int32_t ret = compPrivacy_->OnResourceInfoCallback(subtype, networkId, isSensitive, isSameAccout);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY, ret);
+}
+
+HWTEST_F(ComponentPrivacyTest, StartPrivacePage_001, TestSize.Level0)
+{
+    std::string subtype = "mic";
+    std::string networkId = "networkId_test";
+    int32_t ret = compPrivacy_->StartPrivacePage(subtype, networkId);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    subtype = "camera";
+    ret = compPrivacy_->StartPrivacePage(subtype, networkId);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(ComponentPrivacyTest, StopPrivacePage_001, TestSize.Level0)
+{
+    std::string subtype = "mic";
+    int32_t ret = compPrivacy_->StopPrivacePage(subtype);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    subtype = "camera";
+    ret = compPrivacy_->StopPrivacePage(subtype);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 HWTEST_F(ComponentPrivacyTest, DeviceTypeToString_001, TestSize.Level0)

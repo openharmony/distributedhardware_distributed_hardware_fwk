@@ -40,6 +40,8 @@ public:
     static void TearDownTestCase();
     void SetUp() override;
     void TearDown() override;
+private:
+    std::shared_ptr<AVOutputFilter> avOutputTest_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
