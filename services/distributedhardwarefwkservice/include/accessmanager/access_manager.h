@@ -45,7 +45,8 @@ public:
     virtual void OnDeviceOffline(const DmDeviceInfo &deviceInfo) override;
     virtual void OnDeviceReady(const DmDeviceInfo &deviceInfo) override;
     virtual void OnDeviceChanged(const DmDeviceInfo &deviceInfo) override;
-
+    /* Send device online event which is already online */
+    void CheckTrustedDeviceOnline();
     int32_t Dump(const std::vector<std::string> &argsStr, std::string &result);
 
 private:
@@ -54,10 +55,6 @@ private:
     int32_t UnRegisterDevStateCallback();
     int32_t InitDeviceManager();
     int32_t UnInitDeviceManager();
-
-    /* Send device online event which is already online */
-    void SendTrustedDeviceOnline();
-
     std::mutex accessMutex_;
 };
 } // namespace DistributedHardware

@@ -17,6 +17,9 @@
 #define OHOS_DISTRIBUTED_HARDWARE_MANAGER_H
 
 #include "idistributed_hardware_manager.h"
+
+#include <atomic>
+
 #include "single_instance.h"
 #include "device_type.h"
 
@@ -34,6 +37,9 @@ public:
     int32_t GetComponentVersion(std::unordered_map<DHType, std::string> &versionMap) override;
 
     int32_t Dump(const std::vector<std::string> &argsStr, std::string &result) override;
+private:
+    std::atomic<bool> isLocalInit{false};
+    std::atomic<bool> isAllInit{false};
 };
 } // namespace DistributedHardware
 } // namespace OHOS

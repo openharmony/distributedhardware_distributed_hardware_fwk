@@ -200,7 +200,7 @@ std::string DHContext::GetDeviceIdByDBGetPrefix(const std::string &prefix)
     }
 
     if (prefix.find(RESOURCE_SEPARATOR) != std::string::npos) {
-        id = str.substr(0, str.find_first_of(RESOURCE_SEPARATOR));
+        id = prefix.substr(0, prefix.find_first_of(RESOURCE_SEPARATOR));
     } else {
         id = prefix;
     }

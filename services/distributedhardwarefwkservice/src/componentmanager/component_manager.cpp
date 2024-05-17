@@ -536,7 +536,7 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
     std::string subtype = param.subtype;
     std::map<std::string, bool> resourceDesc = ComponentLoader::GetInstance().GetCompResourceDesc();
     if (resourceDesc.find(subtype) == resourceDesc.end()) {
-        DHLOGE("GetCompResourceDesc failed.");
+        DHLOGE("GetCompResourceDesc failed, subtype: %{public}s", subtype.c_str());
         return ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY;
     }
     bool sensitiveVal = resourceDesc[subtype];

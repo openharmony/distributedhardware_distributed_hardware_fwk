@@ -58,12 +58,10 @@ int32_t AccessManager::Init()
         DHLOGE("InitDeviceManager failed");
         return ERR_DH_FWK_ACCESS_INIT_DM_FAILED;
     }
-
     if (RegisterDevStateCallback() != DH_FWK_SUCCESS) {
         DHLOGE("RegisterDevStateCallback failed");
         return ERR_DH_FWK_ACCESS_REGISTER_DM_FAILED;
     }
-    SendTrustedDeviceOnline();
     return DH_FWK_SUCCESS;
 }
 
@@ -181,7 +179,7 @@ void AccessManager::OnDeviceChanged(const DmDeviceInfo &deviceInfo)
     return;
 }
 
-void AccessManager::SendTrustedDeviceOnline()
+void AccessManager::CheckTrustedDeviceOnline()
 {
     std::vector<DmDeviceInfo> deviceList;
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);

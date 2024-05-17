@@ -30,6 +30,9 @@ namespace {
 }
 std::string GetAnonyString(const std::string &value)
 {
+    if (value.empty()) {
+        return "";
+    }
     std::string res;
     std::string tmpStr("******");
     size_t strLen = value.length();

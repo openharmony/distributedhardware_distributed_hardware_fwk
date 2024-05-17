@@ -42,6 +42,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+#undef DH_LOG_TAG
+#define DH_LOG_TAG "DistributedHardwareService"
 REGISTER_SYSTEM_ABILITY_BY_ID(DistributedHardwareService, DISTRIBUTED_HARDWARE_SA_ID, true);
 namespace {
     constexpr int32_t INIT_BUSINESS_DELAY_TIME_MS = 5 * 100;
@@ -108,6 +110,7 @@ bool DistributedHardwareService::DoBusinessInit()
         eventHandler_->PostTask(executeInnerFunc, INIT_TASK_ID, INIT_BUSINESS_DELAY_TIME_MS);
         return false;
     }
+
     DHLOGI("Init AccessManager");
     auto ret = AccessManager::GetInstance()->Init();
     if (ret != DH_FWK_SUCCESS) {
@@ -116,6 +119,7 @@ bool DistributedHardwareService::DoBusinessInit()
             ret, "dhfwk sa AccessManager init fail.");
     }
     InitLocalDevInfo();
+    AccessManager::GetInstance()->CheckTrustedDeviceOnline();
     return true;
 }
 

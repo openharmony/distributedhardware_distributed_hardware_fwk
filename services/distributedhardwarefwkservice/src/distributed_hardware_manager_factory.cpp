@@ -71,12 +71,12 @@ bool DistributedHardwareManagerFactory::InitLocalDevInfo()
 bool DistributedHardwareManagerFactory::Init()
 {
     DHLOGI("start");
-    isInit = true;
     auto initResult = DistributedHardwareManager::GetInstance().Initialize();
     if (initResult != DH_FWK_SUCCESS) {
         DHLOGE("Initialize failed, errCode = %{public}d", initResult);
         return false;
     }
+    isInit = true;
     DHLOGI("success");
     return true;
 }

@@ -40,7 +40,7 @@ public:
 
     virtual ~DBAdapter();
     // default init auto-sync kv store
-    int32_t Init(bool isAutoSync, DataType dataType);
+    int32_t Init(bool isAutoSync, DistributedKv::DataType dataType);
     // init local kv store
     int32_t InitLocal();
     void UnInit();
@@ -62,7 +62,7 @@ private:
     void RegisterKvStoreDeathListener();
     void UnRegisterKvStoreDeathListener();
     // get default kv store with auto sync
-    DistributedKv::Status GetKvStorePtr(bool isAutoSync, DataType dataType);
+    DistributedKv::Status GetKvStorePtr(bool isAutoSync, DistributedKv::DataType dataType);
     // get local kv store with no sync with other devices
     DistributedKv::Status GetLocalKvStorePtr();
     bool DBDiedOpt(int32_t &times);
@@ -76,7 +76,7 @@ private:
     std::shared_ptr<DistributedKv::KvStoreObserver> dataChangeListener_;
     std::mutex dbAdapterMutex_;
     bool isAutoSync {false};
-    DataType dataType {DataType::TYPE_DYNAMICAL};
+    DistributedKv::DataType dataType {DistributedKv::DataType::TYPE_DYNAMICAL};
 };
 } // namespace DistributedHardware
 } // namespace OHOS

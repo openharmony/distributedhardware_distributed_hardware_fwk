@@ -56,7 +56,7 @@ DBAdapter::~DBAdapter()
     DHLOGI("DBAdapter Destruction");
 }
 
-DistributedKv::Status DBAdapter::GetKvStorePtr(bool isAutoSync, DataType dataType)
+DistributedKv::Status DBAdapter::GetKvStorePtr(bool isAutoSync, DistributedKv::DataType dataType)
 {
     DistributedKv::Options options = {
         .createIfMissing = true,
@@ -67,11 +67,11 @@ DistributedKv::Status DBAdapter::GetKvStorePtr(bool isAutoSync, DataType dataTyp
         .area = DistributedKv::EL1,
         .kvStoreType = DistributedKv::KvStoreType::SINGLE_VERSION,
         .baseDir = DATABASE_DIR + appId_.appId,
+        .dataType = dataType,
         .cloudConfig = {
             .enableCloud = true,
             .autoSync  = true,
-        },
-        .dataType = dataType
+        }
     };
     if (isAutoSync) {
         DistributedKv::SyncPolicy syncPolicyOnline {
@@ -96,7 +96,7 @@ DistributedKv::Status DBAdapter::GetLocalKvStorePtr()
     return kvDataMgr_.GetSingleKvStore(options, appId_, storeId_, kvStoragePtr_);
 }
 
-int32_t DBAdapter::Init(bool isAutoSync, DataType dataType)
+int32_t DBAdapter::Init(bool isAutoSync, DistributedKv::DataType dataType)
 {
     DHLOGI("Init DB, storeId: %{public}s", storeId_.storeId.c_str());
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
@@ -109,6 +109,12 @@ int32_t DBAdapter::Init(bool isAutoSync, DataType dataType)
             RegisterKvStoreDeathListener();
             return DH_FWK_SUCCESS;
         }
+
+        if (status == DistributedKv::Status::STORE_META_CHANGED) {
+            DHLOGW("This db meta changed, remove and rebuild it");
+            kvDataMgr_.DeleteKvStore(appId_, storeId_, DATABASE_DIR + appId_.appId);
+        }
+
         DHLOGD("CheckKvStore, left times: %{public}d", tryTimes);
         usleep(INIT_RETRY_SLEEP_INTERVAL);
         tryTimes--;
@@ -188,6 +194,12 @@ void DBAdapter::TriggerDynamicQuery(const std::string &key)
         DHLOGI("Get deviceId empty, key: %{public}s", GetAnonyString(key).c_str());
         return;
     }
+
+    if (deviceId == DHContext::GetInstance().GetDeviceInfo().deviceId) {
+        DHLOGI("Query local db info, no need dynamic sync");
+        return;
+    }
+
     std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
     if (uuid.empty()) {
         DHLOGI("Get uuid empty, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
@@ -206,12 +218,13 @@ void DBAdapter::TriggerDynamicQuery(const std::string &key)
     }
 
     DHLOGI("Try Sync DYNAMIC data with remote dev, networkId: %{public}s", GetAnonyString(networkId).c_str());
-    std::function<void(Status, std::vector<Entry>&&)> call =
-        [](Status status, std::vector<Entry>&& values) {
+    std::function<void(DistributedKv::Status, DistributedKv::Value&&)> call =
+        [](DistributedKv::Status status, DistributedKv::Value &&value) {
             (void)status;
-            (void)values;
+            (void)value;
         };
-    kvStoragePtr_->Get(key, networkId, call);
+    DistributedKv::Key kvKey(key);
+    kvStoragePtr_->Get(kvKey, networkId, call);
 }
 
 int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
@@ -222,7 +235,7 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    if (this->dataType == DataType::TYPE_DYNAMICAL) {
+    if (this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
         TriggerDynamicQuery(key);
     }
     DistributedKv::Key kvKey(key);
@@ -244,8 +257,8 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    if (this->dataType == DataType::TYPE_DYNAMICAL) {
-        TriggerDynamicQuery(key);
+    if (this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
+        TriggerDynamicQuery(keyPrefix);
     }
 
     // if prefix is empty, get all entries.

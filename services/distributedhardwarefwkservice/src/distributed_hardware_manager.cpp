@@ -46,27 +46,33 @@ IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManager);
 int32_t DistributedHardwareManager::LocalInit()
 {
     DHLOGI("DHFWK Local Init begin");
-    VersionInfoManager::GetInstance()->Init();
-    ComponentLoader::GetInstance().Init();
-    VersionManager::GetInstance().Init();
-    CapabilityInfoManager::GetInstance()->Init();
-    MetaInfoManager::GetInstance()->Init();
-    LocalHardwareManager::GetInstance().Init();
-    DHLOGI("DHFWK Local Init end");
-    return DH_FWK_SUCCESS;
-}
-
-int32_t DistributedHardwareManager::Initialize()
-{
-    DHLOGI("start");
+    if (isLocalInit) {
+        DHLOGI("Local init already finish");
+        return DH_FWK_SUCCESS;
+    }
     VersionInfoManager::GetInstance()->Init();
     CapabilityInfoManager::GetInstance()->Init();
     MetaInfoManager::GetInstance()->Init();
     LocalCapabilityInfoManager::GetInstance()->Init();
     ComponentLoader::GetInstance().Init();
     VersionManager::GetInstance().Init();
-    ComponentManager::GetInstance().Init();
     LocalHardwareManager::GetInstance().Init();
+    DHLOGI("DHFWK Local Init end");
+    isLocalInit = true;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareManager::Initialize()
+{
+    DHLOGI("DHFWK Normal Init begin");
+    if (isAllInit) {
+        DHLOGI("DHMgr init already finish");
+        return DH_FWK_SUCCESS;
+    }
+    LocalInit();
+    ComponentManager::GetInstance().Init();
+    DHLOGI("DHFWK Normal Init end");
+    isAllInit = true;
     return DH_FWK_SUCCESS;
 }
 
@@ -82,6 +88,8 @@ int32_t DistributedHardwareManager::Release()
     CapabilityInfoManager::GetInstance()->UnInit();
     MetaInfoManager::GetInstance()->UnInit();
     LocalCapabilityInfoManager::GetInstance()->UnInit();
+    isAllInit = false;
+    isLocalInit = false;
     return DH_FWK_SUCCESS;
 }
 
