@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+# Copyright (c) 2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,10 +12,9 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/resource_manager_test"
+module_out_path = "distributed_hardware_fwk/transport_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -23,20 +22,22 @@ config("module_private_config") {
     "include",
     "${utils_path}/include",
     "${utils_path}/include/log",
-    "${utils_path}/include/eventbus",
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "${services_path}/distributedhardwarefwkservice/include/transport",
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",
     "${common_path}/log/include",
   ]
 }
 
-## UnitTest resource_manager_test
-ohos_unittest("ResourceManagerTest") {
+ohos_unittest("TransportTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/resource_manager_test.cpp" ]
+  sources = [
+    "dh_comm_tool_test.cpp",
+    "dh_transport_test.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 
@@ -57,14 +58,13 @@ ohos_unittest("ResourceManagerTest") {
     "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
-    "hilog:libhilog",
     "kv_store:distributeddata_inner",
     "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
   ]
 }
 
-group("resource_manager_test") {
+group("transport_test") {
   testonly = true
-  deps = [ ":ResourceManagerTest" ]
+  deps = [ ":TransportTest" ]
 }
