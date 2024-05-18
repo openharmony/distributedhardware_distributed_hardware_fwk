@@ -173,5 +173,39 @@ std::string DHContext::GetUUIDByDeviceId(const std::string &deviceId)
     }
     return deviceIdUUIDMap_[deviceId];
 }
+
+std::string DHContext::GetNetworkIdByDeviceId(const std::string &deviceId)
+{
+    std::string id = "";
+    std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
+    if (deviceIdUUIDMap_.find(deviceId) == deviceIdUUIDMap_.end()) {
+        DHLOGE("Can not find uuid, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
+        return id;
+    }
+
+    // current id is uuid
+    id = deviceIdUUIDMap_[deviceId];
+    if (onlineDeviceMap_.find(id) == onlineDeviceMap_.end()) {
+        DHLOGE("Can not find networkId, uuid: %{public}s", GetAnonyString(id).c_str());
+        return "";
+    }
+    return onlineDeviceMap_[id];
+}
+
+std::string DHContext::GetDeviceIdByDBGetPrefix(const std::string &prefix)
+{
+    std::string id = "";
+    if (prefix.empty()) {
+        return id;
+    }
+
+    if (prefix.find(RESOURCE_SEPARATOR) != std::string::npos) {
+        id = prefix.substr(0, prefix.find_first_of(RESOURCE_SEPARATOR));
+    } else {
+        id = prefix;
+    }
+
+    return id;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -103,7 +103,7 @@ void DbAdapterTest::SetUpTestCase(void)
     std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = std::make_shared<MockDBChangeListener>();
     g_dbAdapterPtr = std::make_shared<DBAdapter>(APP_ID, GLOBAL_CAPABILITY_ID, changeListener);
     if (g_dbAdapterPtr != nullptr) {
-        g_dbAdapterPtr->Init(true);
+        g_dbAdapterPtr->Init(true, DistributedKv::DataType::TYPE_DYNAMICAL);
     }
 }
 
@@ -137,7 +137,7 @@ void DbAdapterTest::TearDown()
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_000, TestSize.Level0)
 {
-    EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->Init(true));
+    EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->Init(true, DistributedKv::DataType::TYPE_DYNAMICAL));
 }
 
 /**
@@ -346,7 +346,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_015, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, ReInit_001, TestSize.Level0)
 {
-    g_dbAdapterPtr->GetKvStorePtr(true);
+    g_dbAdapterPtr->GetKvStorePtr(true, DistributedKv::DataType::TYPE_DYNAMICAL);
     EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->ReInit(true));
 }
 
@@ -358,7 +358,7 @@ HWTEST_F(DbAdapterTest, ReInit_001, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, RemoveDeviceData_001, TestSize.Level0)
 {
-    g_dbAdapterPtr->GetKvStorePtr(true);
+    g_dbAdapterPtr->GetKvStorePtr(true, DistributedKv::DataType::TYPE_DYNAMICAL);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL, g_dbAdapterPtr->RemoveDeviceData(TEST_DEV_ID_0));
 }
 

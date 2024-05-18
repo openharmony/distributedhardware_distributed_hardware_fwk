@@ -45,9 +45,16 @@ public:
     size_t GetOnlineCount();
     std::string GetNetworkIdByUUID(const std::string &uuid);
     std::string GetUUIDByNetworkId(const std::string &networkId);
-
     /* DeviceId is which is hashed by sha256 */
     std::string GetUUIDByDeviceId(const std::string &deviceId);
+    /**
+     * @brief Get the Network Id By Device Id object
+     *
+     * @param deviceId the device form uuid hash
+     * @return std::string the networkId for the deviceId
+     */
+    std::string GetNetworkIdByDeviceId(const std::string &deviceId);
+    std::string GetDeviceIdByDBGetPrefix(const std::string &prefix);
 
     class CommonEventHandler : public AppExecFwk::EventHandler {
         public:
