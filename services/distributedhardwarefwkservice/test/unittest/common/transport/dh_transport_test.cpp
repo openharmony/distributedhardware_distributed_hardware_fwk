@@ -27,8 +27,8 @@ namespace DistributedHardware {
 using namespace std;
 
 namespace {
-    int32_t SOCKETID = 1;
-    std::string NETWORKID = "networkId_test";
+    int32_t g_socketid = 1;
+    std::string g_networkid = "networkId_test";
 }
 class DhTransportTest : public testing::Test {
 public:
@@ -61,10 +61,10 @@ void DhTransportTest::TearDown()
 HWTEST_F(DhTransportTest, OnSocketClosed_001, TestSize.Level0)
 {
     ShutdownReason reason = ShutdownReason::SHUTDOWN_REASON_UNKNOWN;
-    dhTransportTest_->remoteDevSocketIds_[NETWORKID] = SOCKETID;
+    dhTransportTest_->remoteDevSocketIds_[g_networkid] = g_socketid;
     dhTransportTest_->OnSocketClosed(2, reason);
 
-    dhTransportTest_->OnSocketClosed(SOCKETID, reason);
+    dhTransportTest_->OnSocketClosed(g_socketid, reason);
     EXPECT_EQ(0, dhTransportTest_->remoteDevSocketIds_.size());
 }
 
@@ -75,27 +75,27 @@ HWTEST_F(DhTransportTest, OnBytesReceived_001, TestSize.Level0)
     uint32_t dataLen = 0;
     dhTransportTest_->OnBytesReceived(sessionId, data, dataLen);
 
-    dhTransportTest_->OnBytesReceived(SOCKETID, data, dataLen);
+    dhTransportTest_->OnBytesReceived(g_socketid, data, dataLen);
 
     char dataMsg[10] = "dataMsg";
     dhTransportTest_->OnBytesReceived(sessionId, dataMsg, dataLen);
 
-    dhTransportTest_->OnBytesReceived(SOCKETID, dataMsg, dataLen);
+    dhTransportTest_->OnBytesReceived(g_socketid, dataMsg, dataLen);
 
     dataLen = 1;
-    dhTransportTest_->OnBytesReceived(SOCKETID, data, dataLen);
+    dhTransportTest_->OnBytesReceived(g_socketid, data, dataLen);
 
     dhTransportTest_->OnBytesReceived(sessionId, data, dataLen);
     dhTransportTest_->OnBytesReceived(sessionId, dataMsg, dataLen);
     dataLen = 5 * 1024 * 1024;
     dhTransportTest_->OnBytesReceived(sessionId, data, dataLen);
     dhTransportTest_->OnBytesReceived(sessionId, dataMsg, dataLen);
-    dhTransportTest_->OnBytesReceived(SOCKETID, dataMsg, dataLen);
+    dhTransportTest_->OnBytesReceived(g_socketid, dataMsg, dataLen);
 
     dataLen = 1;
-    dhTransportTest_->OnBytesReceived(SOCKETID, dataMsg, dataLen);
-    dhTransportTest_->remoteDevSocketIds_[NETWORKID] = SOCKETID;
-    dhTransportTest_->OnBytesReceived(SOCKETID, dataMsg, dataLen);
+    dhTransportTest_->OnBytesReceived(g_socketid, dataMsg, dataLen);
+    dhTransportTest_->remoteDevSocketIds_[g_networkid] = g_socketid;
+    dhTransportTest_->OnBytesReceived(g_socketid, dataMsg, dataLen);
     EXPECT_EQ(1, dhTransportTest_->remoteDevSocketIds_.size());
 }
 
@@ -123,18 +123,18 @@ HWTEST_F(DhTransportTest, UnInit_001, TestSize.Level0)
 HWTEST_F(DhTransportTest, IsDeviceSessionOpened_001, TestSize.Level0)
 {
     dhTransportTest_->remoteDevSocketIds_.clear();
-    auto ret = dhTransportTest_->IsDeviceSessionOpened(NETWORKID, SOCKETID);
+    auto ret = dhTransportTest_->IsDeviceSessionOpened(g_networkid, g_socketid);
     EXPECT_EQ(false, ret);
 
-    dhTransportTest_->remoteDevSocketIds_[NETWORKID] = SOCKETID;
-    ret = dhTransportTest_->IsDeviceSessionOpened(NETWORKID, SOCKETID);
+    dhTransportTest_->remoteDevSocketIds_[g_networkid] = g_socketid;
+    ret = dhTransportTest_->IsDeviceSessionOpened(g_networkid, g_socketid);
     EXPECT_EQ(true, ret);
 }
 
 HWTEST_F(DhTransportTest, StartSocket_001, TestSize.Level0)
 {
-    dhTransportTest_->remoteDevSocketIds_[NETWORKID] = SOCKETID;
-    auto ret = dhTransportTest_->StartSocket(NETWORKID);
+    dhTransportTest_->remoteDevSocketIds_[g_networkid] = g_socketid;
+    auto ret = dhTransportTest_->StartSocket(g_networkid);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 
     std::string remoteNetworkId = "remoteNetworkId_test";
@@ -145,11 +145,11 @@ HWTEST_F(DhTransportTest, StartSocket_001, TestSize.Level0)
 HWTEST_F(DhTransportTest, StopSocket_001, TestSize.Level0)
 {
     dhTransportTest_->remoteDevSocketIds_.clear();
-    auto ret = dhTransportTest_->StopSocket(NETWORKID);
+    auto ret = dhTransportTest_->StopSocket(g_networkid);
     EXPECT_EQ(ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED, ret);
 
-    dhTransportTest_->remoteDevSocketIds_[NETWORKID] = SOCKETID;
-    ret = dhTransportTest_->StopSocket(NETWORKID);
+    dhTransportTest_->remoteDevSocketIds_[g_networkid] = g_socketid;
+    ret = dhTransportTest_->StopSocket(g_networkid);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
@@ -157,7 +157,7 @@ HWTEST_F(DhTransportTest, Send_001, TestSize.Level0)
 {
     std::string payload = "payload_test";
     dhTransportTest_->remoteDevSocketIds_.clear();
-    auto ret = dhTransportTest_->Send(NETWORKID, payload);
+    auto ret = dhTransportTest_->Send(g_networkid, payload);
     EXPECT_EQ(ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED, ret);
 }
 }
