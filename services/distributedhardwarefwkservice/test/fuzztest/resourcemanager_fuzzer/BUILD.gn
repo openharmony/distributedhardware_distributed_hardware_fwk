@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+# Copyright (c) 2022-2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -18,7 +18,7 @@ import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("ResourcemanagerFuzzTest") {
+ohos_fuzztest("ResourceManagerFuzzTest") {
   module_out_path = fuzz_test_output_path
   fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/resourcemanager_fuzzer"
 
@@ -46,7 +46,7 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"ResourcemanagerFuzzTest\"",
+    "DH_LOG_TAG=\"ResourceManagerFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
@@ -63,6 +63,6 @@ ohos_fuzztest("ResourcemanagerFuzzTest") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [ ":ResourcemanagerFuzzTest" ]
+  deps = [ ":ResourceManagerFuzzTest" ]
 }
 ###############################################################################
