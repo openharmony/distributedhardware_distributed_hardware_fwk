@@ -59,6 +59,7 @@ Note:If the text contains special characters, please escape them according to th
         <filefilterlist>
             <filefilter name="binaryFileTypePolicyFilter" desc="Filters for project binary file" >
                 <filteritem type="filepath" name="figures/distributedhardwarefwk_arch.png" desc="pictures for project readme document"/>
+				<filteritem type="filepath" name="application/entry/src/main/resources/base/media/.*.png" desc="pictures for DHardware_UI"/>
             </filefilter>
         </filefilterlist>
     </oatconfig>
