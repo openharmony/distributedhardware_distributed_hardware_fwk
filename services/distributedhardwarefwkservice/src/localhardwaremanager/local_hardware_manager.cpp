@@ -116,8 +116,7 @@ void LocalHardwareManager::QueryLocalHardware(const DHType dhType, IHardwareHand
             DHLOGE("Query hardwareHandler and obtain empty, dhType: %{public}#X", dhType);
             usleep(QUERY_INTERVAL_TIME);
         } else {
-            DHLOGI("Query hardwareHandler success, dhType: %{public}#X!, size: %{public}d",
-                dhType, static_cast<int32_t>(dhItems.size()));
+            DHLOGI("Query hardwareHandler success, dhType: %{public}#X!, size: %{public}zu", dhType, dhItems.size());
             /*
              * Failed to delete data when the device restarts or other exception situation.
              * So check and remove the non-exist local capabilityInfo.
@@ -141,8 +140,8 @@ void LocalHardwareManager::QueryMetaHardware(const DHType dhType, IHardwareHandl
             DHLOGE("Query metahardwareHandler and obtain empty, dhType: %{public}#X", dhType);
             usleep(QUERY_INTERVAL_TIME);
         } else {
-            DHLOGI("Query metahardwareHandler success, dhType: %{public}#X!, size: %{public}d",
-                dhType, static_cast<int32_t>(metaDhItems.size()));
+            DHLOGI("Query metahardwareHandler success, dhType: %{public}#X!, size: %{public}zu",
+                dhType, metaDhItems.size());
             metaDHItemsMap_[dhType] = metaDhItems;
             break;
         }
