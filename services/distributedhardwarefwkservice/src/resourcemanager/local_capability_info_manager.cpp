@@ -123,7 +123,6 @@ int32_t LocalCapabilityInfoManager::AddCapability(const std::vector<std::shared_
     std::vector<std::string> keys;
     std::vector<std::string> values;
     std::string key;
-    std::string data;
     for (auto &resInfo : resInfos) {
         if (resInfo == nullptr) {
             continue;

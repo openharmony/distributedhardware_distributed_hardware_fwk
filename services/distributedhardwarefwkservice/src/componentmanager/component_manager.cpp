@@ -719,14 +719,14 @@ int32_t ComponentManager::GetCapParam(const std::string &uuid, const std::string
     std::string deviceId = GetDeviceIdByUUID(uuid);
     auto ret = CapabilityInfoManager::GetInstance()->GetCapability(deviceId, dhId, capability);
     if ((ret == DH_FWK_SUCCESS) && (capability != nullptr)) {
-        DHLOGE("GetCapability success, deviceId: %{public}s, uuid: %{public}s, dhId: %{public}s, ret: %{public}d",
+        DHLOGI("GetCapability success, deviceId: %{public}s, uuid: %{public}s, dhId: %{public}s, ret: %{public}d",
             GetAnonyString(deviceId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
         return ret;
     }
 
     ret = LocalCapabilityInfoManager::GetInstance()->GetCapability(deviceId, dhId, capability);
     if ((ret == DH_FWK_SUCCESS) && (capability != nullptr)) {
-        DHLOGE("Local GetCaps success, deviceId: %{public}s, uuid: %{public}s, dhId: %{public}s, ret: %{public}d",
+        DHLOGI("Local GetCaps success, deviceId: %{public}s, uuid: %{public}s, dhId: %{public}s, ret: %{public}d",
             GetAnonyString(deviceId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
         return ret;
     }
@@ -739,7 +739,7 @@ int32_t ComponentManager::GetMetaParam(const std::string &uuid, const std::strin
 {
     auto ret = MetaInfoManager::GetInstance()->GetMetaCapInfo(GetDeviceIdByUUID(uuid), dhId, metaCapPtr);
     if ((ret == DH_FWK_SUCCESS) && (metaCapPtr != nullptr)) {
-        DHLOGE("GetCapability success, uuid =%{public}s, dhId = %{public}s, errCode = %{public}d",
+        DHLOGI("GetCapability success, uuid =%{public}s, dhId = %{public}s, errCode = %{public}d",
             GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);
         return ret;
     }
