@@ -55,7 +55,6 @@
         "bounds_checking_function",
         "power_manager",
         "openssl",
-        "json",
         "ffmpeg",
         "zlib"
       ]
