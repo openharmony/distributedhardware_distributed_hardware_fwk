@@ -62,14 +62,12 @@ namespace {
     constexpr int32_t DISABLE_RETRY_MAX_TIMES = 3;
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
     constexpr int32_t INVALID_SA_ID = -1;
-    constexpr int32_t MONITOR_TASK_DELAY_MS = 5 * 1000;
     constexpr int32_t UNINIT_COMPONENT_TIMEOUT_SECONDS = 2;
     const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
 }
 
 ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
     compMonitorPtr_(std::make_shared<ComponentMonitor>()), lowLatencyListener_(new(std::nothrow) LowLatencyListener),
-    monitorTaskTimer_(std::make_shared<MonitorTaskTimer>(MONITOR_TASK_TIMER_ID, MONITOR_TASK_DELAY_MS)),
     isUnInitTimeOut_(false), dhBizStates_({}), dhStateListener_(std::make_shared<DHStateListener>()),
     dataSyncTriggerListener_(std::make_shared<DHDataSyncTriggerListener>()),
     dhCommToolPtr_(std::make_shared<DHCommTool>()), needRefreshTaskParams_({})
@@ -102,7 +100,6 @@ int32_t ComponentManager::Init()
     }
 
     StartComponent();
-    StartTaskMonitor();
     RegisterDHStateListener();
     RegisterDataSyncTriggerListener();
     InitDHCommTool();
@@ -163,13 +160,6 @@ void ComponentManager::StartComponent()
     }
 }
 
-void ComponentManager::StartTaskMonitor()
-{
-    if (monitorTaskTimer_ != nullptr) {
-        monitorTaskTimer_->StartTimer();
-    }
-}
-
 void ComponentManager::RegisterDHStateListener()
 {
     for (const auto &item : compSource_) {
@@ -213,7 +203,6 @@ int32_t ComponentManager::UnInit()
     UnregisterDHStateListener();
     UnregisterDataSyncTriggerListener();
     UnInitDHCommTool();
-    StopTaskMonitor();
     StopPrivacy();
     UnInitSAMonitor();
     StopComponent();
@@ -279,14 +268,6 @@ void ComponentManager::UnInitDHCommTool()
     }
     DHLOGI("UnInit DH communication tool");
     dhCommToolPtr_->UnInit();
-}
-
-void ComponentManager::StopTaskMonitor()
-{
-    // stop monitor task timer
-    if (monitorTaskTimer_ != nullptr) {
-        monitorTaskTimer_->StopTimer();
-    }
 }
 
 void ComponentManager::StopComponent()
