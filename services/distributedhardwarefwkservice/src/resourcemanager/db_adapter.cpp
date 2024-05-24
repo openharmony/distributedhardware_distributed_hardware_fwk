@@ -98,7 +98,10 @@ DistributedKv::Status DBAdapter::GetLocalKvStorePtr()
 
 int32_t DBAdapter::Init(bool isAutoSync, DistributedKv::DataType dataType)
 {
-    DHLOGI("Init DB, storeId: %{public}s", storeId_.storeId.c_str());
+    this->isAutoSync = isAutoSync;
+    this->dataType = dataType;
+    DHLOGI("Init DB, storeId: %{public}s, dataType: %{public}d",
+        storeId_.storeId.c_str(), static_cast<int32_t>(dataType));
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     int32_t tryTimes = MAX_INIT_RETRY_TIMES;
     while (tryTimes > 0) {
@@ -123,14 +126,15 @@ int32_t DBAdapter::Init(bool isAutoSync, DistributedKv::DataType dataType)
         DHLOGE("Init KvStorePtr failed");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    this->isAutoSync = isAutoSync;
-    this->dataType = dataType;
     return DH_FWK_SUCCESS;
 }
 
 int32_t DBAdapter::InitLocal()
 {
-    DHLOGI("Init local DB, storeId: %{public}s", storeId_.storeId.c_str());
+    this->isAutoSync = false;
+    this->dataType = DistributedKv::DataType::TYPE_STATICS;
+    DHLOGI("Init local DB, storeId: %{public}s, dataType: %{public}d",
+        storeId_.storeId.c_str(), static_cast<int32_t>(this->dataType));
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     int32_t tryTimes = MAX_INIT_RETRY_TIMES;
     while (tryTimes > 0) {
@@ -148,7 +152,6 @@ int32_t DBAdapter::InitLocal()
         DHLOGE("Init KvStorePtr failed");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    this->isAutoSync = false;
     return DH_FWK_SUCCESS;
 }
 
@@ -229,7 +232,8 @@ void DBAdapter::TriggerDynamicQuery(const std::string &key)
 
 int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
 {
-    DHLOGI("Get data by key: %{public}s", GetAnonyString(key).c_str());
+    DHLOGI("Get data by key: %{public}s, storeId: %{public}s, dataType: %{public}d",
+        GetAnonyString(key).c_str(), storeId_.storeId.c_str(), static_cast<int32_t>(this->dataType));
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is null");
@@ -251,7 +255,8 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
 
 int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<std::string> &values)
 {
-    DHLOGI("Get data by key prefix: %{public}s", GetAnonyString(keyPrefix).c_str());
+    DHLOGI("Get data by key prefix: %{public}s, storeId: %{public}s, dataType: %{public}d",
+        GetAnonyString(keyPrefix).c_str(), storeId_.storeId.c_str(), static_cast<int32_t>(this->dataType));
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is null");
