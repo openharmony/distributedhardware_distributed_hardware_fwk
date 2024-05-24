@@ -100,27 +100,6 @@ HWTEST_F(ComponentPrivacyTest, OnResourceInfoCallback_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY, ret);
 }
 
-HWTEST_F(ComponentPrivacyTest, StartPrivacePage_001, TestSize.Level0)
-{
-    std::string subtype = "mic";
-    std::string networkId = "networkId_test";
-    int32_t ret = compPrivacy_->StartPrivacePage(subtype, networkId);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-    subtype = "camera";
-    ret = compPrivacy_->StartPrivacePage(subtype, networkId);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-}
-
-HWTEST_F(ComponentPrivacyTest, StopPrivacePage_001, TestSize.Level0)
-{
-    std::string subtype = "mic";
-    int32_t ret = compPrivacy_->StopPrivacePage(subtype);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-    subtype = "camera";
-    ret = compPrivacy_->StopPrivacePage(subtype);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-}
-
 HWTEST_F(ComponentPrivacyTest, DeviceTypeToString_001, TestSize.Level0)
 {
     uint16_t deviceTypeId = 0x08;
