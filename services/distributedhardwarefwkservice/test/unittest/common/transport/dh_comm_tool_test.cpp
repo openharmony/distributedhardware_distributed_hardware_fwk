@@ -84,5 +84,32 @@ HWTEST_F(DhCommToolTest, GetAndSendLocalFullCaps_001, TestSize.Level0)
     dhCommToolTest_->GetAndSendLocalFullCaps(reqNetworkId);
     EXPECT_NE(nullptr, dhCommToolTest_->dhTransportPtr_);
 }
+
+HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_001, TestSize.Level0)
+{
+    std::string remoteCaps = "";
+    FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps);
+    EXPECT_EQ("", ret.networkId);
+}
+
+HWTEST_F(DhCommToolTest, ProcessEvent_001, TestSize.Level0)
+{
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    DHCommTool::DHCommToolEventHandler eventHandler(runner, dhCommToolTest_);
+    AppExecFwk::InnerEvent::Pointer event = AppExecFwk::InnerEvent::Get(DH_COMM_REQ_FULL_CAPS, commMsg);
+    eventHandler.ProcessEvent(event);
+
+    std::vector<std::shared_ptr<CapabilityInfo>> caps;
+    std::string networkId = "";
+    FullCapsRsp capsRsp(networkId, caps);
+    eventHandler.ProcessFullCapsRsp(capsRsp, dhCommToolTest_);
+    EXPECT_EQ("", capsRsp.networkId);
+
+    networkId = "networkId_test";
+    FullCapsRsp capsRsp1(networkId, caps);
+    eventHandler.ProcessFullCapsRsp(capsRsp1, dhCommToolTest_);
+    EXPECT_EQ("networkId_test", capsRsp1.networkId);
+}
 }
 }

@@ -811,5 +811,30 @@ HWTEST_F(ComponentManagerTest, OnRegisterResult_001, TestSize.Level0)
     ret = compEnable->OnRegisterResult(networkId, dhId, status, data);
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_UNREGISTER_FAILED);
 }
+
+HWTEST_F(ComponentManagerTest, QueryBusinessState_001, TestSize.Level0)
+{
+    std::string networkId = "networkId_test";
+    std::string dhId = "dhId_test";
+    BusinessState state = BusinessState::UNKNOWN;
+    ComponentManager::GetInstance().UpdateBusinessState(networkId, dhId, state);
+
+    state = BusinessState::IDLE;
+    ComponentManager::GetInstance().needRefreshTaskParams_.clear();
+    ComponentManager::GetInstance().UpdateBusinessState(networkId, dhId, state);
+
+    TaskParam taskParam;
+    ComponentManager::GetInstance().needRefreshTaskParams_[{networkId, dhId}] = taskParam;
+    ComponentManager::GetInstance().UpdateBusinessState(networkId, dhId, state);
+
+    std::string uuid = "uuid_test";
+    ComponentManager::GetInstance().dhBizStates_[{uuid, dhId}] = state;
+    BusinessState ret = ComponentManager::GetInstance().QueryBusinessState(uuid, dhId);
+    EXPECT_EQ(BusinessState::IDLE, ret);
+
+    ComponentManager::GetInstance().dhBizStates_.clear();
+    ret = ComponentManager::GetInstance().QueryBusinessState(uuid, dhId);
+    EXPECT_EQ(BusinessState::UNKNOWN, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
