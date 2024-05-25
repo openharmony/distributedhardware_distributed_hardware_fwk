@@ -379,6 +379,10 @@ HWTEST_F(AvReceiverEngineTest, OnChannelEvent_003, testing::ext::TestSize.Level1
     receiver->receiverCallback_ = std::make_shared<ReceiverEngineCallback>();
     receiver->currentState_ = StateId::CH_CREATED;
     receiver->OnChannelEvent(event);
+    receiver->currentState_ = StateId::IDLE;
+    receiver->OnChannelEvent(event);
+    receiver->currentState_ = StateId::INITIALIZED;
+    receiver->OnChannelEvent(event);
 
     event.type = EventType::EVENT_DATA_RECEIVED;
     receiver->OnChannelEvent(event);
@@ -503,6 +507,26 @@ HWTEST_F(AvReceiverEngineTest, HandleOutputBuffer_001, testing::ext::TestSize.Le
     receiver->receiverCallback_ = std::make_shared<ReceiverEngineCallback>();
     int32_t ret = receiver->HandleOutputBuffer(buffer);
     EXPECT_EQ(ERR_DH_AVT_OUTPUT_DATA_FAILED, ret);
+}
+
+HWTEST_F(AvReceiverEngineTest, OnEvent_001, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+
+    OHOS::Media::Event event;
+    event.srcFilter = "filter";
+    event.type = OHOS::Media::EventType::EVENT_READY;
+    event.param = PluginEventType::EVENT_CHANNEL_OPEN_FAIL;
+    receiver->currentState_ = StateId::INITIALIZED;
+
+    receiver->OnEvent(event);
+    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+
+    receiver->receiverCallback_ = std::make_shared<ReceiverEngineCallback>();
+    receiver->OnEvent(event);
+    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

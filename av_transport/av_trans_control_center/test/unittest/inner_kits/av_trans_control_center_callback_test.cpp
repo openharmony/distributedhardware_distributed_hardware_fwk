@@ -78,6 +78,8 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_parameter_003, TestSize.Level0)
     std::string value;
     int32_t ret = callBack_->SetParameter(tag, value);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
+    callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();
+    EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 
 /**
@@ -90,6 +92,8 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_shared_memory_001, TestSize.Level
 {
     AVTransSharedMemory memory;
     int32_t ret = callBack_->SetSharedMemory(memory);
+    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+    callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 
@@ -106,7 +110,11 @@ HWTEST_F(AVTransControlCenterCallbackTest, notify_001, TestSize.Level0)
     int32_t ret = callBack_->Notify(event);
     std::shared_ptr<IAVSenderEngine> sender = std::shared_ptr<SenderEngineTest>();
     callBack_->SetSenderEngine(sender);
+    sender = nullptr;
+    callBack_->SetSenderEngine(sender);
     std::shared_ptr<IAVReceiverEngine> receiver = std::shared_ptr<ReceiverEngineTest>();
+    callBack_->SetReceiverEngine(receiver);
+    receiver = nullptr;
     callBack_->SetReceiverEngine(receiver);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
