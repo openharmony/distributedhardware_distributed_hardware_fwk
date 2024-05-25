@@ -61,6 +61,10 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Prepare_002, TestSize.Level0)
     plugin->state_ = State::INITIALIZED;
     Status ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_UNKNOWN, ret);
+
+    plugin->bufferPopTask_ = std::make_shared<Media::OSAL::Task>("audioBufferQueuePopThread");
+    ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_UNKNOWN, ret);
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, GetParameter_001, TestSize.Level1)
@@ -105,6 +109,11 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Stop_001, TestSize.Level1)
     auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
     Status ret = plugin->Stop();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+
+    plugin->state_ = State::RUNNING;
+    plugin->bufferPopTask_ = std::make_shared<Media::OSAL::Task>("audioBufferQueuePopThread");
+    ret = plugin->Stop();
+    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, PushData_001, testing::ext::TestSize.Level1)
@@ -125,6 +134,8 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, PushData_001, testing::ext::TestSize.Lev
     auto bufData = buffer->WrapMemory(buff.data(), bufferSize, bufferSize);
     ret = plugin->PushData(inPort, buffer, offset);
     EXPECT_EQ(Status::OK, ret);
+
+    plugin->SendDataToSoftbus(buffer);
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, SetParameter_001, testing::ext::TestSize.Level1)
@@ -132,6 +143,9 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, SetParameter_001, testing::ext::TestSize
     auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
     std::string value = "dsoftbus_output_audio_plugin_test";
     Status ret = plugin->SetParameter(Tag::MEDIA_DESCRIPTION, value);
+    EXPECT_EQ(Status::OK, ret);
+
+    ret = plugin->SetParameter(Tag::SECTION_USER_SPECIFIC_START, value);
     EXPECT_EQ(Status::OK, ret);
 }
 
@@ -150,7 +164,12 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, SetCallback_001, testing::ext::TestSize.
     plugin->OnChannelEvent(event);
     event.type = EventType::EVENT_CHANNEL_CLOSED;
     plugin->OnChannelEvent(event);
+    event.type = EventType::EVENT_START_SUCCESS;
+    plugin->OnChannelEvent(event);
     EXPECT_EQ(Status::OK, ret);
+
+    plugin->eventsCb_ = nullptr;
+    plugin->OnChannelEvent(event);
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, OpenSoftbusChannel_002, testing::ext::TestSize.Level1)
@@ -170,6 +189,9 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, OpenSoftbusChannel_002, testing::ext::Te
     plugin->peerDevId_ = "peerDevId";
     ret = plugin->OpenSoftbusChannel();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->sessionName_ = "";
+    plugin->CloseSoftbusChannel();
 }
 
 HWTEST_F(DsoftbusOutputAudioPluginTest, SetDataCallback_001, testing::ext::TestSize.Level1)
