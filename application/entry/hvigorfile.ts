@@ -12,17 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-{
-  "app": {
-    "bundleName": "com.ohos.dhardwareui",
-    "vendor": "example",
-    "versionCode": 1000002,
-    "versionName": "1.0.2",
-    "icon": "$media:app_icon",
-    "label": "$string:app_name",
-    "minAPIVersion": 11,
-    "targetAPIVersion": 11,
-    "apiReleaseType": "Beta1",
-    "debug": false
-  }
-}
+
+import { hapTasks } from '@ohos/hvigor-ohos-plugin';
+
+export default {
+  system: hapTasks, /* Built-in plugin of Hvigor. It cannot be modified. */
+  plugins:[] /* Custom plugin to extend the functionality of Hvigor. */
+};

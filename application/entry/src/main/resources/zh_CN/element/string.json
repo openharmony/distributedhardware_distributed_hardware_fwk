@@ -1,60 +1,60 @@
 {
-  "string": [
-    {
-      "name": "module_desc",
-      "value": "模块描述"
-    },
-    {
-      "name": "EntryAbility_desc",
-      "value": "description"
-    },
-    {
-      "name": "EntryAbility_label",
-      "value": "分布式硬件控制UI"
-    },
-    {
-      "name": "connected_to",
-      "value": "已连接至%1$s"
-    },
-    {
-      "name": "stop_device",
-      "value": "您可以断开连接以停止使用此设备的%1$s"
-    },
-    {
-      "name": "pause",
-      "value": "暂停"
-    },
-    {
-      "name": "continue",
-      "value": "继续"
-    },
-    {
-      "name": "DHTypeName_Camera",
-      "value": "相机"
-    },
-    {
-      "name": "DHTypeName_Mic",
-      "value": "麦克风"
-    },
-    {
-      "name": "disconnect",
-      "value": "断开连接"
-    },
-    {
-      "name": "ContinueSwitchAbility_desc",
-      "value": "description"
-    },
-    {
-      "name": "ContinueSwitchAbility_label",
-      "value": "label"
-    },
-    {
-      "name": "continue_title",
-      "value": "接续"
-    },
-    {
-      "name": "continue_desc",
-      "value": "在一台设备上进行浏览或编辑，然后可在附近另一台登录相同华为账号的设备上继续。此功能需双方设备开启“接续”，WLAN和蓝牙。"
-    }
-  ]
+    "string":[
+        {
+            "name":"module_desc",
+            "value":"模块描述"
+        },
+        {
+            "name":"EntryAbility_desc",
+            "value":"description"
+        },
+        {
+            "name":"EntryAbility_label",
+            "value":"分布式硬件控制UI"
+        },
+        {
+            "name":"connected_to",
+            "value":"已连接至%1$s"
+        },
+        {
+            "name":"stop_device",
+            "value":"您可以断开连接以停止使用此设备的%1$s"
+        },
+        {
+            "name":"pause",
+            "value":"暂停"
+        },
+        {
+            "name":"continue",
+            "value":"继续"
+        },
+        {
+            "name":"DHTypeName_Camera",
+            "value":"相机"
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"麦克风"
+        },
+        {
+            "name":"disconnect",
+            "value":"断开连接"
+        },
+        {
+            "name":"ContinueSwitchAbility_desc",
+            "value":"description"
+        },
+        {
+            "name":"ContinueSwitchAbility_label",
+            "value":"label"
+        },
+        {
+            "name":"continue_title",
+            "value":"接续"
+        },
+        {
+            "name":"continue_desc",
+            "value":"在一台设备上进行浏览或编辑，然后可在附近另一台登录相同华为帐号的设备上继续。此功能需双方设备开启“接续”、Wi-Fi 和蓝牙。"
+        }
+    ]
 }

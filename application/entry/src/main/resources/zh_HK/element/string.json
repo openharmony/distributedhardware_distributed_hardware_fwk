@@ -27,6 +27,14 @@
         {
             "name":"continue",
             "value":"繼續"
+        },
+        {
+            "name":"continue_desc",
+            "value":"在一部裝置上進行瀏覽或編輯，然後可在附近另一部登入相同華為帳戶的裝置上繼續。此功能需雙方裝置啟用「接續」、Wi-Fi 和藍牙。"
+        },
+        {
+            "name":"continue_title",
+            "value":"接續"
         }
     ]
 }
