@@ -186,7 +186,7 @@ HWTEST_F(DaudioOutputTest, PushData_001, testing::ext::TestSize.Level1)
     ret = plugin->PushData(inPort, buffer, offset);
     EXPECT_EQ(Status::OK, ret);
 
-    for(int32_t i = 0; i < bufferSize; i++) {
+    for (int32_t i = 0; i < bufferSize; i++) {
         plugin->outputBuffer_.push(buffer);
     }
     ret = plugin->PushData(inPort, buffer, offset);

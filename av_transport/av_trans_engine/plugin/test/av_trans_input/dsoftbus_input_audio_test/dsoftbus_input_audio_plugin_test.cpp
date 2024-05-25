@@ -61,7 +61,7 @@ HWTEST_F(DsoftbusInputAudioPluginTest, Prepare_002, TestSize.Level1)
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 
     plugin->isrunning_ = false;
-    ret = plugin->HandleData();
+    plugin->HandleData();
 }
 
 HWTEST_F(DsoftbusInputAudioPluginTest, Start_001, TestSize.Level1)

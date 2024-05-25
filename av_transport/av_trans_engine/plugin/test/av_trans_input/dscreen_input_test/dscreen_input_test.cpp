@@ -37,7 +37,7 @@ HWTEST_F(DscreenInputTest, SetParameter_001, TestSize.Level0)
     Status ret = plugin->SetParameter(Tag::USER_SHARED_MEMORY_FD, value);
     EXPECT_EQ(Status::OK, ret);
 
-    Status ret = plugin->SetParameter(Tag::USER_TIME_SYNC_RESULT, value);
+    ret = plugin->SetParameter(Tag::USER_TIME_SYNC_RESULT, value);
     EXPECT_EQ(Status::OK, ret);
 }
 
