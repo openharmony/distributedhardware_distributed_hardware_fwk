@@ -30,7 +30,7 @@ ohos_hap("DHardware_UI") {
     certificate_profile = "${certificate_profile_path}"
     key_alias = "DHardwareUI Release"
     private_key_path = "DHardwareUI Release"
-    compatible_version = "11"
+    compatible_version = "12"
   }
 }
 
