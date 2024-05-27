@@ -896,6 +896,13 @@ HWTEST_F(ResourceManagerTest, UnInit_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_UNINIT_DB_FAILED, ret);
 }
 
+HWTEST_F(ResourceManagerTest, UnInit_002, TestSize.Level0)
+{
+    LocalCapabilityInfoManager::GetInstance()->Init();
+    auto ret = LocalCapabilityInfoManager::GetInstance()->UnInit();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
 HWTEST_F(ResourceManagerTest, SyncDeviceInfoFromDB_001, TestSize.Level0)
 {
     std::string deviceId = "deviceId_test";
@@ -980,6 +987,26 @@ HWTEST_F(ResourceManagerTest, GetDataByKeyPrefix_002, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
 }
 
+HWTEST_F(ResourceManagerTest, UnInit_003, TestSize.Level0)
+{
+    MetaInfoManager::GetInstance()->Init();
+    auto ret = MetaInfoManager::GetInstance()->UnInit();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(ResourceManagerTest, AddMetaCapInfos_001, TestSize.Level0)
+{
+    std::string deviceId = "deviceId_test";
+    std::string dhId = "dhId_test";
+    MetaInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    std::shared_ptr<MetaCapabilityInfo> dhMetaCapInfo = std::make_shared<MetaCapabilityInfo>(
+        dhId, deviceId, "devName_test", 14, DHType::CAMERA, "attrs_test", "subtype", "1.0");
+    std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
+    metaCapInfos.push_back(dhMetaCapInfo);
+    auto ret = MetaInfoManager::GetInstance()->AddMetaCapInfos(metaCapInfos);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
 HWTEST_F(ResourceManagerTest, SyncMetaInfoFromDB_001, TestSize.Level0)
 {
     std::string deviceId = "deviceId_test";
@@ -1049,6 +1076,10 @@ HWTEST_F(ResourceManagerTest, GetMetaCapInfo_001, TestSize.Level0)
     std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
     MetaInfoManager::GetInstance()->GetMetaCapInfosByDeviceId(deviceId, metaCapInfos);
     MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
+
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = dhMetaCapInfo;
+    MetaInfoManager::GetInstance()->GetMetaCapInfosByDeviceId(deviceId, metaCapInfos);
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
 }
 
 HWTEST_F(ResourceManagerTest, GetMetaCapByValue_001, TestSize.Level0)
@@ -1056,6 +1087,13 @@ HWTEST_F(ResourceManagerTest, GetMetaCapByValue_001, TestSize.Level0)
     std::string value = "";
     std::shared_ptr<MetaCapabilityInfo> metaCapPtr = nullptr;
     auto ret = MetaInfoManager::GetInstance()->GetMetaCapByValue(value, metaCapPtr);
+    EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
+
+    std::string deviceId = "deviceId_test";
+    std::string dhId = "dhId_test";
+    metaCapPtr = std::make_shared<MetaCapabilityInfo>(
+        dhId, deviceId, "devName_test", 14, DHType::CAMERA, "attrs_test", "subtype", "1.0");
+    ret = MetaInfoManager::GetInstance()->GetMetaCapByValue(value, metaCapPtr);
     EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
 }
 
@@ -1067,6 +1105,10 @@ HWTEST_F(ResourceManagerTest, GetEntriesByKeys_002, TestSize.Level0)
 
     MetaInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
     keys.push_back("key_test");
+    ret = MetaInfoManager::GetInstance()->GetEntriesByKeys(keys);
+    EXPECT_EQ(0, ret.size());
+
+    MetaInfoManager::GetInstance()->Init();
     ret = MetaInfoManager::GetInstance()->GetEntriesByKeys(keys);
     EXPECT_EQ(0, ret.size());
 }

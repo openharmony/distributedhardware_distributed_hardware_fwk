@@ -47,6 +47,14 @@ ohos_unittest("DistributedHardwareServiceTest") {
     "//third_party/googletest:gtest_main",
   ]
 
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
+
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"DistributedHardwareServiceTest\"",

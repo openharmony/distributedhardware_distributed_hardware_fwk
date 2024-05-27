@@ -20,16 +20,13 @@
 #include <vector>
 
 #include "constants.h"
+#include "cJSON.h"
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#define protected public
-#define private public
 #include "distributed_hardware_service.h"
 #include "distributed_hardware_manager.h"
 #include "task_board.h"
-#undef private
-#undef protected
 #include "mock_publisher_listener.h"
 
 using namespace testing::ext;
@@ -261,6 +258,47 @@ HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_002, TestSize.L
     std::string networkId = "111";
     auto ret = service.StopDistributedHardware(DHType::UNKNOWN, networkId);
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+}
+
+HWTEST_F(DistributedHardwareServiceTest, DoBusinessInit_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    auto ret = service.DoBusinessInit();
+    EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_001, TestSize.Level0)
+{
+    std::string targetKey = "";
+    std::string attrs = "";
+    DistributedHardwareService service(ASID, true);
+    auto ret = service.QueryDhSysSpec(targetKey, attrs);
+    EXPECT_EQ(0, ret.length());
+}
+
+HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_002, TestSize.Level0)
+{
+    std::string targetKey = "histmAudEnc";
+    int32_t target = 100;
+    cJSON *attrJson = cJSON_CreateObject();
+    cJSON_AddNumberToObject(attrJson, targetKey.c_str(), target);
+    char* cjson = cJSON_PrintUnformatted(attrJson);
+    std::string attrs(cjson);
+    DistributedHardwareService service(ASID, true);
+    auto ret = service.QueryDhSysSpec(targetKey, attrs);
+    EXPECT_EQ(0, ret.length());
+    cJSON_free(cjson);
+    cJSON_Delete(attrJson);
+
+    cJSON *attrJson1 = cJSON_CreateObject();
+    std::string targetKeyValue = "targetKeyValue";
+    cJSON_AddStringToObject(attrJson1, targetKey.c_str(), targetKeyValue.c_str());
+    char* cjson1 = cJSON_PrintUnformatted(attrJson1);
+    std::string attrs1(cjson1);
+    ret = service.QueryDhSysSpec(targetKey, attrs1);
+    EXPECT_NE(0, ret.length());
+    cJSON_free(cjson1);
+    cJSON_Delete(attrJson1);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
