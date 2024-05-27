@@ -18,6 +18,7 @@ import settings from '@ohos.settings';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import deviceInfo from '@ohos.deviceInfo';
 import { BusinessError } from '@ohos.base';
+import { EditableLeftIconType, EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
@@ -121,6 +122,20 @@ struct ContinueSwitch {
 
   build() {
     Navigation() {
+      Column(){
+        EditableTitleBar({
+          leftIconStyle:EditableLeftIconType.Back,
+          title:$r("app.string.continue_title"),
+          isSaveIconRequired:false,
+          onCancel:()=>{
+            if (this.continueSession) {
+              this.continueSession.sendData({ 'action': 'pop' })
+            } else {
+              console.error(TAG + 'continueSession is undefined');
+            }
+          }
+        })
+      }
       Row() {
         Column() {
           Image($r('app.media.continueImg'))
@@ -145,6 +160,7 @@ struct ContinueSwitch {
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
 
               Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
+                .hoverEffect(HoverEffect.None)
                 .onChange((isOn: boolean) => {
                   console.log(TAG + 'isOn:' + isOn);
                   this.isSwitchOn = isOn;
@@ -177,7 +193,7 @@ struct ContinueSwitch {
       .alignItems(VerticalAlign.Top)
       .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
     }
-    .hideTitleBar(false)
+    .hideTitleBar(true)
     .title(this.NavigationTitle)
     .titleMode(NavigationTitleMode.Mini)
     .mode(NavigationMode.Stack)
