@@ -16,11 +16,13 @@
 #include <algorithm>
 
 #include "anonymous_string.h"
+#include "cJSON.h"
 #include "constants.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "publisher.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -31,6 +33,7 @@ DHContext::DHContext()
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
     eventHandler_ = std::make_shared<DHContext::CommonEventHandler>(runner);
     RegisterPowerStateLinstener();
+    RegisDHFWKIsomerismListener();
 }
 
 DHContext::~DHContext()
@@ -206,6 +209,88 @@ std::string DHContext::GetDeviceIdByDBGetPrefix(const std::string &prefix)
     }
 
     return id;
+}
+
+void DHContext::RegisDHFWKIsomerismListener()
+{
+    sptr<IPublisherListener> dhFwkIsomerismListener(new (std::nothrow) DHFWKIsomerismListener());
+    if (dhFwkIsomerismListener == nullptr) {
+        DHLOGE("dhFwkIsomerismListener Create Error");
+        return;
+    }
+    Publisher::GetInstance().RegisterListener(DHTopic::TOPIC_ISOMERISM, dhFwkIsomerismListener);
+}
+
+void DHContext::DHFWKIsomerismListener::OnMessage(const DHTopic topic, const std::string &message)
+{
+    DHLOGI("OnMessage topic: %{public}u", static_cast<uint32_t>(topic));
+    if (topic != DHTopic::TOPIC_ISOMERISM) {
+        DHLOGE("OnMessage topic is wrong");
+        return;
+    }
+    if (message.length() > MAX_MESSAGE_LEN) {
+        DHLOGE("OnMessage error, message too large");
+        return;
+    }
+    cJSON *messageJson = cJSON_Parse(message.c_str());
+    if (messageJson == nullptr) {
+        DHLOGE("OnMessage error, parse failed");
+        return;
+    }
+    cJSON *eventObj = cJSON_GetObjectItemCaseSensitive(messageJson, ISOMERISM_EVENT.c_str());
+    if (eventObj == nullptr || !IsString(messageJson, ISOMERISM_EVENT)) {
+        cJSON_Delete(messageJson);
+        DHLOGE("OnMessage event invaild");
+        return;
+    }
+    cJSON *devObj = cJSON_GetObjectItemCaseSensitive(messageJson, DEV_ID.c_str());
+    if (devObj == nullptr || !IsString(messageJson, DEV_ID)) {
+        cJSON_Delete(messageJson);
+        DHLOGE("OnMessage deviceId invaild");
+        return;
+    }
+    std::string event = eventObj->valuestring;
+    std::string deviceId = devObj->valuestring;
+    cJSON_Delete(messageJson);
+    if (event == ISOMERISM_CONNECT) {
+        DHContext::GetInstance().AddConnectDev(deviceId);
+    } else if (event == ISOMERISM_DISCONNECT) {
+        DHContext::GetInstance().DelConnectDev(deviceId);
+    }
+    DHLOGI("OnMessage end");
+}
+
+void DHContext::AddConnectDev(const std::string &deviceId)
+{
+    std::shared_lock<std::shared_mutex> lock(connectDevMutex_);
+    connectedDevIds_.insert(deviceId);
+}
+
+void DHContext::DelConnectDev(const std::string &deviceId)
+{
+    std::shared_lock<std::shared_mutex> lock(connectDevMutex_);
+    connectedDevIds_.erase(deviceId);
+}
+
+size_t DHContext::GetConnectCount()
+{
+    std::shared_lock<std::shared_mutex> lock(connectDevMutex_);
+    return connectedDevIds_.size();
+}
+
+DHContext::DHFWKIsomerismListener::DHFWKIsomerismListener()
+{
+    DHLOGI("DHFWKIsomerismListener ctor");
+}
+
+DHContext::DHFWKIsomerismListener::~DHFWKIsomerismListener()
+{
+    DHLOGI("DHFWKIsomerismListener dtor");
+}
+
+sptr<IRemoteObject> DHContext::DHFWKIsomerismListener::AsObject()
+{
+    return nullptr;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

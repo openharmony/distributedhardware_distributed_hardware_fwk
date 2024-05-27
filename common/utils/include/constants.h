@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,6 +82,10 @@ namespace DistributedHardware {
     const uint32_t EVENT_CAPABILITY_INFO_DB_RECOVER = 201;
     const uint32_t EVENT_DATA_SYNC_MANUAL = 301;
     const uint32_t EVENT_META_INFO_DB_RECOVER = 401;
+
+    const std::string ISOMERISM_EVENT = "isomerism_event";
+    const std::string ISOMERISM_CONNECT = "isomerism_connect";
+    const std::string ISOMERISM_DISCONNECT = "isomerism_disconnect";
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,8 @@ Publisher::Publisher() : publisherItems_({
         { DHTopic::TOPIC_DEV_OFFLINE, std::make_shared<PublisherItem>(DHTopic::TOPIC_DEV_OFFLINE) },
         { DHTopic::TOPIC_LOW_LATENCY, std::make_shared<PublisherItem>(DHTopic::TOPIC_LOW_LATENCY) },
         { DHTopic::TOPIC_INIT_DHMS_READY, std::make_shared<PublisherItem>(DHTopic::TOPIC_INIT_DHMS_READY) },
-        { DHTopic::TOPIC_PHY_DEV_PLUGIN, std::make_shared<PublisherItem>(DHTopic::TOPIC_PHY_DEV_PLUGIN) }
+        { DHTopic::TOPIC_PHY_DEV_PLUGIN, std::make_shared<PublisherItem>(DHTopic::TOPIC_PHY_DEV_PLUGIN) },
+        { DHTopic::TOPIC_ISOMERISM, std::make_shared<PublisherItem>(DHTopic::TOPIC_ISOMERISM) }
     })
 {
 }

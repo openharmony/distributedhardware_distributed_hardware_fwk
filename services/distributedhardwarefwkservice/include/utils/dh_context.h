@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,7 @@
 
 #include "device_type.h"
 #include "event_handler.h"
+#include "ipublisher_listener.h"
 #include "single_instance.h"
 
 namespace OHOS {
@@ -68,6 +69,9 @@ public:
 
     bool IsSleeping();
     void SetIsSleeping(bool isSleeping);
+    size_t GetConnectCount();
+    void AddConnectDev(const std::string &deviceId);
+    void DelConnectDev(const std::string &deviceId);
 
 private:
     class DHFWKPowerStateCallback : public OHOS::PowerMgr::PowerStateCallbackStub {
@@ -76,6 +80,15 @@ private:
     };
     void RegisterPowerStateLinstener();
 
+private:
+    class DHFWKIsomerismListener : public IPublisherListener {
+    public:
+        DHFWKIsomerismListener();
+        ~DHFWKIsomerismListener() override;
+        void OnMessage(const DHTopic topic, const std::string &message) override;
+        sptr<IRemoteObject> AsObject() override;
+    };
+    void RegisDHFWKIsomerismListener();
 private:
     DeviceInfo devInfo_ { "", "", "", "", 0 };
     std::mutex devMutex_;
@@ -90,7 +103,11 @@ private:
     std::shared_ptr<DHContext::CommonEventHandler> eventHandler_;
     /* true for system in sleeping, false for NOT in sleeping */
     std::atomic<bool> isSleeping_ = false;
-};
+
+    std::unordered_set<std::string> connectedDevIds_;
+
+    std::shared_mutex connectDevMutex_;
+    };
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
