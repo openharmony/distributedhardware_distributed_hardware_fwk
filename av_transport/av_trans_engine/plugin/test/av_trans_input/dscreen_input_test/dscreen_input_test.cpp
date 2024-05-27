@@ -36,6 +36,9 @@ HWTEST_F(DscreenInputTest, SetParameter_001, TestSize.Level0)
     std::string value = "dscreen_input_test";
     Status ret = plugin->SetParameter(Tag::USER_SHARED_MEMORY_FD, value);
     EXPECT_EQ(Status::OK, ret);
+
+    ret = plugin->SetParameter(Tag::USER_TIME_SYNC_RESULT, value);
+    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(DscreenInputTest, GetParameter_001, TestSize.Level0)
@@ -66,6 +69,10 @@ HWTEST_F(DscreenInputTest, PushData_001, TestSize.Level0)
     buffer->GetMemory()->Write((uint8_t*)"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 10);
     ret = plugin->PushData("", buffer, 0);
     EXPECT_EQ(Status::OK, ret);
+
+    buffer->ChangeBufferMetaType(BufferMetaType::AUDIO);
+    ret = plugin->PushData("", buffer, 0);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

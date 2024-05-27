@@ -56,6 +56,11 @@ HWTEST_F(DaudioOutputTest, Prepare_001, TestSize.Level0)
     plugin->state_ = State::PREPARED;
     Status ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+
+    uint32_t channels = 1;
+    uint32_t sampleRate = 1;
+    uint32_t channelLayout = 1;
+    plugin->RampleInit(channels, sampleRate, channelLayout);
 }
 
 HWTEST_F(DaudioOutputTest, Prepare_002, TestSize.Level0)
@@ -82,6 +87,11 @@ HWTEST_F(DaudioOutputTest, Prepare_002, TestSize.Level0)
     plugin->SetParameter(Tag::AUDIO_CHANNEL_LAYOUT, value);
     ret = plugin->Prepare();
     EXPECT_EQ(Status::OK, ret);
+
+    value = 2;
+    plugin->SetParameter(Tag::AUDIO_CHANNEL_LAYOUT, value);
+    ret = plugin->Prepare();
+    EXPECT_NE(Status::OK, ret);
 }
 
 HWTEST_F(DaudioOutputTest, Prepare_003, TestSize.Level0)
@@ -175,6 +185,15 @@ HWTEST_F(DaudioOutputTest, PushData_001, testing::ext::TestSize.Level1)
     auto bufData = buffer->WrapMemory(buff.data(), bufferSize, bufferSize);
     ret = plugin->PushData(inPort, buffer, offset);
     EXPECT_EQ(Status::OK, ret);
+
+    for (int32_t i = 0; i < bufferSize; i++) {
+        plugin->outputBuffer_.push(buffer);
+    }
+    ret = plugin->PushData(inPort, buffer, offset);
+    EXPECT_EQ(Status::OK, ret);
+
+    plugin->isrunning_ = false;
+    plugin->HandleData();
 }
 
 HWTEST_F(DaudioOutputTest, SetDataCallback_001, testing::ext::TestSize.Level1)
@@ -192,6 +211,28 @@ HWTEST_F(DaudioOutputTest, WriteMasterClockToMemory_001, testing::ext::TestSize.
     Status ret = plugin->SetParameter(Tag::USER_AV_SYNC_GROUP_INFO, value);
     std::shared_ptr<AVBuffer> buffer = std::make_shared<AVBuffer>();
     plugin->WriteMasterClockToMemory(buffer);
+
+    plugin->sharedMemory_.fd = 1;
+    plugin->WriteMasterClockToMemory(buffer);
+
+    plugin->sharedMemory_.fd = 0;
+    plugin->sharedMemory_.size = 1;
+    plugin->WriteMasterClockToMemory(buffer);
+
+    plugin->sharedMemory_.fd = 1;
+    plugin->sharedMemory_.size = 1;
+    plugin->WriteMasterClockToMemory(buffer);
+
+    plugin->sharedMemory_.fd = 0;
+    plugin->sharedMemory_.size = 0;
+    plugin->sharedMemory_.name = "sharedMemory_";
+    plugin->WriteMasterClockToMemory(buffer);
+
+    plugin->sharedMemory_.fd = 1;
+    plugin->sharedMemory_.size = 1;
+    plugin->sharedMemory_.name = "sharedMemory_";
+    plugin->WriteMasterClockToMemory(buffer);
+
     buffer = nullptr;
     plugin->WriteMasterClockToMemory(buffer);
     EXPECT_EQ(Status::OK, ret);

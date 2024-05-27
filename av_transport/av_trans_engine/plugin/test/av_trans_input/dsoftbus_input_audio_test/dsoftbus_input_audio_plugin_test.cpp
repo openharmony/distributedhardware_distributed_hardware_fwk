@@ -55,6 +55,13 @@ HWTEST_F(DsoftbusInputAudioPluginTest, Prepare_002, TestSize.Level1)
     plugin->ownerName_ = "ohos.dhardware.dcamera";
     ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->peerDevId_ = "peerDevId_";
+    ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->isrunning_ = false;
+    plugin->HandleData();
 }
 
 HWTEST_F(DsoftbusInputAudioPluginTest, Start_001, TestSize.Level1)
@@ -96,6 +103,9 @@ HWTEST_F(DsoftbusInputAudioPluginTest, SetParameter_001, TestSize.Level0)
     plugin->Init();
     std::string value = "dsoftbus_input_test";
     Status ret = plugin->SetParameter(Tag::MEDIA_DESCRIPTION, value);
+    EXPECT_EQ(Status::OK, ret);
+
+    ret = plugin->SetParameter(Tag::SECTION_USER_SPECIFIC_START, value);
     EXPECT_EQ(Status::OK, ret);
 }
 

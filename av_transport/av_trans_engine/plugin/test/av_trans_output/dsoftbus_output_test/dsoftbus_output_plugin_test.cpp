@@ -66,6 +66,11 @@ HWTEST_F(DsoftbusOutputPluginTest, Prepare_002, TestSize.Level1)
     plugin->ownerName_ = "";
     ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+
+    plugin->ownerName_ = "ohos_dhardware.dcamera";
+    plugin->bufferPopTask_ = std::make_shared<Media::OSAL::Task>("videoBufferQueuePopThread");
+    ret = plugin->Prepare();
+    EXPECT_NE(Status::OK, ret);
 }
 
 HWTEST_F(DsoftbusOutputPluginTest, GetParameter_001, TestSize.Level1)
@@ -103,6 +108,10 @@ HWTEST_F(DsoftbusOutputPluginTest, Start_002, TestSize.Level1)
     plugin->peerDevId_ = "peerDevId";
     ret = plugin->Start();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->ownerName_ = "ohos_dhardware.dcamera";
+    ret = plugin->Start();
+    EXPECT_NE(Status::OK, ret);
 }
 
 HWTEST_F(DsoftbusOutputPluginTest, Stop_001, TestSize.Level1)
@@ -120,6 +129,15 @@ HWTEST_F(DsoftbusOutputPluginTest, PushData_001, testing::ext::TestSize.Level1)
     int64_t offset = 1;
     Status ret = plugin->PushData(inPort, buffer, offset);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+    buffer = std::make_shared<Plugin::Buffer>(BufferMetaType::AUDIO);
+    plugin->reDumpFlag_ = true;
+    plugin->dumpFlag_ = false;
+    ret = plugin->PushData(inPort, buffer, offset);
+    EXPECT_NE(Status::OK, ret);
+    plugin->dumpFlag_ = false;
+    ret = plugin->PushData(inPort, buffer, offset);
+    EXPECT_NE(Status::OK, ret);
+    plugin->SendDataToSoftbus(buffer);
 }
 
 HWTEST_F(DsoftbusOutputPluginTest, Deinit_001, testing::ext::TestSize.Level1)
@@ -148,6 +166,8 @@ HWTEST_F(DsoftbusOutputPluginTest, SetCallback_001, testing::ext::TestSize.Level
     plugin->OnChannelEvent(event);
     event.type = EventType::EVENT_CHANNEL_CLOSED;
     plugin->OnChannelEvent(event);
+    event.type = EventType::EVENT_START_SUCCESS;
+    plugin->OnChannelEvent(event);
     EXPECT_EQ(Status::OK, ret);
 }
 
@@ -159,5 +179,35 @@ HWTEST_F(DsoftbusOutputPluginTest, SetDataCallback_001, testing::ext::TestSize.L
     EXPECT_EQ(Status::OK, ret);
 }
 
+HWTEST_F(DsoftbusOutputPluginTest, SetParameter_001, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
+    std::string value = "dsoftbus_output_plugin_test";
+    Status ret = plugin->SetParameter(Tag::MEDIA_DESCRIPTION, value);
+    EXPECT_EQ(Status::OK, ret);
+
+    bool val = true;
+    ret = plugin->SetParameter(Tag::SECTION_USER_SPECIFIC_START, val);
+    EXPECT_EQ(Status::OK, ret);
+
+    plugin->paramsMap_.clear();
+    ret = plugin->SetParameter(Tag::SECTION_VIDEO_SPECIFIC_START, val);
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DsoftbusOutputPluginTest, OpenSoftbusChannel_001, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusOutputPlugin>(PLUGINNAME);
+    plugin->sessionName_ = "sessionName";
+    Status ret = plugin->OpenSoftbusChannel();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    plugin->peerDevId_ = "peerDevId";
+    plugin->ownerName_ = "ohos_dhardware.dcamera";
+    ret = plugin->OpenSoftbusChannel();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    StreamData *data = nullptr;
+    StreamData *ext = nullptr;
+    plugin->OnStreamReceived(data, ext);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -29,6 +29,14 @@ void DsoftbusInputPluginTest::SetUp(void) {}
 
 void DsoftbusInputPluginTest::TearDown(void) {}
 
+class DaudioInputPluginCallback : public Callback {
+public:
+    void OnEvent(const PluginEvent &event)
+    {
+        (void)event;
+    }
+};
+
 HWTEST_F(DsoftbusInputPluginTest, Prepare_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusInputPlugin>(PLUGINNAME);
@@ -45,6 +53,10 @@ HWTEST_F(DsoftbusInputPluginTest, Prepare_002, TestSize.Level1)
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 
     plugin->ownerName_ = "ohos.dhardware.dcamera";
+    ret = plugin->Prepare();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+
+    plugin->peerDevId_ = "peerDevId_";
     ret = plugin->Prepare();
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
@@ -89,6 +101,13 @@ HWTEST_F(DsoftbusInputPluginTest, SetParameter_001, TestSize.Level0)
     std::string value = "dsoftbus_input_test";
     Status ret = plugin->SetParameter(Tag::MEDIA_DESCRIPTION, value);
     EXPECT_EQ(Status::OK, ret);
+
+    bool val = true;
+    ret = plugin->SetParameter(Tag::SECTION_USER_SPECIFIC_START, val);
+    EXPECT_EQ(Status::OK, ret);
+
+    ret = plugin->SetParameter(Tag::SECTION_VIDEO_SPECIFIC_START, val);
+    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(DsoftbusInputPluginTest, GetParameter_001, TestSize.Level1)
@@ -129,6 +148,11 @@ HWTEST_F(DsoftbusInputPluginTest, SetCallback_001, TestSize.Level1)
     auto plugin = std::make_shared<DsoftbusInputPlugin>(PLUGINNAME);
     Status ret = plugin->SetCallback(nullptr);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+
+    Callback *cb = new DaudioInputPluginCallback();
+    ret = plugin->SetCallback(cb);
+    EXPECT_EQ(Status::OK, ret);
+    delete cb;
 }
 
 HWTEST_F(DsoftbusInputPluginTest, Resume_001, TestSize.Level1)
@@ -144,6 +168,39 @@ HWTEST_F(DsoftbusInputPluginTest, SetDataCallback_001, TestSize.Level1)
     AVDataCallback dataCb;
     Status ret = plugin->SetDataCallback(dataCb);
     EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DsoftbusInputPluginTest, Deinit_001, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusInputPlugin>(PLUGINNAME);
+    plugin->Init();
+    Status ret = plugin->Deinit();
+    EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(DsoftbusInputPluginTest, Reset_001, TestSize.Level1)
+{
+    auto plugin = std::make_shared<DsoftbusInputPlugin>(PLUGINNAME);
+    plugin->Init();
+    Status ret = plugin->Reset();
+    EXPECT_EQ(Status::OK, ret);
+    AVTransEvent event;
+    event.type = EventType::EVENT_CHANNEL_OPENED;
+    plugin->eventsCb_ = new DaudioInputPluginCallback();
+    plugin->OnChannelEvent(event);
+    delete plugin->eventsCb_;
+
+    event.type = EventType::EVENT_CHANNEL_OPEN_FAIL;
+    plugin->OnChannelEvent(event);
+
+    event.type = EventType::EVENT_CHANNEL_CLOSED;
+    plugin->OnChannelEvent(event);
+
+    event.type = EventType::EVENT_START_SUCCESS;
+    plugin->OnChannelEvent(event);
+    AVTRANS_LOGI("zlf 2");
+    plugin->isrunning_ = false;
+    plugin->HandleData();
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -84,6 +84,27 @@ HWTEST_F(DaudioInputTest, PushData_001, TestSize.Level0)
     buffer->GetMemory()->Write((uint8_t*)"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 10);
     ret = plugin->PushData("", buffer, 0);
     EXPECT_EQ(Status::OK, ret);
+
+    plugin->sharedMemory_.fd = 1;
+    ret = plugin->PushData("", buffer, 0);
+    EXPECT_EQ(Status::OK, ret);
+
+    plugin->sharedMemory_.fd = 1;
+    plugin->sharedMemory_.size = 1;
+    ret = plugin->PushData("", buffer, 0);
+    EXPECT_EQ(Status::OK, ret);
+
+    plugin->sharedMemory_.fd = 0;
+    plugin->sharedMemory_.size = 0;
+    plugin->sharedMemory_.name = "sharedMemory_";
+    ret = plugin->PushData("", buffer, 0);
+    EXPECT_EQ(Status::OK, ret);
+
+    plugin->sharedMemory_.fd = 1;
+    plugin->sharedMemory_.size = 1;
+    plugin->sharedMemory_.name = "sharedMemory_";
+    ret = plugin->PushData("", buffer, 0);
+    EXPECT_EQ(Status::OK, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
