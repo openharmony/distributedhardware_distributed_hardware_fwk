@@ -175,7 +175,7 @@ HWTEST_F(OutputControllerTest, WaitRereadClockFailed_001, testing::ext::TestSize
     EXPECT_EQ(false, ret);
 
     data = std::make_shared<Plugin::Buffer>(BufferMetaType::AUDIO);
-    for(int32_t i = 0; i <= TEST_QUEUE_MAX_SIZE; i++) {
+    for (int32_t i = 0; i <= TEST_QUEUE_MAX_SIZE; i++) {
         controller->dataQueue_.push(data);
     }
     ret = controller->WaitRereadClockFailed(data);
