@@ -143,6 +143,11 @@ HWTEST_F(AvTransportInputFilterTest, Stop_001, testing::ext::TestSize.Level1)
     EXPECT_EQ(ErrorCode::ERROR_NULL_POINTER, ret);
     avInputTest_->plugin_ =
         PluginManager::Instance().CreateGenericPlugin<AvTransInput, AvTransInputPlugin>("AVTransDaudioInputPlugin");
+
+    avInputTest_->state_ = FilterState::READY;
+    ret = avInputTest_->Stop();
+    EXPECT_EQ(ErrorCode::SUCCESS, ret);
+
     avInputTest_->state_ = FilterState::PAUSED;
     ret = avInputTest_->Stop();
     EXPECT_EQ(ErrorCode::SUCCESS, ret);
@@ -225,6 +230,11 @@ HWTEST_F(AvTransportInputFilterTest, FindPlugin_001, testing::ext::TestSize.Leve
     avInputTest_->SetParameter(key, value);
     ret = avInputTest_->FindPlugin();
     EXPECT_EQ(ErrorCode::ERROR_INVALID_PARAMETER_VALUE, ret);
+
+    value = MEDIA_MIME_VIDEO_RAW;
+    avInputTest_->SetParameter(key, value);
+    ret = avInputTest_->FindPlugin();
+    EXPECT_NE(ErrorCode::ERROR_UNSUPPORTED_FORMAT, ret);
 }
 
 HWTEST_F(AvTransportInputFilterTest, DoNegotiate_001, testing::ext::TestSize.Level1)
@@ -233,6 +243,11 @@ HWTEST_F(AvTransportInputFilterTest, DoNegotiate_001, testing::ext::TestSize.Lev
         FilterFactory::Instance().CreateFilterWithType<AVInputFilter>(AVINPUT_NAME, FILTERNAME);
     CapabilitySet outCaps;
     bool ret = avInputTest_->DoNegotiate(outCaps);
+    EXPECT_EQ(false, ret);
+
+    Capability capability;
+    outCaps.push_back(capability);
+    ret = avInputTest_->DoNegotiate(outCaps);
     EXPECT_EQ(false, ret);
 }
 
@@ -475,6 +490,11 @@ HWTEST_F(AvTransportInputFilterTest, PreparePlugin_001, testing::ext::TestSize.L
         FilterFactory::Instance().CreateFilterWithType<AVInputFilter>(AVINPUT_NAME, FILTERNAME);
     ErrorCode ret = avInputTest_->PreparePlugin();
     EXPECT_EQ(ErrorCode::ERROR_NULL_POINTER, ret);
+
+    avInputTest_->plugin_ =
+        PluginManager::Instance().CreateGenericPlugin<AvTransInput, AvTransInputPlugin>("AVTransDaudioInputPlugin");
+    ret = avInputTest_->PreparePlugin();
+    EXPECT_NE(ErrorCode::SUCCESS, ret);
 }
 
 HWTEST_F(AvTransportInputFilterTest, PushData_001, testing::ext::TestSize.Level1)
