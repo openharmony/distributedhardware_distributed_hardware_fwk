@@ -13,9 +13,7 @@
  * limitations under the License.
  */
 
-#define protected public
 #include "output_controller_test.h"
-#undef protected
 
 #include "output_controller.h"
 #include "av_trans_errno.h"

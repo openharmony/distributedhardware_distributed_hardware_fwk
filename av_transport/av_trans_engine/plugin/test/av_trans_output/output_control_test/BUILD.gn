@@ -39,6 +39,7 @@ ohos_unittest("OutputControllerTest") {
     "-Wall",
     "-fexceptions",
     "-Dprivate = public",
+    "-Dprotected = public",
   ]
   cflags_cc = cflags
 
