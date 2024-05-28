@@ -17,12 +17,12 @@
 #define OHOS_DISTRIBUTED_HARDWARE_OUTPUT_CONTROLLER_TEST_H
 
 #include <gtest/gtest.h>
-
+#include "output_controller.h"
 namespace OHOS {
 namespace DistributedHardware {
 using namespace testing::ext;
 using namespace std;
-class OutputControllerTest : public testing::Test {
+class OutputControllerTest : public testing::Test, public OutputController {
 public:
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);

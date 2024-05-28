@@ -29,12 +29,25 @@ void OutputControllerTest::SetUp(void) {}
 
 void OutputControllerTest::TearDown(void) {}
 
+const int32_t TEST_QUEUE_MAX_SIZE = 100;
+
 HWTEST_F(OutputControllerTest, SetParameter_001, TestSize.Level0)
 {
     auto controller = std::make_shared<OutputController>();
     std::string value = "dscreen_output_test";
     Status ret = controller->SetParameter(Tag::USER_FRAME_NUMBER, value);
     EXPECT_EQ(Status::OK, ret);
+
+    std::shared_ptr<Plugin::Buffer> data = std::make_shared<Plugin::Buffer>(BufferMetaType::AUDIO);
+    controller->PushData(data);
+
+    controller->status_.store(OutputController::ControlStatus::START);
+    controller->mode_.store(OutputController::ControlMode::SYNC);
+
+    for (int32_t i = 0; i <= TEST_QUEUE_MAX_SIZE; i++) {
+        controller->dataQueue_.push(data);
+    }
+    controller->PushData(data);
 }
 
 HWTEST_F(OutputControllerTest, SetParameter_002, TestSize.Level0)
@@ -113,7 +126,19 @@ HWTEST_F(OutputControllerTest, ControlOutput_001, testing::ext::TestSize.Level1)
     ret = controller->ControlOutput(data);
     EXPECT_EQ(OUTPUT_FRAME, ret);
 
+    controller->isTimeInit_.store(true);
+    ret = controller->ControlOutput(data);
+    EXPECT_EQ(OUTPUT_FRAME, ret);
+
+    controller->isBaselineInit_.store(true);
+    ret = controller->ControlOutput(data);
+    EXPECT_EQ(OUTPUT_FRAME, ret);
+
     controller->CheckSyncInfo(data);
+
+    controller->SetControlMode(OutputController::ControlMode::SMOOTH);
+    controller->CheckSyncInfo(data);
+
     controller->PrepareControl();
     controller->SetControlMode(OutputController::ControlMode::SYNC);
     controller->CalProcessTime(data);
@@ -143,8 +168,24 @@ HWTEST_F(OutputControllerTest, WaitRereadClockFailed_001, testing::ext::TestSize
 {
     auto controller = std::make_shared<OutputController>();
     std::shared_ptr<Plugin::Buffer> data;
+    controller->statistician_ = std::make_shared<TimeStatistician>();
     bool ret = controller->WaitRereadClockFailed(data);
     EXPECT_EQ(false, ret);
+
+    data = std::make_shared<Plugin::Buffer>(BufferMetaType::AUDIO);
+    for (int32_t i = 0; i <= TEST_QUEUE_MAX_SIZE; i++) {
+        controller->dataQueue_.push(data);
+    }
+    ret = controller->WaitRereadClockFailed(data);
+    EXPECT_EQ(true, ret);
+
+    controller->enterTime_ = 2;
+    controller->leaveTime_ = 1;
+    int64_t timeStamp = 2;
+    controller->CalSleepTime(timeStamp);
+
+    controller->adjustSleepFactor_ = -2;
+    controller->CalSleepTime(timeStamp);
 }
 
 HWTEST_F(OutputControllerTest, CheckIsProcessInDynamicBalance_001, testing::ext::TestSize.Level1)
@@ -178,6 +219,23 @@ HWTEST_F(OutputControllerTest, PostOutputEvent_001, testing::ext::TestSize.Level
 
     data = std::make_shared<AVBuffer>();
     controller->SyncClock(data);
+
+    controller->sleep_ = 1;
+    controller->SyncClock(data);
+
+    controller->sleep_ = -1;
+    controller->SyncClock(data);
+
+    controller->statistician_ = std::make_shared<TimeStatistician>();
+    data = std::make_shared<Plugin::Buffer>(BufferMetaType::AUDIO);
+    data->pts = 1;
+    controller->sleep_ = 1;
+    controller->clockTime_.store(1);
+    controller->HandleSmoothTime(data);
+
+    controller->statistician_->averTimeStampInterval_ = 1;
+    controller->waitClockFactor_ = 2;
+    controller->HandleSmoothTime(data);
 }
 
 HWTEST_F(OutputControllerTest, NotifyOutput_001, testing::ext::TestSize.Level1)
@@ -192,6 +250,8 @@ HWTEST_F(OutputControllerTest, NotifyOutput_001, testing::ext::TestSize.Level1)
     controller->HandleControlResult(data, result);
 
     result = 1;
+    data = std::make_shared<Plugin::Buffer>(BufferMetaType::AUDIO);
+    controller->dataQueue_.push(data);
     controller->HandleControlResult(data, result);
 
     result = 2;
