@@ -19,6 +19,7 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import deviceInfo from '@ohos.deviceInfo';
 import { BusinessError } from '@ohos.base';
 import { EditableLeftIconType, EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
+import mediaQuery from '@ohos.mediaquery';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
@@ -29,22 +30,33 @@ interface switchStatus {
 }
 
 let switchState: switchStatus = {
-  open: 'continue_switch_on',
-  close: 'continue_switch_off'
+  open: 'continue_switch_on', close: 'continue_switch_off'
 }
-
 
 @Entry
 @Component
 struct ContinueSwitch {
   @StorageLink('isSwitchOn') isSwitchOn: boolean | undefined = true;
-  @State title: string = '';
   @StorageLink('continueSession') continueSession: UIExtensionContentSession | undefined = undefined;
+  @State title: string = '';
   @State screenHeight: number = 0;
   @State screenWidth: number = 0;
   @State imageHeight: number = 0;
   @State textWidth: number = 0;
   @State gapLength: number = 0;
+  @State videoSrc: Resource = $rawfile('continue.mp4');
+  @State isShow: boolean = false;
+  @State portraitFunc: mediaQuery.MediaQueryResult | void | null = null;
+  private videoController: VideoController | undefined = undefined;
+  private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
+
+  onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult) {
+    if (mediaQueryResult.matches as boolean) {
+      this.videoSrc = $rawfile('continue_dark.mp4');
+    } else {
+      this.videoSrc = $rawfile('continue.mp4');
+    }
+  }
 
   @Builder
   NavigationTitle() {
@@ -66,6 +78,9 @@ struct ContinueSwitch {
       this.getImageHeight();
       console.log(TAG + 'screenWidth = ' + this.screenWidth + '; screenHeight = ' + this.screenHeight);
     })
+    if (this.videoController) {
+      this.videoController.start();
+    }
   }
 
   aboutToAppear() {
@@ -81,7 +96,7 @@ struct ContinueSwitch {
       context.resourceManager.getStringValue($r('app.string.continue_title')
         .id, (error: BusinessError, value: string) => {
         if (error != null) {
-          console.error(TAG + 'rror is ' + error);
+          console.error(TAG + 'error is ' + error);
         } else {
           this.title = value;
           console.info(TAG + '<aboutToAppear> this.title : ' + this.title);
@@ -92,12 +107,21 @@ struct ContinueSwitch {
       let message: string = (error as BusinessError).message;
       console.error(TAG + `callback getStringValue failed,error code: ${code},message: ${message}.`);
     }
+
+    this.listener.on('change', (mediaQueryResult: mediaQuery.MediaQueryResult) => {
+      this.onPortrait(mediaQueryResult);
+    })
   }
 
   getImageHeight() {
     console.log(TAG + 'getImageHeight in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
-    let shortLength = this.screenWidth < this.screenHeight / 2 ? this.screenWidth : this.screenHeight / 2;
-    this.imageHeight = shortLength * 0.8;
+    if (deviceInfo.deviceType === 'phone') {
+      this.imageHeight = 220;
+    } else if (deviceInfo.deviceType === 'table') {
+      this.imageHeight = 212;
+    } else if (deviceInfo.deviceType === '2in1') {
+      this.imageHeight = 261;
+    }
     console.log(TAG + 'this.imageHeight' + this.imageHeight);
   }
 
@@ -120,14 +144,20 @@ struct ContinueSwitch {
     }
   }
 
+  async awaitTime(time: number) {
+    setTimeout(() => {
+      console.log(TAG, 'awaitTime is' + time);
+    }, time)
+  }
+
   build() {
     Navigation() {
-      Column(){
+      Column() {
         EditableTitleBar({
-          leftIconStyle:EditableLeftIconType.Back,
-          title:$r("app.string.continue_title"),
-          isSaveIconRequired:false,
-          onCancel:()=>{
+          leftIconStyle: EditableLeftIconType.Back,
+          title: $r('app.string.continue_title'),
+          isSaveIconRequired: false,
+          onCancel: () => {
             if (this.continueSession) {
               this.continueSession.sendData({ 'action': 'pop' })
             } else {
@@ -136,13 +166,27 @@ struct ContinueSwitch {
           }
         })
       }
+
       Row() {
         Column() {
-          Image($r('app.media.continueImg'))
-            .width(this.imageHeight)
+          Video({ src: this.videoSrc, controller: this.videoController })
+            .autoPlay(true)
+            .loop(true)
+            .objectFit(ImageFit.Contain)
+            .muted(true)
+            .controls(false)
+            .height(this.imageHeight)
             .margin({ left: 35, right: 35, bottom: 24 })
             .backgroundColor(Color.Transparent)
-            .objectFit(ImageFit.Contain)
+            .visibility(this.isShow ? Visibility.Visible : Visibility.Hidden)
+            .onPrepared(async (event) => {
+              console.info('onPrepared is ' + event.duration);
+              if (this.videoController) {
+                this.videoController.start();
+              }
+              await this.awaitTime(100);
+              this.isShow = true;
+            })
 
           Text($r('app.string.continue_desc'))
             .fontSize($r('sys.float.ohos_id_text_size_body2'))
@@ -165,12 +209,10 @@ struct ContinueSwitch {
                   console.log(TAG + 'isOn:' + isOn);
                   this.isSwitchOn = isOn;
                   AppStorage.setAndLink('isSwitchOn', isOn);
-                  if (isOn) {
-                    // open
+                  if (isOn) { // open
                     let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open);
                     console.log(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is on');
-                  } else {
-                    // close
+                  } else { // close
                     let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.close);
                     console.log(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
                   }
@@ -182,11 +224,22 @@ struct ContinueSwitch {
             .padding({ left: 12, right: 8 })
             .backgroundColor($r('sys.color.ohos_id_color_list_card_bg'))
             .borderRadius(20)
-          }
-          .width('100%')
-        }
-        .padding({ left: this.gapLength, right: this.gapLength })
-        .width('100%')
+          }.width('100%')
+
+          Column() {
+            Row() {
+              Text($r('app.string.continue_privacy_text'))
+                .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                .fontWeight(FontWeight.Regular)
+                .margin({ top: 8 })
+                .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                .textAlign(TextAlign.Start)
+                .width('100%')
+            }
+            .padding({ left: 8, right: 8 })
+          }.width('100%')
+
+        }.padding({ left: this.gapLength, right: this.gapLength }).width('100%')
       }
       .width('100%')
       .height('100%')

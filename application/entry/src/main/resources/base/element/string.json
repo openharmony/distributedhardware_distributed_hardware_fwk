@@ -54,7 +54,15 @@
     },
     {
       "name": "continue_desc",
-      "value": "Browse or edit on one device, then continue on another nearby device logged in with the same Huawei ID. This function requires that both devices have enabled \"Application connection,\" Wifi, and Bluetooth."
+      "value": "Browse or edit on one device, then continue on another nearby device logged in with the same Huawei ID."
+    },
+    {
+      "name": "multi_device_collaboration",
+      "value": "More connectivity options"
+    },
+    {
+      "name": "continue_privacy_text",
+      "value": "During the use of this service, Bluetooth and WLAN functions are required to read and transmit the device name. Data is only used locally on trusted devices and will not be uploaded to the server. By turning on the switch, you agree to the above."
     }
   ]
 }

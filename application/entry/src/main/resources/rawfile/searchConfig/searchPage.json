@@ -1,0 +1,38 @@
+{
+  "version": {
+    "curVersion": "1.0.5"
+  },
+  "searchPages": [
+    {
+      "pageTitle": "$string:continue_title",
+      "pageDescription": "",
+      "entryKey": "continue_entry",
+      "params": "",
+      "path": [
+        "$string:multi_device_collaboration",
+        "$string:continue_title"
+      ],
+      "supportDevices": [
+        "phone",
+        "tablet",
+        "2in1"
+      ],
+      "searchItems": [
+        {
+          "itemName": "settings_continue",
+          "itemTitle": "$string:continue_title",
+          "itemDescription": "",
+          "icon": "",
+          "alias": "接续|接力|应用接续|应用迁移",
+          "enable": "true",
+          "childItems": "",
+          "supportDevices": [
+            "phone",
+            "tablet",
+            "2in1"
+          ]
+        }
+      ]
+    }
+  ]
+}
