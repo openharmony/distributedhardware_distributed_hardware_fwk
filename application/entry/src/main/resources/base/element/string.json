@@ -54,7 +54,7 @@
     },
     {
       "name": "continue_desc",
-      "value": "Browse or edit on one device, then continue on another nearby device logged in with the same Huawei ID. This function requires that both devices have enabled \"Application connection,\" Wifi, and Bluetooth."
+      "value": "Browse or edit on one device, then continue on another nearby device logged in with the same Huawei ID."
     },
     {
       "name": "multi_device_collaboration",
