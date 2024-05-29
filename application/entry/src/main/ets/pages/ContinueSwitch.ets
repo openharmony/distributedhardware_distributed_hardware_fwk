@@ -43,6 +43,7 @@ struct ContinueSwitch {
   @State screenWidth: number = 0;
   @State imageHeight: number = 0;
   @State textWidth: number = 0;
+  0
   @State gapLength: number = 0;
   @State videoSrc: Resource = $rawfile('continue.mp4');
   @State isShow: boolean = false;
@@ -172,7 +173,7 @@ struct ContinueSwitch {
           Video({ src: this.videoSrc, controller: this.videoController })
             .autoPlay(true)
             .loop(true)
-            .objectFit(ImageFit.Cover)
+            .objectFit(ImageFit.Contain)
             .muted(true)
             .controls(false)
             .height(this.imageHeight)
@@ -225,6 +226,20 @@ struct ContinueSwitch {
             .backgroundColor($r('sys.color.ohos_id_color_list_card_bg'))
             .borderRadius(20)
           }.width('100%')
+
+          Column() {
+            Row() {
+              Text($r('app.string.continue_privacy_text'))
+                .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                .fontWeight(FontWeight.Regular)
+                .margin({ top: 8 })
+                .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                .textAlign(TextAlign.Start)
+                .width('100%')
+            }
+            .padding({ left: 8, right: 8 })
+          }.width('100%')
+
         }.padding({ left: this.gapLength, right: this.gapLength }).width('100%')
       }
       .width('100%')
