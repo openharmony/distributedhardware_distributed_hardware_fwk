@@ -43,7 +43,6 @@ struct ContinueSwitch {
   @State screenWidth: number = 0;
   @State imageHeight: number = 0;
   @State textWidth: number = 0;
-  0
   @State gapLength: number = 0;
   @State videoSrc: Resource = $rawfile('continue.mp4');
   @State isShow: boolean = false;
