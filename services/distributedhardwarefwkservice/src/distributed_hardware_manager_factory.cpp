@@ -61,7 +61,8 @@ bool DistributedHardwareManagerFactory::InitLocalDevInfo()
 
     deviceList.clear();
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
-    if (deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) {
+    if ((deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) &&
+        DHContext::GetInstance().GetConnectCount() == 0) {
         DHLOGI("After InitLocalDevInfo, no device online, exit dhfwk");
         ExitDHFWK();
     }
@@ -117,7 +118,8 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
 {
     std::vector<DmDeviceInfo> deviceList;
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
-    if (deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) {
+    if ((deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) &&
+        DHContext::GetInstance().GetConnectCount() == 0) {
         ExitDHFWK();
         return;
     }
@@ -198,7 +200,8 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
     }
 
     DHContext::GetInstance().RemoveOnlineDevice(uuid);
-    if (DistributedHardwareManager::GetInstance().GetOnLineCount() == 0) {
+    if (DistributedHardwareManager::GetInstance().GetOnLineCount() == 0 &&
+        DHContext::GetInstance().GetConnectCount() == 0) {
         DHLOGI("all devices are offline, start to free the resource");
         UnInit();
     }
