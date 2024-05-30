@@ -33,5 +33,5 @@ fuzz_test_output_path = "distributed_hardware_fwk/distributed_hardware_fwk"
 build_flags = [ "-Werror" ]
 
 declare_args() {
-  dhardware_low_latency = false
+  distributed_hardware_fwk_low_latency = false
 }

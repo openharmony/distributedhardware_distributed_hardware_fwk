@@ -17,7 +17,9 @@
     "syscap": [
       "SystemCapability.DistributedHardware.DistributedHardwareFWK"
     ],
-    "features": [],
+    "features": [
+      "distributed_hardware_fwk_low_latency"
+    ],
     "adapted_system_type": [
       "standard"
     ],
