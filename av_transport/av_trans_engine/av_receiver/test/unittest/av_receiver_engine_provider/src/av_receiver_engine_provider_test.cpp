@@ -40,6 +40,15 @@ void AvReceiverEngineProviderTest::TearDownTestCase()
 {
 }
 
+class IAVReceiverEngineProvider : public IAVEngineProviderCallback {
+public:
+    virtual int32_t OnProviderEvent(const AVTransEvent &event)
+    {
+        (void)event;
+        return DH_AVT_SUCCESS;
+    }
+};
+
 HWTEST_F(AvReceiverEngineProviderTest, CreateAVReceiverEngine_001, testing::ext::TestSize.Level1)
 {
     std::string peerDevId = "peerDevId";
@@ -80,6 +89,20 @@ HWTEST_F(AvReceiverEngineProviderTest, RegisterProviderCallback_001, testing::ex
     std::shared_ptr<IAVEngineProviderCallback> callback = nullptr;
     int32_t ret = avReceiveProTest_->RegisterProviderCallback(callback);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
+
+    AVTransEvent event;
+    event.type = EventType::EVENT_CHANNEL_OPENED;
+    avReceiveProTest_->OnChannelEvent(event);
+
+    callback = make_shared<IAVReceiverEngineProvider>();
+    avReceiveProTest_->RegisterProviderCallback(callback);
+    avReceiveProTest_->OnChannelEvent(event);
+
+    event.type = EventType::EVENT_CHANNEL_CLOSED;
+    avReceiveProTest_->OnChannelEvent(event);
+
+    event.type = EventType::EVENT_START_SUCCESS;
+    avReceiveProTest_->OnChannelEvent(event);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

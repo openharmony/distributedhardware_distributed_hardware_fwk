@@ -63,6 +63,9 @@ HWTEST_F(AVTransControlCenterTest, initialize_av_center_002, TestSize.Level0)
     center_->initialized_= true;
     int32_t ret = center_->InitializeAVCenter(transRole, engineId);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
+    transRole = TransRole::AV_RECEIVER;
+    ret = center_->InitializeAVCenter(transRole, engineId);
+    EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 
 /**
@@ -103,9 +106,13 @@ HWTEST_F(AVTransControlCenterTest, release_av_center_002, TestSize.Level0)
 {
     int32_t engineId = BASE_ENGINE_ID;
     int32_t engineIdSecond = BASE_ENGINE_ID + 1 ;
+
+    int32_t ret = center_->ReleaseAVCenter(engineId);
+    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+
     center_->engine2DevIdMap_.insert(std::make_pair(engineId, "engineId"));
     center_->engine2DevIdMap_.insert(std::make_pair(engineIdSecond, "engineId"));
-    int32_t ret = center_->ReleaseAVCenter(engineId);
+    ret = center_->ReleaseAVCenter(engineId);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 
@@ -401,6 +408,7 @@ HWTEST_F(AVTransControlCenterTest, set_param_2_engines_001, TestSize.Level0)
     int32_t engineId = BASE_ENGINE_ID;
     sptr<CenterCallback> callback = new CenterCallback();
     center_->callbackMap_.insert(std::make_pair(engineId, callback));
+    center_->callbackMap_.insert(std::make_pair(engineId + 1, nullptr));
     center_->SetParam2Engines(tag, value);
     EXPECT_EQ(callback->value_, value);
 }
@@ -417,6 +425,7 @@ HWTEST_F(AVTransControlCenterTest, set_param_2_engines_002, TestSize.Level0)
     memory.name = "memory";
     sptr<CenterCallback> callback = new CenterCallback();
     center_->callbackMap_.insert(std::make_pair(0, callback));
+    center_->callbackMap_.insert(std::make_pair(1, nullptr));
     center_->SetParam2Engines(memory);
     EXPECT_EQ(callback->memory_.name, memory.name);
 }
@@ -437,7 +446,11 @@ HWTEST_F(AVTransControlCenterTest, handle_channel_event_001, TestSize.Level0)
     event.type = EventType::EVENT_CHANNEL_OPENED;
     event.content = AV_SYNC_RECEIVER_CONTROL_SESSION_NAME;
     center_->HandleChannelEvent(event);
-
+    event.type = EventType::EVENT_CHANNEL_OPENED;
+    event.content = AV_SYNC_SENDER_CONTROL_SESSION_NAME;
+    center_->HandleChannelEvent(event);
+    event.type = EventType::EVENT_START_SUCCESS;
+    center_->HandleChannelEvent(event);
     EXPECT_NE(0, center_->connectedDevIds_.size());
 }
 
