@@ -66,7 +66,9 @@ private:
     // get local kv store with no sync with other devices
     DistributedKv::Status GetLocalKvStorePtr();
     bool DBDiedOpt(int32_t &times);
-    void TriggerDynamicQuery(const std::string &key);
+    void TriggerOnDemandQuery(const std::string &key);
+    void SyncByNotFound(const std::string &key);
+    std::string GetNetworkIdByKey(const std::string &key);
 
 private:
     DistributedKv::AppId appId_;
