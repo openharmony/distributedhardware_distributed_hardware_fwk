@@ -40,6 +40,15 @@ void AvSenderEngineProviderTest::TearDownTestCase()
 {
 }
 
+class IAVSenderEngineProvider : public IAVEngineProviderCallback {
+public:
+    virtual int32_t OnProviderEvent(const AVTransEvent &event)
+    {
+        (void)event;
+        return DH_AVT_SUCCESS;
+    }
+};
+
 HWTEST_F(AvSenderEngineProviderTest, CreateAVSenderEngine_001, testing::ext::TestSize.Level1)
 {
     std::string peerDevId = "peerDevId";
@@ -83,6 +92,18 @@ HWTEST_F(AvSenderEngineProviderTest, RegisterProviderCallback_001, testing::ext:
     AVTransEvent event = {EventType::EVENT_ADD_STREAM, ownerName, peerDevId};
     avSendProTest_->providerCallback_ = nullptr;
     avSendProTest_->OnChannelEvent(event);
+
+    callback = make_shared<IAVSenderEngineProvider>();
+    avSendProTest_->RegisterProviderCallback(callback);
+    event.type = EventType::EVENT_CHANNEL_OPENED;
+    avSendProTest_->OnChannelEvent(event);
+
+    event.type = EventType::EVENT_CHANNEL_CLOSED;
+    avSendProTest_->OnChannelEvent(event);
+
+    event.type = EventType::EVENT_START_SUCCESS;
+    avSendProTest_->OnChannelEvent(event);
+
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 } // namespace DistributedHardware
