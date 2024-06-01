@@ -36,7 +36,7 @@ export default class ContinueSwitchAbility extends UIExtensionAbility {
   }
 
   onSessionCreate(want: Want, session: UIExtensionContentSession) {
-    console.log(TAG, `UIExtAbility onSessionCreate, want: ${JSON.stringify(want)}`)
+    console.log(TAG, `UIExtAbility onSessionCreate`);
     AppStorage.setOrCreate('continueSession', session);
     let param: Record<string, UIExtensionContentSession> = {
       'session': session

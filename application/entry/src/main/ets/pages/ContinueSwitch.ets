@@ -86,11 +86,16 @@ struct ContinueSwitch {
   aboutToAppear() {
     console.log(TAG + 'aboutToAppear in');
     let value = settings.getValueSync(context, 'Continue_Switch_Status', switchState.open);
-    this.isSwitchOn = value === switchState.open ? true : false;
-    console.log(TAG + '<aboutToAppear> this.isSwitchOn : ' + this.isSwitchOn);
+    this.isSwitchOn = value != switchState.close ? true : false;
+    console.log(TAG + '<aboutToAppear> this.isSwitchOn : ' + this.isSwitchOn + '; value: ' + value);
 
     AppStorage.setOrCreate('isSwitchOn', this.isSwitchOn);
     console.log(TAG + 'AppStorage.get<boolean>(isSwitchOn) : ' + AppStorage.get<boolean>('isSwitchOn'));
+
+    if (this.isSwitchOn) {
+      let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open);
+      console.log(TAG + 'set value success :' + status + '; set:Continue_Switch_Status is continue_switch_on');
+    }
 
     try {
       context.resourceManager.getStringValue($r('app.string.continue_title')
