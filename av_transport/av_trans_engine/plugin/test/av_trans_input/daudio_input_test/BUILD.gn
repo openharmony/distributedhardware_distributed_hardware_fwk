@@ -27,10 +27,12 @@ ohos_unittest("DaudioInputPluginTest") {
 
   sources = [
     "${common_path}/src/av_sync_utils.cpp",
+    "${common_path}/src/av_trans_buffer.cpp",
     "${common_path}/src/av_trans_log.cpp",
     "${common_path}/src/av_trans_message.cpp",
     "${common_path}/src/av_trans_meta.cpp",
     "${common_path}/src/av_trans_utils.cpp",
+    "${common_path}/src/softbus_channel_adapter.cpp",
     "daudio_input_test.cpp",
   ]
 
@@ -59,6 +61,7 @@ ohos_unittest("DaudioInputPluginTest") {
     "bounds_checking_function:libsec_shared",
     "cJSON:cjson",
     "c_utils:utils",
+    "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
     "kv_store:distributeddata_inner",
