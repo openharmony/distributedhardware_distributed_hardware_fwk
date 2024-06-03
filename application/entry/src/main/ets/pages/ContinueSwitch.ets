@@ -30,7 +30,8 @@ interface switchStatus {
 }
 
 let switchState: switchStatus = {
-  open: 'continue_switch_on', close: 'continue_switch_off'
+  open: '1',
+  close: '0'
 }
 
 @Entry
@@ -94,7 +95,7 @@ struct ContinueSwitch {
 
     if (this.isSwitchOn) {
       let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open);
-      console.log(TAG + 'set value success :' + status + '; set:Continue_Switch_Status is continue_switch_on');
+      console.log(TAG + 'set value success :' + status + '; set:Continue_Switch_Status is 1');
     }
 
     try {
