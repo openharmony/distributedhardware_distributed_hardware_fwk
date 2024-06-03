@@ -118,7 +118,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "LOG_DOMAIN=0xD004100",
   ]
 
-  if (dhardware_low_latency) {
+  if (distributed_hardware_fwk_low_latency) {
     defines += [ "DHARDWARE_LOW_LATENCY" ]
   }
 
