@@ -62,7 +62,7 @@
     },
     {
       "name": "continue_privacy_text",
-      "value": "During the use of this service, Bluetooth and WLAN functions are required to read and transmit the device name. Data is only used locally on trusted devices and will not be uploaded to the server. By turning on the switch, you agree to the above."
+      "value": "The Bluetooth and WLAN functions are required to read and transmit the device name to the peer trusted device. By turning on the switch, you agree to the above content."
     }
   ]
 }
