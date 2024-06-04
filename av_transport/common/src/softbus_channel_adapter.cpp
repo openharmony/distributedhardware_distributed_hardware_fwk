@@ -118,6 +118,7 @@ SoftbusChannelAdapter::SoftbusChannelAdapter()
     sessListener_.OnFile = nullptr;
     sessListener_.OnQos = nullptr;
     sessListener_.OnError = nullptr;
+    sessListener_.OnNegotiate = nullptr;
 }
 
 SoftbusChannelAdapter::~SoftbusChannelAdapter()
