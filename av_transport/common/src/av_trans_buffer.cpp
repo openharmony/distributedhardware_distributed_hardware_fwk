@@ -21,7 +21,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-const uint32_t BUFFER_MAX_CAPACITY = 209715200;
+static const uint32_t BUFFER_MAX_CAPACITY = 209715200;
 
 AVTransBuffer::AVTransBuffer(MetaType type) : meta_()
 {
