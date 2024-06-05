@@ -17,8 +17,12 @@
 
 #include <securec.h>
 
+#include "av_trans_log.h"
+
 namespace OHOS {
 namespace DistributedHardware {
+static const uint32_t BUFFER_MAX_CAPACITY = 104857600;
+
 AVTransBuffer::AVTransBuffer(MetaType type) : meta_()
 {
     meta_ = std::make_shared<BufferMeta>(type);
@@ -26,6 +30,10 @@ AVTransBuffer::AVTransBuffer(MetaType type) : meta_()
 
 std::shared_ptr<BufferData> AVTransBuffer::CreateBufferData(size_t capacity)
 {
+    if (capacity > BUFFER_MAX_CAPACITY) {
+        AVTRANS_LOGE("create buffer data input capacity is over size.");
+        return nullptr;
+    }
     auto bufData = std::make_shared<BufferData>(capacity);
     data_.push_back(bufData);
     return bufData;
@@ -33,6 +41,10 @@ std::shared_ptr<BufferData> AVTransBuffer::CreateBufferData(size_t capacity)
 
 std::shared_ptr<BufferData> AVTransBuffer::WrapBufferData(const uint8_t* data, size_t capacity, size_t size)
 {
+    if (capacity > BUFFER_MAX_CAPACITY) {
+        AVTRANS_LOGE("wrap buffer data input capacity is over size.");
+        return nullptr;
+    }
     auto bufData = std::make_shared<BufferData>(capacity,
         std::shared_ptr<uint8_t>(const_cast<uint8_t *>(data), [](void* ptr) {}));
     bufData->SetSize(size);
