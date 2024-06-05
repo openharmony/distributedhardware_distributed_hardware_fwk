@@ -83,9 +83,9 @@ namespace DistributedHardware {
     const uint32_t EVENT_DATA_SYNC_MANUAL = 301;
     const uint32_t EVENT_META_INFO_DB_RECOVER = 401;
 
-    const std::string ISOMERISM_EVENT = "isomerism_event";
-    const std::string ISOMERISM_CONNECT = "isomerism_connect";
-    const std::string ISOMERISM_DISCONNECT = "isomerism_disconnect";
+    const std::string ISOMERISM_EVENT_KEY = "isomerism_event";
+    const std::string ISOMERISM_EVENT_CONNECT_VAL = "isomerism_connect";
+    const std::string ISOMERISM_EVENT_DISCONNECT_VAL = "isomerism_disconnect";
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
