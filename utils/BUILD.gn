@@ -65,6 +65,7 @@ ohos_shared_library("distributedhardwareutils") {
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
+    "init:libbegetutil",
     "openssl:libcrypto_shared",
     "safwk:system_ability_fwk",
     "zlib:shared_libz",

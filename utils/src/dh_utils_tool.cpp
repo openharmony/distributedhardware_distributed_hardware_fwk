@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <iomanip>
+#include <iostream>
 #include <random>
 #include <sstream>
 #include <string>
@@ -25,6 +26,7 @@
 #include <zlib.h>
 
 #include "openssl/sha.h"
+#include "parameter.h"
 #include "softbus_common.h"
 #include "softbus_bus_center.h"
 
@@ -253,6 +255,25 @@ std::string Decompress(const std::string& data)
  
     inflateEnd(&strm);
     return out;
+}
+
+bool GetSysPara(const char *key, bool &value)
+{
+    if (key == nullptr) {
+        DHLOGE("GetSysPara: key is nullptr");
+        return false;
+    }
+    char paraValue[20] = {0}; // 20 for system parameter
+    auto res = GetParameter(key, "false", paraValue, sizeof(paraValue));
+    if (res <= 0) {
+        DHLOGD("GetSysPara fail, key:%{public}s res:%{public}d", key, res);
+        return false;
+    }
+    DHLOGI("GetSysPara: key:%{public}s value:%{public}s", key, paraValue);
+    std::stringstream valueStr;
+    valueStr << paraValue;
+    valueStr >> std::boolalpha >> value;
+    return true;
 }
 } // namespace DistributedHardware
 } // namespace OHOS
