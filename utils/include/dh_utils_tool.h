@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,6 +61,8 @@ bool IsArray(const cJSON* jsonObj, const std::string& key);
 
 std::string Compress(const std::string& data);
 std::string Decompress(const std::string& data);
+
+bool GetSysPara(const char *key, bool &value);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

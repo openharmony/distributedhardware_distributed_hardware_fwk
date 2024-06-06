@@ -82,6 +82,13 @@ std::map<std::string, DHType> g_mapDhTypeName = {
     { "A2D", DHType::A2D },
     { "VIRMODEM_AUDIO", DHType::VIRMODEM_AUDIO },
 };
+
+std::map<DHType, std::string> g_mapPartsParamName = {
+    { DHType::CAMERA, "sys.dhfwk.component.dcamera.enable" },
+    { DHType::AUDIO, "sys.dhfwk.component.daudio.enable" },
+    { DHType::SCREEN, "sys.dhfwk.component.dscreen.enable" },
+    { DHType::INPUT, "sys.dhfwk.component.dinput.enable" },
+};
 }
 
 int32_t ComponentLoader::Init()
@@ -226,6 +233,22 @@ CompVersion ComponentLoader::GetCompVersionFromComConfig(const CompConfig& cCfg)
     return compVersions;
 }
 
+bool ComponentLoader::CheckComponentEnable(const CompConfig &config)
+{
+    auto item = g_mapPartsParamName.find(config.type);
+    if (item == g_mapPartsParamName.end()) {
+        DHLOGI("Crrent component is enabled by default.");
+        return true;
+    }
+    bool isEnable = false;
+    if (!GetSysPara((item->second).c_str(), isEnable)) {
+        DHLOGE("sys para: %{public}s get failed.", (item->second).c_str());
+        return false;
+    }
+    DHLOGI("Component type: %{public}u, enable flag: %{public}d.", config.type, isEnable);
+    return isEnable;
+}
+
 int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::map<DHType, CompConfig> &dhtypeMap)
 {
     cJSON *root = cJSON_Parse(jsonStr.c_str());
@@ -250,6 +273,10 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
     cJSON_ArrayForEach(component, components) {
         CompConfig config;
         ParseCompConfigFromJson(component, config);
+        if (config.type == DHType::CAMERA && !CheckComponentEnable(config)) {
+            DHLOGI("Current type is camera, not enabled.");
+            continue;
+        }
         dhtypeMap.insert(std::pair<DHType, CompConfig>(config.type, config));
         localDHVersion_.compVersions.insert(
             std::pair<DHType, CompVersion>(config.type, GetCompVersionFromComConfig(config)));
