@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,9 +66,9 @@ void ToJson(cJSON *jsonObject, const VersionInfo &versionInfo)
     cJSON_AddStringToObject(jsonObject, DEV_ID.c_str(), versionInfo.deviceId.c_str());
     cJSON_AddStringToObject(jsonObject, DH_VER.c_str(), versionInfo.dhVersion.c_str());
 
-    cJSON *compVers = cJSON_CreateObject();
+    cJSON *compVers = cJSON_CreateArray();
     if (compVers == NULL) {
-        DHLOGE("Failed to create cJSON object.");
+        DHLOGE("Failed to create cJSON array.");
         return;
     }
     for (const auto &compVersion : versionInfo.compVersions) {
