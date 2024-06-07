@@ -40,6 +40,7 @@ private:
     std::string ownerName_;
     std::string sessionName_;
     std::mutex listMutex_;
+    std::mutex callbackMutex_;
     std::shared_ptr<IAVEngineProviderCallback> providerCallback_;
     std::vector<std::shared_ptr<IAVReceiverEngine>> receiverEngineList_;
 };
