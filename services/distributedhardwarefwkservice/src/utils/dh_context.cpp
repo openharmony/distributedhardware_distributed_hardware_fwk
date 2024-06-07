@@ -237,8 +237,8 @@ void DHContext::DHFWKIsomerismListener::OnMessage(const DHTopic topic, const std
         DHLOGE("OnMessage error, parse failed");
         return;
     }
-    cJSON *eventObj = cJSON_GetObjectItemCaseSensitive(messageJson, ISOMERISM_EVENT.c_str());
-    if (eventObj == nullptr || !IsString(messageJson, ISOMERISM_EVENT)) {
+    cJSON *eventObj = cJSON_GetObjectItemCaseSensitive(messageJson, ISOMERISM_EVENT_KEY.c_str());
+    if (eventObj == nullptr || !IsString(messageJson, ISOMERISM_EVENT_KEY)) {
         cJSON_Delete(messageJson);
         DHLOGE("OnMessage event invaild");
         return;
@@ -252,30 +252,36 @@ void DHContext::DHFWKIsomerismListener::OnMessage(const DHTopic topic, const std
     std::string event = eventObj->valuestring;
     std::string deviceId = devObj->valuestring;
     cJSON_Delete(messageJson);
-    if (event == ISOMERISM_CONNECT) {
-        DHContext::GetInstance().AddConnectDev(deviceId);
-    } else if (event == ISOMERISM_DISCONNECT) {
-        DHContext::GetInstance().DelConnectDev(deviceId);
+    if (event == ISOMERISM_EVENT_CONNECT_VAL) {
+        DHContext::GetInstance().AddIsomerismConnectDev(deviceId);
+    } else if (event == ISOMERISM_EVENT_DISCONNECT_VAL) {
+        DHContext::GetInstance().DelIsomerismConnectDev(deviceId);
     }
     DHLOGI("OnMessage end");
 }
 
-void DHContext::AddConnectDev(const std::string &deviceId)
+void DHContext::AddIsomerismConnectDev(const std::string &IsomerismDeviceId)
 {
+    DHLOGI("AddIsomerismConnectDev id = %{public}s", GetAnonyString(IsomerismDeviceId).c_str());
     std::shared_lock<std::shared_mutex> lock(connectDevMutex_);
-    connectedDevIds_.insert(deviceId);
+    connectedDevIds_.insert(IsomerismDeviceId);
 }
 
-void DHContext::DelConnectDev(const std::string &deviceId)
+void DHContext::DelIsomerismConnectDev(const std::string &IsomerismDeviceId)
 {
+    DHLOGI("DelIsomerismConnectDev id = %{public}s", GetAnonyString(IsomerismDeviceId).c_str());
     std::shared_lock<std::shared_mutex> lock(connectDevMutex_);
-    connectedDevIds_.erase(deviceId);
+    if (connectedDevIds_.find(IsomerismDeviceId) == connectedDevIds_.end()) {
+        DHLOGI("DelIsomerismConnectDev is not exist.");
+        return;
+    }
+    connectedDevIds_.erase(IsomerismDeviceId);
 }
 
-size_t DHContext::GetConnectCount()
+uint32_t DHContext::GetIsomerismConnectCount()
 {
     std::shared_lock<std::shared_mutex> lock(connectDevMutex_);
-    return connectedDevIds_.size();
+    return static_cast<uint32_t>(connectedDevIds_.size());
 }
 
 DHContext::DHFWKIsomerismListener::DHFWKIsomerismListener()

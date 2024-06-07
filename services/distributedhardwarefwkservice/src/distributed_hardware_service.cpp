@@ -174,7 +174,7 @@ int32_t DistributedHardwareService::UnregisterPublisherListener(const DHTopic to
 
 int32_t DistributedHardwareService::PublishMessage(const DHTopic topic, const std::string &msg)
 {
-    DHContext::GetInstance().GetConnectCount();
+    DHContext::GetInstance();
     Publisher::GetInstance().PublishMessage(topic, msg);
     return DH_FWK_SUCCESS;
 }

@@ -69,9 +69,9 @@ public:
 
     bool IsSleeping();
     void SetIsSleeping(bool isSleeping);
-    size_t GetConnectCount();
-    void AddConnectDev(const std::string &deviceId);
-    void DelConnectDev(const std::string &deviceId);
+    uint32_t GetIsomerismConnectCount();
+    void AddIsomerismConnectDev(const std::string &IsomerismDeviceId);
+    void DelIsomerismConnectDev(const std::string &IsomerismDeviceId);
 
 private:
     class DHFWKPowerStateCallback : public OHOS::PowerMgr::PowerStateCallbackStub {
