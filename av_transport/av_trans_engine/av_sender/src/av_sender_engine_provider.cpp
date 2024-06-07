@@ -72,6 +72,7 @@ std::vector<std::shared_ptr<IAVSenderEngine>> AVSenderEngineProvider::GetAVSende
 
 int32_t AVSenderEngineProvider::RegisterProviderCallback(const std::shared_ptr<IAVEngineProviderCallback> &callback)
 {
+    std::lock_guard<std::mutex> lock(callbackMutex_);
     providerCallback_ = callback;
     return DH_AVT_SUCCESS;
 }
