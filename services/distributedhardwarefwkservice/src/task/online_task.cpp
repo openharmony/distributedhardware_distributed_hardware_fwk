@@ -72,19 +72,7 @@ void OnLineTask::DoTask()
 void OnLineTask::DoSyncInfo()
 {
     std::string deviceId = GetDeviceIdByUUID(GetUUID());
-    auto ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("SyncDeviceInfoFromDB failed, deviceId = %{public}s, uuid = %{public}s, errCode = %{public}d",
-            GetAnonyString(deviceId).c_str(), GetAnonyString(GetUUID()).c_str(), ret);
-    }
-
-    ret = VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(deviceId);
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("SyncVersionInfoFromDB failed, deviceId = %{public}s, uuid = %{public}s, errCode = %{public}d",
-            GetAnonyString(deviceId).c_str(), GetAnonyString(GetUUID()).c_str(), ret);
-    }
-
-    ret = LocalCapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
+    auto ret = LocalCapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("SyncLocalCapabilityInfoFromDB failed, deviceId = %{public}s, uuid = %{public}s, errCode = %{public}d",
             GetAnonyString(deviceId).c_str(), GetAnonyString(GetUUID()).c_str(), ret);

@@ -73,12 +73,6 @@ DistributedKv::Status DBAdapter::GetKvStorePtr(bool isAutoSync, DistributedKv::D
             .autoSync  = true,
         }
     };
-    if (isAutoSync) {
-        DistributedKv::SyncPolicy syncPolicyOnline {
-            .type = DistributedKv::IMMEDIATE_SYNC_ON_ONLINE
-        };
-        options.policies.emplace_back(syncPolicyOnline);
-    }
     return kvDataMgr_.GetSingleKvStore(options, appId_, storeId_, kvStoragePtr_);
 }
 
@@ -199,7 +193,7 @@ std::string DBAdapter::GetNetworkIdByKey(const std::string &key)
     }
 
     if (deviceId == DHContext::GetInstance().GetDeviceInfo().deviceId) {
-        DHLOGD("Query local db info, no need dynamic sync");
+        DHLOGW("Query local db info, no need sync");
         return "";
     }
 
@@ -209,7 +203,7 @@ std::string DBAdapter::GetNetworkIdByKey(const std::string &key)
         return "";
     }
     if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
-        DHLOGW("The device not online, no need dynamic sync, uuid: %{public}s, deviceId: %{public}s",
+        DHLOGW("The device not online, no need sync, uuid: %{public}s, deviceId: %{public}s",
             GetAnonyString(uuid).c_str(), GetAnonyString(deviceId).c_str());
         return "";
     }
@@ -293,7 +287,8 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
     DistributedKv::Key allEntryKeyPrefix(keyPrefix);
     std::vector<DistributedKv::Entry> allEntries;
     DistributedKv::Status status = kvStoragePtr_->GetEntries(allEntryKeyPrefix, allEntries);
-    if (status == DistributedKv::Status::NOT_FOUND && this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
+    if (status == DistributedKv::Status::SUCCESS && allEntries.size() == 0 &&
+        this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
         SyncByNotFound(keyPrefix);
     }
     if (status != DistributedKv::Status::SUCCESS) {
