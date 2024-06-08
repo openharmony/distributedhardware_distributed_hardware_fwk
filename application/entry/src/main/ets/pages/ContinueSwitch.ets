@@ -20,9 +20,11 @@ import deviceInfo from '@ohos.deviceInfo';
 import { BusinessError } from '@ohos.base';
 import { EditableLeftIconType, EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
 import mediaQuery from '@ohos.mediaquery';
+import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
+let localStorage = LocalStorage.getShared();
 
 interface switchStatus {
   open: string;
@@ -50,12 +52,16 @@ struct ContinueSwitch {
   @State portraitFunc: mediaQuery.MediaQueryResult | void | null = null;
   private videoController: VideoController | undefined = undefined;
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
+  private extContext?: common.UIExtensionContext;
 
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult) {
+    console.log(TAG + 'onPortrait in');
     if (mediaQueryResult.matches as boolean) {
       this.videoSrc = $rawfile('continue_dark.mp4');
+      this.extContext?.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_DARK);
     } else {
       this.videoSrc = $rawfile('continue.mp4');
+      this.extContext?.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT);
     }
   }
 
@@ -117,6 +123,7 @@ struct ContinueSwitch {
     this.listener.on('change', (mediaQueryResult: mediaQuery.MediaQueryResult) => {
       this.onPortrait(mediaQueryResult);
     })
+    this.extContext = localStorage.get<common.UIExtensionContext>('context');
   }
 
   getImageHeight() {
