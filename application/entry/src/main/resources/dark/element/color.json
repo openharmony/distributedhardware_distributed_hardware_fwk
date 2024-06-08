@@ -1,10 +1,6 @@
 {
   "color": [
     {
-      "name": "start_window_background",
-      "value": "#FFFFFF"
-    },
-    {
       "name": "default_dark_value",
       "value": "#00000000"
     }
