@@ -24,6 +24,7 @@ import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
+let localStorage = LocalStorage.getShared();
 
 interface switchStatus {
   open: string;
@@ -61,8 +62,6 @@ struct ContinueSwitch {
     } else {
       this.videoSrc = $rawfile('continue.mp4');
       this.extContext?.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT);
-    }
-  }
     }
   }
 
@@ -124,6 +123,7 @@ struct ContinueSwitch {
     this.listener.on('change', (mediaQueryResult: mediaQuery.MediaQueryResult) => {
       this.onPortrait(mediaQueryResult);
     })
+    this.extContext = localStorage.get<common.UIExtensionContext>('context');
   }
 
   getImageHeight() {
