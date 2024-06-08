@@ -15,12 +15,18 @@
 import UIExtensionAbility from '@ohos.app.ability.UIExtensionAbility';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Want from '@ohos.app.ability.Want';
+import { Configuration } from '@ohos.app.ability.Configuration';
 
 const TAG: string = '[ContinueSwitchAbility]'
 
 export default class ContinueSwitchAbility extends UIExtensionAbility {
   onCreate() {
-    console.log(TAG, `UIExtAbility onCreate`)
+    console.log(TAG, `UIExtAbility onCreate`);
+    AppStorage.setOrCreate('currentColorMode', this.context.config.colorMode);
+  }
+
+  onConfigurationUpdate(newConfig: Configuration) {
+    AppStorage.setOrCreate('currentColorMode', this.context.config.colorMode);
   }
 
   onForeground() {
