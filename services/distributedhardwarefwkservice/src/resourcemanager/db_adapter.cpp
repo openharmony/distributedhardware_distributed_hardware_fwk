@@ -73,6 +73,11 @@ DistributedKv::Status DBAdapter::GetKvStorePtr(bool isAutoSync, DistributedKv::D
             .autoSync  = true,
         }
     };
+    if (dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
+        DHLOGI("Dynamic not go to cloud.");
+        options.cloudConfig.enableCloud = false;
+        options.cloudConfig.autoSync = false;
+    }
     return kvDataMgr_.GetSingleKvStore(options, appId_, storeId_, kvStoragePtr_);
 }
 
