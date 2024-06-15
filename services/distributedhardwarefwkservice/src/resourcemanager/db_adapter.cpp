@@ -258,14 +258,16 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    if (this->dataType == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
-        TriggerOnDemandQuery(key);
-    }
     DistributedKv::Key kvKey(key);
     DistributedKv::Value kvValue;
     DistributedKv::Status status = kvStoragePtr_->Get(kvKey, kvValue);
-    if (status == DistributedKv::Status::NOT_FOUND && this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
-        SyncByNotFound(key);
+    if (status == DistributedKv::Status::NOT_FOUND) {
+        if (this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
+            SyncByNotFound(key);
+        }
+        if (this->dataType == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
+            TriggerOnDemandQuery(key);
+        }
     }
     if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("Query from db failed, key: %{public}s", GetAnonyString(key).c_str());
@@ -284,17 +286,17 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
         DHLOGE("kvStoragePtr_ is null");
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
-    if (this->dataType == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
-        TriggerOnDemandQuery(keyPrefix);
-    }
-
     // if prefix is empty, get all entries.
     DistributedKv::Key allEntryKeyPrefix(keyPrefix);
     std::vector<DistributedKv::Entry> allEntries;
     DistributedKv::Status status = kvStoragePtr_->GetEntries(allEntryKeyPrefix, allEntries);
-    if (status == DistributedKv::Status::SUCCESS && allEntries.size() == 0 &&
-        this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
-        SyncByNotFound(keyPrefix);
+    if (status == DistributedKv::Status::SUCCESS && allEntries.size() == 0) {
+        if (this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
+            SyncByNotFound(keyPrefix);
+        }
+        if (this->dataType == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
+            TriggerOnDemandQuery(keyPrefix);
+        }
     }
     if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("Query data by keyPrefix failed, prefix: %{public}s",
