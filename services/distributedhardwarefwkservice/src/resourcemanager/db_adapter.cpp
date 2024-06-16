@@ -215,25 +215,6 @@ std::string DBAdapter::GetNetworkIdByKey(const std::string &key)
     return DHContext::GetInstance().GetNetworkIdByUUID(uuid);
 }
 
-void DBAdapter::TriggerOnDemandQuery(const std::string &key)
-{
-    std::string networkId = GetNetworkIdByKey(key);
-    if (networkId.empty()) {
-        DHLOGW("The networkId emtpy.");
-        return;
-    }
-
-    DHLOGI("Ondemand try sync data by key: %{public}s, storeId: %{public}s", GetAnonyString(key).c_str(),
-        storeId_.storeId.c_str());
-    std::function<void(DistributedKv::Status, DistributedKv::Value&&)> call =
-        [](DistributedKv::Status status, DistributedKv::Value &&value) {
-            (void)status;
-            (void)value;
-        };
-    DistributedKv::Key kvKey(key);
-    kvStoragePtr_->Get(kvKey, networkId, call);
-}
-
 void DBAdapter::SyncByNotFound(const std::string &key)
 {
     std::string networkId = GetNetworkIdByKey(key);
@@ -265,9 +246,6 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
         if (this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
             SyncByNotFound(key);
         }
-        if (this->dataType == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
-            TriggerOnDemandQuery(key);
-        }
     }
     if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("Query from db failed, key: %{public}s", GetAnonyString(key).c_str());
@@ -293,9 +271,6 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
     if (status == DistributedKv::Status::SUCCESS && allEntries.size() == 0) {
         if (this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
             SyncByNotFound(keyPrefix);
-        }
-        if (this->dataType == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
-            TriggerOnDemandQuery(keyPrefix);
         }
     }
     if (status != DistributedKv::Status::SUCCESS) {
