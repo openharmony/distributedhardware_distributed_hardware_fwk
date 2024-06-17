@@ -246,6 +246,11 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
         if (this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
             SyncByNotFound(key);
         }
+#ifdef DHARDWARE_OPEN_SOURCE
+        if (this->dataType == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
+            SyncByNotFound(key);
+        }
+#endif
     }
     if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("Query from db failed, key: %{public}s", GetAnonyString(key).c_str());
@@ -272,6 +277,11 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
         if (this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
             SyncByNotFound(keyPrefix);
         }
+#ifdef DHARDWARE_OPEN_SOURCE
+        if (this->dataType == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
+            SyncByNotFound(keyPrefix);
+        }
+#endif
     }
     if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("Query data by keyPrefix failed, prefix: %{public}s",
