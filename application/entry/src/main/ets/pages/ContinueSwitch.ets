@@ -131,7 +131,7 @@ struct ContinueSwitch {
     console.log(TAG + 'getImageHeight in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
     if (deviceInfo.deviceType === 'phone') {
       this.imageHeight = 220;
-    } else if (deviceInfo.deviceType === 'table') {
+    } else if (deviceInfo.deviceType === 'tablet') {
       this.imageHeight = 212;
     } else if (deviceInfo.deviceType === '2in1') {
       this.imageHeight = 261;
