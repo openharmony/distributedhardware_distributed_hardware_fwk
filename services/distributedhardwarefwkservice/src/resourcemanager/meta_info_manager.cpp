@@ -135,14 +135,13 @@ int32_t MetaInfoManager::AddMetaCapInfos(const std::vector<std::shared_ptr<MetaC
         }
         key = metaCapInfo->GetKey();
         globalMetaInfoMap_[key] = metaCapInfo;
-        if (dbAdapterPtr_->GetDataByKey(key, data) == DH_FWK_SUCCESS &&
-            IsCapInfoJsonEqual<MetaCapabilityInfo>(data, metaCapInfo->ToJsonString())) {
+        if (dbAdapterPtr_->GetDataByKey(key, data) == DH_FWK_SUCCESS && data == metaCapInfo->ToCompressedString()) {
             DHLOGI("this record is exist, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
             continue;
         }
         DHLOGI("AddMetaCapability, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
         keys.push_back(key);
-        values.push_back(metaCapInfo->ToJsonString());
+        values.push_back(Compress(metaCapInfo->ToJsonString()));
     }
     if (keys.empty() || values.empty()) {
         DHLOGD("Records are empty, No need add data to db!");
@@ -155,17 +154,17 @@ int32_t MetaInfoManager::AddMetaCapInfos(const std::vector<std::shared_ptr<MetaC
     return DH_FWK_SUCCESS;
 }
 
-int32_t MetaInfoManager::SyncMetaInfoFromDB(const std::string &deviceId)
+int32_t MetaInfoManager::SyncMetaInfoFromDB(const std::string &udidHash)
 {
-    DHLOGI("Sync MetaInfo from DB, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
+    DHLOGI("Sync MetaInfo from DB, udidHash: %{public}s", GetAnonyString(udidHash).c_str());
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
     }
     std::vector<std::string> dataVector;
-    if (dbAdapterPtr_->GetDataByKeyPrefix(deviceId, dataVector) != DH_FWK_SUCCESS) {
-        DHLOGE("Query Metadata from DB by deviceId failed, id: %{public}s", GetAnonyString(deviceId).c_str());
+    if (dbAdapterPtr_->GetDataByKeyPrefix(udidHash, dataVector) != DH_FWK_SUCCESS) {
+        DHLOGE("Query Metadata from DB by udidHash failed, udidHash: %{public}s", GetAnonyString(udidHash).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
@@ -174,7 +173,7 @@ int32_t MetaInfoManager::SyncMetaInfoFromDB(const std::string &deviceId)
     }
     for (const auto &data : dataVector) {
         std::shared_ptr<MetaCapabilityInfo> metaCapInfo;
-        if (GetMetaCapByValue(data, metaCapInfo) != DH_FWK_SUCCESS) {
+        if (GetMetaCapByValue(Decompress(data), metaCapInfo) != DH_FWK_SUCCESS) {
             DHLOGE("Get capability ptr by value failed");
             continue;
         }
@@ -202,18 +201,20 @@ int32_t MetaInfoManager::SyncRemoteMetaInfos()
     }
     for (const auto &data : dataVector) {
         std::shared_ptr<MetaCapabilityInfo> metaCapInfo;
-        if (GetMetaCapByValue(data, metaCapInfo) != DH_FWK_SUCCESS) {
+        if (GetMetaCapByValue(Decompress(data), metaCapInfo) != DH_FWK_SUCCESS) {
             DHLOGE("Get Metainfo ptr by value failed");
             continue;
         }
-        const std::string &deviceId = metaCapInfo->GetDeviceId();
-        const std::string &localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
-        if (deviceId.compare(localDeviceId) == 0) {
+        const std::string &udidHash = metaCapInfo->GetUdidHash();
+        const std::string &localUdidHash = DHContext::GetInstance().GetDeviceInfo().udidHash;
+        if (udidHash.compare(localUdidHash) == 0) {
             DHLOGE("device MetaInfo not need sync from db");
             continue;
         }
-        if (!DHContext::GetInstance().IsDeviceOnline(deviceId)) {
-            DHLOGE("offline device, no need sync to memory, deviceId : %{public}s ", GetAnonyString(deviceId).c_str());
+        if (!DHContext::GetInstance().IsDeviceOnline(
+            DHContext::GetInstance().GetUUIDByDeviceId(metaCapInfo->GetDeviceId()))) {
+            DHLOGE("offline device, no need sync to memory, udidHash : %{public}s",
+                GetAnonyString(metaCapInfo->GetUdidHash()).c_str());
             continue;
         }
         globalMetaInfoMap_[metaCapInfo->GetKey()] = metaCapInfo;
@@ -230,7 +231,7 @@ int32_t MetaInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, MetaCa
     }
     std::vector<std::string> dataVector;
     if (dbAdapterPtr_->GetDataByKeyPrefix(keyPrefix, dataVector) != DH_FWK_SUCCESS) {
-        DHLOGE("Query metaInfo from db failed, key: %{public}s", GetAnonyString(keyPrefix).c_str());
+        DHLOGE("Query metaInfo from db failed, keyPrefix: %{public}s", GetAnonyString(keyPrefix).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
@@ -239,12 +240,8 @@ int32_t MetaInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, MetaCa
     }
     for (const auto &data : dataVector) {
         std::shared_ptr<MetaCapabilityInfo> metaCapInfo;
-        if (GetMetaCapByValue(data, metaCapInfo) != DH_FWK_SUCCESS) {
+        if (GetMetaCapByValue(Decompress(data), metaCapInfo) != DH_FWK_SUCCESS) {
             DHLOGE("Get Metainfo ptr by value failed");
-            continue;
-        }
-        if (metaCapInfo->FromJsonString(data) != DH_FWK_SUCCESS) {
-            DHLOGE("Wrong data: %{public}s", GetAnonyString(data).c_str());
             continue;
         }
         metaCapMap[metaCapInfo->GetKey()] = metaCapInfo;
@@ -269,25 +266,25 @@ int32_t MetaInfoManager::RemoveMetaInfoByKey(const std::string &key)
     return DH_FWK_SUCCESS;
 }
 
-int32_t MetaInfoManager::GetMetaCapInfo(const std::string &deviceId,
+int32_t MetaInfoManager::GetMetaCapInfo(const std::string &udidHash,
     const std::string &dhId, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
 {
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
-    std::string key = GetCapabilityKey(deviceId, dhId);
+    std::string key = GetCapabilityKey(udidHash, dhId);
     if (globalMetaInfoMap_.find(key) == globalMetaInfoMap_.end()) {
-        DHLOGE("Can not find capability In globalMetaInfoMap_: %{public}s", GetAnonyString(deviceId).c_str());
+        DHLOGE("Can not find capability In globalMetaInfoMap_: %{public}s", GetAnonyString(udidHash).c_str());
         return ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND;
     }
     metaCapPtr = globalMetaInfoMap_[key];
     return DH_FWK_SUCCESS;
 }
 
-void MetaInfoManager::GetMetaCapInfosByDeviceId(const std::string &deviceId,
+void MetaInfoManager::GetMetaCapInfosByUdidHash(const std::string &udidHash,
     std::vector<std::shared_ptr<MetaCapabilityInfo>> &metaCapInfos)
 {
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     for (auto &metaCapInfo : globalMetaInfoMap_) {
-        if (IsCapKeyMatchDeviceId(metaCapInfo.first, deviceId)) {
+        if (IsCapKeyMatchDeviceId(metaCapInfo.first, udidHash)) {
             metaCapInfos.emplace_back(metaCapInfo.second);
         }
     }
@@ -354,7 +351,7 @@ void MetaInfoManager::HandleMetaCapabilityAddChange(const std::vector<Distribute
     for (const auto &item : insertRecords) {
         const std::string value = item.value.ToString();
         std::shared_ptr<MetaCapabilityInfo> capPtr;
-        if (GetCapabilityByValue<MetaCapabilityInfo>(value, capPtr) != DH_FWK_SUCCESS) {
+        if (GetCapabilityByValue<MetaCapabilityInfo>(Decompress(value), capPtr) != DH_FWK_SUCCESS) {
             DHLOGE("Get Meta capability by value failed");
             continue;
         }
@@ -388,7 +385,7 @@ void MetaInfoManager::HandleMetaCapabilityUpdateChange(const std::vector<Distrib
     for (const auto &item : updateRecords) {
         const std::string value = item.value.ToString();
         std::shared_ptr<MetaCapabilityInfo> capPtr;
-        if (GetCapabilityByValue<MetaCapabilityInfo>(value, capPtr) != DH_FWK_SUCCESS) {
+        if (GetCapabilityByValue<MetaCapabilityInfo>(Decompress(value), capPtr) != DH_FWK_SUCCESS) {
             DHLOGE("Get Meta capability by value failed");
             continue;
         }
@@ -404,7 +401,7 @@ void MetaInfoManager::HandleMetaCapabilityDeleteChange(const std::vector<Distrib
     for (const auto &item : deleteRecords) {
         const std::string value = item.value.ToString();
         std::shared_ptr<MetaCapabilityInfo> capPtr;
-        if (GetCapabilityByValue<MetaCapabilityInfo>(value, capPtr) != DH_FWK_SUCCESS) {
+        if (GetCapabilityByValue<MetaCapabilityInfo>(Decompress(value), capPtr) != DH_FWK_SUCCESS) {
             DHLOGE("Get Meta capability by value failed");
             continue;
         }

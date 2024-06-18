@@ -79,11 +79,11 @@ HWTEST_F(EventTraceTest, GetDeviceInfo_001, TestSize.Level0)
     DHContext::GetInstance().GetDeviceInfo();
     uint32_t MAX_ONLINE_DEVICE_SIZE = 10002;
     for (uint32_t i = 0; i <= MAX_ONLINE_DEVICE_SIZE; ++i) {
-        DHContext::GetInstance().onlineDeviceMap_.insert(std::make_pair(std::to_string(i), std::to_string(i)));
+        DHContext::GetInstance().onlineDevUUID2NetworkIdMap_.insert(std::make_pair(std::to_string(i), std::to_string(i)));
         DHContext::GetInstance().deviceIdUUIDMap_.insert(std::make_pair(std::to_string(i), std::to_string(i)));
     }
     DHContext::GetInstance().AddOnlineDevice(uuid, networkId);
-    DHContext::GetInstance().onlineDeviceMap_.clear();
+    DHContext::GetInstance().onlineDevUUID2NetworkIdMap_.clear();
     DHContext::GetInstance().AddOnlineDevice(uuid, networkId);
     EXPECT_EQ(true, uuid.empty());
 }

@@ -36,6 +36,8 @@ std::string GetRandomID();
 
 std::string GetUUIDBySoftBus(const std::string &networkId);
 
+std::string GetUDIDBySoftBus(const std::string &networkId);
+
 DeviceInfo GetLocalDeviceInfo();
 
 std::string GetLocalNetworkId();

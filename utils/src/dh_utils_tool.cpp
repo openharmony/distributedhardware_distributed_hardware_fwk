@@ -91,6 +91,17 @@ std::string GetUUIDBySoftBus(const std::string &networkId)
     return (ret == DH_FWK_SUCCESS) ? std::string(uuid) : "";
 }
 
+std::string GetUDIDBySoftBus(const std::string &networkId)
+{
+    if (networkId.empty()) {
+        return "";
+    }
+    char udid[UDID_BUF_LEN] = {0};
+    auto ret = GetNodeKeyInfo(DH_FWK_PKG_NAME.c_str(), networkId.c_str(), NodeDeviceInfoKey::NODE_KEY_UDID,
+        reinterpret_cast<uint8_t *>(udid), UDID_BUF_LEN);
+    return (ret == DH_FWK_SUCCESS) ? std::string(udid) : "";
+}
+
 std::string GetDeviceIdByUUID(const std::string &uuid)
 {
     if (uuid.size() == 0 || uuid.size() > MAX_ID_LEN) {
@@ -121,7 +132,7 @@ std::string Sha256(const std::string& in)
 
 DeviceInfo GetLocalDeviceInfo()
 {
-    DeviceInfo devInfo { "", "", "", "", 0 };
+    DeviceInfo devInfo { "", "", "", "", "", "", 0 };
     auto info = std::make_unique<NodeBasicInfo>();
     auto ret = GetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
     if (ret != DH_FWK_SUCCESS) {
@@ -131,6 +142,8 @@ DeviceInfo GetLocalDeviceInfo()
     devInfo.networkId = info->networkId;
     devInfo.uuid = GetUUIDBySoftBus(info->networkId);
     devInfo.deviceId = GetDeviceIdByUUID(devInfo.uuid);
+    devInfo.udid = GetUDIDBySoftBus(info->networkId);
+    devInfo.udidHash = Sha256(devInfo.udid);
     devInfo.deviceName = info->deviceName;
     devInfo.deviceType = info->deviceTypeId;
     return devInfo;

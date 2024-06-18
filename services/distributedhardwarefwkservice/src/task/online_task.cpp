@@ -108,7 +108,7 @@ void OnLineTask::CreateEnableTask()
     if (devDhInfos.empty()) {
         DHLOGW("Can not get cap info from local Capbility, try use meta info");
         std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
-        MetaInfoManager::GetInstance()->GetMetaCapInfosByDeviceId(deviceId, metaCapInfos);
+        MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(deviceId, metaCapInfos);
         std::for_each(metaCapInfos.begin(), metaCapInfos.end(), [&](std::shared_ptr<MetaCapabilityInfo> cap) {
             devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
         });

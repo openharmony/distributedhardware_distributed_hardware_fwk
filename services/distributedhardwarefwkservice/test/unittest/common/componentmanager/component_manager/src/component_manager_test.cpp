@@ -225,7 +225,7 @@ HWTEST_F(ComponentManagerTest, init_compSink_test_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
 {
-    DeviceInfo devInfo { "", "", "", "", 0 };
+    DeviceInfo devInfo { "", "", "", "", "", "", 0 };
     auto info = std::make_unique<MockNodeBasicInfo>();
     MockGetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
     devInfo.uuid = GetUUIDBySoftBus(info->networkId);
@@ -743,7 +743,7 @@ HWTEST_F(ComponentManagerTest, RetryGetEnableParam_001, TestSize.Level0)
 {
     DHType dhType = DHType::CAMERA;
     EnableParam param;
-    DHContext::GetInstance().onlineDeviceMap_.clear();
+    DHContext::GetInstance().onlineDevUUID2NetworkIdMap_.clear();
     auto ret = ComponentManager::GetInstance().RetryGetEnableParam(NETWORK_TEST, UUID_TEST, DH_ID_1, dhType, param);
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_ENABLE_FAILED);
 }
@@ -758,7 +758,7 @@ HWTEST_F(ComponentManagerTest, RetryGetEnableParam_002, TestSize.Level0)
 {
     DHType dhType = DHType::CAMERA;
     EnableParam param;
-    DHContext::GetInstance().onlineDeviceMap_[UUID_TEST] = NETWORK_TEST;
+    DHContext::GetInstance().onlineDevUUID2NetworkIdMap_[UUID_TEST] = NETWORK_TEST;
     auto ret = ComponentManager::GetInstance().RetryGetEnableParam(NETWORK_TEST, UUID_TEST, DH_ID_1, dhType, param);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 

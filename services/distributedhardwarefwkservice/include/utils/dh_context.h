@@ -90,11 +90,11 @@ private:
     };
     void RegisDHFWKIsomerismListener();
 private:
-    DeviceInfo devInfo_ { "", "", "", "", 0 };
+    DeviceInfo devInfo_ { "", "", "", "", "", "", 0 };
     std::mutex devMutex_;
 
     /* Save online device uuid and networkId */
-    std::unordered_map<std::string, std::string> onlineDeviceMap_ = {};
+    std::unordered_map<std::string, std::string> onlineDevUUID2NetworkIdMap_ = {};
 
     /* Save online device hashed uuid and uuid */
     std::unordered_map<std::string, std::string> deviceIdUUIDMap_ = {};

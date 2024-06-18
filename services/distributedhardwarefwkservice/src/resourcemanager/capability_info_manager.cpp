@@ -174,7 +174,7 @@ int32_t CapabilityInfoManager::SyncRemoteCapabilityInfos()
             DHLOGE("local device info not need sync from db");
             continue;
         }
-        if (!DHContext::GetInstance().IsDeviceOnline(deviceId)) {
+        if (!DHContext::GetInstance().IsDeviceOnline(DHContext::GetInstance().GetUUIDByDeviceId(deviceId))) {
             DHLOGE("offline device, no need sync to memory, deviceId : %{public}s ", GetAnonyString(deviceId).c_str());
             continue;
         }
@@ -576,10 +576,6 @@ int32_t CapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, 
         std::shared_ptr<CapabilityInfo> capabilityInfo;
         if (GetCapabilityByValue<CapabilityInfo>(data, capabilityInfo) != DH_FWK_SUCCESS) {
             DHLOGE("Get capability ptr by value failed");
-            continue;
-        }
-        if (capabilityInfo->FromJsonString(data) != DH_FWK_SUCCESS) {
-            DHLOGE("Wrong data: %{public}s", GetAnonyString(data).c_str());
             continue;
         }
         capabilityMap[capabilityInfo->GetKey()] = capabilityInfo;

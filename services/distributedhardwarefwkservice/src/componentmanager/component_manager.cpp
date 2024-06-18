@@ -668,7 +668,7 @@ int32_t ComponentManager::GetEnableMetaParam(const std::string &networkId, const
     DeviceInfo sourceDeviceInfo = GetLocalDeviceInfo();
     std::vector<std::shared_ptr<MetaCapabilityInfo>> sourceMetaInfos;
     std::string sourceDHId;
-    MetaInfoManager::GetInstance()->GetMetaCapInfosByDeviceId(sourceDeviceInfo.deviceId, sourceMetaInfos);
+    MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(sourceDeviceInfo.deviceId, sourceMetaInfos);
     for (const auto &metaInfo : sourceMetaInfos) {
         if (dhType == metaInfo->GetDHType()) {
             param.sourceAttrs = metaInfo->GetDHAttrs();

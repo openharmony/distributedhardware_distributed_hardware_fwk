@@ -115,52 +115,55 @@ const DeviceInfo& DHContext::GetDeviceInfo()
 void DHContext::AddOnlineDevice(const std::string &uuid, const std::string &networkId)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    if (onlineDeviceMap_.size() > MAX_ONLINE_DEVICE_SIZE || deviceIdUUIDMap_.size() > MAX_ONLINE_DEVICE_SIZE) {
+    if (onlineDevUUID2NetworkIdMap_.size() > MAX_ONLINE_DEVICE_SIZE || deviceIdUUIDMap_.size() > MAX_ONLINE_DEVICE_SIZE) {
         DHLOGE("OnlineDeviceMap or deviceIdUUIDMap is over size!");
         return;
     }
-    onlineDeviceMap_[uuid] = networkId;
+    onlineDevUUID2NetworkIdMap_[uuid] = networkId;
     deviceIdUUIDMap_[GetDeviceIdByUUID(uuid)] = uuid;
 }
 
 void DHContext::RemoveOnlineDevice(const std::string &uuid)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    auto iter = onlineDeviceMap_.find(uuid);
-    if (iter != onlineDeviceMap_.end()) {
-        onlineDeviceMap_.erase(iter);
+    auto iter = onlineDevUUID2NetworkIdMap_.find(uuid);
+    if (iter != onlineDevUUID2NetworkIdMap_.end()) {
+        onlineDevUUID2NetworkIdMap_.erase(iter);
         deviceIdUUIDMap_.erase(GetDeviceIdByUUID(uuid));
     }
 }
 
 bool DHContext::IsDeviceOnline(const std::string &uuid)
 {
+    if (uuid.empty()) {
+        return false;
+    }
     std::shared_lock<std::shared_mutex> lock(onlineDevMutex_);
-    return onlineDeviceMap_.find(uuid) != onlineDeviceMap_.end();
+    return onlineDevUUID2NetworkIdMap_.find(uuid) != onlineDevUUID2NetworkIdMap_.end();
 }
 
 size_t DHContext::GetOnlineCount()
 {
     std::shared_lock<std::shared_mutex> lock(onlineDevMutex_);
-    return onlineDeviceMap_.size();
+    return onlineDevUUID2NetworkIdMap_.size();
 }
 
 std::string DHContext::GetNetworkIdByUUID(const std::string &uuid)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    if (onlineDeviceMap_.find(uuid) == onlineDeviceMap_.end()) {
+    if (onlineDevUUID2NetworkIdMap_.find(uuid) == onlineDevUUID2NetworkIdMap_.end()) {
         DHLOGE("Can not find networkId, uuid: %{public}s", GetAnonyString(uuid).c_str());
         return "";
     }
-    return onlineDeviceMap_[uuid];
+    return onlineDevUUID2NetworkIdMap_[uuid];
 }
 
 std::string DHContext::GetUUIDByNetworkId(const std::string &networkId)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    auto iter = std::find_if(onlineDeviceMap_.begin(), onlineDeviceMap_.end(),
+    auto iter = std::find_if(onlineDevUUID2NetworkIdMap_.begin(), onlineDevUUID2NetworkIdMap_.end(),
         [networkId](const auto &item) {return networkId.compare(item.second) == 0; });
-    if (iter == onlineDeviceMap_.end()) {
+    if (iter == onlineDevUUID2NetworkIdMap_.end()) {
         DHLOGE("Can not find uuid, networkId: %{public}s", GetAnonyString(networkId).c_str());
         return "";
     }
@@ -188,11 +191,11 @@ std::string DHContext::GetNetworkIdByDeviceId(const std::string &deviceId)
 
     // current id is uuid
     id = deviceIdUUIDMap_[deviceId];
-    if (onlineDeviceMap_.find(id) == onlineDeviceMap_.end()) {
+    if (onlineDevUUID2NetworkIdMap_.find(id) == onlineDevUUID2NetworkIdMap_.end()) {
         DHLOGE("Can not find networkId, uuid: %{public}s", GetAnonyString(id).c_str());
         return "";
     }
-    return onlineDeviceMap_[id];
+    return onlineDevUUID2NetworkIdMap_[id];
 }
 
 std::string DHContext::GetDeviceIdByDBGetPrefix(const std::string &prefix)
