@@ -34,10 +34,9 @@ public:
     {}
 
     MetaCapabilityInfo(std::string dhId, std::string devId, std::string devName, uint16_t devType, DHType dhType,
-                   std::string dhAttrs, std::string dhSubtype,  std::string udidHash, std::string sinkVersion)
+        std::string dhAttrs, std::string dhSubtype,  std::string udidHash, std::string sinkVersion)
         : CapabilityInfo(dhId, devId, devName, devType, dhType, dhAttrs, dhSubtype),
-        udidHash_(udidHash), sinkVersion_(sinkVersion)
-    {}
+          udidHash_(udidHash), sinkVersion_(sinkVersion) {}
 
     virtual ~MetaCapabilityInfo() {}
 
