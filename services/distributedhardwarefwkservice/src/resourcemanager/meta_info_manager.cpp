@@ -135,13 +135,13 @@ int32_t MetaInfoManager::AddMetaCapInfos(const std::vector<std::shared_ptr<MetaC
         }
         key = metaCapInfo->GetKey();
         globalMetaInfoMap_[key] = metaCapInfo;
-        if (dbAdapterPtr_->GetDataByKey(key, data) == DH_FWK_SUCCESS && data == metaCapInfo->ToCompressedString()) {
+        if (dbAdapterPtr_->GetDataByKey(key, data) == DH_FWK_SUCCESS && data == metaCapInfo->ToJsonString()) {
             DHLOGI("this record is exist, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
             continue;
         }
         DHLOGI("AddMetaCapability, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
         keys.push_back(key);
-        values.push_back(Compress(metaCapInfo->ToJsonString()));
+        values.push_back(metaCapInfo->ToJsonString());
     }
     if (keys.empty() || values.empty()) {
         DHLOGD("Records are empty, No need add data to db!");
@@ -173,7 +173,7 @@ int32_t MetaInfoManager::SyncMetaInfoFromDB(const std::string &udidHash)
     }
     for (const auto &data : dataVector) {
         std::shared_ptr<MetaCapabilityInfo> metaCapInfo;
-        if (GetMetaCapByValue(Decompress(data), metaCapInfo) != DH_FWK_SUCCESS) {
+        if (GetMetaCapByValue(data, metaCapInfo) != DH_FWK_SUCCESS) {
             DHLOGE("Get capability ptr by value failed");
             continue;
         }
@@ -201,7 +201,7 @@ int32_t MetaInfoManager::SyncRemoteMetaInfos()
     }
     for (const auto &data : dataVector) {
         std::shared_ptr<MetaCapabilityInfo> metaCapInfo;
-        if (GetMetaCapByValue(Decompress(data), metaCapInfo) != DH_FWK_SUCCESS) {
+        if (GetMetaCapByValue(data, metaCapInfo) != DH_FWK_SUCCESS) {
             DHLOGE("Get Metainfo ptr by value failed");
             continue;
         }
@@ -240,7 +240,7 @@ int32_t MetaInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, MetaCa
     }
     for (const auto &data : dataVector) {
         std::shared_ptr<MetaCapabilityInfo> metaCapInfo;
-        if (GetMetaCapByValue(Decompress(data), metaCapInfo) != DH_FWK_SUCCESS) {
+        if (GetMetaCapByValue(data, metaCapInfo) != DH_FWK_SUCCESS) {
             DHLOGE("Get Metainfo ptr by value failed");
             continue;
         }
@@ -351,7 +351,7 @@ void MetaInfoManager::HandleMetaCapabilityAddChange(const std::vector<Distribute
     for (const auto &item : insertRecords) {
         const std::string value = item.value.ToString();
         std::shared_ptr<MetaCapabilityInfo> capPtr;
-        if (GetCapabilityByValue<MetaCapabilityInfo>(Decompress(value), capPtr) != DH_FWK_SUCCESS) {
+        if (GetCapabilityByValue<MetaCapabilityInfo>(value, capPtr) != DH_FWK_SUCCESS) {
             DHLOGE("Get Meta capability by value failed");
             continue;
         }
@@ -385,7 +385,7 @@ void MetaInfoManager::HandleMetaCapabilityUpdateChange(const std::vector<Distrib
     for (const auto &item : updateRecords) {
         const std::string value = item.value.ToString();
         std::shared_ptr<MetaCapabilityInfo> capPtr;
-        if (GetCapabilityByValue<MetaCapabilityInfo>(Decompress(value), capPtr) != DH_FWK_SUCCESS) {
+        if (GetCapabilityByValue<MetaCapabilityInfo>(value, capPtr) != DH_FWK_SUCCESS) {
             DHLOGE("Get Meta capability by value failed");
             continue;
         }
@@ -401,7 +401,7 @@ void MetaInfoManager::HandleMetaCapabilityDeleteChange(const std::vector<Distrib
     for (const auto &item : deleteRecords) {
         const std::string value = item.value.ToString();
         std::shared_ptr<MetaCapabilityInfo> capPtr;
-        if (GetCapabilityByValue<MetaCapabilityInfo>(Decompress(value), capPtr) != DH_FWK_SUCCESS) {
+        if (GetCapabilityByValue<MetaCapabilityInfo>(value, capPtr) != DH_FWK_SUCCESS) {
             DHLOGE("Get Meta capability by value failed");
             continue;
         }

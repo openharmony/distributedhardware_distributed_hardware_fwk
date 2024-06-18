@@ -31,25 +31,30 @@ namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(TaskFactory);
 std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskParam, std::shared_ptr<Task> fatherTask)
 {
-    DHLOGI("taskType = %{public}d, networkId = %{public}s, uuid = %{public}s, dhId = %{public}s",
+    DHLOGI("taskType: %{public}d, networkId: %{public}s, uuid: %{public}s, uuid: %{public}s, dhId: %{public}s",
         static_cast<int32_t>(taskType), GetAnonyString(taskParam.networkId).c_str(),
-        GetAnonyString(taskParam.uuid).c_str(), GetAnonyString(taskParam.dhId).c_str());
+        GetAnonyString(taskParam.uuid).c_str(), GetAnonyString(taskParam.udid).c_str(),
+        GetAnonyString(taskParam.dhId).c_str());
     std::shared_ptr<Task> task = nullptr;
     switch (taskType) {
         case TaskType::ENABLE: {
-            task = std::make_shared<EnableTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId, taskParam.dhType);
+            task = std::make_shared<EnableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
             break;
         }
         case TaskType::DISABLE: {
-            task = std::make_shared<DisableTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId, taskParam.dhType);
+            task = std::make_shared<DisableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
             break;
         }
         case TaskType::ON_LINE: {
-            task = std::make_shared<OnLineTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId, taskParam.dhType);
+            task = std::make_shared<OnLineTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
             break;
         }
         case TaskType::OFF_LINE: {
-            task = std::make_shared<OffLineTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId, taskParam.dhType);
+            task = std::make_shared<OffLineTask>(taskParam.networkId, taskParam.uuid, taskParam.uuid,
+                taskParam.dhId, taskParam.dhType);
             break;
         }
         default: {

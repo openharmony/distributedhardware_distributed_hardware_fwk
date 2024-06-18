@@ -23,7 +23,8 @@ namespace DistributedHardware {
 class DisableTask : public Task {
 public:
     DisableTask() = delete;
-    DisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId, const DHType dhType);
+    DisableTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
+        const std::string &dhId, const DHType dhType);
     virtual ~DisableTask();
     virtual void DoTask();
 

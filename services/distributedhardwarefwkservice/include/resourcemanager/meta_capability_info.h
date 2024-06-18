@@ -50,7 +50,6 @@ public:
     bool Compare(const MetaCapabilityInfo& metaCapInfo);
     virtual std::string GetKey() const;
     virtual std::string GetAnonymousKey() const;
-    std::string ToCompressedString();
 
 private:
     std::string udidHash_;

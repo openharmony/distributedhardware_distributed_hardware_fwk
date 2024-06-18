@@ -82,11 +82,6 @@ std::string MetaCapabilityInfo::ToJsonString()
     return jsonString;
 }
 
-std::string MetaCapabilityInfo::ToCompressedString()
-{
-    return Compress(ToJsonString());
-}
-
 bool MetaCapabilityInfo::Compare(const MetaCapabilityInfo& metaCapInfo)
 {
     if (strcmp(this->GetDeviceId().c_str(), metaCapInfo.GetDeviceId().c_str()) != 0) {
