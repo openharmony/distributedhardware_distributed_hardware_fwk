@@ -33,8 +33,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-struct DeviceIdEntry
-{
+struct DeviceIdEntry {
     std::string networkId;
     std::string uuid;
     // deviceId is uuid hash
@@ -42,7 +41,8 @@ struct DeviceIdEntry
     std::string udid;
     std::string udidHash;
 
-    bool operator == (const DeviceIdEntry &other) const {
+    bool operator == (const DeviceIdEntry &other) const
+    {
         return (networkId == other.networkId) &&
             (uuid == other.uuid) &&
             (deviceId == other.deviceId) &&
@@ -50,7 +50,8 @@ struct DeviceIdEntry
             (udidHash == other.udidHash);
     }
 
-    bool operator < (const DeviceIdEntry &other) const {
+    bool operator < (const DeviceIdEntry &other) const
+    {
         return networkId.compare(other.networkId) < 0 ||
             uuid.compare(other.uuid) < 0 ||
             deviceId.compare(other.deviceId) < 0 ||

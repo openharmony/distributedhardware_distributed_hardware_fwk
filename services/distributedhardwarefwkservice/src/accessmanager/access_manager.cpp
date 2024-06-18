@@ -195,7 +195,7 @@ void AccessManager::CheckTrustedDeviceOnline()
         const auto uuid = GetUUIDBySoftBus(networkId);
         const auto udid = GetUDIDBySoftBus(networkId);
         DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s, udid = %{public}s",
-            GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(),  GetAnonyString(udid).c_str());
+            GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid,
             deviceInfo.deviceTypeId);
     }
