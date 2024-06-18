@@ -30,24 +30,29 @@ namespace DistributedHardware {
 class MetaCapabilityInfo : public CapabilityInfo {
 public:
     MetaCapabilityInfo()
-        : CapabilityInfo("", "", "", 0, DHType::UNKNOWN, "", ""), sinkVersion_("")
+        : CapabilityInfo("", "", "", 0, DHType::UNKNOWN, "", ""), udidHash_(""), sinkVersion_("")
     {}
 
     MetaCapabilityInfo(std::string dhId, std::string devId, std::string devName, uint16_t devType, DHType dhType,
-                   std::string dhAttrs, std::string dhSubtype, std::string sinkVersion)
-        : CapabilityInfo(dhId, devId, devName, devType, dhType, dhAttrs, dhSubtype), sinkVersion_(sinkVersion)
-    {}
+        std::string dhAttrs, std::string dhSubtype, std::string udidHash, std::string sinkVersion)
+        : CapabilityInfo(dhId, devId, devName, devType, dhType, dhAttrs, dhSubtype),
+          udidHash_(udidHash), sinkVersion_(sinkVersion) {}
 
     virtual ~MetaCapabilityInfo() {}
 
+    std::string GetUdidHash() const;
+    void SetUdidHash(const std::string &udidHash);
     std::string GetSinkVersion() const;
     void SetSinkVersion(const std::string &sinkVersion);
 
     virtual int32_t FromJsonString(const std::string &jsonStr);
     virtual std::string ToJsonString();
     bool Compare(const MetaCapabilityInfo& metaCapInfo);
+    virtual std::string GetKey() const;
+    virtual std::string GetAnonymousKey() const;
 
 private:
+    std::string udidHash_;
     std::string sinkVersion_;
 };
 

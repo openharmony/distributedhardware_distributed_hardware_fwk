@@ -23,8 +23,8 @@ namespace DistributedHardware {
 class MockEnableTask : public EnableTask {
 public:
     MockEnableTask() = delete;
-    MockEnableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
-        const DHType dhType);
+    MockEnableTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
+        const std::string &dhId, const DHType dhType);
 
 private:
     /* synchronous function for register distributed hardware, return on asynchronous register finish */

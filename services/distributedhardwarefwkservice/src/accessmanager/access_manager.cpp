@@ -125,7 +125,7 @@ void AccessManager::OnDeviceOnline(const DmDeviceInfo &deviceInfo)
 void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
 {
     std::lock_guard<std::mutex> lock(accessMutex_);
-    DHLOGI("start, networkId = %{public}s, deviceName = %{public}s, deviceTypeId = %{public}d",
+    DHLOGI("AccessManager offline, networkId: %{public}s, deviceName: %{public}s, deviceTypeId: %{public}d",
         GetAnonyString(deviceInfo.networkId).c_str(), GetAnonyString(deviceInfo.deviceName).c_str(),
         deviceInfo.deviceTypeId);
 
@@ -134,26 +134,23 @@ void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
         DHLOGE("NetworkId is invalid!");
         return;
     }
-    auto uuid = GetUUIDBySoftBus(networkId);
-
-    // when other device restart, the device receives online and offline messages in sequence
-    // uuid is empty call by GetUUIDBySoftBus function. So, get uuid by memory cache when other device restart
-    uuid = uuid.empty() ? DHContext::GetInstance().GetUUIDByNetworkId(networkId) : uuid;
-    if (uuid.size() == 0 || uuid.size() > MAX_ID_LEN) {
-        DHLOGE("Uuid is invalid!");
+    std::string uuid = DHContext::GetInstance().GetUUIDByNetworkId(networkId);
+    std::string udid = DHContext::GetInstance().GetUDIDByNetworkId(networkId);
+    if (uuid.empty() || uuid.size() > MAX_ID_LEN || udid.empty() || udid.size() > MAX_ID_LEN) {
+        DHLOGE("uuid or udid is invalid!");
         return;
     }
 
-    auto ret =
-        DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
-    DHLOGI("offline result = %{public}d, networkId = %{public}s, uuid = %{public}s", ret,
-        GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
+    auto ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId, uuid, udid,
+        deviceInfo.deviceTypeId);
+    DHLOGI("offline result: %{public}d, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
+        ret, GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
 }
 
 void AccessManager::OnDeviceReady(const DmDeviceInfo &deviceInfo)
 {
     std::lock_guard<std::mutex> lock(accessMutex_);
-    DHLOGI("start, networkId = %{public}s, deviceName = %{public}s, deviceTypeId = %{public}d",
+    DHLOGI("AccessManager online, networkId: %{public}s, deviceName: %{public}s, deviceTypeId: %{public}d",
         GetAnonyString(deviceInfo.networkId).c_str(), GetAnonyString(deviceInfo.deviceName).c_str(),
         deviceInfo.deviceTypeId);
 
@@ -167,10 +164,16 @@ void AccessManager::OnDeviceReady(const DmDeviceInfo &deviceInfo)
         DHLOGE("Uuid is invalid!");
         return;
     }
+    auto udid = GetUDIDBySoftBus(networkId);
+    if (udid.size() == 0 || udid.size() > MAX_ID_LEN) {
+        DHLOGE("Udid is invalid!");
+        return;
+    }
     auto ret =
-        DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
-    DHLOGI("online result = %{public}d, networkId = %{public}s, uuid = %{public}s", ret,
-        GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
+        DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid,
+            deviceInfo.deviceTypeId);
+    DHLOGI("AccessManager online result: %{public}d, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
+        ret, GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
 }
 
 void AccessManager::OnDeviceChanged(const DmDeviceInfo &deviceInfo)
@@ -190,9 +193,11 @@ void AccessManager::CheckTrustedDeviceOnline()
     for (const auto &deviceInfo : deviceList) {
         const auto networkId = std::string(deviceInfo.networkId);
         const auto uuid = GetUUIDBySoftBus(networkId);
-        DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s",
-            GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
-        DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, deviceInfo.deviceTypeId);
+        const auto udid = GetUDIDBySoftBus(networkId);
+        DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s, udid = %{public}s",
+            GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
+        DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid,
+            deviceInfo.deviceTypeId);
     }
 }
 

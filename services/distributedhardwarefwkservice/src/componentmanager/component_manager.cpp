@@ -644,7 +644,7 @@ int32_t ComponentManager::GetEnableCapParam(const std::string &networkId, const 
         DHLOGE("Get sink version failed.");
         // If Version DB not sync, try get sink version from meta info
         std::shared_ptr<MetaCapabilityInfo> metaCapPtr = nullptr;
-        ret = MetaInfoManager::GetInstance()->GetMetaCapInfo(GetDeviceIdByUUID(uuid),
+        ret = MetaInfoManager::GetInstance()->GetMetaCapInfo(DHContext::GetInstance().GetUdidHashIdByUUID(uuid),
             capability->GetDHId(), metaCapPtr);
         if ((ret == DH_FWK_SUCCESS) && (metaCapPtr != nullptr)) {
             sinkVersion = metaCapPtr->GetSinkVersion();
@@ -668,7 +668,7 @@ int32_t ComponentManager::GetEnableMetaParam(const std::string &networkId, const
     DeviceInfo sourceDeviceInfo = GetLocalDeviceInfo();
     std::vector<std::shared_ptr<MetaCapabilityInfo>> sourceMetaInfos;
     std::string sourceDHId;
-    MetaInfoManager::GetInstance()->GetMetaCapInfosByDeviceId(sourceDeviceInfo.deviceId, sourceMetaInfos);
+    MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(sourceDeviceInfo.udidHash, sourceMetaInfos);
     for (const auto &metaInfo : sourceMetaInfos) {
         if (dhType == metaInfo->GetDHType()) {
             param.sourceAttrs = metaInfo->GetDHAttrs();
@@ -718,7 +718,8 @@ int32_t ComponentManager::GetCapParam(const std::string &uuid, const std::string
 int32_t ComponentManager::GetMetaParam(const std::string &uuid, const std::string &dhId,
     std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
 {
-    auto ret = MetaInfoManager::GetInstance()->GetMetaCapInfo(GetDeviceIdByUUID(uuid), dhId, metaCapPtr);
+    auto ret = MetaInfoManager::GetInstance()->GetMetaCapInfo(DHContext::GetInstance().GetUdidHashIdByUUID(uuid),
+        dhId, metaCapPtr);
     if ((ret == DH_FWK_SUCCESS) && (metaCapPtr != nullptr)) {
         DHLOGI("GetCapability success, uuid =%{public}s, dhId = %{public}s, errCode = %{public}d",
             GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), ret);

@@ -67,6 +67,8 @@ struct TaskParam {
     std::string networkId;
     // remote device uuid
     std::string uuid;
+    // remote device udid
+    std::string udid;
     // remote device dhid
     std::string dhId;
     // remote device dh type

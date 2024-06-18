@@ -39,7 +39,6 @@ public:
 
 private:
     void QueryLocalHardware(const DHType dhType, IHardwareHandler *hardwareHandler);
-    void QueryMetaHardware(const DHType dhType, IHardwareHandler *hardwareHandler);
     void AddLocalCapabilityInfo(const std::vector<DHItem> &dhItems, const DHType dhType,
                                 std::vector<std::shared_ptr<CapabilityInfo>> &capabilityInfos);
     void AddLocalMetaCapInfo(const std::vector<DHItem> &dhItems, const DHType dhType,
@@ -51,7 +50,6 @@ private:
     std::map<DHType, IHardwareHandler*> compToolFuncsMap_;
     std::map<DHType, std::shared_ptr<PluginListener>> pluginListenerMap_;
     std::unordered_map<DHType, std::vector<DHItem>> localDHItemsMap_;
-    std::unordered_map<DHType, std::vector<DHItem>> metaDHItemsMap_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

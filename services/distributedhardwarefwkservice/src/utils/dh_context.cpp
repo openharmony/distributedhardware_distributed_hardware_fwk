@@ -112,87 +112,138 @@ const DeviceInfo& DHContext::GetDeviceInfo()
     return devInfo_;
 }
 
-void DHContext::AddOnlineDevice(const std::string &uuid, const std::string &networkId)
+void DHContext::AddOnlineDevice(const std::string &udid, const std::string &uuid, const std::string &networkId)
 {
-    std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    if (onlineDeviceMap_.size() > MAX_ONLINE_DEVICE_SIZE || deviceIdUUIDMap_.size() > MAX_ONLINE_DEVICE_SIZE) {
-        DHLOGE("OnlineDeviceMap or deviceIdUUIDMap is over size!");
+    if (udid.empty() || uuid.empty() || networkId.empty()) {
+        DHLOGE("Add online device id invalid");
         return;
     }
-    onlineDeviceMap_[uuid] = networkId;
-    deviceIdUUIDMap_[GetDeviceIdByUUID(uuid)] = uuid;
+    std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
+    if (devIdEntrySet_.size() > MAX_ONLINE_DEVICE_SIZE) {
+        DHLOGE("devIdEntrySet_ is over size!");
+        return;
+    }
+    std::string deviceId = Sha256(uuid);
+    std::string udidHash = Sha256(udid);
+    DeviceIdEntry idEntry = {
+        .networkId = networkId,
+        .uuid = uuid,
+        .deviceId = deviceId,
+        .udid = udid,
+        .udidHash = udidHash
+    };
+    devIdEntrySet_.insert(idEntry);
 }
 
-void DHContext::RemoveOnlineDevice(const std::string &uuid)
+void DHContext::RemoveOnlineDeviceByUUID(const std::string &uuid)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    auto iter = onlineDeviceMap_.find(uuid);
-    if (iter != onlineDeviceMap_.end()) {
-        onlineDeviceMap_.erase(iter);
-        deviceIdUUIDMap_.erase(GetDeviceIdByUUID(uuid));
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+        if (iter->uuid == uuid) {
+            devIdEntrySet_.erase(iter);
+            break;
+        }
     }
 }
 
 bool DHContext::IsDeviceOnline(const std::string &uuid)
 {
+    if (uuid.empty()) {
+        return false;
+    }
     std::shared_lock<std::shared_mutex> lock(onlineDevMutex_);
-    return onlineDeviceMap_.find(uuid) != onlineDeviceMap_.end();
+    bool flag = false;
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+        if (iter->uuid == uuid) {
+            flag = true;
+            break;
+        }
+    }
+    return flag;
 }
 
 size_t DHContext::GetOnlineCount()
 {
     std::shared_lock<std::shared_mutex> lock(onlineDevMutex_);
-    return onlineDeviceMap_.size();
+    return devIdEntrySet_.size();
 }
 
 std::string DHContext::GetNetworkIdByUUID(const std::string &uuid)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    if (onlineDeviceMap_.find(uuid) == onlineDeviceMap_.end()) {
-        DHLOGE("Can not find networkId, uuid: %{public}s", GetAnonyString(uuid).c_str());
-        return "";
+    std::string networkId = "";
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+        if (iter->uuid == uuid) {
+            networkId = iter->networkId;
+            break;
+        }
     }
-    return onlineDeviceMap_[uuid];
+    return networkId;
+}
+
+std::string DHContext::GetUdidHashIdByUUID(const std::string &uuid)
+{
+    std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
+    std::string udidHash = "";
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+        if (iter->uuid == uuid) {
+            udidHash = iter->udidHash;
+            break;
+        }
+    }
+    return udidHash;
 }
 
 std::string DHContext::GetUUIDByNetworkId(const std::string &networkId)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    auto iter = std::find_if(onlineDeviceMap_.begin(), onlineDeviceMap_.end(),
-        [networkId](const auto &item) {return networkId.compare(item.second) == 0; });
-    if (iter == onlineDeviceMap_.end()) {
-        DHLOGE("Can not find uuid, networkId: %{public}s", GetAnonyString(networkId).c_str());
-        return "";
+    std::string uuid = "";
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+        if (iter->networkId == networkId) {
+            uuid = iter->uuid;
+            break;
+        }
     }
-    return iter->first;
+    return uuid;
+}
+
+std::string DHContext::GetUDIDByNetworkId(const std::string &networkId)
+{
+    std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
+    std::string udid = "";
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+        if (iter->networkId == networkId) {
+            udid = iter->udid;
+            break;
+        }
+    }
+    return udid;
 }
 
 std::string DHContext::GetUUIDByDeviceId(const std::string &deviceId)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    if (deviceIdUUIDMap_.find(deviceId) == deviceIdUUIDMap_.end()) {
-        DHLOGE("Can not find uuid, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
-        return "";
+    std::string uuid = "";
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+        if (iter->deviceId == deviceId) {
+            uuid = iter->uuid;
+            break;
+        }
     }
-    return deviceIdUUIDMap_[deviceId];
+    return uuid;
 }
 
 std::string DHContext::GetNetworkIdByDeviceId(const std::string &deviceId)
 {
-    std::string id = "";
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    if (deviceIdUUIDMap_.find(deviceId) == deviceIdUUIDMap_.end()) {
-        DHLOGE("Can not find uuid, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
-        return id;
+    std::string networkId = "";
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+        if (iter->deviceId == deviceId) {
+            networkId = iter->networkId;
+            break;
+        }
     }
-
-    // current id is uuid
-    id = deviceIdUUIDMap_[deviceId];
-    if (onlineDeviceMap_.find(id) == onlineDeviceMap_.end()) {
-        DHLOGE("Can not find networkId, uuid: %{public}s", GetAnonyString(id).c_str());
-        return "";
-    }
-    return onlineDeviceMap_[id];
+    return networkId;
 }
 
 std::string DHContext::GetDeviceIdByDBGetPrefix(const std::string &prefix)

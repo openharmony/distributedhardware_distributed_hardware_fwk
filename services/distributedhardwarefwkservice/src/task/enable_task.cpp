@@ -32,12 +32,13 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "EnableTask"
 
-EnableTask::EnableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
-    const DHType dhType) : Task(networkId, uuid, dhId, dhType)
+EnableTask::EnableTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
+    const std::string &dhId, const DHType dhType) : Task(networkId, uuid, udid, dhId, dhType)
 {
     SetTaskType(TaskType::ENABLE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::DO_ENABLE });
-    DHLOGD("id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(uuid).c_str());
+    DHLOGD("EnableTask id: %{public}s, networkId: %{public}s, dhId: %{public}s",
+        GetId().c_str(), GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str());
 }
 
 EnableTask::~EnableTask()
@@ -56,8 +57,8 @@ void EnableTask::DoTaskInner()
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DoTaskInner setname failed.");
     }
-    DHLOGD("id = %{public}s, uuid = %{public}s, dhId = %{public}s", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
-        GetAnonyString(GetDhId()).c_str());
+    DHLOGD("DoTaskInner id = %{public}s, uuid = %{public}s, dhId = %{public}s", GetId().c_str(),
+        GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetDhId()).c_str());
     SetTaskState(TaskState::RUNNING);
     auto result = RegisterHardware();
     auto state = (result == DH_FWK_SUCCESS) ? TaskState::SUCCESS : TaskState::FAIL;
@@ -67,6 +68,7 @@ void EnableTask::DoTaskInner()
         TaskParam taskParam = {
             .networkId = GetNetworkId(),
             .uuid = GetUUID(),
+            .udid = GetUDID(),
             .dhId = GetDhId(),
             .dhType = GetDhType()
         };

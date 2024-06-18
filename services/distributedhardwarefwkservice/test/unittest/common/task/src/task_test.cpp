@@ -268,7 +268,8 @@ HWTEST_F(TaskTest, task_test_011, TestSize.Level0)
 HWTEST_F(TaskTest, task_test_012, TestSize.Level0)
 {
     std::vector<TaskDump> taskInfos;
-    std::shared_ptr<Task> childrenTask = std::make_shared<OnLineTask>("networkId", "uuid", "dhId", DHType::AUDIO);
+    std::shared_ptr<Task> childrenTask = std::make_shared<OnLineTask>("networkId", "uuid", "udid", "dhId",
+        DHType::AUDIO);
     TaskBoard::GetInstance().tasks_.insert(std::make_pair("", childrenTask));
     TaskBoard::GetInstance().DumpAllTasks(taskInfos);
     ASSERT_TRUE(TaskBoard::GetInstance().enabledDevices_.empty());
@@ -384,7 +385,8 @@ HWTEST_F(TaskTest, task_test_019, TestSize.Level0)
  */
 HWTEST_F(TaskTest, task_test_020, TestSize.Level0)
 {
-    std::shared_ptr<Task> childrenTask = std::make_shared<OnLineTask>("networkId", "uuid", "dhId", DHType::AUDIO);
+    std::shared_ptr<Task> childrenTask = std::make_shared<OnLineTask>("networkId", "uuid", "udid", "dhId",
+        DHType::AUDIO);
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);
     task->AddChildrenTask(childrenTask);

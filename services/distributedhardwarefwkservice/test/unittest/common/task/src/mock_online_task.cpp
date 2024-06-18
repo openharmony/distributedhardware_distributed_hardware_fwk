@@ -24,8 +24,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-MockOnLineTask::MockOnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
-    const DHType dhType) : OnLineTask(networkId, uuid, dhId, dhType)
+MockOnLineTask::MockOnLineTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
+    const std::string &dhId, const DHType dhType) : OnLineTask(networkId, uuid, udid, dhId, dhType)
 {
     DHLOGI("Ctor MockOnLineTask: %{public}s, type: %{public}d", this->GetId().c_str(), this->GetTaskType());
 }

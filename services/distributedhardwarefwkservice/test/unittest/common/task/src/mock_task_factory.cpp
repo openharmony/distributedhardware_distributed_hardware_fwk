@@ -31,23 +31,23 @@ std::shared_ptr<Task> MockTaskFactory::CreateTask(TaskType taskType, TaskParam t
     std::shared_ptr<Task> task = nullptr;
     switch (taskType) {
         case TaskType::ENABLE: {
-            task = std::make_shared<MockEnableTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId,
-                taskParam.dhType);
+            task = std::make_shared<MockEnableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
             break;
         }
         case TaskType::DISABLE: {
-            task = std::make_shared<MockDisableTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId,
-                taskParam.dhType);
+            task = std::make_shared<MockDisableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
             break;
         }
         case TaskType::ON_LINE: {
-            task = std::make_shared<MockOnLineTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId,
-                taskParam.dhType);
+            task = std::make_shared<MockOnLineTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
             break;
         }
         case TaskType::OFF_LINE: {
-            task = std::make_shared<MockOffLineTask>(taskParam.networkId, taskParam.uuid, taskParam.dhId,
-                taskParam.dhType);
+            task = std::make_shared<MockOffLineTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
             break;
         }
         default: {

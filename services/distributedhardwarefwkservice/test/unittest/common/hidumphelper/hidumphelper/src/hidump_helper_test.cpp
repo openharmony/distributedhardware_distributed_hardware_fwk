@@ -184,9 +184,10 @@ HWTEST_F(HidumpHelperTest, ShowAllTaskInfos_002, TestSize.Level0)
     std::string result;
     std::string networkId = "networkId_test";
     std::string uuId = "uuId_test";
+    std::string udId = "udId_test";
     std::string dhId = "dhId_test";
     DHType dhType = DHType::CAMERA;
-    std::shared_ptr<Task> childrenTask = std::make_shared<OffLineTask>(networkId, uuId, dhId, dhType);
+    std::shared_ptr<Task> childrenTask = std::make_shared<OffLineTask>(networkId, uuId, udId, dhId, dhType);
     TaskBoard::GetInstance().tasks_.insert(std::make_pair("1", childrenTask));
     int32_t ret = HidumpHelper::GetInstance().ShowAllTaskInfos(result);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);

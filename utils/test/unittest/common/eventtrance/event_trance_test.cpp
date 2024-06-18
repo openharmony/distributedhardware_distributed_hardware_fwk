@@ -64,28 +64,5 @@ HWTEST_F(EventTraceTest, DHCompMgrTraceStart_001, TestSize.Level0)
     DHCompMgrTraceStart(anonyNetworkId, anonyDHId, msg);
     EXPECT_EQ(true, msg.empty());
 }
-
-/**
- * @tc.name: GetDeviceInfo_001
- * @tc.desc: Verify the GetDeviceInfo function
- * @tc.type: FUNC
- * @tc.require: AR000GHSK0
- */
-HWTEST_F(EventTraceTest, GetDeviceInfo_001, TestSize.Level0)
-{
-    std::string uuid;
-    std::string networkId;
-    DHContext::GetInstance().devInfo_.uuid = "uuid";
-    DHContext::GetInstance().GetDeviceInfo();
-    uint32_t MAX_ONLINE_DEVICE_SIZE = 10002;
-    for (uint32_t i = 0; i <= MAX_ONLINE_DEVICE_SIZE; ++i) {
-        DHContext::GetInstance().onlineDeviceMap_.insert(std::make_pair(std::to_string(i), std::to_string(i)));
-        DHContext::GetInstance().deviceIdUUIDMap_.insert(std::make_pair(std::to_string(i), std::to_string(i)));
-    }
-    DHContext::GetInstance().AddOnlineDevice(uuid, networkId);
-    DHContext::GetInstance().onlineDeviceMap_.clear();
-    DHContext::GetInstance().AddOnlineDevice(uuid, networkId);
-    EXPECT_EQ(true, uuid.empty());
-}
 } // namespace DistributedHardware
 } // namespace OHOS

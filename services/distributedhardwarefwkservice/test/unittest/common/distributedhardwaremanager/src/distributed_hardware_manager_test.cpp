@@ -44,7 +44,7 @@ void DistributedHardwareManagerTest::TearDownTestCase(void) {}
 void DistributedHardwareManagerTest::SetUp()
 {
     for (auto device : TEST_DEVICES) {
-        DHContext::GetInstance().RemoveOnlineDevice(device.second);
+        DHContext::GetInstance().RemoveOnlineDeviceByUUID(device.second);
     }
 }
 
@@ -59,7 +59,7 @@ void DistributedHardwareManagerTest::TearDown() {}
 HWTEST_F(DistributedHardwareManagerTest, sendOnLineEvent_test_001, TestSize.Level0)
 {
     auto onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent(TEST_DEVICES[0].first,
-        TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
+        TEST_DEVICES[0].second, TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
     ASSERT_EQ(DH_FWK_SUCCESS, onlineResult);
 
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
@@ -75,11 +75,11 @@ HWTEST_F(DistributedHardwareManagerTest, sendOnLineEvent_test_001, TestSize.Leve
 HWTEST_F(DistributedHardwareManagerTest, sendOnLineEvent_test_002, TestSize.Level0)
 {
     auto onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent(TEST_DEVICES[0].first,
-        TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
+        TEST_DEVICES[0].second, TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
     ASSERT_EQ(DH_FWK_SUCCESS, onlineResult);
 
     onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent(TEST_DEVICES[0].first,
-        TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
+        TEST_DEVICES[0].second, TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
     ASSERT_EQ(DH_FWK_SUCCESS, onlineResult);
 
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
@@ -94,11 +94,11 @@ HWTEST_F(DistributedHardwareManagerTest, sendOnLineEvent_test_002, TestSize.Leve
  */
 HWTEST_F(DistributedHardwareManagerTest, sendOnLineEvent_test_003, TestSize.Level0)
 {
-    auto onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent("", "", TEST_DEV_TYPE_PAD);
+    auto onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent("", "", "", TEST_DEV_TYPE_PAD);
     ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, onlineResult);
 
     onlineResult =
-        DistributedHardwareManager::GetInstance().SendOnLineEvent(TEST_DEVICES[0].first, "", TEST_DEV_TYPE_PAD);
+        DistributedHardwareManager::GetInstance().SendOnLineEvent(TEST_DEVICES[0].first, "", "", TEST_DEV_TYPE_PAD);
     ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, onlineResult);
 
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
@@ -114,11 +114,11 @@ HWTEST_F(DistributedHardwareManagerTest, sendOnLineEvent_test_003, TestSize.Leve
 HWTEST_F(DistributedHardwareManagerTest, sendOffLineEvent_test_001, TestSize.Level0)
 {
     auto onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent(TEST_DEVICES[0].first,
-        TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
+        TEST_DEVICES[0].second, TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
     ASSERT_EQ(DH_FWK_SUCCESS, onlineResult);
 
     auto offlineResult = DistributedHardwareManager::GetInstance().SendOffLineEvent(TEST_DEVICES[0].first,
-        TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
+        TEST_DEVICES[0].second, TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
     ASSERT_EQ(DH_FWK_SUCCESS, offlineResult);
 
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
@@ -134,15 +134,15 @@ HWTEST_F(DistributedHardwareManagerTest, sendOffLineEvent_test_001, TestSize.Lev
 HWTEST_F(DistributedHardwareManagerTest, sendOffLineEvent_test_002, TestSize.Level0)
 {
     auto onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent(TEST_DEVICES[0].first,
-        TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
+        TEST_DEVICES[0].second, TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
     ASSERT_EQ(DH_FWK_SUCCESS, onlineResult);
 
     auto offlineResult = DistributedHardwareManager::GetInstance().SendOffLineEvent(TEST_DEVICES[0].first,
-        TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
+        TEST_DEVICES[0].second, TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
     ASSERT_EQ(DH_FWK_SUCCESS, offlineResult);
 
     offlineResult = DistributedHardwareManager::GetInstance().SendOffLineEvent(TEST_DEVICES[0].first,
-        TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
+        TEST_DEVICES[0].second, TEST_DEVICES[0].second, TEST_DEV_TYPE_PAD);
     ASSERT_EQ(DH_FWK_SUCCESS, offlineResult);
 
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
@@ -158,11 +158,11 @@ HWTEST_F(DistributedHardwareManagerTest, sendOffLineEvent_test_002, TestSize.Lev
 HWTEST_F(DistributedHardwareManagerTest, sendOffLineEvent_test_003, TestSize.Level0)
 {
     auto offlineResult =
-        DistributedHardwareManager::GetInstance().SendOffLineEvent("", "", TEST_DEV_TYPE_PAD);
+        DistributedHardwareManager::GetInstance().SendOffLineEvent("", "", "", TEST_DEV_TYPE_PAD);
     ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, offlineResult);
 
     offlineResult =
-        DistributedHardwareManager::GetInstance().SendOffLineEvent(TEST_DEVICES[0].first, "", TEST_DEV_TYPE_PAD);
+        DistributedHardwareManager::GetInstance().SendOffLineEvent(TEST_DEVICES[0].first, "", "", TEST_DEV_TYPE_PAD);
     ASSERT_EQ(ERR_DH_FWK_PARA_INVALID, offlineResult);
 
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
@@ -212,15 +212,15 @@ HWTEST_F(DistributedHardwareManagerTest, SendOnLineEvent_001, TestSize.Level0)
     std::string uuid3 = "uuid3";
 
     uint16_t deviceType = 0;
-    int32_t ret1 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId1, uuid3, deviceType);
+    int32_t ret1 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId1, uuid3, uuid3, deviceType);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret1);
-    int32_t ret2 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId2, uuid3, deviceType);
+    int32_t ret2 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId2, uuid3, uuid3, deviceType);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret2);
-    int32_t ret3 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId3, uuid3, deviceType);
+    int32_t ret3 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId3, uuid3, uuid3, deviceType);
     EXPECT_EQ(DH_FWK_SUCCESS, ret3);
-    int32_t ret4 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId3, uuid1, deviceType);
+    int32_t ret4 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId3, uuid1, uuid1, deviceType);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret4);
-    int32_t ret5 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId3, uuid2, deviceType);
+    int32_t ret5 =  DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId3, uuid2, uuid2, deviceType);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret5);
 }
 
@@ -244,15 +244,15 @@ HWTEST_F(DistributedHardwareManagerTest, SendOffLineEvent_001, TestSize.Level0)
     std::string uuid3 = "uuid3";
 
     uint16_t deviceType = 0;
-    int32_t ret1 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId1, uuid3, deviceType);
+    int32_t ret1 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId1, uuid3, uuid3, deviceType);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret1);
-    int32_t ret2 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId2, uuid3, deviceType);
+    int32_t ret2 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId2, uuid3, uuid3, deviceType);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret2);
-    int32_t ret3 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId3, uuid3, deviceType);
+    int32_t ret3 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId3, uuid3, uuid3, deviceType);
     EXPECT_EQ(DH_FWK_SUCCESS, ret3);
-    int32_t ret4 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId3, uuid1, deviceType);
+    int32_t ret4 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId3, uuid1, uuid3, deviceType);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret4);
-    int32_t ret5 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId3, uuid2, deviceType);
+    int32_t ret5 =  DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId3, uuid2, uuid3, deviceType);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret5);
 }
 

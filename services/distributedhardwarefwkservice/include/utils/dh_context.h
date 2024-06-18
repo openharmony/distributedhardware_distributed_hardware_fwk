@@ -18,6 +18,7 @@
 
 #include <atomic>
 #include <memory>
+#include <set>
 #include <string>
 #include <unordered_set>
 #include <shared_mutex>
@@ -32,6 +33,33 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+struct DeviceIdEntry {
+    std::string networkId;
+    std::string uuid;
+    // deviceId is uuid hash
+    std::string deviceId;
+    std::string udid;
+    std::string udidHash;
+
+    bool operator == (const DeviceIdEntry &other) const
+    {
+        return (networkId == other.networkId) &&
+            (uuid == other.uuid) &&
+            (deviceId == other.deviceId) &&
+            (udid == other.udid) &&
+            (udidHash == other.udidHash);
+    }
+
+    bool operator < (const DeviceIdEntry &other) const
+    {
+        return networkId.compare(other.networkId) < 0 ||
+            uuid.compare(other.uuid) < 0 ||
+            deviceId.compare(other.deviceId) < 0 ||
+            udid.compare(other.udid) < 0 ||
+            udidHash.compare(other.udidHash) < 0;
+    }
+};
+
 class DHContext {
 DECLARE_SINGLE_INSTANCE_BASE(DHContext);
 public:
@@ -40,12 +68,14 @@ public:
     const DeviceInfo& GetDeviceInfo();
 
     /* Save online device UUID and networkId when devices online */
-    void AddOnlineDevice(const std::string &uuid, const std::string &networkId);
-    void RemoveOnlineDevice(const std::string &uuid);
+    void AddOnlineDevice(const std::string &udid, const std::string &uuid, const std::string &networkId);
+    void RemoveOnlineDeviceByUUID(const std::string &uuid);
     bool IsDeviceOnline(const std::string &uuid);
     size_t GetOnlineCount();
     std::string GetNetworkIdByUUID(const std::string &uuid);
+    std::string GetUdidHashIdByUUID(const std::string &uuid);
     std::string GetUUIDByNetworkId(const std::string &networkId);
+    std::string GetUDIDByNetworkId(const std::string &networkId);
     /* DeviceId is which is hashed by sha256 */
     std::string GetUUIDByDeviceId(const std::string &deviceId);
     /**
@@ -90,14 +120,10 @@ private:
     };
     void RegisDHFWKIsomerismListener();
 private:
-    DeviceInfo devInfo_ { "", "", "", "", 0 };
+    DeviceInfo devInfo_ { "", "", "", "", "", "", 0 };
     std::mutex devMutex_;
 
-    /* Save online device uuid and networkId */
-    std::unordered_map<std::string, std::string> onlineDeviceMap_ = {};
-
-    /* Save online device hashed uuid and uuid */
-    std::unordered_map<std::string, std::string> deviceIdUUIDMap_ = {};
+    std::set<DeviceIdEntry> devIdEntrySet_;
     std::shared_mutex onlineDevMutex_;
 
     std::shared_ptr<DHContext::CommonEventHandler> eventHandler_;

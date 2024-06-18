@@ -26,8 +26,8 @@ namespace DistributedHardware {
 class MockOnLineTask : public OnLineTask {
 public:
     MockOnLineTask() = delete;
-    MockOnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
-        const DHType dhType);
+    MockOnLineTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
+        const std::string &dhId, const DHType dhType);
 
     void SetOnLineDevInfos(std::vector<MockDevInfo> devInfos);
 private:

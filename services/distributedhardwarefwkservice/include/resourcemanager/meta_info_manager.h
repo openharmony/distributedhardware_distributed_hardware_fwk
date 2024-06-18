@@ -40,13 +40,13 @@ public:
     int32_t Init();
     int32_t UnInit();
     int32_t AddMetaCapInfos(const std::vector<std::shared_ptr<MetaCapabilityInfo>> &meatCapInfos);
-    int32_t SyncMetaInfoFromDB(const std::string &deviceId);
+    int32_t SyncMetaInfoFromDB(const std::string &udidHash);
     int32_t SyncRemoteMetaInfos();
     int32_t GetDataByKeyPrefix(const std::string &keyPrefix, MetaCapInfoMap &metaCapMap);
     int32_t RemoveMetaInfoByKey(const std::string &key);
-    int32_t GetMetaCapInfo(const std::string &deviceId, const std::string &dhId,
+    int32_t GetMetaCapInfo(const std::string &udidHash, const std::string &dhId,
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
-    void GetMetaCapInfosByDeviceId(const std::string &deviceId,
+    void GetMetaCapInfosByUdidHash(const std::string &udidHash,
         std::vector<std::shared_ptr<MetaCapabilityInfo>> &metaCapInfos);
     /* Database data changes callback */
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;

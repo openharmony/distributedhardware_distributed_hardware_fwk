@@ -51,6 +51,7 @@ namespace DistributedHardware {
     const std::string DH_TYPE = "dh_type";
     const std::string DH_ATTRS = "dh_attrs";
     const std::string DH_SUBTYPE = "dh_subtype";
+    const std::string DEV_UDID_HASH = "udid_hash";
     const std::string DH_LOG_TITLE_TAG = "DHFWK";
     const std::string DH_VER = "dh_ver";
     const std::string COMP_VER = "comp_ver";

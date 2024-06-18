@@ -225,13 +225,14 @@ HWTEST_F(ComponentManagerTest, init_compSink_test_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
 {
-    DeviceInfo devInfo { "", "", "", "", 0 };
+    DeviceInfo devInfo { "", "", "", "", "", "", 0 };
     auto info = std::make_unique<MockNodeBasicInfo>();
     MockGetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
     devInfo.uuid = GetUUIDBySoftBus(info->networkId);
+    devInfo.udid = GetUDIDBySoftBus(info->networkId);
     devInfo.deviceId = GetDeviceIdByUUID(devInfo.uuid);
 
-    DHContext::GetInstance().AddOnlineDevice(info->networkId, devInfo.uuid);
+    DHContext::GetInstance().AddOnlineDevice(devInfo.udid, devInfo.uuid, info->networkId);
 
     const std::shared_ptr<CapabilityInfo> CAP_INFO_1 =
         std::make_shared<CapabilityInfo>(DH_ID_1, devInfo.deviceId, DEVICE_NAME,
@@ -743,29 +744,9 @@ HWTEST_F(ComponentManagerTest, RetryGetEnableParam_001, TestSize.Level0)
 {
     DHType dhType = DHType::CAMERA;
     EnableParam param;
-    DHContext::GetInstance().onlineDeviceMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
     auto ret = ComponentManager::GetInstance().RetryGetEnableParam(NETWORK_TEST, UUID_TEST, DH_ID_1, dhType, param);
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_ENABLE_FAILED);
-}
-
-/**
- * @tc.name: RetryGetEnableParam_002
- * @tc.desc: Verify the RetryGetEnableParam function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ComponentManagerTest, RetryGetEnableParam_002, TestSize.Level0)
-{
-    DHType dhType = DHType::CAMERA;
-    EnableParam param;
-    DHContext::GetInstance().onlineDeviceMap_[UUID_TEST] = NETWORK_TEST;
-    auto ret = ComponentManager::GetInstance().RetryGetEnableParam(NETWORK_TEST, UUID_TEST, DH_ID_1, dhType, param);
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
-
-    std::string key = Sha256(UUID_TEST);
-    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = CAP_INFO_TEST;
-    ret = ComponentManager::GetInstance().RetryGetEnableParam(NETWORK_TEST, UUID_TEST, DH_ID_1, dhType, param);
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
 /**

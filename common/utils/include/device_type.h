@@ -54,15 +54,25 @@ const std::unordered_map<DHType, std::string> DHTypeStrMap = {
 };
 
 struct DeviceInfo {
+    // device networkid
     std::string networkId;
+    // device uuid
     std::string uuid;
+    // device id for uuid hash
     std::string deviceId;
+    // device udid
+    std::string udid;
+    // udid hash as the absolute id even if the device resetting
+    std::string udidHash;
+    // device name
     std::string deviceName;
+    // device type
     uint16_t deviceType;
 
-    explicit DeviceInfo(std::string networkId, std::string uuid, std::string deviceId, std::string deviceName,
-        uint16_t deviceType) : networkId(networkId), uuid(uuid), deviceId(deviceId), deviceName(deviceName),
-        deviceType(deviceType) {}
+    explicit DeviceInfo(std::string networkId, std::string uuid, std::string deviceId,
+        std::string udid, std::string udidHash, std::string deviceName,
+        uint16_t deviceType) : networkId(networkId), uuid(uuid), deviceId(deviceId),
+        udid(udid), udidHash(udidHash), deviceName(deviceName), deviceType(deviceType) {}
 };
 
 /* The key is DHType, the value is the prefix of DHId */

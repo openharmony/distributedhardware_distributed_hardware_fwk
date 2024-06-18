@@ -30,6 +30,15 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "MetaCapabilityInfo"
 
+std::string MetaCapabilityInfo::GetUdidHash() const
+{
+    return udidHash_;
+}
+
+void MetaCapabilityInfo::SetUdidHash(const std::string &udidHash)
+{
+    this->udidHash_ = udidHash;
+}
 
 std::string MetaCapabilityInfo::GetSinkVersion() const
 {
@@ -103,11 +112,33 @@ bool MetaCapabilityInfo::Compare(const MetaCapabilityInfo& metaCapInfo)
         DHLOGE("dhSubtype is not equal");
         return false;
     }
+    if (strcmp(this->GetUdidHash().c_str(), metaCapInfo.GetUdidHash().c_str()) != 0) {
+        DHLOGE("udidHash is not equal");
+        return false;
+    }
     if (strcmp(this->GetSinkVersion().c_str(), metaCapInfo.GetSinkVersion().c_str()) != 0) {
         DHLOGE("sinkVersion is not equal");
         return false;
     }
     return true;
+}
+
+std::string MetaCapabilityInfo::GetKey() const
+{
+    std::string kvStoreKey;
+    kvStoreKey.append(udidHash_);
+    kvStoreKey.append(RESOURCE_SEPARATOR);
+    kvStoreKey.append(this->GetDHId());
+    return kvStoreKey;
+}
+
+std::string MetaCapabilityInfo::GetAnonymousKey() const
+{
+    std::string kvStoreKey;
+    kvStoreKey.append(GetAnonyString(udidHash_));
+    kvStoreKey.append(RESOURCE_SEPARATOR);
+    kvStoreKey.append(GetAnonyString(this->GetDHId()));
+    return kvStoreKey;
 }
 
 void ToJson(cJSON *jsonObject, const MetaCapabilityInfo &metaCapInfo)
@@ -119,6 +150,7 @@ void ToJson(cJSON *jsonObject, const MetaCapabilityInfo &metaCapInfo)
     cJSON_AddNumberToObject(jsonObject, DH_TYPE.c_str(), (double)metaCapInfo.GetDHType());
     cJSON_AddStringToObject(jsonObject, DH_ATTRS.c_str(), metaCapInfo.GetDHAttrs().c_str());
     cJSON_AddStringToObject(jsonObject, DH_SUBTYPE.c_str(), metaCapInfo.GetDHSubtype().c_str());
+    cJSON_AddStringToObject(jsonObject, DEV_UDID_HASH.c_str(), metaCapInfo.GetUdidHash().c_str());
     cJSON_AddStringToObject(jsonObject, SINK_VER.c_str(), metaCapInfo.GetSinkVersion().c_str());
 }
 
@@ -165,6 +197,12 @@ void FromJson(const cJSON *jsonObject, MetaCapabilityInfo &metaCapInfo)
         return;
     }
     metaCapInfo.SetDHSubtype(cJSON_GetObjectItem(jsonObject, DH_SUBTYPE.c_str())->valuestring);
+
+    if (!IsString(jsonObject, DEV_UDID_HASH)) {
+        DHLOGE("DEV_UDID_HASH is invalid!");
+        return;
+    }
+    metaCapInfo.SetUdidHash(cJSON_GetObjectItem(jsonObject, DEV_UDID_HASH.c_str())->valuestring);
 
     if (!IsString(jsonObject, SINK_VER)) {
         DHLOGE("SINK_VER is invalid!");

@@ -33,12 +33,13 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DisableTask"
 
-DisableTask::DisableTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
-    const DHType dhType) : Task(networkId, uuid, dhId, dhType)
+DisableTask::DisableTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
+    const std::string &dhId, const DHType dhType) : Task(networkId, uuid, udid, dhId, dhType)
 {
     SetTaskType(TaskType::DISABLE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::DO_DISABLE });
-    DHLOGD("id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(uuid).c_str());
+    DHLOGD("DisableTask id: %{public}s, networkId: %{public}s, dhId: %{public}s",
+        GetId().c_str(), GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str());
 }
 
 DisableTask::~DisableTask()

@@ -32,12 +32,14 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "OnLineTask"
 
-OnLineTask::OnLineTask(const std::string &networkId, const std::string &uuid, const std::string &dhId,
-    const DHType dhType) : Task(networkId, uuid, dhId, dhType)
+OnLineTask::OnLineTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
+    const std::string &dhId, const DHType dhType) : Task(networkId, uuid, udid, dhId, dhType)
 {
     SetTaskType(TaskType::ON_LINE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::SYNC_ONLINE_INFO, TaskStep::REGISTER_ONLINE_DISTRIBUTED_HARDWARE });
-    DHLOGD("id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(uuid).c_str());
+    DHLOGD("OnLineTask id: %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
+        GetId().c_str(), GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(),
+        GetAnonyString(udid).c_str());
 }
 
 OnLineTask::~OnLineTask()
@@ -47,7 +49,9 @@ OnLineTask::~OnLineTask()
 
 void OnLineTask::DoTask()
 {
-    DHLOGD("start online task, id = %{public}s, uuid = %{public}s", GetId().c_str(), GetAnonyString(GetUUID()).c_str());
+    DHLOGD("start online task, id = %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
+        GetId().c_str(), GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str(),
+        GetAnonyString(GetUDID()).c_str());
     this->SetTaskState(TaskState::RUNNING);
     for (const auto& step : this->GetTaskSteps()) {
         switch (step) {
@@ -72,23 +76,28 @@ void OnLineTask::DoTask()
 void OnLineTask::DoSyncInfo()
 {
     std::string deviceId = GetDeviceIdByUUID(GetUUID());
+    std::string udidHash = Sha256(GetUDID());
+    DHLOGI("DoSyncInfo, networkId: %{public}s, deviceId: %{public}s, uuid: %{public}s,"
+        "udid: %{public}s, udidHash: %{public}s", GetAnonyString(GetNetworkId()).c_str(),
+        GetAnonyString(deviceId).c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetUDID()).c_str(),
+        GetAnonyString(udidHash).c_str());
     auto ret = LocalCapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("SyncLocalCapabilityInfoFromDB failed, deviceId = %{public}s, uuid = %{public}s, errCode = %{public}d",
-            GetAnonyString(deviceId).c_str(), GetAnonyString(GetUUID()).c_str(), ret);
+        DHLOGE("SyncLocalCapabilityInfoFromDB failed, deviceId = %{public}s, errCode = %{public}d",
+            GetAnonyString(deviceId).c_str(), ret);
     }
 
-    ret = MetaInfoManager::GetInstance()->SyncMetaInfoFromDB(deviceId);
+    ret = MetaInfoManager::GetInstance()->SyncMetaInfoFromDB(udidHash);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("SyncMetaInfoFromDB failed, deviceId = %{public}s, uuid = %{public}s, errCode = %{public}d",
-            GetAnonyString(deviceId).c_str(), GetAnonyString(GetUUID()).c_str(), ret);
+        DHLOGE("SyncMetaInfoFromDB failed, udidHash = %{public}s, errCode = %{public}d",
+            GetAnonyString(udidHash).c_str(), ret);
     }
 }
 
 void OnLineTask::CreateEnableTask()
 {
-    DHLOGI("networkId = %{public}s, uuid = %{public}s", GetAnonyString(GetNetworkId()).c_str(),
-        GetAnonyString(GetUUID()).c_str());
+    DHLOGI("CreateEnableTask, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
+        GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetUDID()).c_str());
     std::string deviceId = GetDeviceIdByUUID(GetUUID());
     std::vector<std::pair<std::string, DHType>> devDhInfos;
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
@@ -107,8 +116,9 @@ void OnLineTask::CreateEnableTask()
 
     if (devDhInfos.empty()) {
         DHLOGW("Can not get cap info from local Capbility, try use meta info");
+        std::string udidHash = Sha256(GetUDID());
         std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
-        MetaInfoManager::GetInstance()->GetMetaCapInfosByDeviceId(deviceId, metaCapInfos);
+        MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(udidHash, metaCapInfos);
         std::for_each(metaCapInfos.begin(), metaCapInfos.end(), [&](std::shared_ptr<MetaCapabilityInfo> cap) {
             devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
         });
@@ -123,6 +133,7 @@ void OnLineTask::CreateEnableTask()
         TaskParam taskParam = {
             .networkId = GetNetworkId(),
             .uuid = GetUUID(),
+            .udid = GetUDID(),
             .dhId = info.first,
             .dhType = info.second
         };
