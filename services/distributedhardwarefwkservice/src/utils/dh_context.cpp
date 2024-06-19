@@ -138,7 +138,7 @@ void DHContext::AddOnlineDevice(const std::string &udid, const std::string &uuid
 void DHContext::RemoveOnlineDeviceByUUID(const std::string &uuid)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
-    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
         if (iter->uuid == uuid) {
             devIdEntrySet_.erase(iter);
             break;
@@ -153,7 +153,7 @@ bool DHContext::IsDeviceOnline(const std::string &uuid)
     }
     std::shared_lock<std::shared_mutex> lock(onlineDevMutex_);
     bool flag = false;
-    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
         if (iter->uuid == uuid) {
             flag = true;
             break;
@@ -172,7 +172,7 @@ std::string DHContext::GetNetworkIdByUUID(const std::string &uuid)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
     std::string networkId = "";
-    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
         if (iter->uuid == uuid) {
             networkId = iter->networkId;
             break;
@@ -185,7 +185,7 @@ std::string DHContext::GetUdidHashIdByUUID(const std::string &uuid)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
     std::string udidHash = "";
-    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
         if (iter->uuid == uuid) {
             udidHash = iter->udidHash;
             break;
@@ -198,7 +198,7 @@ std::string DHContext::GetUUIDByNetworkId(const std::string &networkId)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
     std::string uuid = "";
-    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
         if (iter->networkId == networkId) {
             uuid = iter->uuid;
             break;
@@ -211,7 +211,7 @@ std::string DHContext::GetUDIDByNetworkId(const std::string &networkId)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
     std::string udid = "";
-    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
         if (iter->networkId == networkId) {
             udid = iter->udid;
             break;
@@ -224,8 +224,8 @@ std::string DHContext::GetUUIDByDeviceId(const std::string &deviceId)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
     std::string uuid = "";
-    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
-        if (iter->deviceId == deviceId) {
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
+        if (iter->deviceId == deviceId || iter->udidHash == deviceId) {
             uuid = iter->uuid;
             break;
         }
@@ -237,7 +237,7 @@ std::string DHContext::GetNetworkIdByDeviceId(const std::string &deviceId)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
     std::string networkId = "";
-    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end();) {
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
         if (iter->deviceId == deviceId) {
             networkId = iter->networkId;
             break;
