@@ -44,7 +44,9 @@ struct ContinueSwitch {
   @State title: string = '';
   @State screenHeight: number = 0;
   @State screenWidth: number = 0;
-  @State imageHeight: number = 0;
+  @State shortSideSize: number = 0;
+  @State videoHeight: number = 0;
+  @State videoWidth: number = 0;
   @State textWidth: number = 0;
   @State gapLength: number = 0;
   @State videoSrc: Resource = $rawfile('continue.mp4');
@@ -66,6 +68,18 @@ struct ContinueSwitch {
     }
   }
 
+  getVideoSize() {
+    console.log(TAG + 'getVideoSize in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
+    if (deviceInfo.deviceType === 'phone' || deviceInfo.deviceType === 'tablet') {
+      this.videoWidth = this.shortSideSize * 0.8;
+      this.videoHeight = this.shortSideSize * 0.8 * 2 / 3;
+    } else if (deviceInfo.deviceType === '2in1') {
+      this.videoWidth = this.shortSideSize * 0.8 * 3 / 2;
+      this.videoHeight = this.shortSideSize * 0.8;
+    }
+    console.log(TAG + 'this.shortSideSize = ' + this.shortSideSize + ', this.videoWidth = ' + this.videoWidth + ', this.videoHeight = ' + this.videoHeight);
+  }
+
   @Builder
   NavigationTitle() {
     Column() {
@@ -83,7 +97,6 @@ struct ContinueSwitch {
     display.getAllDisplays((err, data) => {
       this.screenWidth = px2vp(data[0].width);
       this.screenHeight = px2vp(data[0].height);
-      this.getImageHeight();
       console.log(TAG + 'screenWidth = ' + this.screenWidth + '; screenHeight = ' + this.screenHeight);
     })
     if (this.videoController) {
@@ -125,18 +138,6 @@ struct ContinueSwitch {
       this.onPortrait(mediaQueryResult);
     })
     this.extContext = localStorage.get<common.UIExtensionContext>('context');
-  }
-
-  getImageHeight() {
-    console.log(TAG + 'getImageHeight in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
-    if (deviceInfo.deviceType === 'phone') {
-      this.imageHeight = 220;
-    } else if (deviceInfo.deviceType === 'table') {
-      this.imageHeight = 212;
-    } else if (deviceInfo.deviceType === '2in1') {
-      this.imageHeight = 261;
-    }
-    console.log(TAG + 'this.imageHeight' + this.imageHeight);
   }
 
   getGapLength() {
@@ -185,9 +186,10 @@ struct ContinueSwitch {
               .objectFit(ImageFit.Contain)
               .muted(true)
               .controls(false)
-              .height(this.imageHeight)
+              .width(this.videoWidth)
+              .height(this.videoHeight)
               .margin({ left: 35, right: 35, bottom: 24 })
-              .backgroundColor(Color.Transparent)
+              .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
               .visibility(this.isShow ? Visibility.Visible : Visibility.Hidden)
               .onPrepared(async (event) => {
                 console.info('onPrepared is ' + event.duration);
@@ -277,5 +279,11 @@ struct ContinueSwitch {
     .width('100%')
     .height('100%')
     .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
+    .onAreaChange((oldArea: Area, newArea: Area) => {
+      let fullHeight = newArea.height as number;
+      this.shortSideSize = newArea.width < fullHeight / 2 ? newArea.width as number : fullHeight / 2 as number;
+      this.getVideoSize();
+      console.log(TAG + 'this.shortSideSize = ' + this.shortSideSize + ', this.videoWidth = ' + this.videoWidth + ', this.videoHeight = ' + this.videoHeight);
+    })
   }
 }
