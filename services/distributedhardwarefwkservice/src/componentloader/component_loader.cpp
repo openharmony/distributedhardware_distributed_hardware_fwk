@@ -273,10 +273,6 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
     cJSON_ArrayForEach(component, components) {
         CompConfig config;
         ParseCompConfigFromJson(component, config);
-        if (config.type == DHType::CAMERA && !CheckComponentEnable(config)) {
-            DHLOGI("Current type is camera, not enabled.");
-            continue;
-        }
         dhtypeMap.insert(std::pair<DHType, CompConfig>(config.type, config));
         localDHVersion_.compVersions.insert(
             std::pair<DHType, CompVersion>(config.type, GetCompVersionFromComConfig(config)));
