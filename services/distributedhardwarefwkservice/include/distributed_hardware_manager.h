@@ -19,6 +19,7 @@
 #include "idistributed_hardware_manager.h"
 
 #include <atomic>
+#include <mutex>
 #include "device_type.h"
 #include "single_instance.h"
 
@@ -41,6 +42,7 @@ public:
 private:
     std::atomic<bool> isLocalInit{false};
     std::atomic<bool> isAllInit{false};
+    std::mutex dhInitMgrMutex_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

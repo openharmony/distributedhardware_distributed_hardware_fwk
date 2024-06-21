@@ -65,6 +65,7 @@ int32_t DistributedHardwareManager::LocalInit()
 int32_t DistributedHardwareManager::Initialize()
 {
     DHLOGI("DHFWK Normal Init begin");
+    std::lock_guard<std::mutex> lock(dhInitMgrMutex_);
     if (isAllInit) {
         DHLOGI("DHMgr init already finish");
         return DH_FWK_SUCCESS;
