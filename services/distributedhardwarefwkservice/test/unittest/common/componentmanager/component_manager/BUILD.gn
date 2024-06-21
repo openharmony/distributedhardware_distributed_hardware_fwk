@@ -65,7 +65,6 @@ ohos_unittest("ComponentManagerTest") {
     "access_token:libtoken_setproc",
     "cJSON:cjson",
     "c_utils:utils",
-    "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",

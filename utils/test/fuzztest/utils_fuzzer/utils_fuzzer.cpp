@@ -52,7 +52,7 @@ void UtilsToolTest(const uint8_t* data, size_t size)
 
     std::string networkId(reinterpret_cast<const char*>(data), size);
     std::string uuid(reinterpret_cast<const char*>(data), size);
-    GetUUIDBySoftBus(networkId);
+    GetUUIDByDm(networkId);
     GetDeviceIdByUUID(uuid);
 }
 }

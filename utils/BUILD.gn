@@ -61,7 +61,7 @@ ohos_shared_library("distributedhardwareutils") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
-    "dsoftbus:softbus_client",
+    "device_manager:devicemanagersdk",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",

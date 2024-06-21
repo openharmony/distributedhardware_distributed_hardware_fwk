@@ -130,7 +130,7 @@ HWTEST_F(UtilsToolTest, utils_tool_test_004, TestSize.Level0)
 HWTEST_F(UtilsToolTest, utils_tool_test_005, TestSize.Level0)
 {
     std::string networkId = "";
-    std::string ret = GetUUIDBySoftBus(networkId);
+    std::string ret = GetUUIDByDm(networkId);
     EXPECT_EQ(0, ret.size());
 }
 
