@@ -128,8 +128,8 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
     Init();
     for (const auto &deviceInfo : deviceList) {
         const auto networkId = std::string(deviceInfo.networkId);
-        const auto uuid = GetUUIDBySoftBus(networkId);
-        const auto udid = GetUDIDBySoftBus(networkId);
+        const auto uuid = GetUUIDByDm(networkId);
+        const auto udid = GetUDIDByDm(networkId);
         DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s",
             GetAnonyString(networkId).c_str(),
             GetAnonyString(uuid).c_str());

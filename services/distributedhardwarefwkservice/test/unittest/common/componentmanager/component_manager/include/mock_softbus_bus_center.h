@@ -33,16 +33,16 @@ typedef struct {
     char networkId[MOCK_NETWORK_ID_BUF_LEN];
     char deviceName[MOCK_DEVICE_NAME_BUF_LEN];
     uint16_t deviceTypeId;
-} MockNodeBasicInfo;
+} MockDmDeviceInfo;
 
-int32_t MockGetLocalNodeDeviceInfo(const char *pkgName, MockNodeBasicInfo *info)
+static int32_t MockGetLocalNodeDeviceInfo(const char *pkgName, MockDmDeviceInfo *info)
 {
-    MockNodeBasicInfo nodeBasicInfo = {
+    MockDmDeviceInfo dmDeviceInfo = {
         .networkId = "nt36a637105409e904d4da83790a4a8",
         .deviceName = "distributed_camera",
         .deviceTypeId = 1};
     (void)pkgName;
-    *info = nodeBasicInfo;
+    *info = dmDeviceInfo;
     return DH_FWK_SUCCESS;
 }
 #ifdef __cplusplus

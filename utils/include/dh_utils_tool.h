@@ -34,9 +34,9 @@ int64_t GetCurrentTime();
  */
 std::string GetRandomID();
 
-std::string GetUUIDBySoftBus(const std::string &networkId);
+std::string GetUUIDByDm(const std::string &networkId);
 
-std::string GetUDIDBySoftBus(const std::string &networkId);
+std::string GetUDIDByDm(const std::string &networkId);
 
 DeviceInfo GetLocalDeviceInfo();
 

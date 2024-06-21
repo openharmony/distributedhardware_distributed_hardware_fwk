@@ -27,8 +27,8 @@
 
 #include "openssl/sha.h"
 #include "parameter.h"
-#include "softbus_common.h"
-#include "softbus_bus_center.h"
+#include "device_manager.h"
+#include "dm_device_info.h"
 
 #include "constants.h"
 #include "distributed_hardware_errno.h"
@@ -80,26 +80,24 @@ std::string GetRandomID()
     return ss.str();
 }
 
-std::string GetUUIDBySoftBus(const std::string &networkId)
+std::string GetUUIDByDm(const std::string &networkId)
 {
     if (networkId.empty()) {
         return "";
     }
-    char uuid[UUID_BUF_LEN] = {0};
-    auto ret = GetNodeKeyInfo(DH_FWK_PKG_NAME.c_str(), networkId.c_str(), NodeDeviceInfoKey::NODE_KEY_UUID,
-        reinterpret_cast<uint8_t *>(uuid), UUID_BUF_LEN);
-    return (ret == DH_FWK_SUCCESS) ? std::string(uuid) : "";
+    std::string uuid = "";
+    auto ret = DeviceManager::GetInstance().GetUuidByNetworkId(DH_FWK_PKG_NAME, networkId, uuid);
+    return (ret == DH_FWK_SUCCESS) ? uuid : "";
 }
 
-std::string GetUDIDBySoftBus(const std::string &networkId)
+std::string GetUDIDByDm(const std::string &networkId)
 {
     if (networkId.empty()) {
         return "";
     }
-    char udid[UDID_BUF_LEN] = {0};
-    auto ret = GetNodeKeyInfo(DH_FWK_PKG_NAME.c_str(), networkId.c_str(), NodeDeviceInfoKey::NODE_KEY_UDID,
-        reinterpret_cast<uint8_t *>(udid), UDID_BUF_LEN);
-    return (ret == DH_FWK_SUCCESS) ? std::string(udid) : "";
+    std::string udid = "";
+    auto ret = DeviceManager::GetInstance().GetUdidByNetworkId(DH_FWK_PKG_NAME, networkId, udid);
+    return (ret == DH_FWK_SUCCESS) ? udid : "";
 }
 
 std::string GetDeviceIdByUUID(const std::string &uuid)
@@ -133,31 +131,31 @@ std::string Sha256(const std::string& in)
 DeviceInfo GetLocalDeviceInfo()
 {
     DeviceInfo devInfo { "", "", "", "", "", "", 0 };
-    auto info = std::make_unique<NodeBasicInfo>();
-    auto ret = GetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
+    DmDeviceInfo info;
+    auto ret = DeviceManager::GetInstance().GetLocalDeviceInfo(DH_FWK_PKG_NAME, info);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("GetLocalNodeDeviceInfo failed, errCode = %{public}d", ret);
         return devInfo;
     }
-    devInfo.networkId = info->networkId;
-    devInfo.uuid = GetUUIDBySoftBus(info->networkId);
+    devInfo.networkId = info.networkId;
+    devInfo.uuid = GetUUIDByDm(info.networkId);
     devInfo.deviceId = GetDeviceIdByUUID(devInfo.uuid);
-    devInfo.udid = GetUDIDBySoftBus(info->networkId);
+    devInfo.udid = GetUDIDByDm(info.networkId);
     devInfo.udidHash = Sha256(devInfo.udid);
-    devInfo.deviceName = info->deviceName;
-    devInfo.deviceType = info->deviceTypeId;
+    devInfo.deviceName = info.deviceName;
+    devInfo.deviceType = info.deviceTypeId;
     return devInfo;
 }
 
 std::string GetLocalNetworkId()
 {
-    auto info = std::make_unique<NodeBasicInfo>();
-    auto ret = GetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
+    DmDeviceInfo info;
+    auto ret = DeviceManager::GetInstance().GetLocalDeviceInfo(DH_FWK_PKG_NAME, info);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("GetLocalNodeDeviceInfo failed, errCode = %{public}d", ret);
         return "";
     }
-    return info->networkId;
+    return info.networkId;
 }
 
 bool IsUInt8(const cJSON* jsonObj, const std::string& key)

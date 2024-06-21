@@ -159,12 +159,12 @@ void AccessManager::OnDeviceReady(const DmDeviceInfo &deviceInfo)
         DHLOGE("NetworkId is invalid!");
         return;
     }
-    auto uuid = GetUUIDBySoftBus(networkId);
+    auto uuid = GetUUIDByDm(networkId);
     if (uuid.size() == 0 || uuid.size() > MAX_ID_LEN) {
         DHLOGE("Uuid is invalid!");
         return;
     }
-    auto udid = GetUDIDBySoftBus(networkId);
+    auto udid = GetUDIDByDm(networkId);
     if (udid.size() == 0 || udid.size() > MAX_ID_LEN) {
         DHLOGE("Udid is invalid!");
         return;
@@ -192,8 +192,8 @@ void AccessManager::CheckTrustedDeviceOnline()
     }
     for (const auto &deviceInfo : deviceList) {
         const auto networkId = std::string(deviceInfo.networkId);
-        const auto uuid = GetUUIDBySoftBus(networkId);
-        const auto udid = GetUDIDBySoftBus(networkId);
+        const auto uuid = GetUUIDByDm(networkId);
+        const auto udid = GetUDIDByDm(networkId);
         DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s, udid = %{public}s",
             GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid,
