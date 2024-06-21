@@ -91,7 +91,11 @@ void AVTransBuffer::Reset()
 BufferData::BufferData(size_t capacity)
     : capacity_(capacity), size_(0), address_(nullptr)
 {
-    address_ = std::shared_ptr<uint8_t>(new uint8_t[capacity], std::default_delete<uint8_t[]>());
+    if (capacity <= CAPACITY_MAX_LENGTH) {
+        address_ = std::shared_ptr<uint8_t>(new uint8_t[capacity], std::default_delete<uint8_t[]>());
+    } else {
+        AVTRANS_LOGE("The capacity is not in range : %{public}d.", capacity);
+    }
 }
 
 BufferData::BufferData(size_t capacity, std::shared_ptr<uint8_t> bufData)
