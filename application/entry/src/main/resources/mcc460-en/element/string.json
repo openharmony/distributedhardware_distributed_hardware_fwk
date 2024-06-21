@@ -2,7 +2,11 @@
     "string":[
         {
             "name":"continue_desc",
-            "value":"Browse or edit on one device, then continue on another nearby device logged in with the same Huawei ID. This function requires that both devices have enabled \"Application connection,\" WLAN, and Bluetooth."
+            "value":"Start something on one device, then pick it up on another. For example, you can start a note on your phone, then finish it on your tablet.\n\nTo use Continuity, devices need to be close together, using the same HUAWEI ID, and have WLAN, Bluetooth, as well as this feature enabled."
+        },
+        {
+            "name":"continue_privacy_text",
+            "value":"This service uses Bluetooth and WLAN. During use, it will read this device's name and send it to devices you hop to. By turning this on, you agree to these terms."
         }
     ]
 }
