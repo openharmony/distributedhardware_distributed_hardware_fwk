@@ -25,6 +25,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 constexpr size_t INVALID_POSITION = -1;
+static constexpr size_t CAPACITY_MAX_LENGTH = 8192;
 
 enum struct MetaType : uint32_t {
     AUDIO,
