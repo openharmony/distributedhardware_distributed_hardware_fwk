@@ -47,10 +47,18 @@ ohos_unittest("AccessManagerTest") {
     "${utils_path}:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
   ]
+
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"dhfwksvr\"",
     "LOG_DOMAIN=0xD004100",
+  ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
   ]
 
   external_deps = [
