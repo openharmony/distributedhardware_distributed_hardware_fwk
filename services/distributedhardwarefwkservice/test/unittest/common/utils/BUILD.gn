@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+# Copyright (c) 2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,47 +12,34 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../../distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/dh_manager_test"
+module_out_path = "distributed_hardware_fwk/dh_context_test"
 
 config("module_private_config") {
-  visibility = [ ":*" ]
   include_dirs = [
-    "include",
     "${utils_path}/include",
-    "${utils_path}/include/log",
-    "${common_path}/log/include",
     "${common_path}/utils/include",
-    "${services_path}/distributedhardwarefwkservice/include",
-    "${services_path}/distributedhardwarefwkservice/include/componentloader",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
   ]
 }
 
-ohos_unittest("DistributedHardwareManagerTest") {
+ohos_unittest("DhContextTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/distributed_hardware_manager_test.cpp" ]
+  sources = [ "dh_context_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//third_party/googletest:gmock_main",
+    "${utils_path}:distributedhardwareutils",
     "//third_party/googletest:gtest_main",
-  ]
-
-  external_deps = [
-    "cJSON:cjson",
-    "c_utils:utils",
-    "eventhandler:libeventhandler",
-    "power_manager:powermgr_client",
   ]
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"DistributedHardwareManagerTest\"",
+    "DH_LOG_TAG=\"dhfwksvr\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
@@ -62,9 +49,24 @@ ohos_unittest("DistributedHardwareManagerTest") {
     "-g3",
     "-Dprivate=public",
   ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "device_manager:devicemanagersdk",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
+    "init:libbegetutil",
+    "power_manager:powermgr_client",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
 }
 
-group("distributed_hardware_manager_test") {
+group("dh_context_test") {
   testonly = true
-  deps = [ ":DistributedHardwareManagerTest" ]
+
+  deps = [ ":DhContextTest" ]
 }

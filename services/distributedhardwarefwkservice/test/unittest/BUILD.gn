@@ -35,6 +35,7 @@ group("test") {
     "common/resourcemanager:resource_manager_test",
     "common/task:dh_task_test",
     "common/transport:transport_test",
+    "common/utils:dh_context_test",
     "common/versioninfomanager/versioninfo:version_info_test",
     "common/versioninfomanager/versioninfomanager:versioninfo_manager_test",
     "common/versionmanager:version_manager_test",

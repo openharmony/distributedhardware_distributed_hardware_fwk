@@ -186,8 +186,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, OnDHFWKOnLine_001, testing::ext::TestSiz
  */
 HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_002, testing::ext::TestSize.Level0)
 {
-    uint32_t invalid = 8;
-    DHTopic topic = static_cast<DHTopic>(invalid);
+    DHTopic topic = DHTopic::TOPIC_MIN;
     sptr<IPublisherListener> listener = nullptr;
     int32_t ret = dhfwkPtr_->RegisterPublisherListener(topic, listener);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
@@ -215,8 +214,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_003, testing::
  */
 HWTEST_F(DistributedHardwareFwkKitTest, UnregisterPublisherListener_001, testing::ext::TestSize.Level0)
 {
-    uint32_t invalid = 8;
-    DHTopic topic = static_cast<DHTopic>(invalid);
+    DHTopic topic = DHTopic::TOPIC_MIN;
     sptr<IPublisherListener> listener = nullptr;
     int32_t ret = dhfwkPtr_->UnregisterPublisherListener(topic, listener);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
