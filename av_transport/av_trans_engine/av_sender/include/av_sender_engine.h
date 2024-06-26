@@ -97,6 +97,7 @@ private:
     void SetEngineReady(const std::string &value);
     void SetEnginePause(const std::string &value);
     void SetEngineResume(const std::string &value);
+    void SetParameterInner(AVTransTag tag, const std::string &value);
 
     StateId GetCurrentState()
     {
