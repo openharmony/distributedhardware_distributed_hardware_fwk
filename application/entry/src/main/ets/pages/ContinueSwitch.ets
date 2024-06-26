@@ -52,6 +52,7 @@ struct ContinueSwitch {
   @State videoSrc: Resource = $rawfile('continue.mp4');
   @State isShow: boolean = false;
   @State portraitFunc: mediaQuery.MediaQueryResult | void | null = null;
+  @State isVideoVisible: Visibility = Visibility.Hidden;
   private videoController: VideoController | undefined = undefined;
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
@@ -190,14 +191,16 @@ struct ContinueSwitch {
               .height(this.videoHeight)
               .margin({ left: 35, right: 35, bottom: 24 })
               .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
-              .visibility(this.isShow ? Visibility.Visible : Visibility.Hidden)
+              .visibility(this.isVideoVisible)
               .onPrepared(async (event) => {
-                console.info('onPrepared is ' + event.duration);
+                console.info(TAG + 'onPrepared is ' + event.duration);
                 if (this.videoController) {
                   this.videoController.start();
                 }
-                await this.awaitTime(100);
-                this.isShow = true;
+              })
+              .onStart(() => {
+                console.info(TAG + 'onStart in');
+                this.isVideoVisible = Visibility.Visible;
               })
 
             Text($r('app.string.continue_desc'))
