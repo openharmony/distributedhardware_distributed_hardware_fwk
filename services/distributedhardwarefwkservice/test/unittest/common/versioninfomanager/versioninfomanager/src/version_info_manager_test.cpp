@@ -19,11 +19,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#define private public
 #include "version_info_manager.h"
 #include "version_manager.h"
 #include "version_info_event.h"
-#undef private
 #include "dh_context.h"
 #include "distributed_hardware_log.h"
 

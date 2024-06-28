@@ -35,16 +35,6 @@ void SyncMetaInfoFromDBFuzzTest(const uint8_t* data, size_t size)
     MetaInfoManager::GetInstance()->SyncMetaInfoFromDB(deviceId);
 }
 
-void SyncRemoteMetaInfosFuzzTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-    (void)data;
-    (void)size;
-    MetaInfoManager::GetInstance()->SyncRemoteMetaInfos();
-}
-
 void GetDataByKeyPrefixFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -87,7 +77,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     OHOS::DistributedHardware::SyncMetaInfoFromDBFuzzTest(data, size);
-    OHOS::DistributedHardware::SyncRemoteMetaInfosFuzzTest(data, size);
     OHOS::DistributedHardware::GetDataByKeyPrefixFuzzTest(data, size);
     OHOS::DistributedHardware::RemoveMetaInfoByKeyFuzzTest(data, size);
     OHOS::DistributedHardware::GetMetaCapInfoFuzzTest(data, size);

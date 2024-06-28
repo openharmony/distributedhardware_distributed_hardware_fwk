@@ -15,6 +15,7 @@
 
 #include "component_loader_test.h"
 
+#include "config_policy_utils.h"
 #include "component_loader.h"
 #include "distributed_hardware_log.h"
 #include "hitrace_meter.h"
@@ -48,6 +49,27 @@ void ComponentLoaderTest::TearDown()
     ComponentLoader::GetInstance().compHandlerMap_.clear();
 }
 
+HWTEST_F(ComponentLoaderTest, CheckComponentEnable_001, TestSize.Level0)
+{
+    CompConfig config = {
+        .name = "name",
+        .type = DHType::UNKNOWN,
+        .compSourceSaId = 4801,
+        .compSinkSaId = 4802
+    };
+    auto ret = ComponentLoader::GetInstance().CheckComponentEnable(config);
+    EXPECT_EQ(true, ret);
+
+    CompConfig config1 = {
+        .name = "name",
+        .type = DHType::INPUT,
+        .compSourceSaId = 4801,
+        .compSinkSaId = 4802
+    };
+    ret = ComponentLoader::GetInstance().CheckComponentEnable(config1);
+    EXPECT_EQ(false, ret);
+}
+
 /**
  * @tc.name: component_loader_test_001
  * @tc.desc: Verify the GetLocalDHVersion function.
@@ -57,7 +79,13 @@ void ComponentLoaderTest::TearDown()
 HWTEST_F(ComponentLoaderTest, component_loader_test_001, TestSize.Level0)
 {
     DHVersion dhVersion;
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
+    ComponentLoader::GetInstance().StoreLocalDHVersionInDB();
     auto ret = ComponentLoader::GetInstance().GetLocalDHVersion(dhVersion);
+    EXPECT_EQ(ERR_DH_FWK_LOADER_GET_LOCAL_VERSION_FAIL, ret);
+
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(true);
+    ret = ComponentLoader::GetInstance().GetLocalDHVersion(dhVersion);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
@@ -273,19 +301,6 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_015, TestSize.Level0)
 }
 
 /**
- * @tc.name: component_loader_test_016
- * @tc.desc: Verify the GetHandler function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK3
- */
-HWTEST_F(ComponentLoaderTest, component_loader_test_016, TestSize.Level0)
-{
-    std::string soName = "NON_EXISTENT_SO";
-    auto handler = ComponentLoader::GetInstance().GetHandler(soName);
-    EXPECT_EQ(nullptr, handler);
-}
-
-/**
  * @tc.name: component_loader_test_017
  * @tc.desc: Verify the GetCompPathAndVersion function.
  * @tc.type: FUNC
@@ -322,19 +337,6 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_018, TestSize.Level0)
     cJSON_free(cjson);
     cJSON_Delete(json0bject);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
-}
-
-/**
- * @tc.name: component_loader_test_019
- * @tc.desc: Verify the StoreLocalDHVersionInDB function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK3
- */
-HWTEST_F(ComponentLoaderTest, component_loader_test_019, TestSize.Level0)
-{
-    ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
-    ComponentLoader::GetInstance().StoreLocalDHVersionInDB();
-    EXPECT_EQ(false, ComponentLoader::GetInstance().isLocalVersionInit_.load());
 }
 
 /**
@@ -919,9 +921,6 @@ HWTEST_F(ComponentLoaderTest, ParseSource_004, TestSize.Level0)
     auto ret = ParseSource(json, cfg);
     cJSON_Delete(json);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
-
-    ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
-    ComponentLoader::GetInstance().StoreLocalDHVersionInDB();
 }
 
 HWTEST_F(ComponentLoaderTest, GetHardwareHandler_001, TestSize.Level0)

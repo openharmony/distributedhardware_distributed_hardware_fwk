@@ -56,6 +56,13 @@ ohos_unittest("VersioninfoManagerTest") {
     "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
   ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
 }
 
 group("versioninfo_manager_test") {
