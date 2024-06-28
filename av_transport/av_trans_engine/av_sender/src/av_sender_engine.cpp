@@ -251,11 +251,7 @@ int32_t AVSenderEngine::SetParameter(AVTransTag tag, const std::string &value)
 {
     bool isFilterNull = (avInput_ == nullptr) || (avOutput_ == nullptr) || (pipeline_ == nullptr);
     TRUE_RETURN_V_MSG_E(isFilterNull, ERR_DH_AVT_SETUP_FAILED, "filter or pipeline is null, set parameter failed.");
-    auto iter = funcMap_.find(tag);
-    if (iter == funcMap_.end()) {
-        AVTRANS_LOGE("AVTransTag %{public}u is undefined.", tag);
-        return ERR_DH_AVT_INVALID_PARAM;
-    }
+    AVTRANS_LOGI("AVTransTag=%{public}u.", tag);
     switch (tag) {
         case AVTransTag::VIDEO_WIDTH:
             SetVideoWidth(value);
@@ -289,7 +285,8 @@ int32_t AVSenderEngine::SetParameter(AVTransTag tag, const std::string &value)
             SetParameterInner(tag, value);
             break;
         default:
-            break;
+            AVTRANS_LOGE("AVTransTag %{public}u is undefined.", tag);
+            return ERR_DH_AVT_INVALID_PARAM;
     }
     return DH_AVT_SUCCESS;
 }
