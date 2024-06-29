@@ -97,6 +97,7 @@ private:
     void SetStopAvSync(const std::string &value);
     void SetSharedMemoryFd(const std::string &value);
     void SetEngineReady(const std::string &value);
+    void SetParameterInner(AVTransTag tag, const std::string &value);
 
     StateId GetCurrentState()
     {

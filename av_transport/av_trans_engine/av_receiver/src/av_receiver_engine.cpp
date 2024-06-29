@@ -226,17 +226,89 @@ int32_t AVReceiverEngine::Release()
     return DH_AVT_SUCCESS;
 }
 
+void AVReceiverEngine::SetParameterInner(AVTransTag tag, const std::string &value)
+{
+    switch (tag) {
+        case AVTransTag::VIDEO_CODEC_TYPE:
+            SetVideoCodecType(value);
+            break;
+        case AVTransTag::AUDIO_CODEC_TYPE:
+            SetAudioCodecType(value);
+            break;
+        case AVTransTag::AUDIO_CHANNEL_MASK:
+            SetAudioChannelMask(value);
+            break;
+        case AVTransTag::AUDIO_SAMPLE_RATE:
+            SetAudioSampleRate(value);
+            break;
+        case AVTransTag::AUDIO_CHANNEL_LAYOUT:
+            SetAudioChannelLayout(value);
+            break;
+        case AVTransTag::AUDIO_SAMPLE_FORMAT:
+            SetAudioSampleFormat(value);
+            break;
+        case AVTransTag::AUDIO_FRAME_SIZE:
+            SetAudioFrameSize(value);
+            break;
+        case AVTransTag::TIME_SYNC_RESULT:
+            SetSyncResult(value);
+            break;
+        case AVTransTag::START_AV_SYNC:
+            SetStartAvSync(value);
+            break;
+        case AVTransTag::STOP_AV_SYNC:
+            SetStopAvSync(value);
+            break;
+        case AVTransTag::SHARED_MEMORY_FD:
+            SetSharedMemoryFd(value);
+            break;
+        case AVTransTag::ENGINE_READY:
+            SetEngineReady(value);
+            break;
+        default:
+            break;
+    }
+}
+
 int32_t AVReceiverEngine::SetParameter(AVTransTag tag, const std::string &value)
 {
     bool isFilterNull = (avInput_ == nullptr) || (avOutput_ == nullptr) || (pipeline_ == nullptr);
     TRUE_RETURN_V_MSG_E(isFilterNull, ERR_DH_AVT_SETUP_FAILED, "filter or pipeline is null, set parameter failed.");
-    auto iter = funcMap_.find(tag);
-    if (iter == funcMap_.end()) {
-        AVTRANS_LOGE("AVTransTag %{public}u is undefined.", tag);
-        return ERR_DH_AVT_INVALID_PARAM;
+    AVTRANS_LOGI("AVTransTag=%{public}u.", tag);
+    switch (tag) {
+        case AVTransTag::VIDEO_WIDTH:
+            SetVideoWidth(value);
+            break;
+        case AVTransTag::VIDEO_HEIGHT:
+            SetVideoHeight(value);
+            break;
+        case AVTransTag::VIDEO_FRAME_RATE:
+            SetVideoFrameRate(value);
+            break;
+        case AVTransTag::AUDIO_BIT_RATE:
+            SetAudioBitRate(value);
+            break;
+        case AVTransTag::VIDEO_BIT_RATE:
+            SetVideoBitRate(value);
+            break;
+        case AVTransTag::VIDEO_CODEC_TYPE:
+        case AVTransTag::AUDIO_CODEC_TYPE:
+        case AVTransTag::AUDIO_CHANNEL_MASK:
+        case AVTransTag::AUDIO_SAMPLE_RATE:
+        case AVTransTag::AUDIO_CHANNEL_LAYOUT:
+        case AVTransTag::AUDIO_SAMPLE_FORMAT:
+        case AVTransTag::AUDIO_FRAME_SIZE:
+        case AVTransTag::TIME_SYNC_RESULT:
+        case AVTransTag::START_AV_SYNC:
+        case AVTransTag::STOP_AV_SYNC:
+        case AVTransTag::SHARED_MEMORY_FD:
+        case AVTransTag::ENGINE_READY:
+            SetParameterInner(tag, value);
+            break;
+        default:
+            AVTRANS_LOGE("AVTransTag %{public}u is undefined.", tag);
+            return ERR_DH_AVT_INVALID_PARAM;
     }
-    SetParaFunc &func = iter->second;
-    (this->*func)(value);
     return DH_AVT_SUCCESS;
 }
 

@@ -343,7 +343,7 @@ ErrorCode AVOutputFilter::SetDataCallBack()
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_INVALID_PARAMETER_VALUE;
     }
-    plugin_->SetDataCallback(std::bind(&AVOutputFilter::OnDataCallback, this, std::placeholders::_1));
+    plugin_->SetDataCallback([this](std::shared_ptr<Plugin::Buffer> buffer) { this->OnDataCallback(buffer); });
     return ErrorCode::SUCCESS;
 }
 

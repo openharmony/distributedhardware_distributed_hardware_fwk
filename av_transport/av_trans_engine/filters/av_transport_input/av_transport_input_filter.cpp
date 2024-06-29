@@ -582,8 +582,8 @@ ErrorCode AVInputFilter::SetDataCallBack()
         AVTRANS_LOGE("plugin is nullptr!");
         return ErrorCode::ERROR_NULL_POINTER;
     }
-    return TranslatePluginStatus(plugin_->SetDataCallback(std::bind(&AVInputFilter::OnDataCallback, this,
-        std::placeholders::_1)));
+    return TranslatePluginStatus(
+        plugin_->SetDataCallback([this](std::shared_ptr<Plugin::Buffer> buffer) { this->OnDataCallback(buffer); }));
 }
 
 void AVInputFilter::OnDataCallback(std::shared_ptr<Plugin::Buffer> buffer)
