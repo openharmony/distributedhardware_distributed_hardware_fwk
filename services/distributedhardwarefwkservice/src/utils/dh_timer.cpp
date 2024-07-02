@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,7 +43,7 @@ void DHTimer::InitTimer()
     DHLOGI("start");
     std::unique_lock<std::mutex> lock(timerMutex_);
     if (eventHandler_ == nullptr) {
-        eventHandlerThread_ = std::thread(&DHTimer::StartEventRunner, this);
+        eventHandlerThread_ = std::thread([this]() { this->StartEventRunner(); });
         timerCond_.wait(lock, [this] { return eventHandler_ != nullptr; });
     }
     DHLOGI("end");

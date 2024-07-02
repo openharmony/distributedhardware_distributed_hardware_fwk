@@ -49,7 +49,7 @@ DisableTask::~DisableTask()
 
 void DisableTask::DoTask()
 {
-    std::thread(&DisableTask::DoTaskInner, this).detach();
+    std::thread([this]() { this->DoTaskInner(); }).detach();
 }
 
 void DisableTask::DoTaskInner()

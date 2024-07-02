@@ -48,7 +48,7 @@ EnableTask::~EnableTask()
 
 void EnableTask::DoTask()
 {
-    std::thread(&EnableTask::DoTaskInner, this).detach();
+    std::thread([this]() { this->DoTaskInner(); }).detach();
 }
 
 void EnableTask::DoTaskInner()

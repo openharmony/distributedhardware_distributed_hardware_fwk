@@ -52,7 +52,7 @@ OffLineTask::~OffLineTask()
 
 void OffLineTask::DoTask()
 {
-    std::thread(&OffLineTask::DoTaskInner, this).detach();
+    std::thread([this]() { this->DoTaskInner(); }).detach();
 }
 
 void OffLineTask::DoTaskInner()

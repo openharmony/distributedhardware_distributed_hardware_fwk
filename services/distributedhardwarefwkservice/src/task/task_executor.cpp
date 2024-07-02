@@ -32,7 +32,7 @@ IMPLEMENT_SINGLE_INSTANCE(TaskExecutor);
 TaskExecutor::TaskExecutor() : taskThreadFlag_(true)
 {
     DHLOGI("Ctor TaskExecutor");
-    std::thread(&TaskExecutor::TriggerTask, this).detach();
+    std::thread([this]() { this->TriggerTask(); }).detach();
 }
 
 TaskExecutor::~TaskExecutor()

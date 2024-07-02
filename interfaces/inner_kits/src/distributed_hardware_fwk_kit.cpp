@@ -30,8 +30,7 @@ namespace DistributedHardware {
 DistributedHardwareFwkKit::DistributedHardwareFwkKit() : isDHFWKOnLine_(false)
 {
     DHLOGI("Ctor DistributedHardwareFwkKit");
-    DHFWKSAManager::GetInstance().RegisterSAStateCallback(
-        std::bind(&DistributedHardwareFwkKit::OnDHFWKOnLine, this, std::placeholders::_1));
+    DHFWKSAManager::GetInstance().RegisterSAStateCallback([this](bool isOnLine) { this->OnDHFWKOnLine(isOnLine); });
     DHFWKSAManager::GetInstance().RegisterAbilityListener();
 }
 
