@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,12 +15,9 @@
 
 #include "local_hardware_manager_test.h"
 
-#define private public
 #include "capability_info_manager.h"
-#include "component_loader.h"
 #include "dh_context.h"
 #include "local_hardware_manager.h"
-#undef private
 #include "mock_hardware_handler.h"
 using namespace testing::ext;
 
@@ -35,28 +32,6 @@ void LocalHardwareManagerTest::SetUp() {}
 void LocalHardwareManagerTest::TearDown() {}
 
 /**
- * @tc.name: local_hardware_manager_test_001
- * @tc.desc: Verify the Init function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK3
- */
-HWTEST_F(LocalHardwareManagerTest, local_hardware_manager_test_001, TestSize.Level0)
-{
-    LocalHardwareManager::GetInstance().Init();
-}
-
-/**
- * @tc.name: local_hardware_manager_test_002
- * @tc.desc: Verify the UnInit function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK3
- */
-HWTEST_F(LocalHardwareManagerTest, local_hardware_manager_test_002, TestSize.Level0)
-{
-    LocalHardwareManager::GetInstance().UnInit();
-}
-
-/**
  * @tc.name: Init_001
  * @tc.desc: Verify the Init function.
  * @tc.type: FUNC
@@ -64,7 +39,6 @@ HWTEST_F(LocalHardwareManagerTest, local_hardware_manager_test_002, TestSize.Lev
  */
 HWTEST_F(LocalHardwareManagerTest, Init_001, TestSize.Level0)
 {
-    ComponentLoader::GetInstance().UnInit();
     LocalHardwareManager::GetInstance().Init();
     EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
 }

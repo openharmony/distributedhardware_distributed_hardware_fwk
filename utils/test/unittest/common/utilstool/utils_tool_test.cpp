@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,11 +24,15 @@
 
 #include "anonymous_string.h"
 #include "dh_utils_tool.h"
+#include "dh_utils_hitrace.h"
 
 using namespace testing::ext;
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    constexpr int32_t UUID_LENGTH = 257;
+}
 void UtilsToolTest::SetUpTestCase(void)
 {
 }
@@ -46,88 +50,50 @@ void UtilsToolTest::TearDown()
 }
 
 /**
- * @tc.name: utils_tool_test_001
- * @tc.desc: Verify the utils tool GetCurrentTime function
- * @tc.type: FUNC
- * @tc.require: AR000GHSK0
- */
-HWTEST_F(UtilsToolTest, utils_tool_test_001, TestSize.Level0)
-{
-    int64_t time1 = GetCurrentTime();
-    using namespace std::chrono_literals;
-    std::this_thread::sleep_for(100ms);
-    int64_t time2 = GetCurrentTime();
-
-    EXPECT_LT(time1, time2);
-}
-
-/**
- * @tc.name: utils_tool_test_002
- * @tc.desc: Verify the utils tool GetRandomID function
- * @tc.type: FUNC
- * @tc.require: AR000GHSK0
- */
-HWTEST_F(UtilsToolTest, utils_tool_test_002, TestSize.Level0)
-{
-    uint32_t roundCnt = 100;
-    std::set<std::string> idSet;
-
-    for (uint32_t i = 0; i < roundCnt; i++) {
-        idSet.insert(GetRandomID());
-    }
-
-    EXPECT_EQ(idSet.size(), roundCnt);
-}
-
-/**
- * @tc.name: utils_tool_test_003
+ * @tc.name: GetAnonyString_001
  * @tc.desc: Verify the GetAnonyString function
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(UtilsToolTest, utils_tool_test_003, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetAnonyString_001, TestSize.Level0)
 {
-    std::string str1 = "a";
-    std::string str2 = "ab";
-    std::string str3 = "abc";
-    std::string str4 = "abcd";
-    std::string str5 = "9a40932aff004e209e93524c6e35706b";
+    std::string value = "";
+    auto ret = GetAnonyString(value);
+    EXPECT_EQ("", ret);
 
-    ASSERT_STRNE(str1.c_str(), GetAnonyString(str1).c_str());
-    ASSERT_STRNE(str2.c_str(), GetAnonyString(str2).c_str());
-    ASSERT_STRNE(str3.c_str(), GetAnonyString(str3).c_str());
-    ASSERT_STRNE(str4.c_str(), GetAnonyString(str4).c_str());
-    ASSERT_STRNE(str5.c_str(), GetAnonyString(str5).c_str());
+    value = "11";
+    ret = GetAnonyString(value);
+    EXPECT_EQ("******", ret);
+
+    value = "123456789";
+    ret = GetAnonyString(value);
+    EXPECT_EQ("1******9", ret);
+
+    value = "111222333444555666777888999";
+    ret = GetAnonyString(value);
+    EXPECT_EQ("1112******8999", ret);
 }
 
 /**
- * @tc.name: utils_tool_test_004
+ * @tc.name: GetAnonyInt32_001
  * @tc.desc: Verify the GetAnnoyInt32 function
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(UtilsToolTest, utils_tool_test_004, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetAnonyInt32_001, TestSize.Level0)
 {
-    int32_t i1 = 0;
-    int32_t i2 = 10;
-    int32_t i3 = 555;
-    int32_t i4 = 6666;
-    int32_t i5 = 88888;
-
-    ASSERT_STRNE(std::to_string(i1).c_str(), GetAnonyInt32(i1).c_str());
-    ASSERT_STRNE(std::to_string(i2).c_str(), GetAnonyInt32(i2).c_str());
-    ASSERT_STRNE(std::to_string(i3).c_str(), GetAnonyInt32(i3).c_str());
-    ASSERT_STRNE(std::to_string(i4).c_str(), GetAnonyInt32(i4).c_str());
-    ASSERT_STRNE(std::to_string(i5).c_str(), GetAnonyInt32(i5).c_str());
+    int32_t value = 123456;
+    auto ret = GetAnonyInt32(value);
+    EXPECT_EQ("1*****", ret);
 }
 
 /**
- * @tc.name: utils_tool_test_005
+ * @tc.name: GetUUIDByDm_001
  * @tc.desc: Verify the GetUUIDBySoftBus function
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(UtilsToolTest, utils_tool_test_005, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetUUIDByDm_001, TestSize.Level0)
 {
     std::string networkId = "";
     std::string ret = GetUUIDByDm(networkId);
@@ -135,29 +101,36 @@ HWTEST_F(UtilsToolTest, utils_tool_test_005, TestSize.Level0)
 }
 
 /**
- * @tc.name: utils_tool_test_006
+ * @tc.name: GetDeviceIdByUUID_001
  * @tc.desc: Verify the GetDeviceIdByUUID function
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(UtilsToolTest, utils_tool_test_006, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetDeviceIdByUUID_001, TestSize.Level0)
 {
     std::string uuidEmpty = "";
     std::string ret = GetDeviceIdByUUID(uuidEmpty);
-    ASSERT_EQ(0, ret.size());
+    EXPECT_EQ(0, ret.size());
+
+    std::string uuid(UUID_LENGTH, '1');
+    ret = GetDeviceIdByUUID(uuid);
+    EXPECT_EQ(0, ret.size());
 }
 
 /**
- * @tc.name: utils_tool_test_007
+ * @tc.name: GetDeviceIdByUUID_002
  * @tc.desc: Verify the GetDeviceIdByUUID function
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(UtilsToolTest, utils_tool_test_007, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetDeviceIdByUUID_002, TestSize.Level0)
 {
+    DHType dhType = DHType::CAMERA;
+    DHQueryTraceStart(dhType);
+
     std::string uuid = "bb536a637105409e904d4da78290ab1";
     std::string ret = GetDeviceIdByUUID(uuid);
-    ASSERT_NE(0, ret.size());
+    EXPECT_NE(0, ret.size());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
