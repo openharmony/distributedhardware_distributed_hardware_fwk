@@ -238,8 +238,9 @@ struct ContinueSwitch {
                   })
               }
               .justifyContent(FlexAlign.SpaceBetween)
+              .height(this.is2in1 ? 48 : 56)
               .width('100%')
-              .padding({ left: 12, right: 8, top: 10, bottom: 10 })
+              .padding({ left: 12, right: 12, top: 10, bottom: 10 })
               .backgroundColor($r('sys.color.ohos_id_color_list_card_bg'))
               .borderRadius(20)
             }.width('100%')
