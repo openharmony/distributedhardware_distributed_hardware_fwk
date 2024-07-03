@@ -49,8 +49,9 @@ struct ContinueSwitch {
   @State videoWidth: number = 0;
   @State textWidth: number = 0;
   @State gapLength: number = 0;
-  @State videoSrc: Resource = $rawfile('continue.mp4');
+  @State videoSrc: Resource = $rawfile('continue_center.mp4');
   @State isShow: boolean = false;
+  @State is2in1: boolean = false;
   @State portraitFunc: mediaQuery.MediaQueryResult | void | null = null;
   @State isVideoVisible: Visibility = Visibility.Hidden;
   private videoController: VideoController | undefined = undefined;
@@ -61,10 +62,10 @@ struct ContinueSwitch {
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult) {
     console.log(TAG + 'onPortrait in');
     if (mediaQueryResult.matches as boolean) {
-      this.videoSrc = $rawfile('continue_dark.mp4');
+      this.videoSrc = $rawfile('continue_dark_center.mp4');
       this.extContext?.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_DARK);
     } else {
-      this.videoSrc = $rawfile('continue.mp4');
+      this.videoSrc = $rawfile('continue_center.mp4');
       this.extContext?.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT);
     }
   }
@@ -103,6 +104,7 @@ struct ContinueSwitch {
     if (this.videoController) {
       this.videoController.start();
     }
+    this.is2in1 = deviceInfo.deviceType === '2in1' ? true : false;
   }
 
   aboutToAppear() {
@@ -219,6 +221,8 @@ struct ContinueSwitch {
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
 
                 Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
+                  .width(36)
+                  .height(20)
                   .hoverEffect(HoverEffect.None)
                   .onChange((isOn: boolean) => {
                     console.log(TAG + 'isOn:' + isOn);
@@ -243,7 +247,7 @@ struct ContinueSwitch {
             Column() {
               Row() {
                 Text($r('app.string.continue_privacy_text'))
-                  .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                  .fontSize($r('sys.float.ohos_id_text_size_body3'))
                   .fontWeight(FontWeight.Regular)
                   .margin({ top: 8 })
                   .fontColor($r('sys.color.ohos_id_color_text_secondary'))
