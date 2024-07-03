@@ -214,7 +214,11 @@ struct ContinueSwitch {
               .width('100%')
 
             Column() {
-              Row() {
+              Flex({
+                direction: FlexDirection.Row,
+                justifyContent: FlexAlign.SpaceBetween,
+                alignItems: ItemAlign.Center
+              }) {
                 Text($r('app.string.continue_title'))
                   .fontSize($r('sys.float.ohos_id_text_size_sub_title2'))
                   .fontWeight(FontWeight.Medium)
@@ -237,12 +241,11 @@ struct ContinueSwitch {
                     }
                   })
               }
-              .justifyContent(FlexAlign.SpaceBetween)
               .height(this.is2in1 ? 48 : 56)
               .width('100%')
-              .padding({ left: 12, right: 12, top: 10, bottom: 10 })
+              .padding({ left: 12, right: 12 })
               .backgroundColor($r('sys.color.ohos_id_color_list_card_bg'))
-              .borderRadius(20)
+              .borderRadius(this.is2in1 ? 16 : 20)
             }.width('100%')
 
             Column() {
