@@ -21,9 +21,11 @@
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
 #include "constants.h"
+#include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "distributed_hardware_manager_factory.h"
 #include "meta_info_manager.h"
 #include "task_board.h"
 #include "task_executor.h"
@@ -104,7 +106,8 @@ void OffLineTask::CreateDisableTask()
     if (devDhInfos.empty()) {
         DHLOGW("Can not get cap info from CapabilityInfo, try use meta info");
         std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
-        MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(deviceId, metaCapInfos);
+        std::string udidHash = DHContext::GetInstance().GetUdidHashIdByUUID(GetUUID());
+        MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(udidHash, metaCapInfos);
         std::for_each(metaCapInfos.begin(), metaCapInfos.end(), [&](std::shared_ptr<MetaCapabilityInfo> cap) {
             devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
         });
@@ -133,6 +136,12 @@ void OffLineTask::WaitDisableTaskFinish()
     std::unique_lock<std::mutex> waitLock(unFinishTaskMtx_);
     finishCondVar_.wait(waitLock, [&] { return this->unFinishChildrenTasks_.empty(); });
     DHLOGI("all disable task finish");
+    DHContext::GetInstance().RemoveOnlineDeviceByUUID(GetUUID());
+    if (DHContext::GetInstance().GetOnlineCount() == 0 &&
+        DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
+        DHLOGI("all devices are offline, start to free the resource");
+        DistributedHardwareManagerFactory::GetInstance().UnInit();
+    }
 }
 
 void OffLineTask::ClearOffLineInfo()
