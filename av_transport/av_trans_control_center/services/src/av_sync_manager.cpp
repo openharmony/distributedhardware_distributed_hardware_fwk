@@ -113,6 +113,10 @@ void AVSyncManager::DisableSenderAVSync()
 
 void AVSyncManager::HandleAvSyncMessage(const std::shared_ptr<AVTransMessage> &message)
 {
+    if (message == nullptr) {
+        AVTRANS_LOGI("message is nullptr.");
+        return;
+    }
     if (message->type_ == (uint32_t)AVTransTag::START_AV_SYNC) {
         EnableReceiverAVSync(message->content_);
     } else if (message->type_ == (uint32_t)AVTransTag::STOP_AV_SYNC) {

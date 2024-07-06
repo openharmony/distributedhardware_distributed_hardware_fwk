@@ -29,6 +29,9 @@ void AVTransCallbackSetParameterFuzzTest(const uint8_t *data, size_t size)
     AVTransTag tag = static_cast<AVTransTag>(*(reinterpret_cast<const uint32_t*>(data)) % DC_AVTRANSTAG_SIZE);
     std::string value(reinterpret_cast<const char*>(data), size);
     sptr<AVTransControlCenterCallback> controlCenterCallback(new (std::nothrow) AVTransControlCenterCallback());
+    if (controlCenterCallback == nullptr) {
+        return;
+    }
     controlCenterCallback->SetParameter(tag, value);
 }
 } // namespace DistributedHardware
