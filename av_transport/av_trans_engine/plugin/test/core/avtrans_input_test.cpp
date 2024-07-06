@@ -21,31 +21,39 @@ void AvTransInputTest::SetUpTestCase() {}
 
 void AvTransInputTest::TearDownTestCase() {}
 
-void AvTransInputTest::SetUp()
+void AvTransInputTest::SetUp() {}
+
+void AvTransInputTest::TearDown() {}
+
+HWTEST_F(AvTransInputTest, Pause_001, TestSize.Level0)
 {
     uint32_t pkgVer = 2;
     uint32_t apiVer = 2;
     std::string name = "name";
     std::shared_ptr<AvTransInputPlugin> plugin = std::make_shared<AvTransInputPluginTest>(name);
     input_ = std::make_shared<AvTransInput>(pkgVer, apiVer, plugin);
-}
-
-void AvTransInputTest::TearDown() {}
-
-HWTEST_F(AvTransInputTest, Pause_001, TestSize.Level0)
-{
     Status ret = input_->Pause();
     EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(AvTransInputTest, Resume_001, TestSize.Level0)
 {
+    uint32_t pkgVer = 2;
+    uint32_t apiVer = 2;
+    std::string name = "name";
+    std::shared_ptr<AvTransInputPlugin> plugin = std::make_shared<AvTransInputPluginTest>(name);
+    input_ = std::make_shared<AvTransInput>(pkgVer, apiVer, plugin);
     Status ret = input_->Resume();
     EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(AvTransInputTest, PushData_001, TestSize.Level0)
 {
+    uint32_t pkgVer = 2;
+    uint32_t apiVer = 2;
+    std::string name = "name";
+    std::shared_ptr<AvTransInputPlugin> plugin = std::make_shared<AvTransInputPluginTest>(name);
+    input_ = std::make_shared<AvTransInput>(pkgVer, apiVer, plugin);
     std::string inPort = "inPort";
     std::shared_ptr<Plugin::Buffer> buffer = nullptr;
     int32_t offset = 0;
@@ -55,6 +63,11 @@ HWTEST_F(AvTransInputTest, PushData_001, TestSize.Level0)
 
 HWTEST_F(AvTransInputTest, SetDataCallback_001, TestSize.Level0)
 {
+    uint32_t pkgVer = 2;
+    uint32_t apiVer = 2;
+    std::string name = "name";
+    std::shared_ptr<AvTransInputPlugin> plugin = std::make_shared<AvTransInputPluginTest>(name);
+    input_ = std::make_shared<AvTransInput>(pkgVer, apiVer, plugin);
     std::function<void(std::shared_ptr<Plugin::Buffer>)> callback = nullptr;
     Status ret = input_->SetDataCallback(callback);
     EXPECT_EQ(Status::OK, ret);

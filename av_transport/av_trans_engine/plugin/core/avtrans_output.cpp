@@ -25,11 +25,17 @@ AvTransOutput::AvTransOutput(uint32_t pkgVer, uint32_t apiVer, std::shared_ptr<A
 
 Status AvTransOutput::PushData(const std::string& inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
+    if (AvTransOutputPlugin_ == nullptr) {
+        return Status::ERROR_NOT_EXISTED;
+    }
     return AvTransOutputPlugin_->PushData(inPort, buffer, offset);
 }
 
 Status AvTransOutput::SetDataCallback(std::function<void(std::shared_ptr<Plugin::Buffer>)> callback)
 {
+    if (AvTransOutputPlugin_ == nullptr) {
+        return Status::ERROR_NOT_EXISTED;
+    }
     return AvTransOutputPlugin_->SetDataCallback(callback);
 }
 }

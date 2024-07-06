@@ -139,6 +139,10 @@ std::vector<AudioEncoder> QueryAudioEncoderAbility()
             continue;
         }
         auto pluginInfo = PluginManager::Instance().GetPluginInfo(PluginType::AUDIO_ENCODER, name);
+        if (pluginInfo == nullptr) {
+            AVTRANS_LOGE("pluginInfo is nullptr");
+            continue;
+        }
         AudioEncoder audioEncoder;
         audioEncoder.name = name;
         audioEncoder.ins = ParseAudioEncoderIn(pluginInfo->inCaps);
@@ -183,7 +187,7 @@ void FromJson(const cJSON *jsonObject, AudioEncoderIn &audioEncoderIn)
     }
     cJSON *rateInfo = nullptr;
     cJSON_ArrayForEach(rateInfo, rateJson) {
-        if (rateInfo->type == cJSON_Number) {
+        if (rateInfo && rateInfo->type == cJSON_Number) {
             audioEncoderIn.sample_rate.push_back(static_cast<uint32_t>(rateInfo->valueint));
         }
     }
@@ -357,6 +361,10 @@ std::vector<AudioDecoder> QueryAudioDecoderAbility()
             continue;
         }
         auto pluginInfo = PluginManager::Instance().GetPluginInfo(PluginType::AUDIO_DECODER, name);
+        if (pluginInfo == nullptr) {
+            AVTRANS_LOGE("pluginInfo is nullptr");
+            continue;
+        }
         AudioDecoder audioDecoder;
         audioDecoder.name = name;
         audioDecoder.ins = ParseAudioDecoderIn(pluginInfo->inCaps);
@@ -402,7 +410,7 @@ void FromJson(const cJSON *jsonObject, AudioDecoderIn &audioDecoderIn)
     }
     cJSON *layoutInfo = nullptr;
     cJSON_ArrayForEach(layoutInfo, channelLayoutJson) {
-        if (layoutInfo->type == cJSON_Number) {
+        if (layoutInfo && layoutInfo->type == cJSON_Number) {
             audioDecoderIn.channel_layout.push_back(static_cast<AudioChannelLayout>(layoutInfo->valueint));
         }
     }
@@ -444,7 +452,7 @@ void FromJson(const cJSON *jsonObject, AudioDecoderOut &audioDecoderOut)
 
     cJSON *sampleInfo = nullptr;
     cJSON_ArrayForEach(sampleInfo, sampleFormatJson) {
-        if (sampleInfo->type == cJSON_Number) {
+        if (sampleInfo && sampleInfo->type == cJSON_Number) {
             audioDecoderOut.sample_fmt.push_back(static_cast<AudioSampleFormat>(sampleInfo->valueint));
         }
     }
@@ -561,6 +569,10 @@ std::vector<VideoEncoder> QueryVideoEncoderAbility()
             continue;
         }
         auto pluginInfo = PluginManager::Instance().GetPluginInfo(PluginType::VIDEO_ENCODER, name);
+        if (pluginInfo == nullptr) {
+            AVTRANS_LOGE("pluginInfo is nullptr");
+            continue;
+        }
         VideoEncoder videoEncoder;
         videoEncoder.name = name;
         videoEncoder.ins = ParseVideoEncoderIn(pluginInfo->inCaps);
@@ -609,7 +621,7 @@ void FromJson(const cJSON *jsonObject, VideoEncoderIn &videoEncoderIn)
     }
     cJSON *fmt = nullptr;
     cJSON_ArrayForEach(fmt, videoPixelFmtJson) {
-        if (fmt->type == cJSON_Number) {
+        if (fmt && fmt->type == cJSON_Number) {
             videoEncoderIn.pixel_fmt.push_back(static_cast<VideoPixelFormat>(fmt->valueint));
         }
     }
@@ -755,6 +767,10 @@ std::vector<VideoDecoder> QueryVideoDecoderAbility()
             continue;
         }
         auto pluginInfo = PluginManager::Instance().GetPluginInfo(PluginType::VIDEO_DECODER, name);
+        if (pluginInfo == nullptr) {
+            AVTRANS_LOGE("pluginInfo is nullptr");
+            continue;
+        }
         VideoDecoder videoDecoder;
         videoDecoder.name = name;
         videoDecoder.ins = ParseVideoDecoderIn(pluginInfo->inCaps);
@@ -847,7 +863,7 @@ void FromJson(const cJSON *jsonObject, VideoDecoderOut &videoDecoderOut)
     }
     cJSON *fmtInfo = nullptr;
     cJSON_ArrayForEach(fmtInfo, videoPixelFmtJson) {
-        if (fmtInfo->type == cJSON_Number) {
+        if (fmtInfo && fmtInfo->type == cJSON_Number) {
             videoDecoderOut.pixel_fmt.push_back(static_cast<VideoPixelFormat>(fmtInfo->valueint));
         }
     }

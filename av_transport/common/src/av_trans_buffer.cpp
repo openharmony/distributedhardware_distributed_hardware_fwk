@@ -82,10 +82,14 @@ bool AVTransBuffer::IsEmpty()
 
 void AVTransBuffer::Reset()
 {
-    data_[0]->Reset();
-    MetaType type = meta_->GetMetaType();
-    meta_.reset();
-    meta_ = std::make_shared<BufferMeta>(type);
+    if (data_[0]) {
+        data_[0]->Reset();
+    }
+    if (meta_ != nullptr) {
+        MetaType type = meta_->GetMetaType();
+        meta_.reset();
+        meta_ = std::make_shared<BufferMeta>(type);
+    }
 }
 
 BufferData::BufferData(size_t capacity)

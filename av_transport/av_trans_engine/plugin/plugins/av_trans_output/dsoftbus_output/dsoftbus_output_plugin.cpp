@@ -131,7 +131,9 @@ Status DsoftbusOutputPlugin::Start()
         return Status::ERROR_INVALID_OPERATION;
     }
     DataQueueClear(dataQueue_);
-    bufferPopTask_->Start();
+    if (bufferPopTask_) {
+        bufferPopTask_->Start();
+    }
     SetCurrentState(State::RUNNING);
     return Status::OK;
 }
@@ -144,7 +146,9 @@ Status DsoftbusOutputPlugin::Stop()
         return Status::ERROR_WRONG_STATE;
     }
     SetCurrentState(State::PREPARED);
-    bufferPopTask_->Stop();
+    if (bufferPopTask_) {
+        bufferPopTask_->Stop();
+    }
     DataQueueClear(dataQueue_);
     CloseSoftbusChannel();
     return Status::OK;
@@ -208,7 +212,7 @@ void DsoftbusOutputPlugin::CloseSoftbusChannel()
 {
     int32_t ret = SoftbusChannelAdapter::GetInstance().CloseSoftbusChannel(sessionName_, peerDevId_);
     if (ret != DH_AVT_SUCCESS) {
-        AVTRANS_LOGE("Close softbus channle failed ret: %{public}s.", ret);
+        AVTRANS_LOGE("Close softbus channle failed ret: %{public}d.", ret);
     }
 }
 
@@ -297,6 +301,10 @@ void DsoftbusOutputPlugin::FeedChannelData()
 
 void DsoftbusOutputPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffer)
 {
+    if (buffer == nullptr || buffer->GetBufferMeta() == nullptr || buffer->GetMemory() == nullptr) {
+        AVTRANS_LOGE("buffer or getbuffermeta or getmemory is nullptr.");
+        return;
+    }
     cJSON *jsonObj = cJSON_CreateObject();
     if (jsonObj == nullptr) {
         return;

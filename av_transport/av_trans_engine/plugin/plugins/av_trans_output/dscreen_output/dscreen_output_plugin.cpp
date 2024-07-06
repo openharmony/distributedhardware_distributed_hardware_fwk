@@ -161,6 +161,10 @@ Status DscreenOutputPlugin::PushData(const std::string &inPort, std::shared_ptr<
 
 void DscreenOutputPlugin::OnOutput(const std::shared_ptr<Plugin::Buffer>& data)
 {
+    if (data == nullptr) {
+        AVTRANS_LOGE("data is nullptr.");
+        return;
+    }
     auto bufferMeta = data->GetBufferMeta();
     uint32_t vFrameNumber = DEFAULT_INVALID_FRAME_NUM;
     if (bufferMeta->IsExist(Tag::USER_FRAME_NUMBER)) {

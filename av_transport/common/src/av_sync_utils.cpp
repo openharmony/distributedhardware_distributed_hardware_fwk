@@ -51,7 +51,11 @@ AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t si
     }
 
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
-    (void)memset_s(base, size, INVALID_VALUE_FALG, size);
+    if (memset_s(base, size, INVALID_VALUE_FALG, size) != EOK) {
+        AVTRANS_LOGE("memset_s failed.");
+        (void)::close(fd);
+        return AVTransSharedMemory{0, 0, name};
+    }
     uint64_t tmpsize = static_cast<uint64_t>(size);
     AVTRANS_LOGI("create av trans shared memory success, name=%{public}s, size=%{public}" PRIu64 ", fd=%{public}"
         PRId32, name.c_str(), tmpsize, fd);
@@ -242,8 +246,10 @@ int32_t ResetSharedMemory(const AVTransSharedMemory &memory)
         AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
         return ERR_DH_AVT_SHARED_MEMORY_FAILED;
     }
-    (void)memset_s(reinterpret_cast<uint8_t*>(addr), size, INVALID_VALUE_FALG, size);
-
+    if (memset_s(reinterpret_cast<uint8_t*>(addr), size, INVALID_VALUE_FALG, size) != EOK) {
+        AVTRANS_LOGE("memset_s failed.");
+        return ERR_DH_AVT_SHARED_MEMORY_FAILED;
+    }
     AVTRANS_LOGI("reset shared memory success.");
     return DH_AVT_SUCCESS;
 }

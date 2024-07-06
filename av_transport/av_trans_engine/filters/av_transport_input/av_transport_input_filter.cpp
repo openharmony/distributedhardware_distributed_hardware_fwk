@@ -211,7 +211,7 @@ ErrorCode AVInputFilter::FindPlugin()
     auto nameList = PluginManager::Instance().ListPlugins(PluginType::GENERIC_PLUGIN);
     for (const std::string& name : nameList) {
         auto info = PluginManager::Instance().GetPluginInfo(PluginType::GENERIC_PLUGIN, name);
-        if (info->outCaps.empty() || mime != info->outCaps[0].mime) {
+        if (info == nullptr || info->outCaps.empty() || mime != info->outCaps[0].mime) {
             continue;
         }
         if (DoNegotiate(info->outCaps) && CreatePlugin(info) == ErrorCode::SUCCESS) {
@@ -308,6 +308,10 @@ ErrorCode AVInputFilter::DoConfigure()
 ErrorCode AVInputFilter::MergeMeta(const Plugin::Meta& meta, Plugin::Meta& targetMeta)
 {
     std::lock_guard<std::mutex> lock(inputFilterMutex_);
+    if (pluginInfo_ == nullptr) {
+        AVTRANS_LOGE("pluginInfo_ is nullptr");
+        return ErrorCode::ERROR_INVALID_OPERATION;
+    }
     if (!MergeMetaWithCapability(meta, capNegWithDownstream_, targetMeta)) {
         AVTRANS_LOGE("cannot find available capability of plugin %{public}s", pluginInfo_->name.c_str());
         return ErrorCode::ERROR_INVALID_OPERATION;

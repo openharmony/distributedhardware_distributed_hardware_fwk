@@ -141,7 +141,9 @@ Status DsoftbusInputPlugin::Start()
     }
     DataQueueClear(dataQueue_);
     isrunning_.store(true);
-    bufferPopTask_->Start();
+    if (bufferPopTask_) {
+        bufferPopTask_->Start();
+    }
     SetCurrentState(State::RUNNING);
     return Status::OK;
 }
@@ -155,7 +157,9 @@ Status DsoftbusInputPlugin::Stop()
     }
     SetCurrentState(State::PREPARED);
     isrunning_.store(false);
-    bufferPopTask_->Stop();
+    if (bufferPopTask_) {
+        bufferPopTask_->Stop();
+    }
     DataQueueClear(dataQueue_);
     return Status::OK;
 }
@@ -246,6 +250,10 @@ void DsoftbusInputPlugin::OnChannelEvent(const AVTransEvent &event)
 
 void DsoftbusInputPlugin::OnStreamReceived(const StreamData *data, const StreamData *ext)
 {
+    if (ext == nullptr) {
+        AVTRANS_LOGE("ext is nullptr.");
+        return;
+    }
     std::string message(reinterpret_cast<const char *>(ext->buf), ext->bufLen);
     AVTRANS_LOGI("Receive message : %{public}s", message.c_str());
     cJSON *resMsg = cJSON_Parse(message.c_str());
@@ -274,6 +282,10 @@ void DsoftbusInputPlugin::OnStreamReceived(const StreamData *data, const StreamD
 std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
     const StreamData *data, const cJSON *resMsg)
 {
+    if (data == nullptr) {
+        AVTRANS_LOGE("data is nullptr.");
+        return nullptr;
+    }
     auto buffer = Buffer::CreateDefaultBuffer(static_cast<BufferMetaType>(metaType), data->bufLen);
     auto bufData = buffer->GetMemory();
 
@@ -304,14 +316,20 @@ std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
 
 void DsoftbusInputPlugin::DataEnqueue(std::shared_ptr<Buffer> &buffer)
 {
+    if (buffer == nullptr) {
+        AVTRANS_LOGE("buffer is nullptr.");
+        return;
+    }
     if (GetReDumpFlag() == true) {
         std::remove(SCREEN_FILE_NAME_BEFOREENCODING.c_str());
         SetReDumpFlagFalse();
     }
     if (GetDumpFlag() == true) {
         auto bufferData = buffer->GetMemory();
-        DumpBufferToFile(SCREEN_FILE_NAME_BEFOREENCODING,
-            const_cast<uint8_t*>(bufferData->GetReadOnlyData()), bufferData->GetSize());
+        if (bufferData != nullptr) {
+            DumpBufferToFile(SCREEN_FILE_NAME_BEFOREENCODING,
+                const_cast<uint8_t*>(bufferData->GetReadOnlyData()), bufferData->GetSize());
+        }
     } else {
         AVTRANS_LOGE("DumpFlag = false.");
     }

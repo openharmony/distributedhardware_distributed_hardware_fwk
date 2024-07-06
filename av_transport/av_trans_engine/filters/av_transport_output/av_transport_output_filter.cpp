@@ -188,7 +188,7 @@ ErrorCode AVOutputFilter::FindPlugin()
     auto nameList = PluginManager::Instance().ListPlugins(PluginType::GENERIC_PLUGIN);
     for (const std::string& name : nameList) {
         auto info = PluginManager::Instance().GetPluginInfo(PluginType::GENERIC_PLUGIN, name);
-        if (info->inCaps.empty() || mime != info->inCaps[0].mime) {
+        if (info == nullptr || info->inCaps.empty() || mime != info->inCaps[0].mime) {
             continue;
         }
         if (CreatePlugin(info) == ErrorCode::SUCCESS) {
