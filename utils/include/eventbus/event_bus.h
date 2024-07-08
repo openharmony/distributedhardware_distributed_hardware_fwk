@@ -53,7 +53,7 @@ public:
     {
         ULOGI("ctor EventBus");
         if (eventbusHandler_ == nullptr) {
-            eventThread_ = std::thread(&EventBus::StartEvent, this);
+            eventThread_ = std::thread([this]() { this->StartEvent(); });
             std::unique_lock<std::mutex> lock(eventMutex_);
             eventCon_.wait(lock, [this] {
                 return eventbusHandler_ != nullptr;
@@ -65,7 +65,7 @@ public:
     {
         ULOGI("ctor EventBus threadName: %{public}s", threadName.c_str());
         if (eventbusHandler_ == nullptr) {
-            eventThread_ = std::thread(&EventBus::StartEventWithName, this, threadName);
+            eventThread_ = std::thread([this]() { this->StartEvent(threadName); });
             std::unique_lock<std::mutex> lock(eventMutex_);
             eventCon_.wait(lock, [this] {
                 return eventbusHandler_ != nullptr;

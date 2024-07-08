@@ -133,8 +133,10 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
         DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s",
             GetAnonyString(networkId).c_str(),
             GetAnonyString(uuid).c_str());
-        std::thread(&DistributedHardwareManagerFactory::SendOnLineEvent, this, networkId, uuid, udid,
-            deviceInfo.deviceTypeId).detach();
+        uint16_t deviceType = deviceInfo.deviceTypeId;
+        std::thread([this, networkId, uuid, udid, deviceType]() {
+            this->SendOnLineEvent(networkId, uuid, udid, deviceType);
+        }).detach();
     }
 }
 

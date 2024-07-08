@@ -254,28 +254,28 @@ bool ComponentPrivacy::GetPageFlag()
 
 void ComponentPrivacy::ComponentEventHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto iter = eventFuncMap_.find(event->GetInnerEventId());
-    if (iter == eventFuncMap_.end()) {
-        DHLOGE("ComponentEventHandler Event Id %{public}d is undefined.", event->GetInnerEventId());
-        return;
+    switch (event->GetInnerEventId()) {
+        case COMP_START_PAGE:
+            ProcessStartPage(event);
+            break;
+        case COMP_STOP_PAGE:
+            ProcessStopPage(event);
+            break;
+        default:
+            DHLOGE("ComponentEventHandler EventId %{public}d is undefined.", event->GetInnerEventId());
+            break;
     }
-    compEventFunc &func = iter->second;
-    (this->*func)(event);
 }
 
 ComponentPrivacy::ComponentEventHandler::ComponentEventHandler(
     const std::shared_ptr<AppExecFwk::EventRunner> &runner, ComponentPrivacy *comPrivacy)
     : AppExecFwk::EventHandler(runner)
 {
-    eventFuncMap_[COMP_START_PAGE] = &ComponentEventHandler::ProcessStartPage;
-    eventFuncMap_[COMP_STOP_PAGE] = &ComponentEventHandler::ProcessStopPage;
-
     comPrivacyObj_ = comPrivacy;
 }
 
 ComponentPrivacy::ComponentEventHandler::~ComponentEventHandler()
 {
-    eventFuncMap_.clear();
     comPrivacyObj_ = nullptr;
 }
 
