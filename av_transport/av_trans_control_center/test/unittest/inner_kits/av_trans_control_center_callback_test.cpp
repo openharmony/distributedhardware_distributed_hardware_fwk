@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,12 +27,7 @@ void AVTransControlCenterCallbackTest::TearDownTestCase(void)
 {
 }
 
-void AVTransControlCenterCallbackTest::SetUp()
-{
-    callBack_ = std::make_shared<AVTransControlCenterCallback>();
-    callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();
-    callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
-}
+void AVTransControlCenterCallbackTest::SetUp() {}
 
 void AVTransControlCenterCallbackTest::TearDown()
 {
@@ -46,6 +41,9 @@ void AVTransControlCenterCallbackTest::TearDown()
  */
 HWTEST_F(AVTransControlCenterCallbackTest, set_parameter_001, TestSize.Level0)
 {
+    callBack_ = std::make_shared<AVTransControlCenterCallback>();
+    callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();
+    callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
     AVTransTag tag = AVTransTag::START_AV_SYNC;
     std::string value;
     int32_t ret = callBack_->SetParameter(tag, value);
@@ -60,6 +58,9 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_parameter_001, TestSize.Level0)
  */
 HWTEST_F(AVTransControlCenterCallbackTest, set_parameter_002, TestSize.Level0)
 {
+    callBack_ = std::make_shared<AVTransControlCenterCallback>();
+    callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();
+    callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
     AVTransTag tag = AVTransTag::STOP_AV_SYNC;
     std::string value;
     int32_t ret = callBack_->SetParameter(tag, value);
@@ -74,6 +75,9 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_parameter_002, TestSize.Level0)
  */
 HWTEST_F(AVTransControlCenterCallbackTest, set_parameter_003, TestSize.Level0)
 {
+    callBack_ = std::make_shared<AVTransControlCenterCallback>();
+    callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();
+    callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
     AVTransTag tag = AVTransTag::TIME_SYNC_RESULT;
     std::string value;
     int32_t ret = callBack_->SetParameter(tag, value);
@@ -90,6 +94,9 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_parameter_003, TestSize.Level0)
  */
 HWTEST_F(AVTransControlCenterCallbackTest, set_shared_memory_001, TestSize.Level0)
 {
+    callBack_ = std::make_shared<AVTransControlCenterCallback>();
+    callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();
+    callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
     AVTransSharedMemory memory;
     int32_t ret = callBack_->SetSharedMemory(memory);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
@@ -105,6 +112,9 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_shared_memory_001, TestSize.Level
  */
 HWTEST_F(AVTransControlCenterCallbackTest, notify_001, TestSize.Level0)
 {
+    callBack_ = std::make_shared<AVTransControlCenterCallback>();
+    callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();
+    callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
     AVTransEvent event;
     event.type = EventType::EVENT_ADD_STREAM;
     int32_t ret = callBack_->Notify(event);

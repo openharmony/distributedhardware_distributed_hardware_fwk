@@ -57,6 +57,9 @@ void AVTransStubOnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     }
 
     sptr<AVTransControlCenterCallback> controlCenterCallback(new (std::nothrow) AVTransControlCenterCallback());
+    if (controlCenterCallback == nullptr) {
+        return;
+    }
     controlCenterCallback->OnRemoteRequest(code, pdata, reply, option);
 }
 } // namespace DistributedHardware

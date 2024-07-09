@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -181,6 +181,10 @@ int32_t AVTransControlCenter::NotifyAVCenter(int32_t engineId, const AVTransEven
 {
     TRUE_RETURN_V_MSG_E(IsInvalidEngineId(engineId), ERR_DH_AVT_INVALID_PARAM_VALUE,
         "Invalid input engine id = %{public}d", engineId);
+    if (syncManager_ == nullptr) {
+        AVTRANS_LOGE("syncManager is nullptr.");
+        return ERR_DH_AVT_INVALID_PARAM_VALUE;
+    }
 
     switch (event.type) {
         case EventType::EVENT_ADD_STREAM: {
@@ -296,6 +300,10 @@ void AVTransControlCenter::HandleDataReceived(const std::string &content, const 
         return;
     }
     AVTRANS_LOGI("Handle data received, av message type = %{public}d", avMessage->type_);
+    if (syncManager_ == nullptr) {
+        AVTRANS_LOGE("syncManager is nullptr.");
+        return;
+    }
     if ((avMessage->type_ == (uint32_t)AVTransTag::START_AV_SYNC) ||
         (avMessage->type_ == (uint32_t)AVTransTag::STOP_AV_SYNC)) {
         syncManager_->HandleAvSyncMessage(avMessage);

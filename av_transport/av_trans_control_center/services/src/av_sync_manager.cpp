@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -113,6 +113,10 @@ void AVSyncManager::DisableSenderAVSync()
 
 void AVSyncManager::HandleAvSyncMessage(const std::shared_ptr<AVTransMessage> &message)
 {
+    if (message == nullptr) {
+        AVTRANS_LOGI("message is nullptr.");
+        return;
+    }
     if (message->type_ == (uint32_t)AVTransTag::START_AV_SYNC) {
         EnableReceiverAVSync(message->content_);
     } else if (message->type_ == (uint32_t)AVTransTag::STOP_AV_SYNC) {

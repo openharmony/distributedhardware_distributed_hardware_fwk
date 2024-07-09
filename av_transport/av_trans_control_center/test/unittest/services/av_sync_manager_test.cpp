@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,10 +27,7 @@ void AVSyncManagerTest::TearDownTestCase(void)
 {
 }
 
-void AVSyncManagerTest::SetUp()
-{
-    syncManager_ = std::make_shared<AVSyncManager>();
-}
+void AVSyncManagerTest::SetUp() {}
 
 void AVSyncManagerTest::TearDown()
 {
@@ -44,6 +41,7 @@ void AVSyncManagerTest::TearDown()
  */
 HWTEST_F(AVSyncManagerTest, add_stream_info_001, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo stream;
     syncManager_->AddStreamInfo(stream);
@@ -58,6 +56,7 @@ HWTEST_F(AVSyncManagerTest, add_stream_info_001, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, add_stream_info_002, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     syncManager_->AddStreamInfo(streamFirst);
@@ -74,6 +73,7 @@ HWTEST_F(AVSyncManagerTest, add_stream_info_002, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, remove_stream_info_001, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     streamFirst.sceneType = "streamFirstType";
@@ -97,6 +97,7 @@ HWTEST_F(AVSyncManagerTest, remove_stream_info_001, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, enable_sender_av_sync_001, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     streamFirst.sceneType = "streamFirstType";
@@ -115,6 +116,7 @@ HWTEST_F(AVSyncManagerTest, enable_sender_av_sync_001, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, disable_sender_av_sync_001, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     streamFirst.sceneType = "streamFirstType";
@@ -138,6 +140,7 @@ HWTEST_F(AVSyncManagerTest, disable_sender_av_sync_001, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, disable_sender_av_sync_002, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     syncManager_->DisableSenderAVSync();
 
@@ -152,6 +155,7 @@ HWTEST_F(AVSyncManagerTest, disable_sender_av_sync_002, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, handle_av_sync_message_001, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     streamFirst.sceneType = "streamFirstType";
@@ -172,6 +176,7 @@ HWTEST_F(AVSyncManagerTest, handle_av_sync_message_001, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, handle_av_sync_message_002, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     streamFirst.sceneType = "streamFirstType";
@@ -192,6 +197,7 @@ HWTEST_F(AVSyncManagerTest, handle_av_sync_message_002, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, enable_receiver_av_sync_001, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     streamFirst.sceneType = "streamFirstType";
@@ -211,6 +217,7 @@ HWTEST_F(AVSyncManagerTest, enable_receiver_av_sync_001, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, disable_receiver_av_sync_001, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     streamFirst.sceneType = "streamFirstType";
@@ -230,6 +237,7 @@ HWTEST_F(AVSyncManagerTest, disable_receiver_av_sync_001, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, merge_group_info_001, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     streamFirst.sceneType = "streamFirstType";
@@ -249,6 +257,7 @@ HWTEST_F(AVSyncManagerTest, merge_group_info_001, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, merge_group_info_002, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     streamFirst.sceneType = SCENE_TYPE_D_MIC;
@@ -273,6 +282,7 @@ HWTEST_F(AVSyncManagerTest, merge_group_info_002, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, merge_group_info_003, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     streamFirst.sceneType = MIME_VIDEO_RAW;
@@ -297,6 +307,7 @@ HWTEST_F(AVSyncManagerTest, merge_group_info_003, TestSize.Level0)
  */
 HWTEST_F(AVSyncManagerTest, merge_group_info_004, TestSize.Level0)
 {
+    syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
     AVStreamInfo streamFirst;
     streamFirst.sceneType = SCENE_TYPE_D_SCREEN;
