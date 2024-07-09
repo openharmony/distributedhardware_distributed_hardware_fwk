@@ -72,9 +72,9 @@ HWTEST_F(PublisherItemTest, RemoveListener_001, TestSize.Level0)
     item.RemoveListener(listener);
     EXPECT_EQ(true, item.listeners_.empty());
 
-    listener = new MockIPublisherListener();
-    item.AddListener(listener);
-    item.RemoveListener(listener);
+    sptr<IPublisherListener> listener1(new MockIPublisherListener());
+    item.AddListener(listener1);
+    item.RemoveListener(listener1);
     EXPECT_EQ(true, item.listeners_.empty());
 }
 
@@ -92,7 +92,7 @@ HWTEST_F(PublisherItemTest, PublishMessage_001, TestSize.Level0)
     EXPECT_EQ(true, item.listeners_.empty());
 
     std::string msg(MESSAGE_LEN, 'a');
-    item.PublishMessage(message);
+    item.PublishMessage(msg);
     EXPECT_EQ(true, item.listeners_.empty());
 }
 
