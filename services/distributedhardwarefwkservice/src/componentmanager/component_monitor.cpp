@@ -80,7 +80,7 @@ void ComponentMonitor::AddSAMonitor(int32_t saId)
         return;
     }
 
-    sptr<CompSystemAbilityListener> listener = new CompSystemAbilityListener();
+    sptr<CompSystemAbilityListener> listener(new CompSystemAbilityListener());
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (!systemAbilityManager) {
