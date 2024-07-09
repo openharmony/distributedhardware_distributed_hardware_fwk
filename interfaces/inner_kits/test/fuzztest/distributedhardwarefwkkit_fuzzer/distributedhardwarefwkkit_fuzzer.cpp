@@ -46,7 +46,7 @@ void RegisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
         return;
     }
 
-    sptr<TestPublisherListener> listener = new TestPublisherListener();
+    sptr<TestPublisherListener> listener(new TestPublisherListener());
     DistributedHardwareFwkKit dhfwkKit;
     DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
     dhfwkKit.RegisterPublisherListener(topic, listener);
@@ -59,7 +59,7 @@ void PublishMessageFuzzTest(const uint8_t *data, size_t size)
         return;
     }
 
-    sptr<TestPublisherListener> listener = new TestPublisherListener();
+    sptr<TestPublisherListener> listener(new TestPublisherListener());
     DistributedHardwareFwkKit dhfwkKit;
     DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
     std::string message(reinterpret_cast<const char*>(data), size);
@@ -73,7 +73,7 @@ void UnregisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
         return;
     }
 
-    sptr<TestPublisherListener> listener = new TestPublisherListener();
+    sptr<TestPublisherListener> listener(new TestPublisherListener());
     DistributedHardwareFwkKit dhfwkKit;
     DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
     dhfwkKit.UnregisterPublisherListener(topic, listener);
