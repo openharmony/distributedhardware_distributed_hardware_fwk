@@ -563,6 +563,10 @@ void SoftbusChannelAdapter::OnSoftbusTimeSyncResult(const TimeSyncResultInfo *in
     AVTRANS_LOGI("On softbus channel time sync result:%{public}" PRId32, result);
     TRUE_RETURN(result == 0, "On softbus channel time sync failed");
 
+    if (info == nullptr) {
+        AVTRANS_LOGE("info id nullptr");
+        return;
+    }
     int32_t millisecond = info->result.millisecond;
     int32_t microsecond = info->result.microsecond;
     TimeSyncAccuracy accuracy  = info->result.accuracy;

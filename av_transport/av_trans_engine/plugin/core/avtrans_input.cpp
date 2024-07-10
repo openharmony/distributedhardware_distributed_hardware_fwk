@@ -25,21 +25,33 @@ AvTransInput::AvTransInput(uint32_t pkgVer, uint32_t apiVer, std::shared_ptr<AvT
 
 Status AvTransInput::Pause()
 {
+    if (AvTransInputPlugin_ == nullptr) {
+        return Status::ERROR_NOT_EXISTED;
+    }
     return AvTransInputPlugin_->Pause();
 }
 
 Status AvTransInput::Resume()
 {
+    if (AvTransInputPlugin_ == nullptr) {
+        return Status::ERROR_NOT_EXISTED;
+    }
     return AvTransInputPlugin_->Resume();
 }
 
 Status AvTransInput::PushData(const std::string& inPort, std::shared_ptr<Plugin::Buffer> buffer, int32_t offset)
 {
+    if (AvTransInputPlugin_ == nullptr) {
+        return Status::ERROR_NOT_EXISTED;
+    }
     return AvTransInputPlugin_->PushData(inPort, buffer, offset);
 }
 
 Status AvTransInput::SetDataCallback(std::function<void(std::shared_ptr<Plugin::Buffer>)> callback)
 {
+    if (AvTransInputPlugin_ == nullptr) {
+        return Status::ERROR_NOT_EXISTED;
+    }
     return AvTransInputPlugin_->SetDataCallback(callback);
 }
 }

@@ -38,6 +38,10 @@ void OutputController::PushData(std::shared_ptr<Plugin::Buffer>& data)
             dataQueue_.pop();
         }
         CheckSyncInfo(data);
+        if (data == nullptr || data->GetBufferMeta() == nullptr) {
+            AVTRANS_LOGE("data or data getbuffermeta is nullptr");
+            return;
+        }
         data->GetBufferMeta()->SetMeta(Tag::USER_PUSH_DATA_TIME, pushTime);
         dataQueue_.push(data);
         AVTRANS_LOGD("Push Data, dataQueue size is %{public}zu.", dataQueue_.size());
@@ -100,7 +104,7 @@ OutputController::ControlStatus OutputController::ReleaseControl()
     controlCon_.notify_one();
     sleepCon_.notify_one();
     clockCon_.notify_one();
-    if (handler_) {
+    if (handler_ && handler_->GetEventRunner()) {
         handler_->GetEventRunner()->Stop();
     }
     if (handlerThread_) {
@@ -234,6 +238,10 @@ void OutputController::LooperControl()
 
 int32_t OutputController::ControlOutput(const std::shared_ptr<Plugin::Buffer>& data)
 {
+    if (data == nullptr) {
+        AVTRANS_LOGE("data is nullptr");
+        return OUTPUT_FRAME;
+    }
     enterTime_ = GetCurrentTime();
     int64_t timeStamp = data->pts;
     TRUE_RETURN_V_MSG_D((timeStamp == INVALID_TIMESTAMP || !CheckIsAllowControl()), OUTPUT_FRAME,
@@ -258,6 +266,10 @@ int32_t OutputController::ControlOutput(const std::shared_ptr<Plugin::Buffer>& d
 
 void OutputController::CheckSyncInfo(const std::shared_ptr<Plugin::Buffer>& data)
 {
+    if (data == nullptr || data->GetBufferMeta() == nullptr) {
+        AVTRANS_LOGE("data or getbuffermeta is nullptr");
+        return;
+    }
     auto bufferMeta = data->GetBufferMeta();
     bool isAFrameNumberExist = bufferMeta->IsExist(Tag::AUDIO_SAMPLE_PER_FRAME);
     bool isAPtsExist = bufferMeta->IsExist(Tag::MEDIA_START_TIME);
@@ -333,6 +345,10 @@ bool OutputController::CheckIsClockInvalid(const std::shared_ptr<Plugin::Buffer>
 
 int32_t OutputController::AcquireSyncClockTime(const std::shared_ptr<Plugin::Buffer>& data)
 {
+    if (data == nullptr || data->GetBufferMeta() == nullptr) {
+        AVTRANS_LOGE("data or getbuffermeta is nullptr");
+        return ERR_DH_AVT_INVALID_PARAM;
+    }
     TRUE_RETURN_V_MSG_E(((sharedMem_.fd <= 0) || (sharedMem_.size <= 0) || sharedMem_.name.empty()),
         ERR_DH_AVT_SHARED_MEMORY_FAILED, "Parameter USER_SHARED_MEMORY_FD info error.");
     AVTransSharedMemory sharedMem;
@@ -501,6 +517,10 @@ void OutputController::HandleSmoothTime(const std::shared_ptr<Plugin::Buffer>& d
 
 void OutputController::HandleSyncTime(const std::shared_ptr<Plugin::Buffer>& data)
 {
+    if (data == nullptr || data->GetBufferMeta() == nullptr) {
+        AVTRANS_LOGE("data or getbuffermeta is nullptr");
+        return;
+    }
     auto bufferMeta = data->GetBufferMeta();
     int64_t vTimeStamp = data->pts;
     uint32_t vFrameNumber = Plugin::AnyCast<uint32_t>(bufferMeta->GetMeta(Tag::USER_FRAME_NUMBER));

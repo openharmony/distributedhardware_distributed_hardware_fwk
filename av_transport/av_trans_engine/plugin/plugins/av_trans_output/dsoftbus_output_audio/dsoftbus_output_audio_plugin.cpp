@@ -134,7 +134,9 @@ Status DsoftbusOutputAudioPlugin::Start()
         return Status::ERROR_INVALID_OPERATION;
     }
     DataQueueClear(dataQueue_);
-    bufferPopTask_->Start();
+    if (bufferPopTask_) {
+        bufferPopTask_->Start();
+    }
     SetCurrentState(State::RUNNING);
     return Status::OK;
 }
@@ -147,7 +149,9 @@ Status DsoftbusOutputAudioPlugin::Stop()
         return Status::ERROR_WRONG_STATE;
     }
     SetCurrentState(State::PREPARED);
-    bufferPopTask_->Stop();
+    if (bufferPopTask_) {
+        bufferPopTask_->Stop();
+    }
     DataQueueClear(dataQueue_);
     CloseSoftbusChannel();
     return Status::OK;
@@ -243,7 +247,7 @@ void DsoftbusOutputAudioPlugin::OnStreamReceived(const StreamData *data, const S
 Status DsoftbusOutputAudioPlugin::PushData(const std::string &inPort, std::shared_ptr<Buffer> buffer, int32_t offset)
 {
     std::lock_guard<std::mutex> lock(dataQueueMtx_);
-    if (buffer == nullptr || buffer->IsEmpty()) {
+    if (buffer == nullptr || buffer->IsEmpty() || buffer->GetMemory() == nullptr) {
         AVTRANS_LOGE("Buffer is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
@@ -290,12 +294,15 @@ void DsoftbusOutputAudioPlugin::FeedChannelData()
 
 void DsoftbusOutputAudioPlugin::SendDataToSoftbus(std::shared_ptr<Buffer> &buffer)
 {
+    if (buffer == nullptr || buffer->GetBufferMeta() == nullptr || buffer->GetMemory() == nullptr) {
+        AVTRANS_LOGE("buffer or getbuffermeta or getmemory is nullptr.");
+        return;
+    }
     cJSON *jsonObj = cJSON_CreateObject();
     if (jsonObj == nullptr) {
         return;
     }
-    auto bufferMeta = buffer->GetBufferMeta();
-    BufferMetaType metaType = bufferMeta->GetType();
+    BufferMetaType metaType = buffer->GetBufferMeta()->GetType();
     cJSON_AddNumberToObject(jsonObj, AVT_DATA_META_TYPE.c_str(), static_cast<uint32_t>(metaType));
     if (metaType != BufferMetaType::AUDIO) {
         AVTRANS_LOGE("metaType is wrong");

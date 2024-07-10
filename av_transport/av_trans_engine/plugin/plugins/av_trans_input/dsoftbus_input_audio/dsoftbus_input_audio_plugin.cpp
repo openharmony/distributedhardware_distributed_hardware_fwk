@@ -131,7 +131,9 @@ Status DsoftbusInputAudioPlugin::Start()
     }
     DataQueueClear(dataQueue_);
     isrunning_.store(true);
-    bufferPopTask_->Start();
+    if (bufferPopTask_) {
+        bufferPopTask_->Start();
+    }
     SetCurrentState(State::RUNNING);
     return Status::OK;
 }
@@ -146,7 +148,9 @@ Status DsoftbusInputAudioPlugin::Stop()
     SetCurrentState(State::PREPARED);
     isrunning_.store(false);
     DataQueueClear(dataQueue_);
-    bufferPopTask_->Stop();
+    if (bufferPopTask_) {
+        bufferPopTask_->Stop();
+    }
     return Status::OK;
 }
 
@@ -230,6 +234,10 @@ void DsoftbusInputAudioPlugin::OnChannelEvent(const AVTransEvent &event)
 
 void DsoftbusInputAudioPlugin::OnStreamReceived(const StreamData *data, const StreamData *ext)
 {
+    if (ext == nullptr) {
+        AVTRANS_LOGE("ext is nullptr.");
+        return;
+    }
     std::string message(reinterpret_cast<const char *>(ext->buf), ext->bufLen);
     AVTRANS_LOGI("Receive message : %{public}s", message.c_str());
 
@@ -257,6 +265,10 @@ void DsoftbusInputAudioPlugin::OnStreamReceived(const StreamData *data, const St
 std::shared_ptr<Buffer> DsoftbusInputAudioPlugin::CreateBuffer(uint32_t metaType,
     const StreamData *data, const cJSON *resMsg)
 {
+    if (data == nullptr) {
+        AVTRANS_LOGE("data is nullptr.");
+        return nullptr;
+    }
     auto buffer = Buffer::CreateDefaultBuffer(static_cast<BufferMetaType>(metaType), data->bufLen);
     auto bufData = buffer->GetMemory();
 

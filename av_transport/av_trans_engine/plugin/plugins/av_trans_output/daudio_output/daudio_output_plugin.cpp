@@ -187,7 +187,9 @@ Status DaudioOutputPlugin::Start()
     }
     DataQueueClear(outputBuffer_);
     isrunning_.store(true);
-    sendPlayTask_->Start();
+    if (sendPlayTask_) {
+        sendPlayTask_->Start();
+    }
     SetCurrentState(State::RUNNING);
     return Status::OK;
 }
@@ -201,7 +203,9 @@ Status DaudioOutputPlugin::Stop()
     }
     SetCurrentState(State::PREPARED);
     isrunning_.store(false);
-    sendPlayTask_->Stop();
+    if (sendPlayTask_) {
+        sendPlayTask_->Stop();
+    }
     DataQueueClear(outputBuffer_);
     return Status::OK;
 }

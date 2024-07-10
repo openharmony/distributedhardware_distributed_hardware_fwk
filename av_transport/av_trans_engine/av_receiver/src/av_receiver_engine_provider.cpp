@@ -38,6 +38,9 @@ AVReceiverEngineProvider::~AVReceiverEngineProvider()
     {
         std::lock_guard<std::mutex> lock(listMutex_);
         for (auto &receiver : receiverEngineList_) {
+            if (receiver == nullptr) {
+                continue;
+            }
             receiver->Release();
         }
     }
@@ -83,6 +86,7 @@ int32_t AVReceiverEngineProvider::RegisterProviderCallback(
 void AVReceiverEngineProvider::OnChannelEvent(const AVTransEvent &event)
 {
     if (providerCallback_ == nullptr) {
+        AVTRANS_LOGE("providerCallback_ is nullptr.");
         return;
     }
     if ((event.type == EventType::EVENT_CHANNEL_OPENED) || (event.type == EventType::EVENT_CHANNEL_CLOSED)) {

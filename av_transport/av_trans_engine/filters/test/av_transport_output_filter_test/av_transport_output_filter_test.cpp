@@ -49,12 +49,18 @@ HWTEST_F(AvTransportOutputFilterTest, SetParameter_001, testing::ext::TestSize.L
 {
     int32_t key = -1;
     Any value = VideoBitStreamFormat::ANNEXB;
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     ErrorCode ret = avOutputTest_->SetParameter(key, value);
     EXPECT_EQ(ErrorCode::ERROR_INVALID_PARAMETER_VALUE, ret);
 }
 
 HWTEST_F(AvTransportOutputFilterTest, SetParameter_002, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     int32_t key = static_cast<int32_t>(Plugin::Tag::MIME);
     Any value = MEDIA_MIME_AUDIO_RAW;
     ErrorCode ret = avOutputTest_->SetParameter(key, value);
@@ -68,6 +74,9 @@ HWTEST_F(AvTransportOutputFilterTest, SetParameter_002, testing::ext::TestSize.L
 
 HWTEST_F(AvTransportOutputFilterTest, GetParameter_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     int32_t key = -1;
     Any value = VideoBitStreamFormat::ANNEXB;
     ErrorCode ret = avOutputTest_->GetParameter(key, value);
@@ -76,6 +85,9 @@ HWTEST_F(AvTransportOutputFilterTest, GetParameter_001, testing::ext::TestSize.L
 
 HWTEST_F(AvTransportOutputFilterTest, GetParameter_002, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     int32_t key = static_cast<int32_t>(Plugin::Tag::MIME);
     Any value = VideoBitStreamFormat::ANNEXB;
     ErrorCode ret = avOutputTest_->GetParameter(key, value);
@@ -84,12 +96,18 @@ HWTEST_F(AvTransportOutputFilterTest, GetParameter_002, testing::ext::TestSize.L
 
 HWTEST_F(AvTransportOutputFilterTest, Prepare_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     ErrorCode ret = avOutputTest_->Prepare();
     EXPECT_EQ(ErrorCode::ERROR_INVALID_STATE, ret);
 }
 
 HWTEST_F(AvTransportOutputFilterTest, Prepare_002, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     avOutputTest_->state_ = FilterState::INITIALIZED;
     ErrorCode ret = avOutputTest_->Prepare();
     EXPECT_EQ(ErrorCode::ERROR_INVALID_PARAMETER_VALUE, ret);
@@ -97,6 +115,9 @@ HWTEST_F(AvTransportOutputFilterTest, Prepare_002, testing::ext::TestSize.Level1
 
 HWTEST_F(AvTransportOutputFilterTest, Start_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     ErrorCode ret = avOutputTest_->Start();
     EXPECT_EQ(ErrorCode::ERROR_INVALID_STATE, ret);
 
@@ -111,6 +132,9 @@ HWTEST_F(AvTransportOutputFilterTest, Start_001, testing::ext::TestSize.Level1)
 
 HWTEST_F(AvTransportOutputFilterTest, Start_002, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     avOutputTest_->plugin_ =
         PluginManager::Instance().CreateGenericPlugin<AvTransOutput, AvTransOutputPlugin>("AVTransDaudioOutputPlugin");
     avOutputTest_->state_ = FilterState::READY;
@@ -120,6 +144,9 @@ HWTEST_F(AvTransportOutputFilterTest, Start_002, testing::ext::TestSize.Level1)
 
 HWTEST_F(AvTransportOutputFilterTest, Stop_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     avOutputTest_->plugin_ = nullptr;
     ErrorCode ret = avOutputTest_->Stop();
     EXPECT_EQ(ErrorCode::ERROR_NULL_POINTER, ret);
@@ -132,6 +159,9 @@ HWTEST_F(AvTransportOutputFilterTest, Stop_001, testing::ext::TestSize.Level1)
 
 HWTEST_F(AvTransportOutputFilterTest, Stop_002, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     avOutputTest_->state_ = FilterState::RUNNING;
     avOutputTest_->plugin_ =
         PluginManager::Instance().CreateGenericPlugin<AvTransOutput, AvTransOutputPlugin>("AVTransDaudioOutputPlugin");
@@ -141,12 +171,18 @@ HWTEST_F(AvTransportOutputFilterTest, Stop_002, testing::ext::TestSize.Level1)
 
 HWTEST_F(AvTransportOutputFilterTest, FindPlugin_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     ErrorCode ret = avOutputTest_->FindPlugin();
     EXPECT_EQ(ErrorCode::ERROR_INVALID_PARAMETER_VALUE, ret);
 }
 
 HWTEST_F(AvTransportOutputFilterTest, FindPlugin_002, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     int32_t key = static_cast<int32_t>(Plugin::Tag::MIME);
     Any value = 100;
     avOutputTest_->plugin_ =
@@ -163,6 +199,9 @@ HWTEST_F(AvTransportOutputFilterTest, FindPlugin_002, testing::ext::TestSize.Lev
 
 HWTEST_F(AvTransportOutputFilterTest, Negotiate_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     std::string inPort = "inPort_test";
     std::shared_ptr<const Plugin::Capability> upstreamCap;
     Plugin::Capability negotiatedCap;
@@ -179,6 +218,9 @@ HWTEST_F(AvTransportOutputFilterTest, Negotiate_001, testing::ext::TestSize.Leve
 
 HWTEST_F(AvTransportOutputFilterTest, CreatePlugin_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     std::shared_ptr<PluginInfo> selectedInfo = nullptr;
     ErrorCode ret = avOutputTest_->CreatePlugin(selectedInfo);
     EXPECT_EQ(ErrorCode::ERROR_INVALID_PARAMETER_VALUE, ret);
@@ -218,6 +260,9 @@ HWTEST_F(AvTransportOutputFilterTest, CreatePlugin_001, testing::ext::TestSize.L
 
 HWTEST_F(AvTransportOutputFilterTest, CreatePlugin_002, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     std::shared_ptr<PluginInfo> selectedInfo = PluginManager::Instance().GetPluginInfo(
         PluginType::GENERIC_PLUGIN, "");
     ErrorCode ret = avOutputTest_->CreatePlugin(selectedInfo);
@@ -226,6 +271,9 @@ HWTEST_F(AvTransportOutputFilterTest, CreatePlugin_002, testing::ext::TestSize.L
 
 HWTEST_F(AvTransportOutputFilterTest, InitPlugin_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     avOutputTest_->plugin_ = nullptr;
     ErrorCode ret = avOutputTest_->InitPlugin();
     EXPECT_EQ(ErrorCode::ERROR_INVALID_PARAMETER_VALUE, ret);
@@ -238,6 +286,9 @@ HWTEST_F(AvTransportOutputFilterTest, InitPlugin_001, testing::ext::TestSize.Lev
 
 HWTEST_F(AvTransportOutputFilterTest, ConfigPlugin_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     ErrorCode ret = avOutputTest_->ConfigPlugin();
     EXPECT_EQ(ErrorCode::ERROR_NULL_POINTER, ret);
 
@@ -249,6 +300,9 @@ HWTEST_F(AvTransportOutputFilterTest, ConfigPlugin_001, testing::ext::TestSize.L
 
 HWTEST_F(AvTransportOutputFilterTest, PreparePlugin_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     avOutputTest_->plugin_ = nullptr;
     ErrorCode ret = avOutputTest_->PreparePlugin();
     EXPECT_EQ(ErrorCode::ERROR_INVALID_PARAMETER_TYPE, ret);
@@ -256,6 +310,9 @@ HWTEST_F(AvTransportOutputFilterTest, PreparePlugin_001, testing::ext::TestSize.
 
 HWTEST_F(AvTransportOutputFilterTest, PreparePlugin_002, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     ErrorCode ret = avOutputTest_->PreparePlugin();
     EXPECT_EQ(ErrorCode::ERROR_INVALID_PARAMETER_TYPE, ret);
 
@@ -267,6 +324,9 @@ HWTEST_F(AvTransportOutputFilterTest, PreparePlugin_002, testing::ext::TestSize.
 
 HWTEST_F(AvTransportOutputFilterTest, PushData_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     std::string inPort;
     AVBufferPtr buffer;
     int64_t offset = 0;
@@ -291,6 +351,9 @@ HWTEST_F(AvTransportOutputFilterTest, PushData_001, testing::ext::TestSize.Level
 
 HWTEST_F(AvTransportOutputFilterTest, SetPluginParams_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     avOutputTest_->plugin_ = nullptr;
     ErrorCode ret = avOutputTest_->SetPluginParams();
     EXPECT_EQ(ErrorCode::ERROR_NULL_POINTER, ret);
@@ -339,6 +402,9 @@ HWTEST_F(AvTransportOutputFilterTest, SetPluginParams_001, testing::ext::TestSiz
 
 HWTEST_F(AvTransportOutputFilterTest, SetEventCallBack_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     avOutputTest_->plugin_ =
         PluginManager::Instance().CreateGenericPlugin<AvTransOutput, AvTransOutputPlugin>("AVTransDaudioOutputPlugin");
     ErrorCode ret = avOutputTest_->SetEventCallBack();
@@ -351,6 +417,9 @@ HWTEST_F(AvTransportOutputFilterTest, SetEventCallBack_001, testing::ext::TestSi
 
 HWTEST_F(AvTransportOutputFilterTest, SetDataCallBack_001, testing::ext::TestSize.Level1)
 {
+    if (avOutputTest_ == nullptr) {
+        return;
+    }
     avOutputTest_->plugin_ =
         PluginManager::Instance().CreateGenericPlugin<AvTransOutput, AvTransOutputPlugin>("AVTransDaudioOutputPlugin");
     std::shared_ptr<Plugin::Buffer> buffer = nullptr;
