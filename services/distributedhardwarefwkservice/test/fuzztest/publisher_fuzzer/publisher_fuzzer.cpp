@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,7 +58,7 @@ void PublisherListenerFuzzTest(const uint8_t* data, size_t size)
     }
 
     DHTopic topic = topicFuzz[data[0] % TOPIC_SIZE];
-    sptr<IPublisherListener> listener = new MockPublisherListener();
+    sptr<IPublisherListener> listener(new MockPublisherListener());
     std::string message(reinterpret_cast<const char*>(data), size);
 
     Publisher::GetInstance().RegisterListener(topic, listener);

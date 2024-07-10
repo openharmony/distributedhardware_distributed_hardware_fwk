@@ -81,19 +81,19 @@ uint32_t DistributedHardwareFwkKitTest::TestPublisherListener::GetTopicMsgCnt(co
  */
 HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_001, testing::ext::TestSize.Level0)
 {
-    sptr<TestPublisherListener> listener1 = new TestPublisherListener();
+    sptr<TestPublisherListener> listener1(new TestPublisherListener());
     int32_t ret = dhfwkPtr_->RegisterPublisherListener(DHTopic::TOPIC_START_DSCREEN, listener1);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 
-    sptr<TestPublisherListener> listener2 = new TestPublisherListener();
+    sptr<TestPublisherListener> listener2(new TestPublisherListener());
     ret = dhfwkPtr_->RegisterPublisherListener(DHTopic::TOPIC_SINK_PROJECT_WINDOW_INFO, listener2);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 
-    sptr<TestPublisherListener> listener3 = new TestPublisherListener();
+    sptr<TestPublisherListener> listener3(new TestPublisherListener());
     ret = dhfwkPtr_->RegisterPublisherListener(DHTopic::TOPIC_STOP_DSCREEN, listener3);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 
-    sptr<TestPublisherListener> listener4 = new TestPublisherListener();
+    sptr<TestPublisherListener> listener4(new TestPublisherListener());
     ret = dhfwkPtr_->RegisterPublisherListener(DHTopic::TOPIC_DEV_OFFLINE, listener4);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 
