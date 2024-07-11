@@ -81,6 +81,7 @@ std::map<std::string, DHType> g_mapDhTypeName = {
     { "HFP", DHType::HFP },
     { "A2D", DHType::A2D },
     { "VIRMODEM_AUDIO", DHType::VIRMODEM_AUDIO },
+    { "MODEM", DHType::MODEM },
 };
 
 std::map<DHType, std::string> g_mapPartsParamName = {
