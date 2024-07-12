@@ -126,6 +126,10 @@ void DHTransport::HandleReceiveMessage(const std::string &payload)
         DHLOGE("Can not get DHCommTool ptr");
         return;
     }
+    if (dhCommToolSPtr->GetEventHandler() == nullptr) {
+        DHLOGE("Can not get eventHandler");
+        return;
+    }
     dhCommToolSPtr->GetEventHandler()->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
 }
 
