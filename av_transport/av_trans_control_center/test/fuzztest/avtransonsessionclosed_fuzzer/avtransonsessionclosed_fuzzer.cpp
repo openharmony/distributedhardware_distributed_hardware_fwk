@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "avtransOnSessionClosed_fuzzer.h"
+#include "avtransonsessionclosed_fuzzer.h"
 
 #include <algorithm>
 #include <securec.h>

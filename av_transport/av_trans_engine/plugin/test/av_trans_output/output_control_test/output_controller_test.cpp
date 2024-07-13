@@ -161,7 +161,7 @@ HWTEST_F(OutputControllerTest, AcquireSyncClockTime_001, testing::ext::TestSize.
     auto controller = std::make_shared<OutputController>();
     std::shared_ptr<Plugin::Buffer> data;
     int32_t ret = controller->AcquireSyncClockTime(data);
-    EXPECT_EQ(ERR_DH_AVT_SHARED_MEMORY_FAILED, ret);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
 }
 
 HWTEST_F(OutputControllerTest, WaitRereadClockFailed_001, testing::ext::TestSize.Level1)

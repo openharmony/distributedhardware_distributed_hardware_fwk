@@ -254,7 +254,7 @@ HWTEST_F(DscreenOutputTest, AcquireSyncClockTime_001, testing::ext::TestSize.Lev
     plugin->InitOutputController();
     std::shared_ptr<Plugin::Buffer> data;
     int32_t ret = plugin->controller_->AcquireSyncClockTime(data);
-    EXPECT_EQ(ERR_DH_AVT_SHARED_MEMORY_FAILED, ret);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
 }
 
 HWTEST_F(DscreenOutputTest, WaitRereadClockFailed_001, testing::ext::TestSize.Level1)
