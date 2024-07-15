@@ -16,6 +16,6 @@
 #ifndef TEST_AVTRANSONSESSIONCLOSED_FUZZER_H
 #define TEST_AVTRANSONSESSIONCLOSED_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "avtransOnSessionClosed_fuzzer.cpp"
+#define FUZZ_PROJECT_NAME "avtransonsessionclosed_fuzzer.cpp"
 
 #endif

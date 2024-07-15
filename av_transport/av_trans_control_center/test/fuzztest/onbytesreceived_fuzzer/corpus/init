@@ -11,17 +11,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-group("fuzztest") {
-  testonly = true
-
-  deps = [
-    "avtranscallbacknotify_fuzzer:fuzztest",
-    "avtranscallbacksetparameter_fuzzer:fuzztest",
-    "avtranscallbacksetsharedmemory_fuzzer:fuzztest",
-    "avtransonsessionclosed_fuzzer:fuzztest",
-    "avtransstubonremoterequest_fuzzer:fuzztest",
-    "onbytesreceived_fuzzer:fuzztest",
-    "onsoftbustimesyncresult_fuzzer:fuzztest",
-    "onstreamreceived_fuzzer:fuzztest",
-  ]
-}
+FUZZ

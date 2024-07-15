@@ -141,40 +141,31 @@ bool AVTransVideoBufferMeta::UnmarshalVideoMeta(const std::string& jsonStr)
     if (metaJson == nullptr) {
         return false;
     }
+
     cJSON *typeObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_DATA_TYPE.c_str());
-    if (typeObj == nullptr || !IsUInt32(metaJson, META_DATA_TYPE)) {
-        cJSON_Delete(metaJson);
-        return false;
+    if (typeObj != nullptr && IsUInt32(metaJson, META_DATA_TYPE)) {
+        dataType_ = static_cast<BufferDataType>(typeObj->valueint);
     }
-    dataType_ = static_cast<BufferDataType>(typeObj->valueint);
 
     cJSON *timeStampObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_TIMESTAMP.c_str());
-    if (timeStampObj == nullptr || !IsInt64(metaJson, META_TIMESTAMP)) {
-        cJSON_Delete(metaJson);
-        return false;
+    if (timeStampObj != nullptr && IsInt64(metaJson, META_TIMESTAMP)) {
+        pts_ = static_cast<int64_t>(timeStampObj->valueint);
     }
-    pts_ = static_cast<int64_t>(timeStampObj->valueint);
-    
+
     cJSON *numberObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_FRAME_NUMBER.c_str());
-    if (numberObj == nullptr || !IsUInt32(metaJson, META_FRAME_NUMBER)) {
-        cJSON_Delete(metaJson);
-        return false;
+    if (numberObj != nullptr && IsUInt32(metaJson, META_FRAME_NUMBER)) {
+        frameNum_ = static_cast<uint32_t>(numberObj->valueint);
     }
-    frameNum_ = static_cast<uint32_t>(numberObj->valueint);
 
     cJSON *extTimeStampObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_EXT_TIMESTAMP.c_str());
-    if (extTimeStampObj == nullptr || !IsInt64(metaJson, META_EXT_TIMESTAMP)) {
-        cJSON_Delete(metaJson);
-        return false;
+    if (extTimeStampObj != nullptr && IsInt64(metaJson, META_EXT_TIMESTAMP)) {
+        extPts_ = static_cast<int64_t>(extTimeStampObj->valueint);
     }
-    extPts_ = static_cast<int64_t>(extTimeStampObj->valueint);
 
     cJSON *extNumberObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_EXT_FRAME_NUMBER.c_str());
-    if (extNumberObj == nullptr || !IsUInt32(metaJson, META_EXT_FRAME_NUMBER)) {
-        cJSON_Delete(metaJson);
-        return false;
+    if (extNumberObj != nullptr && IsUInt32(metaJson, META_EXT_FRAME_NUMBER)) {
+        extFrameNum_ = static_cast<uint32_t>(extNumberObj->valueint);
     }
-    extFrameNum_ =static_cast<uint32_t>(extNumberObj->valueint);
     cJSON_Delete(metaJson);
     return true;
 }
