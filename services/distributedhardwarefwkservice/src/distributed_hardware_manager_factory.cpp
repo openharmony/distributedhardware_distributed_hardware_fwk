@@ -191,13 +191,6 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
     if (offlineResult != DH_FWK_SUCCESS) {
         DHLOGE("offline failed, errCode = %{public}d", offlineResult);
     }
-
-    DHContext::GetInstance().RemoveOnlineDeviceByUUID(uuid);
-    if (DistributedHardwareManager::GetInstance().GetOnLineCount() == 0 &&
-        DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
-        DHLOGI("all devices are offline, start to free the resource");
-        UnInit();
-    }
     return DH_FWK_SUCCESS;
 }
 
