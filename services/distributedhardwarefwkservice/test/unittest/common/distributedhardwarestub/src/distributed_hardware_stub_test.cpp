@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -77,7 +77,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_003, TestSize.Level0)
     uint32_t topicInt = (uint32_t)DHTopic::TOPIC_MIN;
     data.WriteUint32(topicInt);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_004, TestSize.Level0)
@@ -90,7 +90,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_004, TestSize.Level0)
     uint32_t topicInt = (uint32_t)DHTopic::TOPIC_MIN;
     data.WriteUint32(topicInt);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_005, TestSize.Level0)
@@ -103,7 +103,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_005, TestSize.Level0)
     uint32_t transRole = static_cast<uint32_t>(TransRole::UNKNOWN);
     data.WriteUint32(transRole);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_006, TestSize.Level0)
@@ -116,7 +116,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_006, TestSize.Level0)
     int32_t engineId = 1;
     data.WriteInt32(engineId);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_007, TestSize.Level0)
@@ -131,7 +131,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_007, TestSize.Level0)
     data.WriteInt32(engineId);
     data.WriteString(peerDevId);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_008, TestSize.Level0)
@@ -150,7 +150,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_008, TestSize.Level0)
     data.WriteUint32(type);
     data.WriteString(content);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_009, TestSize.Level0)
@@ -163,7 +163,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_009, TestSize.Level0)
     uint32_t specInt = static_cast<uint32_t>(QueryLocalSysSpecType::MIN);
     data.WriteUint32(specInt);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_010, TestSize.Level0)
@@ -176,7 +176,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_010, TestSize.Level0)
     std::string deviceId = "deviceId_test";
     data.WriteString(deviceId);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_011, TestSize.Level0)
@@ -222,7 +222,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_014, TestSize.Level0)
     uint32_t topicInt = (uint32_t)DHTopic::TOPIC_MIN;
     data.WriteUint32(topicInt);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
 /**
