@@ -113,6 +113,7 @@ namespace DistributedHardware {
 
     /* DHFWK Check Permission errno, range: [-11200, -11299] */
     constexpr int32_t ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL = -11200;
+    constexpr int32_t ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL = -11201;
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DISTRIBUTED_HARDWARE_ERRNO
