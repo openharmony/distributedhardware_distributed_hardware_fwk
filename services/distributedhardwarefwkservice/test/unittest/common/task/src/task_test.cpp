@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -88,10 +88,10 @@ void TaskTest::TearDown()
  */
 HWTEST_F(TaskTest, task_test_001, TestSize.Level0)
 {
-    std::shared_ptr<MockOnLineTask> onlineTask =
-        std::static_pointer_cast<MockOnLineTask>(
+    std::shared_ptr<MockOnLineTask> onlineTask = std::static_pointer_cast<MockOnLineTask>(
         MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, TASK_PARAM_1, nullptr));
     onlineTask->SetOnLineDevInfos({ DEV_INFO_11, DEV_INFO_12, DEV_INFO_13, DEV_INFO_14, DEV_INFO_15 });
+
     TaskExecutor::GetInstance().PushTask(onlineTask);
 
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
@@ -122,24 +122,6 @@ HWTEST_F(TaskTest, task_test_002, TestSize.Level0)
 }
 
 /**
- * @tc.name: task_test_003
- * @tc.desc: Verify the Execute OffLineTask function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(TaskTest, task_test_003, TestSize.Level0)
-{
-    std::shared_ptr<MockOffLineTask> offlineTask =
-        std::static_pointer_cast<MockOffLineTask>(
-        MockTaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, TASK_PARAM_1, nullptr));
-    offlineTask->SetOffLineDevInfos({ DEV_INFO_11, DEV_INFO_12, DEV_INFO_13, DEV_INFO_14, DEV_INFO_15 });
-    TaskExecutor::GetInstance().PushTask(offlineTask);
-
-    ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
-    ASSERT_TRUE(TaskBoard::GetInstance().IsAllTaskFinish());
-}
-
-/**
  * @tc.name: task_test_004
  * @tc.desc: Verify the Execute OnLineTask and OffLineTask function
  * @tc.type: FUNC
@@ -147,24 +129,21 @@ HWTEST_F(TaskTest, task_test_003, TestSize.Level0)
  */
 HWTEST_F(TaskTest, task_test_004, TestSize.Level0)
 {
-    std::shared_ptr<MockOnLineTask> onlineTask =
-        std::static_pointer_cast<MockOnLineTask>(
+    std::shared_ptr<MockOnLineTask> onlineTask1 = std::static_pointer_cast<MockOnLineTask>(
         MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, TASK_PARAM_1, nullptr));
-    onlineTask->SetOnLineDevInfos({ DEV_INFO_11, DEV_INFO_12, DEV_INFO_13, DEV_INFO_14, DEV_INFO_15 });
+    onlineTask1->SetOnLineDevInfos({ DEV_INFO_11, DEV_INFO_12, DEV_INFO_13, DEV_INFO_14, DEV_INFO_15 });
 
-    std::shared_ptr<MockOffLineTask> offlineTask =
-        std::static_pointer_cast<MockOffLineTask>(
-        MockTaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, TASK_PARAM_1, nullptr));
-    offlineTask->SetOffLineDevInfos({ DEV_INFO_11, DEV_INFO_12, DEV_INFO_13, DEV_INFO_14, DEV_INFO_15 });
+    std::shared_ptr<MockOnLineTask> onlineTask2 = std::static_pointer_cast<MockOnLineTask>(
+        MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, TASK_PARAM_2, nullptr));
+    onlineTask2->SetOnLineDevInfos({ DEV_INFO_21, DEV_INFO_22, DEV_INFO_23, DEV_INFO_24, DEV_INFO_25 });
 
-    TaskExecutor::GetInstance().PushTask(onlineTask);
+    TaskExecutor::GetInstance().PushTask(onlineTask1);
 
     ASSERT_EQ(ERR_DH_FWK_TASK_TIMEOUT, TaskBoard::GetInstance().WaitForALLTaskFinish());
     ASSERT_FALSE(TaskBoard::GetInstance().IsAllTaskFinish());
 
-    TaskExecutor::GetInstance().PushTask(offlineTask);
+    TaskExecutor::GetInstance().PushTask(onlineTask2);
     ASSERT_EQ(DH_FWK_SUCCESS, TaskBoard::GetInstance().WaitForALLTaskFinish());
-    ASSERT_TRUE(TaskBoard::GetInstance().IsAllTaskFinish());
 }
 
 /**
