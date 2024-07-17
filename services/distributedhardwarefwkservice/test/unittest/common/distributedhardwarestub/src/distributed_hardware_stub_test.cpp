@@ -187,7 +187,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_011, TestSize.Level0)
     MessageOption option;
     data.WriteInterfaceToken(stubTest_->GetDescriptor());
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+    EXPECT_EQ(ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_012, TestSize.Level0)
@@ -198,7 +198,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_012, TestSize.Level0)
     MessageOption option;
     data.WriteInterfaceToken(stubTest_->GetDescriptor());
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+    EXPECT_EQ(ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_013, TestSize.Level0)
@@ -209,7 +209,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_013, TestSize.Level0)
     MessageOption option;
     data.WriteInterfaceToken(stubTest_->GetDescriptor());
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+    EXPECT_EQ(ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_014, TestSize.Level0)

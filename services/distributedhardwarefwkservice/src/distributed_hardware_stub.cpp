@@ -312,6 +312,10 @@ bool DistributedHardwareStub::ValidQueryLocalSpec(uint32_t spec)
 
 int32_t DistributedHardwareStub::PauseDistributedHardwareInner(MessageParcel &data, MessageParcel &reply)
 {
+    if (!IsSystemHap()) {
+        DHLOGE("GetCallerProcessName not system hap.");
+        return ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL;
+    }
     if (!HasAccessDHPermission()) {
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
@@ -328,6 +332,10 @@ int32_t DistributedHardwareStub::PauseDistributedHardwareInner(MessageParcel &da
 
 int32_t DistributedHardwareStub::ResumeDistributedHardwareInner(MessageParcel &data, MessageParcel &reply)
 {
+    if (!IsSystemHap()) {
+        DHLOGE("GetCallerProcessName not system hap.");
+        return ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL;
+    }
     if (!HasAccessDHPermission()) {
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
@@ -344,6 +352,10 @@ int32_t DistributedHardwareStub::ResumeDistributedHardwareInner(MessageParcel &d
 
 int32_t DistributedHardwareStub::StopDistributedHardwareInner(MessageParcel &data, MessageParcel &reply)
 {
+    if (!IsSystemHap()) {
+        DHLOGE("GetCallerProcessName not system hap.");
+        return ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL;
+    }
     if (!HasAccessDHPermission()) {
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
@@ -360,16 +372,20 @@ int32_t DistributedHardwareStub::StopDistributedHardwareInner(MessageParcel &dat
 
 bool DistributedHardwareStub::HasAccessDHPermission()
 {
-    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
-    if (!OHOS::Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(fullTokenId)) {
-        DHLOGE("GetCallerProcessName not system hap.");
-        return false;
-    }
     Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetCallingTokenID();
     const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
     int32_t result = Security::AccessToken::AccessTokenKit::VerifyAccessToken(callerToken,
         permissionName);
     return (result == Security::AccessToken::PERMISSION_GRANTED);
+}
+
+bool DistributedHardwareStub::IsSystemHap()
+{
+    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+    if (!OHOS::Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(fullTokenId)) {
+        return false;
+    }
+    return true;
 }
 } // namespace DistributedHardware
 } // namespace OHOS
