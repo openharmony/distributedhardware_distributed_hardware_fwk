@@ -82,6 +82,25 @@ struct ContinueSwitch {
     console.log(TAG + 'this.shortSideSize = ' + this.shortSideSize + ', this.videoWidth = ' + this.videoWidth + ', this.videoHeight = ' + this.videoHeight);
   }
 
+  getStringSync() {
+    console.log(TAG + 'getStringSync in');
+    try {
+      context.resourceManager.getStringValue($r('app.string.continue_title')
+        .id, (error: BusinessError, value: string) => {
+        if (error != null) {
+          console.error(TAG + 'error is ' + error);
+        } else {
+          this.title = value;
+          console.info(TAG + '<aboutToAppear> this.title : ' + this.title);
+        }
+      })
+    } catch (error) {
+      let code: number = (error as BusinessError).code;
+      let message: string = (error as BusinessError).message;
+      console.error(TAG + `callback getStringValue failed,error code: ${code},message: ${message}.`);
+    }
+  }
+
   @Builder
   NavigationTitle() {
     Column() {
@@ -121,21 +140,7 @@ struct ContinueSwitch {
       console.log(TAG + 'set value success :' + status + '; set:Continue_Switch_Status is 1');
     }
 
-    try {
-      context.resourceManager.getStringValue($r('app.string.continue_title')
-        .id, (error: BusinessError, value: string) => {
-        if (error != null) {
-          console.error(TAG + 'error is ' + error);
-        } else {
-          this.title = value;
-          console.info(TAG + '<aboutToAppear> this.title : ' + this.title);
-        }
-      })
-    } catch (error) {
-      let code: number = (error as BusinessError).code;
-      let message: string = (error as BusinessError).message;
-      console.error(TAG + `callback getStringValue failed,error code: ${code},message: ${message}.`);
-    }
+    this.getStringSync();
 
     this.listener.on('change', (mediaQueryResult: mediaQuery.MediaQueryResult) => {
       this.onPortrait(mediaQueryResult);
@@ -223,6 +228,7 @@ struct ContinueSwitch {
                   .fontSize($r('sys.float.ohos_id_text_size_sub_title2'))
                   .fontWeight(FontWeight.Medium)
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                  .accessibilityLevel('no')
 
                 Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
                   .width(36)
@@ -232,10 +238,10 @@ struct ContinueSwitch {
                     console.log(TAG + 'isOn:' + isOn);
                     this.isSwitchOn = isOn;
                     AppStorage.setAndLink('isSwitchOn', isOn);
-                    if (isOn) { // open
+                    if (isOn) {
                       let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open);
                       console.log(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is on');
-                    } else { // close
+                    } else {
                       let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.close);
                       console.log(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
                     }
@@ -246,6 +252,7 @@ struct ContinueSwitch {
               .padding({ left: 12, right: 12 })
               .backgroundColor($r('sys.color.ohos_id_color_list_card_bg'))
               .borderRadius(this.is2in1 ? 16 : 20)
+              .accessibilityText(this.title)
             }.width('100%')
 
             Column() {
