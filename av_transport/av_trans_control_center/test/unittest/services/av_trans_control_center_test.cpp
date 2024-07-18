@@ -306,7 +306,7 @@ HWTEST_F(AVTransControlCenterTest, register_ctl_center_callback_003, TestSize.Le
 {
     center_ = std::make_shared<AVTransControlCenter>();
     int32_t engineId = BASE_ENGINE_ID;
-    sptr<CenterCallback> callback = new CenterCallback();
+    sptr<CenterCallback> callback = sptr<CenterCallback>(new CenterCallback());
     int32_t ret = center_->RegisterCtlCenterCallback(engineId, callback);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
@@ -324,7 +324,7 @@ HWTEST_F(AVTransControlCenterTest, on_channel_event_001, TestSize.Level0)
     event.type = EventType::EVENT_CHANNEL_CLOSED;
     center_->OnChannelEvent(event);
     int32_t engineId = BASE_ENGINE_ID;
-    sptr<CenterCallback> callback = new CenterCallback();
+    sptr<CenterCallback> callback = sptr<CenterCallback>(new CenterCallback());
     int32_t ret = center_->RegisterCtlCenterCallback(engineId, callback);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
@@ -342,7 +342,7 @@ HWTEST_F(AVTransControlCenterTest, on_channel_event_002, TestSize.Level0)
     event.type = EventType::EVENT_DATA_RECEIVED;
     center_->OnChannelEvent(event);
     int32_t engineId = BASE_ENGINE_ID;
-    sptr<CenterCallback> callback = new CenterCallback();
+    sptr<CenterCallback> callback = sptr<CenterCallback>(new CenterCallback());
     int32_t ret = center_->RegisterCtlCenterCallback(engineId, callback);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
@@ -361,7 +361,7 @@ HWTEST_F(AVTransControlCenterTest, on_channel_event_003, TestSize.Level0)
     center_->sessionName_ = AV_SYNC_RECEIVER_CONTROL_SESSION_NAME;
     center_->OnChannelEvent(event);
     int32_t engineId = BASE_ENGINE_ID;
-    sptr<CenterCallback> callback = new CenterCallback();
+    sptr<CenterCallback> callback = sptr<CenterCallback>(new CenterCallback());
     int32_t ret = center_->RegisterCtlCenterCallback(engineId, callback);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
@@ -384,7 +384,7 @@ HWTEST_F(AVTransControlCenterTest, on_channel_event_004, TestSize.Level0)
     StreamData *ext = nullptr;
     center_->OnStreamReceived(data, ext);
     int32_t engineId = BASE_ENGINE_ID;
-    sptr<CenterCallback> callback = new CenterCallback();
+    sptr<CenterCallback> callback = sptr<CenterCallback>(new CenterCallback());
     int32_t ret = center_->RegisterCtlCenterCallback(engineId, callback);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
@@ -429,7 +429,7 @@ HWTEST_F(AVTransControlCenterTest, set_param_2_engines_001, TestSize.Level0)
     AVTransTag tag = AVTransTag::START_AV_SYNC;
     std::string value = "value";
     int32_t engineId = BASE_ENGINE_ID;
-    sptr<CenterCallback> callback = new CenterCallback();
+    sptr<CenterCallback> callback = sptr<CenterCallback>(new CenterCallback());
     center_->callbackMap_.insert(std::make_pair(engineId, callback));
     center_->callbackMap_.insert(std::make_pair(engineId + 1, nullptr));
     center_->SetParam2Engines(tag, value);
@@ -447,7 +447,7 @@ HWTEST_F(AVTransControlCenterTest, set_param_2_engines_002, TestSize.Level0)
     center_ = std::make_shared<AVTransControlCenter>();
     AVTransSharedMemory memory;
     memory.name = "memory";
-    sptr<CenterCallback> callback = new CenterCallback();
+    sptr<CenterCallback> callback = sptr<CenterCallback>(new CenterCallback());
     center_->callbackMap_.insert(std::make_pair(0, callback));
     center_->callbackMap_.insert(std::make_pair(1, nullptr));
     center_->SetParam2Engines(memory);
