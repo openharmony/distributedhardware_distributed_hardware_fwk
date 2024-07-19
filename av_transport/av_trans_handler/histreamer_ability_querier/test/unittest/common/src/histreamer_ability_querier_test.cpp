@@ -539,7 +539,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_020, Test
     VideoEncoder videoEncoder;
     ToJson(jsonObject, videoEncoder);
     FromJson(jsonObject, videoEncoder);
-    cJSON_CreateObject();
+    jsonObject = cJSON_CreateObject();
     if (jsonObject == nullptr) {
         return;
     }

@@ -114,7 +114,7 @@ int32_t AVReceiverEngine::InitControlCenter()
     int32_t ret = dhFwkKit_->InitializeAVCenter(TransRole::AV_RECEIVER, engineId_);
     TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CTRL_CENTER_INIT_FAIL, "init av trans control center failed");
 
-    ctlCtrCallback_ = new (std::nothrow) AVTransControlCenterCallback();
+    ctlCtrCallback_ = sptr<AVTransControlCenterCallback>(new (std::nothrow) AVTransControlCenterCallback());
     TRUE_RETURN_V_MSG_E(ctlCtrCallback_ == nullptr, ERR_DH_AVT_REGISTER_CALLBACK_FAIL,
         "new control center callback failed");
 

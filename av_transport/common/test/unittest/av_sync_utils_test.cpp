@@ -147,6 +147,5 @@ HWTEST_F(AvSyncUtilsTest, UnmarshalSharedMemory_002, TestSize.Level0)
     cJSON_free(cjson3);
     cJSON_Delete(cJsonObj3);
 }
-
 }
 }
