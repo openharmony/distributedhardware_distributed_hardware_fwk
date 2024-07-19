@@ -14,8 +14,7 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import(
-    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+import("../../../../../distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("ComponentManagerFuzzTest") {
@@ -52,6 +51,7 @@ ohos_fuzztest("ComponentManagerFuzzTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "ipc:ipc_single",
   ]
 
