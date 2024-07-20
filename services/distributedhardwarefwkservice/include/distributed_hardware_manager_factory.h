@@ -39,7 +39,7 @@ public:
 
     int Dump(const std::vector<std::string> &argsStr, std::string &result);
     void UnInit();
-
+    bool GetUnInitFlag();
 private:
     bool Init();
     void CheckExitSAOrNot();
@@ -47,6 +47,7 @@ private:
 
 private:
     std::atomic<bool> isInit = false;
+    std::atomic<bool> flagUnInit_ = false;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
