@@ -153,6 +153,11 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
         DHLOGE("SendOnLineEvent setname failed.");
     }
 
+    if (flagUnInit_.load()) {
+        DHLOGE("is in uniniting, can not process online event.");
+        return ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED;
+    }
+
     if (DHContext::GetInstance().IsDeviceOnline(uuid)) {
         DHLOGW("device is already online, uuid = %{public}s", GetAnonyString(uuid).c_str());
         return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE;
@@ -187,6 +192,12 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
         return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_OFFLINE;
     }
 
+    if (DHContext::GetInstance().GetOnlineCount() == 1 &&
+        DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
+        flagUnInit_.store(true);
+        DHLOGI("no online device, set uninit flag true");
+    }
+
     auto offlineResult = DistributedHardwareManager::GetInstance().SendOffLineEvent(networkId, uuid, udid, deviceType);
     if (offlineResult != DH_FWK_SUCCESS) {
         DHLOGE("offline failed, errCode = %{public}d", offlineResult);
@@ -203,6 +214,11 @@ int32_t DistributedHardwareManagerFactory::GetComponentVersion(std::unordered_ma
 int32_t DistributedHardwareManagerFactory::Dump(const std::vector<std::string> &argsStr, std::string &result)
 {
     return DistributedHardwareManager::GetInstance().Dump(argsStr, result);
+}
+
+bool DistributedHardwareManagerFactory::GetUnInitFlag()
+{
+    return flagUnInit_.load();
 }
 } // namespace DistributedHardware
 } // namespace OHOS

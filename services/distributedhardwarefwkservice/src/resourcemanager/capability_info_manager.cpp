@@ -23,6 +23,7 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager.h"
+#include "distributed_hardware_manager_factory.h"
 #include "task_executor.h"
 #include "task_factory.h"
 
@@ -403,6 +404,10 @@ void CapabilityInfoManager::HandleCapabilityAddChange(const std::vector<Distribu
 
 void CapabilityInfoManager::HandleCapabilityUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords)
 {
+    if (DistributedHardwareManagerFactory::GetInstance().GetUnInitFlag()) {
+        DHLOGE("no need Update, is in uniniting.");
+        return;
+    }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     for (const auto &item : updateRecords) {
         const std::string value = item.value.ToString();
@@ -419,6 +424,10 @@ void CapabilityInfoManager::HandleCapabilityUpdateChange(const std::vector<Distr
 
 void CapabilityInfoManager::HandleCapabilityDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords)
 {
+    if (DistributedHardwareManagerFactory::GetInstance().GetUnInitFlag()) {
+        DHLOGE("no need Update, is in uniniting.");
+        return;
+    }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     for (const auto &item : deleteRecords) {
         const std::string value = item.value.ToString();

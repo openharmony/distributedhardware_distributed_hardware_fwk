@@ -22,6 +22,7 @@
 
 #include "config_policy_utils.h"
 
+#include "anonymous_string.h"
 #include "constants.h"
 #include "dh_context.h"
 #include "dh_utils_hitrace.h"
@@ -373,7 +374,9 @@ void *ComponentLoader::GetHandler(const std::string &soName)
     char path[PATH_MAX + 1] = {0x00};
     if (soName.length() == 0 || (LIB_LOAD_PATH.length() + soName.length()) > PATH_MAX ||
         realpath((LIB_LOAD_PATH + soName).c_str(), path) == nullptr) {
-        DHLOGE("File canonicalization failed");
+        std::string loadPath(path);
+        DHLOGE("File canonicalization failed, soName:%{public}s, path:%{public}s", soName.c_str(),
+            GetAnonyString(loadPath).c_str());
         return nullptr;
     }
     void *pHandler = dlopen(path, RTLD_LAZY | RTLD_NODELETE);
@@ -508,8 +511,10 @@ int32_t ComponentLoader::ParseConfig()
         DHLOGE("profilePath is null.");
         return ERR_DH_FWK_LOADER_PROFILE_PATH_IS_NULL;
     }
+
     if (strlen(profilePath) == 0 || strlen(profilePath) > PATH_MAX || realpath(profilePath, path) == nullptr) {
-        DHLOGE("File connicailization failed.");
+        std::string comProfilePath(profilePath);
+        DHLOGE("File connicailization failed, comProfilePath: %{public}s.", GetAnonyString(comProfilePath).c_str());
         return ERR_DH_FWK_LOADER_PROFILE_PATH_IS_NULL;
     }
     std::string componentProfilePath(path);
