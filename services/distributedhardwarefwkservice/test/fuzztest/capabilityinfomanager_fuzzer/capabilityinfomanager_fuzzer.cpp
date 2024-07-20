@@ -48,6 +48,45 @@ void CapabilityInfoManagerFuzzTest(const uint8_t* data, size_t size)
         deviceId, true);
     CapabilityInfoManager::GetInstance()->OnChange(changeIn);
 }
+
+void RemoveCapabilityInfoInMemFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    std::string deviceId(reinterpret_cast<const char*>(data), size);
+    CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInMem(deviceId);
+}
+
+void RemoveCapabilityInfoByKeyFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    std::string key(reinterpret_cast<const char*>(data), size);
+    CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(key);
+}
+
+void RemoveCapabilityInfoInDBFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    std::string deviceId(reinterpret_cast<const char*>(data), size);
+    CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceId);
+}
+
+void SyncDeviceInfoFromDBFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    std::string deviceId(reinterpret_cast<const char*>(data), size);
+    CapabilityInfoManager::GetInstance()->Init();
+    CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
+    CapabilityInfoManager::GetInstance()->SyncRemoteCapabilityInfos();
+    CapabilityInfoManager::GetInstance()->UnInit();
+}
 }
 }
 
@@ -56,6 +95,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     OHOS::DistributedHardware::CapabilityInfoManagerFuzzTest(data, size);
+    OHOS::DistributedHardware::RemoveCapabilityInfoInMemFuzzTest(data, size);
+    OHOS::DistributedHardware::RemoveCapabilityInfoByKeyFuzzTest(data, size);
+    OHOS::DistributedHardware::RemoveCapabilityInfoInDBFuzzTest(data, size);
+    OHOS::DistributedHardware::SyncDeviceInfoFromDBFuzzTest(data, size);
     return 0;
 }
 

@@ -24,6 +24,9 @@
 #include "constants.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "dh_data_sync_trigger_listener.h"
+#include "dh_state_listener.h"
+#include "event_handler.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -50,6 +53,30 @@ void ComponentManagerFuzzTest(const uint8_t* data, size_t size)
     ComponentManager::GetInstance().Disable(networkId, uuid, dhId, dhType);
     ComponentManager::GetInstance().UnInit();
 }
+
+void OnDataSyncTriggerFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    DHDataSyncTriggerListener dhDataSyncTrigger;
+    dhDataSyncTrigger.OnDataSyncTrigger(networkId);
+}
+
+void OnStateChangedFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::string dhId(reinterpret_cast<const char*>(data), size);
+    BusinessState state = BusinessState::UNKNOWN;
+    DHStateListener dhData;
+    dhData.OnStateChanged(networkId, dhId, state);
+}
 }
 }
 
@@ -58,6 +85,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     OHOS::DistributedHardware::ComponentManagerFuzzTest(data, size);
+    OHOS::DistributedHardware::OnDataSyncTriggerFuzzTest(data, size);
+    OHOS::DistributedHardware::OnStateChangedFuzzTest(data, size);
     return 0;
 }
 

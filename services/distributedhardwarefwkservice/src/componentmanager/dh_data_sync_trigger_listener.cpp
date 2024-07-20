@@ -46,6 +46,10 @@ void DHDataSyncTriggerListener::OnDataSyncTrigger(const std::string &networkId)
     }
     std::shared_ptr<std::string> networkIdPtr = std::make_shared<std::string>(networkId);
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_DATA_SYNC_MANUAL, networkIdPtr);
+    if (ComponentManager::GetInstance().GetEventHandler() == nullptr) {
+        DHLOGE("Can not get eventHandler");
+        return;
+    }
     ComponentManager::GetInstance().GetEventHandler()->SendEvent(msgEvent,
         0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
 }

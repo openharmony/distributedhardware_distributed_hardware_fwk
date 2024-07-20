@@ -79,6 +79,96 @@ void UnregisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
     dhfwkKit.UnregisterPublisherListener(topic, listener);
     std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
 }
+
+void InitializeAVCenterFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(int32_t))) {
+        return;
+    }
+
+    sptr<TestPublisherListener> listener(new TestPublisherListener());
+    DistributedHardwareFwkKit dhfwkKit;
+    TransRole transRole = TransRole::UNKNOWN;
+    int32_t engineId = *(reinterpret_cast<const int32_t*>(data));
+    dhfwkKit.InitializeAVCenter(transRole, engineId);
+}
+
+void ReleaseAVCenterFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(int32_t))) {
+        return;
+    }
+
+    sptr<TestPublisherListener> listener(new TestPublisherListener());
+    DistributedHardwareFwkKit dhfwkKit;
+    int32_t engineId = *(reinterpret_cast<const int32_t*>(data));
+    dhfwkKit.ReleaseAVCenter(engineId);
+}
+
+void CreateControlChannelFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(int32_t))) {
+        return;
+    }
+
+    sptr<TestPublisherListener> listener(new TestPublisherListener());
+    DistributedHardwareFwkKit dhfwkKit;
+    int32_t engineId = *(reinterpret_cast<const int32_t*>(data));
+    std::string peerDevId(reinterpret_cast<const char*>(data), size);
+    dhfwkKit.CreateControlChannel(engineId, peerDevId);
+}
+
+void NotifyAVCenterFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(int32_t))) {
+        return;
+    }
+
+    sptr<TestPublisherListener> listener(new TestPublisherListener());
+    DistributedHardwareFwkKit dhfwkKit;
+    int32_t engineId = *(reinterpret_cast<const int32_t*>(data));
+    AVTransEvent event;
+    dhfwkKit.NotifyAVCenter(engineId, event);
+}
+
+void PauseDistributedHardwareFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    sptr<TestPublisherListener> listener(new TestPublisherListener());
+    DistributedHardwareFwkKit dhfwkKit;
+    DHType dhType = DHType::AUDIO;
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    dhfwkKit.PauseDistributedHardware(dhType, networkId);
+}
+
+void ResumeDistributedHardwareFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    sptr<TestPublisherListener> listener(new TestPublisherListener());
+    DistributedHardwareFwkKit dhfwkKit;
+    DHType dhType = DHType::AUDIO;
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    dhfwkKit.ResumeDistributedHardware(dhType, networkId);
+}
+
+void StopDistributedHardwareFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    sptr<TestPublisherListener> listener(new TestPublisherListener());
+    DistributedHardwareFwkKit dhfwkKit;
+    DHType dhType = DHType::AUDIO;
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    dhfwkKit.StopDistributedHardware(dhType, networkId);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
 
@@ -89,5 +179,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     OHOS::DistributedHardware::RegisterPublisherListenerFuzzTest(data, size);
     OHOS::DistributedHardware::PublishMessageFuzzTest(data, size);
     OHOS::DistributedHardware::UnregisterPublisherListenerFuzzTest(data, size);
+    OHOS::DistributedHardware::InitializeAVCenterFuzzTest(data, size);
+    OHOS::DistributedHardware::ReleaseAVCenterFuzzTest(data, size);
+    OHOS::DistributedHardware::CreateControlChannelFuzzTest(data, size);
+    OHOS::DistributedHardware::NotifyAVCenterFuzzTest(data, size);
+    OHOS::DistributedHardware::PauseDistributedHardwareFuzzTest(data, size);
+    OHOS::DistributedHardware::ResumeDistributedHardwareFuzzTest(data, size);
+    OHOS::DistributedHardware::StopDistributedHardwareFuzzTest(data, size);
     return 0;
 }
