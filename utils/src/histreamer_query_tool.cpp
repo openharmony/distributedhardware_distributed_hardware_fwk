@@ -63,6 +63,7 @@ void HiStreamerQueryTool::Init()
     if (queryAudioEncoderFunc == nullptr) {
         DHLOGE("get QueryAudioEncoderAbilityStr is null, failed reason : %{public}s", dlerror());
         dlclose(pHandler);
+        pHandler = nullptr;
         return;
     }
 
@@ -71,6 +72,7 @@ void HiStreamerQueryTool::Init()
     if (queryAudioDecoderFunc == nullptr) {
         DHLOGE("get QueryAudioDecoderAbilityStr is null, failed reason : %{public}s", dlerror());
         dlclose(pHandler);
+        pHandler = nullptr;
         return;
     }
 
@@ -79,6 +81,7 @@ void HiStreamerQueryTool::Init()
     if (queryVideoEncoderFunc == nullptr) {
         DHLOGE("get QueryVideoEncoderAbilityStr is null, failed reason : %{public}s", dlerror());
         dlclose(pHandler);
+        pHandler = nullptr;
         return;
     }
 
@@ -87,6 +90,7 @@ void HiStreamerQueryTool::Init()
     if (queryVideoDecoderFunc == nullptr) {
         DHLOGE("get QueryVideoDecoderAbilityStr is null, failed reason : %{public}s", dlerror());
         dlclose(pHandler);
+        pHandler = nullptr;
         return;
     }
 
