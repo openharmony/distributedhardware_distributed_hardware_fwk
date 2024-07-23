@@ -20,6 +20,7 @@ ohos_hap("DHardware_UI") {
     ":DHardware_UI_js_assets",
     ":DHardware_UI_resources",
   ]
+  publicity_file = "../publicity.xml"
   certificate_profile = "signature/DHardware_UI.p7b"
   hap_name = "DHardware_UI"
   part_name = "prebuilt_hap"
