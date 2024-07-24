@@ -188,7 +188,6 @@ HWTEST_F(DsoftbusInputPluginTest, Reset_001, TestSize.Level1)
     event.type = EventType::EVENT_CHANNEL_OPENED;
     plugin->eventsCb_ = new DaudioInputPluginCallback();
     plugin->OnChannelEvent(event);
-    delete plugin->eventsCb_;
 
     event.type = EventType::EVENT_CHANNEL_OPEN_FAIL;
     plugin->OnChannelEvent(event);
@@ -198,6 +197,7 @@ HWTEST_F(DsoftbusInputPluginTest, Reset_001, TestSize.Level1)
 
     event.type = EventType::EVENT_START_SUCCESS;
     plugin->OnChannelEvent(event);
+    delete plugin->eventsCb_;
     AVTRANS_LOGI("zlf 2");
     plugin->isrunning_ = false;
     plugin->HandleData();
