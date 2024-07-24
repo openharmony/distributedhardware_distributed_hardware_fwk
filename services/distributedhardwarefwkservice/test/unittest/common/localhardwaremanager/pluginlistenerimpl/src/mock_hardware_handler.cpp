@@ -14,8 +14,8 @@
  */
 
 #include "mock_hardware_handler.h"
-
 #include "distributed_hardware_errno.h"
+#include "distributed_hardware_log.h"
 
 namespace OHOS {
 namespace DistributedHardware {

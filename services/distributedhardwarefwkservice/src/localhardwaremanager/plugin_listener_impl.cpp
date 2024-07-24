@@ -20,6 +20,7 @@
 #include "capability_info_manager.h"
 #include "constants.h"
 #include "dh_context.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "publisher.h"
@@ -31,8 +32,7 @@ namespace DistributedHardware {
 
 void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::string &attrs, const std::string &subtype)
 {
-    if (dhId.size() == 0 || dhId.size() > MAX_ID_LEN || attrs.size() == 0 || attrs.size() > MAX_MESSAGE_LEN) {
-        DHLOGE("Param is invalid!");
+    if (!IsIdLengthValid(dhId) || !IsMessageLengthValid(attrs)) {
         return;
     }
     DHLOGI("plugin start, dhId: %{public}s", GetAnonyString(dhId).c_str());
@@ -55,8 +55,7 @@ void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::stri
 
 void PluginListenerImpl::UnPluginHardware(const std::string &dhId)
 {
-    if (dhId.size() == 0 || dhId.size() > MAX_ID_LEN) {
-        DHLOGE("DhId is invalid!");
+    if (!IsIdLengthValid(dhId)) {
         return;
     }
     DHLOGI("unplugin start, dhId: %{public}s", GetAnonyString(dhId).c_str());

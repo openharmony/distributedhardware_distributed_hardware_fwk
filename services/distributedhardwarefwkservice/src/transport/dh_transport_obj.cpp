@@ -14,14 +14,18 @@
  */
 
 #include "dh_transport_obj.h"
-
 #include "dh_utils_tool.h"
+#include "distributed_hardware_log.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 
 void ToJson(cJSON *jsonObject, const FullCapsRsp &capsRsp)
 {
+    if (jsonObject == nullptr) {
+        DHLOGE("Json pointer is nullptr!");
+        return;
+    }
     const char *networkId = capsRsp.networkId.c_str();
     cJSON_AddStringToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, networkId);
     cJSON *capArr = cJSON_CreateArray();
@@ -42,6 +46,10 @@ void ToJson(cJSON *jsonObject, const FullCapsRsp &capsRsp)
 
 void FromJson(const cJSON *jsonObject, FullCapsRsp &capsRsp)
 {
+    if (jsonObject == nullptr) {
+        DHLOGE("Json pointer is nullptr!");
+        return;
+    }
     std::string keyNetworkId(CAPS_RSP_NETWORKID_KEY);
     if (IsString(jsonObject, keyNetworkId)) {
         capsRsp.networkId = cJSON_GetObjectItem(jsonObject, CAPS_RSP_NETWORKID_KEY)->valuestring;
@@ -61,6 +69,10 @@ void FromJson(const cJSON *jsonObject, FullCapsRsp &capsRsp)
 
 void ToJson(cJSON *jsonObject, const CommMsg &commMsg)
 {
+    if (jsonObject == nullptr) {
+        DHLOGE("Json pointer is nullptr!");
+        return;
+    }
     cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, commMsg.code);
     const char *msg = commMsg.msg.c_str();
     cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY, msg);
@@ -68,6 +80,10 @@ void ToJson(cJSON *jsonObject, const CommMsg &commMsg)
 
 void FromJson(const cJSON *jsonObject, CommMsg &commMsg)
 {
+    if (jsonObject == nullptr) {
+        DHLOGE("Json pointer is nullptr!");
+        return;
+    }
     std::string keyCode(COMM_MSG_CODE_KEY);
     if (IsInt32(jsonObject, keyCode)) {
         commMsg.code = cJSON_GetObjectItem(jsonObject, COMM_MSG_CODE_KEY)->valueint;

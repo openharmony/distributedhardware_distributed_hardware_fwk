@@ -32,6 +32,9 @@ namespace DistributedHardware {
 
 int32_t VersionInfo::FromJsonString(const std::string &jsonStr)
 {
+    if (!IsJsonLengthValid(jsonStr)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     cJSON *jsonObj = cJSON_Parse(jsonStr.c_str());
     if (jsonObj == NULL) {
         DHLOGE("json string parse failed");
@@ -63,6 +66,10 @@ std::string VersionInfo::ToJsonString() const
 
 void ToJson(cJSON *jsonObject, const VersionInfo &versionInfo)
 {
+    if (jsonObject == nullptr) {
+        DHLOGE("Json pointer is nullptr!");
+        return;
+    }
     cJSON_AddStringToObject(jsonObject, DEV_ID.c_str(), versionInfo.deviceId.c_str());
     cJSON_AddStringToObject(jsonObject, DH_VER.c_str(), versionInfo.dhVersion.c_str());
 
@@ -90,6 +97,10 @@ void ToJson(cJSON *jsonObject, const VersionInfo &versionInfo)
 
 void FromJson(const cJSON *jsonObject, CompVersion &compVer)
 {
+    if (jsonObject == nullptr) {
+        DHLOGE("Json pointer is nullptr!");
+        return;
+    }
     if (IsString(jsonObject, NAME)) {
         compVer.name = cJSON_GetObjectItem(jsonObject, NAME.c_str())->valuestring;
     }
@@ -110,6 +121,10 @@ void FromJson(const cJSON *jsonObject, CompVersion &compVer)
 
 void FromJson(const cJSON *jsonObject, VersionInfo &versionInfo)
 {
+    if (jsonObject == nullptr) {
+        DHLOGE("Json pointer is nullptr!");
+        return;
+    }
     if (IsString(jsonObject, DEV_ID)) {
         versionInfo.deviceId = cJSON_GetObjectItem(jsonObject, DEV_ID.c_str())->valuestring;
     }

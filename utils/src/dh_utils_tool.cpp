@@ -25,14 +25,13 @@
 #include <vector>
 #include <zlib.h>
 
-#include "openssl/sha.h"
-#include "parameter.h"
-#include "device_manager.h"
-#include "dm_device_info.h"
-
 #include "constants.h"
+#include "device_manager.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "dm_device_info.h"
+#include "openssl/sha.h"
+#include "parameter.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -284,6 +283,60 @@ bool GetSysPara(const char *key, bool &value)
     std::stringstream valueStr;
     valueStr << paraValue;
     valueStr >> std::boolalpha >> value;
+    return true;
+}
+
+bool IsIdLengthValid(const std::string &inputID)
+{
+    if (inputID.empty() || inputID.length() > MAX_ID_LEN) {
+        DHLOGE("On parameter length error, maybe empty or beyond MAX_ID_LEN!");
+        return false;
+    }
+    return true;
+}
+
+bool IsMessageLengthValid(const std::string &inputMessage)
+{
+    if (inputMessage.empty() || inputMessage.length() > MAX_MESSAGE_LEN) {
+        DHLOGE("On parameter error, maybe empty or beyond MAX_MESSAGE_LEN!");
+        return false;
+    }
+    return true;
+}
+
+bool JsonLengthInvalid(const std::string &inputJsonStr)
+{
+    if (inputJsonStr.empty() || inputJsonStr.length() > MAX_JSON_SIZE) {
+        DHLOGE("On parameter error, maybe empty or beyond MAX_JSON_SIZE");
+        return false;
+    }
+    return true;
+}
+
+bool IsArrayLengthValid(const std::vector<std::string> &inputArray)
+{
+    if (inputArray.empty() || inputArray.size() > MAX_ARR_SIZE) {
+        DHLOGE("On parameter error, maybe empty or beyond MAX_ARR_SIZE");
+        return false;
+    }
+    return true;
+}
+
+bool KeySizeInvalid(const std::string &inputKey)
+{
+    if (inputKey.empty() || inputKey.length() > MAX_KEY_SIZE) {
+        DHLOGE("On parameter error, maybe empty or beyond MAX_KEY_SIZE");
+        return false;
+    }
+    return true;
+}
+
+bool HashSizeInvalid(const std::string &inputHashValue)
+{
+    if (inputHashValue.empty() || inputHashValue.length() > MAX_HASH_SIZE) {
+        DHLOGE("On parameter error, maybe empty or beyond MAX_HASH_SIZE");
+        return false;
+    }
     return true;
 }
 } // namespace DistributedHardware

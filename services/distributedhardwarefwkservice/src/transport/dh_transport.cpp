@@ -108,6 +108,9 @@ void DHTransport::OnBytesReceived(int32_t socketId, const void *data, uint32_t d
 
 void DHTransport::HandleReceiveMessage(const std::string &payload)
 {
+    if (!IsMessageLengthValid(payload)) {
+        return;
+    }
     std::string rawPayload = Decompress(payload);
 
     cJSON *root = cJSON_Parse(rawPayload.c_str());
@@ -205,6 +208,10 @@ void OnFile(int32_t socket, FileEvent *event)
 
 void OnQos(int32_t socket, QoSEvent eventId, const QosTV *qos, uint32_t qosCount)
 {
+    if (qosCount == 0 || qosCount > MAX_ROUND_SIZE) {
+        DHLOGE("qosCount is invalid!");
+        return;
+    }
     DHLOGI("OnQos, socket: %{public}d, QoSEvent: %{public}d, qosCount: %{public}" PRIu32,
         socket, (int32_t)eventId, qosCount);
     for (uint32_t idx = 0; idx < qosCount; idx++) {
@@ -241,6 +248,9 @@ int32_t DHTransport::CreateServerSocket()
 
 int32_t DHTransport::CreateClientSocket(const std::string &remoteNetworkId)
 {
+    if (!IsIdLengthValid(remoteNetworkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("CreateClientSocket start, peerNetworkId: %{public}s", GetAnonyString(remoteNetworkId).c_str());
     std::string peerSocketName = DH_FWK_SESSION_NAME + remoteNetworkId.substr(0, INTERCEPT_STRING_LENGTH);
     SocketInfo info = {
@@ -305,6 +315,9 @@ int32_t DHTransport::UnInit()
 
 bool DHTransport::IsDeviceSessionOpened(const std::string &remoteNetworkId, int32_t &socketId)
 {
+    if (!IsIdLengthValid(remoteNetworkId)) {
+        return false;
+    }
     std::lock_guard<std::mutex> lock(rmtSocketIdMtx_);
     if (remoteDevSocketIds_.find(remoteNetworkId) == remoteDevSocketIds_.end()) {
         return false;
@@ -330,12 +343,18 @@ std::string DHTransport::GetRemoteNetworkIdBySocketId(int32_t socketId)
 
 void DHTransport::ClearDeviceSocketOpened(const std::string &remoteDevId)
 {
+    if (!IsIdLengthValid(remoteDevId)) {
+        return;
+    }
     std::lock_guard<std::mutex> lock(rmtSocketIdMtx_);
     remoteDevSocketIds_.erase(remoteDevId);
 }
 
 int32_t DHTransport::StartSocket(const std::string &remoteNetworkId)
 {
+    if (!IsIdLengthValid(remoteNetworkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     int32_t socketId = -1;
     if (IsDeviceSessionOpened(remoteNetworkId, socketId)) {
         DHLOGE("Softbus session has already opened, deviceId: %{public}s", GetAnonyString(remoteNetworkId).c_str());
@@ -371,6 +390,9 @@ int32_t DHTransport::StartSocket(const std::string &remoteNetworkId)
 
 int32_t DHTransport::StopSocket(const std::string &remoteNetworkId)
 {
+    if (!IsIdLengthValid(remoteNetworkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     int32_t socketId = -1;
     if (!IsDeviceSessionOpened(remoteNetworkId, socketId)) {
         DHLOGI("remote dev may be not opened, remoteNetworkId: %{public}s", GetAnonyString(remoteNetworkId).c_str());
@@ -386,6 +408,9 @@ int32_t DHTransport::StopSocket(const std::string &remoteNetworkId)
 
 int32_t DHTransport::Send(const std::string &remoteNetworkId, const std::string &payload)
 {
+    if (!IsIdLengthValid(remoteNetworkId) || !IsMessageLengthValid(payload)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     int32_t socketId = -1;
     if (!IsDeviceSessionOpened(remoteNetworkId, socketId)) {
         DHLOGI("The session is not open, target networkId: %{public}s", GetAnonyString(remoteNetworkId).c_str());

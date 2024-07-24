@@ -197,7 +197,7 @@ void DHCommTool::DHCommToolEventHandler::ProcessFullCapsRsp(const FullCapsRsp &c
     const std::shared_ptr<DHCommTool> dhCommToolPtr)
 {
     if (capsRsp.networkId.empty() || capsRsp.caps.empty()) {
-        DHLOGE("Receive remote caps info invalid");
+        DHLOGE("Receive remote caps info invalid!");
         return;
     }
     // after receive rsp, close dsoftbus channel
