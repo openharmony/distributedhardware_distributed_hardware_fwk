@@ -25,13 +25,16 @@
 #include <vector>
 #include <zlib.h>
 
-#include "constants.h"
-#include "device_manager.h"
-#include "distributed_hardware_errno.h"
-#include "distributed_hardware_log.h"
-#include "dm_device_info.h"
 #include "openssl/sha.h"
 #include "parameter.h"
+
+#include "device_manager.h"
+#include "dm_device_info.h"
+
+#include "constants.h"
+#include "distributed_hardware_errno.h"
+#include "distributed_hardware_log.h"
+
 
 namespace OHOS {
 namespace DistributedHardware {
