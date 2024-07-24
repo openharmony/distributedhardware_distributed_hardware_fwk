@@ -307,7 +307,7 @@ bool IsMessageLengthValid(const std::string &inputMessage)
     return true;
 }
 
-bool JsonLengthInvalid(const std::string &inputJsonStr)
+bool IsJsonLengthvalid(const std::string &inputJsonStr)
 {
     if (inputJsonStr.empty() || inputJsonStr.length() > MAX_JSON_SIZE) {
         DHLOGE("On parameter error, maybe empty or beyond MAX_JSON_SIZE");
