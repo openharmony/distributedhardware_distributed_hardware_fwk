@@ -84,7 +84,7 @@ std::string GetRandomID()
 
 std::string GetUUIDByDm(const std::string &networkId)
 {
-    if (networkId.empty()) {
+    if (!IsIdLengthValid(networkId)) {
         return "";
     }
     std::string uuid = "";
@@ -94,7 +94,7 @@ std::string GetUUIDByDm(const std::string &networkId)
 
 std::string GetUDIDByDm(const std::string &networkId)
 {
-    if (networkId.empty()) {
+    if (!IsIdLengthValid(networkId)) {
         return "";
     }
     std::string udid = "";
@@ -104,7 +104,7 @@ std::string GetUDIDByDm(const std::string &networkId)
 
 std::string GetDeviceIdByUUID(const std::string &uuid)
 {
-    if (uuid.size() == 0 || uuid.size() > MAX_ID_LEN) {
+    if (!IsIdLengthValid(uuid)) {
         DHLOGE("uuid is invalid!");
         return "";
     }
@@ -325,7 +325,7 @@ bool IsArrayLengthValid(const std::vector<std::string> &inputArray)
     return true;
 }
 
-bool KeySizeInvalid(const std::string &inputKey)
+bool IsKeySizeValid(const std::string &inputKey)
 {
     if (inputKey.empty() || inputKey.length() > MAX_KEY_SIZE) {
         DHLOGE("On parameter error, maybe empty or beyond MAX_KEY_SIZE");
@@ -334,7 +334,7 @@ bool KeySizeInvalid(const std::string &inputKey)
     return true;
 }
 
-bool HashSizeInvalid(const std::string &inputHashValue)
+bool IsHashSizeValid(const std::string &inputHashValue)
 {
     if (inputHashValue.empty() || inputHashValue.length() > MAX_HASH_SIZE) {
         DHLOGE("On parameter error, maybe empty or beyond MAX_HASH_SIZE");
