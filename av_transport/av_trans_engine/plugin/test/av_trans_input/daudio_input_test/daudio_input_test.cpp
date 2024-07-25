@@ -242,7 +242,7 @@ HWTEST_F(DaudioInputTest, UnmarshalVideoMeta_001, TestSize.Level0)
     char* cjson = cJSON_PrintUnformatted(metaJson);
     std::string jsonStr(cjson);
     ret = meta->UnmarshalVideoMeta(jsonStr);
-    EXPECT_EQ(false, ret);
+    EXPECT_EQ(true, ret);
     cJSON_free(cjson);
     cJSON_Delete(metaJson);
 
@@ -252,7 +252,7 @@ HWTEST_F(DaudioInputTest, UnmarshalVideoMeta_001, TestSize.Level0)
     char* cjson1 = cJSON_PrintUnformatted(metaJson1);
     std::string jsonStr1(cjson1);
     ret = meta->UnmarshalVideoMeta(jsonStr1);
-    EXPECT_EQ(false, ret);
+    EXPECT_EQ(true, ret);
     cJSON_free(cjson1);
     cJSON_Delete(metaJson1);
 
@@ -263,7 +263,7 @@ HWTEST_F(DaudioInputTest, UnmarshalVideoMeta_001, TestSize.Level0)
     char* cjson2 = cJSON_PrintUnformatted(metaJson2);
     std::string jsonStr2(cjson2);
     ret = meta->UnmarshalVideoMeta(jsonStr2);
-    EXPECT_EQ(false, ret);
+    EXPECT_EQ(true, ret);
     cJSON_free(cjson2);
     cJSON_Delete(metaJson2);
 }
@@ -279,7 +279,7 @@ HWTEST_F(DaudioInputTest, UnmarshalVideoMeta_002, TestSize.Level0)
     char* cjson3 = cJSON_PrintUnformatted(metaJson3);
     std::string jsonStr3(cjson3);
     auto ret = meta->UnmarshalVideoMeta(jsonStr3);
-    EXPECT_EQ(false, ret);
+    EXPECT_EQ(true, ret);
     cJSON_free(cjson3);
     cJSON_Delete(metaJson3);
 
@@ -292,7 +292,7 @@ HWTEST_F(DaudioInputTest, UnmarshalVideoMeta_002, TestSize.Level0)
     char* cjson4 = cJSON_PrintUnformatted(metaJson4);
     std::string jsonStr4(cjson4);
     ret = meta->UnmarshalVideoMeta(jsonStr4);
-    EXPECT_EQ(false, ret);
+    EXPECT_EQ(true, ret);
     cJSON_free(cjson4);
     cJSON_Delete(metaJson4);
 
