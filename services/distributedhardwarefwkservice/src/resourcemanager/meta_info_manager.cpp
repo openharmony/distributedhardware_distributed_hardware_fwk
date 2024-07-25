@@ -355,9 +355,6 @@ void MetaInfoManager::HandleMetaCapabilityAddChange(const std::vector<Distribute
             DHLOGE("Get Meta capability by value failed");
             continue;
         }
-        const auto keyString = capPtr->GetKey();
-        DHLOGI("Add MetaCapability key: %{public}s", capPtr->GetAnonymousKey().c_str());
-        globalMetaInfoMap_[keyString] = capPtr;
         std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(capPtr->GetDeviceId());
         if (uuid.empty()) {
             DHLOGI("Find uuid failed and never enable");
@@ -368,6 +365,10 @@ void MetaInfoManager::HandleMetaCapabilityAddChange(const std::vector<Distribute
             DHLOGI("Find network failed and never enable, uuid: %{public}s", GetAnonyString(uuid).c_str());
             continue;
         }
+
+        const auto keyString = capPtr->GetKey();
+        DHLOGI("Add MetaCapability key: %{public}s", capPtr->GetAnonymousKey().c_str());
+        globalMetaInfoMap_[keyString] = capPtr;
         TaskParam taskParam = {
             .networkId = networkId,
             .uuid = uuid,
