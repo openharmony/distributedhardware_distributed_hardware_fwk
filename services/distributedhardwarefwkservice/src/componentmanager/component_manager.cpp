@@ -307,6 +307,10 @@ ActionResult ComponentManager::StartSource()
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     for (const auto &item : compSource_) {
+        if (item.second == nullptr) {
+            DHLOGE("comp source ptr is null");
+            continue;
+        }
         CompVersion compversion;
         VersionManager::GetInstance().GetCompVersion(uuid, item.first, compversion);
         auto params = compversion.sourceVersion;
@@ -328,7 +332,10 @@ ActionResult ComponentManager::StartSource(DHType dhType)
         DHLOGE("Component for DHType: %{public}" PRIu32 " not init source handler", (uint32_t)dhType);
         return futures;
     }
-
+    if (compSource_[dhType] == nullptr) {
+        DHLOGE("comp source ptr is null");
+        return futures;
+    }
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     CompVersion compVersion;
     VersionManager::GetInstance().GetCompVersion(uuid, dhType, compVersion);
@@ -349,6 +356,10 @@ ActionResult ComponentManager::StartSink()
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     for (const auto &item : compSink_) {
+        if (item.second == nullptr) {
+            DHLOGE("comp sink ptr is null");
+            continue;
+        }
         CompVersion compversion;
         VersionManager::GetInstance().GetCompVersion(uuid, item.first, compversion);
         auto params = compversion.sinkVersion;
@@ -378,7 +389,10 @@ ActionResult ComponentManager::StartSink(DHType dhType)
         DHLOGE("Component for DHType: %{public}" PRIu32 " not init sink handler", (uint32_t)dhType);
         return futures;
     }
-
+    if (compSink_[dhType] == nullptr) {
+        DHLOGE("comp sink ptr is null");
+        return futures;
+    }
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     CompVersion compVersion;
     VersionManager::GetInstance().GetCompVersion(uuid, dhType, compVersion);
@@ -406,6 +420,10 @@ ActionResult ComponentManager::StopSource()
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     for (const auto &item : compSource_) {
+        if (item.second == nullptr) {
+            DHLOGE("comp source ptr is null");
+            continue;
+        }
         std::promise<int32_t> p;
         std::future<int32_t> f = p.get_future();
         std::thread([p = std::move(p), item] () mutable {
@@ -421,6 +439,10 @@ ActionResult ComponentManager::StopSink()
     DHLOGI("start.");
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     for (const auto &item : compSink_) {
+        if (item.second == nullptr) {
+            DHLOGE("comp sink ptr is null");
+            continue;
+        }
         std::promise<int32_t> p;
         std::future<int32_t> f = p.get_future();
         std::thread([p = std::move(p), item] () mutable {
@@ -971,6 +993,10 @@ void ComponentManager::TriggerFullCapsSync(const std::string &networkId)
         DHLOGE("Remote networkid is null");
         return;
     }
+    if (dhCommToolPtr_ == nullptr) {
+        DHLOGE("DH communication tool ptr is null");
+        return;
+    }
     dhCommToolPtr_->TriggerReqFullDHCaps(networkId);
 }
 
@@ -1001,6 +1027,10 @@ ComponentManager::ComponentManagerEventHandler::ComponentManagerEventHandler(
 void ComponentManager::ComponentManagerEventHandler::ProcessEvent(
     const AppExecFwk::InnerEvent::Pointer &event)
 {
+    if (event == nullptr) {
+        DHLOGE("event is nullptr");
+        return;
+    }
     uint32_t eventId = event->GetInnerEventId();
     switch (eventId) {
         case EVENT_DATA_SYNC_MANUAL: {

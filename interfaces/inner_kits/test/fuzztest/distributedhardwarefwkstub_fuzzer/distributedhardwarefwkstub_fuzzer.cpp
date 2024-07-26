@@ -54,8 +54,10 @@ void DistributedHardwareFwkStubFuzzTest(const uint8_t *data, size_t size)
         pdata.WriteUint32(tag);
         pdata.WriteString(value);
     }
-    sptr<PublisherListenerStub> publisherListenerStub(new (std::nothrow)
-        MyPublisherListenerStub());
+    sptr<PublisherListenerStub> publisherListenerStub(new (std::nothrow)MyPublisherListenerStub());
+    if (publisherListenerStub == nullptr) {
+        return;
+    }
     publisherListenerStub->OnRemoteRequest(code, pdata, reply, option);
 }
 } // namespace DistributedHardware

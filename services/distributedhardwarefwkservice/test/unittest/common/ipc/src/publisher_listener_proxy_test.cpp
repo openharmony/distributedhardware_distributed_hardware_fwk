@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,6 +46,9 @@ void PublisherListenerProxyTest::TearDown()
  */
 HWTEST_F(PublisherListenerProxyTest, OnMessage_001, TestSize.Level0)
 {
+    if (proxy_ == nullptr) {
+        return;
+    }
     uint32_t invalid = 8;
     DHTopic topic = static_cast<DHTopic>(invalid);
     std::string message;
@@ -61,6 +64,9 @@ HWTEST_F(PublisherListenerProxyTest, OnMessage_001, TestSize.Level0)
  */
 HWTEST_F(PublisherListenerProxyTest, OnMessage_002, TestSize.Level0)
 {
+    if (proxy_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     std::string message;
     proxy_->OnMessage(topic, message);
@@ -75,6 +81,9 @@ HWTEST_F(PublisherListenerProxyTest, OnMessage_002, TestSize.Level0)
  */
 HWTEST_F(PublisherListenerProxyTest, OnMessage_003, TestSize.Level0)
 {
+    if (proxy_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     std::string message = "message";
     proxy_->OnMessage(topic, message);

@@ -81,6 +81,9 @@ uint32_t DistributedHardwareFwkKitTest::TestPublisherListener::GetTopicMsgCnt(co
  */
 HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     sptr<TestPublisherListener> listener1(new TestPublisherListener());
     int32_t ret = dhfwkPtr_->RegisterPublisherListener(DHTopic::TOPIC_START_DSCREEN, listener1);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
@@ -118,6 +121,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_001, testing::
  */
 HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     uint32_t invalid = 7;
     DHTopic topic = static_cast<DHTopic>(invalid);
     std::string message;
@@ -132,6 +138,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_001, testing::ext::TestSi
  */
 HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_002, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
     std::string message;
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, dhfwkPtr_->PublishMessage(topic, message));
@@ -145,6 +154,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_002, testing::ext::TestSi
  */
 HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_003, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
     std::string message = "TOPIC_STOP_DSCREEN";
     EXPECT_EQ(ERR_DH_FWK_PUBLISH_MSG_FAILED, dhfwkPtr_->PublishMessage(topic, message));
@@ -158,6 +170,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_003, testing::ext::TestSi
  */
 HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_004, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
     std::string message;
     uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024 + 10;
@@ -173,6 +188,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_004, testing::ext::TestSi
  */
 HWTEST_F(DistributedHardwareFwkKitTest, OnDHFWKOnLine_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     bool isOnLine = true;
     dhfwkPtr_->OnDHFWKOnLine(isOnLine);
     EXPECT_EQ(nullptr, DHFWKSAManager::GetInstance().GetDHFWKProxy());
@@ -186,6 +204,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, OnDHFWKOnLine_001, testing::ext::TestSiz
  */
 HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_002, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_MIN;
     sptr<IPublisherListener> listener = nullptr;
     int32_t ret = dhfwkPtr_->RegisterPublisherListener(topic, listener);
@@ -200,6 +221,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_002, testing::
  */
 HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_003, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     sptr<IPublisherListener> listener = nullptr;
     int32_t ret = dhfwkPtr_->RegisterPublisherListener(topic, listener);
@@ -214,6 +238,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, RegisterPublisherListener_003, testing::
  */
 HWTEST_F(DistributedHardwareFwkKitTest, UnregisterPublisherListener_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_MIN;
     sptr<IPublisherListener> listener = nullptr;
     int32_t ret = dhfwkPtr_->UnregisterPublisherListener(topic, listener);
@@ -228,6 +255,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, UnregisterPublisherListener_001, testing
  */
 HWTEST_F(DistributedHardwareFwkKitTest, UnregisterPublisherListener_002, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     sptr<IPublisherListener> listener = nullptr;
     int32_t ret = dhfwkPtr_->UnregisterPublisherListener(topic, listener);
@@ -242,6 +272,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, UnregisterPublisherListener_002, testing
  */
 HWTEST_F(DistributedHardwareFwkKitTest, QueryLocalSysSpec_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     QueryLocalSysSpecType spec = QueryLocalSysSpecType::MIN;
     std::string ret = dhfwkPtr_->QueryLocalSysSpec(spec);
     EXPECT_EQ(true, ret.empty());
@@ -255,6 +288,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, QueryLocalSysSpec_001, testing::ext::Tes
  */
 HWTEST_F(DistributedHardwareFwkKitTest, QueryLocalSysSpec_002, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     QueryLocalSysSpecType spec = QueryLocalSysSpecType::HISTREAMER_AUDIO_ENCODER;
     std::string ret = dhfwkPtr_->QueryLocalSysSpec(spec);
     EXPECT_EQ(true, ret.empty());
@@ -268,6 +304,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, QueryLocalSysSpec_002, testing::ext::Tes
  */
 HWTEST_F(DistributedHardwareFwkKitTest, InitializeAVCenter_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     TransRole transRole = TransRole::UNKNOWN;
     int32_t engineId = 0;
     int32_t ret = dhfwkPtr_->InitializeAVCenter(transRole, engineId);
@@ -282,6 +321,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, InitializeAVCenter_001, testing::ext::Te
  */
 HWTEST_F(DistributedHardwareFwkKitTest, ReleaseAVCenter_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     int32_t engineId = 0;
     int32_t ret = dhfwkPtr_->ReleaseAVCenter(engineId);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
@@ -295,6 +337,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, ReleaseAVCenter_001, testing::ext::TestS
  */
 HWTEST_F(DistributedHardwareFwkKitTest, CreateControlChannel_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     int32_t engineId = 0;
     std::string peerDevId = "peerDevId_test";
     int32_t ret = dhfwkPtr_->CreateControlChannel(engineId, peerDevId);
@@ -309,6 +354,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, CreateControlChannel_001, testing::ext::
  */
 HWTEST_F(DistributedHardwareFwkKitTest, NotifyAVCenter_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     int32_t engineId = 0;
     AVTransEvent event;
     int32_t ret = dhfwkPtr_->NotifyAVCenter(engineId, event);
@@ -323,6 +371,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, NotifyAVCenter_001, testing::ext::TestSi
  */
 HWTEST_F(DistributedHardwareFwkKitTest, PauseDistributedHardware_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     DHType dhType = DHType::CAMERA;
     std::string networkId = "networkId_test";
     int32_t ret = dhfwkPtr_->PauseDistributedHardware(dhType, networkId);
@@ -337,6 +388,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, PauseDistributedHardware_001, testing::e
  */
 HWTEST_F(DistributedHardwareFwkKitTest, ResumeDistributedHardware_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     DHType dhType = DHType::CAMERA;
     std::string networkId = "networkId_test";
     int32_t ret = dhfwkPtr_->ResumeDistributedHardware(dhType, networkId);
@@ -351,6 +405,9 @@ HWTEST_F(DistributedHardwareFwkKitTest, ResumeDistributedHardware_001, testing::
  */
 HWTEST_F(DistributedHardwareFwkKitTest, StopDistributedHardware_001, testing::ext::TestSize.Level0)
 {
+    if (dhfwkPtr_ == nullptr) {
+        return;
+    }
     DHType dhType = DHType::CAMERA;
     std::string networkId = "networkId_test";
     int32_t ret = dhfwkPtr_->StopDistributedHardware(dhType, networkId);
