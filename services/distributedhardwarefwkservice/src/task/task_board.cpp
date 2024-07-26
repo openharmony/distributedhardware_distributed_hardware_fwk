@@ -128,5 +128,18 @@ const std::unordered_map<std::string, TaskParam> TaskBoard::GetEnabledDevice()
     }
     return enabledDevices_;
 }
+
+bool TaskBoard::IsEnabledDevice(const std::string &enabledDeviceKey)
+{
+    std::lock_guard<std::mutex> lock(enabledDevicesMutex_);
+    bool flag = false;
+    for (auto iter = enabledDevices_.begin(); iter != enabledDevices_.end(); iter++) {
+        if (iter->first == enabledDeviceKey) {
+            flag = true;
+            break;
+        }
+    }
+    return flag;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

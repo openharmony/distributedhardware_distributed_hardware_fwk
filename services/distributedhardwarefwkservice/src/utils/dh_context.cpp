@@ -53,7 +53,7 @@ void DHContext::RegisterPowerStateLinstener()
     if (!ret) {
         DHLOGE("DHFWK register power state callback failed");
     } else {
-        DHLOGE("DHFWK register power state callback success");
+        DHLOGI("DHFWK register power state callback success");
     }
 }
 

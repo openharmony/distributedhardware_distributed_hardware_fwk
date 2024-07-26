@@ -25,6 +25,7 @@
 #include "distributed_hardware_manager.h"
 #include "task_executor.h"
 #include "task_factory.h"
+#include "task_board.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -357,12 +358,13 @@ void MetaInfoManager::HandleMetaCapabilityAddChange(const std::vector<Distribute
         }
         std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(capPtr->GetDeviceId());
         if (uuid.empty()) {
-            DHLOGI("Find uuid failed and never enable");
+            DHLOGE("Find uuid failed and never enable, deviceId: %{public}s",
+                GetAnonyString(capPtr->GetDeviceId()).c_str());
             continue;
         }
         std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
         if (networkId.empty()) {
-            DHLOGI("Find network failed and never enable, uuid: %{public}s", GetAnonyString(uuid).c_str());
+            DHLOGE("Find network failed and never enable, uuid: %{public}s", GetAnonyString(uuid).c_str());
             continue;
         }
 
@@ -390,9 +392,33 @@ void MetaInfoManager::HandleMetaCapabilityUpdateChange(const std::vector<Distrib
             DHLOGE("Get Meta capability by value failed");
             continue;
         }
+        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(capPtr->GetDeviceId());
+        if (uuid.empty()) {
+            DHLOGE("Find uuid failed and never enable, deviceId: %{public}s",
+                GetAnonyString(capPtr->GetDeviceId()).c_str());
+            continue;
+        }
+        std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
+        if (networkId.empty()) {
+            DHLOGE("Find network failed and never enable, uuid: %{public}s", GetAnonyString(uuid).c_str());
+            continue;
+        }
+        std::string enabledDeviceKey = GetCapabilityKey(capPtr->GetDeviceId(), capPtr->GetDHId());
+        if (TaskBoard::GetInstance().IsEnabledDevice(enabledDeviceKey)) {
+            DHLOGI("The deviceKey: %{public}s is enabled.", GetAnonyString(enabledDeviceKey).c_str());
+            continue;
+        }
         const auto keyString = capPtr->GetKey();
         DHLOGI("Update MetaCapability key: %{public}s", capPtr->GetAnonymousKey().c_str());
         globalMetaInfoMap_[keyString] = capPtr;
+        TaskParam taskParam = {
+            .networkId = networkId,
+            .uuid = uuid,
+            .dhId = capPtr->GetDHId(),
+            .dhType = capPtr->GetDHType()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
+        TaskExecutor::GetInstance().PushTask(task);
     }
 }
 
