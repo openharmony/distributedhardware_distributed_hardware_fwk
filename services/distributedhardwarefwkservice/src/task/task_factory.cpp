@@ -31,10 +31,9 @@ namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(TaskFactory);
 std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskParam, std::shared_ptr<Task> fatherTask)
 {
-    DHLOGI("taskType: %{public}d, networkId: %{public}s, uuid: %{public}s, uuid: %{public}s, dhId: %{public}s",
+    DHLOGI("taskType: %{public}d, networkId: %{public}s, uuid: %{public}s, dhId: %{public}s",
         static_cast<int32_t>(taskType), GetAnonyString(taskParam.networkId).c_str(),
-        GetAnonyString(taskParam.uuid).c_str(), GetAnonyString(taskParam.udid).c_str(),
-        GetAnonyString(taskParam.dhId).c_str());
+        GetAnonyString(taskParam.uuid).c_str(), GetAnonyString(taskParam.dhId).c_str());
     std::shared_ptr<Task> task = nullptr;
     switch (taskType) {
         case TaskType::ENABLE: {
