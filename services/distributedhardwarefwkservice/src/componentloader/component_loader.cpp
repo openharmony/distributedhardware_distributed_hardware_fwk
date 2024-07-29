@@ -66,12 +66,6 @@ const std::string DEFAULT_LOC = "";
 const int32_t DEFAULT_SA_ID = -1;
 const std::string DEFAULT_VERSION = "1.0";
 
-#ifdef __LP64__
-const std::string LIB_LOAD_PATH = "/system/lib64/";
-#else
-const std::string LIB_LOAD_PATH = "/system/lib/";
-#endif
-
 std::map<std::string, DHType> g_mapDhTypeName = {
     { "UNKNOWN", DHType::UNKNOWN },
     { "CAMERA", DHType::CAMERA },
@@ -371,17 +365,13 @@ void ComponentLoader::StoreLocalDHVersionInDB()
 
 void *ComponentLoader::GetHandler(const std::string &soName)
 {
-    char path[PATH_MAX + 1] = {0x00};
-    if (soName.length() == 0 || (LIB_LOAD_PATH.length() + soName.length()) > PATH_MAX ||
-        realpath((LIB_LOAD_PATH + soName).c_str(), path) == nullptr) {
-        std::string loadPath(path);
-        DHLOGE("File canonicalization failed, soName:%{public}s, path:%{public}s", soName.c_str(),
-            GetAnonyString(loadPath).c_str());
+    if (soName.length() == 0 || soName.length() > PATH_MAX) {
+        DHLOGE("File canonicalization failed, soName: %{public}s", soName.c_str());
         return nullptr;
     }
-    void *pHandler = dlopen(path, RTLD_LAZY | RTLD_NODELETE);
+    void *pHandler = dlopen(soName.c_str(), RTLD_LAZY | RTLD_NODELETE);
     if (pHandler == nullptr) {
-        DHLOGE("%{public}s handler load failed, failed reason : %{public}s", path, dlerror());
+        DHLOGE("so: %{public}s load failed, failed reason: %{public}s", soName.c_str(), dlerror());
         HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             "dhfwk so open failed, soname : " + soName);
         return nullptr;
