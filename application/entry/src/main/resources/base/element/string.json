@@ -62,7 +62,7 @@
     },
     {
       "name": "continue_privacy_text",
-      "value":"This service uses Bluetooth and Wi-Fi. During use, it will read this device's name and send it to devices you hop to. By turning this on, you agree to these terms."
+      "value":"This service uses Bluetooth and WLAN. During use, it will read this device's name and send it to devices you hop to. By turning this on, you agree to these terms."
     }
   ]
 }

@@ -12,17 +12,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-{
-  "app": {
-    "bundleName": "com.ohos.dhardwareui",
-    "vendor": "example",
-    "versionCode": 10000018,
-    "versionName": "1.0.18",
-    "icon": "$media:app_icon",
-    "label": "$string:app_name",
-    "minAPIVersion": 11,
-    "targetAPIVersion": 12,
-    "apiReleaseType": "Beta1",
-    "debug": false
+
+import hilog from '@ohos.hilog';
+
+class LoggerModel {
+  private domain: number;
+  private prefix: string;
+
+  constructor(prefix: string) {
+    this.prefix = prefix;
+    this.domain = 0xFF00;
+  }
+
+  debug(message: string): void {
+    hilog.debug(this.domain, this.prefix, message);
+  }
+
+  info(message: string): void {
+    hilog.info(this.domain, this.prefix, message);
+  }
+
+  warn(message: string): void {
+    hilog.warn(this.domain, this.prefix, message);
+  }
+
+  error(message: string): void {
+    hilog.error(this.domain, this.prefix, message);
   }
 }
+
+export let logger = new LoggerModel('[DHardware_UI]');
