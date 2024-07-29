@@ -22,7 +22,7 @@ import { EditableLeftIconType, EditableTitleBar } from '@ohos.arkui.advanced.Edi
 import mediaQuery from '@ohos.mediaquery';
 import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 import CommonConstants from '../common/constants/CommonConstants';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/Logger';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
