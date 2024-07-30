@@ -603,7 +603,7 @@ int32_t CapabilityInfoManager::GetDataByDHType(const DHType dhType, CapabilityIn
 
 int32_t CapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, CapabilityInfoMap &capabilityMap)
 {
-    if (!IsIdLengthValid(key)) {
+    if (!IsIdLengthValid(keyPrefix)) {
         return ERR_DH_FWK_PARA_INVALID;
     }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
