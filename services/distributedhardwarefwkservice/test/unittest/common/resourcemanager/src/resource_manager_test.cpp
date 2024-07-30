@@ -477,7 +477,7 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_019, TestSize.Level0)
     CapabilityInfo capaInfo;
     std::string jsonStr = "";
     int32_t ret = capaInfo.FromJsonString(jsonStr);
-    EZPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 
     jsonStr = "invalid JSON string";
     ret = capaInfo.FromJsonString(jsonStr);
