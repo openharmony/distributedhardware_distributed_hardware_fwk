@@ -460,7 +460,7 @@ HWTEST_F(ComponentManagerTest, Enable_002, TestSize.Level0)
     IDistributedHardwareSource *sourcePtr = nullptr;
     ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
     int32_t ret = ComponentManager::GetInstance().Enable(networkId, uuid, dhId, dhType);
-    EXPECT_EQ(ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED, ret);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 /**

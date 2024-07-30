@@ -491,9 +491,6 @@ bool CapabilityInfoManager::IsCapabilityMatchFilter(const std::shared_ptr<Capabi
         DHLOGE("cap is null");
         return false;
     }
-    if (!IsMessageLengthValid(value)) {
-        return false;
-    }
 
     bool isMatch = false;
     switch (filter) {
@@ -534,8 +531,7 @@ bool CapabilityInfoManager::IsCapabilityMatchFilter(const std::shared_ptr<Capabi
 void CapabilityInfoManager::GetCapabilitiesByDeviceId(const std::string &deviceId,
     std::vector<std::shared_ptr<CapabilityInfo>> &resInfos)
 {
-    if (resInfos.empty() || resInfos.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("resInfo is empty or too large!");
+    if (!IsIdLengthValid(deviceId)) {
         return;
     }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
@@ -607,9 +603,6 @@ int32_t CapabilityInfoManager::GetDataByDHType(const DHType dhType, CapabilityIn
 
 int32_t CapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, CapabilityInfoMap &capabilityMap)
 {
-    if (!IsIdLengthValid(keyPrefix)) {
-        return ERR_DH_FWK_PARA_INVALID;
-    }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr is null");

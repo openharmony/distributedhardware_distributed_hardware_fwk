@@ -239,7 +239,7 @@ void DBAdapter::SyncByNotFound(const std::string &key)
 
 int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
 {
-    if (!IsIdLengthValid(key) || !IsMessageLengthValid(data)) {
+    if (!IsIdLengthValid(key)) {
         return ERR_DH_FWK_PARA_INVALID;
     }
     DHLOGI("Get data by key: %{public}s, storeId: %{public}s, dataType: %{public}d",
@@ -272,9 +272,6 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
 
 int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<std::string> &values)
 {
-    if (!IsIdLengthValid(keyPrefix)) {
-        return ERR_DH_FWK_PARA_INVALID;
-    }
     DHLOGI("Get data by key prefix: %{public}s, storeId: %{public}s, dataType: %{public}d",
         GetAnonyString(keyPrefix).c_str(), storeId_.storeId.c_str(), static_cast<int32_t>(this->dataType));
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);

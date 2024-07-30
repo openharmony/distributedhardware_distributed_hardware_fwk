@@ -767,7 +767,7 @@ int32_t ComponentManager::GetEnableParam(const std::string &networkId, const std
     const std::string &dhId, DHType dhType, EnableParam &param)
 {
     if (!IsIdLengthValid(networkId) || !IsIdLengthValid(uuid) || !IsIdLengthValid(dhId)) {
-        return ERR_DH_FWK_PARA_INVALID;
+        return ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED;
     }
     DHLOGI("GetEnableParam start, networkId= %{public}s, uuid = %{public}s, dhId = %{public}s, dhType = %{public}#X,",
         GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(dhId).c_str(), dhType);
