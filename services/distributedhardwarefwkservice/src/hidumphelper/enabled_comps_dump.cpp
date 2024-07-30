@@ -30,9 +30,6 @@ void EnabledCompsDump::DumpEnabledComp(const std::string &networkId, const DHTyp
 
 void EnabledCompsDump::DumpDisabledComp(const std::string &networkId, const DHType dhType, const std::string &dhId)
 {
-    if (!IsIdLengthValid(networkId) || !IsIdLengthValid(dhId)) {
-        return;
-    }
     HidumpCompInfo info(networkId, dhType, dhId);
 
     std::lock_guard<std::mutex> lock(compInfosMutex_);

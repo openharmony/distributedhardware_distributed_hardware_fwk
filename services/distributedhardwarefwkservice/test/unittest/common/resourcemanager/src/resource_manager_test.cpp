@@ -1110,7 +1110,7 @@ HWTEST_F(ResourceManagerTest, GetMetaCapByValue_001, TestSize.Level0)
     std::string value = "";
     std::shared_ptr<MetaCapabilityInfo> metaCapPtr = nullptr;
     auto ret = MetaInfoManager::GetInstance()->GetMetaCapByValue(value, metaCapPtr);
-    EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 
     std::string deviceId = "deviceId_test";
     std::string udidHash = "udidHash_test";
