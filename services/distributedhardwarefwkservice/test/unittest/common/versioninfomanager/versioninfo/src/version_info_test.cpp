@@ -102,6 +102,9 @@ HWTEST_F(VersionInfoTest, FromJson_001, TestSize.Level0)
     const char* DH_ATTRS = "dh_attrs";
 
     cJSON* json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, DH_ID, "dh_id");
     cJSON_AddStringToObject(json, DEV_ID, "dev_id");
     cJSON_AddStringToObject(json, DEV_NAME, "dev_name");
@@ -109,6 +112,10 @@ HWTEST_F(VersionInfoTest, FromJson_001, TestSize.Level0)
     cJSON_AddStringToObject(json, DH_TYPE, "dh_type");
     cJSON_AddStringToObject(json, DH_ATTRS, "dh_attrs");
     char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
     std::string jsonStr(cjson);
     cJSON_free(cjson);
     cJSON_Delete(json);
@@ -131,6 +138,9 @@ HWTEST_F(VersionInfoTest, FromJson_002, TestSize.Level0)
     const char* DH_TYPE = "dh_type";
     const char* DH_ATTRS = "dh_attrs";
     cJSON* json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, DH_ID, "dh_id");
     cJSON_AddStringToObject(json, DEV_ID, "dev_id");
     cJSON_AddStringToObject(json, DEV_NAME, "dev_name");
@@ -138,6 +148,10 @@ HWTEST_F(VersionInfoTest, FromJson_002, TestSize.Level0)
     cJSON_AddStringToObject(json, DH_TYPE, "dh_type");
     cJSON_AddStringToObject(json, DH_ATTRS, "dh_attrs");
     char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
     std::string jsonStr(cjson);
     cJSON_free(cjson);
     cJSON_Delete(json);

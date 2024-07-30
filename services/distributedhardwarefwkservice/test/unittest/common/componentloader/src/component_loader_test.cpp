@@ -292,11 +292,22 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_018, TestSize.Level0)
     const char *TYPE = "TYPE";
     const char *PATH = "PATH";
     cJSON* json0bject = cJSON_CreateObject();
+    if (json0bject == nullptr) {
+        return;
+    }
     cJSON* compVers = cJSON_CreateObject();
+    if (compVers == nullptr) {
+        cJSON_Delete(json0bject);
+        return;
+    }
     cJSON_AddStringToObject(compVers, NAME, "name");
     cJSON_AddNumberToObject(compVers, TYPE, 1111);
     cJSON_AddItemToObject(json0bject, PATH, compVers);
     char* cjson = cJSON_PrintUnformatted(json0bject);
+    if (cjson == nullptr) {
+        cJSON_Delete(json0bject);
+        return;
+    }
     std::string jsonStr(cjson);
     std::map<DHType, CompConfig> dhtypeMap;
     int32_t ret = ComponentLoader::GetInstance().GetCompPathAndVersion(jsonStr, dhtypeMap);
@@ -439,6 +450,9 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_029, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(json, COMP_NAME.c_str(), 4801);
 
     from_json(json, cfg);
@@ -456,6 +470,9 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_030, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
     cJSON_AddNumberToObject(json, COMP_TYPE.c_str(), 0x02);
 
@@ -474,6 +491,9 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_031, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
     cJSON_AddNumberToObject(json, COMP_HANDLER_LOC.c_str(), 4801);
@@ -493,6 +513,9 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_032, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
     cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
@@ -513,6 +536,9 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_033, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
     cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
@@ -534,6 +560,9 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_034, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
     cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
@@ -556,6 +585,9 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_035, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
     cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
@@ -579,6 +611,9 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_036, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
     cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
@@ -603,6 +638,9 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_037, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
     cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
@@ -628,6 +666,9 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_038, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
     cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
@@ -654,6 +695,9 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_039, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "name");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "DHType::AUDIO");
     cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc");
@@ -674,6 +718,9 @@ HWTEST_F(ComponentLoaderTest, ParseSink_001, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(json, COMP_SINK_LOC.c_str(), 100);
     auto ret = ParseSink(json, cfg);
     cJSON_Delete(json);
@@ -684,6 +731,9 @@ HWTEST_F(ComponentLoaderTest, ParseSink_002, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_SINK_LOC.c_str(), "comp_sink_loc_test");
     cJSON_AddNumberToObject(json, COMP_SINK_VERSION.c_str(), 100);
     auto ret = ParseSink(json, cfg);
@@ -695,6 +745,9 @@ HWTEST_F(ComponentLoaderTest, ParseSink_003, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_SINK_LOC.c_str(), "comp_sink_loc_test");
     cJSON_AddStringToObject(json, COMP_SINK_VERSION.c_str(), "1.0");
     cJSON_AddStringToObject(json, COMP_SINK_SA_ID.c_str(), "comp_sink_sa_id_test");
@@ -707,6 +760,9 @@ HWTEST_F(ComponentLoaderTest, ParseSink_004, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_SINK_LOC.c_str(), "comp_sink_loc_test");
     cJSON_AddStringToObject(json, COMP_SINK_VERSION.c_str(), "1.0");
     cJSON_AddNumberToObject(json, COMP_SINK_SA_ID.c_str(), 4801);
@@ -719,17 +775,31 @@ HWTEST_F(ComponentLoaderTest, ParseResourceDesc_001, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *array = cJSON_CreateArray();
+    if (array == nullptr) {
+        return;
+    }
     cJSON *obj = cJSON_CreateObject();
+    if (obj == nullptr) {
+        cJSON_Delete(array);
+        return;
+    }
     cJSON_AddStringToObject(obj, COMP_SUBTYPE.c_str(), "comp_subtype");
     cJSON_AddBoolToObject(obj, COMP_SENSITIVE.c_str(), true);
     cJSON_AddItemToArray(array, obj);
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        cJSON_Delete(array);
+        return;
+    }
     cJSON_AddItemToObject(json, COMP_RESOURCE_DESC.c_str(), array);
     auto ret = ParseResourceDesc(json, cfg);
     cJSON_Delete(json);
 
     CompConfig config;
     cJSON *component = cJSON_CreateObject();
+    if (component == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(component, COMP_NAME.c_str(), 1);
     cJSON_AddNumberToObject(component, COMP_TYPE.c_str(), 1);
     cJSON_AddNumberToObject(component, COMP_HANDLER_LOC.c_str(), 1);
@@ -744,9 +814,25 @@ HWTEST_F(ComponentLoaderTest, ParseResourceDesc_001, TestSize.Level0)
     ComponentLoader::GetInstance().ParseCompConfigFromJson(component, config);
     cJSON_Delete(component);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+HWTEST_F(ComponentLoaderTest, ParseResourceDesc_002, TestSize.Level0)
+{
+    CompConfig cfg;
+    cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
+    cJSON_AddNumberToObject(json, COMP_NAME.c_str(), 100);
+    auto ret = ParseComponent(json, cfg);
+    cJSON_Delete(json);
+    EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 
     CompConfig config1;
     cJSON *component1 = cJSON_CreateObject();
+    if (component1 == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(component1, COMP_NAME.c_str(), "comp_name_test");
     cJSON_AddStringToObject(component1, COMP_TYPE.c_str(), "comp_type_test");
     cJSON_AddStringToObject(component1, COMP_HANDLER_LOC.c_str(), "comp_handler_loc_test");
@@ -759,7 +845,6 @@ HWTEST_F(ComponentLoaderTest, ParseResourceDesc_001, TestSize.Level0)
     cJSON_AddNumberToObject(component1, COMP_SINK_SA_ID.c_str(), 4802);
     cJSON_AddStringToObject(component1, COMP_RESOURCE_DESC.c_str(), "comp_resource_desc");
     ComponentLoader::GetInstance().ParseCompConfigFromJson(component1, config1);
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
     cJSON_Delete(component1);
 }
 
@@ -767,11 +852,17 @@ HWTEST_F(ComponentLoaderTest, from_json_001, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(json, COMP_NAME.c_str(), 100);
     from_json(json, cfg);
     cJSON_Delete(json);
 
     cJSON *Json1 = cJSON_CreateObject();
+    if (Json1 == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(Json1, COMP_NAME.c_str(), "comp_name_test");
     cJSON_AddStringToObject(Json1, COMP_TYPE.c_str(), "comp_type_test");
     cJSON_AddStringToObject(Json1, COMP_HANDLER_LOC.c_str(), "comp_handler_loc_test");
@@ -781,6 +872,9 @@ HWTEST_F(ComponentLoaderTest, from_json_001, TestSize.Level0)
     cJSON_Delete(Json1);
 
     cJSON *Json2 = cJSON_CreateObject();
+    if (Json2 == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(Json2, COMP_NAME.c_str(), "comp_name_test");
     cJSON_AddStringToObject(Json2, COMP_TYPE.c_str(), "comp_type_test");
     cJSON_AddStringToObject(Json2, COMP_HANDLER_LOC.c_str(), "comp_handler_loc_test");
@@ -798,6 +892,9 @@ HWTEST_F(ComponentLoaderTest, ParseComponent_001, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(json, COMP_NAME.c_str(), 100);
     auto ret = ParseComponent(json, cfg);
     cJSON_Delete(json);
@@ -808,6 +905,9 @@ HWTEST_F(ComponentLoaderTest, ParseComponent_002, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "comp_name_test");
     cJSON_AddNumberToObject(json, COMP_TYPE.c_str(), 100);
     auto ret = ParseComponent(json, cfg);
@@ -819,6 +919,9 @@ HWTEST_F(ComponentLoaderTest, ParseComponent_003, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "comp_name_test");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "comp_type_test");
     cJSON_AddNumberToObject(json, COMP_HANDLER_LOC.c_str(), 100);
@@ -831,6 +934,9 @@ HWTEST_F(ComponentLoaderTest, ParseComponent_004, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "comp_name_test");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "comp_type_test");
     cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc_test");
@@ -844,6 +950,9 @@ HWTEST_F(ComponentLoaderTest, ParseComponent_005, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_NAME.c_str(), "comp_name_test");
     cJSON_AddStringToObject(json, COMP_TYPE.c_str(), "comp_type_test");
     cJSON_AddStringToObject(json, COMP_HANDLER_LOC.c_str(), "comp_handler_loc_test");
@@ -857,6 +966,9 @@ HWTEST_F(ComponentLoaderTest, ParseSource_001, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(json, COMP_SOURCE_LOC.c_str(), 100);
     auto ret = ParseSource(json, cfg);
     cJSON_Delete(json);
@@ -867,6 +979,9 @@ HWTEST_F(ComponentLoaderTest, ParseSource_002, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_SOURCE_LOC.c_str(), "comp_source_loc_test");
     cJSON_AddNumberToObject(json, COMP_SOURCE_VERSION.c_str(), 100);
     auto ret = ParseSource(json, cfg);
@@ -878,6 +993,9 @@ HWTEST_F(ComponentLoaderTest, ParseSource_003, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_SOURCE_LOC.c_str(), "comp_source_loc_test");
     cJSON_AddStringToObject(json, COMP_SOURCE_VERSION.c_str(), "1.0");
     cJSON_AddStringToObject(json, COMP_SOURCE_SA_ID.c_str(), "4801");
@@ -890,6 +1008,9 @@ HWTEST_F(ComponentLoaderTest, ParseSource_004, TestSize.Level0)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(json, COMP_SOURCE_LOC.c_str(), "comp_source_loc_test");
     cJSON_AddStringToObject(json, COMP_SOURCE_VERSION.c_str(), "1.0");
     cJSON_AddNumberToObject(json, COMP_SOURCE_SA_ID.c_str(), 4801);

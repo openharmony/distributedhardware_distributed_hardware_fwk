@@ -30,7 +30,7 @@ namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DHFWKSAManager);
 DHFWKSAManager::DHFWKSAManager()
     : dhfwkOnLine_(false), isSubscribeDHFWKSAChangeListener(false), dhfwkProxy_(nullptr),
-      saListener_(new SystemAbilityListener()), saStateCallback(nullptr),
+      saListener_(sptr<SystemAbilityListener>(new SystemAbilityListener())), saStateCallback(nullptr),
       publisherListenersCache_({}), avTransControlCenterCbCache_({})
 {
     DHLOGI("Ctor DHFWKSAManager");

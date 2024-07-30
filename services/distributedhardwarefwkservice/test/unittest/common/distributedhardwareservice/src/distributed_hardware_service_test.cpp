@@ -281,8 +281,15 @@ HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_002, TestSize.Level0)
     std::string targetKey = "histmAudEnc";
     int32_t target = 100;
     cJSON *attrJson = cJSON_CreateObject();
+    if (attrJson == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(attrJson, targetKey.c_str(), target);
     char* cjson = cJSON_PrintUnformatted(attrJson);
+    if (cjson == nullptr) {
+        cJSON_Delete(attrJson);
+        return;
+    }
     std::string attrs(cjson);
     DistributedHardwareService service(ASID, true);
     auto ret = service.QueryDhSysSpec(targetKey, attrs);
@@ -291,9 +298,16 @@ HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_002, TestSize.Level0)
     cJSON_Delete(attrJson);
 
     cJSON *attrJson1 = cJSON_CreateObject();
+    if (attrJson1 == nullptr) {
+        return;
+    }
     std::string targetKeyValue = "targetKeyValue";
     cJSON_AddStringToObject(attrJson1, targetKey.c_str(), targetKeyValue.c_str());
     char* cjson1 = cJSON_PrintUnformatted(attrJson1);
+    if (cjson1 == nullptr) {
+        cJSON_Delete(attrJson1);
+        return;
+    }
     std::string attrs1(cjson1);
     ret = service.QueryDhSysSpec(targetKey, attrs1);
     EXPECT_NE(0, ret.length());

@@ -51,9 +51,9 @@ void FromJson(const cJSON *jsonObject, AudioEncoderIn &audioEncoderIn)
         DHLOGE("AudioEncoderIn SAMPLE_RATE is invalid\n");
         return;
     }
-    cJSON *sampleRateItem;
+    cJSON *sampleRateItem = nullptr;
     cJSON_ArrayForEach(sampleRateItem, sampleRate) {
-    audioEncoderIn.sample_rate.push_back((uint32_t)sampleRateItem->valuedouble);
+        audioEncoderIn.sample_rate.push_back((uint32_t)sampleRateItem->valuedouble);
     }
 }
 
@@ -98,11 +98,11 @@ void FromJson(const cJSON *jsonObject, AudioEncoder &audioEncoder)
         return;
     }
     cJSON *insJson = cJSON_GetObjectItem(jsonObject, INS.c_str());
-    cJSON *inJson;
+    cJSON *inJson = nullptr;
     cJSON_ArrayForEach(inJson, insJson) {
-    AudioEncoderIn in;
-    FromJson(inJson, in);
-    audioEncoder.ins.push_back(in);
+        AudioEncoderIn in;
+        FromJson(inJson, in);
+        audioEncoder.ins.push_back(in);
     }
 
     if (!IsArray(jsonObject, OUTS)) {
@@ -110,11 +110,11 @@ void FromJson(const cJSON *jsonObject, AudioEncoder &audioEncoder)
         return;
     }
     cJSON *outsJson = cJSON_GetObjectItem(jsonObject, OUTS.c_str());
-    cJSON *outJson;
+    cJSON *outJson = nullptr;
     cJSON_ArrayForEach(outJson, outsJson) {
-    AudioEncoderOut out;
-    FromJson(outJson, out);
-    audioEncoder.outs.push_back(out);
+        AudioEncoderOut out;
+        FromJson(outJson, out);
+        audioEncoder.outs.push_back(out);
     }
 }
 
@@ -131,9 +131,9 @@ void FromJson(const cJSON *jsonObject, AudioDecoderIn &audioDecoderIn)
         return;
     }
     const cJSON *channelLayoutJson = cJSON_GetObjectItem(jsonObject, AUDIO_CHANNEL_LAYOUT.c_str());
-    const cJSON *layout;
+    const cJSON *layout = nullptr;
     cJSON_ArrayForEach(layout, channelLayoutJson) {
-    audioDecoderIn.channel_layout.push_back((AudioChannelLayout)layout->valuedouble);
+        audioDecoderIn.channel_layout.push_back((AudioChannelLayout)layout->valuedouble);
     }
 }
 
@@ -149,7 +149,7 @@ void FromJson(const cJSON *jsonObject, AudioDecoderOut &audioDecoderOut)
         return;
     }
     cJSON *sampleFormatJson = cJSON_GetObjectItem(jsonObject, AUDIO_SAMPLE_FORMAT.c_str());
-    cJSON *format;
+    cJSON *format = nullptr;
     cJSON_ArrayForEach(format, sampleFormatJson) {
         audioDecoderOut.sample_fmt.push_back((AudioSampleFormat)format->valuedouble);
     }
@@ -168,7 +168,7 @@ void FromJson(const cJSON *jsonObject, AudioDecoder &audioDecoder)
         return;
     }
     const cJSON *insJson = cJSON_GetObjectItem(jsonObject, INS.c_str());
-    cJSON *inJson;
+    cJSON *inJson = nullptr;
     cJSON_ArrayForEach(inJson, insJson) {
         AudioDecoderIn in;
         FromJson(inJson, in);
@@ -179,7 +179,7 @@ void FromJson(const cJSON *jsonObject, AudioDecoder &audioDecoder)
         return;
     }
     cJSON *outsJson = cJSON_GetObjectItem(jsonObject, OUTS.c_str());
-    cJSON *outJson;
+    cJSON *outJson = nullptr;
     cJSON_ArrayForEach(outJson, outsJson) {
         AudioDecoderOut out;
         FromJson(outJson, out);
@@ -200,7 +200,7 @@ void FromJson(const cJSON *jsonObject, VideoEncoderIn &videoEncoderIn)
         return;
     }
     cJSON *videoPixelFmt = cJSON_GetObjectItem(jsonObject, VIDEO_PIXEL_FMT.c_str());
-    cJSON *pixelFmt;
+    cJSON *pixelFmt = nullptr;
     cJSON_ArrayForEach(pixelFmt, videoPixelFmt) {
         videoEncoderIn.pixel_fmt.push_back((VideoPixelFormat)pixelFmt->valuedouble);
     }
@@ -228,7 +228,7 @@ void FromJson(const cJSON *jsonObject, VideoEncoder &videoEncoder)
         return;
     }
     cJSON *videoEncoderInsJson = cJSON_GetObjectItem(jsonObject, INS.c_str());
-    cJSON *inJson;
+    cJSON *inJson = nullptr;
     cJSON_ArrayForEach(inJson, videoEncoderInsJson) {
         VideoEncoderIn in;
         FromJson(inJson, in);
@@ -240,7 +240,7 @@ void FromJson(const cJSON *jsonObject, VideoEncoder &videoEncoder)
         return;
     }
     cJSON *videoEncoderOutsJson = cJSON_GetObjectItem(jsonObject, OUTS.c_str());
-    cJSON *outJson;
+    cJSON *outJson = nullptr;
     cJSON_ArrayForEach(outJson, videoEncoderOutsJson) {
         VideoEncoderOut out;
         FromJson(outJson, out);
@@ -261,7 +261,7 @@ void FromJson(const cJSON *jsonObject, VideoDecoderIn &videoDecoderIn)
         return;
     }
     cJSON *videoBitStreamFmtJson = cJSON_GetObjectItem(jsonObject, VIDEO_BIT_STREAM_FMT.c_str());
-    cJSON *fmt;
+    cJSON *fmt = nullptr;
     cJSON_ArrayForEach(fmt, videoBitStreamFmtJson) {
         videoDecoderIn.vd_bit_stream_fmt.push_back((VideoBitStreamFormat)(fmt->valuedouble));
     }
@@ -280,7 +280,7 @@ void FromJson(const cJSON *jsonObject, VideoDecoderOut &videoDecoderOut)
         return;
     }
     cJSON *videoPixelFmtJson = cJSON_GetObjectItem(jsonObject, VIDEO_PIXEL_FMT.c_str());
-    cJSON *fmt;
+    cJSON *fmt = nullptr;
     cJSON_ArrayForEach(fmt, videoPixelFmtJson) {
         videoDecoderOut.pixel_fmt.push_back((VideoPixelFormat)(fmt->valuedouble));
     }
@@ -299,7 +299,7 @@ void FromJson(const cJSON *jsonObject, VideoDecoder &videoDecoder)
         return;
     }
     cJSON *videoDecoderInsJson = cJSON_GetObjectItem(jsonObject, INS.c_str());
-    cJSON *inJson;
+    cJSON *inJson = nullptr;
     cJSON_ArrayForEach(inJson, videoDecoderInsJson) {
         VideoDecoderIn in;
         FromJson(inJson, in);
@@ -311,7 +311,7 @@ void FromJson(const cJSON *jsonObject, VideoDecoder &videoDecoder)
         return;
     }
     cJSON *videoDecoderOutsJson =  cJSON_GetObjectItem(jsonObject, OUTS.c_str());
-    cJSON *outJson;
+    cJSON *outJson = nullptr;
     cJSON_ArrayForEach(outJson, videoDecoderOutsJson) {
         VideoDecoderOut out;
         FromJson(outJson, out);

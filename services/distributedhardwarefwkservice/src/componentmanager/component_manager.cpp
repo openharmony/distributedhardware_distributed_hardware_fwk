@@ -67,7 +67,8 @@ namespace {
 }
 
 ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
-    compMonitorPtr_(std::make_shared<ComponentMonitor>()), lowLatencyListener_(new(std::nothrow) LowLatencyListener),
+    compMonitorPtr_(std::make_shared<ComponentMonitor>()),
+    lowLatencyListener_(sptr<LowLatencyListener>(new(std::nothrow) LowLatencyListener())),
     isUnInitTimeOut_(false), dhBizStates_({}), dhStateListener_(std::make_shared<DHStateListener>()),
     dataSyncTriggerListener_(std::make_shared<DHDataSyncTriggerListener>()),
     dhCommToolPtr_(std::make_shared<DHCommTool>()), needRefreshTaskParams_({})
