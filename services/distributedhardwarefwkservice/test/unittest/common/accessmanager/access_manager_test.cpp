@@ -86,10 +86,10 @@ HWTEST_F(AccessManagerTest, SendOffLineEvent_001, TestSize.Level1)
     auto ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent("", TEST_UUID, TEST_UDID,
         TEST_DEV_TYPE_PAD);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
-    auto ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(TEST_NETWORKID, "", TEST_UDID,
+    ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(TEST_NETWORKID, "", TEST_UDID,
         TEST_DEV_TYPE_PAD);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
-    auto ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(TEST_NETWORKID, TEST_UUID, "",
+    ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(TEST_NETWORKID, TEST_UUID, "",
         TEST_DEV_TYPE_PAD);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 
