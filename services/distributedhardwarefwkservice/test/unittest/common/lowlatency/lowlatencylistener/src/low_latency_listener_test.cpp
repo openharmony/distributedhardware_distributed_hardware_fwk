@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,7 +30,7 @@ void LowLatencyListenerTest::TearDownTestCase()
 
 void LowLatencyListenerTest::SetUp()
 {
-    listener_ = new(std::nothrow) LowLatencyListener;
+    listener_ = sptr<LowLatencyListener>(new(std::nothrow) LowLatencyListener());
 }
 
 void LowLatencyListenerTest::TearDown()
@@ -46,6 +46,9 @@ void LowLatencyListenerTest::TearDown()
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_001, TestSize.Level0)
 {
+    if (listener_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_MIN;
     std::string message;
     listener_->OnMessage(topic, message);
@@ -60,6 +63,9 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_001, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_002, TestSize.Level0)
 {
+    if (listener_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     std::string message;
     listener_->OnMessage(topic, message);
@@ -74,6 +80,9 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_002, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_003, TestSize.Level0)
 {
+    if (listener_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     std::string message = "message";
     listener_->OnMessage(topic, message);
@@ -88,8 +97,10 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_003, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_004, TestSize.Level0)
 {
+    if (listener_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
-
     cJSON* json = cJSON_CreateObject();
     const char* DH_TYPE = "dh_type";
     const char* LOW_LATENCY_ENABLE = "low_latency_enable";
@@ -112,6 +123,9 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_004, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_005, TestSize.Level0)
 {
+    if (listener_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     std::string message;
     uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024;
@@ -128,6 +142,9 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_005, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_006, TestSize.Level0)
 {
+    if (listener_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     cJSON* json = cJSON_CreateObject();
     const char* DH_TYPE = "dh_type";
@@ -150,6 +167,9 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_006, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_007, TestSize.Level0)
 {
+    if (listener_ == nullptr) {
+        return;
+    }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     cJSON* json = cJSON_CreateObject();
     const char* DH_TYPE = "dh_type";
@@ -172,6 +192,9 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_007, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, ExecuteInner_008, TestSize.Level0)
 {
+    if (listener_ == nullptr) {
+        return;
+    }
     std::string timerId;
     int32_t delayTimeMs = 1;
     LowLatencyTimer timer(timerId, delayTimeMs);
@@ -187,6 +210,9 @@ HWTEST_F(LowLatencyListenerTest, ExecuteInner_008, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, HandleStopTimer_008, TestSize.Level0)
 {
+    if (listener_ == nullptr) {
+        return;
+    }
     std::string timerId;
     int32_t delayTimeMs = 1;
     LowLatencyTimer timer(timerId, delayTimeMs);

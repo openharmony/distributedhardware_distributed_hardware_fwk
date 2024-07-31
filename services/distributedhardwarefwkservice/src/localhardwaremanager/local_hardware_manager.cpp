@@ -106,6 +106,10 @@ void LocalHardwareManager::QueryLocalHardware(const DHType dhType, IHardwareHand
     int32_t retryTimes = QUERY_RETRY_MAX_TIMES;
     while (retryTimes > 0) {
         DHLOGI("Query hardwareHandler retry times left: %{public}d, dhType: %{public}#X", retryTimes, dhType);
+        if (hardwareHandler == nullptr) {
+            DHLOGE("hardwareHandler is null.");
+            return;
+        }
         dhItems = hardwareHandler->Query();
         if (dhItems.empty()) {
             DHLOGE("Query hardwareHandler and obtain empty, dhType: %{public}#X", dhType);

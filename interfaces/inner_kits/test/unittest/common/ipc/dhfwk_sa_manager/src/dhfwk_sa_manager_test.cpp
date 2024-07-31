@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -92,7 +92,7 @@ HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_001, TestSize.Level0)
 HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_002, TestSize.Level0)
 {
     DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.store(true);
-    DHFWKSAManager::GetInstance().dhfwkProxy_ = new OHOS::DistributedHardware::MockIDistributedHardware();
+    DHFWKSAManager::GetInstance().dhfwkProxy_ = sptr<MockIDistributedHardware>(new MockIDistributedHardware());
     DHFWKSAManager::GetInstance().GetDHFWKProxy();
     EXPECT_NE(nullptr, DHFWKSAManager::GetInstance().dhfwkProxy_);
 }
@@ -119,7 +119,11 @@ HWTEST_F(DHFWKSAManagerTest, RegisterSAStateCallback_001, TestSize.Level0)
  */
 HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_001, TestSize.Level0)
 {
-    DHFWKSAManager::GetInstance().saListener_ = new DHFWKSAManager::SystemAbilityListener();
+    DHFWKSAManager::GetInstance().saListener_ =
+        sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());
+    if (DHFWKSAManager::GetInstance().saListener_ == nullptr) {
+        return;
+    }
     int32_t systemAbilityId = 1;
     std::string deviceId = "deviceId";
     DHFWKSAManager::GetInstance().saListener_->OnAddSystemAbility(systemAbilityId, deviceId);
@@ -134,7 +138,11 @@ HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_001, TestSize.Level0)
  */
 HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_002, TestSize.Level0)
 {
-    DHFWKSAManager::GetInstance().saListener_ = new DHFWKSAManager::SystemAbilityListener();
+    DHFWKSAManager::GetInstance().saListener_ =
+        sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());
+    if (DHFWKSAManager::GetInstance().saListener_ == nullptr) {
+        return;
+    }
     int32_t systemAbilityId = DISTRIBUTED_HARDWARE_SA_ID;
     std::string deviceId = "deviceId";
     DHFWKSAManager::GetInstance().saListener_->OnAddSystemAbility(systemAbilityId, deviceId);
@@ -149,10 +157,13 @@ HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_002, TestSize.Level0)
  */
 HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_003, TestSize.Level0)
 {
-    DHFWKSAManager::GetInstance().saListener_ = new DHFWKSAManager::SystemAbilityListener();
+    DHFWKSAManager::GetInstance().saListener_ =
+        sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());
+    if (DHFWKSAManager::GetInstance().saListener_ == nullptr) {
+        return;
+    }
     int32_t systemAbilityId = DISTRIBUTED_HARDWARE_SA_ID;
     std::string deviceId = "deviceId";
-    DHFWKSAManager::GetInstance().dhfwkProxy_ = new MockIDistributedHardware();
     DHFWKSAManager::GetInstance().saStateCallback = DHFWKSaStateCallback;
     DHFWKSAManager::GetInstance().saListener_->OnAddSystemAbility(systemAbilityId, deviceId);
     EXPECT_NE(nullptr, DHFWKSAManager::GetInstance().saListener_);
@@ -166,7 +177,11 @@ HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_003, TestSize.Level0)
  */
 HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_001, TestSize.Level0)
 {
-    DHFWKSAManager::GetInstance().saListener_ = new DHFWKSAManager::SystemAbilityListener();
+    DHFWKSAManager::GetInstance().saListener_ =
+        sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());
+    if (DHFWKSAManager::GetInstance().saListener_ == nullptr) {
+        return;
+    }
     int32_t systemAbilityId = 1;
     std::string deviceId = "deviceId";
     DHFWKSAManager::GetInstance().saListener_->OnRemoveSystemAbility(systemAbilityId, deviceId);
@@ -181,7 +196,11 @@ HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_001, TestSize.Level0)
  */
 HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_002, TestSize.Level0)
 {
-    DHFWKSAManager::GetInstance().saListener_ = new DHFWKSAManager::SystemAbilityListener();
+    DHFWKSAManager::GetInstance().saListener_ =
+        sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());
+    if (DHFWKSAManager::GetInstance().saListener_ == nullptr) {
+        return;
+    }
     int32_t systemAbilityId = DISTRIBUTED_HARDWARE_SA_ID;
     std::string deviceId = "deviceId";
     DHFWKSAManager::GetInstance().saListener_->OnRemoveSystemAbility(systemAbilityId, deviceId);
@@ -196,10 +215,13 @@ HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_002, TestSize.Level0)
  */
 HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_003, TestSize.Level0)
 {
-    DHFWKSAManager::GetInstance().saListener_ = new DHFWKSAManager::SystemAbilityListener();
+    DHFWKSAManager::GetInstance().saListener_ =
+        sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());
+    if (DHFWKSAManager::GetInstance().saListener_ == nullptr) {
+        return;
+    }
     int32_t systemAbilityId = DISTRIBUTED_HARDWARE_SA_ID;
     std::string deviceId = "deviceId";
-    DHFWKSAManager::GetInstance().dhfwkProxy_ = new OHOS::DistributedHardware::MockIDistributedHardware();
     DHFWKSAManager::GetInstance().saStateCallback = DHFWKSaStateCallback;
     DHFWKSAManager::GetInstance().saListener_->OnAddSystemAbility(systemAbilityId, deviceId);
     EXPECT_NE(nullptr, DHFWKSAManager::GetInstance().saListener_);

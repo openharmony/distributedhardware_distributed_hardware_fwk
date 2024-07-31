@@ -36,7 +36,7 @@ namespace DistributedHardware {
 namespace {
     const int32_t ASID = 4801;
     const DHTopic TOPIC = DHTopic::TOPIC_START_DSCREEN;
-    sptr<IPublisherListener> g_listener = sptr<IPublisherListener>(new MockPublisherListener());
+    sptr<IPublisherListener> g_listener(new MockPublisherListener());
 
     const std::u16string ARGS_H = u"-h";
     const std::u16string ARGS_L = u"-l";

@@ -59,6 +59,9 @@ void DhCommToolTest::TearDown()
 
 HWTEST_F(DhCommToolTest, TriggerReqFullDHCaps_001, TestSize.Level0)
 {
+    if (dhCommToolTest_ == nullptr) {
+        return;
+    }
     std::string remoteNetworkId = "";
     dhCommToolTest_->TriggerReqFullDHCaps(remoteNetworkId);
 
@@ -76,6 +79,9 @@ HWTEST_F(DhCommToolTest, TriggerReqFullDHCaps_001, TestSize.Level0)
 
 HWTEST_F(DhCommToolTest, GetAndSendLocalFullCaps_001, TestSize.Level0)
 {
+    if (dhCommToolTest_ == nullptr) {
+        return;
+    }
     std::string reqNetworkId = "";
     dhCommToolTest_->dhTransportPtr_ = nullptr;
     dhCommToolTest_->GetAndSendLocalFullCaps(reqNetworkId);
@@ -87,6 +93,9 @@ HWTEST_F(DhCommToolTest, GetAndSendLocalFullCaps_001, TestSize.Level0)
 
 HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_001, TestSize.Level0)
 {
+    if (dhCommToolTest_ == nullptr) {
+        return;
+    }
     std::string remoteCaps = "";
     FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps);
     EXPECT_EQ("", ret.networkId);

@@ -95,6 +95,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL = -10807;
     constexpr int32_t ERR_DH_FWK_PUBLISHER_LISTENER_IS_NULL = -10808;
     constexpr int32_t ERR_DH_FWK_SERVICE_MSG_INVALID = -10809;
+    constexpr int32_t ERR_DH_FWK_AVTRANS_CALLBACK_IS_NULL = -10810;
 
     /* AccessManager errno, range: [-10900, -10999] */
     constexpr int32_t ERR_DH_FWK_ACCESS_INIT_DM_FAILED = -10900;
