@@ -527,10 +527,6 @@ std::vector<DistributedKv::Entry> DBAdapter::GetEntriesByKeys(const std::vector<
     }
     DHLOGI("call");
     std::vector<DistributedKv::Entry> entries;
-    if (keys.empty()) {
-        DHLOGE("keys empty.");
-        return entries;
-    }
     {
         std::lock_guard<std::mutex> lock(dbAdapterMutex_);
         if (kvStoragePtr_ == nullptr) {

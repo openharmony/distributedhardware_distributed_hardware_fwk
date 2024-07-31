@@ -365,10 +365,6 @@ void MetaInfoManager::OnChange(const DistributedKv::DataOrigin &origin, Keys &&k
 
 void MetaInfoManager::HandleMetaCapabilityAddChange(const std::vector<DistributedKv::Entry> &insertRecords)
 {
-    if (insertRecords.empty() || insertRecords.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("Records is empty or too large!");
-        return;
-    }
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     for (const auto &item : insertRecords) {
         const std::string value = item.value.ToString();
@@ -403,10 +399,6 @@ void MetaInfoManager::HandleMetaCapabilityAddChange(const std::vector<Distribute
 
 void MetaInfoManager::HandleMetaCapabilityUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords)
 {
-    if (updateRecords.empty() || updateRecords.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("Records is empty or too large!");
-        return;
-    }
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     for (const auto &item : updateRecords) {
         const std::string value = item.value.ToString();
@@ -423,10 +415,6 @@ void MetaInfoManager::HandleMetaCapabilityUpdateChange(const std::vector<Distrib
 
 void MetaInfoManager::HandleMetaCapabilityDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords)
 {
-    if (deleteRecords.empty() || deleteRecords.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("Records is empty or too large!");
-        return;
-    }
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     for (const auto &item : deleteRecords) {
         const std::string value = item.value.ToString();

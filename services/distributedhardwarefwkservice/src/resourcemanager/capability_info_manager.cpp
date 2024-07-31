@@ -382,10 +382,6 @@ void CapabilityInfoManager::OnChange(const DistributedKv::DataOrigin &origin, Ke
 
 void CapabilityInfoManager::HandleCapabilityAddChange(const std::vector<DistributedKv::Entry> &insertRecords)
 {
-    if (insertRecords.empty() || insertRecords.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("Records is empty or too large!");
-        return;
-    }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     for (const auto &item : insertRecords) {
         const std::string value = item.value.ToString();
@@ -420,10 +416,6 @@ void CapabilityInfoManager::HandleCapabilityAddChange(const std::vector<Distribu
 
 void CapabilityInfoManager::HandleCapabilityUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords)
 {
-    if (updateRecords.empty() || updateRecords.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("Records is empty or too large!");
-        return;
-    }
     if (DistributedHardwareManagerFactory::GetInstance().GetUnInitFlag()) {
         DHLOGE("no need Update, is in uniniting.");
         return;
@@ -444,10 +436,6 @@ void CapabilityInfoManager::HandleCapabilityUpdateChange(const std::vector<Distr
 
 void CapabilityInfoManager::HandleCapabilityDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords)
 {
-    if (deleteRecords.empty() || deleteRecords.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("Records is empty or too large!");
-        return;
-    }
     if (DistributedHardwareManagerFactory::GetInstance().GetUnInitFlag()) {
         DHLOGE("no need Update, is in uniniting.");
         return;
@@ -645,10 +633,6 @@ std::vector<DistributedKv::Entry> CapabilityInfoManager::GetEntriesByKeys(const 
         return {};
     }
     DHLOGI("call");
-    if (keys.empty()) {
-        DHLOGE("keys empty.");
-        return {};
-    }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
