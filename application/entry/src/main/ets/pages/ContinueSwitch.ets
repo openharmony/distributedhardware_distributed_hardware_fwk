@@ -51,7 +51,6 @@ struct ContinueSwitch {
   @State imageAnimatorWidth: number = 0;
   @State textWidth: number = 0;
   @State gapLength: number = 0;
-  @State videoSrc: Resource = $rawfile('continue_center.mp4');
   @State isShow: boolean = false;
   @State is2in1: boolean = false;
   @State portraitFunc: mediaQuery.MediaQueryResult | void | null = null;
@@ -69,10 +68,8 @@ struct ContinueSwitch {
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult) {
     logger.info(TAG + 'onPortrait in');
     if (mediaQueryResult.matches as boolean) {
-      this.videoSrc = $rawfile('continue_dark_center.mp4');
       this.extContext?.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_DARK);
     } else {
-      this.videoSrc = $rawfile('continue_center.mp4');
       this.extContext?.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT);
     }
   }
