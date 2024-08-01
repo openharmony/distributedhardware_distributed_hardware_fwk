@@ -16,6 +16,7 @@
 #include "dh_transport_obj.h"
 
 #include "dh_utils_tool.h"
+#include "distributed_hardware_log.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -81,6 +82,10 @@ void FromJson(const cJSON *jsonObject, CommMsg &commMsg)
 std::string GetCommMsgString(const CommMsg &commMsg)
 {
     cJSON *rootMsg = cJSON_CreateObject();
+    if (rootMsg == nullptr) {
+        DHLOGE("Create cJSON object failed.");
+        return "";
+    }
     ToJson(rootMsg, commMsg);
     char *msg = cJSON_PrintUnformatted(rootMsg);
     if (msg == nullptr) {

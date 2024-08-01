@@ -102,12 +102,19 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_004, TestSize.Level0)
     }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     cJSON* json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     const char* DH_TYPE = "dh_type";
     const char* LOW_LATENCY_ENABLE = "low_latency_enable";
 
     cJSON_AddStringToObject(json, DH_TYPE, "dh_type");
     cJSON_AddStringToObject(json, LOW_LATENCY_ENABLE, "low_latency_enable");
     char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
     std::string message(cjson);
     listener_->OnMessage(topic, message);
     cJSON_free(cjson);
@@ -147,11 +154,18 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_006, TestSize.Level0)
     }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     cJSON* json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     const char* DH_TYPE = "dh_type";
     const char* LOW_LATENCY_ENABLE = "low_latency_enable";
     cJSON_AddNumberToObject(json, DH_TYPE, 0x01);
     cJSON_AddBoolToObject(json, LOW_LATENCY_ENABLE, true);
     char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
     std::string message(cjson);
     listener_->OnMessage(topic, message);
     cJSON_free(cjson);
@@ -172,11 +186,18 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_007, TestSize.Level0)
     }
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     cJSON* json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     const char* DH_TYPE = "dh_type";
     const char* LOW_LATENCY_ENABLE = "low_latency_enable";
     cJSON_AddNumberToObject(json, DH_TYPE, 0x01);
     cJSON_AddBoolToObject(json, LOW_LATENCY_ENABLE, false);
     char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
     std::string message(cjson);
     listener_->OnMessage(topic, message);
     cJSON_free(cjson);

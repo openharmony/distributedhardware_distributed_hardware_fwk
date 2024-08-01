@@ -847,6 +847,9 @@ HWTEST_F(ResourceManagerTest, FromJson_001, TestSize.Level0)
     CapabilityInfo info(dhId, devId, devName, devType, dhType, dhAttrs, dhSubtype);
 
     cJSON* json = cJSON_CreateObject();
+    if (json == nullptr) {
+        return;
+    }
     const char* DH_ID = "dh_id";
     const char* DEV_ID = "dev_id";
     const char* DEV_NAME = "dev_name";
@@ -864,6 +867,10 @@ HWTEST_F(ResourceManagerTest, FromJson_001, TestSize.Level0)
     cJSON_AddStringToObject(json, DH_SUBTYPE, "dh_subtype");
 
     char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
     std::string jsonStr(cjson);
     cJSON_free(cjson);
     cJSON_Delete(json);
@@ -1128,6 +1135,9 @@ HWTEST_F(ResourceManagerTest, FromJson_002, TestSize.Level0)
     std::string dhSubtype = "dhSubtype_test";
     std::string sinkVersion = "sinkVersion_test";
     cJSON *jsonObj = cJSON_CreateObject();
+    if (jsonObj == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), dhId.c_str());
     cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), dveId.c_str());
     cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), devName.c_str());

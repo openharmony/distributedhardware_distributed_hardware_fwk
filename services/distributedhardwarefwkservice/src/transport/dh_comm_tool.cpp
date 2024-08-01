@@ -108,6 +108,10 @@ void DHCommTool::GetAndSendLocalFullCaps(const std::string &reqNetworkId)
     capsRsp.networkId = GetLocalNetworkId();
     capsRsp.caps = resInfos;
     cJSON *root = cJSON_CreateObject();
+    if (root == nullptr) {
+        DHLOGE("Create cJSON object failed.");
+        return;
+    }
     ToJson(root, capsRsp);
     char *msg = cJSON_PrintUnformatted(root);
     if (msg == nullptr) {

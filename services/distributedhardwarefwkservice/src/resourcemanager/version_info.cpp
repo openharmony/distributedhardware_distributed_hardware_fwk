@@ -120,7 +120,7 @@ void FromJson(const cJSON *jsonObject, VersionInfo &versionInfo)
 
     const cJSON *compVer = cJSON_GetObjectItem(jsonObject, COMP_VER.c_str());
     if (compVer != NULL) {
-        cJSON *compVerObj;
+        cJSON *compVerObj = nullptr;
         cJSON_ArrayForEach(compVerObj, compVer) {
             CompVersion compVerValue;
             FromJson(compVerObj, compVerValue);

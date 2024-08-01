@@ -179,7 +179,7 @@ int32_t ParseResourceDesc(const cJSON *json, CompConfig &cfg)
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
     cJSON *resourceDescArray = cJSON_GetObjectItem(json, COMP_RESOURCE_DESC.c_str());
-    cJSON *element;
+    cJSON *element = nullptr;
     cJSON_ArrayForEach(element, resourceDescArray) {
         ResourceDesc desc;
         if (!IsString(element, COMP_SUBTYPE)) {
@@ -265,7 +265,7 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
         cJSON_Delete(root);
         return ERR_DH_FWK_PARA_INVALID;
     }
-    cJSON *component;
+    cJSON *component = nullptr;
     cJSON_ArrayForEach(component, components) {
         CompConfig config;
         ParseCompConfigFromJson(component, config);
@@ -320,7 +320,7 @@ void ComponentLoader::ParseCompConfigFromJson(cJSON *component, CompConfig &conf
 
 void ComponentLoader::ParseResourceDescFromJson(cJSON *resourceDescs, CompConfig &config)
 {
-    cJSON *resourceDesc;
+    cJSON *resourceDesc = nullptr;
     cJSON_ArrayForEach(resourceDesc, resourceDescs) {
         bool sensitiveValue;
         cJSON *sensitive = cJSON_GetObjectItem(resourceDesc, COMP_SENSITIVE.c_str());
