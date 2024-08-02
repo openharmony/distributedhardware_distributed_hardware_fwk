@@ -80,7 +80,6 @@ int32_t DistributedHardwareManager::Initialize()
 int32_t DistributedHardwareManager::Release()
 {
     DHLOGI("start");
-    TaskBoard::GetInstance().WaitForALLTaskFinish();
     LocalHardwareManager::GetInstance().UnInit();
     ComponentManager::GetInstance().UnInit();
     VersionManager::GetInstance().UnInit();
