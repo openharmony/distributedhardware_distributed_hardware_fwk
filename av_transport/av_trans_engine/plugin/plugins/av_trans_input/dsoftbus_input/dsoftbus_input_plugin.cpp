@@ -295,7 +295,7 @@ std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
         return buffer;
     }
     cJSON *paramItem = cJSON_GetObjectItem(resMsg, AVT_DATA_PARAM.c_str());
-    if (paramItem == NULL) {
+    if (paramItem == NULL || !cJSON_IsString(paramItem)) {
         return nullptr;
     }
     auto meta = std::make_shared<AVTransVideoBufferMeta>();
