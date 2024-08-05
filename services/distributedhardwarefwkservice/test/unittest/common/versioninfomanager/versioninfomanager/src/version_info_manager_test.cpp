@@ -220,10 +220,15 @@ HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_002, TestSize.Level0)
  */
 HWTEST_F(VersionInfoManagerTest, RemoveVersionInfoByDeviceId_001, TestSize.Level0)
 {
-    std::string deviceId;
+    std::string deviceId = DEV_ID_1;
     VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
     int32_t ret = VersionInfoManager::GetInstance()->RemoveVersionInfoByDeviceId(deviceId);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+
+    deviceId = "";
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    ret = VersionInfoManager::GetInstance()->RemoveVersionInfoByDeviceId(deviceId);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 /**
@@ -251,10 +256,15 @@ HWTEST_F(VersionInfoManagerTest, RemoveVersionInfoByDeviceId_002, TestSize.Level
  */
 HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_001, TestSize.Level0)
 {
-    std::string deviceId;
+    std::string deviceId = DEV_ID_1;
     VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
     int32_t ret = VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(deviceId);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+
+    deviceId = "";
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    ret = VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(deviceId);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 /**
@@ -401,11 +411,16 @@ HWTEST_F(VersionInfoManagerTest, HandleVersionDeleteChange_001, TestSize.Level0)
  */
 HWTEST_F(VersionInfoManagerTest, GetVersionInfoByDeviceId_001, TestSize.Level0)
 {
-    std::string deviceId;
+    std::string deviceId = DEV_ID_1;
     VersionInfo versionInfo;
     VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
     int32_t ret = VersionInfoManager::GetInstance()->GetVersionInfoByDeviceId(deviceId, versionInfo);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+
+    deviceId = "";
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    ret = VersionInfoManager::GetInstance()->GetVersionInfoByDeviceId(deviceId, versionInfo);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 } // namespace DistributedHardware

@@ -312,6 +312,8 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_009, TestSize.Level0)
 HWTEST_F(ResourceManagerTest, resource_manager_test_010, TestSize.Level0)
 {
     vector<shared_ptr<CapabilityInfo>> capInfos;
+    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId("", capInfos);
+    EXPECT_EQ(capInfos.empty(), true);
     CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(DEV_ID_0, capInfos);
     EXPECT_EQ(capInfos.size(), TEST_SIZE_5);
     CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(DEV_ID_1, capInfos);
@@ -416,6 +418,11 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_015, TestSize.Level0)
     std::string value = "";
     std::shared_ptr<CapabilityInfo> capPtr = nullptr;
     int32_t ret = GetCapabilityByValue<CapabilityInfo>(value, capPtr);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    value = "invalid JSON string";
+    capPtr = nullptr;
+    ret = GetCapabilityByValue<CapabilityInfo>(value, capPtr);
     EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
 }
 
@@ -470,6 +477,10 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_019, TestSize.Level0)
     CapabilityInfo capaInfo;
     std::string jsonStr = "";
     int32_t ret = capaInfo.FromJsonString(jsonStr);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    jsonStr = "invalid JSON string";
+    ret = capaInfo.FromJsonString(jsonStr);
     EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
 }
 
@@ -785,11 +796,16 @@ HWTEST_F(ResourceManagerTest, HandleCapabilityDeleteChange_001, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, GetDataByKey_001, TestSize.Level0)
 {
-    std::string key;
+    std::string key = "000";
     std::shared_ptr<CapabilityInfo> capInfoPtr;
     CapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
     int32_t ret = CapabilityInfoManager::GetInstance()->GetDataByKey(key, capInfoPtr);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+
+    key = "";
+    CapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    ret = CapabilityInfoManager::GetInstance()->GetDataByKey(key, capInfoPtr);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 /**
@@ -800,11 +816,16 @@ HWTEST_F(ResourceManagerTest, GetDataByKey_001, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, GetDataByKeyPrefix_001, TestSize.Level0)
 {
-    std::string keyPrefix;
+    std::string keyPrefix = "000";
     CapabilityInfoMap capabilityMap;
     CapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
     int32_t ret = CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(keyPrefix, capabilityMap);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+
+    keyPrefix = "";
+    CapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    ret = CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(keyPrefix, capabilityMap);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 /**
@@ -1096,13 +1117,17 @@ HWTEST_F(ResourceManagerTest, GetMetaCapByValue_001, TestSize.Level0)
     std::string value = "";
     std::shared_ptr<MetaCapabilityInfo> metaCapPtr = nullptr;
     auto ret = MetaInfoManager::GetInstance()->GetMetaCapByValue(value, metaCapPtr);
-    EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 
     std::string deviceId = "deviceId_test";
     std::string udidHash = "udidHash_test";
     std::string dhId = "dhId_test";
     metaCapPtr = std::make_shared<MetaCapabilityInfo>(
         dhId, deviceId, "devName_test", 14, DHType::CAMERA, "attrs_test", "subtype", udidHash, "1.0");
+    ret = MetaInfoManager::GetInstance()->GetMetaCapByValue(value, metaCapPtr);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    value = "invalid JSON string";
     ret = MetaInfoManager::GetInstance()->GetMetaCapByValue(value, metaCapPtr);
     EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
 }

@@ -96,6 +96,9 @@ int32_t DistributedHardwareManager::Release()
 int32_t DistributedHardwareManager::SendOnLineEvent(const std::string &networkId, const std::string &uuid,
     const std::string &udid, uint16_t deviceType)
 {
+    if (!IsIdLengthValid(networkId) || !IsIdLengthValid(uuid) || !IsIdLengthValid(udid)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     (void)deviceType;
     DHLOGI("SendOnLineEvent networkId = %{public}s, uuid = %{public}s, udid = %{public}s",
         GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
@@ -115,6 +118,9 @@ int32_t DistributedHardwareManager::SendOnLineEvent(const std::string &networkId
 int32_t DistributedHardwareManager::SendOffLineEvent(const std::string &networkId, const std::string &uuid,
     const std::string &udid, uint16_t deviceType)
 {
+    if (!IsIdLengthValid(networkId) || !IsIdLengthValid(uuid) || !IsIdLengthValid(udid)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     (void)deviceType;
     DHLOGI("SendOffLineEvent networkId = %{public}s, uuid = %{public}s, udid = %{public}s",
         GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());

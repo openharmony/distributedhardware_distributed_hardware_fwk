@@ -47,6 +47,9 @@ ComponentPrivacy::~ComponentPrivacy()
 int32_t ComponentPrivacy::OnPrivaceResourceMessage(const ResourceEventType &type, const std::string &subtype,
     const std::string &networkId, bool &isSensitive, bool &isSameAccout)
 {
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("OnPrivaceResourceMessage start.");
     int32_t ret = DH_FWK_SUCCESS;
     if (type == ResourceEventType::EVENT_TYPE_QUERY_RESOURCE) {
@@ -61,6 +64,9 @@ int32_t ComponentPrivacy::OnPrivaceResourceMessage(const ResourceEventType &type
 
 void ComponentPrivacy::HandlePullUpPage(const std::string &subtype, const std::string &networkId)
 {
+    if (!IsIdLengthValid(networkId)) {
+        return;
+    }
     cJSON *jsonArrayMsg = cJSON_CreateArray();
     if (jsonArrayMsg == NULL) {
         DHLOGE("Failed to create cJSON arrary.");
@@ -119,6 +125,9 @@ void ComponentPrivacy::HandleClosePage(const std::string &subtype)
 int32_t ComponentPrivacy::OnResourceInfoCallback(const std::string &subtype, const std::string &networkId,
     bool &isSensitive, bool &isSameAccout)
 {
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("OnResourceInfoCallback start.");
     std::map<std::string, bool> resourceDesc = ComponentLoader::GetInstance().GetCompResourceDesc();
     if (resourceDesc.find(subtype) == resourceDesc.end()) {
@@ -149,6 +158,9 @@ int32_t ComponentPrivacy::OnResourceInfoCallback(const std::string &subtype, con
 
 int32_t ComponentPrivacy::StartPrivacePage(const std::string &subtype, const std::string &networkId)
 {
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("StartPrivacePage start.");
     DmDeviceInfo deviceInfo;
     DeviceManager::GetInstance().GetDeviceInfo(DH_FWK_PKG_NAME, networkId, deviceInfo);
@@ -293,12 +305,12 @@ void ComponentPrivacy::ComponentEventHandler::ProcessStartPage(const AppExecFwk:
     std::shared_ptr<cJSON> dataMsg = event->GetSharedObject<cJSON>();
     cJSON *innerMsg = cJSON_GetArrayItem(dataMsg.get(), 0);
     if (!IsString(innerMsg, PRIVACY_SUBTYPE)) {
-        DHLOGE("PRIVACY_SUBTYPE is invalid");
+        DHLOGE("PRIVACY_SUBTYPE is invalid!");
         return;
     }
     std::string subtype = cJSON_GetObjectItem(innerMsg, PRIVACY_SUBTYPE.c_str())->valuestring;
     if (!IsString(innerMsg, PRIVACY_NETWORKID)) {
-        DHLOGE("PRIVACY_NETWORKID is invalid");
+        DHLOGE("PRIVACY_NETWORKID is invalid!");
         return;
     }
     if (comPrivacyObj_ == nullptr) {
@@ -319,7 +331,7 @@ void ComponentPrivacy::ComponentEventHandler::ProcessStopPage(const AppExecFwk::
     std::shared_ptr<cJSON> dataMsg = event->GetSharedObject<cJSON>();
     cJSON *innerMsg = cJSON_GetArrayItem(dataMsg.get(), 0);
     if (!IsString(innerMsg, PRIVACY_SUBTYPE)) {
-        DHLOGE("PRIVACY_SUBTYPE is invalid");
+        DHLOGE("PRIVACY_SUBTYPE is invalid!");
         return;
     }
     if (comPrivacyObj_ == nullptr) {

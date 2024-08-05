@@ -117,8 +117,8 @@ int32_t MetaInfoManager::UnInit()
 
 int32_t MetaInfoManager::AddMetaCapInfos(const std::vector<std::shared_ptr<MetaCapabilityInfo>> &metaCapInfos)
 {
-    if (metaCapInfos.size() == 0 || metaCapInfos.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("metaCapInfos size is invalid!");
+    if (metaCapInfos.empty() || metaCapInfos.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("MetaCapInfos is empty or too large!");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
@@ -157,6 +157,9 @@ int32_t MetaInfoManager::AddMetaCapInfos(const std::vector<std::shared_ptr<MetaC
 
 int32_t MetaInfoManager::SyncMetaInfoFromDB(const std::string &udidHash)
 {
+    if (!IsHashSizeValid(udidHash)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("Sync MetaInfo from DB, udidHash: %{public}s", GetAnonyString(udidHash).c_str());
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
@@ -168,8 +171,8 @@ int32_t MetaInfoManager::SyncMetaInfoFromDB(const std::string &udidHash)
         DHLOGE("Query Metadata from DB by udidHash failed, udidHash: %{public}s", GetAnonyString(udidHash).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("DataVector size is invalid!");
+    if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("On dataVector error, maybe empty or too large.");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {
@@ -196,8 +199,8 @@ int32_t MetaInfoManager::SyncRemoteMetaInfos()
         DHLOGE("Query all Metadata from DB failed");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("DataVector size is invalid!");
+    if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("On dataVector error, maybe empty or too large.");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {
@@ -225,6 +228,9 @@ int32_t MetaInfoManager::SyncRemoteMetaInfos()
 
 int32_t MetaInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, MetaCapInfoMap &metaCapMap)
 {
+    if (!IsKeySizeValid(keyPrefix)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr is null");
@@ -235,8 +241,8 @@ int32_t MetaInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, MetaCa
         DHLOGE("Query metaInfo from db failed, keyPrefix: %{public}s", GetAnonyString(keyPrefix).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("DataVector size is invalid!");
+    if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("On dataVector error, maybe empty or too large.");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {
@@ -252,6 +258,9 @@ int32_t MetaInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, MetaCa
 
 int32_t MetaInfoManager::RemoveMetaInfoByKey(const std::string &key)
 {
+    if (!IsKeySizeValid(key)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("Remove device metaInfo, key: %{public}s", GetAnonyString(key).c_str());
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
@@ -270,6 +279,9 @@ int32_t MetaInfoManager::RemoveMetaInfoByKey(const std::string &key)
 int32_t MetaInfoManager::GetMetaCapInfo(const std::string &udidHash,
     const std::string &dhId, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
 {
+    if (!IsHashSizeValid(udidHash) || !IsIdLengthValid(dhId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     std::string key = GetCapabilityKey(udidHash, dhId);
     if (globalMetaInfoMap_.find(key) == globalMetaInfoMap_.end()) {
@@ -283,6 +295,9 @@ int32_t MetaInfoManager::GetMetaCapInfo(const std::string &udidHash,
 void MetaInfoManager::GetMetaCapInfosByUdidHash(const std::string &udidHash,
     std::vector<std::shared_ptr<MetaCapabilityInfo>> &metaCapInfos)
 {
+    if (!IsHashSizeValid(udidHash)) {
+        return;
+    }
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     for (auto &metaCapInfo : globalMetaInfoMap_) {
         if (IsCapKeyMatchDeviceId(metaCapInfo.first, udidHash)) {
@@ -293,6 +308,9 @@ void MetaInfoManager::GetMetaCapInfosByUdidHash(const std::string &udidHash,
 
 int32_t MetaInfoManager::GetMetaCapByValue(const std::string &value, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
 {
+    if (!IsMessageLengthValid(value)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     if (metaCapPtr == nullptr) {
         metaCapPtr = std::make_shared<MetaCapabilityInfo>();
     }
@@ -440,6 +458,9 @@ void MetaInfoManager::HandleMetaCapabilityDeleteChange(const std::vector<Distrib
 
 std::vector<DistributedKv::Entry> MetaInfoManager::GetEntriesByKeys(const std::vector<std::string> &keys)
 {
+    if (!IsArrayLengthValid(keys)) {
+        return {};
+    }
     DHLOGI("call");
     if (keys.empty()) {
         DHLOGE("keys empty.");

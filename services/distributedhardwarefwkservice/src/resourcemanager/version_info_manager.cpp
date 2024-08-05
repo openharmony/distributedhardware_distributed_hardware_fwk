@@ -138,6 +138,9 @@ int32_t VersionInfoManager::AddVersion(const VersionInfo &versionInfo)
 
 int32_t VersionInfoManager::GetVersionInfoByDeviceId(const std::string &deviceId, VersionInfo &versionInfo)
 {
+    if (!IsIdLengthValid(deviceId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
@@ -167,6 +170,9 @@ void VersionInfoManager::UpdateVersionCache(const VersionInfo &versionInfo)
 
 int32_t VersionInfoManager::RemoveVersionInfoByDeviceId(const std::string &deviceId)
 {
+    if (!IsIdLengthValid(deviceId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("Remove version device info, key: %{public}s", GetAnonyString(deviceId).c_str());
     std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
@@ -192,6 +198,9 @@ int32_t VersionInfoManager::RemoveVersionInfoByDeviceId(const std::string &devic
 
 int32_t VersionInfoManager::SyncVersionInfoFromDB(const std::string &deviceId)
 {
+    if (!IsIdLengthValid(deviceId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("Sync versionInfo from DB, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
     std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
@@ -227,8 +236,8 @@ int32_t VersionInfoManager::SyncRemoteVersionInfos()
         DHLOGE("Query all data from DB failed");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("DataVector Size is invalid!");
+    if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("On dataVector error, maybe empty or too large.");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {

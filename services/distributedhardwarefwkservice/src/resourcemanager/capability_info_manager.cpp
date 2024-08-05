@@ -121,6 +121,9 @@ int32_t CapabilityInfoManager::UnInit()
 
 int32_t CapabilityInfoManager::SyncDeviceInfoFromDB(const std::string &deviceId)
 {
+    if (!IsIdLengthValid(deviceId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("Sync DeviceInfo from DB, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
@@ -132,8 +135,8 @@ int32_t CapabilityInfoManager::SyncDeviceInfoFromDB(const std::string &deviceId)
         DHLOGE("Query data from DB by deviceId failed, id: %{public}s", GetAnonyString(deviceId).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("DataVector size is invalid!");
+    if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("On dataVector error, maybe empty or too large.");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {
@@ -160,8 +163,8 @@ int32_t CapabilityInfoManager::SyncRemoteCapabilityInfos()
         DHLOGE("Query all data from DB failed");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("DataVector size is invalid!");
+    if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("On dataVector error, maybe empty or too large.");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {
@@ -187,8 +190,8 @@ int32_t CapabilityInfoManager::SyncRemoteCapabilityInfos()
 
 int32_t CapabilityInfoManager::AddCapability(const std::vector<std::shared_ptr<CapabilityInfo>> &resInfos)
 {
-    if (resInfos.size() == 0 || resInfos.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("ResInfos size is invalid!");
+    if (resInfos.empty() || resInfos.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("ResInfo is empty or too large!");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
@@ -228,6 +231,10 @@ int32_t CapabilityInfoManager::AddCapability(const std::vector<std::shared_ptr<C
 
 int32_t CapabilityInfoManager::AddCapabilityInMem(const std::vector<std::shared_ptr<CapabilityInfo>> &resInfos)
 {
+    if (resInfos.empty() || resInfos.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("ResInfo is empty or too large!");
+        return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
+    }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     for (auto &resInfo : resInfos) {
         if (resInfo == nullptr) {
@@ -242,8 +249,7 @@ int32_t CapabilityInfoManager::AddCapabilityInMem(const std::vector<std::shared_
 
 int32_t CapabilityInfoManager::RemoveCapabilityInfoInDB(const std::string &deviceId)
 {
-    if (deviceId.size() == 0 || deviceId.size() > MAX_ID_LEN) {
-        DHLOGE("DeviceId is invalid!");
+    if (!IsIdLengthValid(deviceId)) {
         return ERR_DH_FWK_PARA_INVALID;
     }
     DHLOGI("Remove capability device info, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
@@ -271,6 +277,9 @@ int32_t CapabilityInfoManager::RemoveCapabilityInfoInDB(const std::string &devic
 
 int32_t CapabilityInfoManager::RemoveCapabilityInfoByKey(const std::string &key)
 {
+    if (!IsIdLengthValid(key)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("Remove capability device info, key: %{public}s", GetAnonyString(key).c_str());
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
@@ -290,6 +299,9 @@ int32_t CapabilityInfoManager::RemoveCapabilityInfoByKey(const std::string &key)
 
 int32_t CapabilityInfoManager::RemoveCapabilityInfoInMem(const std::string &deviceId)
 {
+    if (!IsIdLengthValid(deviceId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGI("remove capability device info in memory, deviceId: %{public}s", GetAnonyString(deviceId).c_str());
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     for (auto iter = globalCapInfoMap_.begin(); iter != globalCapInfoMap_.end();) {
@@ -534,6 +546,9 @@ bool CapabilityInfoManager::IsCapabilityMatchFilter(const std::shared_ptr<Capabi
 void CapabilityInfoManager::GetCapabilitiesByDeviceId(const std::string &deviceId,
     std::vector<std::shared_ptr<CapabilityInfo>> &resInfos)
 {
+    if (!IsIdLengthValid(deviceId)) {
+        return;
+    }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     for (auto &capabilityInfo : globalCapInfoMap_) {
         if (IsCapKeyMatchDeviceId(capabilityInfo.first, deviceId)) {
@@ -544,6 +559,9 @@ void CapabilityInfoManager::GetCapabilitiesByDeviceId(const std::string &deviceI
 
 bool CapabilityInfoManager::HasCapability(const std::string &deviceId, const std::string &dhId)
 {
+    if (!IsIdLengthValid(deviceId) || !IsIdLengthValid(dhId)) {
+        return false;
+    }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     std::string kvKey = GetCapabilityKey(deviceId, dhId);
     if (globalCapInfoMap_.find(kvKey) == globalCapInfoMap_.end()) {
@@ -555,6 +573,9 @@ bool CapabilityInfoManager::HasCapability(const std::string &deviceId, const std
 int32_t CapabilityInfoManager::GetCapability(const std::string &deviceId, const std::string &dhId,
     std::shared_ptr<CapabilityInfo> &capPtr)
 {
+    if (!IsIdLengthValid(deviceId) || !IsIdLengthValid(dhId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     std::string key = GetCapabilityKey(deviceId, dhId);
     if (globalCapInfoMap_.find(key) == globalCapInfoMap_.end()) {
@@ -567,6 +588,9 @@ int32_t CapabilityInfoManager::GetCapability(const std::string &deviceId, const 
 
 int32_t CapabilityInfoManager::GetDataByKey(const std::string &key, std::shared_ptr<CapabilityInfo> &capInfoPtr)
 {
+    if (!IsIdLengthValid(key)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGI("dbAdapterPtr_ is null");
@@ -594,6 +618,9 @@ int32_t CapabilityInfoManager::GetDataByDHType(const DHType dhType, CapabilityIn
 
 int32_t CapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, CapabilityInfoMap &capabilityMap)
 {
+    if (!IsIdLengthValid(keyPrefix)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr is null");
@@ -604,8 +631,8 @@ int32_t CapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, 
         DHLOGE("Query capability info from db failed, key: %{public}s", GetAnonyString(keyPrefix).c_str());
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
-    if (dataVector.size() == 0 || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("DataVector size is invalid!");
+    if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
+        DHLOGE("On dataVector error, maybe empty or too large.");
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {
@@ -629,11 +656,10 @@ void CapabilityInfoManager::DumpCapabilityInfos(std::vector<CapabilityInfo> &cap
 
 std::vector<DistributedKv::Entry> CapabilityInfoManager::GetEntriesByKeys(const std::vector<std::string> &keys)
 {
-    DHLOGI("call");
-    if (keys.empty()) {
-        DHLOGE("keys empty.");
+    if (!IsArrayLengthValid(keys)) {
         return {};
     }
+    DHLOGI("call");
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
