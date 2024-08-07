@@ -21,7 +21,6 @@
 #include "system_ability_definition.h"
 
 #include "constants.h"
-#include "dh_utils_tool.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_proxy.h"
 #include "distributed_hardware_errno.h"
@@ -103,9 +102,6 @@ void DHFWKSAManager::RegisterSAStateCallback(DHFWKSAStateCb callback)
 
 void DHFWKSAManager::SystemAbilityListener::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 {
-    if (!IsIdLengthValid(deviceId)) {
-        return;
-    }
     (void)deviceId;
     if (systemAbilityId != DISTRIBUTED_HARDWARE_SA_ID) {
         DHLOGW("Receive SA Start, but sa id is not DHFWK, id: %{public}" PRId32, systemAbilityId);
@@ -127,9 +123,6 @@ void DHFWKSAManager::SystemAbilityListener::OnAddSystemAbility(int32_t systemAbi
 
 void DHFWKSAManager::SystemAbilityListener::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 {
-    if (!IsIdLengthValid(deviceId)) {
-        return;
-    }
     (void)deviceId;
     if (systemAbilityId != DISTRIBUTED_HARDWARE_SA_ID) {
         DHLOGW("Receive SA Stop, but sa id is not DHFWK, id: %{public}" PRId32, systemAbilityId);
