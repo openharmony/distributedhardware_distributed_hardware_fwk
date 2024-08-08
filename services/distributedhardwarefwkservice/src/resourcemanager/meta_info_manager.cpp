@@ -45,11 +45,7 @@ MetaInfoManager::~MetaInfoManager()
 
 std::shared_ptr<MetaInfoManager> MetaInfoManager::GetInstance()
 {
-    static std::shared_ptr<MetaInfoManager> instance(new(std::nothrow) MetaInfoManager);
-    if (instance == nullptr) {
-        DHLOGE("instance is nullptr, because applying memory fail!");
-        return nullptr;
-    }
+    static std::shared_ptr<MetaInfoManager> instance = std::make_shared<MetaInfoManager>();
     return instance;
 }
 

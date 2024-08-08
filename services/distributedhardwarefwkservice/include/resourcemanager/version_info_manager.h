@@ -40,6 +40,7 @@ public:
     VersionInfoManager(VersionInfoManager &&) = delete;
     VersionInfoManager &operator = (VersionInfoManager &&) = delete;
     static std::shared_ptr<VersionInfoManager> GetInstance();
+    VersionInfoManager();
     virtual ~VersionInfoManager();
 
     int32_t Init();
@@ -64,7 +65,6 @@ public:
     std::shared_ptr<VersionInfoManager::VersionInfoManagerEventHandler> GetEventHandler();
 
 private:
-    VersionInfoManager();
     void UpdateVersionCache(const VersionInfo &versionInfo);
     void HandleVersionAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
     void HandleVersionUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
