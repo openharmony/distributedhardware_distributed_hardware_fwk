@@ -277,7 +277,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_017, TestSize.Level0)
     std::string jsonStr = "";
     std::map<DHType, CompConfig> dhtypeMap;
     int32_t ret = ComponentLoader::GetInstance().GetCompPathAndVersion(jsonStr, dhtypeMap);
-    EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 /**

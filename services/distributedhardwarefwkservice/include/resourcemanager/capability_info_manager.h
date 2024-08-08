@@ -38,6 +38,7 @@ public:
     CapabilityInfoManager(CapabilityInfoManager &&) = delete;
     CapabilityInfoManager &operator = (CapabilityInfoManager &&) = delete;
     static std::shared_ptr<CapabilityInfoManager> GetInstance();
+    CapabilityInfoManager();
     virtual ~CapabilityInfoManager();
     int32_t Init();
     int32_t UnInit();
@@ -91,7 +92,6 @@ public:
     void DumpCapabilityInfos(std::vector<CapabilityInfo> &capInfos);
 
 private:
-    CapabilityInfoManager();
     void HandleCapabilityAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
     void HandleCapabilityUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);
     void HandleCapabilityDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords);

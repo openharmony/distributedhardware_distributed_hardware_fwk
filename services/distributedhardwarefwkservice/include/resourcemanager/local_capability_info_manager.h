@@ -37,6 +37,7 @@ public:
     LocalCapabilityInfoManager(LocalCapabilityInfoManager &&) = delete;
     LocalCapabilityInfoManager &operator = (LocalCapabilityInfoManager &&) = delete;
     static std::shared_ptr<LocalCapabilityInfoManager> GetInstance();
+    LocalCapabilityInfoManager();
     virtual ~LocalCapabilityInfoManager();
     int32_t Init();
     int32_t UnInit();
@@ -56,9 +57,6 @@ public:
     int32_t GetDataByDHType(const DHType dhType, CapabilityInfoMap &capabilityMap);
     /* Queries batch records in the database based on the prefix of the key. */
     int32_t GetDataByKeyPrefix(const std::string &keyPrefix, CapabilityInfoMap &capabilityMap);
-
-private:
-    LocalCapabilityInfoManager();
 
 private:
     mutable std::mutex capInfoMgrMutex_;
