@@ -1174,5 +1174,35 @@ HWTEST_F(ResourceManagerTest, FromJson_002, TestSize.Level0)
     FromJson(jsonObj, metaCapInfo);
     EXPECT_EQ(0, MetaInfoManager::GetInstance()->globalMetaInfoMap_.size());
 }
+
+HWTEST_F(ResourceManagerTest, GetMetaDataByDHType_001, TestSize.Level0)
+{
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
+    std::string deviceId = "deviceId_test";
+    std::string udidHash = "udidHash_test";
+    std::string dhId = "dhId_test";
+    MetaCapInfoMap metaInfoMap;
+    std::shared_ptr<MetaCapabilityInfo> dhMetaCapInfo = std::make_shared<MetaCapabilityInfo>(
+        dhId, deviceId, "devName_test", 14, DHType::CAMERA, "attrs_test", "subtype", udidHash, "1.0");
+    std::string key = udidHash + "###" + dhId;
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = dhMetaCapInfo;
+    auto ret = MetaInfoManager::GetInstance()->GetMetaDataByDHType(DHType::AUDIO, metaInfoMap);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(ResourceManagerTest, GetMetaDataByDHType_002, TestSize.Level0)
+{
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
+    std::string deviceId = "deviceId_test";
+    std::string udidHash = "udidHash_test";
+    std::string dhId = "dhId_test";
+    MetaCapInfoMap metaInfoMap;
+    std::shared_ptr<MetaCapabilityInfo> dhMetaCapInfo = std::make_shared<MetaCapabilityInfo>(
+        dhId, deviceId, "devName_test", 14, DHType::AUDIO, "attrs_test", "subtype", udidHash, "1.0");
+    std::string key = udidHash + "###" + dhId;
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = dhMetaCapInfo;
+    auto ret = MetaInfoManager::GetInstance()->GetMetaDataByDHType(DHType::AUDIO, metaInfoMap);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

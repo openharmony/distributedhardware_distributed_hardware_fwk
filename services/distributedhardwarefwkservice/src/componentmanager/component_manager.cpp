@@ -936,13 +936,13 @@ void ComponentManager::ReStartSA(DHType dhType)
 
 void ComponentManager::RecoverDistributedHardware(DHType dhType)
 {
-    CapabilityInfoMap capabilityMap;
-    CapabilityInfoManager::GetInstance()->GetDataByDHType(dhType, capabilityMap);
-    for (const auto &capInfo : capabilityMap) {
-        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(capInfo.second->GetDeviceId());
+    MetaCapInfoMap metaInfoMap;
+    MetaInfoManager::GetInstance()->GetMetaDataByDHType(dhType, metaInfoMap);
+    for (const auto &metaInfo : metaInfoMap) {
+        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(metaInfo.second->GetDeviceId());
         if (uuid.empty()) {
             DHLOGE("Can not find uuid by capability deviceId: %{public}s",
-                GetAnonyString(capInfo.second->GetDeviceId()).c_str());
+                GetAnonyString(metaInfo.second->GetDeviceId()).c_str());
             continue;
         }
 
@@ -955,8 +955,8 @@ void ComponentManager::RecoverDistributedHardware(DHType dhType)
         TaskParam taskParam = {
             .networkId = networkId,
             .uuid = uuid,
-            .dhId = capInfo.second->GetDHId(),
-            .dhType = capInfo.second->GetDHType()
+            .dhId = metaInfo.second->GetDHId(),
+            .dhType = metaInfo.second->GetDHType()
         };
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
         TaskExecutor::GetInstance().PushTask(task);
