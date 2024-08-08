@@ -177,6 +177,8 @@ HWTEST_F(DscreenOutputTest, StartControl_001, testing::ext::TestSize.Level1)
     plugin->controller_->SetControlStatus(OutputController::ControlStatus::START);
     ret = plugin->controller_->StartControl();
     EXPECT_EQ(OutputController::ControlStatus::STARTED, ret);
+    plugin->controller_->StopControl();
+    plugin->controller_->ReleaseControl();
 }
 
 HWTEST_F(DscreenOutputTest, StopControl_001, testing::ext::TestSize.Level1)
