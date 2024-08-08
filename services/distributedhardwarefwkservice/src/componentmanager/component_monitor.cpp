@@ -24,9 +24,7 @@
 #include "anonymous_string.h"
 #include "component_loader.h"
 #include "component_manager.h"
-#include "constants.h"
 #include "device_type.h"
-#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
@@ -49,17 +47,11 @@ ComponentMonitor::~ComponentMonitor()
 
 void ComponentMonitor::CompSystemAbilityListener::OnAddSystemAbility(int32_t saId, const std::string &deviceId)
 {
-    if (!IsIdLengthValid(deviceId)) {
-        return;
-    }
     DHLOGI("OnAddSystemAbility, saId: %{public}d, deviceId: %{public}s", saId, GetAnonyString(deviceId).c_str());
 }
 
 void ComponentMonitor::CompSystemAbilityListener::OnRemoveSystemAbility(int32_t saId, const std::string &deviceId)
 {
-    if (!IsIdLengthValid(deviceId)) {
-        return;
-    }
     DHLOGI("OnRemoveSystemAbility, saId: %{public}d, deviceId: %{public}s", saId, GetAnonyString(deviceId).c_str());
     DHType dhType = ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId);
     if (dhType == DHType::UNKNOWN) {
