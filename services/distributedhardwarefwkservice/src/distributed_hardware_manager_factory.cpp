@@ -92,6 +92,7 @@ void DistributedHardwareManagerFactory::UnInit()
     // release all the resources synchronously
     DistributedHardwareManager::GetInstance().Release();
     isInit = false;
+    flagUnInit_.store(false);
     DHTraceEnd();
     CheckExitSAOrNot();
 }

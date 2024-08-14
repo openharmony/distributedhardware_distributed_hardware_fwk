@@ -48,6 +48,7 @@ public:
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
     void GetMetaCapInfosByUdidHash(const std::string &udidHash,
         std::vector<std::shared_ptr<MetaCapabilityInfo>> &metaCapInfos);
+    int32_t GetMetaDataByDHType(const DHType dhType, MetaCapInfoMap &metaInfoMap);
     /* Database data changes callback */
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     /* Cloud data changes callback */

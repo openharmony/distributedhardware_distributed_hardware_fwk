@@ -299,6 +299,18 @@ int32_t MetaInfoManager::GetMetaCapByValue(const std::string &value, std::shared
     return metaCapPtr->FromJsonString(value);
 }
 
+int32_t MetaInfoManager::GetMetaDataByDHType(const DHType dhType, MetaCapInfoMap &metaInfoMap)
+{
+    std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
+    for (const auto &metaCapInfo : globalMetaInfoMap_) {
+        if (metaCapInfo.second->GetDHType() != dhType) {
+            continue;
+        }
+        metaInfoMap[metaCapInfo.first] = metaCapInfo.second;
+    }
+    return DH_FWK_SUCCESS;
+}
+
 void MetaInfoManager::OnChange(const DistributedKv::ChangeNotification &changeNotification)
 {
     DHLOGI("MetaInfoManager: DB data OnChange");
