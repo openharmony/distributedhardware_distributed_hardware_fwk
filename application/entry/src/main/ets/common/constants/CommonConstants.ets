@@ -15,7 +15,7 @@
 
 export default class CommonConstants {
   //ContinueSwitch page :
-  static readonly IMAGE_COUNT:number = 85;
+  static readonly IMAGE_COUNT:number = 84;
   static readonly IMG_ANIMATOR_OVER_DURATION:number = 1000;
   static readonly IMG_ANIMATOR_NORMAL_DURATION:number = 30;
   static readonly SWITCH_STATUS_OPEN:string = '1';
@@ -31,4 +31,6 @@ export default class CommonConstants {
   static readonly CONTINUE_PRIVACY_TEXT_MARGIN_TOP:number = 8;
   static readonly CONTINUE_SWITCH_WIDTH:number = 36;
   static readonly CONTINUE_SWITCH_HEIGHT:number = 20;
+  static readonly TIPS_TYPE:string = '105';
+  static readonly FUN_NUM = 'SF-20005815_f101';
 }

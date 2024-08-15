@@ -22,7 +22,8 @@ import util from '@ohos.util';
 const DOMAIN_ID = 0x3F3F;
 const TAG = 'TipsJump';
 const APP_BUNDLE_NAME = 'com.huawei.hmos.tips';
-const TIPS_APP_ID = 'com.huawei.hmos.tips_BB4oLXt8JLOw5djd42S0oLOGzO6kOnT8hZfFRAAel2gbcQBG5jIsO4genni5cn2SQpKpKvkwOA7Ajsc7qf+MZgM=';
+const TIPS_APP_ID =
+  'com.huawei.hmos.tips_BB4oLXt8JLOw5djd42S0oLOGzO6kOnT8hZfFRAAel2gbcQBG5jIsO4genni5cn2SQpKpKvkwOA7Ajsc7qf+MZgM=';
 const MODULE_NAME_PHONE = 'phone_widget';
 const MODULE_NAME_PC = 'pc_widget';
 const URI_FORMATTER = 'hwtips://com.huawei.hmos.tips.app?funNum=%s&type=%s';
@@ -33,26 +34,39 @@ const CODE_SUCCESS_ERROR = 0;
 const FUN_NUM_HOME = 'SF-20005815_f101';
 type startAbleContext = common.UIAbilityContext | common.ServiceExtensionContext;
 
-/**
- * cut in com.huawei.hmos.tips
- *
- */
 export class TipsJumpUtils {
   /**
    * Jump to Tips Home
    *
    * @param startAbleContext:common.UIAbilityContext | common.ServiceExtensionContext
-   * @param type
+   * @param type: entry type ID, used for dotting
+   * @param moduleName: phone_widget: jump phone, pc_widget: jump pc
    */
   public static jumpHome(context: startAbleContext, type: string, moduleName: string = MODULE_NAME_PHONE) {
-    TipsJumpUtils.jumpTips(context, FUN_NUM_HOME, type, moduleName ?? MODULE_NAME_PHONE)
+    TipsJumpUtils.jumpTips(context, FUN_NUM_HOME, type, moduleName ?? MODULE_NAME_PHONE);
   }
 
-  public static jumpTips(context: startAbleContext, funNum: string, type: string, moduleName: string = MODULE_NAME_PHONE) {
+  /**
+   * Jump to the specified page of Tips by FUN_NUM
+   *
+   * @param startAbleContext:common.UIAbilityContext | common.ServiceExtensionContext
+   * @param funNum: page FUN_NUM
+   * @param type: entry type ID, used for dotting
+   * @param moduleName: phone_widget: jump phone, pc_widget: jump pc
+   */
+  public static jumpTips(context: startAbleContext, funNum: string, type: string,
+                         moduleName: string = MODULE_NAME_PHONE) {
     let uri = util.format(URI_FORMATTER, funNum, type);
     TipsJumpUtils.jumpTipsByUri(context, uri, moduleName ?? MODULE_NAME_PHONE);
   }
 
+  /**
+   * Jump to the specified page of Tips by uri
+   *
+   * @param startAbleContext:common.UIAbilityContext | common.ServiceExtensionContext
+   * @param uri: uri format:hwtips://com.huawei.hmos.tips.app?funNum=xxx&type=xxx
+   * @param moduleName: phone_widget: jump phone, pc_widget: jump pc
+   */
   public static jumpTipsByUri(context: startAbleContext, uri: string, moduleName: string = MODULE_NAME_PHONE) {
     if (moduleName !== MODULE_NAME_PHONE && moduleName !== MODULE_NAME_PC) {
       hilog.error(DOMAIN_ID, TAG, `unknown moduleName, supported value:"${MODULE_NAME_PHONE}" or "${MODULE_NAME_PC}"`);
@@ -67,8 +81,14 @@ export class TipsJumpUtils {
     })
   }
 
+  /**
+   * Jump to Tips APP by uri
+   *
+   * @param startAbleContext:common.UIAbilityContext | common.ServiceExtensionContext
+   * @param uri: uri format:hwtips://com.huawei.hmos.tips.app?funNum=xxx&type=xxx
+   */
   private static jumpAppByUri(context: startAbleContext, uri: string) {
-    hilog.info(DOMAIN_ID, TAG, 'try to jump to app');
+    hilog.info(DOMAIN_ID, TAG, 'try jump to tips app');
     let want: Want = {
       bundleName: APP_BUNDLE_NAME,
       action: 'ohos.want.action.viewData',
@@ -81,20 +101,22 @@ export class TipsJumpUtils {
       } else {
         hilog.info(DOMAIN_ID, TAG, 'jump to [tips app] success');
       }
-    })
+    });
   }
 
+  /**
+   * Jump to AppGallery by uri
+   *
+   * @param startAbleContext:common.UIAbilityContext | common.ServiceExtensionContext
+   */
   private static jumpAppGallery(context: startAbleContext) {
     hilog.info(DOMAIN_ID, TAG, 'try to jump to AppGallery');
-    const want: Want = {
-      bundleName: MODULE_NAME_APPGALLERY,
-      uri: URI_APPGALLERY
-    };
+    const want: Want = { bundleName: MODULE_NAME_APPGALLERY, uri: URI_APPGALLERY };
     context.startAbility(want).then(() => {
       hilog.info(DOMAIN_ID, TAG, 'jump to AppGallery success');
     }).catch(() => {
       hilog.warn(DOMAIN_ID, TAG, 'jump to AppGallery error');
-    })
+    });
   }
 
   private static isAppInstalled(): Promise<boolean> {
@@ -116,6 +138,5 @@ export class TipsJumpUtils {
         }
         return false;
       })
-
   }
 }

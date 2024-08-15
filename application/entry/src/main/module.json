@@ -46,6 +46,9 @@
       },
       {
         "name": "ohos.permission.MANAGE_SETTINGS"
+      },
+      {
+        "name": "ohos.permission.GET_BUNDLE_INFO"
       }
     ],
     "extensionAbilities": [

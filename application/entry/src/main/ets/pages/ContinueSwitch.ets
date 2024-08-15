@@ -28,7 +28,6 @@ import { TipsJumpUtils } from '../utils/TipsJumpUtils';
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
 let localStorage = LocalStorage.getShared();
-const FUN_NUM = 'SF-20005815_f101';
 
 interface switchStatus {
   open: string;
@@ -244,10 +243,10 @@ struct ContinueSwitch {
             Span(this.learnMore)
               .fontFamily('HarmonyHeiTi')
               .fontSize($r('sys.float.ohos_id_text_size_body2'))
-              .fontColor($r('app.color.color_0A59F7_blue'))
+              .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
               .fontWeight(FontWeight.Regular)
               .onClick(() => {
-                TipsJumpUtils.jumpTips(getContext(this) as common.UIAbilityContext, FUN_NUM, '105');
+                TipsJumpUtils.jumpTips(getContext(this) as common.UIAbilityContext, CommonConstants.FUN_NUM, CommonConstants.TIPS_TYPE);
               })
           }
           .margin({ bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM })
@@ -304,15 +303,15 @@ struct ContinueSwitch {
               SymbolGlyph($r('sys.symbol.info_circle_fill'))
                 .fontWeight(FontWeight.Lighter)
                 .fontSize(14)
-                .fontColor([$r('app.color.color_0A59F7_blue')])
-                .margin({right:4})
+                .fontColor([$r('sys.color.ohos_id_color_activated')])
+                .margin({ right: 4 })
 
               Text($r('app.string.update_version_prompt'))
                 .fontSize($r('sys.float.ohos_id_text_size_body3'))
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
             }
-            .margin({top:9})
+            .margin({ top: 9 })
           }
           .padding({
             left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
