@@ -280,8 +280,8 @@ int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRe
     MessageParcel &reply)
 {
     Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetCallingTokenID();
-    std::string deviceId = data.ReadString();
-    std::string networkId = DHContext::GetInstance().GetNetworkIdByUDID(deviceId);
+    std::string deviceUDID = data.ReadString();
+    std::string networkId = DHContext::GetInstance().GetNetworkIdByUDID(deviceUDID);
     uint32_t dAccessToken = Security::AccessToken::AccessTokenKit::AllocLocalTokenID(networkId,
         callerToken);
     const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
@@ -293,7 +293,7 @@ int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRe
     }
 
     DHLOGI("DistributedHardwareStub HandleNotifySourceRemoteSinkStarted Start.");
-    int32_t ret = NotifySourceRemoteSinkStarted(deviceId);
+    int32_t ret = NotifySourceRemoteSinkStarted(deviceUDID);
     if (!reply.WriteInt32(ret)) {
         DHLOGE("write ret failed.");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
