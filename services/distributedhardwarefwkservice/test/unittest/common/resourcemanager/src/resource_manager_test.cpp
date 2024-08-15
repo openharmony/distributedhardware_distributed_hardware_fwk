@@ -1204,5 +1204,21 @@ HWTEST_F(ResourceManagerTest, GetMetaDataByDHType_002, TestSize.Level0)
     auto ret = MetaInfoManager::GetInstance()->GetMetaDataByDHType(DHType::AUDIO, metaInfoMap);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
+
+HWTEST_F(ResourceManagerTest, SyncDataByNetworkId_001, TestSize.Level0)
+{
+    std::string networkId = "";
+    auto ret = MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    networkId = "networkId_test";
+    ret = MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+
+
+    MetaInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    ret = MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

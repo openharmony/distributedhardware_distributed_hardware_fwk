@@ -325,6 +325,20 @@ int32_t MetaInfoManager::GetMetaDataByDHType(const DHType dhType, MetaCapInfoMap
     return DH_FWK_SUCCESS;
 }
 
+int32_t MetaInfoManager::SyncDataByNetworkId(const std::string &networkId)
+{
+    if (!IsIdLengthValid(networkId)) {
+        DHLOGE("networId: %{public}s is invalid", GetAnonyString(networkId).c_str());
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr is null");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
+    }
+    dbAdapterPtr_->SyncDataByNetworkId(networkId);
+    return DH_FWK_SUCCESS;
+}
+
 void MetaInfoManager::OnChange(const DistributedKv::ChangeNotification &changeNotification)
 {
     DHLOGI("MetaInfoManager: DB data OnChange");

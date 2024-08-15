@@ -35,6 +35,8 @@
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager.h"
 #include "iservice_registry.h"
+#include "device_param_mgr.h"
+#include "meta_info_manager.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {
@@ -174,6 +176,10 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
         return ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED;
     }
 
+    if (DeviceParamMgr::GetInstance().IsDeviceE2ESync()) {
+        DHLOGI("e2e device, need initiative sync data.");
+        MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
+    }
     auto onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId, uuid, udid, deviceType);
     if (onlineResult != DH_FWK_SUCCESS) {
         DHLOGE("online failed, errCode = %{public}d", onlineResult);

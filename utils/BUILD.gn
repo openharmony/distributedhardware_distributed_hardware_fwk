@@ -44,6 +44,7 @@ ohos_shared_library("distributedhardwareutils") {
 
   sources = [
     "src/anonymous_string.cpp",
+    "src/device_param_mgr.cpp",
     "src/dh_utils_hisysevent.cpp",
     "src/dh_utils_hitrace.cpp",
     "src/dh_utils_tool.cpp",

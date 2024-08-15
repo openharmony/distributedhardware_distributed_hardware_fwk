@@ -24,6 +24,7 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "device_param_mgr.h"
 #include "hidump_helper.h"
 #include "local_capability_info_manager.h"
 #include "local_hardware_manager.h"
@@ -57,6 +58,7 @@ int32_t DistributedHardwareManager::LocalInit()
     ComponentLoader::GetInstance().Init();
     VersionManager::GetInstance().Init();
     LocalHardwareManager::GetInstance().Init();
+    DeviceParamMgr::GetInstance().QueryDeviceDataSyncMode();
     DHLOGI("DHFWK Local Init end");
     isLocalInit = true;
     return DH_FWK_SUCCESS;
