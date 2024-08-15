@@ -246,7 +246,8 @@ struct ContinueSwitch {
               .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
               .fontWeight(FontWeight.Regular)
               .onClick(() => {
-                TipsJumpUtils.jumpTips(getContext(this) as common.UIAbilityContext, CommonConstants.FUN_NUM, CommonConstants.TIPS_TYPE);
+                TipsJumpUtils.jumpTips(getContext(this) as common.UIAbilityContext, CommonConstants.FUN_NUM,
+                  CommonConstants.TIPS_TYPE);
               })
           }
           .margin({ bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM })
