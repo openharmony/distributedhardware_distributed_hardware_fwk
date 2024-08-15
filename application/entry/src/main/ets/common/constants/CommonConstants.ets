@@ -28,6 +28,7 @@ export default class CommonConstants {
   static readonly PC_BORDER_RADIUS:number = 16;
   static readonly NON_PC_BORDER_RADIUS:number = 20;
   static readonly CONTINUE_DESC_TEXT_MARGIN_BOTTOM:number = 32;
+  static readonly CONTINUE_DESC_TEXT_MARGIN_TOP:number = 24;
   static readonly CONTINUE_PRIVACY_TEXT_MARGIN_TOP:number = 8;
   static readonly CONTINUE_SWITCH_WIDTH:number = 36;
   static readonly CONTINUE_SWITCH_HEIGHT:number = 20;

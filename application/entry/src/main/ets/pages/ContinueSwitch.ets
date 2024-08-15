@@ -250,10 +250,12 @@ struct ContinueSwitch {
                   CommonConstants.TIPS_TYPE);
               })
           }
-          .margin({ bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM })
+          .margin({
+            bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM,
+            top: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_TOP
+          })
           .textAlign(TextAlign.Center)
           .width('100%')
-
 
           Column() {
             Flex({
@@ -311,6 +313,7 @@ struct ContinueSwitch {
                 .fontSize($r('sys.float.ohos_id_text_size_body3'))
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                .textAlign(TextAlign.Center)
             }
             .margin({ top: 9 })
           }
