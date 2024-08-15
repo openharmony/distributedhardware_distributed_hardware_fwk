@@ -15,7 +15,7 @@
 
 export default class CommonConstants {
   //ContinueSwitch page :
-  static readonly IMAGE_COUNT:number = 85;
+  static readonly IMAGE_COUNT:number = 84;
   static readonly IMG_ANIMATOR_OVER_DURATION:number = 1000;
   static readonly IMG_ANIMATOR_NORMAL_DURATION:number = 30;
   static readonly SWITCH_STATUS_OPEN:string = '1';
@@ -28,7 +28,17 @@ export default class CommonConstants {
   static readonly PC_BORDER_RADIUS:number = 16;
   static readonly NON_PC_BORDER_RADIUS:number = 20;
   static readonly CONTINUE_DESC_TEXT_MARGIN_BOTTOM:number = 32;
-  static readonly CONTINUE_PRIVACY_TEXT_MARGIN_TOP:number = 8;
+  static readonly CONTINUE_DESC_TEXT_MARGIN_TOP:number = 24;
+  static readonly CONTINUE_PRIVACY_TEXT_MARGIN_TOP:number = 4;
   static readonly CONTINUE_SWITCH_WIDTH:number = 36;
   static readonly CONTINUE_SWITCH_HEIGHT:number = 20;
+  // Tips
+  static readonly TIPS_TYPE:string = '105';
+  static readonly FUN_NUM = 'SF-20005815_f101';
+  // Symbol
+  static readonly SYMBOL_INFO_CIRCLE:number = 14;
+  static readonly SYMBOL_MARGIN_RIGHT:number = 4;
+  // Update prompt text
+  static readonly UPDATE_PROMPT_LINE_HEIGHT:number = 16;
+  static readonly UPDATE_PROMPT_MARGIN_TOP:number = 9;
 }
