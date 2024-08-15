@@ -279,8 +279,6 @@ int32_t DistributedHardwareStub::RegisterControlCenterCallbackInner(MessageParce
 int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRemoteSinkStarted(MessageParcel &data,
     MessageParcel &reply)
 {
-    uint32_t callingPid = IPCSkeleton::GetCallingPid();
-    pid_t callingUid = IPCSkeleton::GetCallingUid();
     Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetCallingTokenID();
     std::string deviceId = data.ReadString();
     std::string networkId = DHContext::GetInstance().GetNetworkIdByUDID(deviceId);
