@@ -32,6 +32,13 @@ export default class CommonConstants {
   static readonly CONTINUE_PRIVACY_TEXT_MARGIN_TOP:number = 8;
   static readonly CONTINUE_SWITCH_WIDTH:number = 36;
   static readonly CONTINUE_SWITCH_HEIGHT:number = 20;
+  // Tips
   static readonly TIPS_TYPE:string = '105';
   static readonly FUN_NUM = 'SF-20005815_f101';
+  // Symbol
+  static readonly SYMBOL_INFO_CIRCLE:number = 14;
+  static readonly SYMBOL_MARGIN_RIGHT:number = 4;
+  // Update prompt text
+  static readonly UPDATE_PROMPT_LINE_HEIGHT:number = 16;
+  static readonly UPDATE_PROMPT_MARGIN_TOP:number = 9;
 }

@@ -304,18 +304,19 @@ struct ContinueSwitch {
               alignItems: ItemAlign.Center
             }) {
               SymbolGlyph($r('sys.symbol.info_circle_fill'))
-                .fontWeight(FontWeight.Lighter)
-                .fontSize(14)
+                .fontWeight(FontWeight.Medium)
+                .fontSize(CommonConstants.SYMBOL_INFO_CIRCLE)
                 .fontColor([$r('sys.color.ohos_id_color_activated')])
-                .margin({ right: 4 })
+                .margin({ right: CommonConstants.SYMBOL_MARGIN_RIGHT })
 
               Text($r('app.string.update_version_prompt'))
                 .fontSize($r('sys.float.ohos_id_text_size_body3'))
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
                 .textAlign(TextAlign.Center)
+                .lineHeight(CommonConstants.UPDATE_PROMPT_LINE_HEIGHT)
             }
-            .margin({ top: 9 })
+            .margin({ top: CommonConstants.UPDATE_PROMPT_MARGIN_TOP })
           }
           .padding({
             left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
