@@ -244,7 +244,7 @@ struct ContinueSwitch {
               .fontFamily('HarmonyHeiTi')
               .fontSize($r('sys.float.ohos_id_text_size_body2'))
               .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-              .fontWeight(FontWeight.Regular)
+              .fontWeight(FontWeight.Medium)
               .onClick(() => {
                 TipsJumpUtils.jumpTips(getContext(this) as common.UIAbilityContext, CommonConstants.FUN_NUM,
                   CommonConstants.TIPS_TYPE);
