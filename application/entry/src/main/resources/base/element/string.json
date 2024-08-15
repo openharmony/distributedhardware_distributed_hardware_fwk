@@ -54,7 +54,7 @@
     },
     {
       "name": "continue_desc",
-      "value":"Continuation lets you start something on one device, then instantly pick it up on other devices nearby using the same HUAWEI ID. When continuation is available, an icon will appear in the app dock."
+      "value":"Continuation lets you start something on one device, then instantly pick it up on other devices nearby using the same HUAWEI ID. When continuation is available, an icon will appear in the app dock. %s"
     },
     {
       "name": "multi_device_collaboration",
@@ -63,6 +63,14 @@
     {
       "name": "continue_privacy_text",
       "value":"This service uses Bluetooth and WLAN. During use, it will read this device's name and send it to devices you hop to. By turning this on, you agree to these terms."
+    },
+    {
+      "name": "update_version_prompt",
+      "value":"The peer party must upgrade to HarmonyOS NEXT or later."
+    },
+    {
+      "name": "learn_more",
+      "value":"Learn more"
     }
   ]
 }

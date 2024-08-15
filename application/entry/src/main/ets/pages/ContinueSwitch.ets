@@ -23,10 +23,12 @@ import mediaQuery from '@ohos.mediaquery';
 import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 import CommonConstants from '../common/constants/CommonConstants';
 import { logger } from '../utils/Logger';
+import { TipsJumpUtils } from '../utils/TipsJumpUtils';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
 let localStorage = LocalStorage.getShared();
+const FUN_NUM = 'SF-20005815_f101';
 
 interface switchStatus {
   open: string;
@@ -64,6 +66,8 @@ struct ContinueSwitch {
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
+  private learnMore: ResourceStr = $r('app.string.learn_more');
+  private continueDesc: ResourceStr = $r('app.string.continue_desc', '');
 
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult) {
     logger.info(TAG + 'onPortrait in');
@@ -231,18 +235,25 @@ struct ContinueSwitch {
               console.info(TAG + 'ImageAnimator Finish');
             })
 
-          Text($r('app.string.continue_desc'))
-            .fontSize($r('sys.float.ohos_id_text_size_body2'))
-            .fontWeight(FontWeight.Regular)
-            .margin({ bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM })
-            .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-            .textAlign(TextAlign.Center)
-            .width('100%')
-            .maxLines(10)
-            .onAreaChange((oldArea: Area, newArea: Area) => {
-              logger.info(TAG + 'Text:continue desc, oldArea.height = ' + oldArea.height +
-                ', newArea.height = ' + newArea.height);
-            })
+          Text() {
+            Span(this.continueDesc)
+              .fontFamily('HarmonyHeiTi')
+              .fontSize($r('sys.float.ohos_id_text_size_body2'))
+              .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+              .fontWeight(FontWeight.Regular)
+            Span(this.learnMore)
+              .fontFamily('HarmonyHeiTi')
+              .fontSize($r('sys.float.ohos_id_text_size_body2'))
+              .fontColor($r('app.color.color_0A59F7_blue'))
+              .fontWeight(FontWeight.Regular)
+              .onClick(() => {
+                TipsJumpUtils.jumpTips(getContext(this) as common.UIAbilityContext, FUN_NUM, '105');
+              })
+          }
+          .margin({ bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM })
+          .textAlign(TextAlign.Center)
+          .width('100%')
+
 
           Column() {
             Flex({
@@ -285,11 +296,35 @@ struct ContinueSwitch {
           }.width('100%')
 
           Column() {
+            Flex({
+              direction: FlexDirection.Row,
+              justifyContent: FlexAlign.SpaceBetween,
+              alignItems: ItemAlign.Center
+            }) {
+              SymbolGlyph($r('sys.symbol.info_circle_fill'))
+                .fontWeight(FontWeight.Lighter)
+                .fontSize(13)
+                .fontColor([$r('app.color.color_0A59F7_blue')])
+                .margin({right:4})
+
+              Text($r('app.string.update_version_prompt'))
+                .fontSize($r('sys.float.ohos_id_text_size_body3'))
+                .fontWeight(FontWeight.Medium)
+                .fontColor($r('sys.color.ohos_id_color_text_primary'))
+            }
+            .margin({top:9})
+          }
+          .padding({
+            left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
+            right: CommonConstants.TEXT_LIST_ALIGN_DISTANCE
+          })
+
+          Column() {
             Row() {
               Text($r('app.string.continue_privacy_text'))
                 .fontSize($r('sys.float.ohos_id_text_size_body3'))
                 .fontWeight(FontWeight.Regular)
-                .margin({ top: CommonConstants.CONTINUE_PRIVACY_TEXT_MARGIN_TOP})
+                .margin({ top: CommonConstants.CONTINUE_PRIVACY_TEXT_MARGIN_TOP })
                 .fontColor($r('sys.color.ohos_id_color_text_secondary'))
                 .textAlign(TextAlign.Start)
                 .width('100%')
@@ -317,7 +352,7 @@ struct ContinueSwitch {
       .align(Alignment.TopStart)
       .friction(0.6)
       .edgeEffect(EdgeEffect.Spring)
-      .onScroll((xOffset: number, yOffset: number) => {
+      .onWillScroll((xOffset: number, yOffset: number) => {
         console.info(TAG + 'onScroll : xOffset:' + xOffset + ' ; yOffset' + yOffset);
       })
       .onScrollEdge(() => {
