@@ -298,12 +298,12 @@ struct ContinueSwitch {
           Column() {
             Flex({
               direction: FlexDirection.Row,
-              justifyContent: FlexAlign.SpaceBetween,
+              justifyContent: FlexAlign.Start,
               alignItems: ItemAlign.Center
             }) {
               SymbolGlyph($r('sys.symbol.info_circle_fill'))
                 .fontWeight(FontWeight.Lighter)
-                .fontSize(13)
+                .fontSize(14)
                 .fontColor([$r('app.color.color_0A59F7_blue')])
                 .margin({right:4})
 

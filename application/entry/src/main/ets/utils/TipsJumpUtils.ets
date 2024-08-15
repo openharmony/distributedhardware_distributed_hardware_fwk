@@ -22,7 +22,7 @@ import util from '@ohos.util';
 const DOMAIN_ID = 0x3F3F;
 const TAG = 'TipsJump';
 const APP_BUNDLE_NAME = 'com.huawei.hmos.tips';
-const TIPS_APP_ID = 'com.huawei.hmos.tips_BB4oLXt8JL0w5djd42S0oL0Gz06kOnT8hZfFRAAel2gbcQBG5jIsO4genni5cn2SQpkpkvkwOA7Ajsc7qf+MZgM=';
+const TIPS_APP_ID = 'com.huawei.hmos.tips_BB4oLXt8JLOw5djd42S0oLOGzO6kOnT8hZfFRAAel2gbcQBG5jIsO4genni5cn2SQpKpKvkwOA7Ajsc7qf+MZgM=';
 const MODULE_NAME_PHONE = 'phone_widget';
 const MODULE_NAME_PC = 'pc_widget';
 const URI_FORMATTER = 'hwtips://com.huawei.hmos.tips.app?funNum=%s&type=%s';
@@ -33,12 +33,17 @@ const CODE_SUCCESS_ERROR = 0;
 const FUN_NUM_HOME = 'SF-20005815_f101';
 type startAbleContext = common.UIAbilityContext | common.ServiceExtensionContext;
 
+/**
+ * cut in com.huawei.hmos.tips
+ *
+ */
 export class TipsJumpUtils {
-  /*
+  /**
    * Jump to Tips Home
    *
    * @param startAbleContext:common.UIAbilityContext | common.ServiceExtensionContext
-   * */
+   * @param type
+   */
   public static jumpHome(context: startAbleContext, type: string, moduleName: string = MODULE_NAME_PHONE) {
     TipsJumpUtils.jumpTips(context, FUN_NUM_HOME, type, moduleName ?? MODULE_NAME_PHONE)
   }
@@ -49,7 +54,7 @@ export class TipsJumpUtils {
   }
 
   public static jumpTipsByUri(context: startAbleContext, uri: string, moduleName: string = MODULE_NAME_PHONE) {
-    if (moduleName != MODULE_NAME_PHONE && moduleName !== MODULE_NAME_PC) {
+    if (moduleName !== MODULE_NAME_PHONE && moduleName !== MODULE_NAME_PC) {
       hilog.error(DOMAIN_ID, TAG, `unknown moduleName, supported value:"${MODULE_NAME_PHONE}" or "${MODULE_NAME_PC}"`);
       return;
     }
@@ -62,9 +67,9 @@ export class TipsJumpUtils {
     })
   }
 
-  public static jumpAppByUri(context: startAbleContext, uri: string) {
+  private static jumpAppByUri(context: startAbleContext, uri: string) {
     hilog.info(DOMAIN_ID, TAG, 'try to jump to app');
-    const want: Want = {
+    let want: Want = {
       bundleName: APP_BUNDLE_NAME,
       action: 'ohos.want.action.viewData',
       entities: ['entity.system.browsable'],
@@ -79,7 +84,7 @@ export class TipsJumpUtils {
     })
   }
 
-  public static jumpAppGallery(context: startAbleContext) {
+  private static jumpAppGallery(context: startAbleContext) {
     hilog.info(DOMAIN_ID, TAG, 'try to jump to AppGallery');
     const want: Want = {
       bundleName: MODULE_NAME_APPGALLERY,
@@ -92,7 +97,7 @@ export class TipsJumpUtils {
     })
   }
 
-  public static isAppInstalled(): Promise<boolean> {
+  private static isAppInstalled(): Promise<boolean> {
     return bundleManager.getBundleInfo(APP_BUNDLE_NAME, bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_SIGNATURE_INFO)
       .then((info) => {
         if (TIPS_APP_ID === info.signatureInfo.appId) {
