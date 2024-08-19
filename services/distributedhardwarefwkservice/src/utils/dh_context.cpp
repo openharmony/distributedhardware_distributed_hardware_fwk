@@ -197,7 +197,6 @@ std::string DHContext::GetNetworkIdByUDID(const std::string &udid)
     return networkId;
 }
 
-
 std::string DHContext::GetUdidHashIdByUUID(const std::string &uuid)
 {
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
