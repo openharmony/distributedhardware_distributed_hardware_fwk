@@ -22,11 +22,14 @@
 #include <thread>
 #include <vector>
 
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
+
 #include "dm_device_info.h"
+#include "device_manager.h"
 
 #include "anonymous_string.h"
 #include "constants.h"
-#include "device_manager.h"
 #include "dh_context.h"
 #include "dh_utils_hisysevent.h"
 #include "dh_utils_hitrace.h"
@@ -34,10 +37,8 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager.h"
-#include "iservice_registry.h"
 #include "device_param_mgr.h"
 #include "meta_info_manager.h"
-#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -79,7 +80,7 @@ bool DistributedHardwareManagerFactory::Init()
         DHLOGE("Initialize failed, errCode = %{public}d", initResult);
         return false;
     }
-    isInit = true;
+    isInit_.store(true);
     DHLOGI("success");
     return true;
 }
@@ -93,7 +94,7 @@ void DistributedHardwareManagerFactory::UnInit()
 
     // release all the resources synchronously
     DistributedHardwareManager::GetInstance().Release();
-    isInit = false;
+    isInit_.store(false);
     flagUnInit_.store(false);
     DHTraceEnd();
     CheckExitSAOrNot();
@@ -145,7 +146,7 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
 
 bool DistributedHardwareManagerFactory::IsInit()
 {
-    return isInit.load();
+    return isInit_.load();
 }
 
 int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &networkId, const std::string &uuid,
@@ -171,7 +172,7 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
 
     DHContext::GetInstance().AddOnlineDevice(udid, uuid, networkId);
 
-    if (!isInit && !Init()) {
+    if (!isInit_.load() && !Init()) {
         DHLOGE("distributedHardwareMgr is null");
         return ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED;
     }
@@ -194,7 +195,7 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
     if (!IsIdLengthValid(networkId) || !IsIdLengthValid(uuid) || !IsIdLengthValid(udid)) {
         return ERR_DH_FWK_PARA_INVALID;
     }
-    if (!isInit && !Init()) {
+    if (!isInit_.load() && !Init()) {
         DHLOGE("distributedHardwareMgr is null");
         return ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED;
     }

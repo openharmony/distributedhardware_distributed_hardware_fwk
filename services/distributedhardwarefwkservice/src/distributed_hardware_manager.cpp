@@ -47,7 +47,7 @@ IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManager);
 int32_t DistributedHardwareManager::LocalInit()
 {
     DHLOGI("DHFWK Local Init begin");
-    if (isLocalInit) {
+    if (isLocalInit_.load()) {
         DHLOGI("Local init already finish");
         return DH_FWK_SUCCESS;
     }
@@ -60,7 +60,7 @@ int32_t DistributedHardwareManager::LocalInit()
     LocalHardwareManager::GetInstance().Init();
     DeviceParamMgr::GetInstance().QueryDeviceDataSyncMode();
     DHLOGI("DHFWK Local Init end");
-    isLocalInit = true;
+    isLocalInit_.store(true);
     return DH_FWK_SUCCESS;
 }
 
@@ -68,14 +68,14 @@ int32_t DistributedHardwareManager::Initialize()
 {
     DHLOGI("DHFWK Normal Init begin");
     std::lock_guard<std::mutex> lock(dhInitMgrMutex_);
-    if (isAllInit) {
+    if (isAllInit_.load()) {
         DHLOGI("DHMgr init already finish");
         return DH_FWK_SUCCESS;
     }
     LocalInit();
     ComponentManager::GetInstance().Init();
     DHLOGI("DHFWK Normal Init end");
-    isAllInit = true;
+    isAllInit_.store(true);
     return DH_FWK_SUCCESS;
 }
 
@@ -90,8 +90,8 @@ int32_t DistributedHardwareManager::Release()
     CapabilityInfoManager::GetInstance()->UnInit();
     MetaInfoManager::GetInstance()->UnInit();
     LocalCapabilityInfoManager::GetInstance()->UnInit();
-    isAllInit = false;
-    isLocalInit = false;
+    isAllInit_.store(false);
+    isLocalInit_.store(false);
     return DH_FWK_SUCCESS;
 }
 

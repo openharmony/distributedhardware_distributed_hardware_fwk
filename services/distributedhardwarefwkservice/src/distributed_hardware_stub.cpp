@@ -18,15 +18,16 @@
 #include <cinttypes>
 
 #include "accesstoken_kit.h"
+#include "ipc_skeleton.h"
+#include "tokenid_kit.h"
+
 #include "anonymous_string.h"
 #include "constants.h"
 #include "dhardware_ipc_interface_code.h"
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#include "ipc_skeleton.h"
 #include "publisher_listener_proxy.h"
-#include "tokenid_kit.h"
 
 namespace OHOS {
 namespace DistributedHardware {

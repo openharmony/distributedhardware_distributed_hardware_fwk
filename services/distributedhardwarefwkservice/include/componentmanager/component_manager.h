@@ -78,10 +78,10 @@ public:
     bool FetchNeedRefreshTask(const std::pair<std::string, std::string> &taskKey, TaskParam &taskParam);
 
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
-        public:
-            ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
-            ~ComponentManagerEventHandler() override = default;
-            void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+    public:
+        ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
+        ~ComponentManagerEventHandler() override = default;
+        void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
     };
     std::shared_ptr<ComponentManager::ComponentManagerEventHandler> GetEventHandler();
 

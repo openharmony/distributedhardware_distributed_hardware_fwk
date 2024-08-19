@@ -17,9 +17,10 @@
 #define OHOS_AV_TRANSPORT_LOG_H
 
 #include <cinttypes>
-#include "hilog/log.h"
 #include <inttypes.h>
 #include <string>
+
+#include "hilog/log.h"
 
 namespace OHOS {
 namespace DistributedHardware {
