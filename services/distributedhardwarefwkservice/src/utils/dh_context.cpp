@@ -183,9 +183,6 @@ std::string DHContext::GetNetworkIdByUUID(const std::string &uuid)
 
 std::string DHContext::GetNetworkIdByUDID(const std::string &udid)
 {
-    if (!IsIdLengthValid(udid)) {
-        return "";
-    }
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
     std::string networkId = "";
     for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
