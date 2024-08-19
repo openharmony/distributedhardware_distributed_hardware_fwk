@@ -300,6 +300,7 @@ int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRe
     }
     DHLOGI("DistributedHardwareStub HandleNotifySourceRemoteSinkStarted End.");
     return DH_FWK_SUCCESS;
+}
 
 bool DistributedHardwareStub::ValidTopic(uint32_t topic)
 {
