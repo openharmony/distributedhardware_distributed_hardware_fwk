@@ -53,7 +53,7 @@ public:
 
     class DHCommToolEventHandler : public AppExecFwk::EventHandler {
     public:
-        DHCommToolEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+        DHCommToolEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner,
             std::shared_ptr<DHCommTool> dhCommToolPtr);
         ~DHCommToolEventHandler() override = default;
         void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;

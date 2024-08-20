@@ -57,12 +57,12 @@ private:
 
 private:
     std::atomic<bool> dhfwkOnLine_;
-    std::atomic<bool> isSubscribeDHFWKSAChangeListener;
+    std::atomic<bool> isSubscribeDHFWKSAChangeListener_;
     std::mutex proxyMutex_;
     sptr<IDistributedHardware> dhfwkProxy_;
     sptr<SystemAbilityListener> saListener_;
     std::mutex saStatCbMutex_;
-    DHFWKSAStateCb saStateCallback;
+    DHFWKSAStateCb saStateCallback_;
     std::mutex publisherListenersMutex_;
     std::unordered_map<DHTopic, std::set<sptr<IPublisherListener>>> publisherListenersCache_;
     std::mutex avTransControlCenterCbMutex_;

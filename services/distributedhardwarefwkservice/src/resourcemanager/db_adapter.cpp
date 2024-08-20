@@ -44,7 +44,7 @@ namespace {
 }
 
 DBAdapter::DBAdapter(const std::string &appId, const std::string &storeId,
-                     const std::shared_ptr<DistributedKv::KvStoreObserver> &changeListener)
+                     const std::shared_ptr<DistributedKv::KvStoreObserver> changeListener)
 {
     this->appId_.appId = appId;
     this->storeId_.storeId = storeId;

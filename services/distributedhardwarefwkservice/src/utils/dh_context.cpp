@@ -81,7 +81,7 @@ void DHContext::SetIsSleeping(bool isSleeping)
     isSleeping_ = isSleeping;
 }
 
-DHContext::CommonEventHandler::CommonEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner)
+DHContext::CommonEventHandler::CommonEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner)
     : AppExecFwk::EventHandler(runner)
 {
     DHLOGI("Ctor CommonEventHandler");
