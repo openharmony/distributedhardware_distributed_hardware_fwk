@@ -21,6 +21,7 @@
 #include "anonymous_string.h"
 #include "constants.h"
 #include "dhardware_ipc_interface_code.h"
+#include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "ipc_skeleton.h"
@@ -278,14 +279,21 @@ int32_t DistributedHardwareStub::RegisterControlCenterCallbackInner(MessageParce
 int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRemoteSinkStarted(MessageParcel &data,
     MessageParcel &reply)
 {
-    if (!HasAccessDHPermission()) {
+    Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetCallingTokenID();
+    std::string udid = data.ReadString();
+    std::string networkId = DHContext::GetInstance().GetNetworkIdByUDID(udid);
+    uint32_t dAccessToken = Security::AccessToken::AccessTokenKit::AllocLocalTokenID(networkId,
+        callerToken);
+    const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
+    int32_t result = Security::AccessToken::AccessTokenKit::VerifyAccessToken(dAccessToken,
+        permissionName);
+    if (result != Security::AccessToken::PERMISSION_GRANTED) {
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
 
     DHLOGI("DistributedHardwareStub HandleNotifySourceRemoteSinkStarted Start.");
-    std::string deviceId = data.ReadString();
-    int32_t ret = NotifySourceRemoteSinkStarted(deviceId);
+    int32_t ret = NotifySourceRemoteSinkStarted(udid);
     if (!reply.WriteInt32(ret)) {
         DHLOGE("write ret failed.");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
