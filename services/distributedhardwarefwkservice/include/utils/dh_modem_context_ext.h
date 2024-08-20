@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,29 +13,27 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_MOCK_ONLINE_TASK_H
-#define OHOS_DISTRIBUTED_HARDWARE_MOCK_ONLINE_TASK_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_DHMODEMCONTEXTEXT_H
+#define OHOS_DISTRIBUTED_HARDWARE_DHMODEMCONTEXTEXT_H
 
-#include <vector>
-
-#include "mock_task_utils.h"
-#include "online_task.h"
+#include "idistributed_modem_ext.h"
+#include "single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class MockOnLineTask : public OnLineTask {
+
+class DHModemContextExt {
+DECLARE_SINGLE_INSTANCE_BASE(DHModemContextExt);
 public:
-    MockOnLineTask() = delete;
-    MockOnLineTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
-        const std::string &dhId, const DHType dhType);
+    DHModemContextExt();
+    ~DHModemContextExt();
+    int32_t GetHandler();
+    std::shared_ptr<IDistributedModemExt> GetModemExtInstance();
+    int32_t UnInit();
 
-    void SetOnLineDevInfos(std::vector<MockDevInfo> devInfos);
 private:
-    void DoSyncInfo();
-    void CreateEnableTask();
-    void CreateMetaEnableTask();
-
-    std::vector<MockDevInfo> onLineDevInfos;
+    void *soHandle_ {nullptr};
+    std::shared_ptr<IDistributedModemExt> distributedModemExt_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

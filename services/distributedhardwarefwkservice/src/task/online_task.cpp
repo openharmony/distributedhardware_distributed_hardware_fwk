@@ -36,7 +36,8 @@ OnLineTask::OnLineTask(const std::string &networkId, const std::string &uuid, co
     const std::string &dhId, const DHType dhType) : Task(networkId, uuid, udid, dhId, dhType)
 {
     SetTaskType(TaskType::ON_LINE);
-    SetTaskSteps(std::vector<TaskStep> { TaskStep::SYNC_ONLINE_INFO, TaskStep::REGISTER_ONLINE_DISTRIBUTED_HARDWARE });
+    SetTaskSteps(std::vector<TaskStep> { TaskStep::SYNC_ONLINE_INFO, TaskStep::REGISTER_ONLINE_DISTRIBUTED_HARDWARE,
+        TaskStep::META_ENABLE_TASK});
     DHLOGD("OnLineTask id: %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
         GetId().c_str(), GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(),
         GetAnonyString(udid).c_str());
@@ -61,6 +62,10 @@ void OnLineTask::DoTask()
             }
             case TaskStep::REGISTER_ONLINE_DISTRIBUTED_HARDWARE: {
                 CreateEnableTask();
+                break;
+            }
+            case TaskStep::META_ENABLE_TASK: {
+                CreateMetaEnableTask();
                 break;
             }
             default: {
@@ -140,6 +145,21 @@ void OnLineTask::CreateEnableTask()
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, shared_from_this());
         TaskExecutor::GetInstance().PushTask(task);
     }
+}
+
+void OnLineTask::CreateMetaEnableTask()
+{
+    DHLOGI("CreateMetaEnableTask, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
+        GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetUDID()).c_str());
+    TaskParam taskParam = {
+        .networkId = GetNetworkId(),
+        .uuid = GetUUID(),
+        .udid = GetUDID(),
+        .dhId = GetDhId(),
+        .dhType = GetDhType()
+    };
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::META_ENABLE, taskParam, shared_from_this());
+    TaskExecutor::GetInstance().PushTask(task);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -40,8 +40,8 @@ OffLineTask::OffLineTask(const std::string &networkId, const std::string &uuid, 
     const std::string &dhId, const DHType dhType) : Task(networkId, uuid, udid, dhId, dhType)
 {
     this->SetTaskType(TaskType::OFF_LINE);
-    this->SetTaskSteps({TaskStep::UNREGISTER_OFFLINE_DISTRIBUTED_HARDWARE, TaskStep::WAIT_UNREGISTGER_COMPLETE,
-        TaskStep::CLEAR_OFFLINE_INFO});
+    this->SetTaskSteps({TaskStep::META_DISABLE_TASK, TaskStep::UNREGISTER_OFFLINE_DISTRIBUTED_HARDWARE,
+        TaskStep::WAIT_UNREGISTGER_COMPLETE, TaskStep::CLEAR_OFFLINE_INFO});
     DHLOGD("OffLineTask id: %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
         GetId().c_str(), GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str(),
         GetAnonyString(GetUDID()).c_str());
@@ -78,6 +78,10 @@ void OffLineTask::DoTaskInner()
             }
             case TaskStep::CLEAR_OFFLINE_INFO: {
                 ClearOffLineInfo();
+                break;
+            }
+            case TaskStep::META_DISABLE_TASK: {
+                CreateMetaDisableTask();
                 break;
             }
             default: {
@@ -167,6 +171,20 @@ void OffLineTask::AddChildrenTask(std::shared_ptr<Task> childrenTask)
 {
     std::lock_guard<std::mutex> lock(unFinishTaskMtx_);
     this->unFinishChildrenTasks_.insert(childrenTask->GetId());
+}
+
+void OffLineTask::CreateMetaDisableTask()
+{
+    DHLOGI("CreateMetaDisableTask, networkId = %{public}s, uuid = %{public}s", GetAnonyString(GetNetworkId()).c_str(),
+        GetAnonyString(GetUUID()).c_str());
+    TaskParam taskParam = {
+        .networkId = GetNetworkId(),
+        .uuid = GetUUID(),
+        .dhId = GetDhId(),
+        .dhType = GetDhType()
+    };
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::META_DISABLE, taskParam, shared_from_this());
+    TaskExecutor::GetInstance().PushTask(task);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

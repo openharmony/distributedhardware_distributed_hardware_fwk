@@ -19,6 +19,8 @@
 #include "disable_task.h"
 #include "distributed_hardware_log.h"
 #include "enable_task.h"
+#include "meta_disable_task.h"
+#include "meta_enable_task.h"
 #include "offline_task.h"
 #include "online_task.h"
 #include "task_board.h"
@@ -53,6 +55,16 @@ std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskP
         }
         case TaskType::OFF_LINE: {
             task = std::make_shared<OffLineTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
+            break;
+        }
+        case TaskType::META_ENABLE: {
+            task = std::make_shared<MetaEnableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
+            break;
+        }
+        case TaskType::META_DISABLE: {
+            task = std::make_shared<MetaDisableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
                 taskParam.dhId, taskParam.dhType);
             break;
         }

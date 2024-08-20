@@ -1016,6 +1016,15 @@ void ComponentManager::UpdateBusinessState(const std::string &networkId, const s
     }
 }
 
+IDistributedHardwareSource* ComponentManager::GetDHSourceInstance(DHType dhType)
+{
+    if (compSource_.find(dhType) == compSource_.end()) {
+        DHLOGE("can not find handler for dhType = %{public}d.", dhType);
+        return nullptr;
+    }
+    return compSource_[dhType];
+}
+
 BusinessState ComponentManager::QueryBusinessState(const std::string &uuid, const std::string &dhId)
 {
     if (!IsIdLengthValid(uuid) || !IsIdLengthValid(dhId)) {

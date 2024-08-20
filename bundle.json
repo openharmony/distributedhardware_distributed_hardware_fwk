@@ -57,7 +57,8 @@
         "power_manager",
         "openssl",
         "ffmpeg",
-        "zlib"
+        "zlib",
+        "ffrt"
       ]
     },
     "build": {

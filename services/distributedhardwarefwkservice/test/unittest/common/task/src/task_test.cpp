@@ -23,6 +23,8 @@
 #include "task_factory.h"
 #include "mock_disable_task.h"
 #include "mock_enable_task.h"
+#include "mock_meta_disable_task.h"
+#include "mock_meta_enable_task.h"
 #include "mock_offline_task.h"
 #include "mock_online_task.h"
 #include "mock_task_factory.h"
@@ -383,6 +385,25 @@ HWTEST_F(TaskTest, task_test_021, TestSize.Level0)
     TaskExecutor::GetInstance().taskThreadFlag_ = false;
     TaskExecutor::GetInstance().TriggerTask();
     ASSERT_EQ(true, TaskExecutor::GetInstance().taskQueue_.empty());
+}
+
+HWTEST_F(TaskTest, task_test_022, TestSize.Level0)
+{
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::META_ENABLE, taskParam, nullptr);
+    task->DoTask();
+    ASSERT_TRUE(task->childrenTasks_.empty());
+}
+
+HWTEST_F(TaskTest, task_test_023, TestSize.Level0)
+{
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);
+    std::vector<TaskStep> taskSteps;
+    taskSteps.push_back(TaskStep::META_DISABLE_TASK);
+    task->SetTaskSteps(taskSteps);
+    task->DoTask();
+    ASSERT_EQ(true, task->childrenTasks_.empty());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
