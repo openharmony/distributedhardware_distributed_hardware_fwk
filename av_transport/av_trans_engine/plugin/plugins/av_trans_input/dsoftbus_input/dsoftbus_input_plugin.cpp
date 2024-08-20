@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -320,11 +320,11 @@ void DsoftbusInputPlugin::DataEnqueue(std::shared_ptr<Buffer> &buffer)
         AVTRANS_LOGE("buffer is nullptr.");
         return;
     }
-    if (GetReDumpFlag() == true) {
+    if (GetReDumpFlag()) {
         std::remove(SCREEN_FILE_NAME_BEFOREENCODING.c_str());
         SetReDumpFlagFalse();
     }
-    if (GetDumpFlag() == true) {
+    if (GetDumpFlag()) {
         auto bufferData = buffer->GetMemory();
         if (bufferData != nullptr) {
             DumpBufferToFile(SCREEN_FILE_NAME_BEFOREENCODING,

@@ -98,8 +98,8 @@ DistributedKv::Status DBAdapter::GetLocalKvStorePtr()
 
 int32_t DBAdapter::Init(bool isAutoSync, DistributedKv::DataType dataType)
 {
-    this->isAutoSync = isAutoSync;
-    this->dataType = dataType;
+    this->isAutoSync_ = isAutoSync;
+    this->dataType_ = dataType;
     DHLOGI("Init DB, storeId: %{public}s, dataType: %{public}d",
         storeId_.storeId.c_str(), static_cast<int32_t>(dataType));
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
@@ -131,10 +131,10 @@ int32_t DBAdapter::Init(bool isAutoSync, DistributedKv::DataType dataType)
 
 int32_t DBAdapter::InitLocal()
 {
-    this->isAutoSync = false;
-    this->dataType = DistributedKv::DataType::TYPE_STATICS;
+    this->isAutoSync_ = false;
+    this->dataType_ = DistributedKv::DataType::TYPE_STATICS;
     DHLOGI("Init local DB, storeId: %{public}s, dataType: %{public}d",
-        storeId_.storeId.c_str(), static_cast<int32_t>(this->dataType));
+        storeId_.storeId.c_str(), static_cast<int32_t>(this->dataType_));
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     int32_t tryTimes = MAX_INIT_RETRY_TIMES;
     while (tryTimes > 0) {
@@ -164,7 +164,7 @@ void DBAdapter::UnInit()
         return;
     }
     UnRegisterKvStoreDeathListener();
-    if (this->isAutoSync) {
+    if (this->isAutoSync_) {
         UnRegisterChangeListener();
     }
     kvStoragePtr_.reset();
@@ -179,8 +179,8 @@ int32_t DBAdapter::ReInit(bool isAutoSync)
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
     }
     kvStoragePtr_.reset();
-    DistributedKv::Status status = this->isAutoSync ?
-        GetKvStorePtr(isAutoSync, this->dataType) : GetLocalKvStorePtr();
+    DistributedKv::Status status = this->isAutoSync_ ?
+        GetKvStorePtr(isAutoSync, this->dataType_) : GetLocalKvStorePtr();
     if (status != DistributedKv::Status::SUCCESS || !kvStoragePtr_) {
         DHLOGW("Get kvStoragePtr_ failed, status: %{public}d", status);
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
@@ -243,7 +243,7 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
         return ERR_DH_FWK_PARA_INVALID;
     }
     DHLOGI("Get data by key: %{public}s, storeId: %{public}s, dataType: %{public}d",
-        GetAnonyString(key).c_str(), storeId_.storeId.c_str(), static_cast<int32_t>(this->dataType));
+        GetAnonyString(key).c_str(), storeId_.storeId.c_str(), static_cast<int32_t>(this->dataType_));
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is null");
@@ -253,11 +253,11 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
     DistributedKv::Value kvValue;
     DistributedKv::Status status = kvStoragePtr_->Get(kvKey, kvValue);
     if (status == DistributedKv::Status::NOT_FOUND) {
-        if (this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
+        if (this->dataType_ == DistributedKv::DataType::TYPE_DYNAMICAL) {
             SyncByNotFound(key);
         }
 #ifdef DHARDWARE_OPEN_SOURCE
-        if (this->dataType == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
+        if (this->dataType_ == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
             SyncByNotFound(key);
         }
 #endif
@@ -273,7 +273,7 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
 int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<std::string> &values)
 {
     DHLOGI("Get data by key prefix: %{public}s, storeId: %{public}s, dataType: %{public}d",
-        GetAnonyString(keyPrefix).c_str(), storeId_.storeId.c_str(), static_cast<int32_t>(this->dataType));
+        GetAnonyString(keyPrefix).c_str(), storeId_.storeId.c_str(), static_cast<int32_t>(this->dataType_));
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is null");
@@ -284,11 +284,11 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
     std::vector<DistributedKv::Entry> allEntries;
     DistributedKv::Status status = kvStoragePtr_->GetEntries(allEntryKeyPrefix, allEntries);
     if (status == DistributedKv::Status::SUCCESS && allEntries.size() == 0) {
-        if (this->dataType == DistributedKv::DataType::TYPE_DYNAMICAL) {
+        if (this->dataType_ == DistributedKv::DataType::TYPE_DYNAMICAL) {
             SyncByNotFound(keyPrefix);
         }
 #ifdef DHARDWARE_OPEN_SOURCE
-        if (this->dataType == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
+        if (this->dataType_ == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
             SyncByNotFound(keyPrefix);
         }
 #endif
@@ -455,9 +455,9 @@ void DBAdapter::OnRemoteDied()
 bool DBAdapter::DBDiedOpt(int32_t &times)
 {
     // init kvStore.
-    if (this->ReInit(this->isAutoSync) == DH_FWK_SUCCESS) {
+    if (this->ReInit(this->isAutoSync_) == DH_FWK_SUCCESS) {
         // register data change listener again.
-        if (this->isAutoSync) {
+        if (this->isAutoSync_) {
             this->RegisterChangeListener();
         }
         this->SyncDBForRecover();

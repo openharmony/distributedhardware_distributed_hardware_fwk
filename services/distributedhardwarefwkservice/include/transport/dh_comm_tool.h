@@ -52,14 +52,14 @@ public:
     FullCapsRsp ParseAndSaveRemoteDHCaps(const std::string &remoteCaps);
 
     class DHCommToolEventHandler : public AppExecFwk::EventHandler {
-        public:
-            DHCommToolEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
-                std::shared_ptr<DHCommTool> dhCommToolPtr);
-            ~DHCommToolEventHandler() override = default;
-            void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
-        private:
-            void ProcessFullCapsRsp(const FullCapsRsp &capsRsp, const std::shared_ptr<DHCommTool> dhCommToolPtr);
-            std::weak_ptr<DHCommTool> dhCommToolWPtr_;
+    public:
+        DHCommToolEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+            std::shared_ptr<DHCommTool> dhCommToolPtr);
+        ~DHCommToolEventHandler() override = default;
+        void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+    private:
+        void ProcessFullCapsRsp(const FullCapsRsp &capsRsp, const std::shared_ptr<DHCommTool> dhCommToolPtr);
+        std::weak_ptr<DHCommTool> dhCommToolWPtr_;
     };
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> GetEventHandler();
     const std::shared_ptr<DHTransport> GetDHTransportPtr();

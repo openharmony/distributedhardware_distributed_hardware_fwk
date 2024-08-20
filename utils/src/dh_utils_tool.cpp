@@ -62,7 +62,10 @@ std::string GetRandomID()
     static std::uniform_int_distribution<uint64_t> dist(0ULL, 0xFFFFFFFFFFFFFFFFULL);
     uint64_t ab = dist(rd);
     uint64_t cd = dist(rd);
-    uint32_t a, b, c, d;
+    uint32_t a;
+    uint32_t b;
+    uint32_t c;
+    uint32_t d;
     std::stringstream ss;
     ab = (ab & 0xFFFFFFFFFFFF0FFFULL) | 0x0000000000004000ULL;
     cd = (cd & 0x3FFFFFFFFFFFFFFFULL) | 0x8000000000000000ULL;
@@ -126,7 +129,7 @@ std::string Sha256(const std::string& in)
         out[i * DOUBLE_TIMES + 1] = hexCode[value & MASK];
     }
     out[SHA256_DIGEST_LENGTH * DOUBLE_TIMES] = 0;
-    return reinterpret_cast<char*>(out);
+    return std::string(reinterpret_cast<char*>(out));
 }
 
 DeviceInfo GetLocalDeviceInfo()

@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-#include "constants.h"
 #include "publisher_item.h"
+
+#include "constants.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_log.h"
 

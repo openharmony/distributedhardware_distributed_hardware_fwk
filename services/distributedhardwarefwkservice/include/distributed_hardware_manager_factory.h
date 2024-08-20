@@ -46,7 +46,7 @@ private:
     void ExitDHFWK();
 
 private:
-    std::atomic<bool> isInit = false;
+    std::atomic<bool> isInit_ = false;
     std::atomic<bool> flagUnInit_ = false;
 };
 } // namespace DistributedHardware

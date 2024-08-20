@@ -254,11 +254,11 @@ Status DsoftbusOutputPlugin::PushData(const std::string &inPort, std::shared_ptr
         AVTRANS_LOGE("Buffer is nullptr.");
         return Status::ERROR_NULL_POINTER;
     }
-    if (GetReDumpFlag() == true) {
+    if (GetReDumpFlag()) {
         std::remove(SCREEN_FILE_NAME_AFTERCODING.c_str());
         SetReDumpFlagFalse();
     }
-    if (GetDumpFlag() == true) {
+    if (GetDumpFlag()) {
         auto bufferData = buffer->GetMemory();
         DumpBufferToFile(SCREEN_FILE_NAME_AFTERCODING,
             const_cast<uint8_t*>(bufferData->GetReadOnlyData()), bufferData->GetSize());
