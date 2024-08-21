@@ -39,7 +39,6 @@ ohos_shared_library("distributedhardwareutils") {
     "${common_path}/utils/include",
     "include",
     "include/log",
-    "include/eventbus",
   ]
 
   sources = [

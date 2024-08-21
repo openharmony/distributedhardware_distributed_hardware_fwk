@@ -27,12 +27,10 @@
 #include "kvstore_observer.h"
 
 #include "capability_info.h"
-#include "event_sender.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class DBAdapter : public std::enable_shared_from_this<DBAdapter>,
-    public EventSender,
     public DistributedKv::KvStoreDeathRecipient {
 public:
     DBAdapter(const std::string &appId, const std::string &storeId,

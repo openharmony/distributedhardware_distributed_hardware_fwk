@@ -26,7 +26,6 @@
 #include "local_capability_info_manager.h"
 #include "meta_capability_info.h"
 #include "meta_info_manager.h"
-#include "version_info_event.h"
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"

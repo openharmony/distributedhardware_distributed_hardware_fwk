@@ -113,12 +113,7 @@
               "dh_utils_hitrace.h",
               "dh_utils_tool.h",
               "histreamer_ability_parser.h",
-              "histreamer_query_tool.h",
-              "eventbus/event_bus.h",
-              "eventbus/event_registration.h",
-              "eventbus/event_sender.h",
-              "eventbus/event.h",
-              "eventbus/eventbus_handler.h"
+              "histreamer_query_tool.h"
             ],
             "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/utils/include"
           }
