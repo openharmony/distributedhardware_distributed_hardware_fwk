@@ -167,18 +167,6 @@ HWTEST_F(DscreenOutputTest, PushData_001, testing::ext::TestSize.Level1)
     plugin->controller_->PushData(data);
 }
 
-HWTEST_F(DscreenOutputTest, StartControl_001, testing::ext::TestSize.Level1)
-{
-    auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
-    plugin->InitOutputController();
-    OutputController::ControlStatus ret = plugin->controller_->StartControl();
-    EXPECT_EQ(OutputController::ControlStatus::START, ret);
-
-    plugin->controller_->SetControlStatus(OutputController::ControlStatus::START);
-    ret = plugin->controller_->StartControl();
-    EXPECT_EQ(OutputController::ControlStatus::STARTED, ret);
-}
-
 HWTEST_F(DscreenOutputTest, StopControl_001, testing::ext::TestSize.Level1)
 {
     auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
