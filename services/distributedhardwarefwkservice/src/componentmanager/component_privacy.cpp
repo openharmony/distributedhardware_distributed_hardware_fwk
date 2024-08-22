@@ -284,7 +284,7 @@ void ComponentPrivacy::ComponentEventHandler::ProcessEvent(const AppExecFwk::Inn
 }
 
 ComponentPrivacy::ComponentEventHandler::ComponentEventHandler(
-    const std::shared_ptr<AppExecFwk::EventRunner> &runner, ComponentPrivacy *comPrivacy)
+    const std::shared_ptr<AppExecFwk::EventRunner> runner, ComponentPrivacy *comPrivacy)
     : AppExecFwk::EventHandler(runner)
 {
     comPrivacyObj_ = comPrivacy;

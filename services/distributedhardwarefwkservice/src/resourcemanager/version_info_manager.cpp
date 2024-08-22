@@ -40,7 +40,7 @@ VersionInfoManager::~VersionInfoManager()
 }
 
 VersionInfoManager::VersionInfoManagerEventHandler::VersionInfoManagerEventHandler(
-    const std::shared_ptr<AppExecFwk::EventRunner> &runner, std::shared_ptr<VersionInfoManager> versionInfoMgrPtr)
+    const std::shared_ptr<AppExecFwk::EventRunner> runner, std::shared_ptr<VersionInfoManager> versionInfoMgrPtr)
     : AppExecFwk::EventHandler(runner)
 {
     DHLOGI("Ctor VersionInfoManagerEventHandler");

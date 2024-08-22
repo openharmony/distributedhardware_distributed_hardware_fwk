@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,14 +27,14 @@ namespace OHOS {
 namespace DistributedHardware {
 class DistributedHardwareProxy : public IRemoteProxy<IDistributedHardware> {
 public:
-    explicit DistributedHardwareProxy(const sptr<IRemoteObject>& impl)
+    explicit DistributedHardwareProxy(const sptr<IRemoteObject> impl)
         : IRemoteProxy<IDistributedHardware>(impl)
     {
     }
 
     virtual ~DistributedHardwareProxy() {}
-    int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
-    int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener) override;
+    int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> listener) override;
+    int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> listener) override;
     int32_t PublishMessage(const DHTopic topic, const std::string &msg) override;
     std::string QueryLocalSysSpec(QueryLocalSysSpecType spec) override;
 
@@ -42,7 +42,7 @@ public:
     int32_t ReleaseAVCenter(int32_t engineId) override;
     int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId) override;
     int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event) override;
-    int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback) override;
+    int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> callback) override;
     int32_t NotifySourceRemoteSinkStarted(std::string &deviceId) override;
     int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId) override;
     int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId) override;

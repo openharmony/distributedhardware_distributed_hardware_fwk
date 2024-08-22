@@ -90,7 +90,7 @@ public:
 
     class CommonEventHandler : public AppExecFwk::EventHandler {
     public:
-        CommonEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
+        CommonEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner);
         ~CommonEventHandler() override = default;
 
         bool PostTask(const Callback &callback, const std::string &name = std::string(), int64_t delayTime = 0);

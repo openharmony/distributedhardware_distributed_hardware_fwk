@@ -54,7 +54,7 @@ public:
     void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     class VersionInfoManagerEventHandler : public AppExecFwk::EventHandler {
         public:
-            VersionInfoManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+            VersionInfoManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner,
                 std::shared_ptr<VersionInfoManager> versionInfoMgrPtr);
             ~VersionInfoManagerEventHandler() override = default;
             void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;

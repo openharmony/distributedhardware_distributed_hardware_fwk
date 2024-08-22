@@ -34,7 +34,7 @@ class DBAdapter : public std::enable_shared_from_this<DBAdapter>,
     public DistributedKv::KvStoreDeathRecipient {
 public:
     DBAdapter(const std::string &appId, const std::string &storeId,
-        const std::shared_ptr<DistributedKv::KvStoreObserver> &changeListener);
+        const std::shared_ptr<DistributedKv::KvStoreObserver> changeListener);
 
     virtual ~DBAdapter();
     // default init auto-sync kv store
