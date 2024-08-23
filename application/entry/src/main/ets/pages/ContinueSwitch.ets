@@ -66,7 +66,7 @@ struct ContinueSwitch {
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
   private learnMore: ResourceStr = $r('app.string.learn_more');
-  private continueDesc: ResourceStr = $r('app.string.continue_desc', '');
+  private continueDesc: ResourceStr = $r('app.string.continue_desc_text', '');
 
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult) {
     logger.info(TAG + 'onPortrait in');
@@ -121,7 +121,7 @@ struct ContinueSwitch {
   }
 
   getImageArray() {
-    logger.info(TAG + 'getStringSync in');
+    logger.info(TAG + 'getImageArray in');
     for (let i = 0; i <= CommonConstants.IMAGE_COUNT; ++i) {
       this.imageArray.push({
         src: $r(`app.media.continue_${i}`),
@@ -268,6 +268,11 @@ struct ContinueSwitch {
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
                 .accessibilityLevel('no')
+                .padding({
+                  top: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_TOP_PC : CommonConstants.ITEM_LIST_PADDING_TOP,
+                  bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC :
+                  CommonConstants.ITEM_LIST_PADDING_BOTTOM
+                })
 
               Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
                 .width(CommonConstants.CONTINUE_SWITCH_WIDTH)
@@ -286,7 +291,6 @@ struct ContinueSwitch {
                   }
                 })
             }
-            .height(this.is2in1 ? CommonConstants.PC_LIST_HEIGHT : CommonConstants.PHONE_LIST_HEIGHT)
             .width('100%')
             .padding({
               left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
@@ -295,7 +299,11 @@ struct ContinueSwitch {
             .backgroundColor($r('sys.color.ohos_id_color_list_card_bg'))
             .borderRadius(this.is2in1 ? CommonConstants.PC_BORDER_RADIUS : CommonConstants.NON_PC_BORDER_RADIUS)
             .accessibilityText(this.title)
-          }.width('100%')
+          }
+          .width('100%')
+          .constraintSize({
+            minHeight: CommonConstants.PC_LIST_HEIGHT
+          })
 
           Column() {
             Flex({
@@ -313,7 +321,7 @@ struct ContinueSwitch {
                 .fontSize($r('sys.float.ohos_id_text_size_body3'))
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                .textAlign(TextAlign.Center)
+                .textAlign(TextAlign.Start)
                 .lineHeight(CommonConstants.UPDATE_PROMPT_LINE_HEIGHT)
             }
             .margin({ top: CommonConstants.UPDATE_PROMPT_MARGIN_TOP })

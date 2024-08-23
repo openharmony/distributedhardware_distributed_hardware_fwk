@@ -41,8 +41,8 @@
             "value":"[TS_867711]_Resume"
         },
         {
-            "name":"continue_desc",
-            "value":"[TS_921308]_Continuation lets you start something on one device, then instantly pick it up on other devices nearby using the same HUAWEI ID. When continuation is available, an icon will appear in the app dock."
+            "name":"continue_desc_text",
+            "value":"[TS_962336]_Continuation lets you start something on one device, then instantly pick it up on other devices nearby using the same HUAWEI ID. When continuation is available, an icon will appear in the app dock."
         },
         {
             "name":"ContinueSwitchAbility_label",
