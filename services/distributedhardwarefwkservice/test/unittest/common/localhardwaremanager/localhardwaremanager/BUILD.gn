@@ -48,7 +48,6 @@ ohos_unittest("LocalHardwareManagerTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [

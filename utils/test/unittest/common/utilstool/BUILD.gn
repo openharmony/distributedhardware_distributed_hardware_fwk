@@ -36,10 +36,7 @@ ohos_unittest("UtilsToolTest") {
 
   configs = [ ":module_private_config" ]
 
-  deps = [
-    "${utils_path}:distributedhardwareutils",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ "${utils_path}:distributedhardwareutils" ]
 
   external_deps = [
     "cJSON:cjson",

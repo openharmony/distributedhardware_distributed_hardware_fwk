@@ -50,7 +50,6 @@ ohos_unittest("VersionManagerTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
