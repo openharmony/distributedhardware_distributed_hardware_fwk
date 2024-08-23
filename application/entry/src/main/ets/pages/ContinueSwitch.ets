@@ -66,7 +66,7 @@ struct ContinueSwitch {
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
   private learnMore: ResourceStr = $r('app.string.learn_more');
-  private continueDesc: ResourceStr = $r('app.string.continue_desc', '');
+  private continueDesc: ResourceStr = $r('app.string.continue_desc_text', '');
 
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult) {
     logger.info(TAG + 'onPortrait in');
@@ -313,7 +313,7 @@ struct ContinueSwitch {
                 .fontSize($r('sys.float.ohos_id_text_size_body3'))
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                .textAlign(TextAlign.Center)
+                .textAlign(TextAlign.Start)
                 .lineHeight(CommonConstants.UPDATE_PROMPT_LINE_HEIGHT)
             }
             .margin({ top: CommonConstants.UPDATE_PROMPT_MARGIN_TOP })

@@ -23,6 +23,7 @@
     "minAPIVersion": 12,
     "targetAPIVersion": 12,
     "apiReleaseType": "Beta1",
-    "debug": false
+    "debug": false,
+    "configuration":"$profile:configuration"
   }
 }

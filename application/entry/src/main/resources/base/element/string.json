@@ -53,7 +53,7 @@
       "value": "Continuation"
     },
     {
-      "name": "continue_desc",
+      "name": "continue_desc_text",
       "value":"Continuation lets you start something on one device, then instantly pick it up on other devices nearby using the same HUAWEI ID. When continuation is available, an icon will appear in the app dock. %s"
     },
     {
