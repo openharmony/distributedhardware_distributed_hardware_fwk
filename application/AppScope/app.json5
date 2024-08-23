@@ -24,6 +24,6 @@
     "targetAPIVersion": 12,
     "apiReleaseType": "Beta1",
     "debug": false,
-    "configuration":"$profile:configuration"
+    "configuration": "$profile:configuration"
   }
 }

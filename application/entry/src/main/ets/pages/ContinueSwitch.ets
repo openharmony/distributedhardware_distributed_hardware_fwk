@@ -269,8 +269,8 @@ struct ContinueSwitch {
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
                 .accessibilityLevel('no')
                 .padding({
-                  top: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_TOP_PC:CommonConstants.ITEM_LIST_PADDING_TOP,
-                  bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC:CommonConstants.ITEM_LIST_PADDING_BOTTOM
+                  top: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_TOP_PC : CommonConstants.ITEM_LIST_PADDING_TOP,
+                  bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC : CommonConstants.ITEM_LIST_PADDING_BOTTOM
                 })
 
               Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
