@@ -32,6 +32,10 @@ export default class CommonConstants {
   public static readonly CONTINUE_PRIVACY_TEXT_MARGIN_TOP: number = 4;
   public static readonly CONTINUE_SWITCH_WIDTH: number = 36;
   public static readonly CONTINUE_SWITCH_HEIGHT: number = 20;
+  public static readonly ITEM_LIST_PADDING_TOP_PC: number = 13;
+  public static readonly ITEM_LIST_PADDING_BOTTOM_PC: number = 14;
+  public static readonly ITEM_LIST_PADDING_TOP: number = 17;
+  public static readonly ITEM_LIST_PADDING_BOTTOM: number = 18;
   // Tips
   public static readonly TIPS_TYPE: string = '105';
   public static readonly FUN_NUM = 'SF-20005815_f101';

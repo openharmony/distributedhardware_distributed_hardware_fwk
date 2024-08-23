@@ -1,6 +1,5 @@
 {
   "configuration": {
-    "fontSizeScale" : "followSystem",
-    "fontSizeMaxScale" : "3.2"
+    "fontSizeScale" : "followSystem"
   }
 }

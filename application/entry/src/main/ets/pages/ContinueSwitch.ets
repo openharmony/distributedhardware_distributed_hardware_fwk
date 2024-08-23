@@ -268,6 +268,10 @@ struct ContinueSwitch {
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
                 .accessibilityLevel('no')
+                .padding({
+                  top: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_TOP_PC:CommonConstants.ITEM_LIST_PADDING_TOP,
+                  bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC:CommonConstants.ITEM_LIST_PADDING_BOTTOM
+                })
 
               Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
                 .width(CommonConstants.CONTINUE_SWITCH_WIDTH)
@@ -286,7 +290,6 @@ struct ContinueSwitch {
                   }
                 })
             }
-            .height(this.is2in1 ? CommonConstants.PC_LIST_HEIGHT : CommonConstants.PHONE_LIST_HEIGHT)
             .width('100%')
             .padding({
               left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
@@ -295,7 +298,11 @@ struct ContinueSwitch {
             .backgroundColor($r('sys.color.ohos_id_color_list_card_bg'))
             .borderRadius(this.is2in1 ? CommonConstants.PC_BORDER_RADIUS : CommonConstants.NON_PC_BORDER_RADIUS)
             .accessibilityText(this.title)
-          }.width('100%')
+          }
+          .width('100%')
+          .constraintSize({
+            minHeight: CommonConstants.PC_LIST_HEIGHT
+          })
 
           Column() {
             Flex({
