@@ -121,7 +121,7 @@ struct ContinueSwitch {
   }
 
   getImageArray() {
-    logger.info(TAG + 'getStringSync in');
+    logger.info(TAG + 'getImageArray in');
     for (let i = 0; i <= CommonConstants.IMAGE_COUNT; ++i) {
       this.imageArray.push({
         src: $r(`app.media.continue_${i}`),
