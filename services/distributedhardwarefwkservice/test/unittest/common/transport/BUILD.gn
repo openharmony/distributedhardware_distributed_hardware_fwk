@@ -51,7 +51,6 @@ ohos_unittest("TransportTest") {
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [

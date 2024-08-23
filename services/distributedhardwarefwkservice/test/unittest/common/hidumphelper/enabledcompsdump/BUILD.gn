@@ -35,8 +35,6 @@ ohos_unittest("EnabledCompsDumpTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   defines = [

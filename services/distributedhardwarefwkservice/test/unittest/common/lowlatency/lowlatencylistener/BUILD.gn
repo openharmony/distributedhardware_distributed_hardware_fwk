@@ -37,7 +37,6 @@ ohos_unittest("LowLatencyListenerTest") {
   deps = [
     "${innerkits_path}:libdhfwk_sdk",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//third_party/googletest:gtest_main",
   ]
 
   cflags = [
