@@ -270,7 +270,8 @@ struct ContinueSwitch {
                 .accessibilityLevel('no')
                 .padding({
                   top: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_TOP_PC : CommonConstants.ITEM_LIST_PADDING_TOP,
-                  bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC : CommonConstants.ITEM_LIST_PADDING_BOTTOM
+                  bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC :
+                  CommonConstants.ITEM_LIST_PADDING_BOTTOM
                 })
 
               Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
