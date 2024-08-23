@@ -530,5 +530,18 @@ std::vector<DistributedKv::Entry> DBAdapter::GetEntriesByKeys(const std::vector<
     }
     return entries;
 }
+
+bool DBAdapter::SyncDataByNetworkId(const std::string &networkId)
+{
+    DHLOGI("Try initiative sync data by networId: %{public}s", GetAnonyString(networkId).c_str());
+    std::vector<std::string> networkIdVec;
+    networkIdVec.push_back(networkId);
+    DistributedKv::Status status = kvStoragePtr_->Sync(networkIdVec, DistributedKv::SyncMode::PUSH_PULL);
+    if (status != DistributedKv::Status::SUCCESS) {
+        DHLOGE("initiative sync data failed");
+        return false;
+    }
+    return true;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

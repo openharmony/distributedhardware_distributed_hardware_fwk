@@ -26,6 +26,7 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${services_path}/distributedhardwarefwkservice/include/accessmanager",
+    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${utils_path}/include/eventbus",
   ]
 }
@@ -70,6 +71,7 @@ ohos_unittest("AccessManagerTest") {
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "init:libbegetutil",
+    "kv_store:distributeddata_inner",
     "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",

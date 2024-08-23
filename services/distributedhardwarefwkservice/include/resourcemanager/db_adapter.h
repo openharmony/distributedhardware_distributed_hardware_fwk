@@ -55,6 +55,7 @@ public:
     int32_t RemoveDeviceData(const std::string &deviceId);
     int32_t RemoveDataByKey(const std::string &key);
     std::vector<DistributedKv::Entry> GetEntriesByKeys(const std::vector<std::string> &keys);
+    bool SyncDataByNetworkId(const std::string &networkId);
 
 private:
     int32_t RegisterChangeListener();
