@@ -27,7 +27,6 @@ config("module_private_config") {
     "${engine_path}/av_receiver/include",
     "${interface_path}",
     "${common_path}/include",
-    "${media_standard_path}/interfaces/inner_api/native",
   ]
 }
 
@@ -40,7 +39,6 @@ ohos_unittest("HistreamerAbilityQuerierTest") {
 
   deps = [
     "${handler_path}/histreamer_ability_querier:histreamer_ability_querier",
-    "//third_party/googletest:gtest_main",
   ]
 
   if (histreamer_compile_part) {

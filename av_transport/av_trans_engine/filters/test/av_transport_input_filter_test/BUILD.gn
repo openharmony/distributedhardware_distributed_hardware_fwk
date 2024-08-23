@@ -54,8 +54,6 @@ ohos_unittest("AvTransportInputFilterTest") {
   deps = [
     "${engine_path}/filters:avtrans_input_filter",
     "${plugin_path}/plugins/av_trans_input/dsoftbus_input:plugin_AVTransDsoftbusInput",
-    "//third_party/googletest:gtest",
-    "//third_party/libevdev:libevdev",
   ]
 
   if (histreamer_compile_part) {
@@ -72,7 +70,9 @@ ohos_unittest("AvTransportInputFilterTest") {
     "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
+    "googletest:gtest",
     "hilog:libhilog",
+    "libevdev:libevdev",
   ]
 }
 

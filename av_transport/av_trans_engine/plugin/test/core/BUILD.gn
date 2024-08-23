@@ -48,7 +48,6 @@ ohos_unittest("AvTransInputOutputTest") {
   deps = [
     "${filters_path}:avtrans_input_filter",
     "${filters_path}:avtrans_output_filter",
-    "//third_party/googletest:gtest",
   ]
 
   if (histreamer_compile_part) {
@@ -66,6 +65,7 @@ ohos_unittest("AvTransInputOutputTest") {
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
+    "googletest:gtest",
     "hilog:libhilog",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
