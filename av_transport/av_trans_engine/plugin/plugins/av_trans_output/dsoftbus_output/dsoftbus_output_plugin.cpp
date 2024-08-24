@@ -260,8 +260,12 @@ Status DsoftbusOutputPlugin::PushData(const std::string &inPort, std::shared_ptr
     }
     if (GetDumpFlag() == true) {
         auto bufferData = buffer->GetMemory();
-        DumpBufferToFile(SCREEN_FILE_NAME_AFTERCODING,
-            const_cast<uint8_t*>(bufferData->GetReadOnlyData()), bufferData->GetSize());
+        if (bufferData != nullptr) {
+            DumpBufferToFile(SCREEN_FILE_NAME_AFTERCODING,
+                const_cast<uint8_t*>(bufferData->GetReadOnlyData()), bufferData->GetSize());
+        } else {
+            AVTRANS_LOGE("bufferData is null.");
+        }
     } else {
         AVTRANS_LOGD("DumpFlag = false.");
     }
