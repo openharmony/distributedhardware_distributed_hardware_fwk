@@ -52,6 +52,21 @@ void MockOnLineTask::CreateEnableTask()
     }
 }
 
+void MockOnLineTask::CreateMetaEnableTask()
+{
+    for (const auto& devInfo : onLineDevInfos) {
+        TaskParam taskParam = {
+            .networkId = devInfo.networkId,
+            .uuid = devInfo.uuid,
+            .dhId = devInfo.dhId,
+            .dhType = devInfo.dhType
+        };
+        std::shared_ptr<Task> metaEnableTask = MockTaskFactory::GetInstance().CreateTask(TaskType::META_ENABLE,
+            taskParam, shared_from_this());
+        TaskExecutor::GetInstance().PushTask(metaEnableTask);
+    }
+}
+
 void MockOnLineTask::SetOnLineDevInfos(std::vector<MockDevInfo> devInfos)
 {
     this->onLineDevInfos = devInfos;

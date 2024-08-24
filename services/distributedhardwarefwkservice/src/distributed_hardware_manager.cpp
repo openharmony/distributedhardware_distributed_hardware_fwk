@@ -20,6 +20,7 @@
 #include "component_loader.h"
 #include "component_manager.h"
 #include "dh_context.h"
+#include "dh_modem_context_ext.h"
 #include "dh_utils_hisysevent.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
@@ -90,6 +91,7 @@ int32_t DistributedHardwareManager::Release()
     CapabilityInfoManager::GetInstance()->UnInit();
     MetaInfoManager::GetInstance()->UnInit();
     LocalCapabilityInfoManager::GetInstance()->UnInit();
+    DHModemContextExt::GetInstance().UnInit();
     isAllInit_.store(false);
     isLocalInit_.store(false);
     return DH_FWK_SUCCESS;

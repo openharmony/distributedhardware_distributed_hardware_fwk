@@ -817,5 +817,11 @@ HWTEST_F(ComponentManagerTest, QueryBusinessState_001, TestSize.Level0)
     ret = ComponentManager::GetInstance().QueryBusinessState(uuid, dhId);
     EXPECT_EQ(BusinessState::UNKNOWN, ret);
 }
+
+HWTEST_F(ComponentManagerTest, GetDHSourceInstance_001, TestSize.Level0)
+{
+    const IDistributedHardwareSource *sourcePtr = ComponentManager::GetInstance().GetDHSourceInstance(DHType::UNKNOWN);
+    EXPECT_EQ(nullptr, sourcePtr);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

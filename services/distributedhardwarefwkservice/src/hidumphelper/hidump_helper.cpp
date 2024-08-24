@@ -49,6 +49,8 @@ std::unordered_map<TaskType, std::string> g_mapTaskType = {
     { TaskType::DISABLE, "DISABLE" },
     { TaskType::ON_LINE, "ON_LINE" },
     { TaskType::OFF_LINE, "OFF_LINE" },
+    { TaskType::META_ENABLE, "META_ENABLE" },
+    { TaskType::META_DISABLE, "META_DISABLE" },
 };
 
 std::unordered_map<TaskStep, std::string> g_mapTaskStep = {
@@ -59,6 +61,10 @@ std::unordered_map<TaskStep, std::string> g_mapTaskStep = {
     { TaskStep::UNREGISTER_OFFLINE_DISTRIBUTED_HARDWARE, "UNREGISTER_OFFLINE_DISTRIBUTED_HARDWARE" },
     { TaskStep::CLEAR_OFFLINE_INFO, "CLEAR_OFFLINE_INFO" },
     { TaskStep::WAIT_UNREGISTGER_COMPLETE, "WAIT_UNREGISTGER_COMPLETE" },
+    { TaskStep::META_ENABLE_TASK, "META_ENABLE_TASK" },
+    { TaskStep::META_DISABLE_TASK, "META_DISABLE_TASK" },
+    { TaskStep::DO_MODEM_META_ENABLE, "DO_MODEM_META_ENABLE" },
+    { TaskStep::DO_MODEM_META_DISABLE, "DO_MODEM_META_DISABLE" },
 };
 
 std::unordered_map<TaskState, std::string> g_mapTaskState = {

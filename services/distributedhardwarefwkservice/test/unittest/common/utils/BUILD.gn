@@ -27,7 +27,10 @@ config("module_private_config") {
 ohos_unittest("DhContextTest") {
   module_out_path = module_out_path
 
-  sources = [ "dh_context_test.cpp" ]
+  sources = [
+    "dh_context_test.cpp",
+    "dh_modem_context_ext_test.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 
