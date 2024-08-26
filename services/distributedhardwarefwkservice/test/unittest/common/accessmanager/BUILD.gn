@@ -34,12 +34,7 @@ config("module_private_config") {
 ohos_unittest("AccessManagerTest") {
   module_out_path = module_out_path
 
-  sources = [
-    "${services_path}/distributedhardwarefwkservice/src/accessmanager/access_manager.cpp",
-    "${services_path}/distributedhardwarefwkservice/src/distributed_hardware_manager_factory.cpp",
-  ]
-
-  sources += [ "access_manager_test.cpp" ]
+  sources = [ "access_manager_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 

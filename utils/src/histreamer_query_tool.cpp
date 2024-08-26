@@ -16,7 +16,7 @@
 #include "histreamer_query_tool.h"
 
 #include <dlfcn.h>
-#include<malloc.h>
+#include <malloc.h>
 
 #include "distributed_hardware_log.h"
 
