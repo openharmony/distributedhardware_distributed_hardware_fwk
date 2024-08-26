@@ -43,10 +43,7 @@ ohos_unittest("OutputControllerTest") {
   ]
   cflags_cc = cflags
 
-  deps = [
-    "${plugin_path}/plugins/av_trans_output/dscreen_output:plugin_AVTransDscreenOutput",
-    "//third_party/googletest:gtest",
-  ]
+  deps = [ "${plugin_path}/plugins/av_trans_output/dscreen_output:plugin_AVTransDscreenOutput" ]
 
   if (histreamer_compile_part) {
     external_deps = [
@@ -61,6 +58,7 @@ ohos_unittest("OutputControllerTest") {
     "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
+    "googletest:gtest",
     "hilog:libhilog",
   ]
 

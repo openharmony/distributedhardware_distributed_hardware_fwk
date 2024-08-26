@@ -29,7 +29,6 @@ config("module_private_config") {
     "${filters_path}/av_transport_output",
     "${engine_path}/av_sender/test/unittest/av_sender_engine/include",
     "${interface_path}",
-    "${media_standard_path}/interfaces/inner_api/native",
     "${plugin_path}/core",
     "${plugin_path}/interface",
   ]
@@ -57,7 +56,6 @@ ohos_unittest("AvSenderEngineTest") {
     "${engine_path}/av_sender:distributed_av_sender",
     "${filters_path}:avtrans_input_filter",
     "${filters_path}:avtrans_output_filter",
-    "//third_party/googletest:gtest",
   ]
 
   defines = [
@@ -87,6 +85,7 @@ ohos_unittest("AvSenderEngineTest") {
     "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
+    "googletest:gtest",
     "graphic_2d:libgraphic_utils",
     "graphic_surface:surface",
     "hilog:libhilog",
