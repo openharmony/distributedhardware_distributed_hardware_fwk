@@ -251,10 +251,10 @@ struct ContinueSwitch {
             .width(this.imageAnimatorWidth)
             .height(this.imageAnimatorHeight)
             .onStart(() => {
-              console.info(TAG + 'ImageAnimator Start');
+              logger.info(TAG + 'ImageAnimator Start');
             })
             .onFinish(() => {
-              console.info(TAG + 'ImageAnimator Finish');
+              logger.info(TAG + 'ImageAnimator Finish');
             })
 
           Text() {
@@ -389,13 +389,13 @@ struct ContinueSwitch {
       .friction(0.6)
       .edgeEffect(EdgeEffect.Spring)
       .onWillScroll((xOffset: number, yOffset: number) => {
-        console.debug(TAG + 'onScroll : xOffset:' + xOffset + ' ; yOffset' + yOffset);
+        logger.debug(TAG + 'onScroll : xOffset:' + xOffset + ' ; yOffset' + yOffset);
       })
       .onScrollEdge(() => {
-        console.info('To the edge');
+        logger.info('To the edge');
       })
       .onScrollStop(() => {
-        console.info('Scroll Stop');
+        logger.info('Scroll Stop');
       })
       .onAreaChange((oldArea: Area, newArea: Area) => {
         logger.info(TAG + 'Scroll, oldArea.height = ' + oldArea.height + ', newArea.height = ' + newArea.height);
