@@ -288,7 +288,10 @@ std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
     }
     auto buffer = Buffer::CreateDefaultBuffer(static_cast<BufferMetaType>(metaType), data->bufLen);
     auto bufData = buffer->GetMemory();
-
+    if (bufData == nullptr) {
+        AVTRANS_LOGE("bufferData is nullptr.");
+        return nullptr;
+    }
     auto writeSize = bufData->Write(reinterpret_cast<const uint8_t *>(data->buf), data->bufLen, 0);
     if (static_cast<ssize_t>(writeSize) != data->bufLen) {
         AVTRANS_LOGE("write buffer data failed.");
