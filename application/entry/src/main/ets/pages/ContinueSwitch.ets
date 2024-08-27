@@ -307,12 +307,12 @@ struct ContinueSwitch {
                   this.isSwitchOn = isOn;
                   AppStorage.setAndLink('isSwitchOn', isOn);
                   if (isOn) {
-                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
-                      settings.domainName.USER_SECURITY);
+                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
+                      switchState.open, settings.domainName.USER_SECURITY);
                     logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is on');
                   } else {
-                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.close,
-                      settings.domainName.USER_SECURITY);
+                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
+                      switchState.close, settings.domainName.USER_SECURITY);
                     logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
                   }
                 })
