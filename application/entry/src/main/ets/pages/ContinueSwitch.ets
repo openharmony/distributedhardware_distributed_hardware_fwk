@@ -144,46 +144,36 @@ struct ContinueSwitch {
     logger.info(TAG + 'this.gapLength : ' + this.gapLength);
   }
 
-  getForegroundOsAccountLocalId(){
+  getForegroundOsAccountLocalId() {
     logger.info(TAG + 'getForegroundOsAccountLocalId in');
     try {
       this.accountManager.getForegroundOsAccountLocalId().then((localId: number) => {
-        logger.info(TAG +'getForegroundOsAccountLocalId, localId: ' + localId);
+        logger.info(TAG + 'getForegroundOsAccountLocalId, localId: ' + localId);
         this.getAccountInfo(localId);
       }).catch((err: BusinessError) => {
-        logger.error(TAG +'getForegroundOsAccountLocalId err: ' + JSON.stringify(err));
+        logger.error(TAG + 'getForegroundOsAccountLocalId err: ' + JSON.stringify(err));
       });
     } catch (e) {
-      logger.error(TAG +'getForegroundOsAccountLocalId exception: ' + JSON.stringify(e));
+      logger.error(TAG + 'getForegroundOsAccountLocalId exception: ' + JSON.stringify(e));
     }
   }
 
-  getAccountInfo(localId:number) {
+  getAccountInfo(localId: number) {
     logger.info(TAG + 'getAccountInfo in');
     try {
       this.accountManager.queryOsAccountById(localId).then((accountInfo: osAccount.OsAccountInfo) => {
-        logger.info(TAG +'queryOsAccountById, accountInfo.type: ' + JSON.stringify(accountInfo.type));
+        logger.info(TAG + 'queryOsAccountById, accountInfo.type: ' + JSON.stringify(accountInfo.type));
         let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.close,
           settings.domainName.USER_SECURITY);
         this.isSwitchOn = false;
         this.isEnabled = false;
         logger.info(TAG + 'set value isSuccess : status =' + status + '; set:Continue_Switch_Status is 0');
       }).catch((err: BusinessError) => {
-        logger.error(TAG +'queryOsAccountById err: ' + JSON.stringify(err));
+        logger.error(TAG + 'queryOsAccountById err: ' + JSON.stringify(err));
       });
     } catch (e) {
-      logger.error(TAG +'queryOsAccountById exception: ' + JSON.stringify(e));
+      logger.error(TAG + 'queryOsAccountById exception: ' + JSON.stringify(e));
     }
-  }
-
-  private getSymbolSize():length {
-    logger.info(TAG + 'getSymbolSize in');
-    let fontSizeScale:number = AppStorage.get<number>('currentFontSizeScale') as number;
-    logger.info(TAG + 'getSymbolSize : fontSizeScale =' + fontSizeScale);
-    if (fontSizeScale >= 2) {
-      return `${CommonConstants.SYMBOL_INFO_CIRCLE*2}vp`
-    }
-    return CommonConstants.SYMBOL_INFO_CIRCLE;
   }
 
   @Builder
@@ -430,5 +420,15 @@ struct ContinueSwitch {
       logger.info(TAG + 'this.shortSideSize = ' + this.shortSideSize + ', this.imageAnimatorWidth = ' +
       this.imageAnimatorWidth + ', this.imageAnimatorHeight = ' + this.imageAnimatorHeight);
     })
+  }
+
+  private getSymbolSize(): length {
+    logger.info(TAG + 'getSymbolSize in');
+    let fontSizeScale: number = AppStorage.get<number>('currentFontSizeScale') as number;
+    logger.info(TAG + 'getSymbolSize : fontSizeScale =' + fontSizeScale);
+    if (fontSizeScale >= 2) {
+      return `${CommonConstants.SYMBOL_INFO_CIRCLE * 2}vp`
+    }
+    return CommonConstants.SYMBOL_INFO_CIRCLE;
   }
 }
