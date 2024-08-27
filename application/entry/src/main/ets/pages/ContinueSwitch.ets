@@ -24,7 +24,7 @@ import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 import CommonConstants from '../common/constants/CommonConstants';
 import { logger } from '../utils/Logger';
 import { TipsJumpUtils } from '../utils/TipsJumpUtils';
-import { osAccount } from '@kit.BasicServicesKits';
+import osAccount from '@ohos.account.osAccount';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
@@ -422,7 +422,7 @@ struct ContinueSwitch {
     })
   }
 
-  private getSymbolSize(): length {
+  private getSymbolSize(): Length {
     logger.info(TAG + 'getSymbolSize in');
     let fontSizeScale: number = AppStorage.get<number>('currentFontSizeScale') as number;
     logger.info(TAG + 'getSymbolSize : fontSizeScale =' + fontSizeScale);
