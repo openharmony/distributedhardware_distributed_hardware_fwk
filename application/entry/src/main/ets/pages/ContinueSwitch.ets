@@ -144,21 +144,46 @@ struct ContinueSwitch {
     logger.info(TAG + 'this.gapLength : ' + this.gapLength);
   }
 
-  getOsAccountType() {
-    logger.info(TAG + 'getOsAccountType in');
+  getForegroundOsAccountLocalId(){
+    logger.info(TAG + 'getForegroundOsAccountLocalId in');
     try {
-      accountManager.getOsAccountType().then((accountType: osAccount.OsAccountType) => {
-        logger.info(TAG + 'getOsAccountType, accountType: ' + accountType);
-        settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.close,
+      this.accountManager.getForegroundOsAccountLocalId().then((localId: number) => {
+        logger.info(TAG +'getForegroundOsAccountLocalId, localId: ' + localId);
+        this.getAccountInfo(localId);
+      }).catch((err: BusinessError) => {
+        logger.error(TAG +'getForegroundOsAccountLocalId err: ' + JSON.stringify(err));
+      });
+    } catch (e) {
+      logger.error(TAG +'getForegroundOsAccountLocalId exception: ' + JSON.stringify(e));
+    }
+  }
+
+  getAccountInfo(localId:number) {
+    logger.info(TAG + 'getAccountInfo in');
+    try {
+      this.accountManager.queryOsAccountById(localId).then((accountInfo: osAccount.OsAccountInfo) => {
+        logger.info(TAG +'queryOsAccountById, accountInfo.type: ' + JSON.stringify(accountInfo.type));
+        let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.close,
           settings.domainName.USER_SECURITY);
         this.isSwitchOn = false;
         this.isEnabled = false;
+        logger.info(TAG + 'set value isSuccess : status =' + status + '; set:Continue_Switch_Status is 0');
       }).catch((err: BusinessError) => {
-        logger.error(TAG + 'getOsAccountType err: ' + JSON.stringify(err));
+        logger.error(TAG +'queryOsAccountById err: ' + JSON.stringify(err));
       });
     } catch (e) {
-      logger.error(TAG + 'getOsAccountType exception: ' + JSON.stringify(e));
+      logger.error(TAG +'queryOsAccountById exception: ' + JSON.stringify(e));
     }
+  }
+
+  private getSymbolSize():length {
+    logger.info(TAG + 'getSymbolSize in');
+    let fontSizeScale:number = AppStorage.get<number>('currentFontSizeScale') as number;
+    logger.info(TAG + 'getSymbolSize : fontSizeScale =' + fontSizeScale);
+    if (fontSizeScale >= 2) {
+      return `${CommonConstants.SYMBOL_INFO_CIRCLE*2}vp`
+    }
+    return CommonConstants.SYMBOL_INFO_CIRCLE;
   }
 
   @Builder
@@ -181,15 +206,12 @@ struct ContinueSwitch {
       this.contentHeight = this.screenHeight;
       logger.info(TAG + 'screenWidth = ' + this.screenWidth + '; screenHeight = ' + this.screenHeight);
     })
-    if (this.videoController) {
-      this.videoController.start();
-    }
     this.is2in1 = deviceInfo.deviceType === '2in1' ? true : false;
   }
 
   aboutToAppear() {
     logger.info(TAG + 'aboutToAppear in');
-    let value = settings.getValueSync(context, 'Continue_Switch_Status', switchState.open,
+    let value = settings.getValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
       settings.domainName.USER_SECURITY);
     this.isSwitchOn = value != switchState.close ? true : false;
     logger.info(TAG + '<aboutToAppear> this.isSwitchOn : ' + this.isSwitchOn + '; value: ' + value);
@@ -198,14 +220,14 @@ struct ContinueSwitch {
     logger.info(TAG + 'AppStorage.get<boolean>(isSwitchOn) : ' + AppStorage.get<boolean>('isSwitchOn'));
 
     if (this.isSwitchOn) {
-      let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open,
+      let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
         settings.domainName.USER_SECURITY);
       logger.info(TAG + 'set value success :' + status + '; set:Continue_Switch_Status is 1');
     }
 
     this.getStringSync();
     this.getImageArray();
-    this.getOsAccountType();
+    this.getForegroundOsAccountLocalId();
 
     this.listener.on('change', (mediaQueryResult: mediaQuery.MediaQueryResult) => {
       this.onPortrait(mediaQueryResult);
@@ -309,7 +331,7 @@ struct ContinueSwitch {
                   if (isOn) {
                     let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
                       switchState.open, settings.domainName.USER_SECURITY);
-                    logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is on');
+                    logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is open');
                   } else {
                     let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
                       switchState.close, settings.domainName.USER_SECURITY);
@@ -339,7 +361,7 @@ struct ContinueSwitch {
             }) {
               SymbolGlyph($r('sys.symbol.info_circle_fill'))
                 .fontWeight(FontWeight.Medium)
-                .fontSize(CommonConstants.SYMBOL_INFO_CIRCLE)
+                .fontSize(this.getSymbolSize())
                 .fontColor([$r('sys.color.ohos_id_color_activated')])
                 .margin({ right: CommonConstants.SYMBOL_MARGIN_RIGHT })
 
