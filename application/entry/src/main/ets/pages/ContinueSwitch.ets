@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
- * Licensed under the Apache License, Version 2.0 (the 'License');
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an 'AS IS' BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright (c) 2024 Huawei Device Co., Ltd.
+* Licensed under the Apache License, Version 2.0 (the 'License');
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an 'AS IS' BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 import common from '@ohos.app.ability.common';
 import display from '@ohos.display';
 import settings from '@ohos.settings';
@@ -24,6 +24,7 @@ import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 import CommonConstants from '../common/constants/CommonConstants';
 import { logger } from '../utils/Logger';
 import { TipsJumpUtils } from '../utils/TipsJumpUtils';
+import { osAccount } from '@kit.BasicServicesKits';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
@@ -61,12 +62,14 @@ struct ContinueSwitch {
   @State animationState: AnimationStatus = AnimationStatus.Running;
   @State reverse: boolean = false;
   @State iterations: number = -1;
+  @State isEnabled: boolean = true;
   private videoController: VideoController | undefined = undefined;
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
   private learnMore: ResourceStr = $r('app.string.learn_more');
   private continueDesc: ResourceStr = $r('app.string.continue_desc_text', '');
+  private accountManager: osAccount.AccountManager = osAccount.getAccountManager();
 
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult) {
     logger.info(TAG + 'onPortrait in');
@@ -110,7 +113,7 @@ struct ContinueSwitch {
           logger.error(TAG + 'error is ' + error);
         } else {
           this.title = value;
-          console.info(TAG + '<aboutToAppear> this.title : ' + this.title);
+          logger.info(TAG + '<aboutToAppear> this.title : ' + this.title);
         }
       })
     } catch (error) {
@@ -128,6 +131,33 @@ struct ContinueSwitch {
         duration: (i == CommonConstants.IMAGE_COUNT) ? CommonConstants.IMG_ANIMATOR_OVER_DURATION
           : CommonConstants.IMG_ANIMATOR_NORMAL_DURATION
       })
+    }
+  }
+
+  getGapLength() {
+    logger.info(TAG + 'getGapLength in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
+    if (deviceInfo.deviceType == 'phone') {
+      this.gapLength = CommonConstants.GENERAL_PHONE_GAP_LENGTH;
+    } else if (deviceInfo.deviceType == '2in1' || deviceInfo.deviceType == 'tablet') {
+      this.gapLength = CommonConstants.PC_PAD_GAP_LENGTH;
+    }
+    logger.info(TAG + 'this.gapLength : ' + this.gapLength);
+  }
+
+  getOsAccountType() {
+    logger.info(TAG + 'getOsAccountType in');
+    try {
+      accountManager.getOsAccountType().then((accountType: osAccount.OsAccountType) => {
+        logger.info(TAG + 'getOsAccountType, accountType: ' + accountType);
+        settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.close,
+          settings.domainName.USER_SECURITY);
+        this.isSwitchOn = false;
+        this.isEnabled = false;
+      }).catch((err: BusinessError) => {
+        logger.error(TAG + 'getOsAccountType err: ' + JSON.stringify(err));
+      });
+    } catch (e) {
+      logger.error(TAG + 'getOsAccountType exception: ' + JSON.stringify(e));
     }
   }
 
@@ -159,7 +189,8 @@ struct ContinueSwitch {
 
   aboutToAppear() {
     logger.info(TAG + 'aboutToAppear in');
-    let value = settings.getValueSync(context, 'Continue_Switch_Status', switchState.open);
+    let value = settings.getValueSync(context, 'Continue_Switch_Status', switchState.open,
+      settings.domainName.USER_SECURITY);
     this.isSwitchOn = value != switchState.close ? true : false;
     logger.info(TAG + '<aboutToAppear> this.isSwitchOn : ' + this.isSwitchOn + '; value: ' + value);
 
@@ -167,27 +198,19 @@ struct ContinueSwitch {
     logger.info(TAG + 'AppStorage.get<boolean>(isSwitchOn) : ' + AppStorage.get<boolean>('isSwitchOn'));
 
     if (this.isSwitchOn) {
-      let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open);
+      let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open,
+        settings.domainName.USER_SECURITY);
       logger.info(TAG + 'set value success :' + status + '; set:Continue_Switch_Status is 1');
     }
 
     this.getStringSync();
     this.getImageArray();
+    this.getOsAccountType();
 
     this.listener.on('change', (mediaQueryResult: mediaQuery.MediaQueryResult) => {
       this.onPortrait(mediaQueryResult);
     })
     this.extContext = localStorage.get<common.UIExtensionContext>('context');
-  }
-
-  getGapLength() {
-    logger.info(TAG + 'getGapLength in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
-    if (deviceInfo.deviceType == 'phone') {
-      this.gapLength = CommonConstants.GENERAL_PHONE_GAP_LENGTH;
-    } else if (deviceInfo.deviceType == '2in1' || deviceInfo.deviceType == 'tablet') {
-      this.gapLength = CommonConstants.PC_PAD_GAP_LENGTH;
-    }
-    logger.info(TAG + 'this.gapLength : ' + this.gapLength);
   }
 
   onBackPress() {
@@ -278,18 +301,23 @@ struct ContinueSwitch {
                 .width(CommonConstants.CONTINUE_SWITCH_WIDTH)
                 .height(CommonConstants.CONTINUE_SWITCH_HEIGHT)
                 .hoverEffect(HoverEffect.None)
+                .enabled(this.isEnabled)
                 .onChange((isOn: boolean) => {
                   logger.info(TAG + 'isOn:' + isOn);
                   this.isSwitchOn = isOn;
                   AppStorage.setAndLink('isSwitchOn', isOn);
                   if (isOn) {
-                    let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open);
+                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
+                      settings.domainName.USER_SECURITY);
                     logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is on');
                   } else {
-                    let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.close);
+                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.close,
+                      settings.domainName.USER_SECURITY);
                     logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
                   }
                 })
+
+
             }
             .width('100%')
             .padding({
@@ -340,10 +368,6 @@ struct ContinueSwitch {
                 .fontColor($r('sys.color.ohos_id_color_text_secondary'))
                 .textAlign(TextAlign.Start)
                 .width('100%')
-                .onAreaChange((oldArea: Area, newArea: Area) => {
-                  logger.info(TAG + 'Text:continue_privacy_text, continue desc, oldArea.height = ' + oldArea.height +
-                    ', newArea.height = ' + newArea.height);
-                })
             }
             .padding({
               left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
@@ -365,7 +389,7 @@ struct ContinueSwitch {
       .friction(0.6)
       .edgeEffect(EdgeEffect.Spring)
       .onWillScroll((xOffset: number, yOffset: number) => {
-        console.info(TAG + 'onScroll : xOffset:' + xOffset + ' ; yOffset' + yOffset);
+        console.debug(TAG + 'onScroll : xOffset:' + xOffset + ' ; yOffset' + yOffset);
       })
       .onScrollEdge(() => {
         console.info('To the edge');
