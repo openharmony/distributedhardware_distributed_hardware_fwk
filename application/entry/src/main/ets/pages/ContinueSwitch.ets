@@ -316,8 +316,6 @@ struct ContinueSwitch {
                     logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
                   }
                 })
-
-
             }
             .width('100%')
             .padding({
