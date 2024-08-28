@@ -163,11 +163,13 @@ struct ContinueSwitch {
     try {
       this.accountManager.queryOsAccountById(localId).then((accountInfo: osAccount.OsAccountInfo) => {
         logger.info(TAG + 'queryOsAccountById, accountInfo.type: ' + JSON.stringify(accountInfo.type));
-        let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.close,
-          settings.domainName.USER_SECURITY);
-        this.isSwitchOn = false;
-        this.isEnabled = false;
-        logger.info(TAG + 'set value isSuccess : status =' + status + '; set:Continue_Switch_Status is 0');
+        if (accountInfo.type === osAccount.OsAccountType.PRIVATE) {
+          let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.close,
+            settings.domainName.USER_SECURITY);
+          this.isSwitchOn = false;
+          this.isEnabled = false;
+          logger.info(TAG + 'set value isSuccess : status =' + status + '; set:Continue_Switch_Status is 0');
+        }
       }).catch((err: BusinessError) => {
         logger.error(TAG + 'queryOsAccountById err: ' + JSON.stringify(err));
       });
