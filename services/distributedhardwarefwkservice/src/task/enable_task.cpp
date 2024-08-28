@@ -17,6 +17,8 @@
 
 #include <pthread.h>
 
+#include "ffrt.h"
+
 #include "anonymous_string.h"
 #include "capability_utils.h"
 #include "component_manager.h"
@@ -48,7 +50,7 @@ EnableTask::~EnableTask()
 
 void EnableTask::DoTask()
 {
-    std::thread([this]() { this->DoTaskInner(); }).detach();
+    ffrt::submit([this]() { this->DoTaskInner(); });
 }
 
 void EnableTask::DoTaskInner()

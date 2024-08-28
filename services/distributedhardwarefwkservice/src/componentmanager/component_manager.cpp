@@ -21,6 +21,7 @@
 #include <string>
 #include <thread>
 
+#include "ffrt.h"
 #include "ipc_object_stub.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
@@ -903,7 +904,7 @@ void ComponentManager::DumpLoadedComps(std::set<DHType> &compSourceType, std::se
 
 void ComponentManager::Recover(DHType dhType)
 {
-    std::thread([this, dhType]() { this->DoRecover(dhType); }).detach();
+    ffrt::submit([this, dhType]() { this->DoRecover(dhType); });
 }
 
 void ComponentManager::DoRecover(DHType dhType)

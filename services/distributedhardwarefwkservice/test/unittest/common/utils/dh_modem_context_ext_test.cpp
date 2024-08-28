@@ -40,41 +40,43 @@ void DHModemContextExtTest::SetUpTestCase() {}
 
 void DHModemContextExtTest::TearDownTestCase() {}
 
-HWTEST_F(DHModemContextExtTest, GetHandler_001, TestSize.Level1)
-{
-    int32_t ret = DHModemContextExt::GetInstance().GetHandler();
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
-}
+#ifdef DHARDWARE_OPEN_MODEM_EXT
+    HWTEST_F(DHModemContextExtTest, GetHandler_001, TestSize.Level1)
+    {
+        int32_t ret = DHModemContextExt::GetInstance().GetHandler();
+        EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    }
 
-HWTEST_F(DHModemContextExtTest, GetModemExtInstance_001, TestSize.Level1)
-{
-    DHModemContextExt::GetInstance().soHandle_ = nullptr;
-    DHModemContextExt::GetInstance().GetModemExtInstance();
-    EXPECT_NE(DHModemContextExt::GetInstance().distributedModemExt_, nullptr);
-}
+    HWTEST_F(DHModemContextExtTest, GetModemExtInstance_001, TestSize.Level1)
+    {
+        DHModemContextExt::GetInstance().soHandle_ = nullptr;
+        DHModemContextExt::GetInstance().GetModemExtInstance();
+        EXPECT_NE(DHModemContextExt::GetInstance().distributedModemExt_, nullptr);
+    }
 
-HWTEST_F(DHModemContextExtTest, GetModemExtInstance_002, TestSize.Level1)
-{
-    int32_t ret = DHModemContextExt::GetInstance().GetHandler();
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    DHModemContextExt::GetInstance().GetModemExtInstance();
-    EXPECT_NE(DHModemContextExt::GetInstance().distributedModemExt_, nullptr);
-}
+    HWTEST_F(DHModemContextExtTest, GetModemExtInstance_002, TestSize.Level1)
+    {
+        int32_t ret = DHModemContextExt::GetInstance().GetHandler();
+        EXPECT_EQ(ret, DH_FWK_SUCCESS);
+        DHModemContextExt::GetInstance().GetModemExtInstance();
+        EXPECT_NE(DHModemContextExt::GetInstance().distributedModemExt_, nullptr);
+    }
 
-HWTEST_F(DHModemContextExtTest, UnInit_001, TestSize.Level1)
-{
-    DHModemContextExt::GetInstance().soHandle_ = nullptr;
-    int32_t ret = DHModemContextExt::GetInstance().UnInit();
-    EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
-}
+    HWTEST_F(DHModemContextExtTest, UnInit_001, TestSize.Level1)
+    {
+        DHModemContextExt::GetInstance().soHandle_ = nullptr;
+        int32_t ret = DHModemContextExt::GetInstance().UnInit();
+        EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
+    }
 
-HWTEST_F(DHModemContextExtTest, UnInit_002, TestSize.Level1)
-{
-    int32_t ret = DHModemContextExt::GetInstance().GetHandler();
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    ret = DHModemContextExt::GetInstance().UnInit();
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
-}
+    HWTEST_F(DHModemContextExtTest, UnInit_002, TestSize.Level1)
+    {
+        int32_t ret = DHModemContextExt::GetInstance().GetHandler();
+        EXPECT_EQ(ret, DH_FWK_SUCCESS);
+        ret = DHModemContextExt::GetInstance().UnInit();
+        EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    }
+#endif
 }
 }
 }

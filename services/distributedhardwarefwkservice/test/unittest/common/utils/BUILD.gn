@@ -52,6 +52,10 @@ ohos_unittest("DhContextTest") {
     "-Dprivate=public",
   ]
 
+  if (distributed_hardware_fwk_low_latency) {
+    defines += [ "DHARDWARE_OPEN_MODEM_EXT" ]
+  }
+
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
