@@ -43,11 +43,7 @@ LocalCapabilityInfoManager::~LocalCapabilityInfoManager()
 
 std::shared_ptr<LocalCapabilityInfoManager> LocalCapabilityInfoManager::GetInstance()
 {
-    static std::shared_ptr<LocalCapabilityInfoManager> instance(new(std::nothrow) LocalCapabilityInfoManager);
-    if (instance == nullptr) {
-        DHLOGE("instance is nullptr, because applying memory fail!");
-        return nullptr;
-    }
+    static std::shared_ptr<LocalCapabilityInfoManager> instance = std::make_shared<LocalCapabilityInfoManager>();
     return instance;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +35,7 @@ public:
     AccessManager &operator = (const AccessManager &) = delete;
     AccessManager(AccessManager &&) = delete;
     AccessManager &operator = (AccessManager &&) = delete;
+    AccessManager() = default;
     virtual ~AccessManager();
     static std::shared_ptr<AccessManager> GetInstance();
     int32_t Init();
@@ -50,7 +51,6 @@ public:
     int32_t Dump(const std::vector<std::string> &argsStr, std::string &result);
 
 private:
-    AccessManager() = default;
     int32_t RegisterDevStateCallback();
     int32_t UnRegisterDevStateCallback();
     int32_t InitDeviceManager();

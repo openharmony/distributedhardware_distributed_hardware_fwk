@@ -87,9 +87,9 @@ void LowLatency::CloseLowLatency()
     DHLOGI("Shutdown LowLatency");
     std::lock_guard<std::mutex> lock(lowLatencyMutex_);
     lowLatencySwitchSet_.clear();
-    auto &rssClient = OHOS::ResourceSchedule::ResSchedClient::GetInstance();
     // to restore normal latency mode: value = 1
-    rssClient.ReportData(OHOS::ResourceSchedule::ResType::RES_TYPE_NETWORK_LATENCY_REQUEST, MODE_DISABLE,
+    OHOS::ResourceSchedule::ResSchedClient::GetInstance().ReportData(
+        OHOS::ResourceSchedule::ResType::RES_TYPE_NETWORK_LATENCY_REQUEST, MODE_DISABLE,
         {{LOW_LATENCY_KEY, DH_FWK_PKG_NAME}});
 }
 } // namespace DistributedHardware

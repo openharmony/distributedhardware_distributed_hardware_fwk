@@ -59,11 +59,7 @@ void DHCommTool::UnInit()
 
 std::shared_ptr<DHCommTool> DHCommTool::GetInstance()
 {
-    static std::shared_ptr<DHCommTool> instance(new(std::nothrow) DHCommTool);
-    if (instance == nullptr) {
-        DHLOGE("instance is nullptr, because applying memory fail!");
-        return nullptr;
-    }
+    static std::shared_ptr<DHCommTool> instance = std::make_shared<DHCommTool>();
     return instance;
 }
 
