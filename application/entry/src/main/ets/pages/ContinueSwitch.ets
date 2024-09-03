@@ -71,7 +71,7 @@ struct ContinueSwitch {
   private continueDesc: ResourceStr = $r('app.string.continue_desc_text', '');
   private accountManager: osAccount.AccountManager = osAccount.getAccountManager();
 
-  onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult):void {
+  onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult): void {
     logger.info(TAG + 'onPortrait in');
     if (mediaQueryResult.matches as boolean) {
       this.extContext?.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_DARK);
@@ -89,7 +89,7 @@ struct ContinueSwitch {
    * @param height
    * @param width
    */
-  getImageAnimatorSize(height: Length, width: Length):void {
+  getImageAnimatorSize(height: Length, width: Length): void {
     logger.info(TAG + 'getImageAnimatorSize in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
     let totalHeight = height as number;
     this.shortSideSize = width < totalHeight / 2 ? width as number : totalHeight / 2 as number;
@@ -104,7 +104,7 @@ struct ContinueSwitch {
     this.imageAnimatorWidth + ', this.imageAnimatorHeight = ' + this.imageAnimatorHeight);
   }
 
-  getStringSync():void {
+  getStringSync(): void {
     logger.info(TAG + 'getStringSync in');
     try {
       context.resourceManager.getStringValue($r('app.string.continue_title')
@@ -123,7 +123,7 @@ struct ContinueSwitch {
     }
   }
 
-  getImageArray():void {
+  getImageArray(): void {
     logger.info(TAG + 'getImageArray in');
     for (let i = 0; i <= CommonConstants.IMAGE_COUNT; ++i) {
       this.imageArray.push({
@@ -134,7 +134,7 @@ struct ContinueSwitch {
     }
   }
 
-  getGapLength():void {
+  getGapLength(): void {
     logger.info(TAG + 'getGapLength in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
     if (deviceInfo.deviceType == 'phone') {
       this.gapLength = CommonConstants.GENERAL_PHONE_GAP_LENGTH;
@@ -144,7 +144,7 @@ struct ContinueSwitch {
     logger.info(TAG + 'this.gapLength : ' + this.gapLength);
   }
 
-  getForegroundOsAccountLocalId():void {
+  getForegroundOsAccountLocalId(): void {
     logger.info(TAG + 'getForegroundOsAccountLocalId in');
     try {
       this.accountManager.getForegroundOsAccountLocalId().then((localId: number) => {
@@ -158,7 +158,7 @@ struct ContinueSwitch {
     }
   }
 
-  getAccountInfo(localId: number):void {
+  getAccountInfo(localId: number): void {
     logger.info(TAG + 'getAccountInfo in');
     try {
       this.accountManager.queryOsAccountById(localId).then((accountInfo: osAccount.OsAccountInfo) => {
