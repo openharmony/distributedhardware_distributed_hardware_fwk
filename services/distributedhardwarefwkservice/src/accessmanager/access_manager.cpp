@@ -43,11 +43,7 @@ AccessManager::~AccessManager()
 
 std::shared_ptr<AccessManager> AccessManager::GetInstance()
 {
-    static std::shared_ptr<AccessManager> instance(new(std::nothrow) AccessManager);
-    if (instance == nullptr) {
-        DHLOGE("instance is nullptr, because applying memory fail!");
-        return nullptr;
-    }
+    static std::shared_ptr<AccessManager> instance = std::make_shared<AccessManager>();
     return instance;
 }
 

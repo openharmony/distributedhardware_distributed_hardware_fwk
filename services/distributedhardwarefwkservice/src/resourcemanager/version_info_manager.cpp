@@ -73,11 +73,7 @@ std::shared_ptr<VersionInfoManager::VersionInfoManagerEventHandler> VersionInfoM
 
 std::shared_ptr<VersionInfoManager> VersionInfoManager::GetInstance()
 {
-    static std::shared_ptr<VersionInfoManager> instance(new(std::nothrow) VersionInfoManager);
-    if (instance == nullptr) {
-        DHLOGE("instance is nullptr, because applying memory fail!");
-        return nullptr;
-    }
+    static std::shared_ptr<VersionInfoManager> instance = std::make_shared<VersionInfoManager>();
     return instance;
 }
 

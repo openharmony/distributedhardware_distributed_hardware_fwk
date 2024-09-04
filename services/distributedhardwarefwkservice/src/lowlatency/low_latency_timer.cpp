@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,18 +39,18 @@ LowLatencyTimer::~LowLatencyTimer()
 void LowLatencyTimer::ExecuteInner()
 {
     DHLOGD("ExecuteInner");
-    auto &rssClient = OHOS::ResourceSchedule::ResSchedClient::GetInstance();
     // to enable low latency mode: value = 0
-    rssClient.ReportData(OHOS::ResourceSchedule::ResType::RES_TYPE_NETWORK_LATENCY_REQUEST, MODE_ENABLE,
+    OHOS::ResourceSchedule::ResSchedClient::GetInstance().ReportData(
+        OHOS::ResourceSchedule::ResType::RES_TYPE_NETWORK_LATENCY_REQUEST, MODE_ENABLE,
         {{LOW_LATENCY_KEY, DH_FWK_PKG_NAME}});
 }
 
 void LowLatencyTimer::HandleStopTimer()
 {
     DHLOGI("HandleStopTimer!");
-    auto &rssClient = OHOS::ResourceSchedule::ResSchedClient::GetInstance();
     // to restore normal latency mode: value = 1
-    rssClient.ReportData(OHOS::ResourceSchedule::ResType::RES_TYPE_NETWORK_LATENCY_REQUEST, MODE_DISABLE,
+    OHOS::ResourceSchedule::ResSchedClient::GetInstance().ReportData(
+        OHOS::ResourceSchedule::ResType::RES_TYPE_NETWORK_LATENCY_REQUEST, MODE_DISABLE,
         {{LOW_LATENCY_KEY, DH_FWK_PKG_NAME}});
 }
 }

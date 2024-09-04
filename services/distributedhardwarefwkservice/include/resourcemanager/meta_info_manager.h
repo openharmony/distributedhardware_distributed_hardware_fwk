@@ -36,6 +36,7 @@ public:
     MetaInfoManager(MetaInfoManager &&) = delete;
     MetaInfoManager &operator = (MetaInfoManager &&) = delete;
     static std::shared_ptr<MetaInfoManager> GetInstance();
+    MetaInfoManager();
     virtual ~MetaInfoManager();
     int32_t Init();
     int32_t UnInit();
@@ -67,7 +68,6 @@ public:
     std::shared_ptr<MetaInfoManager::MetaInfoManagerEventHandler> GetEventHandler();
 
 private:
-    MetaInfoManager();
     int32_t GetMetaCapByValue(const std::string &value, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
     void HandleMetaCapabilityAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
     void HandleMetaCapabilityUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords);

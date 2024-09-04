@@ -45,11 +45,7 @@ CapabilityInfoManager::~CapabilityInfoManager()
 
 std::shared_ptr<CapabilityInfoManager> CapabilityInfoManager::GetInstance()
 {
-    static std::shared_ptr<CapabilityInfoManager> instance(new(std::nothrow) CapabilityInfoManager);
-    if (instance == nullptr) {
-        DHLOGE("instance is nullptr, because applying memory fail!");
-        return nullptr;
-    }
+    static std::shared_ptr<CapabilityInfoManager> instance = std::make_shared<CapabilityInfoManager>();
     return instance;
 }
 
