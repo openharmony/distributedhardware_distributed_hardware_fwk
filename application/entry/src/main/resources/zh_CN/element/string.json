@@ -53,8 +53,8 @@
             "value":"接续"
         },
         {
-            "name":"continue_desc",
-            "value":"在一台设备上浏览或编辑内容后，只需在附近的另一台已登录相同华为账号设备的桌面任务栏上找到接续图标并点击，即可继续操作。"
+            "name":"continue_desc_text",
+            "value":"在一台设备上浏览或编辑内容后，然后在附近另一台登录相同华为账号的设备的桌面任务栏上点击接续图标，即可继续使用。%s"
         },
         {
             "name":"multi_device_collaboration",
@@ -62,7 +62,15 @@
         },
         {
             "name":"continue_privacy_text",
-            "value":"本服务使用过程中需要使用蓝牙和 WLAN 功能，读取并传送本设备名称到要接续的设备。打开开关，即表示您同意上述内容。"
+            "value":"本服务需要使用 WLAN 和蓝牙功能，读取并传送本设备名称到要接续的设备。打开开关，即表示您同意上述内容。"
+        },
+        {
+            "name": "update_version_prompt",
+            "value":"对方需升级至 HarmonyOS NEXT 及以上版本。"
+        },
+        {
+            "name": "learn_more",
+            "value":"了解详情"
         }
     ]
 }

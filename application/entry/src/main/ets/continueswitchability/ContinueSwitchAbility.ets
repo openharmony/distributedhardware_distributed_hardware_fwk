@@ -23,10 +23,12 @@ export default class ContinueSwitchAbility extends UIExtensionAbility {
   onCreate() {
     console.log(TAG, `UIExtAbility onCreate`);
     AppStorage.setOrCreate('currentColorMode', this.context.config.colorMode);
+    AppStorage.setOrCreate('currentFontSizeScale', this.context.config.fontSizeScale);
   }
 
   onConfigurationUpdate(newConfig: Configuration) {
     AppStorage.setOrCreate('currentColorMode', this.context.config.colorMode);
+    AppStorage.setOrCreate('currentFontSizeScale', this.context.config.fontSizeScale);
   }
 
   onForeground() {

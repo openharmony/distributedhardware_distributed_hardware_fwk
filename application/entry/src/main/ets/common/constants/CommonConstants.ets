@@ -15,20 +15,35 @@
 
 export default class CommonConstants {
   //ContinueSwitch page :
-  static readonly IMAGE_COUNT:number = 85;
-  static readonly IMG_ANIMATOR_OVER_DURATION:number = 1000;
-  static readonly IMG_ANIMATOR_NORMAL_DURATION:number = 30;
-  static readonly SWITCH_STATUS_OPEN:string = '1';
-  static readonly SWITCH_STATUS_CLOSE:string = '0';
-  static readonly GENERAL_PHONE_GAP_LENGTH:number = 16;
-  static readonly PC_PAD_GAP_LENGTH:number = 24;
-  static readonly PC_LIST_HEIGHT:number = 48;
-  static readonly PHONE_LIST_HEIGHT:number = 56;
-  static readonly TEXT_LIST_ALIGN_DISTANCE:number = 12;
-  static readonly PC_BORDER_RADIUS:number = 16;
-  static readonly NON_PC_BORDER_RADIUS:number = 20;
-  static readonly CONTINUE_DESC_TEXT_MARGIN_BOTTOM:number = 32;
-  static readonly CONTINUE_PRIVACY_TEXT_MARGIN_TOP:number = 8;
-  static readonly CONTINUE_SWITCH_WIDTH:number = 36;
-  static readonly CONTINUE_SWITCH_HEIGHT:number = 20;
+  public static readonly IMAGE_COUNT: number = 84;
+  public static readonly IMG_ANIMATOR_OVER_DURATION: number = 1000;
+  public static readonly IMG_ANIMATOR_NORMAL_DURATION: number = 30;
+  public static readonly SWITCH_STATUS_OPEN: string = '1';
+  public static readonly SWITCH_STATUS_CLOSE: string = '0';
+  public static readonly GENERAL_PHONE_GAP_LENGTH: number = 16;
+  public static readonly PC_PAD_GAP_LENGTH: number = 24;
+  public static readonly PC_LIST_HEIGHT: number = 48;
+  public static readonly PHONE_LIST_HEIGHT: number = 56;
+  public static readonly TEXT_LIST_ALIGN_DISTANCE: number = 12;
+  public static readonly PC_BORDER_RADIUS: number = 16;
+  public static readonly NON_PC_BORDER_RADIUS: number = 20;
+  public static readonly CONTINUE_DESC_TEXT_MARGIN_BOTTOM: number = 32;
+  public static readonly CONTINUE_DESC_TEXT_MARGIN_TOP: number = 24;
+  public static readonly CONTINUE_PRIVACY_TEXT_MARGIN_TOP: number = 4;
+  public static readonly CONTINUE_SWITCH_WIDTH: number = 36;
+  public static readonly CONTINUE_SWITCH_HEIGHT: number = 20;
+  public static readonly ITEM_LIST_PADDING_TOP_PC: number = 13;
+  public static readonly ITEM_LIST_PADDING_BOTTOM_PC: number = 14;
+  public static readonly ITEM_LIST_PADDING_TOP: number = 17;
+  public static readonly ITEM_LIST_PADDING_BOTTOM: number = 18;
+  public static readonly CONTINUE_SWITCH_KEY: string = 'Continue_Switch_Status';
+  // Tips
+  public static readonly TIPS_TYPE: string = '105';
+  public static readonly FUN_NUM = 'SF-20005815_f101';
+  // Symbol
+  public static readonly SYMBOL_INFO_CIRCLE: number = 14;
+  public static readonly SYMBOL_MARGIN_RIGHT: number = 4;
+  // Update prompt text
+  public static readonly UPDATE_PROMPT_LINE_HEIGHT: number = 16;
+  public static readonly UPDATE_PROMPT_MARGIN_TOP: number = 9;
 }
