@@ -23,6 +23,7 @@ import mediaQuery from '@ohos.mediaquery';
 import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 import CommonConstants from '../common/constants/CommonConstants';
 import { logger } from '../utils/Logger';
+import { TipsJumpUtils } from '../utils/TipsJumpUtils';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
@@ -64,6 +65,8 @@ struct ContinueSwitch {
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
+  private learnMore: ResourceStr = $r('app.string.learn_more');
+  private continueDesc: ResourceStr = $r('app.string.continue_desc_text', '');
 
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult) {
     logger.info(TAG + 'onPortrait in');
@@ -118,7 +121,7 @@ struct ContinueSwitch {
   }
 
   getImageArray() {
-    logger.info(TAG + 'getStringSync in');
+    logger.info(TAG + 'getImageArray in');
     for (let i = 0; i <= CommonConstants.IMAGE_COUNT; ++i) {
       this.imageArray.push({
         src: $r(`app.media.continue_${i}`),
@@ -231,18 +234,28 @@ struct ContinueSwitch {
               console.info(TAG + 'ImageAnimator Finish');
             })
 
-          Text($r('app.string.continue_desc'))
-            .fontSize($r('sys.float.ohos_id_text_size_body2'))
-            .fontWeight(FontWeight.Regular)
-            .margin({ bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM })
-            .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-            .textAlign(TextAlign.Center)
-            .width('100%')
-            .maxLines(10)
-            .onAreaChange((oldArea: Area, newArea: Area) => {
-              logger.info(TAG + 'Text:continue desc, oldArea.height = ' + oldArea.height +
-                ', newArea.height = ' + newArea.height);
-            })
+          Text() {
+            Span(this.continueDesc)
+              .fontFamily('HarmonyHeiTi')
+              .fontSize($r('sys.float.ohos_id_text_size_body2'))
+              .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+              .fontWeight(FontWeight.Regular)
+            Span(this.learnMore)
+              .fontFamily('HarmonyHeiTi')
+              .fontSize($r('sys.float.ohos_id_text_size_body2'))
+              .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+              .fontWeight(FontWeight.Medium)
+              .onClick(() => {
+                TipsJumpUtils.jumpTips(getContext(this) as common.UIAbilityContext, CommonConstants.FUN_NUM,
+                  CommonConstants.TIPS_TYPE);
+              })
+          }
+          .margin({
+            bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM,
+            top: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_TOP
+          })
+          .textAlign(TextAlign.Center)
+          .width('100%')
 
           Column() {
             Flex({
@@ -255,6 +268,11 @@ struct ContinueSwitch {
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
                 .accessibilityLevel('no')
+                .padding({
+                  top: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_TOP_PC : CommonConstants.ITEM_LIST_PADDING_TOP,
+                  bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC :
+                  CommonConstants.ITEM_LIST_PADDING_BOTTOM
+                })
 
               Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
                 .width(CommonConstants.CONTINUE_SWITCH_WIDTH)
@@ -273,7 +291,6 @@ struct ContinueSwitch {
                   }
                 })
             }
-            .height(this.is2in1 ? CommonConstants.PC_LIST_HEIGHT : CommonConstants.PHONE_LIST_HEIGHT)
             .width('100%')
             .padding({
               left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
@@ -282,7 +299,37 @@ struct ContinueSwitch {
             .backgroundColor($r('sys.color.ohos_id_color_list_card_bg'))
             .borderRadius(this.is2in1 ? CommonConstants.PC_BORDER_RADIUS : CommonConstants.NON_PC_BORDER_RADIUS)
             .accessibilityText(this.title)
-          }.width('100%')
+          }
+          .width('100%')
+          .constraintSize({
+            minHeight: CommonConstants.PC_LIST_HEIGHT
+          })
+
+          Column() {
+            Flex({
+              direction: FlexDirection.Row,
+              justifyContent: FlexAlign.Start,
+              alignItems: ItemAlign.Center
+            }) {
+              SymbolGlyph($r('sys.symbol.info_circle_fill'))
+                .fontWeight(FontWeight.Medium)
+                .fontSize(this.getSymbolSize())
+                .fontColor([$r('sys.color.ohos_id_color_activated')])
+                .margin({ right: CommonConstants.SYMBOL_MARGIN_RIGHT })
+
+              Text($r('app.string.update_version_prompt'))
+                .fontSize($r('sys.float.ohos_id_text_size_body3'))
+                .fontWeight(FontWeight.Medium)
+                .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                .textAlign(TextAlign.Start)
+                .lineHeight(CommonConstants.UPDATE_PROMPT_LINE_HEIGHT)
+            }
+            .margin({ top: CommonConstants.UPDATE_PROMPT_MARGIN_TOP })
+          }
+          .padding({
+            left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
+            right: CommonConstants.TEXT_LIST_ALIGN_DISTANCE
+          })
 
           Column() {
             Row() {
@@ -317,7 +364,7 @@ struct ContinueSwitch {
       .align(Alignment.TopStart)
       .friction(0.6)
       .edgeEffect(EdgeEffect.Spring)
-      .onScroll((xOffset: number, yOffset: number) => {
+      .onWillScroll((xOffset: number, yOffset: number) => {
         console.info(TAG + 'onScroll : xOffset:' + xOffset + ' ; yOffset' + yOffset);
       })
       .onScrollEdge(() => {
@@ -339,5 +386,15 @@ struct ContinueSwitch {
       logger.info(TAG + 'this.shortSideSize = ' + this.shortSideSize + ', this.imageAnimatorWidth = ' +
       this.imageAnimatorWidth + ', this.imageAnimatorHeight = ' + this.imageAnimatorHeight);
     })
+  }
+
+  private getSymbolSize(): Length {
+    logger.info(TAG + 'getSymbolSize in');
+    let fontSizeScale: number = AppStorage.get<number>('currentFontSizeScale') as number;
+    logger.info(TAG + 'getSymbolSize : fontSizeScale =' + fontSizeScale);
+    if (fontSizeScale >= 2) {
+      return `${CommonConstants.SYMBOL_INFO_CIRCLE * 2}vp`
+    }
+    return CommonConstants.SYMBOL_INFO_CIRCLE;
   }
 }
