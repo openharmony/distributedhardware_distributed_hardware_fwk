@@ -47,9 +47,6 @@ ComponentPrivacy::~ComponentPrivacy()
 int32_t ComponentPrivacy::OnPrivaceResourceMessage(const ResourceEventType &type, const std::string &subtype,
     const std::string &networkId, bool &isSensitive, bool &isSameAccout)
 {
-    if (!IsIdLengthValid(networkId)) {
-        return ERR_DH_FWK_PARA_INVALID;
-    }
     DHLOGI("OnPrivaceResourceMessage start.");
     int32_t ret = DH_FWK_SUCCESS;
     if (type == ResourceEventType::EVENT_TYPE_QUERY_RESOURCE) {

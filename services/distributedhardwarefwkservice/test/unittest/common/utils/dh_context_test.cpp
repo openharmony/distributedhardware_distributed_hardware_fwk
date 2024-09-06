@@ -76,12 +76,12 @@ HWTEST_F(DhContextTest, AddOnlineDevice_002, TestSize.Level1)
     EXPECT_EQ(false, DHContext::GetInstance().devIdEntrySet_.empty());
 }
 
-HWTEST_F(DhContextTest, RemoveOnlineDeviceByUUID_001, TestSize.Level1)
+HWTEST_F(DhContextTest, RemoveOnlineDeviceIdEntryByNetworkId_001, TestSize.Level1)
 {
-    DHContext::GetInstance().RemoveOnlineDeviceByUUID("123");
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId("123");
     EXPECT_EQ(false, DHContext::GetInstance().devIdEntrySet_.empty());
 
-    DHContext::GetInstance().RemoveOnlineDeviceByUUID(TEST_UUID);
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(TEST_NETWORKID);
     EXPECT_EQ(true, DHContext::GetInstance().devIdEntrySet_.empty());
 }
 
