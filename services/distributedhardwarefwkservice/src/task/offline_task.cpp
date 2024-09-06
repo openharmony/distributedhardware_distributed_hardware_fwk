@@ -95,6 +95,12 @@ void OffLineTask::DoTaskInner()
     this->SetTaskState(TaskState::SUCCESS);
     DHLOGD("Finish OffLine task, remove it, id: %{public}s", GetId().c_str());
     TaskBoard::GetInstance().RemoveTask(this->GetId());
+    if (DHContext::GetInstance().GetRealTimeOnlineDeviceCount() == 0 &&
+        DHContext::GetInstance().GetIsomerismConnectCount() == 0 &&
+        TaskBoard::GetInstance().IsAllTaskFinish()) {
+        DHLOGI("all devices are offline, start to free the resource");
+        DistributedHardwareManagerFactory::GetInstance().UnInit();
+    }
 }
 
 void OffLineTask::CreateDisableTask()
@@ -142,12 +148,7 @@ void OffLineTask::WaitDisableTaskFinish()
     std::unique_lock<std::mutex> waitLock(unFinishTaskMtx_);
     finishCondVar_.wait(waitLock, [&] { return this->unFinishChildrenTasks_.empty(); });
     DHLOGI("all disable task finish");
-    DHContext::GetInstance().RemoveOnlineDeviceByUUID(GetUUID());
-    if (DHContext::GetInstance().GetOnlineCount() == 0 &&
-        DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
-        DHLOGI("all devices are offline, start to free the resource");
-        DistributedHardwareManagerFactory::GetInstance().UnInit();
-    }
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(GetNetworkId());
 }
 
 void OffLineTask::ClearOffLineInfo()

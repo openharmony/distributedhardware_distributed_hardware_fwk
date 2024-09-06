@@ -134,14 +134,14 @@ void DHContext::AddOnlineDevice(const std::string &udid, const std::string &uuid
     devIdEntrySet_.insert(idEntry);
 }
 
-void DHContext::RemoveOnlineDeviceByUUID(const std::string &uuid)
+void DHContext::RemoveOnlineDeviceIdEntryByNetworkId(const std::string &networkId)
 {
-    if (!IsIdLengthValid(uuid)) {
+    if (!IsIdLengthValid(networkId)) {
         return;
     }
     std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
     for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
-        if (iter->uuid == uuid) {
+        if (iter->networkId == networkId) {
             devIdEntrySet_.erase(iter);
             break;
         }
@@ -299,6 +299,26 @@ std::string DHContext::GetDeviceIdByDBGetPrefix(const std::string &prefix)
     }
 
     return id;
+}
+
+void DHContext::AddRealTimeOnlineDeviceNetworkId(const std::string &networkId)
+{
+    DHLOGI("AddRealTimeOnlineDeviceNetworkId: %{public}s", GetAnonyString(networkId).c_str());
+    std::shared_lock<std::shared_mutex> lock(realTimeNetworkIdMutex_);
+    realTimeOnLineNetworkIdSet_.insert(networkId);
+}
+
+void DHContext::DeleteRealTimeOnlineDeviceNetworkId(const std::string &networkId)
+{
+    DHLOGI("DeleteRealTimeOnlineDeviceNetworkId: %{public}s", GetAnonyString(networkId).c_str());
+    std::shared_lock<std::shared_mutex> lock(realTimeNetworkIdMutex_);
+    realTimeOnLineNetworkIdSet_.erase(networkId);
+}
+
+size_t DHContext::GetRealTimeOnlineDeviceCount()
+{
+    std::shared_lock<std::shared_mutex> lock(realTimeNetworkIdMutex_);
+    return realTimeOnLineNetworkIdSet_.size();
 }
 
 void DHContext::RegisDHFWKIsomerismListener()
