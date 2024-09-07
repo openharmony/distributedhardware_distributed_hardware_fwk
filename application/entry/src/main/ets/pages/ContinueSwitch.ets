@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
- * Licensed under the Apache License, Version 2.0 (the 'License');
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an 'AS IS' BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright (c) 2024 Huawei Device Co., Ltd.
+* Licensed under the Apache License, Version 2.0 (the 'License');
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an 'AS IS' BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 import common from '@ohos.app.ability.common';
 import display from '@ohos.display';
 import settings from '@ohos.settings';
@@ -24,6 +24,7 @@ import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 import CommonConstants from '../common/constants/CommonConstants';
 import { logger } from '../utils/Logger';
 import { TipsJumpUtils } from '../utils/TipsJumpUtils';
+import osAccount from '@ohos.account.osAccount';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
@@ -61,14 +62,16 @@ struct ContinueSwitch {
   @State animationState: AnimationStatus = AnimationStatus.Running;
   @State reverse: boolean = false;
   @State iterations: number = -1;
+  @State isEnabled: boolean = true;
   private videoController: VideoController | undefined = undefined;
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
   private learnMore: ResourceStr = $r('app.string.learn_more');
   private continueDesc: ResourceStr = $r('app.string.continue_desc_text', '');
+  private accountManager: osAccount.AccountManager = osAccount.getAccountManager();
 
-  onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult) {
+  onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult): void {
     logger.info(TAG + 'onPortrait in');
     if (mediaQueryResult.matches as boolean) {
       this.extContext?.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_DARK);
@@ -86,7 +89,7 @@ struct ContinueSwitch {
    * @param height
    * @param width
    */
-  getImageAnimatorSize(height: Length, width: Length) {
+  getImageAnimatorSize(height: Length, width: Length): void {
     logger.info(TAG + 'getImageAnimatorSize in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
     let totalHeight = height as number;
     this.shortSideSize = width < totalHeight / 2 ? width as number : totalHeight / 2 as number;
@@ -101,7 +104,7 @@ struct ContinueSwitch {
     this.imageAnimatorWidth + ', this.imageAnimatorHeight = ' + this.imageAnimatorHeight);
   }
 
-  getStringSync() {
+  getStringSync(): void {
     logger.info(TAG + 'getStringSync in');
     try {
       context.resourceManager.getStringValue($r('app.string.continue_title')
@@ -110,7 +113,7 @@ struct ContinueSwitch {
           logger.error(TAG + 'error is ' + error);
         } else {
           this.title = value;
-          console.info(TAG + '<aboutToAppear> this.title : ' + this.title);
+          logger.info(TAG + '<aboutToAppear> this.title : ' + this.title);
         }
       })
     } catch (error) {
@@ -120,7 +123,7 @@ struct ContinueSwitch {
     }
   }
 
-  getImageArray() {
+  getImageArray(): void {
     logger.info(TAG + 'getImageArray in');
     for (let i = 0; i <= CommonConstants.IMAGE_COUNT; ++i) {
       this.imageArray.push({
@@ -128,6 +131,50 @@ struct ContinueSwitch {
         duration: (i == CommonConstants.IMAGE_COUNT) ? CommonConstants.IMG_ANIMATOR_OVER_DURATION
           : CommonConstants.IMG_ANIMATOR_NORMAL_DURATION
       })
+    }
+  }
+
+  getGapLength(): void {
+    logger.info(TAG + 'getGapLength in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
+    if (deviceInfo.deviceType == 'phone') {
+      this.gapLength = CommonConstants.GENERAL_PHONE_GAP_LENGTH;
+    } else if (deviceInfo.deviceType == '2in1' || deviceInfo.deviceType == 'tablet') {
+      this.gapLength = CommonConstants.PC_PAD_GAP_LENGTH;
+    }
+    logger.info(TAG + 'this.gapLength : ' + this.gapLength);
+  }
+
+  getForegroundOsAccountLocalId(): void {
+    logger.info(TAG + 'getForegroundOsAccountLocalId in');
+    try {
+      this.accountManager.getForegroundOsAccountLocalId().then((localId: number) => {
+        logger.info(TAG + 'getForegroundOsAccountLocalId, localId: ' + localId);
+        this.getAccountInfo(localId);
+      }).catch((err: BusinessError) => {
+        logger.error(TAG + 'getForegroundOsAccountLocalId err: ' + JSON.stringify(err));
+      });
+    } catch (e) {
+      logger.error(TAG + 'getForegroundOsAccountLocalId exception: ' + JSON.stringify(e));
+    }
+  }
+
+  getAccountInfo(localId: number): void {
+    logger.info(TAG + 'getAccountInfo in');
+    try {
+      this.accountManager.queryOsAccountById(localId).then((accountInfo: osAccount.OsAccountInfo) => {
+        logger.info(TAG + 'queryOsAccountById, accountInfo.type: ' + JSON.stringify(accountInfo.type));
+        if (accountInfo.type === osAccount.OsAccountType.PRIVATE) {
+          let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.close,
+            settings.domainName.USER_SECURITY);
+          this.isSwitchOn = false;
+          this.isEnabled = false;
+          logger.info(TAG + 'set value isSuccess : status =' + status + '; set:Continue_Switch_Status is 0');
+        }
+      }).catch((err: BusinessError) => {
+        logger.error(TAG + 'queryOsAccountById err: ' + JSON.stringify(err));
+      });
+    } catch (e) {
+      logger.error(TAG + 'queryOsAccountById exception: ' + JSON.stringify(e));
     }
   }
 
@@ -151,15 +198,13 @@ struct ContinueSwitch {
       this.contentHeight = this.screenHeight;
       logger.info(TAG + 'screenWidth = ' + this.screenWidth + '; screenHeight = ' + this.screenHeight);
     })
-    if (this.videoController) {
-      this.videoController.start();
-    }
     this.is2in1 = deviceInfo.deviceType === '2in1' ? true : false;
   }
 
   aboutToAppear() {
     logger.info(TAG + 'aboutToAppear in');
-    let value = settings.getValueSync(context, 'Continue_Switch_Status', switchState.open);
+    let value = settings.getValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
+      settings.domainName.USER_SECURITY);
     this.isSwitchOn = value != switchState.close ? true : false;
     logger.info(TAG + '<aboutToAppear> this.isSwitchOn : ' + this.isSwitchOn + '; value: ' + value);
 
@@ -167,27 +212,19 @@ struct ContinueSwitch {
     logger.info(TAG + 'AppStorage.get<boolean>(isSwitchOn) : ' + AppStorage.get<boolean>('isSwitchOn'));
 
     if (this.isSwitchOn) {
-      let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open);
+      let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
+        settings.domainName.USER_SECURITY);
       logger.info(TAG + 'set value success :' + status + '; set:Continue_Switch_Status is 1');
     }
 
     this.getStringSync();
     this.getImageArray();
+    this.getForegroundOsAccountLocalId();
 
     this.listener.on('change', (mediaQueryResult: mediaQuery.MediaQueryResult) => {
       this.onPortrait(mediaQueryResult);
     })
     this.extContext = localStorage.get<common.UIExtensionContext>('context');
-  }
-
-  getGapLength() {
-    logger.info(TAG + 'getGapLength in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
-    if (deviceInfo.deviceType == 'phone') {
-      this.gapLength = CommonConstants.GENERAL_PHONE_GAP_LENGTH;
-    } else if (deviceInfo.deviceType == '2in1' || deviceInfo.deviceType == 'tablet') {
-      this.gapLength = CommonConstants.PC_PAD_GAP_LENGTH;
-    }
-    logger.info(TAG + 'this.gapLength : ' + this.gapLength);
   }
 
   onBackPress() {
@@ -228,10 +265,10 @@ struct ContinueSwitch {
             .width(this.imageAnimatorWidth)
             .height(this.imageAnimatorHeight)
             .onStart(() => {
-              console.info(TAG + 'ImageAnimator Start');
+              logger.info(TAG + 'ImageAnimator Start');
             })
             .onFinish(() => {
-              console.info(TAG + 'ImageAnimator Finish');
+              logger.info(TAG + 'ImageAnimator Finish');
             })
 
           Text() {
@@ -278,15 +315,18 @@ struct ContinueSwitch {
                 .width(CommonConstants.CONTINUE_SWITCH_WIDTH)
                 .height(CommonConstants.CONTINUE_SWITCH_HEIGHT)
                 .hoverEffect(HoverEffect.None)
+                .enabled(this.isEnabled)
                 .onChange((isOn: boolean) => {
                   logger.info(TAG + 'isOn:' + isOn);
                   this.isSwitchOn = isOn;
                   AppStorage.setAndLink('isSwitchOn', isOn);
                   if (isOn) {
-                    let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.open);
-                    logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is on');
+                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
+                      switchState.open, settings.domainName.USER_SECURITY);
+                    logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is open');
                   } else {
-                    let status: boolean = settings.setValueSync(context, 'Continue_Switch_Status', switchState.close);
+                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
+                      switchState.close, settings.domainName.USER_SECURITY);
                     logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
                   }
                 })
@@ -313,7 +353,7 @@ struct ContinueSwitch {
             }) {
               SymbolGlyph($r('sys.symbol.info_circle_fill'))
                 .fontWeight(FontWeight.Medium)
-                .fontSize(CommonConstants.SYMBOL_INFO_CIRCLE)
+                .fontSize(this.getSymbolSize())
                 .fontColor([$r('sys.color.ohos_id_color_activated')])
                 .margin({ right: CommonConstants.SYMBOL_MARGIN_RIGHT })
 
@@ -340,10 +380,6 @@ struct ContinueSwitch {
                 .fontColor($r('sys.color.ohos_id_color_text_secondary'))
                 .textAlign(TextAlign.Start)
                 .width('100%')
-                .onAreaChange((oldArea: Area, newArea: Area) => {
-                  logger.info(TAG + 'Text:continue_privacy_text, continue desc, oldArea.height = ' + oldArea.height +
-                    ', newArea.height = ' + newArea.height);
-                })
             }
             .padding({
               left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
@@ -365,13 +401,13 @@ struct ContinueSwitch {
       .friction(0.6)
       .edgeEffect(EdgeEffect.Spring)
       .onWillScroll((xOffset: number, yOffset: number) => {
-        console.info(TAG + 'onScroll : xOffset:' + xOffset + ' ; yOffset' + yOffset);
+        logger.debug(TAG + 'onScroll : xOffset:' + xOffset + ' ; yOffset' + yOffset);
       })
       .onScrollEdge(() => {
-        console.info('To the edge');
+        logger.info('To the edge');
       })
       .onScrollStop(() => {
-        console.info('Scroll Stop');
+        logger.info('Scroll Stop');
       })
       .onAreaChange((oldArea: Area, newArea: Area) => {
         logger.info(TAG + 'Scroll, oldArea.height = ' + oldArea.height + ', newArea.height = ' + newArea.height);
@@ -386,5 +422,15 @@ struct ContinueSwitch {
       logger.info(TAG + 'this.shortSideSize = ' + this.shortSideSize + ', this.imageAnimatorWidth = ' +
       this.imageAnimatorWidth + ', this.imageAnimatorHeight = ' + this.imageAnimatorHeight);
     })
+  }
+
+  private getSymbolSize(): Length {
+    logger.info(TAG + 'getSymbolSize in');
+    let fontSizeScale: number = AppStorage.get<number>('currentFontSizeScale') as number;
+    logger.info(TAG + 'getSymbolSize : fontSizeScale =' + fontSizeScale);
+    if (fontSizeScale >= 2) {
+      return `${CommonConstants.SYMBOL_INFO_CIRCLE * 2}vp`
+    }
+    return CommonConstants.SYMBOL_INFO_CIRCLE;
   }
 }
