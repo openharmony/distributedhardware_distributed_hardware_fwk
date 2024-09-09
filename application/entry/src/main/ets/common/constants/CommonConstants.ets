@@ -36,7 +36,6 @@ export default class CommonConstants {
   public static readonly ITEM_LIST_PADDING_BOTTOM_PC: number = 14;
   public static readonly ITEM_LIST_PADDING_TOP: number = 17;
   public static readonly ITEM_LIST_PADDING_BOTTOM: number = 18;
-  public static readonly CONTINUE_SWITCH_KEY: string = 'Continue_Switch_Status';
   // Tips
   public static readonly TIPS_TYPE: string = '105';
   public static readonly FUN_NUM = 'SF-20005815_f101';
