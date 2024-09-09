@@ -551,11 +551,49 @@ std::vector<DistributedKv::Entry> DBAdapter::GetEntriesByKeys(const std::vector<
 bool DBAdapter::SyncDataByNetworkId(const std::string &networkId)
 {
     DHLOGI("Try initiative sync data by networId: %{public}s", GetAnonyString(networkId).c_str());
+    std::lock_guard<std::mutex> lock(dbAdapterMutex_);
+    if (kvStoragePtr_ == nullptr) {
+        DHLOGE("kvStoragePtr_ is nullptr!");
+        return false;
+    }
     std::vector<std::string> networkIdVec;
     networkIdVec.push_back(networkId);
     DistributedKv::Status status = kvStoragePtr_->Sync(networkIdVec, DistributedKv::SyncMode::PUSH_PULL);
     if (status != DistributedKv::Status::SUCCESS) {
         DHLOGE("initiative sync data failed");
+        return false;
+    }
+    return true;
+}
+
+bool DBAdapter::ClearDataWhenPeerLogout(const std::string &peerudid, const std::string &peeruuid)
+{
+    DHLOGI("Clear cloudData start.");
+    std::lock_guard<std::mutex> lock(dbAdapterMutex_);
+    if (kvStoragePtr_ == nullptr) {
+        DHLOGE("kvStoragePtr_ is nullptr!");
+        return false;
+    }
+    std::string udIdHash = Sha256(peerudid);
+    DistributedKv::Key allEntryKeyPrefix(udIdHash);
+    std::vector<DistributedKv::Entry> peerEntries;
+    DistributedKv::Status status = kvStoragePtr_->GetEntries(allEntryKeyPrefix, peerEntries);
+    if (status != DistributedKv::Status::SUCCESS || peerEntries.size() == 0) {
+        DHLOGE("GetEntries error: %{public}d, or peerEntries is empty", status);
+        return false;
+    }
+    std::vector<DistributedKv::Key> peerkeys;
+    for (const auto &entry : peerEntries) {
+        peerkeys.push_back(entry.key);
+    }
+
+    if (kvStoragePtr_->DeleteBatch(peerkeys) != DistributedKv::Status::SUCCESS) {
+        DHLOGE("DeleteBatch failed, error: %{public}d", status);
+        return false;
+    }
+
+    if (kvStoragePtr_->RemoveDeviceData(peeruuid) != DistributedKv::Status::SUCCESS) {
+        DHLOGE("RemoveDeviceData failed, peeruuid=%{public}s", GetAnonyString(peeruuid).c_str());
         return false;
     }
     return true;

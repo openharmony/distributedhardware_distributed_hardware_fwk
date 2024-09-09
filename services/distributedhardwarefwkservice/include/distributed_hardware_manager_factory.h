@@ -36,6 +36,7 @@ public:
     int32_t SendOffLineEvent(const std::string &networkId, const std::string &uuid, const std::string &udid,
         uint16_t deviceType);
     int32_t GetComponentVersion(std::unordered_map<DHType, std::string> &versionMap);
+    void ClearDataWhenPeerLogout(const std::string &peerudid, const std::string &peeruuid);
 
     int Dump(const std::vector<std::string> &argsStr, std::string &result);
     void UnInit();

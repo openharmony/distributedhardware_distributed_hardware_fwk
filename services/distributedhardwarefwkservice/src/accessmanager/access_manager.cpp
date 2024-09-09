@@ -58,6 +58,10 @@ int32_t AccessManager::Init()
         DHLOGE("RegisterDevStateCallback failed");
         return ERR_DH_FWK_ACCESS_REGISTER_DM_FAILED;
     }
+    if (RegDevTrustChangeCallback() != DH_FWK_SUCCESS) {
+        DHLOGE("RegDevTrustChangeCallback failed");
+        return ERR_DH_FWK_ACCESS_REGISTER_DM_FAILED;
+    }
     return DH_FWK_SUCCESS;
 }
 
@@ -96,6 +100,11 @@ int32_t AccessManager::RegisterDevStateCallback()
 int32_t AccessManager::UnRegisterDevStateCallback()
 {
     return DeviceManager::GetInstance().UnRegisterDevStateCallback(DH_FWK_PKG_NAME);
+}
+
+int32_t AccessManager::RegDevTrustChangeCallback()
+{
+    return DeviceManager::GetInstance().RegDevTrustChangeCallback(DH_FWK_PKG_NAME, shared_from_this());
 }
 
 void AccessManager::OnRemoteDied()
@@ -174,6 +183,21 @@ void AccessManager::OnDeviceChanged(const DmDeviceInfo &deviceInfo)
 {
     (void)deviceInfo;
     return;
+}
+
+void AccessManager::OnDeviceTrustChange(const std::string &peerudid, const std::string &peeruuid, DmAuthForm authform)
+{
+    DHLOGI("Peerdevice logout, peerudid: %{public}s, peeruuid: %{public}s", GetAnonyString(peerudid).c_str(),
+        GetAnonyString(peeruuid).c_str());
+    if (!IsIdLengthValid(peerudid) || !IsIdLengthValid(peeruuid)) {
+        return;
+    }
+
+    if (authform != DmAuthForm::IDENTICAL_ACCOUNT) {
+        DHLOGE("Peer is not same account");
+        return;
+    }
+    DistributedHardwareManagerFactory::GetInstance().ClearDataWhenPeerLogout(peerudid, peeruuid);
 }
 
 void AccessManager::CheckTrustedDeviceOnline()
