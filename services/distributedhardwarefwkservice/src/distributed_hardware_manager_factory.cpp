@@ -236,5 +236,11 @@ bool DistributedHardwareManagerFactory::GetUnInitFlag()
 {
     return flagUnInit_.load();
 }
+
+void DistributedHardwareManagerFactory::ClearDataWhenPeerLogout(const std::string &peerudid,
+    const std::string &peeruuid)
+{
+    MetaInfoManager::GetInstance()->ClearDataWhenPeerLogout(peerudid, peeruuid);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

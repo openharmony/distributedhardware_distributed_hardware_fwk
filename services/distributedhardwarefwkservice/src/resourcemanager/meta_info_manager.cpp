@@ -339,6 +339,16 @@ int32_t MetaInfoManager::SyncDataByNetworkId(const std::string &networkId)
     return DH_FWK_SUCCESS;
 }
 
+int32_t MetaInfoManager::ClearDataWhenPeerLogout(const std::string &peerudid, const std::string &peeruuid)
+{
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr is null");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
+    }
+    dbAdapterPtr_->ClearDataWhenPeerLogout(peerudid, peeruuid);
+    return DH_FWK_SUCCESS;
+}
+
 void MetaInfoManager::OnChange(const DistributedKv::ChangeNotification &changeNotification)
 {
     DHLOGI("MetaInfoManager: DB data OnChange");
