@@ -54,7 +54,6 @@ ohos_unittest("ComponentLoaderTest") {
     "config_policy:configpolicy_util",
     "hitrace:hitrace_meter",
     "kv_store:distributeddata_inner",
-    "power_manager:powermgr_client",
   ]
 
   defines = [
@@ -62,6 +61,11 @@ ohos_unittest("ComponentLoaderTest") {
     "DH_LOG_TAG=\"ComponentLoaderTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
+
+  if (powermgr_power_manager_fwk) {
+    external_deps += [ "power_manager:powermgr_client" ]
+    defines += [ "POWER_MANAGER_ENABLE" ]
+  }
 }
 
 group("component_loader_test") {
