@@ -43,6 +43,7 @@ DHContext::~DHContext()
 
 void DHContext::RegisterPowerStateLinstener()
 {
+    #ifdef POWER_MANAGER_ENABLE
     sptr<PowerMgr::IPowerStateCallback> powerStateCallback_(new DHFWKPowerStateCallback());
     if (powerStateCallback_ == nullptr) {
         DHLOGE("DHFWK subscribe create power state callback Create Error");
@@ -55,8 +56,10 @@ void DHContext::RegisterPowerStateLinstener()
     } else {
         DHLOGI("DHFWK register power state callback success");
     }
+    #endif
 }
 
+#ifdef POWER_MANAGER_ENABLE
 void DHContext::DHFWKPowerStateCallback::OnPowerStateChanged(PowerMgr::PowerState state)
 {
     DHLOGI("DHFWK OnPowerStateChanged state: %{public}u", static_cast<uint32_t>(state));
@@ -70,6 +73,7 @@ void DHContext::DHFWKPowerStateCallback::OnPowerStateChanged(PowerMgr::PowerStat
     DHLOGI("DHFWK set NOT in sleeping");
     DHContext::GetInstance().SetIsSleeping(false);
 }
+#endif
 
 bool DHContext::IsSleeping()
 {

@@ -23,8 +23,10 @@
 #include <unordered_set>
 #include <shared_mutex>
 
+#ifdef POWER_MANAGER_ENABLE
 #include "power_mgr_client.h"
 #include "power_state_callback_stub.h"
+#endif
 
 #include "device_type.h"
 #include "event_handler.h"
@@ -112,10 +114,12 @@ public:
     void DelIsomerismConnectDev(const std::string &IsomerismDeviceId);
 
 private:
+#ifdef POWER_MANAGER_ENABLE
     class DHFWKPowerStateCallback : public OHOS::PowerMgr::PowerStateCallbackStub {
     public:
         void OnPowerStateChanged(OHOS::PowerMgr::PowerState state) override;
     };
+    #endif
     void RegisterPowerStateLinstener();
 
 private:

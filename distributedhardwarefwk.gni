@@ -34,4 +34,10 @@ build_flags = [ "-Werror" ]
 
 declare_args() {
   distributed_hardware_fwk_low_latency = false
+  powermgr_power_manager_fwk = true
+
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.powermgr_power_manager)) {
+    powermgr_power_manager_fwk = false
+  }
 }
