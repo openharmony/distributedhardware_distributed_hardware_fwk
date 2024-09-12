@@ -299,7 +299,7 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
     if (allEntries.empty() || allEntries.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("AllEntries is empty or too large!");
+        DHLOGE("AllEntries size: %{public}zu is invalid, maybe empty or too large.", allEntries.size());
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto& item : allEntries) {
