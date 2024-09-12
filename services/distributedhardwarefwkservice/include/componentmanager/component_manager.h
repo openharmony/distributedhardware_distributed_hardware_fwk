@@ -137,6 +137,7 @@ private:
     int32_t GetCapParam(const std::string &uuid, const std::string &dhId, std::shared_ptr<CapabilityInfo> &capability);
     int32_t GetMetaParam(const std::string &uuid, const std::string &dhId,
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
+    int32_t CheckSubtypeResource(const std::string &subtype, const std::string &networkId);
 
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
