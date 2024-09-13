@@ -124,20 +124,22 @@ void ComponentManagerTest::TearDown()
  */
 HWTEST_F(ComponentManagerTest, init_test_001, TestSize.Level0)
 {
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
     auto ret = ComponentManager::GetInstance().Init();
-    EXPECT_EQ(ERR_DH_FWK_COMPONENT_INIT_HANDLER_FAILED, ret);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 /**
- * @tc.name: InitComponentHandler_test_001
- * @tc.desc: Verify the InitComponentHandler function
+ * @tc.name: init_test_002
+ * @tc.desc: Verify the Init function
  * @tc.type: FUNC
  * @tc.require: AR000GHSK5
  */
-HWTEST_F(ComponentManagerTest, InitComponentHandler_test_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, init_test_002, TestSize.Level0)
 {
-    auto ret = ComponentManager::GetInstance().InitComponentHandler();
-    EXPECT_EQ(ERR_DH_FWK_COMPONENT_INIT_HANDLER_FAILED, ret);
+    ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
+    auto ret = ComponentManager::GetInstance().Init();
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_MONITOR_NULL, ret);
 }
 
 /**
