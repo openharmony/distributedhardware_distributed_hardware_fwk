@@ -23,7 +23,7 @@
         "label": "$string:EntryAbility_label",
         "startWindowIcon": "$media:icon01",
         "startWindowBackground": "$color:start_window_background",
-        "exported": true,
+        "exported": false,
         "removeMissionAfterTerminate": true,
         "skills": [
           {
