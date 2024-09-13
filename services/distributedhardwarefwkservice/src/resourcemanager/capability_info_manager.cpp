@@ -154,10 +154,12 @@ int32_t CapabilityInfoManager::SyncRemoteCapabilityInfos()
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
     }
-    for (auto iter : DHContext::GetInstance().devIdEntrySet_) {
+    std::vector<std::string> deviceIdVec;
+    DHContext::GetInstance().GetOnlineDeviceDeviceId(deviceIdVec);
+    for (const auto &deviceId : deviceIdVec) {
         std::vector<std::string> dataVector;
-        if (dbAdapterPtr_->GetDataByKeyPrefix(iter.udidHash, dataVector) != DH_FWK_SUCCESS) {
-            DHLOGE("Query the udidHash: %{public}s data from DB failed", GetAnonyString(iter.udidHash).c_str());
+        if (dbAdapterPtr_->GetDataByKeyPrefix(deviceId, dataVector) != DH_FWK_SUCCESS) {
+            DHLOGE("Query the deviceId: %{public}s data from DB failed", GetAnonyString(deviceId).c_str());
             continue;
         }
         if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {

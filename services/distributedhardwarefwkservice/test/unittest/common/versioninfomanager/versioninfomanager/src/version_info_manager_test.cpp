@@ -317,12 +317,16 @@ HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_001, TestSize.Level0)
  */
 HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_002, TestSize.Level0)
 {
+    std::string udid = "udid_123456";
+    std::string uuid = "uuid_123456";
+    std::string networkId = "networkId_123456";
+    DHContext::GetInstance().AddOnlineDevice(udid, uuid, networkId);
     std::string appId;
     std::string storeId;
     std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = nullptr;
     VersionInfoManager::GetInstance()->dbAdapterPtr_ = std::make_shared<MockDBAdapter>(appId, storeId, changeListener);
     int32_t ret = VersionInfoManager::GetInstance()->SyncRemoteVersionInfos();
-    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 /**

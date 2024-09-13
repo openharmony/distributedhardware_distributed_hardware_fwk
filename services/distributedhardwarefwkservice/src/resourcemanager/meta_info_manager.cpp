@@ -190,10 +190,12 @@ int32_t MetaInfoManager::SyncRemoteMetaInfos()
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
     }
-    for (auto iter : DHContext::GetInstance().devIdEntrySet_) {
+    std::vector<std::string> udidHashVec;
+    DHContext::GetInstance().GetOnlineDeviceUdidHash(udidHashVec);
+    for (const auto &udidHash : udidHashVec) {
         std::vector<std::string> dataVector;
-        if (dbAdapterPtr_->GetDataByKeyPrefix(iter.udidHash, dataVector) != DH_FWK_SUCCESS) {
-            DHLOGE("Query the udidHash: %{public}s data from DB failed", GetAnonyString(iter.udidHash).c_str());
+        if (dbAdapterPtr_->GetDataByKeyPrefix(udidHash, dataVector) != DH_FWK_SUCCESS) {
+            DHLOGE("Query the udidHash: %{public}s data from DB failed", GetAnonyString(udidHash).c_str());
             continue;
         }
         if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
@@ -210,12 +212,6 @@ int32_t MetaInfoManager::SyncRemoteMetaInfos()
             const std::string &localUdidHash = DHContext::GetInstance().GetDeviceInfo().udidHash;
             if (udidHash.compare(localUdidHash) == 0) {
                 DHLOGE("device MetaInfo not need sync from db");
-                continue;
-            }
-            if (!DHContext::GetInstance().IsDeviceOnline(
-                DHContext::GetInstance().GetUUIDByDeviceId(metaCapInfo->GetDeviceId()))) {
-                DHLOGE("offline device, no need sync to memory, udidHash : %{public}s",
-                    GetAnonyString(metaCapInfo->GetUdidHash()).c_str());
                 continue;
             }
             globalMetaInfoMap_[metaCapInfo->GetKey()] = metaCapInfo;
