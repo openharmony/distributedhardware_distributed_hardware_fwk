@@ -68,7 +68,6 @@ ohos_unittest("ComponentManagerTest") {
     "eventhandler:libeventhandler",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
-    "power_manager:powermgr_client",
   ]
 
   defines = [
@@ -76,6 +75,11 @@ ohos_unittest("ComponentManagerTest") {
     "DH_LOG_TAG=\"ComponentManagerTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
+
+  if (powermgr_power_manager_fwk) {
+    external_deps += [ "power_manager:powermgr_client" ]
+    defines += [ "POWER_MANAGER_ENABLE" ]
+  }
 }
 
 group("component_manager_test") {
