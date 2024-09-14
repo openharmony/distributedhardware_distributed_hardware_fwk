@@ -40,7 +40,7 @@ DHContext::~DHContext()
 
 void DHContext::RegisterPowerStateLinstener()
 {
-    #ifdef POWER_MANAGER_ENABLE
+#ifdef POWER_MANAGER_ENABLE
     sptr<PowerMgr::IPowerStateCallback> powerStateCallback_(new DHFWKPowerStateCallback());
     if (powerStateCallback_ == nullptr) {
         DHLOGE("DHFWK subscribe create power state callback Create Error");
@@ -53,7 +53,7 @@ void DHContext::RegisterPowerStateLinstener()
     } else {
         DHLOGE("DHFWK register power state callback success");
     }
-    #endif
+#endif
 }
 
 #ifdef POWER_MANAGER_ENABLE
