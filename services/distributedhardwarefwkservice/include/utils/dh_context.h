@@ -65,12 +65,12 @@ public:
     void SetIsSleeping(bool isSleeping);
 
 private:
-    #ifdef POWER_MANAGER_ENABLE
+#ifdef POWER_MANAGER_ENABLE
     class DHFWKPowerStateCallback : public OHOS::PowerMgr::PowerStateCallbackStub {
     public:
         void OnPowerStateChanged(OHOS::PowerMgr::PowerState state) override;
     };
-    #endif
+#endif
     void RegisterPowerStateLinstener();
 
 private:
