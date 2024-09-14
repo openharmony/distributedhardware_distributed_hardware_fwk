@@ -53,7 +53,9 @@ void FromJson(const cJSON *jsonObject, AudioEncoderIn &audioEncoderIn)
     }
     cJSON *sampleRateItem = nullptr;
     cJSON_ArrayForEach(sampleRateItem, sampleRate) {
-        audioEncoderIn.sample_rate.push_back((uint32_t)sampleRateItem->valuedouble);
+        if (sampleRateItem && sampleRateItem->type == cJSON_Number) {
+            audioEncoderIn.sample_rate.push_back((uint32_t)sampleRateItem->valuedouble);
+        }
     }
 }
 
