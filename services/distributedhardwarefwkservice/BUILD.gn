@@ -134,6 +134,10 @@ ohos_shared_library("distributedhardwarefwksvr") {
     defines += [ "DHARDWARE_OPEN_SOURCE" ]
   }
 
+  if (distributed_hardware_fwk_low_latency) {
+    defines += [ "DHARDWARE_CHECK_RESOURCE" ]
+  }
+
   external_deps = [
     "ability_base:want",
     "ability_runtime:ability_manager",
