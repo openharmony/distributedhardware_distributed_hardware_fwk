@@ -114,6 +114,10 @@ ohos_shared_library("distributedhardwarefwksvr") {
     defines += [ "DHARDWARE_LOW_LATENCY" ]
   }
 
+  if (dhardware_low_latency) {
+    defines += [ "DHARDWARE_CHECK_RESOURCE" ]
+  }
+
   external_deps = [
     "ability_base:want",
     "ability_runtime:ability_manager",

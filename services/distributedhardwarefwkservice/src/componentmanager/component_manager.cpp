@@ -385,17 +385,10 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
             return ret;
         }
     }
-    std::string subtype = param.subtype;
-    std::map<std::string, bool> resourceDesc = ComponentLoader::GetInstance().GetCompResourceDesc();
-    if (resourceDesc.find(subtype) == resourceDesc.end()) {
-        DHLOGE("GetCompResourceDesc failed.");
-        return ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY;
-    }
-    bool sensitiveVal = resourceDesc[subtype];
-    bool isSameAuthForm = IsIdenticalAccount(networkId);
-    if (sensitiveVal && !isSameAuthForm) {
-        DHLOGE("Privacy resources must be logged in with the same account.");
-        return ERR_DH_FWK_COMPONENT_ENABLE_FAILED;
+    ret = CheckSubtypeResource(param.subtype, networkId);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("CheckSubtypeResource failed, ret = %d.", ret);
+        return ret;
     }
 
     auto compEnable = std::make_shared<ComponentEnable>();
@@ -420,6 +413,22 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
     EnabledCompsDump::GetInstance().DumpEnabledComp(networkId, dhType, dhId);
 
     return result;
+}
+
+int32_t ComponentManager::CheckSubtypeResource(const std::string &subtype, const std::string &networkId)
+{
+#ifdef DHARDWARE_CHECK_RESOURCE
+    std::map<std::string, bool> resourceDesc = ComponentLoader::GetInstance().GetCompResourceDesc();
+    if (resourceDesc.find(subtype) == resourceDesc.end()) {
+        DHLOGE("GetCompResourceDesc failed");
+        return ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY;
+    }
+    if (resourceDesc[subtype] && !IsIdenticalAccount(networkId)) {
+        DHLOGE("Privacy resources must be logged in with the same account.");
+        return ERR_DH_FWK_COMPONENT_ENABLE_FAILED;
+    }
+#endif
+    return DH_FWK_SUCCESS;
 }
 
 int32_t ComponentManager::RetryGetEnableParam(const std::string &networkId, const std::string &uuid,
