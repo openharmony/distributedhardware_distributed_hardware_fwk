@@ -167,6 +167,7 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
     }
 
     DHContext::GetInstance().AddOnlineDevice(udid, uuid, networkId);
+    DHContext::GetInstance().AddRealTimeOnlineDeviceNetworkId(networkId);
 
     if (!isInit && !Init()) {
         DHLOGE("distributedHardwareMgr is null");
@@ -199,7 +200,8 @@ int32_t DistributedHardwareManagerFactory::SendOffLineEvent(const std::string &n
         return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_OFFLINE;
     }
 
-    if (DHContext::GetInstance().GetOnlineCount() == 1 &&
+    DHContext::GetInstance().DeleteRealTimeOnlineDeviceNetworkId(networkId);
+    if (DHContext::GetInstance().GetRealTimeOnlineDeviceCount() == 0 &&
         DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
         flagUnInit_.store(true);
         DHLOGI("no online device, set uninit flag true");
