@@ -226,32 +226,31 @@ int32_t VersionInfoManager::SyncRemoteVersionInfos()
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
     }
-    std::vector<std::string> dataVector;
-    if (dbAdapterPtr_->GetDataByKeyPrefix("", dataVector) != DH_FWK_SUCCESS) {
-        DHLOGE("Query all data from DB failed");
-        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
-    }
-    if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("On dataVector error, maybe empty or too large.");
-        return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
-    }
-    for (const auto &data : dataVector) {
-        VersionInfo versionInfo;
-        if (versionInfo.FromJsonString(data) != DH_FWK_SUCCESS) {
+    std::vector<std::string> deviceIdVec;
+    DHContext::GetInstance().GetOnlineDeviceDeviceId(deviceIdVec);
+    for (const auto &deviceId : deviceIdVec) {
+        std::vector<std::string> dataVector;
+        if (dbAdapterPtr_->GetDataByKeyPrefix(deviceId, dataVector) != DH_FWK_SUCCESS) {
+            DHLOGE("Query the deviceId: %{public}s data from DB failed", GetAnonyString(deviceId).c_str());
             continue;
         }
-        const std::string &deviceId = versionInfo.deviceId;
-        const std::string &localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
-        if (deviceId.compare(localDeviceId) == 0) {
-            DHLOGE("Local device info not need sync from db");
+        if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
+            DHLOGE("dataVector size: %{public}zu is invalid, maybe empty or too large.", dataVector.size());
             continue;
         }
-        if (!DHContext::GetInstance().IsDeviceOnline(deviceId)) {
-            DHLOGE("Offline device, no need sync to memory, deviceId : %{public}s ",
-                GetAnonyString(deviceId).c_str());
-            continue;
+        for (const auto &data : dataVector) {
+            VersionInfo versionInfo;
+            if (versionInfo.FromJsonString(data) != DH_FWK_SUCCESS) {
+                continue;
+            }
+            const std::string &deviceId = versionInfo.deviceId;
+            const std::string &localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+            if (deviceId.compare(localDeviceId) == 0) {
+                DHLOGE("Local device info not need sync from db");
+                continue;
+            }
+            UpdateVersionCache(versionInfo);
         }
-        UpdateVersionCache(versionInfo);
     }
     return DH_FWK_SUCCESS;
 }

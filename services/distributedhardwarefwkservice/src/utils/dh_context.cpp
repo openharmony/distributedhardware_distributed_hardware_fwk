@@ -13,12 +13,14 @@
  * limitations under the License.
  */
 
+#include "dh_context.h"
+
 #include <algorithm>
 
-#include "anonymous_string.h"
 #include "cJSON.h"
+
+#include "anonymous_string.h"
 #include "constants.h"
-#include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -284,6 +286,22 @@ std::string DHContext::GetNetworkIdByDeviceId(const std::string &deviceId)
         }
     }
     return networkId;
+}
+
+void DHContext::GetOnlineDeviceUdidHash(std::vector<std::string> &udidHashVec)
+{
+    std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
+        udidHashVec.push_back(iter->udidHash);
+    }
+}
+
+void DHContext::GetOnlineDeviceDeviceId(std::vector<std::string> &deviceIdVec)
+{
+    std::unique_lock<std::shared_mutex> lock(onlineDevMutex_);
+    for (auto iter = devIdEntrySet_.begin(); iter != devIdEntrySet_.end(); iter++) {
+        deviceIdVec.push_back(iter->deviceId);
+    }
 }
 
 std::string DHContext::GetDeviceIdByDBGetPrefix(const std::string &prefix)

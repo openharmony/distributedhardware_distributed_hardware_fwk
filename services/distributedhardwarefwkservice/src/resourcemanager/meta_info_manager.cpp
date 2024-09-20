@@ -168,7 +168,7 @@ int32_t MetaInfoManager::SyncMetaInfoFromDB(const std::string &udidHash)
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("On dataVector error, maybe empty or too large.");
+        DHLOGE("dataVector size: %{public}zu is invalid, maybe empty or too large.", dataVector.size());
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {
@@ -190,34 +190,32 @@ int32_t MetaInfoManager::SyncRemoteMetaInfos()
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
     }
-    std::vector<std::string> dataVector;
-    if (dbAdapterPtr_->GetDataByKeyPrefix("", dataVector) != DH_FWK_SUCCESS) {
-        DHLOGE("Query all Metadata from DB failed");
-        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
-    }
-    if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("On dataVector error, maybe empty or too large.");
-        return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
-    }
-    for (const auto &data : dataVector) {
-        std::shared_ptr<MetaCapabilityInfo> metaCapInfo;
-        if (GetMetaCapByValue(data, metaCapInfo) != DH_FWK_SUCCESS) {
-            DHLOGE("Get Metainfo ptr by value failed");
+    std::vector<std::string> udidHashVec;
+    DHContext::GetInstance().GetOnlineDeviceUdidHash(udidHashVec);
+    for (const auto &udidHash : udidHashVec) {
+        std::vector<std::string> dataVector;
+        if (dbAdapterPtr_->GetDataByKeyPrefix(udidHash, dataVector) != DH_FWK_SUCCESS) {
+            DHLOGE("Query the udidHash: %{public}s data from DB failed", GetAnonyString(udidHash).c_str());
             continue;
         }
-        const std::string &udidHash = metaCapInfo->GetUdidHash();
-        const std::string &localUdidHash = DHContext::GetInstance().GetDeviceInfo().udidHash;
-        if (udidHash.compare(localUdidHash) == 0) {
-            DHLOGE("device MetaInfo not need sync from db");
+        if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
+            DHLOGE("dataVector size: %{public}zu is invalid, maybe empty or too large.", dataVector.size());
             continue;
         }
-        if (!DHContext::GetInstance().IsDeviceOnline(
-            DHContext::GetInstance().GetUUIDByDeviceId(metaCapInfo->GetDeviceId()))) {
-            DHLOGE("offline device, no need sync to memory, udidHash : %{public}s",
-                GetAnonyString(metaCapInfo->GetUdidHash()).c_str());
-            continue;
+        for (const auto &data : dataVector) {
+            std::shared_ptr<MetaCapabilityInfo> metaCapInfo;
+            if (GetMetaCapByValue(data, metaCapInfo) != DH_FWK_SUCCESS) {
+                DHLOGE("Get Metainfo ptr by value failed");
+                continue;
+            }
+            const std::string &udidHash = metaCapInfo->GetUdidHash();
+            const std::string &localUdidHash = DHContext::GetInstance().GetDeviceInfo().udidHash;
+            if (udidHash.compare(localUdidHash) == 0) {
+                DHLOGE("device MetaInfo not need sync from db");
+                continue;
+            }
+            globalMetaInfoMap_[metaCapInfo->GetKey()] = metaCapInfo;
         }
-        globalMetaInfoMap_[metaCapInfo->GetKey()] = metaCapInfo;
     }
     return DH_FWK_SUCCESS;
 }
