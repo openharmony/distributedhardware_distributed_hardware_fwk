@@ -52,11 +52,15 @@ struct DeviceIdEntry {
 
     bool operator < (const DeviceIdEntry &other) const
     {
-        return networkId.compare(other.networkId) < 0 ||
-            uuid.compare(other.uuid) < 0 ||
-            deviceId.compare(other.deviceId) < 0 ||
-            udid.compare(other.udid) < 0 ||
-            udidHash.compare(other.udidHash) < 0;
+        return (networkId.compare(other.networkId) < 0) ||
+            ((networkId.compare(other.networkId) == 0) && (uuid.compare(other.uuid) < 0)) ||
+            ((networkId.compare(other.networkId) == 0) && (uuid.compare(other.uuid) == 0) &&
+            (deviceId.compare(other.deviceId) < 0)) ||
+            ((networkId.compare(other.networkId) == 0) && (uuid.compare(other.uuid) == 0) &&
+            (deviceId.compare(other.deviceId) == 0) && (udid.compare(other.udid) < 0)) ||
+            ((networkId.compare(other.networkId) == 0) && (uuid.compare(other.uuid) == 0) &&
+            (deviceId.compare(other.deviceId) == 0) && (udid.compare(other.udid) == 0) &&
+            (udidHash.compare(other.udidHash) < 0));
     }
 };
 
@@ -69,7 +73,7 @@ public:
 
     /* Save online device UUID and networkId when devices online */
     void AddOnlineDevice(const std::string &udid, const std::string &uuid, const std::string &networkId);
-    void RemoveOnlineDeviceByUUID(const std::string &uuid);
+    void RemoveOnlineDeviceIdEntryByNetworkId(const std::string &networkId);
     bool IsDeviceOnline(const std::string &uuid);
     size_t GetOnlineCount();
     std::string GetNetworkIdByUUID(const std::string &uuid);
@@ -77,6 +81,9 @@ public:
     std::string GetUdidHashIdByUUID(const std::string &uuid);
     std::string GetUUIDByNetworkId(const std::string &networkId);
     std::string GetUDIDByNetworkId(const std::string &networkId);
+    void AddRealTimeOnlineDeviceNetworkId(const std::string &networkId);
+    void DeleteRealTimeOnlineDeviceNetworkId(const std::string &networkId);
+    size_t GetRealTimeOnlineDeviceCount();
     /* DeviceId is which is hashed by sha256 */
     std::string GetUUIDByDeviceId(const std::string &deviceId);
     /**
@@ -126,6 +133,9 @@ private:
 
     std::set<DeviceIdEntry> devIdEntrySet_;
     std::shared_mutex onlineDevMutex_;
+
+    std::set<std::string> realTimeOnLineNetworkIdSet_;
+    std::shared_mutex realTimeNetworkIdMutex_;
 
     std::shared_ptr<DHContext::CommonEventHandler> eventHandler_;
     /* true for system in sleeping, false for NOT in sleeping */

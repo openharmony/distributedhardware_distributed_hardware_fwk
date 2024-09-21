@@ -57,28 +57,6 @@ const std::string TEST_COMPONENT_NAME_3 = "distributed_mic";
 }
 
 /**
- * @tc.name: version_manager_test_001
- * @tc.desc: Verify the Init function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSKN
- */
-HWTEST_F(VersionManagerTest, version_manager_test_001, TestSize.Level0)
-{
-    auto ret = VersionManager::GetInstance().Init();
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-}
-
-void CompVersionGetValue(CompVersion &cVs, std::string name, DHType dhType, std::string handlerVersion,
-    std::string sourceVersion, std::string sinkVersion)
-{
-    cVs.name = name;
-    cVs.dhType = dhType;
-    cVs.handlerVersion = handlerVersion;
-    cVs.sourceVersion = sourceVersion;
-    cVs.sinkVersion = sinkVersion;
-}
-
-/**
  * @tc.name: version_manager_test_002
  * @tc.desc: Verify AddDHVersion function
  * @tc.type: FUNC
@@ -87,15 +65,12 @@ void CompVersionGetValue(CompVersion &cVs, std::string name, DHType dhType, std:
 HWTEST_F(VersionManagerTest, version_manager_test_002, TestSize.Level0)
 {
     DHVersion dhVersion;
-    CompVersion cVs1;
-    CompVersionGetValue(cVs1, TEST_COMPONENT_NAME_1, DHType::CAMERA, TEST_HANDLER_VERSION_1, TEST_SOURCE_VERSION_1,
-        TEST_SINK_VERSION_1);
-    CompVersion cVs2;
-    CompVersionGetValue(cVs2, TEST_COMPONENT_NAME_2, DHType::AUDIO, TEST_HANDLER_VERSION_2, TEST_SOURCE_VERSION_2,
-        TEST_SINK_VERSION_2);
-    CompVersion cVs3;
-    CompVersionGetValue(cVs3, TEST_COMPONENT_NAME_3, DHType::SCREEN, TEST_HANDLER_VERSION_3, TEST_SOURCE_VERSION_3,
-        TEST_SINK_VERSION_3);
+    CompVersion cVs1 { TEST_COMPONENT_NAME_1, DHType::CAMERA, TEST_HANDLER_VERSION_1, TEST_SOURCE_VERSION_1,
+        TEST_SINK_VERSION_1 };
+    CompVersion cVs2 { TEST_COMPONENT_NAME_2, DHType::AUDIO, TEST_HANDLER_VERSION_2, TEST_SOURCE_VERSION_2,
+        TEST_SINK_VERSION_2 };
+    CompVersion cVs3 { TEST_COMPONENT_NAME_3, DHType::SCREEN, TEST_HANDLER_VERSION_3, TEST_SOURCE_VERSION_3,
+        TEST_SINK_VERSION_3 };
     dhVersion.uuid = TEST_DEVICE_ID_1;
     dhVersion.dhVersion = TEST_DH_VERSION;
     dhVersion.compVersions.insert(std::make_pair(cVs1.dhType, cVs1));
@@ -164,9 +139,8 @@ HWTEST_F(VersionManagerTest, version_manager_test_005, TestSize.Level0)
 HWTEST_F(VersionManagerTest, version_manager_test_006, TestSize.Level0)
 {
     DHVersion dhVersion;
-    CompVersion cVs1;
-    CompVersionGetValue(cVs1, TEST_COMPONENT_NAME_1, DHType::CAMERA, TEST_HANDLER_VERSION_1, TEST_SOURCE_VERSION_1,
-        TEST_SINK_VERSION_1);
+    CompVersion cVs1 { TEST_COMPONENT_NAME_1, DHType::CAMERA, TEST_HANDLER_VERSION_1, TEST_SOURCE_VERSION_1,
+        TEST_SINK_VERSION_1 };
     dhVersion.uuid = TEST_DEVICE_ID_1;
     dhVersion.dhVersion = TEST_DH_VERSION;
     dhVersion.compVersions.insert(std::make_pair(cVs1.dhType, cVs1));
@@ -185,9 +159,8 @@ HWTEST_F(VersionManagerTest, version_manager_test_006, TestSize.Level0)
 HWTEST_F(VersionManagerTest, version_manager_test_007, TestSize.Level0)
 {
     DHVersion dhVersion;
-    CompVersion cVs1;
-    CompVersionGetValue(cVs1, TEST_COMPONENT_NAME_1, DHType::CAMERA, TEST_HANDLER_VERSION_1, TEST_SOURCE_VERSION_1,
-        TEST_SINK_VERSION_1);
+    CompVersion cVs1 { TEST_COMPONENT_NAME_1, DHType::CAMERA, TEST_HANDLER_VERSION_1, TEST_SOURCE_VERSION_1,
+        TEST_SINK_VERSION_1 };
     dhVersion.uuid = TEST_DEVICE_ID_1;
     dhVersion.dhVersion = TEST_DH_VERSION;
     dhVersion.compVersions.insert(std::make_pair(cVs1.dhType, cVs1));

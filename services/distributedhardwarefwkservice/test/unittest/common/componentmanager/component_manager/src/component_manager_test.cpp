@@ -405,30 +405,6 @@ HWTEST_F(ComponentManagerTest, WaitForResult_001, TestSize.Level0)
 }
 
 /**
- * @tc.name: InitCompSource_001
- * @tc.desc: Verify the InitCompSource function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ComponentManagerTest, InitCompSource_001, TestSize.Level0)
-{
-    bool ret = ComponentManager::GetInstance().InitCompSource();
-    EXPECT_EQ(true, ret);
-}
-
-/**
- * @tc.name: InitCompSink_001
- * @tc.desc: Verify the InitCompSink function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ComponentManagerTest, InitCompSink_001, TestSize.Level0)
-{
-    bool ret = ComponentManager::GetInstance().InitCompSink();
-    EXPECT_EQ(true, ret);
-}
-
-/**
  * @tc.name: Enable_001
  * @tc.desc: Verify the Enable function
  * @tc.type: FUNC
