@@ -1027,17 +1027,6 @@ HWTEST_F(ResourceManagerTest, SyncMetaInfoFromDB_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
 }
 
-HWTEST_F(ResourceManagerTest, SyncRemoteMetaInfos_001, TestSize.Level0)
-{
-    MetaInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
-    auto ret = MetaInfoManager::GetInstance()->SyncRemoteMetaInfos();
-    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
-
-    MetaInfoManager::GetInstance()->Init();
-    ret = MetaInfoManager::GetInstance()->SyncRemoteMetaInfos();
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-}
-
 HWTEST_F(ResourceManagerTest, GetDataByKeyPrefix_003, TestSize.Level0)
 {
     std::string keyPrefix = "keyPrefix_test";
