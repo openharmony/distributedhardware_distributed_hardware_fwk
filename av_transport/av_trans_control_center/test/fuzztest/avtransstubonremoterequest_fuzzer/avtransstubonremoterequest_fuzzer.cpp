@@ -21,10 +21,17 @@
 #include "iremote_object.h"
 #include "message_option.h"
 #include "message_parcel.h"
+#include "av_sync_utils.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 const uint32_t DC_MESSAGE_SIZE = 4;
+
+std::string MarshalSharedMemory(const AVTransSharedMemory &memory)
+{
+    return "";
+}
+
 void AVTransStubOnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(int32_t))) {
