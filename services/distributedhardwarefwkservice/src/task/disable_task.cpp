@@ -64,6 +64,10 @@ void DisableTask::DoTaskInner()
 
     /* trigger Unregister Distributed Hardware Task, sync function */
     auto result = UnRegisterHardware();
+    if (result == DH_FWK_SUCCESS) {
+        std::string enabledDeviceKey = GetCapabilityKey(GetDeviceIdByUUID(GetUUID()), GetDhId());
+        TaskBoard::GetInstance().RemoveEnabledDevice(enabledDeviceKey);
+    }
     auto state = (result == DH_FWK_SUCCESS) ? TaskState::SUCCESS : TaskState::FAIL;
     SetTaskState(state);
 
@@ -75,10 +79,6 @@ void DisableTask::DoTaskInner()
     }
     DHLOGD("finish disable task, remove it, id = %{public}s", GetId().c_str());
     TaskBoard::GetInstance().RemoveTask(GetId());
-    if (result == DH_FWK_SUCCESS) {
-        std::string enabledDeviceKey = GetCapabilityKey(GetDeviceIdByUUID(GetUUID()), GetDhId());
-        TaskBoard::GetInstance().RemoveEnabledDevice(enabledDeviceKey);
-    }
 }
 
 int32_t DisableTask::UnRegisterHardware()
