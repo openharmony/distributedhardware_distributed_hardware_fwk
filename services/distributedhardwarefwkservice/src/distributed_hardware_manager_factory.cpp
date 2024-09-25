@@ -38,10 +38,14 @@
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager.h"
 #include "device_param_mgr.h"
+#include "local_capability_info_manager.h"
 #include "meta_info_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    constexpr int32_t DOUBLE_FRAME_DEVICE_TYPE = -1;
+}
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DistributedHardwareManagerFactory"
 
@@ -135,11 +139,11 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
         const auto uuid = GetUUIDByDm(networkId);
         const auto udid = GetUDIDByDm(networkId);
         DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s",
-            GetAnonyString(networkId).c_str(),
-            GetAnonyString(uuid).c_str());
+            GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str());
         uint16_t deviceType = deviceInfo.deviceTypeId;
-        std::thread([this, networkId, uuid, udid, deviceType]() {
-            this->SendOnLineEvent(networkId, uuid, udid, deviceType);
+        int32_t osType = GetDeviceSystemType(deviceInfo.extraData);
+        std::thread([this, networkId, uuid, udid, deviceType, osType]() {
+            this->SendOnLineEvent(networkId, uuid, udid, deviceType, osType);
         }).detach();
     }
 }
@@ -150,7 +154,7 @@ bool DistributedHardwareManagerFactory::IsInit()
 }
 
 int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &networkId, const std::string &uuid,
-    const std::string &udid, uint16_t deviceType)
+    const std::string &udid, uint16_t deviceType, int32_t osType)
 {
     if (!IsIdLengthValid(networkId) || !IsIdLengthValid(uuid) || !IsIdLengthValid(udid)) {
         return ERR_DH_FWK_PARA_INVALID;
@@ -181,6 +185,13 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
     if (DeviceParamMgr::GetInstance().IsDeviceE2ESync()) {
         DHLOGI("e2e device, need initiative sync data.");
         MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
+    }
+
+    if (osType == DOUBLE_FRAME_DEVICE_TYPE) {
+        DHLOGE("double frame device, networkId = %{public}s, uuid = %{public}s, udid = %{public}s, need clear data.",
+            GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
+        ClearRemoteDeviceMetaInfoData(udid, uuid);
+        ClearRemoteDeviceLocalInfoData(uuid);
     }
     auto onlineResult = DistributedHardwareManager::GetInstance().SendOnLineEvent(networkId, uuid, udid, deviceType);
     if (onlineResult != DH_FWK_SUCCESS) {
@@ -237,10 +248,15 @@ bool DistributedHardwareManagerFactory::GetUnInitFlag()
     return flagUnInit_.load();
 }
 
-void DistributedHardwareManagerFactory::ClearDataWhenPeerLogout(const std::string &peerudid,
+void DistributedHardwareManagerFactory::ClearRemoteDeviceMetaInfoData(const std::string &peerudid,
     const std::string &peeruuid)
 {
-    MetaInfoManager::GetInstance()->ClearDataWhenPeerLogout(peerudid, peeruuid);
+    MetaInfoManager::GetInstance()->ClearRemoteDeviceMetaInfoData(peerudid, peeruuid);
+}
+
+void DistributedHardwareManagerFactory::ClearRemoteDeviceLocalInfoData(const std::string &peeruuid)
+{
+    LocalCapabilityInfoManager::GetInstance()->ClearRemoteDeviceLocalInfoData(peeruuid);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -45,13 +45,14 @@ public:
     int32_t SyncRemoteMetaInfos();
     int32_t GetDataByKeyPrefix(const std::string &keyPrefix, MetaCapInfoMap &metaCapMap);
     int32_t RemoveMetaInfoByKey(const std::string &key);
+    int32_t RemoveMetaInfoInMemByUdid(const std::string &peerudid);
     int32_t GetMetaCapInfo(const std::string &udidHash, const std::string &dhId,
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
     void GetMetaCapInfosByUdidHash(const std::string &udidHash,
         std::vector<std::shared_ptr<MetaCapabilityInfo>> &metaCapInfos);
     int32_t GetMetaDataByDHType(const DHType dhType, MetaCapInfoMap &metaInfoMap);
     int32_t SyncDataByNetworkId(const std::string &networkId);
-    int32_t ClearDataWhenPeerLogout(const std::string &peerudid, const std::string &peeruuid);
+    int32_t ClearRemoteDeviceMetaInfoData(const std::string &peerudid, const std::string &peeruuid);
     /* Database data changes callback */
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     /* Cloud data changes callback */

@@ -1220,16 +1220,16 @@ HWTEST_F(ResourceManagerTest, SyncDataByNetworkId_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 }
 
-HWTEST_F(ResourceManagerTest, ClearDataWhenPeerLogout_001, TestSize.Level0)
+HWTEST_F(ResourceManagerTest, ClearRemoteDeviceMetaInfoData_001, TestSize.Level0)
 {
     MetaInfoManager::GetInstance()->Init();
     std::string peerudid = "peerudid_test";
     std::string peeruuid = "peeruuid_test";
-    auto ret = MetaInfoManager::GetInstance()->ClearDataWhenPeerLogout(peerudid, peeruuid);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    auto ret = MetaInfoManager::GetInstance()->ClearRemoteDeviceMetaInfoData(peerudid, peeruuid);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
 
     MetaInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
-    ret = MetaInfoManager::GetInstance()->ClearDataWhenPeerLogout(peerudid, peeruuid);
+    ret = MetaInfoManager::GetInstance()->ClearRemoteDeviceMetaInfoData(peerudid, peeruuid);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 }
 } // namespace DistributedHardware

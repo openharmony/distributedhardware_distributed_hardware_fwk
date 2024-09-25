@@ -45,6 +45,7 @@ namespace {
     constexpr unsigned char MASK = 0x0F;
     constexpr int32_t DOUBLE_TIMES = 2;
     constexpr int32_t COMPRESS_SLICE_SIZE = 1024;
+    const std::string PARAM_KEY_OS_TYPE = "OS_TYPE";
 }
 
 int64_t GetCurrentTime()
@@ -343,6 +344,24 @@ bool IsHashSizeValid(const std::string &inputHashValue)
         return false;
     }
     return true;
+}
+
+int32_t GetDeviceSystemType(const std::string &extraData)
+{
+    cJSON *jsonObj = cJSON_Parse(extraData.c_str());
+    if (jsonObj == NULL) {
+        DHLOGE("jsonStr parse failed");
+        return ERR_DH_FWK_INVALID_OSTYPE;
+    }
+    cJSON *paramKey = cJSON_GetObjectItem(jsonObj, PARAM_KEY_OS_TYPE.c_str());
+    if (paramKey == NULL || !cJSON_IsNumber(paramKey)) {
+        DHLOGE("paramKey is null or paramKey is invaild type!");
+        cJSON_Delete(jsonObj);
+        return ERR_DH_FWK_INVALID_OSTYPE;
+    }
+    int32_t osType = paramKey->valueint;
+    cJSON_Delete(jsonObj);
+    return osType;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

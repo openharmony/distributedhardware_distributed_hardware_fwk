@@ -31,6 +31,7 @@ enum class Status : uint32_t {
 };
 
 constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
+constexpr int32_t INVALID_OSTYPE = 10;
 const std::string TEST_NETWORKID = "111111";
 const std::string TEST_UUID = "222222";
 const std::string TEST_UDID = "333333";
@@ -63,14 +64,20 @@ void AccessManagerTest::TearDownTestCase() {}
  */
 HWTEST_F(AccessManagerTest, SendOnLineEvent_001, TestSize.Level1)
 {
+    int32_t ostype = -1;
     DHContext::GetInstance().AddOnlineDevice(TEST_UDID, TEST_UUID, TEST_NETWORKID);
     auto ret = DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(TEST_NETWORKID, TEST_UUID, TEST_UDID,
-        TEST_DEV_TYPE_PAD);
+        TEST_DEV_TYPE_PAD, ostype);
     EXPECT_EQ(ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE, ret);
 
     DHContext::GetInstance().devIdEntrySet_.clear();
     ret = DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(TEST_NETWORKID, TEST_UUID, TEST_UDID,
-        TEST_DEV_TYPE_PAD);
+        TEST_DEV_TYPE_PAD, ostype);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    ret = DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(TEST_NETWORKID, TEST_UUID, TEST_UDID,
+        TEST_DEV_TYPE_PAD, INVALID_OSTYPE);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 

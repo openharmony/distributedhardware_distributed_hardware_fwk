@@ -54,7 +54,7 @@ public:
     int32_t RemoveDataByKey(const std::string &key);
     std::vector<DistributedKv::Entry> GetEntriesByKeys(const std::vector<std::string> &keys);
     bool SyncDataByNetworkId(const std::string &networkId);
-    bool ClearDataWhenPeerLogout(const std::string &peerudid, const std::string &peeruuid);
+    bool ClearDataByPrefix(const std::string &prefix);
 
 private:
     int32_t RegisterChangeListener();
