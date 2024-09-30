@@ -22,6 +22,7 @@ group("fuzztest") {
     "componentenable_fuzzer:fuzztest",
     "componentloader_fuzzer:fuzztest",
     "componentmanager_fuzzer:fuzztest",
+    "dhcommtool_fuzzer:fuzztest",
     "dhmanagerfactory_fuzzer:fuzztest",
     "dhtransport_fuzzer:fuzztest",
     "distributedfwkservices_fuzzer:fuzztest",

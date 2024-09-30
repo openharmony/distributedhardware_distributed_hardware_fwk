@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,8 @@
 #include <string>
 #include <unistd.h>
 
+#include "device_manager.h"
+
 #include "access_manager.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_manager_factory.h"
@@ -33,7 +35,7 @@ namespace {
     constexpr uint32_t SLEEP_TIME_US = 10 * 1000;
 }
 
-void AccessManagerFuzzTest(const uint8_t* data, size_t size)
+void OnDeviceReadyFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
         return;
@@ -49,6 +51,18 @@ void AccessManagerFuzzTest(const uint8_t* data, size_t size)
 
     usleep(SLEEP_TIME_US);
 }
+
+void OnDeviceTrustChangeFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    std::string peerudid(reinterpret_cast<const char*>(data), size);
+    std::string peeruuid(reinterpret_cast<const char*>(data), size);
+    DmAuthForm authform = DmAuthForm::INVALID_TYPE;
+    AccessManager::GetInstance()->OnDeviceTrustChange(peerudid, peeruuid, authform);
+    usleep(SLEEP_TIME_US);
+}
 }
 }
 
@@ -56,7 +70,8 @@ void AccessManagerFuzzTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DistributedHardware::AccessManagerFuzzTest(data, size);
+    OHOS::DistributedHardware::OnDeviceReadyFuzzTest(data, size);
+    OHOS::DistributedHardware::OnDeviceTrustChangeFuzzTest(data, size);
     return 0;
 }
 
