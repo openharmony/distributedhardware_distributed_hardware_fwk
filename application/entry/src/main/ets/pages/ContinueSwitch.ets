@@ -217,12 +217,11 @@ struct ContinueSwitch {
     this.extContext = localStorage.get<common.UIExtensionContext>('context');
     this.startReason = AppStorage.get<string>('startReason');
     logger.info(`${TAG} aboutToAppear: startReason is ${this.startReason}`);
-    this.registerFoldStatusListener();
+    this.registerFoldStatus();
   }
 
   aboutToDisappear() {
     logger.info(`${TAG} aboutToDisappear in`);
-    this.unRegisterFoldStatusListener();
   }
 
   onBackPress() {
@@ -411,9 +410,6 @@ struct ContinueSwitch {
     .align(Alignment.TopStart)
     .friction(0.6)
     .edgeEffect(EdgeEffect.Spring)
-    .onWillScroll((xOffset: number, yOffset: number) => {
-      logger.debug(TAG + 'onScroll : xOffset:' + xOffset + ' ; yOffset' + yOffset);
-    })
     .onScrollEdge(() => {
       logger.info('To the edge');
     })
@@ -470,11 +466,10 @@ struct ContinueSwitch {
     }
   }
 
-  private registerFoldStatusListener(): void {
+  private registerFoldStatus(): void {
     logger.info(`${TAG} registerFoldStatusListener in`);
     if (display.isFoldable()) {
       try {
-        this.unRegisterFoldStatusListener();
         display.on('foldStatusChange', (foldStatus: display.FoldStatus) => {
           let foldStatusValue = foldStatus.valueOf();
           logger.info(`${TAG} registerFoldStatusListener: foldStatusValue is ${foldStatusValue}`);
@@ -482,17 +477,6 @@ struct ContinueSwitch {
         })
       } catch (err) {
         logger.error(`${TAG} Register failed. exception: ${err.message}`);
-      }
-    }
-  }
-
-  private unRegisterFoldStatusListener(): void {
-    logger.info(`${TAG} unRegisterFoldStatusListener in`);
-    if (display.isFoldable()) {
-      try {
-        display.off('foldStatusChange');
-      } catch (err) {
-        logger.error(`${TAG} unRegisterFoldStatusListener exception: ${err.message}`);
       }
     }
   }
