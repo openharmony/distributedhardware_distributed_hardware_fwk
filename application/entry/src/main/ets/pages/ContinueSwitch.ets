@@ -179,11 +179,6 @@ struct ContinueSwitch {
     }
   }
 
-  private isPhone(): boolean {
-    logger.info(`${TAG} isPhone in`);
-    return (deviceInfo.deviceType === 'phone' || deviceInfo.deviceType === 'default');
-  }
-
   onPageShow() {
     logger.info(TAG + 'onPageShow in');
     this.getGapLength();
@@ -223,7 +218,7 @@ struct ContinueSwitch {
     this.startReason = AppStorage.get<string>('startReason');
     this.isShowBack = AppStorage.get<boolean>('isShowBack') ?? true;
     logger.info(`${TAG} aboutToAppear: startReason is ${this.startReason}`);
-    if (this.isPhone) {
+    if (this.isPhone()) {
       this.registerFoldStatus();
     }
   }
@@ -446,6 +441,11 @@ struct ContinueSwitch {
       logger.info(TAG + 'this.shortSideSize = ' + this.shortSideSize + ', this.imageAnimatorWidth = ' +
       this.imageAnimatorWidth + ', this.imageAnimatorHeight = ' + this.imageAnimatorHeight);
     })
+  }
+
+  private isPhone(): boolean {
+    logger.info(`${TAG} isPhone in`);
+    return (deviceInfo.deviceType === 'phone' || deviceInfo.deviceType === 'default');
   }
 
   private getSymbolSize(): Length {
