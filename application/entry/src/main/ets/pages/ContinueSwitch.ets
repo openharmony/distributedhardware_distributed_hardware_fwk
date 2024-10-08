@@ -241,7 +241,7 @@ struct ContinueSwitch {
       this.ContentBuilder();
     }
     .hideTitleBar(false)
-    .title($r('app.string.continue_title'))
+    .title(this.title)
     .backgroundColor($r('sys.color.ohos_id_color_titlebar_sub_bg'))
   }
 
