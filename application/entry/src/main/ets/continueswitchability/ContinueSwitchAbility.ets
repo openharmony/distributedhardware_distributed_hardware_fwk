@@ -32,28 +32,33 @@ export default class ContinueSwitchAbility extends UIExtensionAbility {
   }
 
   onForeground() {
-    console.log(TAG, `UIExtAbility onForeground`)
+    console.log(TAG, `UIExtAbility onForeground`);
   }
 
   onBackground() {
-    console.log(TAG, `UIExtAbility onBackground`)
+    console.log(TAG, `UIExtAbility onBackground`);
   }
 
   onDestroy() {
-    console.log(TAG, `UIExtAbility onDestroy`)
+    console.log(TAG, `UIExtAbility onDestroy`);
   }
 
   onSessionCreate(want: Want, session: UIExtensionContentSession) {
-    console.log(TAG, `UIExtAbility onSessionCreate`);
+    console.log(TAG, `UIExtAbility onSessionCreate.`);
+    let parameters = want.parameters;
+    let startReason = parameters['startReason'];
     AppStorage.setOrCreate('continueSession', session);
+    AppStorage.setOrCreate('startReason', startReason);
     let param: Record<string, UIExtensionContentSession> = {
-      'session': session
+      'session': session,
+      'startReason': startReason
     };
     let storage: LocalStorage = new LocalStorage(param);
     session.loadContent('pages/ContinueSwitch', storage);
+    console.log(TAG, `onSessionCreate end. AppStorage.get<string>('startReason')= ${AppStorage.get<string>('startReason')}`);
   }
 
   onSessionDestroy(session: UIExtensionContentSession) {
-    console.log(TAG, `UIExtAbility onSessionDestroy`)
+    console.log(TAG, `UIExtAbility onSessionDestroy`);
   }
 }
