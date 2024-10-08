@@ -179,6 +179,11 @@ struct ContinueSwitch {
     }
   }
 
+  private isPhone(): boolean {
+    logger.info(`${TAG} isPhone in`);
+    return (deviceInfo.deviceType === 'phone' || deviceInfo.deviceType === 'default');
+  }
+
   onPageShow() {
     logger.info(TAG + 'onPageShow in');
     this.getGapLength();
@@ -216,8 +221,11 @@ struct ContinueSwitch {
     })
     this.extContext = localStorage.get<common.UIExtensionContext>('context');
     this.startReason = AppStorage.get<string>('startReason');
+    this.isShowBack = AppStorage.get<boolean>('isShowBack') ?? true;
     logger.info(`${TAG} aboutToAppear: startReason is ${this.startReason}`);
-    this.registerFoldStatus();
+    if (this.isPhone) {
+      this.registerFoldStatus();
+    }
   }
 
   aboutToDisappear() {
