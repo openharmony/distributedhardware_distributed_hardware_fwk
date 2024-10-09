@@ -219,7 +219,7 @@ struct ContinueSwitch {
     this.isShowBack = AppStorage.get<boolean>('isShowBack') ?? true;
     logger.info(`${TAG} aboutToAppear: startReason is ${this.startReason}, isShowBack: ${this.isShowBack}`);
     if (this.isPhone()) {
-      this.registerFoldStatus();
+      this.checkFoldBackButton();
     }
     this.checkPcPadBackButton();
   }
@@ -484,13 +484,13 @@ struct ContinueSwitch {
     }
   }
 
-  private registerFoldStatus(): void {
-    logger.info(`${TAG} registerFoldStatusListener in`);
+  private checkFoldBackButton(): void {
+    logger.info(`${TAG} checkFoldBackButton in`);
     if (display.isFoldable()) {
       try {
         display.on('foldStatusChange', (foldStatus: display.FoldStatus) => {
           let foldStatusValue = foldStatus.valueOf();
-          logger.info(`${TAG} registerFoldStatusListener: foldStatusValue is ${foldStatusValue}`);
+          logger.info(`${TAG} checkFoldBackButton: foldStatusValue is ${foldStatusValue}`);
           this.refreshFoldStatus(foldStatusValue);
         })
         let data: display.FoldStatus = display.getFoldStatus();
