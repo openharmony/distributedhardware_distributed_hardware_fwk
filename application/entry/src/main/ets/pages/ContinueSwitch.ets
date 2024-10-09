@@ -217,10 +217,11 @@ struct ContinueSwitch {
     this.extContext = localStorage.get<common.UIExtensionContext>('context');
     this.startReason = AppStorage.get<string>('startReason');
     this.isShowBack = AppStorage.get<boolean>('isShowBack') ?? true;
-    logger.info(`${TAG} aboutToAppear: startReason is ${this.startReason}`);
+    logger.info(`${TAG} aboutToAppear: startReason is ${this.startReason}, isShowBack: ${this.isShowBack}`);
     if (this.isPhone()) {
       this.registerFoldStatus();
     }
+    this.checkPcPadBackButton();
   }
 
   aboutToDisappear() {
@@ -441,6 +442,15 @@ struct ContinueSwitch {
       logger.info(TAG + 'this.shortSideSize = ' + this.shortSideSize + ', this.imageAnimatorWidth = ' +
       this.imageAnimatorWidth + ', this.imageAnimatorHeight = ' + this.imageAnimatorHeight);
     })
+  }
+
+  private checkPcPadBackButton(): void {
+    logger.info(`${TAG} checkPcPadBackButton in`);
+    if (this.startReason === 'from_search') {
+      if (deviceInfo.deviceType === '2in1' || deviceInfo.deviceType === 'tablet') {
+        this.isShowBack = false;
+      }
+    }
   }
 
   private isPhone(): boolean {
