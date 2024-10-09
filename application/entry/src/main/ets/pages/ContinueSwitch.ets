@@ -63,13 +63,14 @@ struct ContinueSwitch {
   @State reverse: boolean = false;
   @State iterations: number = -1;
   @State isEnabled: boolean = true;
-  private videoController: VideoController | undefined = undefined;
+  @State isShowBack: boolean = true;
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
   private learnMore: ResourceStr = $r('app.string.learn_more');
   private continueDesc: ResourceStr = $r('app.string.continue_desc_text', '');
   private accountManager: osAccount.AccountManager = osAccount.getAccountManager();
+  private startReason?: string = '';
 
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult): void {
     logger.info(TAG + 'onPortrait in');
@@ -178,17 +179,6 @@ struct ContinueSwitch {
     }
   }
 
-  @Builder
-  NavigationTitle() {
-    Column() {
-      Text($r('app.string.continue_title'))
-        .fontColor($r('sys.color.ohos_id_color_text_primary'))
-        .fontSize($r('sys.float.ohos_id_text_size_headline8'))
-        .lineHeight(45)
-        .fontWeight(FontWeight.Bold)
-    }
-  }
-
   onPageShow() {
     logger.info(TAG + 'onPageShow in');
     this.getGapLength();
@@ -202,7 +192,8 @@ struct ContinueSwitch {
   }
 
   aboutToAppear() {
-    logger.info(TAG + 'aboutToAppear in');
+    logger.info(`${TAG} aboutToAppear in`);
+    // Switch State Initialization
     let value = settings.getValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
       settings.domainName.USER_SECURITY);
     this.isSwitchOn = value != switchState.close ? true : false;
@@ -220,198 +211,227 @@ struct ContinueSwitch {
     this.getStringSync();
     this.getImageArray();
     this.getForegroundOsAccountLocalId();
-
     this.listener.on('change', (mediaQueryResult: mediaQuery.MediaQueryResult) => {
       this.onPortrait(mediaQueryResult);
     })
     this.extContext = localStorage.get<common.UIExtensionContext>('context');
+    this.startReason = AppStorage.get<string>('startReason');
+    this.isShowBack = AppStorage.get<boolean>('isShowBack') ?? true;
+    logger.info(`${TAG} aboutToAppear: startReason is ${this.startReason}, isShowBack: ${this.isShowBack}`);
+    if (this.isPhone()) {
+      this.checkFoldBackButton();
+    }
+    this.checkPcPadBackButton();
+  }
+
+  aboutToDisappear() {
+    logger.info(`${TAG} aboutToDisappear in`);
   }
 
   onBackPress() {
     logger.info(TAG + 'onBackPress in');
   }
 
-  async awaitTime(time: number) {
-    setTimeout(() => {
-      logger.info(TAG + 'awaitTime is' + time);
-    }, time)
+  @Builder
+  NormalRootContent() {
+    this.titleBar();
+    this.ContentBuilder();
   }
 
-  build() {
+  @Builder
+  SearchRootContent() {
+    NavDestination() {
+      this.ContentBuilder();
+    }
+    .hideTitleBar(false)
+    .title(this.title)
+    .backgroundColor($r('sys.color.ohos_id_color_titlebar_sub_bg'))
+  }
+
+  @Builder
+  titleBar() {
     Column() {
-      Column() {
-        EditableTitleBar({
-          leftIconStyle: EditableLeftIconType.Back,
-          title: $r('app.string.continue_title'),
-          isSaveIconRequired: false,
-          onCancel: () => {
-            if (this.continueSession) {
-              this.continueSession.sendData({ 'action': 'pop' })
-            } else {
-              logger.error(TAG + 'continueSession is undefined');
-            }
+      EditableTitleBar({
+        leftIconStyle: EditableLeftIconType.Back,
+        title: $r('app.string.continue_title'),
+        isSaveIconRequired: false,
+        onCancel: () => {
+          if (this.continueSession) {
+            this.continueSession.sendData({ 'action': 'pop' })
+          } else {
+            logger.error(TAG + 'continueSession is undefined');
           }
+        }
+      })
+    }
+  }
+
+  @Builder
+  ContentBuilder() {
+    Scroll(this.scroller) {
+      Column() {
+        ImageAnimator()
+          .images(this.imageArray)
+          .state(this.animationState)
+          .reverse(this.reverse)
+          .fillMode(this.iterations)
+          .iterations(this.iterations)
+          .width(this.imageAnimatorWidth)
+          .height(this.imageAnimatorHeight)
+          .onStart(() => {
+            logger.info(TAG + 'ImageAnimator Start');
+          })
+          .onFinish(() => {
+            logger.info(TAG + 'ImageAnimator Finish');
+          })
+
+        Text() {
+          Span(this.continueDesc)
+            .fontFamily('HarmonyHeiTi')
+            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+            .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+            .fontWeight(FontWeight.Regular)
+          Span(this.learnMore)
+            .fontFamily('HarmonyHeiTi')
+            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+            .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+            .fontWeight(FontWeight.Medium)
+            .onClick(() => {
+              TipsJumpUtils.jumpTips(getContext(this) as common.UIAbilityContext, CommonConstants.FUN_NUM,
+                CommonConstants.TIPS_TYPE);
+            })
+        }
+        .margin({
+          bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM,
+          top: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_TOP
         })
-      }
+        .textAlign(TextAlign.Center)
+        .width('100%')
 
-      Scroll(this.scroller) {
         Column() {
-          ImageAnimator()
-            .images(this.imageArray)
-            .state(this.animationState)
-            .reverse(this.reverse)
-            .fillMode(this.iterations)
-            .iterations(this.iterations)
-            .width(this.imageAnimatorWidth)
-            .height(this.imageAnimatorHeight)
-            .onStart(() => {
-              logger.info(TAG + 'ImageAnimator Start');
-            })
-            .onFinish(() => {
-              logger.info(TAG + 'ImageAnimator Finish');
-            })
-
-          Text() {
-            Span(this.continueDesc)
-              .fontFamily('HarmonyHeiTi')
-              .fontSize($r('sys.float.ohos_id_text_size_body2'))
-              .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-              .fontWeight(FontWeight.Regular)
-            Span(this.learnMore)
-              .fontFamily('HarmonyHeiTi')
-              .fontSize($r('sys.float.ohos_id_text_size_body2'))
-              .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+          Flex({
+            direction: FlexDirection.Row,
+            justifyContent: FlexAlign.SpaceBetween,
+            alignItems: ItemAlign.Center
+          }) {
+            Text($r('app.string.continue_title'))
+              .fontSize($r('sys.float.ohos_id_text_size_sub_title2'))
               .fontWeight(FontWeight.Medium)
-              .onClick(() => {
-                TipsJumpUtils.jumpTips(getContext(this) as common.UIAbilityContext, CommonConstants.FUN_NUM,
-                  CommonConstants.TIPS_TYPE);
+              .fontColor($r('sys.color.ohos_id_color_text_primary'))
+              .accessibilityLevel('no')
+              .padding({
+                top: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_TOP_PC : CommonConstants.ITEM_LIST_PADDING_TOP,
+                bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC :
+                CommonConstants.ITEM_LIST_PADDING_BOTTOM
+              })
+
+            Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
+              .width(CommonConstants.CONTINUE_SWITCH_WIDTH)
+              .height(CommonConstants.CONTINUE_SWITCH_HEIGHT)
+              .hoverEffect(HoverEffect.None)
+              .enabled(this.isEnabled)
+              .onChange((isOn: boolean) => {
+                logger.info(TAG + 'isOn:' + isOn);
+                this.isSwitchOn = isOn;
+                AppStorage.setAndLink('isSwitchOn', isOn);
+                if (isOn) {
+                  let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
+                    switchState.open, settings.domainName.USER_SECURITY);
+                  logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is open');
+                } else {
+                  let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
+                    switchState.close, settings.domainName.USER_SECURITY);
+                  logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
+                }
               })
           }
-          .margin({
-            bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM,
-            top: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_TOP
-          })
-          .textAlign(TextAlign.Center)
           .width('100%')
+          .padding({
+            left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
+            right: CommonConstants.TEXT_LIST_ALIGN_DISTANCE
+          })
+          .backgroundColor($r('sys.color.ohos_id_color_list_card_bg'))
+          .borderRadius(this.is2in1 ? CommonConstants.PC_BORDER_RADIUS : CommonConstants.NON_PC_BORDER_RADIUS)
+          .accessibilityText(this.title)
+        }
+        .width('100%')
+        .constraintSize({
+          minHeight: CommonConstants.PC_LIST_HEIGHT
+        })
 
-          Column() {
-            Flex({
-              direction: FlexDirection.Row,
-              justifyContent: FlexAlign.SpaceBetween,
-              alignItems: ItemAlign.Center
-            }) {
-              Text($r('app.string.continue_title'))
-                .fontSize($r('sys.float.ohos_id_text_size_sub_title2'))
-                .fontWeight(FontWeight.Medium)
-                .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                .accessibilityLevel('no')
-                .padding({
-                  top: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_TOP_PC : CommonConstants.ITEM_LIST_PADDING_TOP,
-                  bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC :
-                  CommonConstants.ITEM_LIST_PADDING_BOTTOM
-                })
+        Column() {
+          Flex({
+            direction: FlexDirection.Row,
+            justifyContent: FlexAlign.Start,
+            alignItems: ItemAlign.Center
+          }) {
+            SymbolGlyph($r('sys.symbol.info_circle_fill'))
+              .fontWeight(FontWeight.Medium)
+              .fontSize(CommonConstants.SYMBOL_INFO_CIRCLE)
+              .fontColor([$r('sys.color.ohos_id_color_activated')])
+              .margin({ right: CommonConstants.SYMBOL_MARGIN_RIGHT })
 
-              Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
-                .width(CommonConstants.CONTINUE_SWITCH_WIDTH)
-                .height(CommonConstants.CONTINUE_SWITCH_HEIGHT)
-                .hoverEffect(HoverEffect.None)
-                .enabled(this.isEnabled)
-                .onChange((isOn: boolean) => {
-                  logger.info(TAG + 'isOn:' + isOn);
-                  this.isSwitchOn = isOn;
-                  AppStorage.setAndLink('isSwitchOn', isOn);
-                  if (isOn) {
-                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
-                      switchState.open, settings.domainName.USER_SECURITY);
-                    logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is open');
-                  } else {
-                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
-                      switchState.close, settings.domainName.USER_SECURITY);
-                    logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
-                  }
-                })
-            }
-            .width('100%')
-            .padding({
-              left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
-              right: CommonConstants.TEXT_LIST_ALIGN_DISTANCE
-            })
-            .backgroundColor($r('sys.color.ohos_id_color_list_card_bg'))
-            .borderRadius(this.is2in1 ? CommonConstants.PC_BORDER_RADIUS : CommonConstants.NON_PC_BORDER_RADIUS)
-            .accessibilityText(this.title)
+            Text($r('app.string.update_version_prompt'))
+              .fontSize($r('sys.float.ohos_id_text_size_body3'))
+              .fontWeight(FontWeight.Medium)
+              .fontColor($r('sys.color.ohos_id_color_text_primary'))
+              .textAlign(TextAlign.Start)
+              .lineHeight(CommonConstants.UPDATE_PROMPT_LINE_HEIGHT)
           }
-          .width('100%')
-          .constraintSize({
-            minHeight: CommonConstants.PC_LIST_HEIGHT
-          })
+          .margin({ top: CommonConstants.UPDATE_PROMPT_MARGIN_TOP })
+        }
+        .padding({
+          left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
+          right: CommonConstants.TEXT_LIST_ALIGN_DISTANCE
+        })
 
-          Column() {
-            Flex({
-              direction: FlexDirection.Row,
-              justifyContent: FlexAlign.Start,
-              alignItems: ItemAlign.Center
-            }) {
-              SymbolGlyph($r('sys.symbol.info_circle_fill'))
-                .fontWeight(FontWeight.Medium)
-                .fontSize(this.getSymbolSize())
-                .fontColor([$r('sys.color.ohos_id_color_activated')])
-                .margin({ right: CommonConstants.SYMBOL_MARGIN_RIGHT })
-
-              Text($r('app.string.update_version_prompt'))
-                .fontSize($r('sys.float.ohos_id_text_size_body3'))
-                .fontWeight(FontWeight.Medium)
-                .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                .textAlign(TextAlign.Start)
-                .lineHeight(CommonConstants.UPDATE_PROMPT_LINE_HEIGHT)
-            }
-            .margin({ top: CommonConstants.UPDATE_PROMPT_MARGIN_TOP })
+        Column() {
+          Row() {
+            Text($r('app.string.continue_privacy_text'))
+              .fontSize($r('sys.float.ohos_id_text_size_body3'))
+              .fontWeight(FontWeight.Regular)
+              .margin({ top: CommonConstants.CONTINUE_PRIVACY_TEXT_MARGIN_TOP })
+              .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+              .textAlign(TextAlign.Start)
+              .width('100%')
           }
           .padding({
             left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
             right: CommonConstants.TEXT_LIST_ALIGN_DISTANCE
           })
+        }.width('100%')
 
-          Column() {
-            Row() {
-              Text($r('app.string.continue_privacy_text'))
-                .fontSize($r('sys.float.ohos_id_text_size_body3'))
-                .fontWeight(FontWeight.Regular)
-                .margin({ top: CommonConstants.CONTINUE_PRIVACY_TEXT_MARGIN_TOP })
-                .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                .textAlign(TextAlign.Start)
-                .width('100%')
-            }
-            .padding({
-              left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
-              right: CommonConstants.TEXT_LIST_ALIGN_DISTANCE
-            })
-          }.width('100%')
-
-        }
-        .width('100%')
-        .padding({ left: this.gapLength, right: this.gapLength })
-        .margin({ bottom: this.contentHeight * 0.09 })
-        .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
       }
       .width('100%')
-      .height(this.screenHeight)
-      .scrollable(ScrollDirection.Vertical)
-      .scrollBar(BarState.Off)
-      .align(Alignment.TopStart)
-      .friction(0.6)
-      .edgeEffect(EdgeEffect.Spring)
-      .onWillScroll((xOffset: number, yOffset: number) => {
-        logger.debug(TAG + 'onScroll : xOffset:' + xOffset + ' ; yOffset' + yOffset);
-      })
-      .onScrollEdge(() => {
-        logger.info('To the edge');
-      })
-      .onScrollStop(() => {
-        logger.info('Scroll Stop');
-      })
-      .onAreaChange((oldArea: Area, newArea: Area) => {
-        logger.info(TAG + 'Scroll, oldArea.height = ' + oldArea.height + ', newArea.height = ' + newArea.height);
-      })
+      .padding({ left: this.gapLength, right: this.gapLength })
+      .margin({ bottom: this.contentHeight * 0.09 })
+      .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
+    }
+    .width('100%')
+    .height(this.screenHeight)
+    .scrollable(ScrollDirection.Vertical)
+    .scrollBar(BarState.Off)
+    .align(Alignment.TopStart)
+    .friction(0.6)
+    .edgeEffect(EdgeEffect.Spring)
+    .onScrollEdge(() => {
+      logger.info('To the edge');
+    })
+    .onScrollStop(() => {
+      logger.info('Scroll Stop');
+    })
+    .onAreaChange((oldArea: Area, newArea: Area) => {
+      logger.info(TAG + 'Scroll, oldArea.height = ' + oldArea.height + ', newArea.height = ' + newArea.height);
+    })
+  }
+
+  build() {
+    Column() {
+      if (this.isShowBack) {
+        this.NormalRootContent();
+      } else {
+        this.SearchRootContent();
+      }
     }
     .width('100%')
     .height('100%')
@@ -424,6 +444,20 @@ struct ContinueSwitch {
     })
   }
 
+  private checkPcPadBackButton(): void {
+    logger.info(`${TAG} checkPcPadBackButton in`);
+    if (this.startReason === 'from_search') {
+      if (deviceInfo.deviceType === '2in1' || deviceInfo.deviceType === 'tablet') {
+        this.isShowBack = false;
+      }
+    }
+  }
+
+  private isPhone(): boolean {
+    logger.info(`${TAG} isPhone in`);
+    return (deviceInfo.deviceType === 'phone' || deviceInfo.deviceType === 'default');
+  }
+
   private getSymbolSize(): Length {
     logger.info(TAG + 'getSymbolSize in');
     let fontSizeScale: number = AppStorage.get<number>('currentFontSizeScale') as number;
@@ -432,5 +466,38 @@ struct ContinueSwitch {
       return `${CommonConstants.SYMBOL_INFO_CIRCLE * 2}vp`
     }
     return CommonConstants.SYMBOL_INFO_CIRCLE;
+  }
+
+  private refreshFoldStatus(foldStatus: display.FoldStatus): void {
+    logger.info(`${TAG} refreshFoldStatus in. foldStatus: ${foldStatus}. startReason: ${this.startReason}`);
+    if (this.startReason === 'from_search') {
+      if (foldStatus === display.FoldStatus.FOLD_STATUS_FOLDED) {
+        this.isShowBack = true;
+        logger.info(`${TAG} foldStatus: ${foldStatus}. this.isShowBack: ${this.isShowBack}`);
+      } else {
+        this.isShowBack = false;
+        logger.info(`${TAG} foldStatus: ${foldStatus}. this.isShowBack: ${this.isShowBack}`);
+      }
+    } else {
+      this.isShowBack = true;
+      logger.info(`${TAG} startReason: ${this.startReason}. this.isShowBack: ${this.isShowBack}`);
+    }
+  }
+
+  private checkFoldBackButton(): void {
+    logger.info(`${TAG} checkFoldBackButton in`);
+    if (display.isFoldable()) {
+      try {
+        display.on('foldStatusChange', (foldStatus: display.FoldStatus) => {
+          let foldStatusValue = foldStatus.valueOf();
+          logger.info(`${TAG} checkFoldBackButton: foldStatusValue is ${foldStatusValue}`);
+          this.refreshFoldStatus(foldStatusValue);
+        })
+        let data: display.FoldStatus = display.getFoldStatus();
+        this.refreshFoldStatus(data);
+      } catch (err) {
+        logger.error(`${TAG} Register failed. exception: ${err.message}`);
+      }
+    }
   }
 }
