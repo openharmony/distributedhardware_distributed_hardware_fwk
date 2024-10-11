@@ -17,15 +17,14 @@ import("//build/test.gni")
 import("../../../../../distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("DhTransportFuzzTest") {
+ohos_fuzztest("DhCommToolFuzzTest") {
   module_out_path = fuzz_test_output_path
-  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/dhtransport_fuzzer"
+  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/dhcommtool_fuzzer"
 
   include_dirs = [
     "${utils_path}/include",
     "${utils_path}/include/log",
     "${common_path}/utils/include",
-    "${common_path}/log/include",
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/transport",
     "${services_path}/distributedhardwarefwkservice/include/componentmanager",
@@ -44,7 +43,7 @@ ohos_fuzztest("DhTransportFuzzTest") {
 
   sources = [
     "${fuzz_test_path}/mock/socket_mock.cpp",
-    "dhtransport_fuzzer.cpp",
+    "dhcommtool_fuzzer.cpp",
   ]
 
   deps = [
@@ -53,7 +52,7 @@ ohos_fuzztest("DhTransportFuzzTest") {
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"DhTransportFuzzTest\"",
+    "DH_LOG_TAG=\"DhCommToolFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
@@ -71,6 +70,6 @@ ohos_fuzztest("DhTransportFuzzTest") {
 group("fuzztest") {
   testonly = true
 
-  deps = [ ":DhTransportFuzzTest" ]
+  deps = [ ":DhCommToolFuzzTest" ]
 }
 ###############################################################################

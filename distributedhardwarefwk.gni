@@ -30,6 +30,8 @@ av_center_kits_path = "${av_trans_path}/av_trans_control_center/inner_kits"
 
 fuzz_test_output_path = "distributed_hardware_fwk/distributed_hardware_fwk"
 
+fuzz_test_path = "${distributedhardwarefwk_path}/services/distributedhardwarefwkservice/test/fuzztest"
+
 build_flags = [ "-Werror" ]
 
 declare_args() {
