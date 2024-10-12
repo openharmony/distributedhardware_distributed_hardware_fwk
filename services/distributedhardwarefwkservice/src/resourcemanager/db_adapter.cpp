@@ -284,12 +284,11 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
 #endif
     }
     if (status != DistributedKv::Status::SUCCESS) {
-        DHLOGE("Query data by keyPrefix failed, prefix: %{public}s",
-            GetAnonyString(keyPrefix).c_str());
+        DHLOGE("Query data by keyPrefix failed, prefix: %{public}s", GetAnonyString(keyPrefix).c_str());
         return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
     }
     if (allEntries.size() == 0 || allEntries.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("AllEntries size is invalid!");
+        DHLOGE("AllEntries size: %{public}zu is invalid, maybe empty or too large.", allEntries.size());
         return ERR_DH_FWK_PARA_INVALID;
     }
     for (const auto& item : allEntries) {
