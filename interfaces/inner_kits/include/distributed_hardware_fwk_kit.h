@@ -128,7 +128,7 @@ public:
      * @param callback av control center callback.
      * @return Returns 0 if success.
      */
-    API_EXPORT int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback);
+    API_EXPORT int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> callback);
 
     /**
      * @brief Pause distributed hardware.

@@ -52,7 +52,7 @@ std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskP
             break;
         }
         case TaskType::OFF_LINE: {
-            task = std::make_shared<OffLineTask>(taskParam.networkId, taskParam.uuid, taskParam.uuid,
+            task = std::make_shared<OffLineTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
                 taskParam.dhId, taskParam.dhType);
             break;
         }

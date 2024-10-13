@@ -36,7 +36,7 @@ const std::unordered_set<DHType> DH_TYPE_SET {
    };
 
 int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic,
-    const sptr<IPublisherListener> &listener)
+    const sptr<IPublisherListener> listener)
 {
     if (listener == nullptr) {
         DHLOGE("publisher listener is null");
@@ -85,7 +85,7 @@ int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic,
 }
 
 int32_t DistributedHardwareProxy::UnregisterPublisherListener(const DHTopic topic,
-    const sptr<IPublisherListener> &listener)
+    const sptr<IPublisherListener> listener)
 {
     if (listener == nullptr) {
         DHLOGE("publisher listener is null");
@@ -352,7 +352,7 @@ int32_t DistributedHardwareProxy::NotifyAVCenter(int32_t engineId, const AVTrans
 }
 
 int32_t DistributedHardwareProxy::RegisterCtlCenterCallback(int32_t engineId,
-    const sptr<IAVTransControlCenterCallback> &callback)
+    const sptr<IAVTransControlCenterCallback> callback)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {

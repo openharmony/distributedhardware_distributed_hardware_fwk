@@ -42,7 +42,7 @@ public:
 
     class ComponentEventHandler : public AppExecFwk::EventHandler {
     public:
-        explicit ComponentEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+        explicit ComponentEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner,
             ComponentPrivacy *comPrivacy);
         ~ComponentEventHandler() override;
 

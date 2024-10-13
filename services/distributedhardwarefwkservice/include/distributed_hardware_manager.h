@@ -40,8 +40,8 @@ public:
 
     int32_t Dump(const std::vector<std::string> &argsStr, std::string &result) override;
 private:
-    std::atomic<bool> isLocalInit{false};
-    std::atomic<bool> isAllInit{false};
+    std::atomic<bool> isLocalInit_{false};
+    std::atomic<bool> isAllInit_{false};
     std::mutex dhInitMgrMutex_;
 };
 } // namespace DistributedHardware

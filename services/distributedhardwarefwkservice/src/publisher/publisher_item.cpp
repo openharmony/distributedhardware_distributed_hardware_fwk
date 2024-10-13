@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-#include "constants.h"
 #include "publisher_item.h"
+
+#include "constants.h"
 #include "distributed_hardware_log.h"
 
 namespace OHOS {
@@ -35,7 +36,7 @@ PublisherItem::~PublisherItem()
     listeners_.clear();
 }
 
-void PublisherItem::AddListener(const sptr<IPublisherListener> &listener)
+void PublisherItem::AddListener(const sptr<IPublisherListener> listener)
 {
     if (listener == nullptr) {
         DHLOGE("Add null publisher listener");
@@ -46,7 +47,7 @@ void PublisherItem::AddListener(const sptr<IPublisherListener> &listener)
     listeners_.insert(listener);
 }
 
-void PublisherItem::RemoveListener(const sptr<IPublisherListener> &listener)
+void PublisherItem::RemoveListener(const sptr<IPublisherListener> listener)
 {
     if (listener == nullptr) {
         DHLOGE("Remove null publisher listener");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,7 +55,7 @@ public:
     void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     class VersionInfoManagerEventHandler : public AppExecFwk::EventHandler {
         public:
-            VersionInfoManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+            VersionInfoManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner,
                 std::shared_ptr<VersionInfoManager> versionInfoMgrPtr);
             ~VersionInfoManagerEventHandler() override = default;
             void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;

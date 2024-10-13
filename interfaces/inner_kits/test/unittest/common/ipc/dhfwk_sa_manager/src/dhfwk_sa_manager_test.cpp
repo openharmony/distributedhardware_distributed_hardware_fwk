@@ -50,10 +50,10 @@ void DHFWKSaStateCallback(bool callback)
  */
 HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_001, TestSize.Level0)
 {
-    DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.store(false);
+    DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.store(false);
     DHFWKSAManager::GetInstance().saListener_ = nullptr;
     DHFWKSAManager::GetInstance().RegisterAbilityListener();
-    EXPECT_EQ(false, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.load());
+    EXPECT_EQ(false, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.load());
 }
 
 /**
@@ -64,9 +64,9 @@ HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_001, TestSize.Level0)
  */
 HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_002, TestSize.Level0)
 {
-    DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.store(true);
+    DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.store(true);
     DHFWKSAManager::GetInstance().RegisterAbilityListener();
-    EXPECT_EQ(true, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.load());
+    EXPECT_EQ(true, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.load());
 }
 
 /**
@@ -77,7 +77,7 @@ HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_002, TestSize.Level0)
  */
 HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_001, TestSize.Level0)
 {
-    DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.store(false);
+    DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.store(false);
     DHFWKSAManager::GetInstance().dhfwkProxy_ = nullptr;
     DHFWKSAManager::GetInstance().GetDHFWKProxy();
     EXPECT_EQ(nullptr, DHFWKSAManager::GetInstance().dhfwkProxy_);
@@ -91,7 +91,7 @@ HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_001, TestSize.Level0)
  */
 HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_002, TestSize.Level0)
 {
-    DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.store(true);
+    DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.store(true);
     DHFWKSAManager::GetInstance().dhfwkProxy_ = sptr<MockIDistributedHardware>(new MockIDistributedHardware());
     DHFWKSAManager::GetInstance().GetDHFWKProxy();
     EXPECT_NE(nullptr, DHFWKSAManager::GetInstance().dhfwkProxy_);
@@ -106,9 +106,9 @@ HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_002, TestSize.Level0)
 HWTEST_F(DHFWKSAManagerTest, RegisterSAStateCallback_001, TestSize.Level0)
 {
     DHFWKSAStateCb callback;
-    DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.store(true);
+    DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.store(true);
     DHFWKSAManager::GetInstance().RegisterSAStateCallback(callback);
-    EXPECT_EQ(true, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener.load());
+    EXPECT_EQ(true, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.load());
 }
 
 /**
@@ -164,7 +164,7 @@ HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_003, TestSize.Level0)
     }
     int32_t systemAbilityId = DISTRIBUTED_HARDWARE_SA_ID;
     std::string deviceId = "deviceId";
-    DHFWKSAManager::GetInstance().saStateCallback = DHFWKSaStateCallback;
+    DHFWKSAManager::GetInstance().saStateCallback_ = DHFWKSaStateCallback;
     DHFWKSAManager::GetInstance().saListener_->OnAddSystemAbility(systemAbilityId, deviceId);
     EXPECT_NE(nullptr, DHFWKSAManager::GetInstance().saListener_);
 }
@@ -222,7 +222,7 @@ HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_003, TestSize.Level0)
     }
     int32_t systemAbilityId = DISTRIBUTED_HARDWARE_SA_ID;
     std::string deviceId = "deviceId";
-    DHFWKSAManager::GetInstance().saStateCallback = DHFWKSaStateCallback;
+    DHFWKSAManager::GetInstance().saStateCallback_ = DHFWKSaStateCallback;
     DHFWKSAManager::GetInstance().saListener_->OnAddSystemAbility(systemAbilityId, deviceId);
     EXPECT_NE(nullptr, DHFWKSAManager::GetInstance().saListener_);
 }

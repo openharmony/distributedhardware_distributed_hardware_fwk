@@ -38,7 +38,7 @@ const int32_t DH_NAPI_ARGS_TWO = 2;
 enum DHBussinessErrorCode {
     // Permission verify failed.
     ERR_NO_PERMISSION = 201,
-    //The caller is not a system application.
+    // The caller is not a system application.
     ERR_NOT_SYSTEM_APP = 202,
     // Input parameter error.
     ERR_INVALID_PARAMS = 401,
