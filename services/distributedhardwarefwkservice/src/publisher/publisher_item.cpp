@@ -13,8 +13,10 @@
  * limitations under the License.
  */
 
-#include "constants.h"
 #include "publisher_item.h"
+
+#include "constants.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_log.h"
 
 namespace OHOS {
@@ -64,8 +66,7 @@ void PublisherItem::RemoveListener(const sptr<IPublisherListener> &listener)
 
 void PublisherItem::PublishMessage(const std::string &message)
 {
-    if (message.size() == 0 || message.size() > MAX_MESSAGE_LEN) {
-        DHLOGE("Message is invalid");
+    if (!IsMessageLengthValid(message)) {
         return;
     }
     std::lock_guard<std::mutex> lock(mutex_);

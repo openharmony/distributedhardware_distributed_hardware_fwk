@@ -18,6 +18,7 @@
 #include "anonymous_string.h"
 #include "constants.h"
 #include "dh_utils_hisysevent.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
@@ -33,6 +34,9 @@ ComponentDisable::~ComponentDisable() {}
 int32_t ComponentDisable::Disable(const std::string &networkId, const std::string &dhId,
     IDistributedHardwareSource *handler)
 {
+    if (!IsIdLengthValid(networkId) || !IsIdLengthValid(dhId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     DHLOGD("networkId = %{public}s dhId = %{public}s.", GetAnonyString(networkId).c_str(),
         GetAnonyString(dhId).c_str());
     if (handler == nullptr) {
@@ -68,6 +72,9 @@ int32_t ComponentDisable::Disable(const std::string &networkId, const std::strin
 int32_t ComponentDisable::OnUnregisterResult(const std::string &networkId, const std::string &dhId, int32_t status,
     const std::string &data)
 {
+    if (!IsIdLengthValid(networkId) || !IsIdLengthValid(dhId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     if (status == DH_FWK_SUCCESS) {
         DHLOGI("disable success, networkId = %{public}s, dhId = %{public}s.", GetAnonyString(networkId).c_str(),
             GetAnonyString(dhId).c_str());

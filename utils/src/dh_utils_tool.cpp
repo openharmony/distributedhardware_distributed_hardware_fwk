@@ -27,6 +27,7 @@
 
 #include "openssl/sha.h"
 #include "parameter.h"
+
 #include "device_manager.h"
 #include "dm_device_info.h"
 
@@ -82,7 +83,7 @@ std::string GetRandomID()
 
 std::string GetUUIDByDm(const std::string &networkId)
 {
-    if (networkId.empty()) {
+    if (!IsIdLengthValid(networkId)) {
         return "";
     }
     std::string uuid = "";
@@ -92,7 +93,7 @@ std::string GetUUIDByDm(const std::string &networkId)
 
 std::string GetUDIDByDm(const std::string &networkId)
 {
-    if (networkId.empty()) {
+    if (!IsIdLengthValid(networkId)) {
         return "";
     }
     std::string udid = "";
@@ -102,7 +103,7 @@ std::string GetUDIDByDm(const std::string &networkId)
 
 std::string GetDeviceIdByUUID(const std::string &uuid)
 {
-    if (uuid.size() == 0 || uuid.size() > MAX_ID_LEN) {
+    if (!IsIdLengthValid(uuid)) {
         DHLOGE("uuid is invalid!");
         return "";
     }
@@ -284,6 +285,60 @@ bool GetSysPara(const char *key, bool &value)
     std::stringstream valueStr;
     valueStr << paraValue;
     valueStr >> std::boolalpha >> value;
+    return true;
+}
+
+bool IsIdLengthValid(const std::string &inputID)
+{
+    if (inputID.empty() || inputID.length() > MAX_ID_LEN) {
+        DHLOGE("On parameter length error, maybe empty or beyond MAX_ID_LEN!");
+        return false;
+    }
+    return true;
+}
+
+bool IsMessageLengthValid(const std::string &inputMessage)
+{
+    if (inputMessage.empty() || inputMessage.length() > MAX_MESSAGE_LEN) {
+        DHLOGE("On parameter error, maybe empty or beyond MAX_MESSAGE_LEN!");
+        return false;
+    }
+    return true;
+}
+
+bool IsJsonLengthValid(const std::string &inputJsonStr)
+{
+    if (inputJsonStr.empty() || inputJsonStr.length() > MAX_JSON_SIZE) {
+        DHLOGE("On parameter error, maybe empty or beyond MAX_JSON_SIZE");
+        return false;
+    }
+    return true;
+}
+
+bool IsArrayLengthValid(const std::vector<std::string> &inputArray)
+{
+    if (inputArray.empty() || inputArray.size() > MAX_ARR_SIZE) {
+        DHLOGE("On parameter error, maybe empty or beyond MAX_ARR_SIZE");
+        return false;
+    }
+    return true;
+}
+
+bool IsKeySizeValid(const std::string &inputKey)
+{
+    if (inputKey.empty() || inputKey.length() > MAX_KEY_SIZE) {
+        DHLOGE("On parameter error, maybe empty or beyond MAX_KEY_SIZE");
+        return false;
+    }
+    return true;
+}
+
+bool IsHashSizeValid(const std::string &inputHashValue)
+{
+    if (inputHashValue.empty() || inputHashValue.length() > MAX_HASH_SIZE) {
+        DHLOGE("On parameter error, maybe empty or beyond MAX_HASH_SIZE");
+        return false;
+    }
     return true;
 }
 } // namespace DistributedHardware

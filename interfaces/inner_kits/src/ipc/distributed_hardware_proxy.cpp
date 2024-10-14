@@ -21,6 +21,7 @@
 #include "anonymous_string.h"
 #include "av_trans_errno.h"
 #include "constants.h"
+#include "dh_utils_tool.h"
 #include "dhardware_ipc_interface_code.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -144,8 +145,7 @@ int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std:
         DHLOGE("Topic is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
     }
-    if (msg.empty() || msg.size() > MAX_MESSAGE_LEN) {
-        DHLOGE("Msg is invalid");
+    if (!IsMessageLengthValid(msg)) {
         return ERR_DH_FWK_SERVICE_MSG_INVALID;
     }
 
@@ -419,6 +419,9 @@ int32_t DistributedHardwareProxy::NotifySourceRemoteSinkStarted(std::string &dev
 
 int32_t DistributedHardwareProxy::PauseDistributedHardware(DHType dhType, const std::string &networkId)
 {
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         DHLOGE("remote service is null");
@@ -454,6 +457,9 @@ int32_t DistributedHardwareProxy::PauseDistributedHardware(DHType dhType, const 
 
 int32_t DistributedHardwareProxy::ResumeDistributedHardware(DHType dhType, const std::string &networkId)
 {
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         DHLOGE("remote service is null");
@@ -489,6 +495,9 @@ int32_t DistributedHardwareProxy::ResumeDistributedHardware(DHType dhType, const
 
 int32_t DistributedHardwareProxy::StopDistributedHardware(DHType dhType, const std::string &networkId)
 {
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         DHLOGE("remote service is null");

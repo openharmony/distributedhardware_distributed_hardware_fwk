@@ -36,6 +36,11 @@ namespace DistributedHardware {
     constexpr int32_t MODE_ENABLE = 0;
     constexpr int32_t MODE_DISABLE = 1;
     constexpr uint32_t MAX_SWITCH_SIZE = 256;
+    constexpr uint32_t MAX_ROUND_SIZE = 1000;
+    constexpr uint32_t MAX_JSON_SIZE = 40 * 1024 * 1024;
+    constexpr uint32_t MAX_HASH_SIZE = 64;
+    constexpr uint32_t MAX_KEY_SIZE = 256;
+
     const std::string LOW_LATENCY_KEY = "identity";
     const std::u16string DHMS_STUB_INTERFACE_TOKEN = u"ohos.distributedhardware.accessToken";
     const std::string APP_ID = "dtbhardware_manager_service";
