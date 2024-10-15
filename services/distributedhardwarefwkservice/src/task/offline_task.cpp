@@ -18,6 +18,8 @@
 #include <pthread.h>
 #include <thread>
 
+#include "ffrt.h"
+
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
 #include "constants.h"
@@ -54,7 +56,7 @@ OffLineTask::~OffLineTask()
 
 void OffLineTask::DoTask()
 {
-    std::thread([this]() { this->DoTaskInner(); }).detach();
+    ffrt::submit([this]() { this->DoTaskInner(); });
 }
 
 void OffLineTask::DoTaskInner()

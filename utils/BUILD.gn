@@ -39,7 +39,6 @@ ohos_shared_library("distributedhardwareutils") {
     "${common_path}/utils/include",
     "include",
     "include/log",
-    "include/eventbus",
   ]
 
   sources = [
@@ -58,6 +57,14 @@ ohos_shared_library("distributedhardwareutils") {
     "LOG_DOMAIN=0xD004100",
     "OPENSSL_SUPPRESS_DEPRECATED",
   ]
+
+  cflags = [
+    "-fstack-protector-strong",
+    "-D_FORTIFY_SOURCE=2",
+    "-O2",
+  ]
+
+  cflags_cc = cflags
 
   external_deps = [
     "cJSON:cjson",

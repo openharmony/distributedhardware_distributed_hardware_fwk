@@ -18,6 +18,8 @@
 #include <pthread.h>
 #include <thread>
 
+#include "ffrt.h"
+
 #include "constants.h"
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
@@ -32,7 +34,7 @@ IMPLEMENT_SINGLE_INSTANCE(TaskExecutor);
 TaskExecutor::TaskExecutor() : taskThreadFlag_(true)
 {
     DHLOGI("Ctor TaskExecutor");
-    std::thread([this]() { this->TriggerTask(); }).detach();
+    ffrt::submit([this]() { this->TriggerTask(); });
 }
 
 TaskExecutor::~TaskExecutor()

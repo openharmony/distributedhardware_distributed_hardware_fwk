@@ -43,8 +43,6 @@ ohos_unittest("DistributedHardwareStubTest") {
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   cflags = [
