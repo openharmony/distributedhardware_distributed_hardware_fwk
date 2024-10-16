@@ -42,10 +42,7 @@ ohos_unittest("DsoftbusOutputAudioPluginTest") {
   ]
   cflags_cc = cflags
 
-  deps = [
-    "${plugin_path}/plugins/av_trans_output/dsoftbus_output_audio:plugin_AVTransDsoftbusOutputAudio",
-    "//third_party/googletest:gtest",
-  ]
+  deps = [ "${plugin_path}/plugins/av_trans_output/dsoftbus_output_audio:plugin_AVTransDsoftbusOutputAudio" ]
 
   if (histreamer_compile_part) {
     external_deps = [
@@ -60,6 +57,7 @@ ohos_unittest("DsoftbusOutputAudioPluginTest") {
     "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
+    "googletest:gtest",
     "hilog:libhilog",
   ]
 
