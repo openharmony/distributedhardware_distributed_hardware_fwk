@@ -159,14 +159,14 @@ void DistributedHardwareService::OnStop()
 }
 
 int32_t DistributedHardwareService::RegisterPublisherListener(const DHTopic topic,
-    const sptr<IPublisherListener> &listener)
+    const sptr<IPublisherListener> listener)
 {
     Publisher::GetInstance().RegisterListener(topic, listener);
     return DH_FWK_SUCCESS;
 }
 
 int32_t DistributedHardwareService::UnregisterPublisherListener(const DHTopic topic,
-    const sptr<IPublisherListener> &listener)
+    const sptr<IPublisherListener> listener)
 {
     Publisher::GetInstance().UnregisterListener(topic, listener);
     return DH_FWK_SUCCESS;
@@ -268,7 +268,7 @@ int32_t DistributedHardwareService::NotifyAVCenter(int32_t engineId, const AVTra
 }
 
 int32_t DistributedHardwareService::RegisterCtlCenterCallback(int32_t engineId,
-    const sptr<IAVTransControlCenterCallback> &callback)
+    const sptr<IAVTransControlCenterCallback> callback)
 {
     return AVTransControlCenter::GetInstance().RegisterCtlCenterCallback(engineId, callback);
 }

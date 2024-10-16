@@ -150,7 +150,7 @@ FullCapsRsp DHCommTool::ParseAndSaveRemoteDHCaps(const std::string &remoteCaps)
     return capsRsp;
 }
 
-DHCommTool::DHCommToolEventHandler::DHCommToolEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+DHCommTool::DHCommToolEventHandler::DHCommToolEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner,
     std::shared_ptr<DHCommTool> dhCommToolPtr) : AppExecFwk::EventHandler(runner), dhCommToolWPtr_(dhCommToolPtr)
 {
     DHLOGI("Ctor DHCommToolEventHandler");

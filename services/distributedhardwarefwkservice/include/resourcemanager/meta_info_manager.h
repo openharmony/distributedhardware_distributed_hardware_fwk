@@ -58,7 +58,7 @@ public:
 
     class MetaInfoManagerEventHandler : public AppExecFwk::EventHandler {
         public:
-            MetaInfoManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+            MetaInfoManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner,
                 std::shared_ptr<MetaInfoManager> metaInfoMgrPtr);
             ~MetaInfoManagerEventHandler() override = default;
             void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;

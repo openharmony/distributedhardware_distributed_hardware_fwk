@@ -50,7 +50,7 @@ std::shared_ptr<MetaInfoManager> MetaInfoManager::GetInstance()
 }
 
 MetaInfoManager::MetaInfoManagerEventHandler::MetaInfoManagerEventHandler(
-    const std::shared_ptr<AppExecFwk::EventRunner> &runner, std::shared_ptr<MetaInfoManager> metaInfoMgrPtr)
+    const std::shared_ptr<AppExecFwk::EventRunner> runner, std::shared_ptr<MetaInfoManager> metaInfoMgrPtr)
     : AppExecFwk::EventHandler(runner), metaInfoMgrWPtr_(metaInfoMgrPtr)
 {
     DHLOGI("Ctor MetaInfoManagerEventHandler");

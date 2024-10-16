@@ -657,7 +657,7 @@ DHType ComponentManager::GetDHType(const std::string &uuid, const std::string &d
 }
 
 int32_t ComponentManager::GetEnableCapParam(const std::string &networkId, const std::string &uuid,
-    DHType dhType, EnableParam &param, std::shared_ptr<CapabilityInfo> &capability)
+    DHType dhType, EnableParam &param, std::shared_ptr<CapabilityInfo> capability)
 {
     DeviceInfo sourceDeviceInfo = GetLocalDeviceInfo();
     std::vector<std::shared_ptr<CapabilityInfo>> sourceCapInfos;
@@ -703,7 +703,7 @@ int32_t ComponentManager::GetEnableCapParam(const std::string &networkId, const 
 }
 
 int32_t ComponentManager::GetEnableMetaParam(const std::string &networkId, const std::string &uuid,
-    DHType dhType, EnableParam &param, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
+    DHType dhType, EnableParam &param, std::shared_ptr<MetaCapabilityInfo> metaCapPtr)
 {
     DeviceInfo sourceDeviceInfo = GetLocalDeviceInfo();
     std::vector<std::shared_ptr<MetaCapabilityInfo>> sourceMetaInfos;
@@ -1020,7 +1020,7 @@ bool ComponentManager::FetchNeedRefreshTask(const std::pair<std::string, std::st
 }
 
 ComponentManager::ComponentManagerEventHandler::ComponentManagerEventHandler(
-    const std::shared_ptr<AppExecFwk::EventRunner> &runner) : AppExecFwk::EventHandler(runner)
+    const std::shared_ptr<AppExecFwk::EventRunner> runner) : AppExecFwk::EventHandler(runner)
 {
     DHLOGI("Ctor ComponentManagerEventHandler");
 }

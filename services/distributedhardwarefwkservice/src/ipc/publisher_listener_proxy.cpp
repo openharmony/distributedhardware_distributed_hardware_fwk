@@ -19,7 +19,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-PublisherListenerProxy::PublisherListenerProxy(const sptr<IRemoteObject> &object)
+PublisherListenerProxy::PublisherListenerProxy(const sptr<IRemoteObject> object)
     : IRemoteProxy<IPublisherListener>(object)
 {
 }

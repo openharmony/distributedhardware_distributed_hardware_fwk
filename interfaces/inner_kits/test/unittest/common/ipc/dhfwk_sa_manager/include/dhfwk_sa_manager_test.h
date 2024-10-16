@@ -43,14 +43,14 @@ sptr<IRemoteObject> AsObject()
     return nullptr;
 }
 
-int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener)
+int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> listener)
 {
     (void)topic;
     (void)listener;
     return DH_FWK_SUCCESS;
 }
 
-int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> &listener)
+int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> listener)
 {
     (void)topic;
     (void)listener;
@@ -97,7 +97,7 @@ int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event)
     return DH_FWK_SUCCESS;
 }
 
-int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback)
+int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> callback)
 {
     (void)engineId;
     (void)callback;
