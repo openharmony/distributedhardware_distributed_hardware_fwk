@@ -19,6 +19,7 @@
 
 #include "anonymous_string.h"
 #include "component_manager.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_log.h"
 #include "event_handler.h"
 
@@ -39,6 +40,9 @@ DHDataSyncTriggerListener::~DHDataSyncTriggerListener()
 
 void DHDataSyncTriggerListener::OnDataSyncTrigger(const std::string &networkId)
 {
+    if (!IsIdLengthValid(networkId)) {
+        return;
+    }
     DHLOGI("Receive data sync trigger, networkId: %{public}s", GetAnonyString(networkId).c_str());
     if (networkId.empty()) {
         DHLOGE("OnDataSyncTrigger networkId is empty");

@@ -14,6 +14,7 @@
  */
 
 #include "constants.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_log.h"
 #include "publisher_listener_proxy.h"
 
@@ -39,8 +40,7 @@ void PublisherListenerProxy::OnMessage(const DHTopic topic, const std::string& m
         DHLOGE("Topic is invalid!");
         return;
     }
-    if (message.size() == 0 || message.size() > MAX_MESSAGE_LEN) {
-        DHLOGE("Message is invalid");
+    if (!IsMessageLengthValid(message)) {
         return;
     }
 

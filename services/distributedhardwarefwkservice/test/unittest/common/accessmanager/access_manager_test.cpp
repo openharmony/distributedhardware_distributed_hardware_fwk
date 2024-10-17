@@ -83,9 +83,15 @@ HWTEST_F(AccessManagerTest, SendOnLineEvent_001, TestSize.Level1)
 HWTEST_F(AccessManagerTest, SendOffLineEvent_001, TestSize.Level1)
 {
     DHContext::GetInstance().devIdEntrySet_.clear();
-    auto ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(TEST_NETWORKID, "", TEST_UDID,
+    auto ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent("", TEST_UUID, TEST_UDID,
         TEST_DEV_TYPE_PAD);
-    EXPECT_EQ(ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_OFFLINE, ret);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+    ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(TEST_NETWORKID, "", TEST_UDID,
+        TEST_DEV_TYPE_PAD);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+    ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(TEST_NETWORKID, TEST_UUID, "",
+        TEST_DEV_TYPE_PAD);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 
     DHContext::GetInstance().AddOnlineDevice(TEST_UDID, TEST_UUID, TEST_NETWORKID);
     ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(TEST_NETWORKID, TEST_UUID, TEST_UDID,

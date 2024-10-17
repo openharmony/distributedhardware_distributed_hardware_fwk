@@ -17,6 +17,7 @@
 
 #include "capability_info.h"
 #include "constants.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 
 namespace OHOS {
@@ -31,6 +32,9 @@ std::string GetCapabilityKey(const std::string &deviceId, const std::string &dhI
 
 bool IsCapKeyMatchDeviceId(const std::string &key, const std::string &deviceId)
 {
+    if (!IsIdLengthValid(key) || !IsIdLengthValid(deviceId)) {
+        return false;
+    }
     std::size_t separatorPos = key.find(RESOURCE_SEPARATOR);
     if (separatorPos == std::string::npos) {
         return false;

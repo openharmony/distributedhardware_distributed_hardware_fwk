@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "dh_utils_tool.h"
 #include "enabled_comps_dump.h"
 
 namespace OHOS {
