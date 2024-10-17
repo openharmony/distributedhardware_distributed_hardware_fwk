@@ -34,10 +34,7 @@ ohos_unittest("DscreenInputTest") {
     "dscreen_input_test.cpp",
   ]
 
-  deps = [
-    "${plugin_path}/plugins/av_trans_input/dscreen_input:plugin_AVTransDscreenInput",
-    "//third_party/googletest:gtest",
-  ]
+  deps = [ "${plugin_path}/plugins/av_trans_input/dscreen_input:plugin_AVTransDscreenInput" ]
 
   if (histreamer_compile_part) {
     external_deps = [
@@ -51,6 +48,7 @@ ohos_unittest("DscreenInputTest") {
     "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
+    "googletest:gtest",
     "hilog:libhilog",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
