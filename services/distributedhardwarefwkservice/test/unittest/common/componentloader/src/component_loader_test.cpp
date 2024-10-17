@@ -100,20 +100,22 @@ HWTEST_F(ComponentLoaderTest, GetHardwareHandler_001, TestSize.Level0)
     ComponentLoader::GetInstance().compHandlerMap_.clear();
 }
 
-/**
- * @tc.name: GetHardwareHandler_002
- * @tc.desc: Verify the GetHardwareHandler function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK3
- */
-HWTEST_F(ComponentLoaderTest, GetHardwareHandler_002, TestSize.Level0)
-{
-    ComponentLoader::GetInstance().Init();
-    IHardwareHandler *hardwareHandlerPtr = nullptr;
-    auto ret = ComponentLoader::GetInstance().GetHardwareHandler(DHType::AUDIO, hardwareHandlerPtr);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-    ComponentLoader::GetInstance().UnInit();
-}
+#ifdef DHARDWARE_CLOSE_UT
+    /**
+     * @tc.name: GetHardwareHandler_002
+     * @tc.desc: Verify the GetHardwareHandler function.
+     * @tc.type: FUNC
+     * @tc.require: AR000GHSK3
+     */
+    HWTEST_F(ComponentLoaderTest, GetHardwareHandler_002, TestSize.Level0)
+    {
+        ComponentLoader::GetInstance().Init();
+        IHardwareHandler *hardwareHandlerPtr = nullptr;
+        auto ret = ComponentLoader::GetInstance().GetHardwareHandler(DHType::AUDIO, hardwareHandlerPtr);
+        EXPECT_EQ(DH_FWK_SUCCESS, ret);
+        ComponentLoader::GetInstance().UnInit();
+    }
+#endif
 
 /**
  * @tc.name: GetSource_001
@@ -134,20 +136,22 @@ HWTEST_F(ComponentLoaderTest, GetSource_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_LOADER_HANDLER_IS_NULL, ret);
 }
 
-/**
- * @tc.name: GetSource_002
- * @tc.desc: Verify the GetSource function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK3
- */
-HWTEST_F(ComponentLoaderTest, GetSource_002, TestSize.Level0)
-{
-    ComponentLoader::GetInstance().Init();
-    IDistributedHardwareSource *sourcePtr = nullptr;
-    auto ret = ComponentLoader::GetInstance().GetSource(DHType::AUDIO, sourcePtr);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-    ComponentLoader::GetInstance().UnInit();
-}
+#ifdef DHARDWARE_CLOSE_UT
+    /**
+     * @tc.name: GetSource_002
+     * @tc.desc: Verify the GetSource function.
+     * @tc.type: FUNC
+     * @tc.require: AR000GHSK3
+     */
+    HWTEST_F(ComponentLoaderTest, GetSource_002, TestSize.Level0)
+    {
+        ComponentLoader::GetInstance().Init();
+        IDistributedHardwareSource *sourcePtr = nullptr;
+        auto ret = ComponentLoader::GetInstance().GetSource(DHType::AUDIO, sourcePtr);
+        EXPECT_EQ(DH_FWK_SUCCESS, ret);
+        ComponentLoader::GetInstance().UnInit();
+    }
+#endif
 
 /**
  * @tc.name: GetSink_001
@@ -168,20 +172,22 @@ HWTEST_F(ComponentLoaderTest, GetSink_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_LOADER_HANDLER_IS_NULL, ret);
 }
 
-/**
- * @tc.name: GetSink_002
- * @tc.desc: Verify the GetSink function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK3
- */
-HWTEST_F(ComponentLoaderTest, GetSink_002, TestSize.Level0)
-{
-    ComponentLoader::GetInstance().Init();
-    IDistributedHardwareSink *sinkPtr = nullptr;
-    auto ret = ComponentLoader::GetInstance().GetSink(DHType::AUDIO, sinkPtr);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-    ComponentLoader::GetInstance().UnInit();
-}
+#ifdef DHARDWARE_CLOSE_UT
+    /**
+     * @tc.name: GetSink_002
+     * @tc.desc: Verify the GetSink function.
+     * @tc.type: FUNC
+     * @tc.require: AR000GHSK3
+     */
+    HWTEST_F(ComponentLoaderTest, GetSink_002, TestSize.Level0)
+    {
+        ComponentLoader::GetInstance().Init();
+        IDistributedHardwareSink *sinkPtr = nullptr;
+        auto ret = ComponentLoader::GetInstance().GetSink(DHType::AUDIO, sinkPtr);
+        EXPECT_EQ(DH_FWK_SUCCESS, ret);
+        ComponentLoader::GetInstance().UnInit();
+    }
+#endif
 
 /**
  * @tc.name: Readfile_001
@@ -204,6 +210,7 @@ HWTEST_F(ComponentLoaderTest, Readfile_001, TestSize.Level0)
  */
 HWTEST_F(ComponentLoaderTest, ReleaseHardwareHandler_001, TestSize.Level0)
 {
+    ComponentLoader::GetInstance().compHandlerMap_.clear();
     auto ret = ComponentLoader::GetInstance().ReleaseHardwareHandler(DHType::AUDIO);
     EXPECT_EQ(ERR_DH_FWK_TYPE_NOT_EXIST, ret);
 

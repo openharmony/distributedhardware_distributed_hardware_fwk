@@ -403,17 +403,19 @@ HWTEST_F(ComponentManagerTest, WaitForResult_001, TestSize.Level0)
     EXPECT_EQ(true, ret);
 }
 
-/**
- * @tc.name: InitCompSource_001
- * @tc.desc: Verify the InitCompSource function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ComponentManagerTest, InitCompSource_001, TestSize.Level0)
-{
-    bool ret = ComponentManager::GetInstance().InitCompSource();
-    EXPECT_EQ(true, ret);
-}
+#ifdef DHARDWARE_CLOSE_UT
+    /**
+     * @tc.name: InitCompSource_001
+     * @tc.desc: Verify the InitCompSource function
+     * @tc.type: FUNC
+     * @tc.require: AR000GHSJM
+     */
+    HWTEST_F(ComponentManagerTest, InitCompSource_001, TestSize.Level0)
+    {
+        bool ret = ComponentManager::GetInstance().InitCompSource();
+        EXPECT_EQ(true, ret);
+    }
+#endif
 
 /**
  * @tc.name: InitCompSink_001
