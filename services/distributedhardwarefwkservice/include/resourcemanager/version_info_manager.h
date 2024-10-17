@@ -27,7 +27,6 @@
 #include "impl_utils.h"
 #include "single_instance.h"
 #include "version_info.h"
-#include "version_info_event.h"
 
 class DBAdapter;
 namespace OHOS {

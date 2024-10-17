@@ -21,7 +21,6 @@
 
 #include "version_info_manager.h"
 #include "version_manager.h"
-#include "version_info_event.h"
 #include "dh_context.h"
 #include "distributed_hardware_log.h"
 

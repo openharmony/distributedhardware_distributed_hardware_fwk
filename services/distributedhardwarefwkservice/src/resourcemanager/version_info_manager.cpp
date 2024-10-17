@@ -23,7 +23,6 @@
 #include "distributed_hardware_log.h"
 #include "task_executor.h"
 #include "task_factory.h"
-#include "version_info_event.h"
 #include "version_manager.h"
 
 class DBAdapter;

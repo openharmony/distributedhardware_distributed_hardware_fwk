@@ -67,6 +67,12 @@ ohos_shared_library("libdhfwk_sdk") {
     "LOG_DOMAIN=0xD004100",
   ]
 
+  cflags = [
+    "-fstack-protector-strong",
+    "-D_FORTIFY_SOURCE=2",
+    "-O2",
+  ]
+
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
@@ -77,7 +83,12 @@ ohos_shared_library("libdhfwk_sdk") {
     "samgr:samgr_proxy",
   ]
 
-  cflags_cc = [ "-DHILOG_ENABLE" ]
+  cflags_cc = [
+    "-DHILOG_ENABLE",
+    "-fstack-protector-strong",
+    "-D_FORTIFY_SOURCE=2",
+    "-O2",
+  ]
 
   innerapi_tags = [ "platformsdk" ]
   subsystem_name = "distributedhardware"

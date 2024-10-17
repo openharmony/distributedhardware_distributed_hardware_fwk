@@ -42,7 +42,6 @@ ohos_unittest("DistributedHardwareProxyTest") {
     "${innerkits_path}:libdhfwk_sdk",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
-    "//third_party/googletest:gtest_main",
   ]
 
   defines = [
