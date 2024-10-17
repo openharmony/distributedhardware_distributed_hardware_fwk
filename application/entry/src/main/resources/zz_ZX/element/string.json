@@ -41,8 +41,8 @@
             "value":"[TS_867711]_Resume"
         },
         {
-            "name":"continue_desc",
-            "value":"[TS_921308]_Continuation lets you start something on one device, then instantly pick it up on other devices nearby using the same HUAWEI ID. When continuation is available, an icon will appear in the app dock."
+            "name":"continue_desc_text",
+            "value":"[TS_962336]_Start viewing or editing content on one device, then continue seamlessly on nearby devices using the same HUAWEI ID. When Handover is available, an icon will appear in the app dock. %s"
         },
         {
             "name":"ContinueSwitchAbility_label",
@@ -50,7 +50,7 @@
         },
         {
             "name":"continue_title",
-            "value":"[TS_921305]_Continuation"
+            "value":"[TS_921305]_Handover"
         },
         {
             "name":"ContinueSwitchAbility_desc",
@@ -62,7 +62,15 @@
         },
         {
             "name":"continue_privacy_text",
-            "value":"[TS_932988]_This service uses Bluetooth and WLAN. During use, it will read this device's name and send it to devices you hop to. By turning this on, you agree to these terms."
+            "value":"[TS_932988]_This service uses Bluetooth and WLAN, and needs to send the name of this device to devices you handover to. By turning this on, you agree to these terms."
+        },
+        {
+            "name":"learn_more",
+            "value":"[TS_961711]_Learn more"
+        },
+        {
+            "name":"update_version_prompt",
+            "value":"[TS_961710]_Both devices must be running HarmonyOS NEXT."
         }
     ]
 }

@@ -29,8 +29,8 @@
             "value":"繼續"
         },
         {
-            "name":"continue_desc",
-            "value":"在一台裝置上瀏覽或編輯內容後，只需在附近的另一台已登入相同華為 ID 裝置的主屏幕任務列上找到接續圖標並輕觸，即可繼續操作。"
+            "name":"continue_desc_text",
+            "value":"在一部裝置上瀏覽或編輯內容，然後在附近另一部登入相同華為 ID 的裝置之主屏幕任務欄上輕觸接續圖標，即可繼續使用。%s"
         },
         {
             "name":"continue_title",
@@ -38,7 +38,15 @@
         },
         {
             "name":"continue_privacy_text",
-            "value":"本服務在使用過程中需要使用藍牙和 WLAN 功能，讀取並傳輸本裝置名稱至要接續的裝置。開啟開關，即表示您同意上述內容。"
+            "value":"本服務需要使用 WLAN 和藍牙功能，讀取並傳輸本裝置名稱到要接續的裝置。開啟開關，即表示您同意上述內容。"
+        },
+        {
+            "name":"learn_more",
+            "value":"了解詳細資訊"
+        },
+        {
+            "name":"update_version_prompt",
+            "value":"對方需要升級至 HarmonyOS NEXT 及以上版本。"
         }
     ]
 }

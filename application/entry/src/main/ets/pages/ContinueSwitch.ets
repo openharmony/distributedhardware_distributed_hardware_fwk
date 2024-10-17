@@ -313,7 +313,7 @@ struct ContinueSwitch {
             }) {
               SymbolGlyph($r('sys.symbol.info_circle_fill'))
                 .fontWeight(FontWeight.Medium)
-                .fontSize(this.getSymbolSize())
+                .fontSize(CommonConstants.SYMBOL_INFO_CIRCLE)
                 .fontColor([$r('sys.color.ohos_id_color_activated')])
                 .margin({ right: CommonConstants.SYMBOL_MARGIN_RIGHT })
 
@@ -336,7 +336,7 @@ struct ContinueSwitch {
               Text($r('app.string.continue_privacy_text'))
                 .fontSize($r('sys.float.ohos_id_text_size_body3'))
                 .fontWeight(FontWeight.Regular)
-                .margin({ top: CommonConstants.CONTINUE_PRIVACY_TEXT_MARGIN_TOP})
+                .margin({ top: CommonConstants.CONTINUE_PRIVACY_TEXT_MARGIN_TOP })
                 .fontColor($r('sys.color.ohos_id_color_text_secondary'))
                 .textAlign(TextAlign.Start)
                 .width('100%')
@@ -386,15 +386,5 @@ struct ContinueSwitch {
       logger.info(TAG + 'this.shortSideSize = ' + this.shortSideSize + ', this.imageAnimatorWidth = ' +
       this.imageAnimatorWidth + ', this.imageAnimatorHeight = ' + this.imageAnimatorHeight);
     })
-  }
-
-  private getSymbolSize(): Length {
-    logger.info(TAG + 'getSymbolSize in');
-    let fontSizeScale: number = AppStorage.get<number>('currentFontSizeScale') as number;
-    logger.info(TAG + 'getSymbolSize : fontSizeScale =' + fontSizeScale);
-    if (fontSizeScale >= 2) {
-      return `${CommonConstants.SYMBOL_INFO_CIRCLE * 2}vp`
-    }
-    return CommonConstants.SYMBOL_INFO_CIRCLE;
   }
 }
