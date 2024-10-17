@@ -970,7 +970,7 @@ template<typename T>
 void FromJson(const std::string &key, const cJSON *jsonObject, std::vector<T> &objs)
 {
     cJSON *objJson = cJSON_GetObjectItemCaseSensitive(jsonObject, key.c_str());
-    if (objJson == nullptr) {
+    if (objJson == nullptr || !cJSON_IsArray(objJson)) {
         AVTRANS_LOGE("JSONObject key invalid, key: %{public}s", key.c_str());
         return;
     }

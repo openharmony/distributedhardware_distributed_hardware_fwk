@@ -36,7 +36,7 @@ class DBAdapter : public std::enable_shared_from_this<DBAdapter>,
     public DistributedKv::KvStoreDeathRecipient {
 public:
     DBAdapter(const std::string &appId, const std::string &storeId,
-        const std::shared_ptr<DistributedKv::KvStoreObserver> &changeListener);
+        const std::shared_ptr<DistributedKv::KvStoreObserver> changeListener);
 
     virtual ~DBAdapter();
     // default init auto-sync kv store
@@ -77,8 +77,8 @@ private:
     std::shared_ptr<DistributedKv::SingleKvStore> kvStoragePtr_;
     std::shared_ptr<DistributedKv::KvStoreObserver> dataChangeListener_;
     std::mutex dbAdapterMutex_;
-    bool isAutoSync {false};
-    DistributedKv::DataType dataType {DistributedKv::DataType::TYPE_DYNAMICAL};
+    bool isAutoSync_ {false};
+    DistributedKv::DataType dataType_ {DistributedKv::DataType::TYPE_DYNAMICAL};
 };
 } // namespace DistributedHardware
 } // namespace OHOS

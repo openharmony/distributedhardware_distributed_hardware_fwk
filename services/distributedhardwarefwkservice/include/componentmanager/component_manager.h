@@ -78,10 +78,10 @@ public:
     bool FetchNeedRefreshTask(const std::pair<std::string, std::string> &taskKey, TaskParam &taskParam);
 
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
-        public:
-            ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
-            ~ComponentManagerEventHandler() override = default;
-            void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+    public:
+        ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner);
+        ~ComponentManagerEventHandler() override = default;
+        void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
     };
     std::shared_ptr<ComponentManager::ComponentManagerEventHandler> GetEventHandler();
 
@@ -130,9 +130,9 @@ private:
     void StopComponent();
     void StopPrivacy();
     int32_t GetEnableCapParam(const std::string &networkId, const std::string &uuid, DHType dhType, EnableParam &param,
-        std::shared_ptr<CapabilityInfo> &capability);
+        std::shared_ptr<CapabilityInfo> capability);
     int32_t GetEnableMetaParam(const std::string &networkId, const std::string &uuid, DHType dhType, EnableParam &param,
-        std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
+        std::shared_ptr<MetaCapabilityInfo> metaCapPtr);
     int32_t GetCapParam(const std::string &uuid, const std::string &dhId, std::shared_ptr<CapabilityInfo> &capability);
     int32_t GetMetaParam(const std::string &uuid, const std::string &dhId,
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);

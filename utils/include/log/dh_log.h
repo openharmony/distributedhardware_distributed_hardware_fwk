@@ -16,8 +16,9 @@
 #ifndef OHOS_DH_LOG_H
 #define OHOS_DH_LOG_H
 
-#include "hilog/log.h"
 #include <inttypes.h>
+
+#include "hilog/log.h"
 
 namespace OHOS {
 namespace DistributedHardware {

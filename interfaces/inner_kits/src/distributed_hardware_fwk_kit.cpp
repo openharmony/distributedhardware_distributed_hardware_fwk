@@ -189,7 +189,7 @@ int32_t DistributedHardwareFwkKit::NotifyAVCenter(int32_t engineId, const AVTran
 }
 
 int32_t DistributedHardwareFwkKit::RegisterCtlCenterCallback(int32_t engineId,
-    const sptr<IAVTransControlCenterCallback> &callback)
+    const sptr<IAVTransControlCenterCallback> callback)
 {
     DHLOGI("Register av control center callback. engineId: %{public}" PRId32, engineId);
 

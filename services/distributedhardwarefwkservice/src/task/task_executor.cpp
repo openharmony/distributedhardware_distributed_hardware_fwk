@@ -41,7 +41,7 @@ TaskExecutor::~TaskExecutor()
     taskThreadFlag_ = false;
 }
 
-void TaskExecutor::PushTask(const std::shared_ptr<Task>& task)
+void TaskExecutor::PushTask(const std::shared_ptr<Task> task)
 {
     if (task == nullptr) {
         DHLOGE("Task is null");

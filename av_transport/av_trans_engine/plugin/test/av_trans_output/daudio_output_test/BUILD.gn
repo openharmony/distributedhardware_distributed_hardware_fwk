@@ -42,10 +42,7 @@ ohos_unittest("DaudioOutputPluginTest") {
   ]
   cflags_cc = cflags
 
-  deps = [
-    "${plugin_path}/plugins/av_trans_output/daudio_output:plugin_AVTransDaudioOutput",
-    "//third_party/googletest:gtest",
-  ]
+  deps = [ "${plugin_path}/plugins/av_trans_output/daudio_output:plugin_AVTransDaudioOutput" ]
 
   if (histreamer_compile_part) {
     external_deps = [
@@ -61,6 +58,7 @@ ohos_unittest("DaudioOutputPluginTest") {
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "ffmpeg:libohosffmpeg",
+    "googletest:gtest",
     "hilog:libhilog",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",

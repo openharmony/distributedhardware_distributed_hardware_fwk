@@ -59,7 +59,7 @@ public:
     /* Queries distributed hardware information based on filter criteria. */
     std::map<std::string, std::shared_ptr<CapabilityInfo>> QueryCapabilityByFilters(
         const std::map<CapabilityInfoFilter, std::string> &filters);
-    bool IsCapabilityMatchFilter(const std::shared_ptr<CapabilityInfo> &cap, const CapabilityInfoFilter &filter,
+    bool IsCapabilityMatchFilter(const std::shared_ptr<CapabilityInfo> cap, const CapabilityInfoFilter &filter,
         const std::string &value);
     bool HasCapability(const std::string &deviceId, const std::string &dhId);
     void GetCapabilitiesByDeviceId(const std::string &deviceId,
@@ -68,7 +68,7 @@ public:
     /* Queries capability information based on deviceId and dhId. */
     int32_t GetCapability(const std::string &deviceId, const std::string &dhId,
         std::shared_ptr<CapabilityInfo> &capPtr);
-    int32_t GetDataByKey(const std::string &key, std::shared_ptr<CapabilityInfo>& capInfoPtr);
+    int32_t GetDataByKey(const std::string &key, std::shared_ptr<CapabilityInfo> &capInfoPtr);
     /* Query batch records by dhtype */
     int32_t GetDataByDHType(const DHType dhType, CapabilityInfoMap &capabilityMap);
     /* Queries batch records in the database based on the prefix of the key. */
@@ -80,7 +80,7 @@ public:
 
     class CapabilityInfoManagerEventHandler : public AppExecFwk::EventHandler {
         public:
-            CapabilityInfoManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+            CapabilityInfoManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner,
                 std::shared_ptr<CapabilityInfoManager> capabilityInfoMgrPtr);
             ~CapabilityInfoManagerEventHandler() override = default;
             void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;

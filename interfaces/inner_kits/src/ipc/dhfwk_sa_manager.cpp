@@ -29,8 +29,8 @@ namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(DHFWKSAManager);
 DHFWKSAManager::DHFWKSAManager()
-    : dhfwkOnLine_(false), isSubscribeDHFWKSAChangeListener(false), dhfwkProxy_(nullptr),
-      saListener_(sptr<SystemAbilityListener>(new SystemAbilityListener())), saStateCallback(nullptr),
+    : dhfwkOnLine_(false), isSubscribeDHFWKSAChangeListener_(false), dhfwkProxy_(nullptr),
+      saListener_(sptr<SystemAbilityListener>(new SystemAbilityListener())), saStateCallback_(nullptr),
       publisherListenersCache_({}), avTransControlCenterCbCache_({})
 {
     DHLOGI("Ctor DHFWKSAManager");
@@ -39,7 +39,7 @@ DHFWKSAManager::~DHFWKSAManager()
 {
     DHLOGI("Dtor DHFWKSAManager");
     dhfwkOnLine_ = false;
-    isSubscribeDHFWKSAChangeListener = false;
+    isSubscribeDHFWKSAChangeListener_.store(false);
     dhfwkProxy_ = nullptr;
     saListener_ = nullptr;
 }
@@ -53,20 +53,20 @@ void DHFWKSAManager::RegisterAbilityListener()
         return;
     }
 
-    if (!isSubscribeDHFWKSAChangeListener) {
+    if (!isSubscribeDHFWKSAChangeListener_.load()) {
         DHLOGI("try subscribe sa change listener, sa id: %{public}d", DISTRIBUTED_HARDWARE_SA_ID);
         int32_t ret = saMgr->SubscribeSystemAbility(DISTRIBUTED_HARDWARE_SA_ID, saListener_);
         if (ret != 0) {
             DHLOGE("subscribe DHFWK sa change listener failed, ret: %{public}d", ret);
             return;
         }
-        isSubscribeDHFWKSAChangeListener = true;
+        isSubscribeDHFWKSAChangeListener_.store(true);
     }
 }
 
 sptr<IDistributedHardware> DHFWKSAManager::GetDHFWKProxy()
 {
-    if (!isSubscribeDHFWKSAChangeListener) {
+    if (!isSubscribeDHFWKSAChangeListener_.load()) {
         RegisterAbilityListener();
     }
 
@@ -97,7 +97,7 @@ sptr<IDistributedHardware> DHFWKSAManager::GetDHFWKProxy()
 void DHFWKSAManager::RegisterSAStateCallback(DHFWKSAStateCb callback)
 {
     std::lock_guard<std::mutex> lock(saStatCbMutex_);
-    saStateCallback = callback;
+    saStateCallback_ = callback;
 }
 
 void DHFWKSAManager::SystemAbilityListener::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
@@ -111,8 +111,8 @@ void DHFWKSAManager::SystemAbilityListener::OnAddSystemAbility(int32_t systemAbi
     DHFWKSAManager::GetInstance().dhfwkOnLine_ = true;
     {
         std::lock_guard<std::mutex> lock(DHFWKSAManager::GetInstance().saStatCbMutex_);
-        if (DHFWKSAManager::GetInstance().saStateCallback != nullptr) {
-            DHFWKSAManager::GetInstance().saStateCallback(true);
+        if (DHFWKSAManager::GetInstance().saStateCallback_ != nullptr) {
+            DHFWKSAManager::GetInstance().saStateCallback_(true);
         }
     }
     if (DHFWKSAManager::GetInstance().RestoreListener() != DH_FWK_SUCCESS) {
@@ -136,8 +136,8 @@ void DHFWKSAManager::SystemAbilityListener::OnRemoveSystemAbility(int32_t system
     }
     {
         std::lock_guard<std::mutex> lock(DHFWKSAManager::GetInstance().saStatCbMutex_);
-        if (DHFWKSAManager::GetInstance().saStateCallback != nullptr) {
-            DHFWKSAManager::GetInstance().saStateCallback(false);
+        if (DHFWKSAManager::GetInstance().saStateCallback_ != nullptr) {
+            DHFWKSAManager::GetInstance().saStateCallback_(false);
         }
     }
     DHLOGI("sa %{public}" PRId32 " stopped", systemAbilityId);

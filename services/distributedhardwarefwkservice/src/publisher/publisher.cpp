@@ -36,12 +36,12 @@ Publisher::~Publisher()
 {
 }
 
-void Publisher::RegisterListener(const DHTopic topic, const sptr<IPublisherListener> &listener)
+void Publisher::RegisterListener(const DHTopic topic, const sptr<IPublisherListener> listener)
 {
     publisherItems_[topic]->AddListener(listener);
 }
 
-void Publisher::UnregisterListener(const DHTopic topic, const sptr<IPublisherListener> &listener)
+void Publisher::UnregisterListener(const DHTopic topic, const sptr<IPublisherListener> listener)
 {
     publisherItems_[topic]->RemoveListener(listener);
 }

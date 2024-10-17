@@ -50,7 +50,7 @@ std::shared_ptr<CapabilityInfoManager> CapabilityInfoManager::GetInstance()
 }
 
 CapabilityInfoManager::CapabilityInfoManagerEventHandler::CapabilityInfoManagerEventHandler(
-    const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+    const std::shared_ptr<AppExecFwk::EventRunner> runner,
     std::shared_ptr<CapabilityInfoManager> capabilityInfoMgrPtr)
     : AppExecFwk::EventHandler(runner)
 {
@@ -495,7 +495,7 @@ void CapabilityInfoManager::HandleCapabilityDeleteChange(const std::vector<Distr
     }
 }
 
-bool CapabilityInfoManager::IsCapabilityMatchFilter(const std::shared_ptr<CapabilityInfo> &cap,
+bool CapabilityInfoManager::IsCapabilityMatchFilter(const std::shared_ptr<CapabilityInfo> cap,
     const CapabilityInfoFilter &filter, const std::string &value)
 {
     if (cap == nullptr) {

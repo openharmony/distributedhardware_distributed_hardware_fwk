@@ -46,7 +46,7 @@ public:
 
 void AccessManagerTest::SetUp()
 {
-    DistributedHardwareManagerFactory::GetInstance().isInit = true;
+    DistributedHardwareManagerFactory::GetInstance().isInit_.store(true);
 }
 
 void AccessManagerTest::TearDown() {}
