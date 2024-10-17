@@ -337,13 +337,34 @@ int32_t MetaInfoManager::SyncDataByNetworkId(const std::string &networkId)
     return DH_FWK_SUCCESS;
 }
 
-int32_t MetaInfoManager::ClearDataWhenPeerLogout(const std::string &peerudid, const std::string &peeruuid)
+int32_t MetaInfoManager::RemoveMetaInfoInMemByUdid(const std::string &peerudid)
+{
+    DHLOGI("remove device metainfo in memory, peerudid: %{public}s", GetAnonyString(peerudid).c_str());
+    std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
+    std::string udIdHash = Sha256(peerudid);
+    for (auto iter = globalMetaInfoMap_.begin(); iter != globalMetaInfoMap_.end();) {
+        if (!IsCapKeyMatchDeviceId(iter->first, udIdHash)) {
+            DHLOGI("not find udIdHash: %{public}s", GetAnonyString(udIdHash).c_str());
+            iter++;
+            continue;
+        }
+        globalMetaInfoMap_.erase(iter++);
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t MetaInfoManager::ClearRemoteDeviceMetaInfoData(const std::string &peerudid, const std::string &peeruuid)
 {
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
     }
-    dbAdapterPtr_->ClearDataWhenPeerLogout(peerudid, peeruuid);
+    dbAdapterPtr_->ClearDataByPrefix(peerudid);
+    if (dbAdapterPtr_->RemoveDeviceData(peeruuid) != DH_FWK_SUCCESS) {
+        DHLOGE("Remove Device Data failed, peeruuid: %{public}s", GetAnonyString(peeruuid).c_str());
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
+    }
+    RemoveMetaInfoInMemByUdid(peerudid);
     return DH_FWK_SUCCESS;
 }
 

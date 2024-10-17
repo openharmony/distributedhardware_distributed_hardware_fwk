@@ -36,6 +36,7 @@ namespace DistributedHardware {
 
 constexpr int32_t DH_RETRY_INIT_DM_COUNT = 6;
 constexpr int32_t DH_RETRY_INIT_DM_INTERVAL_US = 1000 * 500;
+
 AccessManager::~AccessManager()
 {
     UnInit();
@@ -123,8 +124,29 @@ void AccessManager::OnRemoteDied()
 
 void AccessManager::OnDeviceOnline(const DmDeviceInfo &deviceInfo)
 {
-    (void)deviceInfo;
-    return;
+    std::lock_guard<std::mutex> lock(accessMutex_);
+    DHLOGI("AccessManager online, networkId: %{public}s, deviceName: %{public}s, deviceTypeId: %{public}d",
+        GetAnonyString(deviceInfo.networkId).c_str(), GetAnonyString(deviceInfo.deviceName).c_str(),
+        deviceInfo.deviceTypeId);
+
+    auto networkId = std::string(deviceInfo.networkId);
+    if (!IsIdLengthValid(networkId)) {
+        return;
+    }
+    auto uuid = GetUUIDByDm(networkId);
+    if (!IsIdLengthValid(uuid)) {
+        return;
+    }
+    auto udid = GetUDIDByDm(networkId);
+    if (!IsIdLengthValid(udid)) {
+        return;
+    }
+    int32_t osType = GetDeviceSystemType(deviceInfo.extraData);
+    auto ret = DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid,
+        deviceInfo.deviceTypeId, osType);
+    DHLOGI("AccessManager online result: %{public}d, networkId: %{public}s, uuid: %{public}s, udid: %{public}s,"
+        "osType = %{public}d", ret, GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(),
+        GetAnonyString(udid).c_str(), osType);
 }
 
 void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
@@ -155,28 +177,8 @@ void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
 
 void AccessManager::OnDeviceReady(const DmDeviceInfo &deviceInfo)
 {
-    std::lock_guard<std::mutex> lock(accessMutex_);
-    DHLOGI("AccessManager online, networkId: %{public}s, deviceName: %{public}s, deviceTypeId: %{public}d",
-        GetAnonyString(deviceInfo.networkId).c_str(), GetAnonyString(deviceInfo.deviceName).c_str(),
-        deviceInfo.deviceTypeId);
-
-    auto networkId = std::string(deviceInfo.networkId);
-    if (!IsIdLengthValid(networkId)) {
-        return;
-    }
-    auto uuid = GetUUIDByDm(networkId);
-    if (!IsIdLengthValid(uuid)) {
-        return;
-    }
-    auto udid = GetUDIDByDm(networkId);
-    if (!IsIdLengthValid(udid)) {
-        return;
-    }
-    auto ret =
-        DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid,
-            deviceInfo.deviceTypeId);
-    DHLOGI("AccessManager online result: %{public}d, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
-        ret, GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
+    (void)deviceInfo;
+    return;
 }
 
 void AccessManager::OnDeviceChanged(const DmDeviceInfo &deviceInfo)
@@ -197,7 +199,7 @@ void AccessManager::OnDeviceTrustChange(const std::string &peerudid, const std::
         DHLOGE("Peer is not same account");
         return;
     }
-    DistributedHardwareManagerFactory::GetInstance().ClearDataWhenPeerLogout(peerudid, peeruuid);
+    DistributedHardwareManagerFactory::GetInstance().ClearRemoteDeviceMetaInfoData(peerudid, peeruuid);
 }
 
 void AccessManager::CheckTrustedDeviceOnline()
@@ -212,10 +214,12 @@ void AccessManager::CheckTrustedDeviceOnline()
         const auto networkId = std::string(deviceInfo.networkId);
         const auto uuid = GetUUIDByDm(networkId);
         const auto udid = GetUDIDByDm(networkId);
-        DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s, udid = %{public}s",
-            GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
+        int32_t osType = GetDeviceSystemType(deviceInfo.extraData);
+        DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s, udid = %{public}s,"
+            "osType = %{public}d", GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(),
+            GetAnonyString(udid).c_str(), osType);
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid,
-            deviceInfo.deviceTypeId);
+            deviceInfo.deviceTypeId, osType);
     }
 }
 

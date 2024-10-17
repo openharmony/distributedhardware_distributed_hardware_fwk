@@ -57,6 +57,8 @@ public:
     int32_t GetDataByDHType(const DHType dhType, CapabilityInfoMap &capabilityMap);
     /* Queries batch records in the database based on the prefix of the key. */
     int32_t GetDataByKeyPrefix(const std::string &keyPrefix, CapabilityInfoMap &capabilityMap);
+    int32_t RemoveLocalInfoInMemByUuid(const std::string &peeruuid);
+    int32_t ClearRemoteDeviceLocalInfoData(const std::string &peeruuid);
 
 private:
     mutable std::mutex capInfoMgrMutex_;

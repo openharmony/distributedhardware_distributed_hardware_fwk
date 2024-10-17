@@ -565,16 +565,16 @@ bool DBAdapter::SyncDataByNetworkId(const std::string &networkId)
     return true;
 }
 
-bool DBAdapter::ClearDataWhenPeerLogout(const std::string &peerudid, const std::string &peeruuid)
+bool DBAdapter::ClearDataByPrefix(const std::string &prefix)
 {
-    DHLOGI("Clear cloudData start.");
+    DHLOGI("Clear data by prefix: %{public}s.", GetAnonyString(prefix).c_str());
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is nullptr!");
         return false;
     }
-    std::string udIdHash = Sha256(peerudid);
-    DistributedKv::Key allEntryKeyPrefix(udIdHash);
+    std::string keyPrefix = Sha256(prefix);
+    DistributedKv::Key allEntryKeyPrefix(keyPrefix);
     std::vector<DistributedKv::Entry> peerEntries;
     DistributedKv::Status status = kvStoragePtr_->GetEntries(allEntryKeyPrefix, peerEntries);
     if (status != DistributedKv::Status::SUCCESS || peerEntries.size() == 0) {
@@ -588,11 +588,6 @@ bool DBAdapter::ClearDataWhenPeerLogout(const std::string &peerudid, const std::
 
     if (kvStoragePtr_->DeleteBatch(peerkeys) != DistributedKv::Status::SUCCESS) {
         DHLOGE("DeleteBatch failed, error: %{public}d", status);
-        return false;
-    }
-
-    if (kvStoragePtr_->RemoveDeviceData(peeruuid) != DistributedKv::Status::SUCCESS) {
-        DHLOGE("RemoveDeviceData failed, peeruuid=%{public}s", GetAnonyString(peeruuid).c_str());
         return false;
     }
     return true;

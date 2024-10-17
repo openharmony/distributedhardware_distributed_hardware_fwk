@@ -77,6 +77,8 @@ bool IsArrayLengthValid(const std::vector<std::string> &array);
 bool IsKeySizeValid(const std::string &key);
 
 bool IsHashSizeValid(const std::string &hashValue);
+
+int32_t GetDeviceSystemType(const std::string &extraData);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

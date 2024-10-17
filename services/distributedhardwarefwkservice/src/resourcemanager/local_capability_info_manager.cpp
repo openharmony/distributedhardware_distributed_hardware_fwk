@@ -259,5 +259,32 @@ int32_t LocalCapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPre
     }
     return DH_FWK_SUCCESS;
 }
+
+int32_t LocalCapabilityInfoManager::RemoveLocalInfoInMemByUuid(const std::string &peeruuid)
+{
+    DHLOGI("remove device localinfo in memory, peerudid: %{public}s", GetAnonyString(peeruuid).c_str());
+    std::string deviceId = Sha256(peeruuid);
+    for (auto iter = globalCapInfoMap_.begin(); iter != globalCapInfoMap_.end();) {
+        if (!IsCapKeyMatchDeviceId(iter->first, deviceId)) {
+            DHLOGI("not find deviceId: %{public}s", GetAnonyString(deviceId).c_str());
+            iter++;
+            continue;
+        }
+        globalCapInfoMap_.erase(iter++);
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t LocalCapabilityInfoManager::ClearRemoteDeviceLocalInfoData(const std::string &peeruuid)
+{
+    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr is null");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
+    }
+    dbAdapterPtr_->ClearDataByPrefix(peeruuid);
+    RemoveLocalInfoInMemByUuid(peeruuid);
+    return DH_FWK_SUCCESS;
+}
 } // namespace DistributedHardware
 } // namespace OHOS
