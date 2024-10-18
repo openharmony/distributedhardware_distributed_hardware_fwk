@@ -43,6 +43,21 @@ void MockOffLineTask::CreateDisableTask()
     }
 }
 
+void MockOffLineTask::CreateMetaDisableTask()
+{
+    for (const auto &devInfo : offLineDevInfos) {
+        TaskParam taskParam = {
+            .networkId = devInfo.networkId,
+            .uuid = devInfo.uuid,
+            .dhId = devInfo.dhId,
+            .dhType = devInfo.dhType
+        };
+        std::shared_ptr<Task> metaDisableTask = MockTaskFactory::GetInstance().CreateTask(TaskType::META_DISABLE,
+            taskParam, shared_from_this());
+        TaskExecutor::GetInstance().PushTask(metaDisableTask);
+    }
+}
+
 void MockOffLineTask::ClearOffLineInfo()
 {
     DHLOGI("ClearOffLineInfo");

@@ -42,6 +42,8 @@ private:
     void WaitDisableTaskFinish();
     /* clear off line device info */
     void ClearOffLineInfo();
+    /* create meta disable tasks for off line device */
+    void CreateMetaDisableTask();
 
 private:
     /* condition for children task finish */

@@ -77,6 +77,8 @@ namespace DistributedHardware {
     constexpr const char *SEND_ONLINE = "SendOnLine";
     constexpr const char *DISABLE_TASK_INNER = "DisableTask";
     constexpr const char *ENABLE_TASK_INNER = "EnableTask";
+    constexpr const char *META_DISABLE_TASK_INNER = "MetaDisableTask";
+    constexpr const char *META_ENABLE_TASK_INNER = "MetaEnableTask";
     constexpr const char *OFFLINE_TASK_INNER = "OffLineTask";
     constexpr const char *TRIGGER_TASK = "TriggerTask";
     constexpr const char *EVENT_RUN = "EventRun";

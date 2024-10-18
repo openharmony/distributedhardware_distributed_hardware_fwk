@@ -28,7 +28,9 @@ enum class TaskType : int32_t {
     ENABLE = 1,
     DISABLE = 2,
     ON_LINE = 3,
-    OFF_LINE = 4
+    OFF_LINE = 4,
+    META_ENABLE = 5,
+    META_DISABLE = 6
 };
 
 enum class TaskStep : int32_t {
@@ -38,7 +40,11 @@ enum class TaskStep : int32_t {
     REGISTER_ONLINE_DISTRIBUTED_HARDWARE = 4,
     UNREGISTER_OFFLINE_DISTRIBUTED_HARDWARE = 5,
     CLEAR_OFFLINE_INFO = 6,
-    WAIT_UNREGISTGER_COMPLETE = 7
+    WAIT_UNREGISTGER_COMPLETE = 7,
+    META_ENABLE_TASK = 8,
+    META_DISABLE_TASK = 9,
+    DO_MODEM_META_ENABLE = 10,
+    DO_MODEM_META_DISABLE = 11
 };
 
 enum class TaskState : int32_t {
