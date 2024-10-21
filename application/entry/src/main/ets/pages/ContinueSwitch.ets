@@ -21,10 +21,11 @@ import { BusinessError } from '@ohos.base';
 import { EditableLeftIconType, EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
 import mediaQuery from '@ohos.mediaquery';
 import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
-import CommonConstants from '../common/constants/CommonConstants';
+import CommonConstants, { FontSizeScale } from '../common/constants/CommonConstants';
 import { logger } from '../utils/Logger';
 import { TipsJumpUtils } from '../utils/TipsJumpUtils';
 import osAccount from '@ohos.account.osAccount';
+import systemParameterEnhance from '@ohos.systemParameterEnhance';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
@@ -64,6 +65,9 @@ struct ContinueSwitch {
   @State iterations: number = -1;
   @State isEnabled: boolean = true;
   @State isShowBack: boolean = true;
+  @StorageProp('currentFontSizeScale') @Watch('onFontSizeScaleChange') fontSizeScale: number = 1;
+  @State phoneSwitchTextTopMargin : string = '17vp';
+  @State phoneSwitchTextBottomMargin : string = '18vp';
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
@@ -73,12 +77,44 @@ struct ContinueSwitch {
   private startReason?: string = '';
 
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult): void {
-    logger.info(TAG + 'onPortrait in');
+    logger.info(`${TAG} 'onPortrait in`);
     if (mediaQueryResult.matches as boolean) {
       this.extContext?.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_DARK);
     } else {
       this.extContext?.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT);
     }
+  }
+
+  onFontSizeScaleChange(): void {
+    logger.info(`${TAG} onFontSizeScaleChange`);
+    this.phoneSwitchTextTopMargin = this.UpdateMarginBasedOnFontSize(17, this.fontSizeScale);
+    this.phoneSwitchTextBottomMargin = this.UpdateMarginBasedOnFontSize(18, this.fontSizeScale);
+  }
+
+  /**
+   * Update the margins of the switch list according to the font size.
+   */
+  public UpdateMarginBasedOnFontSize(fontFp: number, fontSizeScale: number): string {
+    logger.info(`${TAG} getlistSpace, fontSizeScale: ${fontSizeScale} ; fontFp: ${fontFp}`);
+    switch (fontSizeScale) {
+      case FontSizeScale.XXL1:
+        return '16vp';
+      case FontSizeScale.XXL2:
+        return '20vp';
+      case FontSizeScale.XXL3:
+        return '24vp';
+      default:
+        return `${fontFp}vp`;
+    }
+  }
+
+  /**
+   *  Initialize the switch list spacing size
+   */
+  public phoneSwitchTextMarginInit(): void {
+    let fontSizeScale = parseFloat(systemParameterEnhance.getSync(CommonConstants.FONT_SIZE_SCALE_PARAM, '1'));
+    this.phoneSwitchTextTopMargin = this.UpdateMarginBasedOnFontSize(17, fontSizeScale);
+    this.phoneSwitchTextBottomMargin = this.UpdateMarginBasedOnFontSize(18, fontSizeScale);
   }
 
   /**
@@ -91,7 +127,7 @@ struct ContinueSwitch {
    * @param width
    */
   getImageAnimatorSize(height: Length, width: Length): void {
-    logger.info(TAG + 'getImageAnimatorSize in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
+    logger.info(`${TAG} getImageAnimatorSize in, deviceInfo.deviceType : ${deviceInfo.deviceType}`);
     let totalHeight = height as number;
     this.shortSideSize = width < totalHeight / 2 ? width as number : totalHeight / 2 as number;
     if (deviceInfo.deviceType === 'phone' || deviceInfo.deviceType === 'tablet') {
@@ -101,12 +137,12 @@ struct ContinueSwitch {
       this.imageAnimatorWidth = this.shortSideSize * 0.8 * 3 / 2;
       this.imageAnimatorHeight = this.shortSideSize * 0.8;
     }
-    logger.info(TAG + 'this.shortSideSize = ' + this.shortSideSize + ', this.imageAnimatorWidth = ' +
-    this.imageAnimatorWidth + ', this.imageAnimatorHeight = ' + this.imageAnimatorHeight);
+    logger.info(`${TAG} this.shortSideSize = ${this.shortSideSize} , this.imageAnimatorWidth =
+      ${this.imageAnimatorWidth} , this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
   }
 
   getStringSync(): void {
-    logger.info(TAG + 'getStringSync in');
+    logger.info(`${TAG} getStringSync in`);
     try {
       context.resourceManager.getStringValue($r('app.string.continue_title')
         .id, (error: BusinessError, value: string) => {
@@ -114,18 +150,18 @@ struct ContinueSwitch {
           logger.error(TAG + 'error is ' + error);
         } else {
           this.title = value;
-          logger.info(TAG + '<aboutToAppear> this.title : ' + this.title);
+          logger.info(`${TAG} <aboutToAppear> this.title : ${this.title}`);
         }
       })
     } catch (error) {
       let code: number = (error as BusinessError).code;
       let message: string = (error as BusinessError).message;
-      logger.error(TAG + `callback getStringValue failed,error code: ${code},message: ${message}.`);
+      logger.error(`${TAG} callback getStringValue failed,error code: ${code},message: ${message}.`);
     }
   }
 
   getImageArray(): void {
-    logger.info(TAG + 'getImageArray in');
+    logger.info(`${TAG} getImageArray in`);
     for (let i = 0; i <= CommonConstants.IMAGE_COUNT; ++i) {
       this.imageArray.push({
         src: $r(`app.media.continue_${i}`),
@@ -136,57 +172,57 @@ struct ContinueSwitch {
   }
 
   getGapLength(): void {
-    logger.info(TAG + 'getGapLength in, deviceInfo.deviceType : ' + deviceInfo.deviceType);
+    logger.info(`${TAG} getGapLength in, deviceInfo.deviceType : ${deviceInfo.deviceType}`);
     if (deviceInfo.deviceType == 'phone') {
       this.gapLength = CommonConstants.GENERAL_PHONE_GAP_LENGTH;
     } else if (deviceInfo.deviceType == '2in1' || deviceInfo.deviceType == 'tablet') {
       this.gapLength = CommonConstants.PC_PAD_GAP_LENGTH;
     }
-    logger.info(TAG + 'this.gapLength : ' + this.gapLength);
+    logger.info(`${TAG} this.gapLength : ${this.gapLength}`);
   }
 
   getForegroundOsAccountLocalId(): void {
-    logger.info(TAG + 'getForegroundOsAccountLocalId in');
+    logger.info(`${TAG} getForegroundOsAccountLocalId in`);
     try {
       this.accountManager.getForegroundOsAccountLocalId().then((localId: number) => {
-        logger.info(TAG + 'getForegroundOsAccountLocalId, localId: ' + localId);
+        logger.info(`${TAG} getForegroundOsAccountLocalId, localId: ${localId}`);
         this.getAccountInfo(localId);
       }).catch((err: BusinessError) => {
-        logger.error(TAG + 'getForegroundOsAccountLocalId err: ' + JSON.stringify(err));
+        logger.error(`${TAG} getForegroundOsAccountLocalId errCode: ${err?.code}`);
       });
-    } catch (e) {
-      logger.error(TAG + 'getForegroundOsAccountLocalId exception: ' + JSON.stringify(e));
+    } catch (err) {
+      logger.error(`${TAG} getForegroundOsAccountLocalId exception: ${err?.message}`);
     }
   }
 
   getAccountInfo(localId: number): void {
-    logger.info(TAG + 'getAccountInfo in');
+    logger.info(`${TAG} getAccountInfo in`);
     try {
       this.accountManager.queryOsAccountById(localId).then((accountInfo: osAccount.OsAccountInfo) => {
-        logger.info(TAG + 'queryOsAccountById, accountInfo.type: ' + JSON.stringify(accountInfo.type));
+        logger.info(`${TAG} queryOsAccountById, accountInfo.type: ${accountInfo.type}`);
         if (accountInfo.type === osAccount.OsAccountType.PRIVATE) {
           let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.close,
             settings.domainName.USER_SECURITY);
           this.isSwitchOn = false;
           this.isEnabled = false;
-          logger.info(TAG + 'set value isSuccess : status =' + status + '; set:Continue_Switch_Status is 0');
+          logger.info(`${TAG} set value isSuccess : status = ${status}; set:Continue_Switch_Status is 0`);
         }
       }).catch((err: BusinessError) => {
-        logger.error(TAG + 'queryOsAccountById err: ' + JSON.stringify(err));
+        logger.error(`${TAG} queryOsAccountById errCode: ${err?.code}`);
       });
-    } catch (e) {
-      logger.error(TAG + 'queryOsAccountById exception: ' + JSON.stringify(e));
+    } catch (err) {
+      logger.error(`${TAG} queryOsAccountById exception: ${err?.message}`);
     }
   }
 
   onPageShow() {
-    logger.info(TAG + 'onPageShow in');
+    logger.info(`${TAG} onPageShow in`);
     this.getGapLength();
     display.getAllDisplays((err, data) => {
       this.screenWidth = px2vp(data[0].width);
       this.screenHeight = px2vp(data[0].height);
       this.contentHeight = this.screenHeight;
-      logger.info(TAG + 'screenWidth = ' + this.screenWidth + '; screenHeight = ' + this.screenHeight);
+      logger.info(`${TAG} screenWidth = ${this.screenWidth}; screenHeight = ${this.screenHeight}`);
     })
     this.is2in1 = deviceInfo.deviceType === '2in1' ? true : false;
   }
@@ -197,15 +233,15 @@ struct ContinueSwitch {
     let value = settings.getValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
       settings.domainName.USER_SECURITY);
     this.isSwitchOn = value != switchState.close ? true : false;
-    logger.info(TAG + '<aboutToAppear> this.isSwitchOn : ' + this.isSwitchOn + '; value: ' + value);
+    logger.info(`${TAG} <aboutToAppear> this.isSwitchOn : ${this.isSwitchOn}; value: ${value}`);
 
     AppStorage.setOrCreate('isSwitchOn', this.isSwitchOn);
-    logger.info(TAG + 'AppStorage.get<boolean>(isSwitchOn) : ' + AppStorage.get<boolean>('isSwitchOn'));
+    logger.info(`${TAG} AppStorage.get<boolean>(isSwitchOn) : ${AppStorage.get<boolean>('isSwitchOn')}`);
 
     if (this.isSwitchOn) {
       let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
         settings.domainName.USER_SECURITY);
-      logger.info(TAG + 'set value success :' + status + '; set:Continue_Switch_Status is 1');
+      logger.info(`${TAG} set value success :${status}; set:Continue_Switch_Status is 1`);
     }
 
     this.getStringSync();
@@ -222,6 +258,7 @@ struct ContinueSwitch {
       this.checkFoldBackButton();
     }
     this.checkPcPadBackButton();
+    this.phoneSwitchTextMarginInit();
   }
 
   aboutToDisappear() {
@@ -229,7 +266,7 @@ struct ContinueSwitch {
   }
 
   onBackPress() {
-    logger.info(TAG + 'onBackPress in');
+    logger.info(`${TAG} onBackPress in`);
   }
 
   @Builder
@@ -259,7 +296,7 @@ struct ContinueSwitch {
           if (this.continueSession) {
             this.continueSession.sendData({ 'action': 'pop' })
           } else {
-            logger.error(TAG + 'continueSession is undefined');
+            logger.error(`${TAG} continueSession is undefined`);
           }
         }
       })
@@ -279,10 +316,10 @@ struct ContinueSwitch {
           .width(this.imageAnimatorWidth)
           .height(this.imageAnimatorHeight)
           .onStart(() => {
-            logger.info(TAG + 'ImageAnimator Start');
+            logger.info(`${TAG} ImageAnimator Start`);
           })
           .onFinish(() => {
-            logger.info(TAG + 'ImageAnimator Finish');
+            logger.info(`${TAG} ImageAnimator Finish`);
           })
 
         Text() {
@@ -320,9 +357,8 @@ struct ContinueSwitch {
               .fontColor($r('sys.color.ohos_id_color_text_primary'))
               .accessibilityLevel('no')
               .padding({
-                top: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_TOP_PC : CommonConstants.ITEM_LIST_PADDING_TOP,
-                bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC :
-                CommonConstants.ITEM_LIST_PADDING_BOTTOM
+                top: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_TOP_PC : this.phoneSwitchTextTopMargin,
+                bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC : this.phoneSwitchTextBottomMargin
               })
 
             Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
@@ -331,17 +367,17 @@ struct ContinueSwitch {
               .hoverEffect(HoverEffect.None)
               .enabled(this.isEnabled)
               .onChange((isOn: boolean) => {
-                logger.info(TAG + 'isOn:' + isOn);
+                logger.info(`${TAG} isOn: ${isOn}`);
                 this.isSwitchOn = isOn;
                 AppStorage.setAndLink('isSwitchOn', isOn);
                 if (isOn) {
                   let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
                     switchState.open, settings.domainName.USER_SECURITY);
-                  logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is open');
+                  logger.info(`${TAG} is set success :${status}; set:Continue_Switch_Status is open`);
                 } else {
                   let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
                     switchState.close, settings.domainName.USER_SECURITY);
-                  logger.info(TAG + 'is set success :' + status + '; set:Continue_Switch_Status is close');
+                  logger.info(`${TAG} is set success :${status}; set:Continue_Switch_Status is close`);
                 }
               })
           }
@@ -370,6 +406,9 @@ struct ContinueSwitch {
               .fontSize(CommonConstants.SYMBOL_INFO_CIRCLE)
               .fontColor([$r('sys.color.ohos_id_color_activated')])
               .margin({ right: CommonConstants.SYMBOL_MARGIN_RIGHT })
+              .width(CommonConstants.SYMBOL_INFO_CIRCLE)
+              .height(CommonConstants.SYMBOL_INFO_CIRCLE)
+              .accessibilityLevel('no')
 
             Text($r('app.string.update_version_prompt'))
               .fontSize($r('sys.float.ohos_id_text_size_body3'))
@@ -421,7 +460,7 @@ struct ContinueSwitch {
       logger.info('Scroll Stop');
     })
     .onAreaChange((oldArea: Area, newArea: Area) => {
-      logger.info(TAG + 'Scroll, oldArea.height = ' + oldArea.height + ', newArea.height = ' + newArea.height);
+      logger.info(`${TAG} Scroll, oldArea.height = ${oldArea.height}, newArea.height = ${newArea.height}`);
     })
   }
 
@@ -437,10 +476,10 @@ struct ContinueSwitch {
     .height('100%')
     .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
     .onAreaChange((oldArea: Area, newArea: Area) => {
-      logger.info(TAG + 'build column , oldArea.height = ' + oldArea.height + ', newArea.height = ' + newArea.height);
+      logger.info(`${TAG} build column , oldArea.height = ${oldArea.height}, newArea.height = ${newArea.height}`);
       this.getImageAnimatorSize(newArea.height, newArea.width);
-      logger.info(TAG + 'this.shortSideSize = ' + this.shortSideSize + ', this.imageAnimatorWidth = ' +
-      this.imageAnimatorWidth + ', this.imageAnimatorHeight = ' + this.imageAnimatorHeight);
+      logger.info(`${TAG} this.shortSideSize = ${this.shortSideSize}, this.imageAnimatorWidth =
+        ${this.imageAnimatorWidth}, this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
     })
   }
 
@@ -456,16 +495,6 @@ struct ContinueSwitch {
   private isPhone(): boolean {
     logger.info(`${TAG} isPhone in`);
     return (deviceInfo.deviceType === 'phone' || deviceInfo.deviceType === 'default');
-  }
-
-  private getSymbolSize(): Length {
-    logger.info(TAG + 'getSymbolSize in');
-    let fontSizeScale: number = AppStorage.get<number>('currentFontSizeScale') as number;
-    logger.info(TAG + 'getSymbolSize : fontSizeScale =' + fontSizeScale);
-    if (fontSizeScale >= 2) {
-      return `${CommonConstants.SYMBOL_INFO_CIRCLE * 2}vp`
-    }
-    return CommonConstants.SYMBOL_INFO_CIRCLE;
   }
 
   private refreshFoldStatus(foldStatus: display.FoldStatus): void {
