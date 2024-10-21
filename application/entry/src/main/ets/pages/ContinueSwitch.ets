@@ -190,7 +190,7 @@ struct ContinueSwitch {
       }).catch((err: BusinessError) => {
         logger.error(`${TAG} getForegroundOsAccountLocalId errCode: ${err?.code}`);
       });
-    } catch (e) {
+    } catch (err) {
       logger.error(`${TAG} getForegroundOsAccountLocalId exception: ${err?.message}`);
     }
   }
@@ -210,7 +210,7 @@ struct ContinueSwitch {
       }).catch((err: BusinessError) => {
         logger.error(`${TAG} queryOsAccountById errCode: ${err?.code}`);
       });
-    } catch (e) {
+    } catch (err) {
       logger.error(`${TAG} queryOsAccountById exception: ${err?.message}`);
     }
   }

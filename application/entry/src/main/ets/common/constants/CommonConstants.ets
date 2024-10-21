@@ -37,7 +37,7 @@ export default class CommonConstants {
   public static readonly ITEM_LIST_PADDING_TOP: number = 17;
   public static readonly ITEM_LIST_PADDING_BOTTOM: number = 18;
   public static readonly CONTINUE_SWITCH_KEY: string = 'Continue_Switch_Status';
-  public static readonly CONTINUE_SWITCH_KEY: string = 'persist.sys.font_scale_for_user0';
+  public static readonly FONT_SIZE_SCALE_PARAM: string = 'persist.sys.font_scale_for_user0';
   // Tips
   public static readonly TIPS_TYPE: string = '105';
   public static readonly FUN_NUM = 'SF-20005815_f101';
