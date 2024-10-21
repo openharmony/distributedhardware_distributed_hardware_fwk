@@ -66,6 +66,8 @@ struct ContinueSwitch {
   @State isEnabled: boolean = true;
   @State isShowBack: boolean = true;
   @StorageProp('currentFontSizeScale') @Watch('onFontSizeScaleChange') fontSizeScale: number = 1;
+  @State phoneSwitchTextTopMargin : string = '17vp';
+  @State phoneSwitchTextBottomMargin : string = '18vp';
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
