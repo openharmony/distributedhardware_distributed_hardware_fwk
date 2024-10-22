@@ -469,24 +469,24 @@ struct ContinueSwitch {
 
   private getImageAnimatorHeight(): number {
     if (deviceInfo.deviceType === 'phone') {
-      return ANIMATOR_HEIGHT_PHONE;
+      return CommonConstants.ANIMATOR_HEIGHT_PHONE;
     } else if (deviceInfo.deviceType === '2in1') {
-      return ANIMATOR_HEIGHT_PC;
+      return CommonConstants.ANIMATOR_HEIGHT_PC;
     } else if (deviceInfo.deviceType === 'tablet') {
-      return ANIMATOR_HEIGHT_PAD;
+      return CommonConstants.ANIMATOR_HEIGHT_PAD;
     }
-    return ANIMATOR_HEIGHT_PHONE;
+    return CommonConstants.ANIMATOR_HEIGHT_PHONE;
   }
 
   private getImageAnimatorWidth(): number {
     if (deviceInfo.deviceType === 'phone') {
-      return ANIMATOR_WIDTH_PHONE;
+      return CommonConstants.ANIMATOR_WIDTH_PHONE;
     } else if (deviceInfo.deviceType === '2in1') {
-      return ANIMATOR_WIDTH_PC;
+      return CommonConstants.ANIMATOR_WIDTH_PC;
     } else if (deviceInfo.deviceType === 'tablet') {
-      return ANIMATOR_WIDTH_PAD;
+      return CommonConstants.ANIMATOR_WIDTH_PAD;
     }
-    return ANIMATOR_WIDTH_PHONE;
+    return CommonConstants.ANIMATOR_WIDTH_PHONE;
   }
 
   private checkPcPadBackButton(): void {
