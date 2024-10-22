@@ -18,6 +18,8 @@
 #include "distributed_hardware_log.h"
 #include "mock_disable_task.h"
 #include "mock_enable_task.h"
+#include "mock_meta_disable_task.h"
+#include "mock_meta_enable_task.h"
 #include "mock_offline_task.h"
 #include "mock_online_task.h"
 #include "task_board.h"
@@ -37,6 +39,16 @@ std::shared_ptr<Task> MockTaskFactory::CreateTask(TaskType taskType, TaskParam t
         }
         case TaskType::DISABLE: {
             task = std::make_shared<MockDisableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
+            break;
+        }
+        case TaskType::META_ENABLE: {
+            task = std::make_shared<MockMetaEnableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
+            break;
+        }
+        case TaskType::META_DISABLE: {
+            task = std::make_shared<MockMetaDisableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
                 taskParam.dhId, taskParam.dhType);
             break;
         }

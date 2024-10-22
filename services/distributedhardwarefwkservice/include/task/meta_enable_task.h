@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,29 +13,24 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_MOCK_OFFLINE_TASK_H
-#define OHOS_DISTRIBUTED_HARDWARE_MOCK_OFFLINE_TASK_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_META_ENABLE_TASK_H
+#define OHOS_DISTRIBUTED_HARDWARE_META_ENABLE_TASK_H
 
-#include "mock_task_utils.h"
-#include "offline_task.h"
+#include "task.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class MockOffLineTask : public OffLineTask {
+class MetaEnableTask : public Task {
 public:
-    MockOffLineTask() = delete;
-    MockOffLineTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
+    MetaEnableTask() = delete;
+    MetaEnableTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
         const std::string &dhId, const DHType dhType);
+    virtual ~MetaEnableTask();
+    virtual void DoTask();
+    int32_t Enable();
 
-    void SetOffLineDevInfos(std::vector<MockDevInfo> offLineDevInfos);
 private:
-    /* create disable tasks for off line device */
-    void CreateDisableTask();
-    /* clear off line device info */
-    void ClearOffLineInfo();
-    void CreateMetaDisableTask();
-
-    std::vector<MockDevInfo> offLineDevInfos;
+    void DoTaskInner();
 };
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,26 +13,25 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_ONLINE_TASK_H
-#define OHOS_DISTRIBUTED_HARDWARE_ONLINE_TASK_H
+#include "mock_meta_disable_task.h"
 
-#include "task.h"
+#include <chrono>
+#include <thread>
+
+#include "distributed_hardware_errno.h"
+#include "distributed_hardware_log.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class OnLineTask : public Task {
-public:
-    OnLineTask() = delete;
-    OnLineTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
-        const std::string &dhId, const DHType dhType);
-    virtual ~OnLineTask();
-    virtual void DoTask();
+MockMetaDisableTask::MockMetaDisableTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
+    const std::string &dhId, const DHType dhType) : MetaDisableTask(networkId, uuid, udid, dhId, dhType)
+{}
 
-private:
-    void DoSyncInfo();
-    void CreateEnableTask();
-    void CreateMetaEnableTask();
-};
+int32_t MockMetaDisableTask::Disable()
+{
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(100ms);
+    return DH_FWK_SUCCESS;
+}
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif
