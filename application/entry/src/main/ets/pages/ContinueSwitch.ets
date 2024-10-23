@@ -50,8 +50,8 @@ struct ContinueSwitch {
   @State screenHeight: number = 0;
   @State screenWidth: number = 0;
   @State shortSideSize: number = 0;
-  @State imageAnimatorHeight: number = 0;
-  @State imageAnimatorWidth: number = 0;
+  @State imageAnimatorHeight: number = this.getImageAnimatorHeight();
+  @State imageAnimatorWidth: number = this.getImageAnimatorWidth();
   @State textWidth: number = 0;
   @State gapLength: number = 0;
   @State isShow: boolean = false;
@@ -65,9 +65,10 @@ struct ContinueSwitch {
   @State iterations: number = -1;
   @State isEnabled: boolean = true;
   @State isShowBack: boolean = true;
+  @State isAnimatorDone: boolean = false;
   @StorageProp('currentFontSizeScale') @Watch('onFontSizeScaleChange') fontSizeScale: number = 1;
-  @State phoneSwitchTextTopMargin : string = '17vp';
-  @State phoneSwitchTextBottomMargin : string = '18vp';
+  @State phoneSwitchTextTopMargin: string = '17vp';
+  @State phoneSwitchTextBottomMargin: string = '18vp';
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
@@ -115,30 +116,6 @@ struct ContinueSwitch {
     let fontSizeScale = parseFloat(systemParameterEnhance.getSync(CommonConstants.FONT_SIZE_SCALE_PARAM, '1'));
     this.phoneSwitchTextTopMargin = this.UpdateMarginBasedOnFontSize(17, fontSizeScale);
     this.phoneSwitchTextBottomMargin = this.UpdateMarginBasedOnFontSize(18, fontSizeScale);
-  }
-
-  /**
-   * @description Calculate the ImageAnimator size
-   *   Calculation rule:
-   *    1.general phone & pad : screen height/2 compare with width,shorter is ImageAnimator width
-   *    2.pc: screen height/2 compare with width,shorter is ImageAnimator height
-   *    3.ratio: 3:2
-   * @param height
-   * @param width
-   */
-  getImageAnimatorSize(height: Length, width: Length): void {
-    logger.info(`${TAG} getImageAnimatorSize in, deviceInfo.deviceType : ${deviceInfo.deviceType}`);
-    let totalHeight = height as number;
-    this.shortSideSize = width < totalHeight / 2 ? width as number : totalHeight / 2 as number;
-    if (deviceInfo.deviceType === 'phone' || deviceInfo.deviceType === 'tablet') {
-      this.imageAnimatorWidth = this.shortSideSize * 0.8;
-      this.imageAnimatorHeight = this.shortSideSize * 0.8 * 2 / 3;
-    } else if (deviceInfo.deviceType === '2in1') {
-      this.imageAnimatorWidth = this.shortSideSize * 0.8 * 3 / 2;
-      this.imageAnimatorHeight = this.shortSideSize * 0.8;
-    }
-    logger.info(`${TAG} this.shortSideSize = ${this.shortSideSize} , this.imageAnimatorWidth =
-      ${this.imageAnimatorWidth} , this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
   }
 
   getStringSync(): void {
@@ -259,6 +236,9 @@ struct ContinueSwitch {
     }
     this.checkPcPadBackButton();
     this.phoneSwitchTextMarginInit();
+    setTimeout(() => {
+      this.isAnimatorDone = true;
+    }, 20)
   }
 
   aboutToDisappear() {
@@ -445,6 +425,7 @@ struct ContinueSwitch {
       .padding({ left: this.gapLength, right: this.gapLength })
       .margin({ bottom: this.contentHeight * 0.09 })
       .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
+      .visibility(this.getContentVisibility())
     }
     .width('100%')
     .height(this.screenHeight)
@@ -477,10 +458,35 @@ struct ContinueSwitch {
     .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
     .onAreaChange((oldArea: Area, newArea: Area) => {
       logger.info(`${TAG} build column , oldArea.height = ${oldArea.height}, newArea.height = ${newArea.height}`);
-      this.getImageAnimatorSize(newArea.height, newArea.width);
       logger.info(`${TAG} this.shortSideSize = ${this.shortSideSize}, this.imageAnimatorWidth =
         ${this.imageAnimatorWidth}, this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
     })
+  }
+
+  private getContentVisibility(): Visibility {
+    return (this.imageAnimatorWidth !== 0 && this.isAnimatorDone) ? Visibility.Visible : Visibility.Hidden;
+  }
+
+  private getImageAnimatorHeight(): number {
+    if (deviceInfo.deviceType === 'phone') {
+      return CommonConstants.ANIMATOR_HEIGHT_PHONE;
+    } else if (deviceInfo.deviceType === '2in1') {
+      return CommonConstants.ANIMATOR_HEIGHT_PC;
+    } else if (deviceInfo.deviceType === 'tablet') {
+      return CommonConstants.ANIMATOR_HEIGHT_PAD;
+    }
+    return CommonConstants.ANIMATOR_HEIGHT_PHONE;
+  }
+
+  private getImageAnimatorWidth(): number {
+    if (deviceInfo.deviceType === 'phone') {
+      return CommonConstants.ANIMATOR_WIDTH_PHONE;
+    } else if (deviceInfo.deviceType === '2in1') {
+      return CommonConstants.ANIMATOR_WIDTH_PC;
+    } else if (deviceInfo.deviceType === 'tablet') {
+      return CommonConstants.ANIMATOR_WIDTH_PAD;
+    }
+    return CommonConstants.ANIMATOR_WIDTH_PHONE;
   }
 
   private checkPcPadBackButton(): void {
