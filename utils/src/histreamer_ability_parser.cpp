@@ -329,7 +329,7 @@ void FromJson(const cJSON *jsonObject, VideoDecoderOut &videoDecoderOut)
     }
     videoDecoderOut.mime = cJSON_GetObjectItem(jsonObject, MIME.c_str())->valuestring;
 
-    if (!IsArray(jsonObject, VIDEO_BIT_STREAM_FMT)) {
+    if (!IsArray(jsonObject, VIDEO_PIXEL_FMT)) {
         DHLOGE("videoDecoderOut VIDEO_PIXEL_FMT is invalid!");
         return;
     }

@@ -100,5 +100,13 @@ HWTEST_F(LocalHardwareManagerTest, GetLocalCapabilityMapByPrefix_002, TestSize.L
     EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
 }
 
+HWTEST_F(LocalHardwareManagerTest, QueryLocalHardware_001, TestSize.Level0)
+{
+    DHType dhType = DHType::INPUT;
+    IHardwareHandler *hardwareHandler = nullptr;
+    LocalHardwareManager::GetInstance().QueryLocalHardware(dhType, hardwareHandler);
+    EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
+}
+
 } // namespace DistributedHardware
 } // namespace OHOS
