@@ -19,7 +19,10 @@
 #include <string>
 
 #include "dh_comm_tool.h"
+#include "dh_transport_obj.h"
+#include "capability_info_manager.h"
 #include "distributed_hardware_errno.h"
+
 
 using namespace testing::ext;
 namespace OHOS {
@@ -29,6 +32,7 @@ using namespace std;
 namespace {
     int32_t g_socketid = 1;
     std::string g_networkid = "networkId_test";
+    constexpr int32_t SOCKETID = 10;
 }
 class DhTransportTest : public testing::Test {
 public:
@@ -60,9 +64,7 @@ void DhTransportTest::TearDown()
 
 HWTEST_F(DhTransportTest, OnSocketClosed_001, TestSize.Level0)
 {
-    if (dhTransportTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
     ShutdownReason reason = ShutdownReason::SHUTDOWN_REASON_UNKNOWN;
     dhTransportTest_->remoteDevSocketIds_[g_networkid] = g_socketid;
     dhTransportTest_->OnSocketClosed(2, reason);
@@ -73,9 +75,7 @@ HWTEST_F(DhTransportTest, OnSocketClosed_001, TestSize.Level0)
 
 HWTEST_F(DhTransportTest, OnBytesReceived_001, TestSize.Level0)
 {
-    if (dhTransportTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
     int32_t sessionId = -1;
     char *data = nullptr;
     uint32_t dataLen = 0;
@@ -107,9 +107,7 @@ HWTEST_F(DhTransportTest, OnBytesReceived_001, TestSize.Level0)
 
 HWTEST_F(DhTransportTest, Init_001, TestSize.Level0)
 {
-    if (dhTransportTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
     dhTransportTest_->isSocketSvrCreateFlag_ = true;
     auto ret = dhTransportTest_->Init();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
@@ -121,9 +119,7 @@ HWTEST_F(DhTransportTest, Init_001, TestSize.Level0)
 
 HWTEST_F(DhTransportTest, UnInit_001, TestSize.Level0)
 {
-    if (dhTransportTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
     auto ret = dhTransportTest_->UnInit();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 
@@ -134,9 +130,7 @@ HWTEST_F(DhTransportTest, UnInit_001, TestSize.Level0)
 
 HWTEST_F(DhTransportTest, IsDeviceSessionOpened_001, TestSize.Level0)
 {
-    if (dhTransportTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
     dhTransportTest_->remoteDevSocketIds_.clear();
     auto ret = dhTransportTest_->IsDeviceSessionOpened(g_networkid, g_socketid);
     EXPECT_EQ(false, ret);
@@ -146,11 +140,17 @@ HWTEST_F(DhTransportTest, IsDeviceSessionOpened_001, TestSize.Level0)
     EXPECT_EQ(true, ret);
 }
 
+HWTEST_F(DhTransportTest, IsDeviceSessionOpened_002, TestSize.Level0)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::string remoteNetworkId = "";
+    auto ret = dhTransportTest_->IsDeviceSessionOpened(remoteNetworkId, g_socketid);
+    EXPECT_EQ(false, ret);
+}
+
 HWTEST_F(DhTransportTest, StartSocket_001, TestSize.Level0)
 {
-    if (dhTransportTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
     dhTransportTest_->remoteDevSocketIds_[g_networkid] = g_socketid;
     auto ret = dhTransportTest_->StartSocket(g_networkid);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
@@ -160,11 +160,17 @@ HWTEST_F(DhTransportTest, StartSocket_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED, ret);
 }
 
+HWTEST_F(DhTransportTest, StartSocket_002, TestSize.Level0)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::string remoteNetworkId = "";
+    auto ret = dhTransportTest_->StartSocket(remoteNetworkId);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
 HWTEST_F(DhTransportTest, StopSocket_001, TestSize.Level0)
 {
-    if (dhTransportTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
     dhTransportTest_->remoteDevSocketIds_.clear();
     auto ret = dhTransportTest_->StopSocket(g_networkid);
     EXPECT_EQ(ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED, ret);
@@ -174,15 +180,145 @@ HWTEST_F(DhTransportTest, StopSocket_001, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
+HWTEST_F(DhTransportTest, StopSocket_002, TestSize.Level0)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::string remoteNetworkId = "";
+    auto ret = dhTransportTest_->StopSocket(remoteNetworkId);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
 HWTEST_F(DhTransportTest, Send_001, TestSize.Level0)
 {
-    if (dhTransportTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::string payload = "payload_test";
     dhTransportTest_->remoteDevSocketIds_.clear();
     auto ret = dhTransportTest_->Send(g_networkid, payload);
     EXPECT_EQ(ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED, ret);
+}
+
+HWTEST_F(DhTransportTest, Send_002, TestSize.Level0)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::string payload = "payload_test";
+    dhTransportTest_->remoteDevSocketIds_.clear();
+    dhTransportTest_->remoteDevSocketIds_[g_networkid] = g_socketid;
+    auto ret = dhTransportTest_->Send(g_networkid, payload);
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED, ret);
+}
+
+HWTEST_F(DhTransportTest, GetRemoteNetworkIdBySocketId_001, TestSize.Level0)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::string networkid = "123456";
+    dhTransportTest_->remoteDevSocketIds_[networkid] = SOCKETID;
+    auto ret = dhTransportTest_->GetRemoteNetworkIdBySocketId(SOCKETID);
+    EXPECT_EQ(networkid, ret);
+
+    dhTransportTest_->remoteDevSocketIds_.clear();
+    ret = dhTransportTest_->GetRemoteNetworkIdBySocketId(SOCKETID);
+    EXPECT_EQ("", ret);
+
+    std::string remoteDevId = "";
+    dhTransportTest_->ClearDeviceSocketOpened(remoteDevId);
+
+    std::string payload = "";
+    dhTransportTest_->HandleReceiveMessage(payload);
+
+    payload = "payload_test";
+    dhTransportTest_->HandleReceiveMessage(payload);
+}
+
+HWTEST_F(DhTransportTest, ToJson_FullCapsRsp_001, TestSize.Level0)
+{
+    cJSON *json = nullptr;
+    FullCapsRsp capsRsp;
+    ToJson(json, capsRsp);
+
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        "dhId_test", "deviceId_test", "devName_test", 14, DHType::CAMERA, "attrs_test", "subtype");
+    resInfos.emplace_back(capInfo);
+    capsRsp.networkId = "123456";
+    capsRsp.caps = resInfos;
+    ToJson(jsonObject, capsRsp);
+    cJSON_Delete(jsonObject);
+    EXPECT_FALSE(capsRsp.networkId.empty());
+}
+
+HWTEST_F(DhTransportTest, FromJson_FullCapsRsp_001, TestSize.Level0)
+{
+    cJSON *json = nullptr;
+    FullCapsRsp capsRsp;
+    FromJson(json, capsRsp);
+
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    cJSON_AddStringToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, "caps_rsp_networkIid_test");
+    cJSON_AddStringToObject(jsonObject, CAPS_RSP_CAPS_KEY, "caps_rsp_caps_test");
+    FromJson(jsonObject, capsRsp);
+    cJSON_Delete(jsonObject);
+    EXPECT_FALSE(capsRsp.networkId.empty());
+}
+
+HWTEST_F(DhTransportTest, FromJson_FullCapsRsp_002, TestSize.Level0)
+{
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    cJSON_AddNumberToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, 1);
+
+    cJSON *jsonArr = cJSON_CreateArray();
+    if (jsonArr == nullptr) {
+        cJSON_Delete(jsonObject);
+        return;
+    }
+    cJSON_AddItemToArray(jsonArr, cJSON_CreateNumber(1));
+    cJSON_AddItemToObject(jsonObject, CAPS_RSP_CAPS_KEY, jsonArr);
+    FullCapsRsp capsRsp;
+    FromJson(jsonObject, capsRsp);
+    cJSON_Delete(jsonObject);
+    EXPECT_TRUE(capsRsp.networkId.empty());
+}
+
+HWTEST_F(DhTransportTest, ToJson_CommMsg_001, TestSize.Level0)
+{
+    cJSON *json = nullptr;
+    CommMsg commMsg;
+    ToJson(json, commMsg);
+
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    ToJson(jsonObject, commMsg);
+    cJSON_Delete(jsonObject);
+}
+
+HWTEST_F(DhTransportTest, FromJson_CommMsg_001, TestSize.Level0)
+{
+    cJSON *json = nullptr;
+    CommMsg commMsg;
+    FromJson(json, commMsg);
+
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_CODE_KEY, "comm_msg_code_test");
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY, "comm_msg_msg_test");
+    FromJson(jsonObject, commMsg);
+    cJSON_Delete(jsonObject);
+    EXPECT_FALSE(commMsg.msg.empty());
+}
+
+HWTEST_F(DhTransportTest, FromJson_CommMsg_002, TestSize.Level0)
+{
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_MSG_KEY, 1);
+    CommMsg commMsg;
+    FromJson(jsonObject, commMsg);
+    cJSON_Delete(jsonObject);
+    EXPECT_TRUE(commMsg.msg.empty());
 }
 }
 }
