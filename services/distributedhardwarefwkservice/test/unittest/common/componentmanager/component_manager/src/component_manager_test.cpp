@@ -124,8 +124,9 @@ void ComponentManagerTest::TearDown()
  */
 HWTEST_F(ComponentManagerTest, init_test_001, TestSize.Level0)
 {
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
     auto ret = ComponentManager::GetInstance().Init();
-    EXPECT_EQ(ERR_DH_FWK_COMPONENT_INIT_SOURCE_FAILED, ret);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 /**
@@ -136,11 +137,9 @@ HWTEST_F(ComponentManagerTest, init_test_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, init_test_002, TestSize.Level0)
 {
-    MockIDistributedHardwareSource cameraSource;
-    ComponentManager::GetInstance().compSource_.insert(std::make_pair(DHType::CAMERA, &cameraSource));
-
+    ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
     auto ret = ComponentManager::GetInstance().Init();
-    EXPECT_EQ(ERR_DH_FWK_COMPONENT_INIT_SINK_FAILED, ret);
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_MONITOR_NULL, ret);
 }
 
 /**

@@ -89,15 +89,11 @@ int32_t ComponentManager::Init()
 {
     DHLOGI("start.");
     DHTraceStart(COMPONENT_INIT_START);
-    int32_t ret = InitComponentHandler();
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Init Component Handler failed, ret: %d", ret);
-        return ret;
-    }
+    InitComponentHandler();
 
-    ret = InitSAMonitor();
+    int32_t ret = InitSAMonitor();
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Init SA monitor failed, ret: %d", ret);
+        DHLOGE("Init SA monitor failed, ret: %{public}d", ret);
         return ret;
     }
 
@@ -113,21 +109,17 @@ int32_t ComponentManager::Init()
     return DH_FWK_SUCCESS;
 }
 
-int32_t ComponentManager::InitComponentHandler()
+void ComponentManager::InitComponentHandler()
 {
+    DHLOGI("start.");
     if (!InitCompSource()) {
         DHLOGE("InitCompSource failed.");
         DHTraceEnd();
-        return ERR_DH_FWK_COMPONENT_INIT_SOURCE_FAILED;
     }
     if (!InitCompSink()) {
         DHLOGE("InitCompSink failed.");
-        compSource_.clear();
         DHTraceEnd();
-        return ERR_DH_FWK_COMPONENT_INIT_SINK_FAILED;
     }
-
-    return DH_FWK_SUCCESS;
 }
 
 int32_t ComponentManager::InitSAMonitor()
