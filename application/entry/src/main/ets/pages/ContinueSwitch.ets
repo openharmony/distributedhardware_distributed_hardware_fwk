@@ -215,17 +215,6 @@ struct ContinueSwitch {
     }
   }
 
-  @Builder
-  NavigationTitle() {
-    Column() {
-      Text($r('app.string.continue_title'))
-        .fontColor($r('sys.color.ohos_id_color_text_primary'))
-        .fontSize($r('sys.float.ohos_id_text_size_headline8'))
-        .lineHeight(45)
-        .fontWeight(FontWeight.Bold)
-    }
-  }
-
   onPageShow() {
     logger.info(`${TAG} onPageShow in`);
     this.getGapLength();
