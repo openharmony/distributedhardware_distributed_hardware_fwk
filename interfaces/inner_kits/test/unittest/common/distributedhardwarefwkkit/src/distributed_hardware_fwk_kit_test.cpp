@@ -371,12 +371,14 @@ HWTEST_F(DistributedHardwareFwkKitTest, NotifyAVCenter_001, testing::ext::TestSi
  */
 HWTEST_F(DistributedHardwareFwkKitTest, PauseDistributedHardware_001, testing::ext::TestSize.Level0)
 {
-    if (dhfwkPtr_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
     DHType dhType = DHType::CAMERA;
-    std::string networkId = "networkId_test";
+    std::string networkId = "";
     int32_t ret = dhfwkPtr_->PauseDistributedHardware(dhType, networkId);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    networkId = "networkId_test";
+    ret = dhfwkPtr_->PauseDistributedHardware(dhType, networkId);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
 
@@ -388,12 +390,14 @@ HWTEST_F(DistributedHardwareFwkKitTest, PauseDistributedHardware_001, testing::e
  */
 HWTEST_F(DistributedHardwareFwkKitTest, ResumeDistributedHardware_001, testing::ext::TestSize.Level0)
 {
-    if (dhfwkPtr_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
     DHType dhType = DHType::CAMERA;
-    std::string networkId = "networkId_test";
+    std::string networkId = "";
     int32_t ret = dhfwkPtr_->ResumeDistributedHardware(dhType, networkId);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    networkId = "networkId_test";
+    ret = dhfwkPtr_->ResumeDistributedHardware(dhType, networkId);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
 
@@ -405,12 +409,14 @@ HWTEST_F(DistributedHardwareFwkKitTest, ResumeDistributedHardware_001, testing::
  */
 HWTEST_F(DistributedHardwareFwkKitTest, StopDistributedHardware_001, testing::ext::TestSize.Level0)
 {
-    if (dhfwkPtr_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
     DHType dhType = DHType::CAMERA;
-    std::string networkId = "networkId_test";
+    std::string networkId = "";
     int32_t ret = dhfwkPtr_->StopDistributedHardware(dhType, networkId);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    networkId = "networkId_test";
+    ret = dhfwkPtr_->StopDistributedHardware(dhType, networkId);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
 } // namespace DistributedHardware
