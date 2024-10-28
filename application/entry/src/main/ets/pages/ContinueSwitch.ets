@@ -1,13 +1,13 @@
 /*
 * Copyright (c) 2024 Huawei Device Co., Ltd.
-* Licensed under the Apache License, Version 2.0 (the 'License');
+* Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at
 *
 *     http://www.apache.org/licenses/LICENSE-2.0
 *
 * Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an 'AS IS' BASIS,
+* distributed under the License is distributed on an "AS IS" BASIS,
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
@@ -26,6 +26,7 @@ import { logger } from '../utils/Logger';
 import { TipsJumpUtils } from '../utils/TipsJumpUtils';
 import osAccount from '@ohos.account.osAccount';
 import systemParameterEnhance from '@ohos.systemParameterEnhance';
+import i18n from '@ohos.i18n';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
@@ -385,7 +386,8 @@ struct ContinueSwitch {
               .fontWeight(FontWeight.Medium)
               .fontSize(CommonConstants.SYMBOL_INFO_CIRCLE)
               .fontColor([$r('sys.color.ohos_id_color_activated')])
-              .margin({ right: CommonConstants.SYMBOL_MARGIN_RIGHT })
+              .margin(this.isMirrorLanguages() ? { left: CommonConstants.SYMBOL_MARGIN_RIGHT } :
+                { right: CommonConstants.SYMBOL_MARGIN_RIGHT })
               .width(CommonConstants.SYMBOL_INFO_CIRCLE)
               .height(CommonConstants.SYMBOL_INFO_CIRCLE)
               .accessibilityLevel('no')
@@ -534,5 +536,11 @@ struct ContinueSwitch {
         logger.error(`${TAG} Register failed. exception: ${err.message}`);
       }
     }
+  }
+
+  private isMirrorLanguages(): boolean {
+    logger.info(`${TAG} isMirrorLanguages in`);
+    let locale = new Intl.Locale(i18n.System.getSystemLanguage()).toString();
+    return CommonConstants.MIRROR_LANGUAGES.includes(locale);
   }
 }
