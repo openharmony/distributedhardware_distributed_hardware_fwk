@@ -65,12 +65,12 @@
             "value":"[TS_932988]_This service uses Bluetooth and WLAN, and needs to send the name of this device to devices you handover to. By turning this on, you agree to these terms."
         },
         {
-            "name":"learn_more",
-            "value":"[TS_961711]_Learn more"
-        },
-        {
             "name":"update_version_prompt",
             "value":"[TS_961710]_Both devices must be running HarmonyOS NEXT."
+        },
+        {
+            "name":"learn_more",
+            "value":"[TS_961711]_Learn more"
         }
     ]
 }

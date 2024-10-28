@@ -23,35 +23,49 @@ export default class ContinueSwitchAbility extends UIExtensionAbility {
   onCreate() {
     console.log(TAG, `UIExtAbility onCreate`);
     AppStorage.setOrCreate('currentColorMode', this.context.config.colorMode);
+    AppStorage.setOrCreate('currentFontSizeScale', this.context.config.fontSizeScale);
   }
 
   onConfigurationUpdate(newConfig: Configuration) {
     AppStorage.setOrCreate('currentColorMode', this.context.config.colorMode);
+    AppStorage.setOrCreate('currentFontSizeScale', this.context.config.fontSizeScale);
   }
 
   onForeground() {
-    console.log(TAG, `UIExtAbility onForeground`)
+    console.log(TAG, `UIExtAbility onForeground`);
   }
 
   onBackground() {
-    console.log(TAG, `UIExtAbility onBackground`)
+    console.log(TAG, `UIExtAbility onBackground`);
   }
 
   onDestroy() {
-    console.log(TAG, `UIExtAbility onDestroy`)
+    console.log(TAG, `UIExtAbility onDestroy`);
   }
 
   onSessionCreate(want: Want, session: UIExtensionContentSession) {
-    console.log(TAG, `UIExtAbility onSessionCreate`);
+    console.log(TAG, `UIExtAbility onSessionCreate.`);
+    let parameters = want.parameters;
+    let pushParams = want.parameters?.pushParams as string | undefined;
+    let startReason = '';
+    let isShowBack =
+      pushParams?.includes('isShowBack') ? (pushParams?.includes('isShowBack:false') ? false : true) : true;
+    if (parameters) {
+      startReason = parameters['startReason'] as string;
+    }
     AppStorage.setOrCreate('continueSession', session);
+    AppStorage.setOrCreate('startReason', startReason);
+    AppStorage.setOrCreate('isShowBack', isShowBack);
     let param: Record<string, UIExtensionContentSession> = {
       'session': session
     };
     let storage: LocalStorage = new LocalStorage(param);
     session.loadContent('pages/ContinueSwitch', storage);
+    console.log(TAG,
+      `onSessionCreate end. AppStorage.get<string>('startReason')= ${AppStorage.get<string>('startReason')}`);
   }
 
   onSessionDestroy(session: UIExtensionContentSession) {
-    console.log(TAG, `UIExtAbility onSessionDestroy`)
+    console.log(TAG, `UIExtAbility onSessionDestroy`);
   }
 }
