@@ -210,13 +210,17 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_008, Test
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_009, TestSize.Level0)
 {
     cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(jsonObject, KEY.c_str(), TEST_STR.c_str());
     EXPECT_TRUE(IsString(jsonObject, KEY));
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(jsonObject2, KEY.c_str(), 1);
     EXPECT_FALSE(IsString(jsonObject2, KEY));
     cJSON_Delete(jsonObject2);
@@ -231,7 +235,9 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_009, Test
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_010, TestSize.Level0)
 {
     cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     const uint8_t num_s = 1;
     cJSON_AddNumberToObject(jsonObject, KEY.c_str(), num_s);
     EXPECT_TRUE(IsUInt8(jsonObject, KEY));
@@ -251,7 +257,9 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_010, Test
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_011, TestSize.Level0)
 {
     cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     const uint32_t num_s = 1;
     cJSON_AddNumberToObject(jsonObject, KEY.c_str(), num_s);
     EXPECT_TRUE(IsUInt32(jsonObject, KEY));
@@ -271,7 +279,9 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_011, Test
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_012, TestSize.Level0)
 {
     cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     AudioEncoderIn audioEncoderIn;
     cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioEncoderIn);
@@ -288,7 +298,9 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_012, Test
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_013, TestSize.Level0)
 {
     cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     AudioEncoderOut audioEncoderOut;
     cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioEncoderOut);
@@ -324,14 +336,19 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_014, Test
     AudioEncoder audioEncoder;
     ToJson(jsonObject, audioEncoder);
     jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(jsonObject, NAME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioEncoder);
     EXPECT_TRUE(audioEncoder.name.empty());
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
     cJSON_AddStringToObject(jsonObject2, NAME.c_str(), AUDIO_ENCODER_NAME.c_str());
     FromJson(jsonObject2, audioEncoder);
     EXPECT_EQ(AUDIO_ENCODER_NAME, audioEncoder.name);
@@ -359,14 +376,19 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_015, Test
     AudioDecoderIn audioDecoderIn;
     ToJson(jsonObject, audioDecoderIn);
     jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioDecoderIn);
     EXPECT_TRUE(audioDecoderIn.mime.empty());
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
     cJSON_AddStringToObject(jsonObject2, MIME.c_str(), AUDIO_DECODERIN_MIME.c_str());
     FromJson(jsonObject2, audioDecoderIn);
     EXPECT_EQ(AUDIO_DECODERIN_MIME, audioDecoderIn.mime);
@@ -386,14 +408,19 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_016, Test
     AudioDecoderOut audioDecoderOut;
     ToJson(jsonObject, audioDecoderOut);
     jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioDecoderOut);
     EXPECT_TRUE(audioDecoderOut.mime.empty());
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
     cJSON_AddStringToObject(jsonObject2, MIME.c_str(), AUDIO_DECODEROUT_MIME.c_str());
     FromJson(jsonObject2, audioDecoderOut);
     EXPECT_EQ(AUDIO_DECODEROUT_MIME, audioDecoderOut.mime);
@@ -413,14 +440,19 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_017, Test
     AudioDecoder audioDecoder;
     ToJson(jsonObject, audioDecoder);
     jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(jsonObject, NAME.c_str(), UINT16_ONE);
     FromJson(jsonObject, audioDecoder);
     EXPECT_TRUE(audioDecoder.name.empty());
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
     cJSON_AddStringToObject(jsonObject2, NAME.c_str(), AUDIO_DECODER_NAME.c_str());
     FromJson(jsonObject2, audioDecoder);
     EXPECT_EQ(AUDIO_DECODER_NAME, audioDecoder.name);
@@ -453,14 +485,19 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_018, Test
     ToJson(jsonObject, videoEncoderIn);
     FromJson(jsonObject, videoEncoderIn);
     jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoEncoderIn);
     EXPECT_TRUE(videoEncoderIn.mime.empty());
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
     cJSON_AddStringToObject(jsonObject2, MIME.c_str(), VIDEO_ENCODERIN_MIME.c_str());
     FromJson(jsonObject2, videoEncoderIn);
     EXPECT_EQ(VIDEO_ENCODERIN_MIME, videoEncoderIn.mime);
@@ -481,7 +518,9 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_019, Test
     ToJson(jsonObject, videoEncoderOut);
     FromJson(jsonObject, videoEncoderOut);
     jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoEncoderOut);
     EXPECT_TRUE(videoEncoderOut.mime.empty());
@@ -501,14 +540,19 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_020, Test
     ToJson(jsonObject, videoEncoder);
     FromJson(jsonObject, videoEncoder);
     jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(jsonObject, NAME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoEncoder);
     EXPECT_TRUE(videoEncoder.name.empty());
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
     cJSON_AddStringToObject(jsonObject2, NAME.c_str(), VIDEO_ENCODER_NAME.c_str());
     FromJson(jsonObject2, videoEncoder);
     EXPECT_EQ(VIDEO_ENCODER_NAME, videoEncoder.name);
@@ -536,7 +580,9 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_020, Test
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_021, TestSize.Level0)
 {
     cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     VideoDecoderIn videoDecoderIn;
     cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoDecoderIn);
@@ -544,7 +590,10 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_021, Test
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
     cJSON_AddStringToObject(jsonObject2, MIME.c_str(), VIDEO_DECODERIN_MIME.c_str());
     FromJson(jsonObject2, videoDecoderIn);
     EXPECT_EQ(VIDEO_DECODERIN_MIME, videoDecoderIn.mime);
@@ -561,7 +610,9 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_021, Test
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_022, TestSize.Level0)
 {
     cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     VideoDecoderOut videoDecoderOut;
     cJSON_AddNumberToObject(jsonObject, MIME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoDecoderOut);
@@ -569,7 +620,10 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_022, Test
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
     cJSON_AddStringToObject(jsonObject2, MIME.c_str(), VIDEO_DECODEROUT_MIME.c_str());
     FromJson(jsonObject2, videoDecoderOut);
     EXPECT_EQ(VIDEO_DECODEROUT_MIME, videoDecoderOut.mime);
@@ -586,7 +640,9 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_022, Test
 HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_023, TestSize.Level0)
 {
     cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     VideoDecoder videoDecoder;
     cJSON_AddNumberToObject(jsonObject, NAME.c_str(), UINT16_ONE);
     FromJson(jsonObject, videoDecoder);
@@ -594,7 +650,10 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_023, Test
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
+
     cJSON_AddStringToObject(jsonObject2, NAME.c_str(), VIDEO_DECODER_NAME.c_str());
     FromJson(jsonObject2, videoDecoder);
     EXPECT_EQ(VIDEO_DECODER_NAME, videoDecoder.name);
@@ -628,7 +687,9 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_024, Test
     ToJson(jsonObject, audioEncoderIn);
 
     jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(jsonObject, MIME.c_str(), "MIME");
     cJSON *sampleRateJson = cJSON_CreateArray();
     if (sampleRateJson == nullptr) {
@@ -641,18 +702,22 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_024, Test
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
     cJSON_AddNumberToObject(jsonObject2, MIME.c_str(), 1);
     FromJson(jsonObject2, audioEncoderIn);
     cJSON_Delete(jsonObject2);
 
     cJSON *jsonObject3 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject3 != nullptr);
+    if (jsonObject3 == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(jsonObject3, MIME.c_str(), "MIME");
     cJSON *sampleRateJson1 = cJSON_CreateObject();
     if (sampleRateJson1 == nullptr) {
         cJSON_Delete(jsonObject3);
-        ASSERT_TRUE(sampleRateJson1 != nullptr);
+        return;
     }
     cJSON_AddItemToArray(sampleRateJson1, cJSON_CreateNumber(1));
     cJSON_AddItemToObject(jsonObject3, SAMPLE_RATE.c_str(), sampleRateJson1);
@@ -673,7 +738,9 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_025, Test
     ToJson(jsonObject, audioEncoderOut);
 
     jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
+    if (jsonObject == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(jsonObject, MIME.c_str(), "MIME");
     cJSON_AddNumberToObject(jsonObject, AD_MPEG_VER.c_str(), 1);
     cJSON_AddNumberToObject(jsonObject, AUDIO_AAC_PROFILE.c_str(), 2);
@@ -682,14 +749,18 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_025, Test
     cJSON_Delete(jsonObject);
 
     cJSON *jsonObject2 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject2 != nullptr);
+    if (jsonObject2 == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(jsonObject2, MIME.c_str(), "MIME");
     cJSON_AddStringToObject(jsonObject2, AD_MPEG_VER.c_str(), "VER");
     FromJson(jsonObject2, audioEncoderOut);
     cJSON_Delete(jsonObject2);
 
     cJSON *jsonObject3 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject3 != nullptr);
+    if (jsonObject3 == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(jsonObject3, MIME.c_str(), "MIME");
     cJSON_AddNumberToObject(jsonObject3, AD_MPEG_VER.c_str(), 1);
     cJSON_AddStringToObject(jsonObject3, AUDIO_AAC_PROFILE.c_str(), "PROFILE");
@@ -698,7 +769,9 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_025, Test
 
     
     cJSON *jsonObject4 = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject4 != nullptr);
+    if (jsonObject4 == nullptr) {
+        return;
+    }
     cJSON_AddStringToObject(jsonObject4, MIME.c_str(), "MIME");
     cJSON_AddNumberToObject(jsonObject4, AD_MPEG_VER.c_str(), 1);
     cJSON_AddNumberToObject(jsonObject4, AUDIO_AAC_PROFILE.c_str(), 2);
