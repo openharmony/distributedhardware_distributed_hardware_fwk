@@ -170,6 +170,7 @@ HWTEST_F(ComponentLoaderTest, GetSink_001, TestSize.Level0)
     ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = comHandler;
     ret = ComponentLoader::GetInstance().GetSink(DHType::AUDIO, sinkPtr);
     EXPECT_EQ(ERR_DH_FWK_LOADER_HANDLER_IS_NULL, ret);
+    ComponentLoader::GetInstance().compHandlerMap_.clear();
 }
 
 #ifdef DHARDWARE_CLOSE_UT
@@ -210,7 +211,6 @@ HWTEST_F(ComponentLoaderTest, Readfile_001, TestSize.Level0)
  */
 HWTEST_F(ComponentLoaderTest, ReleaseHardwareHandler_001, TestSize.Level0)
 {
-    ComponentLoader::GetInstance().compHandlerMap_.clear();
     auto ret = ComponentLoader::GetInstance().ReleaseHardwareHandler(DHType::AUDIO);
     EXPECT_EQ(ERR_DH_FWK_TYPE_NOT_EXIST, ret);
 
@@ -853,6 +853,47 @@ HWTEST_F(ComponentLoaderTest, ParseResourceDesc_002, TestSize.Level0)
     cJSON_AddStringToObject(component1, COMP_RESOURCE_DESC.c_str(), "comp_resource_desc");
     ComponentLoader::GetInstance().ParseCompConfigFromJson(component1, config1);
     cJSON_Delete(component1);
+}
+
+HWTEST_F(ComponentLoaderTest, ParseResourceDesc_003, TestSize.Level0)
+{
+    CompConfig cfg;
+    cJSON *jsonArr = cJSON_CreateArray();
+    ASSERT_TRUE(jsonArr != nullptr);
+    cJSON *json = cJSON_CreateObject();
+    if (json == nullptr) {
+        cJSON_Delete(jsonArr);
+        return;
+    }
+    cJSON_AddNumberToObject(json, COMP_SUBTYPE.c_str(), 1);
+    cJSON_AddItemToArray(jsonArr, json);
+    auto ret = ParseResourceDesc(jsonArr, cfg);
+    cJSON_Delete(jsonArr);
+    EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
+}
+
+HWTEST_F(ComponentLoaderTest, ParseResourceDescFromJson_003, TestSize.Level0)
+{
+    CompConfig config;
+    cJSON *resourceDescs = cJSON_CreateArray();
+    ASSERT_TRUE(resourceDescs != nullptr);
+    cJSON *sensitive = cJSON_CreateObject();
+    if (sensitive == nullptr) {
+        cJSON_Delete(resourceDescs);
+        return;
+    }
+    cJSON_AddBoolToObject(sensitive, COMP_SENSITIVE.c_str(), true);
+    cJSON_AddItemToArray(resourceDescs, sensitive);
+    cJSON *subtype = cJSON_CreateObject();
+    if (subtype == nullptr) {
+        cJSON_Delete(resourceDescs);
+        return;
+    }
+    cJSON_AddBoolToObject(subtype, COMP_SUBTYPE.c_str(), true);
+    cJSON_AddItemToArray(resourceDescs, subtype);
+    ComponentLoader::GetInstance().ParseResourceDescFromJson(resourceDescs, config);
+    cJSON_Delete(resourceDescs);
+    EXPECT_TRUE(config.compResourceDesc.empty());
 }
 
 HWTEST_F(ComponentLoaderTest, from_json_001, TestSize.Level0)

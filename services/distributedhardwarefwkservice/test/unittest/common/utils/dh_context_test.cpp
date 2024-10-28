@@ -46,6 +46,20 @@ void DhContextTest::SetUpTestCase() {}
 
 void DhContextTest::TearDownTestCase() {}
 
+HWTEST_F(DhContextTest, OnPowerStateChanged_001, TestSize.Level1)
+{
+    sptr<PowerMgr::IPowerStateCallback> powerStateCallback(new DHContext::DHFWKPowerStateCallback());
+    ASSERT_TRUE(powerStateCallback != nullptr);
+    PowerMgr::PowerState state = PowerMgr::PowerState::SLEEP;
+    powerStateCallback->OnPowerStateChanged(state);
+
+    state = PowerMgr::PowerState::HIBERNATE;
+    powerStateCallback->OnPowerStateChanged(state);
+    
+    state = PowerMgr::PowerState::SHUTDOWN;
+    powerStateCallback->OnPowerStateChanged(state);
+}
+
 HWTEST_F(DhContextTest, AddOnlineDevice_001, TestSize.Level1)
 {
     DHContext::GetInstance().AddOnlineDevice("", "", "");
@@ -78,6 +92,10 @@ HWTEST_F(DhContextTest, AddOnlineDevice_002, TestSize.Level1)
 
 HWTEST_F(DhContextTest, RemoveOnlineDeviceIdEntryByNetworkId_001, TestSize.Level1)
 {
+    std::string networkId = "";
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
+    EXPECT_EQ(false, DHContext::GetInstance().devIdEntrySet_.empty());
+
     DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId("123");
     EXPECT_EQ(false, DHContext::GetInstance().devIdEntrySet_.empty());
 
@@ -87,7 +105,11 @@ HWTEST_F(DhContextTest, RemoveOnlineDeviceIdEntryByNetworkId_001, TestSize.Level
 
 HWTEST_F(DhContextTest, IsDeviceOnline_001, TestSize.Level1)
 {
-    bool ret = DHContext::GetInstance().IsDeviceOnline(TEST_UUID);
+    std::string uuid = "";
+    bool ret = DHContext::GetInstance().IsDeviceOnline(uuid);
+    EXPECT_EQ(false, ret);
+
+    ret = DHContext::GetInstance().IsDeviceOnline(TEST_UUID);
     EXPECT_EQ(false, ret);
 
     DHContext::GetInstance().AddOnlineDevice(TEST_UDID, TEST_UUID, TEST_NETWORKID);
@@ -97,11 +119,30 @@ HWTEST_F(DhContextTest, IsDeviceOnline_001, TestSize.Level1)
 
 HWTEST_F(DhContextTest, GetNetworkIdByUUID_001, TestSize.Level1)
 {
-    auto ret = DHContext::GetInstance().GetNetworkIdByUUID(TEST_UUID);
+    std::string uuid = "";
+    auto ret = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
+    EXPECT_EQ("", ret);
+
+    ret = DHContext::GetInstance().GetNetworkIdByUUID(TEST_UUID);
     EXPECT_EQ(TEST_NETWORKID, ret);
 
     DHContext::GetInstance().devIdEntrySet_.clear();
     ret = DHContext::GetInstance().GetNetworkIdByUUID(TEST_UUID);
+    EXPECT_EQ("", ret);
+}
+
+HWTEST_F(DhContextTest, GetNetworkIdByUDID_001, TestSize.Level1)
+{
+    std::string udid = "";
+    auto ret = DHContext::GetInstance().GetNetworkIdByUDID(udid);
+    EXPECT_EQ("", ret);
+
+    DHContext::GetInstance().AddOnlineDevice(TEST_UDID, TEST_UUID, TEST_NETWORKID);
+    ret = DHContext::GetInstance().GetNetworkIdByUDID(TEST_UDID);
+    EXPECT_EQ(TEST_NETWORKID, ret);
+
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    ret = DHContext::GetInstance().GetNetworkIdByUDID(udid);
     EXPECT_EQ("", ret);
 }
 
@@ -117,7 +158,11 @@ HWTEST_F(DhContextTest, GetUdidHashIdByUUID_001, TestSize.Level1)
 
 HWTEST_F(DhContextTest, GetUUIDByNetworkId_001, TestSize.Level1)
 {
-    auto ret = DHContext::GetInstance().GetUUIDByNetworkId(TEST_NETWORKID);
+    std::string networkId = "";
+    auto ret = DHContext::GetInstance().GetUUIDByNetworkId(networkId);
+    EXPECT_EQ("", ret);
+
+    ret = DHContext::GetInstance().GetUUIDByNetworkId(TEST_NETWORKID);
     EXPECT_EQ(TEST_UUID, ret);
 
     DHContext::GetInstance().devIdEntrySet_.clear();
@@ -127,7 +172,11 @@ HWTEST_F(DhContextTest, GetUUIDByNetworkId_001, TestSize.Level1)
 
 HWTEST_F(DhContextTest, GetUDIDByNetworkId_001, TestSize.Level1)
 {
-    auto ret = DHContext::GetInstance().GetUDIDByNetworkId(TEST_NETWORKID);
+    std::string networkId = "";
+    auto ret = DHContext::GetInstance().GetUDIDByNetworkId(networkId);
+    EXPECT_EQ("", ret);
+
+    ret = DHContext::GetInstance().GetUDIDByNetworkId(TEST_NETWORKID);
     EXPECT_EQ("", ret);
 
     DHContext::GetInstance().AddOnlineDevice(TEST_UDID, TEST_UUID, TEST_NETWORKID);
@@ -137,8 +186,23 @@ HWTEST_F(DhContextTest, GetUDIDByNetworkId_001, TestSize.Level1)
 
 HWTEST_F(DhContextTest, GetUUIDByDeviceId_001, TestSize.Level1)
 {
+    std::string deviceId = "";
+    auto ret = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
+    EXPECT_EQ("", ret);
+
+    deviceId = "123456";
+    ret = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
+    EXPECT_EQ("", ret);
+}
+
+HWTEST_F(DhContextTest, GetUUIDByDeviceId_002, TestSize.Level1)
+{
     std::string deviceId = Sha256(TEST_UUID);
     auto ret = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
+    EXPECT_EQ(TEST_UUID, ret);
+
+    deviceId = Sha256(TEST_UDID);
+    ret = DHContext::GetInstance().GetUUIDByDeviceId(deviceId);
     EXPECT_EQ(TEST_UUID, ret);
 
     DHContext::GetInstance().devIdEntrySet_.clear();
@@ -148,8 +212,12 @@ HWTEST_F(DhContextTest, GetUUIDByDeviceId_001, TestSize.Level1)
 
 HWTEST_F(DhContextTest, GetNetworkIdByDeviceId_001, TestSize.Level1)
 {
-    std::string deviceId = Sha256(TEST_UUID);
+    std::string deviceId = "";
     auto ret = DHContext::GetInstance().GetNetworkIdByDeviceId(deviceId);
+    EXPECT_EQ("", ret);
+
+    deviceId = Sha256(TEST_UUID);
+    ret = DHContext::GetInstance().GetNetworkIdByDeviceId(deviceId);
     EXPECT_EQ("", ret);
 
     DHContext::GetInstance().AddOnlineDevice(TEST_UDID, TEST_UUID, TEST_NETWORKID);
@@ -170,6 +238,212 @@ HWTEST_F(DhContextTest, GetDeviceIdByDBGetPrefix_001, TestSize.Level1)
     prefix = "prefix" + RESOURCE_SEPARATOR;
     ret = DHContext::GetInstance().GetDeviceIdByDBGetPrefix(prefix);
     EXPECT_EQ("prefix", ret);
+}
+
+HWTEST_F(DhContextTest, AddIsomerismConnectDev_001, TestSize.Level1)
+{
+    std::string IsomerismDeviceId = "";
+    DHContext::GetInstance().AddIsomerismConnectDev(IsomerismDeviceId);
+    EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
+
+    IsomerismDeviceId = "IsomerismDeviceId_test";
+    DHContext::GetInstance().AddIsomerismConnectDev(IsomerismDeviceId);
+    EXPECT_FALSE(DHContext::GetInstance().connectedDevIds_.empty());
+}
+
+HWTEST_F(DhContextTest, DelIsomerismConnectDev_001, TestSize.Level1)
+{
+    std::string IsomerismDeviceId = "";
+    DHContext::GetInstance().DelIsomerismConnectDev(IsomerismDeviceId);
+    EXPECT_FALSE(DHContext::GetInstance().connectedDevIds_.empty());
+
+    IsomerismDeviceId = "123456789";
+    DHContext::GetInstance().DelIsomerismConnectDev(IsomerismDeviceId);
+    EXPECT_FALSE(DHContext::GetInstance().connectedDevIds_.empty());
+
+    IsomerismDeviceId = "IsomerismDeviceId_test";
+    DHContext::GetInstance().DelIsomerismConnectDev(IsomerismDeviceId);
+    EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
+}
+
+HWTEST_F(DhContextTest, OnMessage_001, TestSize.Level1)
+{
+    sptr<IPublisherListener> dhFwkIsomerismListener(new DHContext::DHFWKIsomerismListener());
+    ASSERT_TRUE(dhFwkIsomerismListener != nullptr);
+    DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
+    std::string message = "";
+    dhFwkIsomerismListener->OnMessage(topic, message);
+    EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
+
+    message = "message_test";
+    dhFwkIsomerismListener->OnMessage(topic, message);
+    EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
+
+    topic = DHTopic::TOPIC_ISOMERISM;
+    dhFwkIsomerismListener->OnMessage(topic, message);
+    EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
+}
+
+HWTEST_F(DhContextTest, OnMessage_002, TestSize.Level1)
+{
+    sptr<IPublisherListener> dhFwkIsomerismListener(new DHContext::DHFWKIsomerismListener());
+    ASSERT_TRUE(dhFwkIsomerismListener != nullptr);
+    DHTopic topic = DHTopic::TOPIC_ISOMERISM;
+    const std::string eventKey = "Isomerism_event";
+    cJSON *json = cJSON_CreateObject();
+    ASSERT_TRUE(json != nullptr);
+    cJSON_AddStringToObject(json, eventKey.c_str(), "Isomerism_event_test");
+    char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
+    std::string message(cjson);
+    dhFwkIsomerismListener->OnMessage(topic, message);
+    cJSON_free(cjson);
+    cJSON_Delete(json);
+    EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
+}
+
+HWTEST_F(DhContextTest, OnMessage_003, TestSize.Level1)
+{
+    sptr<IPublisherListener> dhFwkIsomerismListener(new DHContext::DHFWKIsomerismListener());
+    ASSERT_TRUE(dhFwkIsomerismListener != nullptr);
+    DHTopic topic = DHTopic::TOPIC_ISOMERISM;
+    const std::string eventKey = "isomerism_event";
+    cJSON *json = cJSON_CreateObject();
+    ASSERT_TRUE(json != nullptr);
+    cJSON_AddNumberToObject(json, eventKey.c_str(), 1);
+    char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
+    std::string message(cjson);
+    dhFwkIsomerismListener->OnMessage(topic, message);
+    cJSON_free(cjson);
+    cJSON_Delete(json);
+    EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
+}
+
+HWTEST_F(DhContextTest, OnMessage_004, TestSize.Level1)
+{
+    sptr<IPublisherListener> dhFwkIsomerismListener(new DHContext::DHFWKIsomerismListener());
+    ASSERT_TRUE(dhFwkIsomerismListener != nullptr);
+    DHTopic topic = DHTopic::TOPIC_ISOMERISM;
+    const std::string eventKey = "isomerism_event";
+    const std::string devId = "Dev_Id";
+    cJSON *json = cJSON_CreateObject();
+    ASSERT_TRUE(json != nullptr);
+    cJSON_AddStringToObject(json, eventKey.c_str(), "isomerism_event_test");
+    cJSON_AddStringToObject(json, DEV_ID.c_str(), "Dev_Id_test");
+
+    char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
+    std::string message(cjson);
+    dhFwkIsomerismListener->OnMessage(topic, message);
+    cJSON_free(cjson);
+    cJSON_Delete(json);
+    EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
+}
+
+HWTEST_F(DhContextTest, OnMessage_005, TestSize.Level1)
+{
+    sptr<IPublisherListener> dhFwkIsomerismListener(new DHContext::DHFWKIsomerismListener());
+    ASSERT_TRUE(dhFwkIsomerismListener != nullptr);
+    DHTopic topic = DHTopic::TOPIC_ISOMERISM;
+    const std::string eventKey = "isomerism_event";
+    const std::string devId = "Dev_Id";
+    cJSON *json = cJSON_CreateObject();
+    ASSERT_TRUE(json != nullptr);
+    cJSON_AddStringToObject(json, eventKey.c_str(), "isomerism_event_test");
+    cJSON_AddNumberToObject(json, DEV_ID.c_str(), 1);
+
+    char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
+    std::string message(cjson);
+    dhFwkIsomerismListener->OnMessage(topic, message);
+    cJSON_free(cjson);
+    cJSON_Delete(json);
+    EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
+}
+
+HWTEST_F(DhContextTest, OnMessage_006, TestSize.Level1)
+{
+    sptr<IPublisherListener> dhFwkIsomerismListener(new DHContext::DHFWKIsomerismListener());
+    ASSERT_TRUE(dhFwkIsomerismListener != nullptr);
+    DHTopic topic = DHTopic::TOPIC_ISOMERISM;
+    const std::string eventKey = "isomerism_event";
+    const std::string devId = "dev_id";
+    cJSON *json = cJSON_CreateObject();
+    ASSERT_TRUE(json != nullptr);
+    cJSON_AddStringToObject(json, eventKey.c_str(), "isomerism_event_test");
+    cJSON_AddStringToObject(json, DEV_ID.c_str(), "dev_id_test");
+
+    char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
+    std::string message(cjson);
+    dhFwkIsomerismListener->OnMessage(topic, message);
+    cJSON_free(cjson);
+    cJSON_Delete(json);
+    EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
+}
+
+HWTEST_F(DhContextTest, OnMessage_007, TestSize.Level1)
+{
+    sptr<IPublisherListener> dhFwkIsomerismListener(new DHContext::DHFWKIsomerismListener());
+    ASSERT_TRUE(dhFwkIsomerismListener != nullptr);
+    DHTopic topic = DHTopic::TOPIC_ISOMERISM;
+    const std::string eventKey = "isomerism_event";
+    const std::string devId = "dev_id";
+    cJSON *json = cJSON_CreateObject();
+    ASSERT_TRUE(json != nullptr);
+    cJSON_AddStringToObject(json, eventKey.c_str(), "isomerism_connect");
+    cJSON_AddStringToObject(json, DEV_ID.c_str(), "dev_id_test");
+
+    char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
+    std::string message(cjson);
+    dhFwkIsomerismListener->OnMessage(topic, message);
+    cJSON_free(cjson);
+    cJSON_Delete(json);
+    EXPECT_FALSE(DHContext::GetInstance().connectedDevIds_.empty());
+}
+
+HWTEST_F(DhContextTest, OnMessage_008, TestSize.Level1)
+{
+    sptr<IPublisherListener> dhFwkIsomerismListener(new DHContext::DHFWKIsomerismListener());
+    ASSERT_TRUE(dhFwkIsomerismListener != nullptr);
+    DHTopic topic = DHTopic::TOPIC_ISOMERISM;
+    const std::string eventKey = "isomerism_event";
+    const std::string devId = "dev_id";
+    cJSON *json = cJSON_CreateObject();
+    ASSERT_TRUE(json != nullptr);
+    cJSON_AddStringToObject(json, eventKey.c_str(), "isomerism_disconnect");
+    cJSON_AddStringToObject(json, DEV_ID.c_str(), "dev_id_test");
+
+    char* cjson = cJSON_PrintUnformatted(json);
+    if (cjson == nullptr) {
+        cJSON_Delete(json);
+        return;
+    }
+    std::string message(cjson);
+    dhFwkIsomerismListener->OnMessage(topic, message);
+    cJSON_free(cjson);
+    cJSON_Delete(json);
+    EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
 }
 }
 }
