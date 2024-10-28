@@ -26,6 +26,7 @@ import { logger } from '../utils/Logger';
 import { TipsJumpUtils } from '../utils/TipsJumpUtils';
 import osAccount from '@ohos.account.osAccount';
 import systemParameterEnhance from '@ohos.systemParameterEnhance';
+import i18n from '@ohos.i18n';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
@@ -385,7 +386,8 @@ struct ContinueSwitch {
               .fontWeight(FontWeight.Medium)
               .fontSize(CommonConstants.SYMBOL_INFO_CIRCLE)
               .fontColor([$r('sys.color.ohos_id_color_activated')])
-              .margin({ right: CommonConstants.SYMBOL_MARGIN_RIGHT })
+              .margin(this.isMirrorLanguages() ? { left: CommonConstants.SYMBOL_MARGIN_RIGHT } :
+                { right: CommonConstants.SYMBOL_MARGIN_RIGHT })
               .width(CommonConstants.SYMBOL_INFO_CIRCLE)
               .height(CommonConstants.SYMBOL_INFO_CIRCLE)
               .accessibilityLevel('no')
@@ -534,5 +536,11 @@ struct ContinueSwitch {
         logger.error(`${TAG} Register failed. exception: ${err.message}`);
       }
     }
+  }
+
+  private isMirrorLanguages(): boolean {
+    logger.info(`${TAG} isMirrorLanguages in`);
+    let locale = new Intl.Locale(i18n.System.getSystemLanguage()).toString();
+    return CommonConstants.MIRROR_LANGUAGES.includes(locale);
   }
 }

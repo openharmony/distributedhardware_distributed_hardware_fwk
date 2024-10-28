@@ -53,6 +53,8 @@ export default class CommonConstants {
   // Update prompt text
   public static readonly UPDATE_PROMPT_LINE_HEIGHT: number = 16;
   public static readonly UPDATE_PROMPT_MARGIN_TOP: number = 9;
+  // isMirrorLanguages
+  public static readonly MIRROR_LANGUAGES: Array<string> = ['ug'];
 }
 
 export enum FontSizeScale {
