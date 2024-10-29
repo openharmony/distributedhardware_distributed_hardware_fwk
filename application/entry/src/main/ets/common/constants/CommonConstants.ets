@@ -38,6 +38,12 @@ export default class CommonConstants {
   public static readonly ITEM_LIST_PADDING_BOTTOM: number = 18;
   public static readonly CONTINUE_SWITCH_KEY: string = 'Continue_Switch_Status';
   public static readonly FONT_SIZE_SCALE_PARAM: string = 'persist.sys.font_scale_for_user0';
+  public static readonly ANIMATOR_HEIGHT_PHONE: number = 192;
+  public static readonly ANIMATOR_HEIGHT_PC: number = 207;
+  public static readonly ANIMATOR_HEIGHT_PAD: number = 212;
+  public static readonly ANIMATOR_WIDTH_PHONE: number = 290;
+  public static readonly ANIMATOR_WIDTH_PC: number = 312;
+  public static readonly ANIMATOR_WIDTH_PAD: number = 320;
   // Tips
   public static readonly TIPS_TYPE: string = '105';
   public static readonly FUN_NUM = 'SF-20005815_f101';
@@ -47,6 +53,8 @@ export default class CommonConstants {
   // Update prompt text
   public static readonly UPDATE_PROMPT_LINE_HEIGHT: number = 16;
   public static readonly UPDATE_PROMPT_MARGIN_TOP: number = 9;
+  // isMirrorLanguages
+  public static readonly MIRROR_LANGUAGES: Array<string> = ['ug'];
 }
 
 export enum FontSizeScale {
