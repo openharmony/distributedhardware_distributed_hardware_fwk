@@ -21,10 +21,13 @@
 #include "ipc_skeleton.h"
 #include "tokenid_kit.h"
 
+#include "device_manager.h"
+
 #include "anonymous_string.h"
 #include "constants.h"
 #include "dhardware_ipc_interface_code.h"
 #include "dh_context.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "publisher_listener_proxy.h"
@@ -282,12 +285,19 @@ int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRe
 {
     Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetCallingTokenID();
     std::string udid = data.ReadString();
-    std::string networkId = DHContext::GetInstance().GetNetworkIdByUDID(udid);
-    uint32_t dAccessToken = Security::AccessToken::AccessTokenKit::AllocLocalTokenID(networkId,
-        callerToken);
+    if (!IsIdLengthValid(udid)) {
+        DHLOGE("the udid is invalid, %{public}s", GetAnonyString(udid).c_str());
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    std::string networkId = "";
+    DeviceManager::GetInstance().GetNetworkIdByUdid(DH_FWK_PKG_NAME, udid, networkId);
+    if (!IsIdLengthValid(networkId)) {
+        DHLOGE("the networkId is invalid, %{public}s", GetAnonyString(networkId).c_str());
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    uint32_t dAccessToken = Security::AccessToken::AccessTokenKit::AllocLocalTokenID(networkId, callerToken);
     const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
-    int32_t result = Security::AccessToken::AccessTokenKit::VerifyAccessToken(dAccessToken,
-        permissionName);
+    int32_t result = Security::AccessToken::AccessTokenKit::VerifyAccessToken(dAccessToken, permissionName);
     if (result != Security::AccessToken::PERMISSION_GRANTED) {
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
