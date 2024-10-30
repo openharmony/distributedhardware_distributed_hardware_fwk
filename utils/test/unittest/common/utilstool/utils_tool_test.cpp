@@ -25,6 +25,7 @@
 #include "anonymous_string.h"
 #include "dh_utils_tool.h"
 #include "dh_utils_hitrace.h"
+#include "distributed_hardware_errno.h"
 
 using namespace testing::ext;
 
@@ -32,6 +33,9 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     constexpr int32_t UUID_LENGTH = 257;
+    constexpr uint32_t JSON_SIZE = 40 * 1024 * 1024 + 1;
+    constexpr uint32_t KEY_SIZE = 257;
+    constexpr int32_t OS_TYPE = 10;
 }
 void UtilsToolTest::SetUpTestCase(void)
 {
@@ -100,6 +104,13 @@ HWTEST_F(UtilsToolTest, GetUUIDByDm_001, TestSize.Level0)
     EXPECT_EQ(0, ret.size());
 }
 
+HWTEST_F(UtilsToolTest, GetUDIDByDm_001, TestSize.Level0)
+{
+    std::string networkId = "";
+    std::string ret = GetUDIDByDm(networkId);
+    EXPECT_EQ(0, ret.size());
+}
+
 /**
  * @tc.name: GetDeviceIdByUUID_001
  * @tc.desc: Verify the GetDeviceIdByUUID function
@@ -128,9 +139,199 @@ HWTEST_F(UtilsToolTest, GetDeviceIdByUUID_002, TestSize.Level0)
     DHType dhType = DHType::CAMERA;
     DHQueryTraceStart(dhType);
 
+    dhType = DHType::MAX_DH;
+    DHQueryTraceStart(dhType);
+
     std::string uuid = "bb536a637105409e904d4da78290ab1";
     std::string ret = GetDeviceIdByUUID(uuid);
     EXPECT_NE(0, ret.size());
+}
+
+HWTEST_F(UtilsToolTest, IsUInt8_001, TestSize.Level0)
+{
+    cJSON* jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    const std::string key = "int8_key";
+    cJSON_AddStringToObject(jsonObj, key.c_str(), "int8_key_test");
+
+    std::string inputKey = "key";
+    auto ret = IsUInt8(jsonObj, key);
+    cJSON_Delete(jsonObj);
+    EXPECT_EQ(false, ret);
+
+    cJSON* jsonObj1 = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj1 != nullptr);
+    cJSON_AddStringToObject(jsonObj1, key.c_str(), "int8_key_test");
+    ret = IsUInt8(jsonObj1, key);
+    cJSON_Delete(jsonObj1);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(UtilsToolTest, IsUInt8_002, TestSize.Level0)
+{
+    cJSON* jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    const std::string key = "int8_key";
+    const uint8_t keyVaule = 1;
+    cJSON_AddNumberToObject(jsonObj, key.c_str(), keyVaule);
+    auto ret = IsUInt8(jsonObj, key);
+    cJSON_Delete(jsonObj);
+    EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(UtilsToolTest, IsUInt16_001, TestSize.Level0)
+{
+    cJSON* jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    const std::string key = "uint16_key";
+    cJSON_AddStringToObject(jsonObj, key.c_str(), "uint16_key_test");
+
+    std::string inputKey = "key";
+    auto ret = IsUInt16(jsonObj, key);
+    cJSON_Delete(jsonObj);
+    EXPECT_EQ(false, ret);
+
+    cJSON* jsonObj1 = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj1 != nullptr);
+    cJSON_AddStringToObject(jsonObj1, key.c_str(), "uint16_key_test");
+    ret = IsUInt16(jsonObj1, key);
+    cJSON_Delete(jsonObj1);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(UtilsToolTest, IsUInt16_002, TestSize.Level0)
+{
+    cJSON* jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    const std::string key = "uint16_key";
+    const uint16_t keyVaule = 1;
+    cJSON_AddNumberToObject(jsonObj, key.c_str(), keyVaule);
+    auto ret = IsUInt16(jsonObj, key);
+    cJSON_Delete(jsonObj);
+    EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(UtilsToolTest, IsUInt32_001, TestSize.Level0)
+{
+    cJSON* jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    const std::string key = "uint32_key";
+    cJSON_AddStringToObject(jsonObj, key.c_str(), "uint32_key_test");
+
+    std::string inputKey = "key";
+    auto ret = IsUInt32(jsonObj, key);
+    cJSON_Delete(jsonObj);
+    EXPECT_EQ(false, ret);
+
+    cJSON* jsonObj1 = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj1 != nullptr);
+    cJSON_AddStringToObject(jsonObj1, key.c_str(), "uint32_key_test");
+    ret = IsUInt32(jsonObj1, key);
+    cJSON_Delete(jsonObj1);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(UtilsToolTest, IsUInt32_002, TestSize.Level0)
+{
+    cJSON* jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    const std::string key = "uint32_key";
+    const uint32_t keyVaule = 1;
+    cJSON_AddNumberToObject(jsonObj, key.c_str(), keyVaule);
+    auto ret = IsUInt32(jsonObj, key);
+    cJSON_Delete(jsonObj);
+    EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(UtilsToolTest, GetSysPara_001, TestSize.Level0)
+{
+    char *key = nullptr;
+    bool value = false;
+    auto ret = GetSysPara(key, value);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(UtilsToolTest, IsJsonLengthValid_001, TestSize.Level0)
+{
+    std::string inputJsonStr = "";
+    auto ret = IsJsonLengthValid(inputJsonStr);
+    EXPECT_EQ(false, ret);
+
+    std::string jsonStr(JSON_SIZE, 'a');
+    ret = IsJsonLengthValid(jsonStr);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(UtilsToolTest, IsKeySizeValid_001, TestSize.Level0)
+{
+    std::string inputKey = "";
+    auto ret = IsKeySizeValid(inputKey);
+    EXPECT_EQ(false, ret);
+
+    std::string key(KEY_SIZE, 'a');
+    ret = IsKeySizeValid(key);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(UtilsToolTest, GetDeviceSystemType_001, TestSize.Level0)
+{
+    std::string extraData = "";
+    auto ret = GetDeviceSystemType(extraData);
+    EXPECT_EQ(ERR_DH_FWK_INVALID_OSTYPE, ret);
+}
+
+HWTEST_F(UtilsToolTest, GetDeviceSystemType_002, TestSize.Level0)
+{
+    cJSON* jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    std::string key = "key";
+    cJSON_AddStringToObject(jsonObj, key.c_str(), "key_test");
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string extraData(cjson);
+    auto ret = GetDeviceSystemType(extraData);
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+    EXPECT_EQ(ERR_DH_FWK_INVALID_OSTYPE, ret);
+}
+
+HWTEST_F(UtilsToolTest, GetDeviceSystemType_003, TestSize.Level0)
+{
+    cJSON* jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    const std::string key = "OS_TYPE";
+    cJSON_AddStringToObject(jsonObj, key.c_str(), "key_test");
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string extraData(cjson);
+    auto ret = GetDeviceSystemType(extraData);
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+    EXPECT_EQ(ERR_DH_FWK_INVALID_OSTYPE, ret);
+}
+
+HWTEST_F(UtilsToolTest, GetDeviceSystemType_004, TestSize.Level0)
+{
+    cJSON* jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    const std::string key = "OS_TYPE";
+    cJSON_AddNumberToObject(jsonObj, key.c_str(), OS_TYPE);
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string extraData(cjson);
+    auto ret = GetDeviceSystemType(extraData);
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+    EXPECT_EQ(OS_TYPE, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
