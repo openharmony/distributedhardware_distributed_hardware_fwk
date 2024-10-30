@@ -65,6 +65,7 @@ ohos_unittest("DhContextTest") {
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "init:libbegetutil",
+    "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
