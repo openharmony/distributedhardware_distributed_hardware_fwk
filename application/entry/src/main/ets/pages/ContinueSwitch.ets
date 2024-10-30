@@ -397,7 +397,7 @@ struct ContinueSwitch {
               .fontWeight(FontWeight.Medium)
               .fontColor($r('sys.color.ohos_id_color_text_primary'))
               .textAlign(TextAlign.Start)
-              .lineHeight(CommonConstants.UPDATE_PROMPT_LINE_HEIGHT)
+              .lineHeight(-1)
           }
           .margin({ top: CommonConstants.UPDATE_PROMPT_MARGIN_TOP })
         }
@@ -415,6 +415,7 @@ struct ContinueSwitch {
               .fontColor($r('sys.color.ohos_id_color_text_secondary'))
               .textAlign(TextAlign.Start)
               .width('100%')
+              .lineHeight(this.isTibetanLanguages() ? 19 : 0)
           }
           .padding({
             left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
@@ -542,5 +543,12 @@ struct ContinueSwitch {
     logger.info(`${TAG} isMirrorLanguages in`);
     let locale = new Intl.Locale(i18n.System.getSystemLanguage()).toString();
     return CommonConstants.MIRROR_LANGUAGES.includes(locale);
+  }
+
+  private isTibetanLanguages(): boolean {
+    logger.info(`${TAG} isTibetanLanguages in`);
+    let locale = new Intl.Locale(i18n.System.getSystemLanguage()).toString();
+    logger.info(`${TAG} isTibetanLanguages: ${locale}`);
+    return CommonConstants.TIBETAN_LANGUAGES.includes(locale);
   }
 }
