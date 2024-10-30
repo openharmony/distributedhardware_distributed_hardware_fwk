@@ -35,9 +35,7 @@ namespace DistributedHardware {
     /* VersionManager errno, range: [-10200, -10299] */
     constexpr int32_t ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST = -10200;
 
-    /* ComponentManager errno, range: [-10300, -10399] */
-    constexpr int32_t ERR_DH_FWK_COMPONENT_INIT_SOURCE_FAILED = -10300;
-    constexpr int32_t ERR_DH_FWK_COMPONENT_INIT_SINK_FAILED = -10301;
+    /* ComponentManager errno, range: [-10302, -10399] */
     constexpr int32_t ERR_DH_FWK_COMPONENT_ENABLE_FAILED = -10302;
     constexpr int32_t ERR_DH_FWK_COMPONENT_DISABLE_FAILED = -10303;
     constexpr int32_t ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT = -10304;
