@@ -56,12 +56,18 @@ Status Pipeline::Prepare()
     Media::SubmitJobOnce([&] {
         Media::AutoLock lock(mutex_);
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             ret = (*it)->Prepare();
             if (ret != Status::OK) {
                 return;
             }
         }
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             ret = (*it)->WaitAllState(FilterState::READY);
             if (ret != Status::OK) {
                 return;
@@ -79,12 +85,18 @@ Status Pipeline::Start()
     Media::SubmitJobOnce([&] {
         Media::AutoLock lock(mutex_);
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             ret = (*it)->Start();
             if (ret != Status::OK) {
                 return;
             }
         }
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             ret = (*it)->WaitAllState(FilterState::RUNNING);
             if (ret != Status::OK) {
                 return;
@@ -102,12 +114,18 @@ Status Pipeline::Pause()
     Media::SubmitJobOnce([&] {
         Media::AutoLock lock(mutex_);
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             auto rtv = (*it)->Pause();
             if (rtv != Status::OK) {
                 ret = rtv;
             }
         }
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             auto rtv = (*it)->WaitAllState(FilterState::PAUSED);
             if (rtv != Status::OK) {
                 ret = rtv;
@@ -125,12 +143,18 @@ Status Pipeline::Resume()
     Media::SubmitJobOnce([&] {
         Media::AutoLock lock(mutex_);
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             ret = (*it)->Resume();
             if (ret != Status::OK) {
                 return;
             }
         }
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             ret = (*it)->WaitAllState(FilterState::RUNNING);
             if (ret != Status::OK) {
                 return;
@@ -158,6 +182,9 @@ Status Pipeline::Stop()
             }
         }
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             auto rtv = (*it)->WaitAllState(FilterState::STOPPED);
             if (rtv != Status::OK) {
                 ret = rtv;
@@ -175,6 +202,9 @@ Status Pipeline::Flush()
     Media::SubmitJobOnce([&] {
         Media::AutoLock lock(mutex_);
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             (*it)->Flush();
         }
     });
@@ -188,9 +218,15 @@ Status Pipeline::Release()
     Media::SubmitJobOnce([&] {
         Media::AutoLock lock(mutex_);
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             (*it)->Release();
         }
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             (*it)->WaitAllState(FilterState::RELEASED);
         }
         filters_.clear();
@@ -205,6 +241,9 @@ Status Pipeline::Preroll(bool render)
     Status ret = Status::OK;
     Media::AutoLock lock(mutex_);
     for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+        if (*it == nullptr) {
+            continue;
+        }
         auto rtv = (*it)->Preroll();
         if (rtv != Status::OK) {
             ret = rtv;
@@ -213,6 +252,9 @@ Status Pipeline::Preroll(bool render)
         }
     }
     for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+        if (*it == nullptr) {
+            continue;
+        }
         auto rtv = (*it)->WaitPrerollDone(render);
         if (rtv != Status::OK) {
             ret = rtv;
@@ -230,6 +272,9 @@ Status Pipeline::SetPlayRange(int64_t start, int64_t end)
     Media::SubmitJobOnce([&] {
         Media::AutoLock lock(mutex_);
         for (auto it = filters_.begin(); it != filters_.end(); ++it) {
+            if (*it == nullptr) {
+                continue;
+            }
             (*it)->SetPlayRange(start, end);
         }
     });
@@ -242,6 +287,9 @@ Status Pipeline::AddHeadFilters(std::vector<std::shared_ptr<Filter>> filtersIn)
     AVTRANS_LOGI("AddHeadFilters enter.");
     std::vector<std::shared_ptr<Filter>> filtersToAdd;
     for (auto& filterIn : filtersIn) {
+        if (filterIn == nullptr) {
+            continue;
+        }
         bool matched = false;
         for (const auto& filter : filters_) {
             if (filterIn == filter) {
@@ -275,9 +323,11 @@ Status Pipeline::RemoveHeadFilter(const std::shared_ptr<Filter>& filter)
         if (it != filters_.end()) {
             filters_.erase(it);
         }
-        filter->Release();
-        filter->WaitAllState(FilterState::RELEASED);
-        filter->ClearAllNextFilters();
+        if (filter != nullptr) {
+            filter->Release();
+            filter->WaitAllState(FilterState::RELEASED);
+            filter->ClearAllNextFilters();
+        }
         return Status::OK;
     });
     return Status::OK;
@@ -287,7 +337,9 @@ Status Pipeline::LinkFilters(const std::shared_ptr<Filter> &preFilter,
                              const std::vector<std::shared_ptr<Filter>> &nextFilters,
                              StreamType type)
 {
+    TRUE_RETURN_V(preFilter == nullptr, Status::ERROR_NULL_POINTER);
     for (auto nextFilter : nextFilters) {
+        TRUE_RETURN_V(nextFilter == nullptr, Status::ERROR_NULL_POINTER);
         auto ret = preFilter->LinkNext(nextFilter, type);
         nextFilter->LinkPipeLine(groupId_);
         TRUE_RETURN_V(ret != Status::OK, ret);
@@ -299,6 +351,7 @@ Status Pipeline::UpdateFilters(const std::shared_ptr<Filter> &preFilter,
                                const std::vector<std::shared_ptr<Filter>> &nextFilters,
                                StreamType type)
 {
+    TRUE_RETURN_V(preFilter == nullptr, Status::ERROR_NULL_POINTER);
     for (auto nextFilter : nextFilters) {
         preFilter->UpdateNext(nextFilter, type);
     }
@@ -309,6 +362,7 @@ Status Pipeline::UnLinkFilters(const std::shared_ptr<Filter> &preFilter,
                                const std::vector<std::shared_ptr<Filter>> &nextFilters,
                                StreamType type)
 {
+    TRUE_RETURN_V(preFilter == nullptr, Status::ERROR_NULL_POINTER);
     for (auto nextFilter : nextFilters) {
         preFilter->UnLinkNext(nextFilter, type);
     }

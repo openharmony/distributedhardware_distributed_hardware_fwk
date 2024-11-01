@@ -43,7 +43,7 @@ public:
     std::shared_ptr<T> CreateFilter(const std::string& filterName, const FilterType type)
     {
         auto filter = CreateFilterPriv(filterName, type);
-        auto typedFilter = ReinterpretPointerCast<T>(filter);
+        auto typedFilter = Media::ReinterpretPointerCast<T>(filter);
         return typedFilter;
     }
 

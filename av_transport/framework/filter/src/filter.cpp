@@ -97,7 +97,9 @@ Status Filter::PrepareDone()
     }
     for (auto iter : nextFiltersMap_) {
         for (auto filter : iter.second) {
-            filter->Prepare();
+            if (filter != nullptr) {
+                filter->Prepare();
+            }
         }
     }
     ChangeState(FilterState::READY);
@@ -117,15 +119,17 @@ Status Filter::Start()
                 filter->Start();
             }
         }
-    } else {
-        for (auto iter : nextFiltersMap_) {
-            for (auto filter : iter.second) {
+        return Status::OK;
+    }
+
+    for (auto iter : nextFiltersMap_) {
+        for (auto filter : iter.second) {
+            if (filter != nullptr) {
                 filter->Start();
             }
         }
-        return StartDone();
     }
-    return Status::OK;
+    return StartDone();
 }
 
 Status Filter::StartDone()
@@ -147,7 +151,9 @@ Status Filter::Pause()
     }
     for (auto iter : nextFiltersMap_) {
         for (auto filter : iter.second) {
-            filter->Pause();
+            if (filter != nullptr) {
+                filter->Pause();
+            }
         }
     }
     return ret;
@@ -162,7 +168,9 @@ Status Filter::PauseDragging()
     }
     for (auto iter : nextFiltersMap_) {
         for (auto filter : iter.second) {
-            filter->PauseDragging();
+            if (filter != nullptr) {
+                filter->PauseDragging();
+            }
         }
     }
     return ret;
@@ -190,15 +198,17 @@ Status Filter::Resume()
                 filter->Resume();
             }
         }
-    } else {
-        for (auto iter : nextFiltersMap_) {
-            for (auto filter : iter.second) {
+        return Status::OK;
+    }
+
+    for (auto iter : nextFiltersMap_) {
+        for (auto filter : iter.second) {
+            if (filter != nullptr) {
                 filter->Resume();
             }
         }
-        return ResumeDone();
     }
-    return Status::OK;
+    return ResumeDone();
 }
 
 Status Filter::ResumeDone()
@@ -223,15 +233,17 @@ Status Filter::ResumeDragging()
                 filter->ResumeDragging();
             }
         }
-    } else {
-        for (auto iter : nextFiltersMap_) {
-            for (auto filter : iter.second) {
+        return Status::OK;
+    }
+
+    for (auto iter : nextFiltersMap_) {
+        for (auto filter : iter.second) {
+            if (filter != nullptr) {
                 filter->ResumeDragging();
             }
         }
-        return DoResumeDragging();
     }
-    return Status::OK;
+    return DoResumeDragging();
 }
 
 Status Filter::Stop()
@@ -244,7 +256,9 @@ Status Filter::Stop()
     }
     for (auto iter : nextFiltersMap_) {
         for (auto filter : iter.second) {
-            filter->Stop();
+            if (filter != nullptr) {
+                filter->Stop();
+            }
         }
     }
     return ret;
@@ -264,7 +278,9 @@ Status Filter::Flush()
     AVTRANS_LOGD("Flush %{public}s, pState:%{public}d", name_.c_str(), curState_);
     for (auto iter : nextFiltersMap_) {
         for (auto filter : iter.second) {
-            filter->Flush();
+            if (filter != nullptr) {
+                filter->Flush();
+            }
         }
     }
     jobIdxBase_ = jobIdx_;
@@ -278,20 +294,23 @@ Status Filter::Release()
         filterTask_->SubmitJobOnce([this]() {
             ReleaseDone();
         });
+
         for (auto iter : nextFiltersMap_) {
             for (auto filter : iter.second) {
                 filter->Release();
             }
         }
-    } else {
-        for (auto iter : nextFiltersMap_) {
-            for (auto filter : iter.second) {
-                filter->Release();
-            }
-        }
-        return ReleaseDone();
+        return Status::OK;
     }
-    return Status::OK;
+
+    for (auto iter : nextFiltersMap_) {
+        for (auto filter : iter.second) {
+            if (filter != nullptr) {
+                filter->Release();
+            }
+        }
+    }
+    return ReleaseDone();
 }
 
 Status Filter::ReleaseDone()
@@ -308,7 +327,9 @@ Status Filter::SetPlayRange(int64_t start, int64_t end)
     AVTRANS_LOGD("SetPlayRange %{public}s, pState:%{public}d", name_.c_str(), curState_);
     for (auto iter : nextFiltersMap_) {
         for (auto filter : iter.second) {
-            filter->SetPlayRange(start, end);
+            if (filter != nullptr) {
+                filter->SetPlayRange(start, end);
+            }
         }
     }
     return DoSetPlayRange(start, end);
@@ -322,6 +343,9 @@ Status Filter::Preroll()
     }
     for (auto iter : nextFiltersMap_) {
         for (auto filter : iter.second) {
+            if (filter == nullptr) {
+                continue;
+            }
             ret = filter->Preroll();
             if (ret != Status::OK) {
                 return ret;
@@ -336,6 +360,9 @@ Status Filter::WaitPrerollDone(bool render)
     Status ret = Status::OK;
     for (auto iter : nextFiltersMap_) {
         for (auto filter : iter.second) {
+            if (filter == nullptr) {
+                continue;
+            }
             auto curRet = filter->WaitPrerollDone(render);
             if (curRet != Status::OK) {
                 ret = curRet;
@@ -505,6 +532,9 @@ Status Filter::WaitAllState(FilterState state)
     Status res = Status::OK;
     for (auto iter : nextFiltersMap_) {
         for (auto filter : iter.second) {
+            if (filter == nullptr) {
+                continue;
+            }
             if (filter->WaitAllState(state) != Status::OK) {
                 res = filter->GetErrCode();
             }
