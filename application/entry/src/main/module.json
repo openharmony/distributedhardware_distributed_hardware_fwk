@@ -65,6 +65,9 @@
       {
         "name": "action.settings.search.path",
         "value": "searchConfig/searchPage.json"
+      },
+      {
+        "name": "ohos.graphics2d.text.adapter_text_height"
       }
     ]
   }
