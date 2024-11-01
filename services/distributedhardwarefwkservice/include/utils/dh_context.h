@@ -16,17 +16,11 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_DHCONTEXT_H
 #define OHOS_DISTRIBUTED_HARDWARE_DHCONTEXT_H
 
-#include <atomic>
 #include <memory>
 #include <set>
 #include <string>
 #include <unordered_set>
 #include <shared_mutex>
-
-#ifdef POWER_MANAGER_ENABLE
-#include "power_mgr_client.h"
-#include "power_state_callback_stub.h"
-#endif
 
 #include "device_type.h"
 #include "event_handler.h"
@@ -109,21 +103,9 @@ public:
     };
     std::shared_ptr<DHContext::CommonEventHandler> GetEventHandler();
 
-    bool IsSleeping();
-    void SetIsSleeping(bool isSleeping);
     uint32_t GetIsomerismConnectCount();
     void AddIsomerismConnectDev(const std::string &IsomerismDeviceId);
     void DelIsomerismConnectDev(const std::string &IsomerismDeviceId);
-
-private:
-#ifdef POWER_MANAGER_ENABLE
-    class DHFWKPowerStateCallback : public OHOS::PowerMgr::PowerStateCallbackStub {
-    public:
-        void OnPowerStateChanged(OHOS::PowerMgr::PowerState state) override;
-    };
-    #endif
-    void RegisterPowerStateLinstener();
-
 private:
     class DHFWKIsomerismListener : public IPublisherListener {
     public:
@@ -144,11 +126,8 @@ private:
     std::shared_mutex realTimeNetworkIdMutex_;
 
     std::shared_ptr<DHContext::CommonEventHandler> eventHandler_;
-    /* true for system in sleeping, false for NOT in sleeping */
-    std::atomic<bool> isSleeping_ = false;
 
     std::unordered_set<std::string> connectedDevIds_;
-
     std::shared_mutex connectDevMutex_;
     };
 } // namespace DistributedHardware
