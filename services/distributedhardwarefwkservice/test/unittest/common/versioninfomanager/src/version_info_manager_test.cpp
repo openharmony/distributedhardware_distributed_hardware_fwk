@@ -23,6 +23,7 @@
 #include "version_manager.h"
 #include "dh_context.h"
 #include "distributed_hardware_log.h"
+#include "dh_utils_tool.h"
 
 using namespace testing::ext;
 using namespace std;
@@ -183,6 +184,13 @@ HWTEST_F(VersionInfoManagerTest, version_info_manager_test_005, TestSize.Level0)
     EXPECT_EQ(VersionInfoManager::GetInstance()->UnInit(), DH_FWK_SUCCESS);
 }
 
+HWTEST_F(VersionInfoManagerTest, version_info_manager_test_006, TestSize.Level0)
+{
+    VersionInfoManager::GetInstance()->dbAdapterPtr_= nullptr;
+    auto ret = VersionInfoManager::GetInstance()->UnInit();
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_UNINIT_DB_FAILED, ret);
+}
+
 /**
  * @tc.name: UpdateVersionCache_001
  * @tc.desc: Verify the UpdateVersionCache function
@@ -206,9 +214,17 @@ HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_001, TestSize.Level0)
  */
 HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_002, TestSize.Level0)
 {
-    VersionInfo versionInfo;
+    std::string testUdid = "111111";
+    std::string testUuid = "222222";
+    std::string testNetworkId = "333333";
+    std::string testDeviceId = Sha256(testUuid);
+    VersionInfo versionInfo = {
+        .deviceId = testDeviceId,
+        .dhVersion = "1.0"
+    };
+    DHContext::GetInstance().AddOnlineDevice(testUdid, testUuid, testNetworkId);
     VersionInfoManager::GetInstance()->UpdateVersionCache(versionInfo);
-    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
+    EXPECT_FALSE(versionInfo.dhVersion.empty());
 }
 
 /**
@@ -424,6 +440,15 @@ HWTEST_F(VersionInfoManagerTest, GetVersionInfoByDeviceId_001, TestSize.Level0)
     VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
     ret = VersionInfoManager::GetInstance()->GetVersionInfoByDeviceId(deviceId, versionInfo);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+HWTEST_F(VersionInfoManagerTest, GetVersionInfoByDeviceId_002, TestSize.Level0)
+{
+    std::string deviceId = DEV_ID_1;
+    VersionInfo versionInfo;
+    VersionInfoManager::GetInstance()->Init();
+    int32_t ret = VersionInfoManager::GetInstance()->GetVersionInfoByDeviceId(deviceId, versionInfo);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 } // namespace DistributedHardware

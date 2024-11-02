@@ -33,10 +33,37 @@ config("module_private_config") {
 }
 
 ## UnitTest resource_manager_test
-ohos_unittest("ResourceManagerTest") {
+ohos_unittest("CapabilityInfoTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/resource_manager_test.cpp" ]
+  sources = [ "capability_info_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "kv_store:distributeddata_inner",
+  ]
+}
+
+ohos_unittest("LocalCapInfoMgrTest") {
+  module_out_path = module_out_path
+
+  sources = [ "local_capability_info_manager_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
@@ -62,7 +89,126 @@ ohos_unittest("ResourceManagerTest") {
   ]
 }
 
+ohos_unittest("MetaCapInfoTest") {
+  module_out_path = module_out_path
+
+  sources = [ "meta_cap_info_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "kv_store:distributeddata_inner",
+  ]
+}
+
+ohos_unittest("MetaInfoMgrTest") {
+  module_out_path = module_out_path
+
+  sources = [ "meta_info_manager_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
+  ]
+}
+
+ohos_unittest("ResourceManagerTest") {
+  module_out_path = module_out_path
+
+  sources = [ "resource_manager_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
+  ]
+}
+
+ohos_unittest("VersionInfoTest") {
+  module_out_path = module_out_path
+
+  sources = [ "version_info_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "kv_store:distributeddata_inner",
+  ]
+}
+
 group("resource_manager_test") {
   testonly = true
-  deps = [ ":ResourceManagerTest" ]
+  deps = [
+    ":CapabilityInfoTest",
+    ":LocalCapInfoMgrTest",
+    ":MetaCapInfoTest",
+    ":MetaInfoMgrTest",
+    ":ResourceManagerTest",
+    ":VersionInfoTest",
+  ]
 }
