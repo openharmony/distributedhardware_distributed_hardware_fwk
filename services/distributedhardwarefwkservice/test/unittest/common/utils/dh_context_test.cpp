@@ -46,20 +46,6 @@ void DhContextTest::SetUpTestCase() {}
 
 void DhContextTest::TearDownTestCase() {}
 
-HWTEST_F(DhContextTest, OnPowerStateChanged_001, TestSize.Level1)
-{
-    sptr<PowerMgr::IPowerStateCallback> powerStateCallback(new DHContext::DHFWKPowerStateCallback());
-    ASSERT_TRUE(powerStateCallback != nullptr);
-    PowerMgr::PowerState state = PowerMgr::PowerState::SLEEP;
-    powerStateCallback->OnPowerStateChanged(state);
-
-    state = PowerMgr::PowerState::HIBERNATE;
-    powerStateCallback->OnPowerStateChanged(state);
-    
-    state = PowerMgr::PowerState::SHUTDOWN;
-    powerStateCallback->OnPowerStateChanged(state);
-}
-
 HWTEST_F(DhContextTest, AddOnlineDevice_001, TestSize.Level1)
 {
     DHContext::GetInstance().AddOnlineDevice("", "", "");

@@ -36,10 +36,6 @@ void PluginListenerImpl::PluginHardware(const std::string &dhId, const std::stri
         return;
     }
     DHLOGI("plugin start, dhId: %{public}s", GetAnonyString(dhId).c_str());
-    if (DHContext::GetInstance().IsSleeping()) {
-        DHLOGI("System is in sleeping, drop it");
-        return;
-    }
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
     std::string devName = DHContext::GetInstance().GetDeviceInfo().deviceName;
@@ -59,10 +55,6 @@ void PluginListenerImpl::UnPluginHardware(const std::string &dhId)
         return;
     }
     DHLOGI("unplugin start, dhId: %{public}s", GetAnonyString(dhId).c_str());
-    if (DHContext::GetInstance().IsSleeping()) {
-        DHLOGI("System is in sleeping, drop it");
-        return;
-    }
     std::string deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
     std::shared_ptr<CapabilityInfo> capability = nullptr;
     auto ret = CapabilityInfoManager::GetInstance()->GetCapability(deviceId, dhId, capability);
