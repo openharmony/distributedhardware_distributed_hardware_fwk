@@ -110,7 +110,6 @@ int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUni
     if (clockUnit.index == MAX_CLOCK_UNIT_COUNT) {
         clockUnit.index = 0;
     }
-
     AVTRANS_LOGI("write clock unit frameNum=%{public}" PRId32 ", pts=%{public}lld to shared memory success",
         clockUnit.frameNum, (long long)(clockUnit.pts));
     return DH_AVT_SUCCESS;
@@ -316,6 +315,9 @@ AVTransSharedMemory UnmarshalSharedMemory(const std::string &jsonStr)
 
 void U32ToU8(uint8_t *ptr, uint32_t value)
 {
+    if (ptr == nullptr) {
+        return;
+    }
     int8_t arrZero = 0;
     int8_t arrOne = 1;
     int8_t arrTwo = 2;
@@ -331,6 +333,9 @@ void U32ToU8(uint8_t *ptr, uint32_t value)
 
 void U64ToU8(uint8_t *ptr, uint64_t value)
 {
+    if (ptr == nullptr) {
+        return;
+    }
     int8_t arrZero = 0;
     int8_t arrOne = 1;
     int8_t arrTwo = 2;
@@ -358,6 +363,9 @@ void U64ToU8(uint8_t *ptr, uint64_t value)
 
 uint32_t U8ToU32(const uint8_t *ptr)
 {
+    if (ptr == nullptr) {
+        return -1;
+    }
     int8_t arrZero = 0;
     int8_t arrOne = 1;
     int8_t arrTwo = 2;
@@ -373,6 +381,9 @@ uint32_t U8ToU32(const uint8_t *ptr)
 
 uint64_t U8ToU64(const uint8_t *ptr)
 {
+    if (ptr == nullptr) {
+        return -1;
+    }
     int8_t arrZero = 0;
     int8_t arrOne = 1;
     int8_t arrTwo = 2;
