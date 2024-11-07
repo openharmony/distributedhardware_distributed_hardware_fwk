@@ -25,6 +25,7 @@
 #include "constants.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
+#include "device_param_mgr.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager_factory.h"
@@ -197,6 +198,10 @@ void AccessManager::OnDeviceTrustChange(const std::string &peerudid, const std::
 
     if (authform != DmAuthForm::IDENTICAL_ACCOUNT) {
         DHLOGE("Peer is not same account");
+        return;
+    }
+    if (DeviceParamMgr::GetInstance().IsDeviceE2ESync()) {
+        DHLOGE("Is e2e device, doesn't need clear data");
         return;
     }
     DistributedHardwareManagerFactory::GetInstance().ClearRemoteDeviceMetaInfoData(peerudid, peeruuid);
