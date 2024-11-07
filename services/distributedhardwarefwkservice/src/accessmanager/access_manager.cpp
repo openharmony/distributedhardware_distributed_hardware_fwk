@@ -202,6 +202,7 @@ void AccessManager::OnDeviceTrustChange(const std::string &peerudid, const std::
     }
     if (DeviceParamMgr::GetInstance().IsDeviceE2ESync()) {
         DHLOGE("Is e2e device, doesn't need clear data");
+        return;
     }
     DistributedHardwareManagerFactory::GetInstance().ClearRemoteDeviceMetaInfoData(peerudid, peeruuid);
 }
