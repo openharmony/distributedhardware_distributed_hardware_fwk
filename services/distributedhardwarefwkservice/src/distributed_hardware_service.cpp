@@ -237,12 +237,13 @@ std::string DistributedHardwareService::QueryDhSysSpec(const std::string &target
         DHLOGE("attrs json is invalid, attrs: %{public}s", attrs.c_str());
         return "";
     }
-    if (!IsString(attrJson, targetKey)) {
+    cJSON *targetKeyJson = cJSON_GetObjectItem(attrJson, targetKey.c_str());
+    if (!IsString(targetKeyJson)) {
         DHLOGE("Attrs Json not contains key: %{public}s", targetKey.c_str());
         cJSON_Delete(attrJson);
         return "";
     }
-    std::string result = cJSON_GetObjectItem(attrJson, targetKey.c_str())->valuestring;
+    std::string result = targetKeyJson->valuestring;
     cJSON_Delete(attrJson);
     return result;
 }

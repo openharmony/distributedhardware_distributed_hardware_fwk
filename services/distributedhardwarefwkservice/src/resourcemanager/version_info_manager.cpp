@@ -243,8 +243,8 @@ int32_t VersionInfoManager::SyncRemoteVersionInfos()
             if (versionInfo.FromJsonString(data) != DH_FWK_SUCCESS) {
                 continue;
             }
-            const std::string &deviceId = versionInfo.deviceId;
-            const std::string &localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+            const std::string deviceId = versionInfo.deviceId;
+            const std::string localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
             if (deviceId.compare(localDeviceId) == 0) {
                 DHLOGE("Local device info not need sync from db");
                 continue;

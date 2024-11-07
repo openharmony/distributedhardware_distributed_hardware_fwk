@@ -931,8 +931,7 @@ HWTEST_F(ComponentLoaderTest, from_json_001, TestSize.Level0)
     cJSON_AddStringToObject(Json2, COMP_SOURCE_VERSION.c_str(), "1.0");
     cJSON_AddNumberToObject(Json2, COMP_SOURCE_SA_ID.c_str(), 4801);
     cJSON_AddNumberToObject(Json2, COMP_SINK_LOC.c_str(), 100);
-    from_json(Json2, cfg);
-    EXPECT_EQ(4801, static_cast<int32_t>(cJSON_GetObjectItem(Json2, COMP_SOURCE_SA_ID.c_str())->valuedouble));
+    EXPECT_NO_FATAL_FAILURE(from_json(Json2, cfg));
     cJSON_Delete(Json2);
 }
 

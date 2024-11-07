@@ -47,19 +47,19 @@ std::string GetDeviceIdByUUID(const std::string &uuid);
 
 std::string Sha256(const std::string& string);
 
-bool IsUInt8(const cJSON* jsonObj, const std::string& key);
+bool IsUInt8(const cJSON* jsonObj);
 
-bool IsUInt16(const cJSON* jsonObj, const std::string& key);
+bool IsUInt16(const cJSON* jsonObj);
 
-bool IsInt32(const cJSON* jsonObj, const std::string& key);
+bool IsInt32(const cJSON* jsonObj);
 
-bool IsUInt32(const cJSON* jsonObj, const std::string& key);
+bool IsUInt32(const cJSON* jsonObj);
 
-bool IsBool(const cJSON* jsonObj, const std::string& key);
+bool IsBool(const cJSON* jsonObj);
 
-bool IsString(const cJSON* jsonObj, const std::string& key);
+bool IsString(const cJSON* jsonObj);
 
-bool IsArray(const cJSON* jsonObj, const std::string& key);
+bool IsArray(const cJSON* jsonObj);
 
 std::string Compress(const std::string& data);
 std::string Decompress(const std::string& data);

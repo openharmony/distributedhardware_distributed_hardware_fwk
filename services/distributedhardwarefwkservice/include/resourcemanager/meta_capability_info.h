@@ -58,6 +58,7 @@ private:
 
 void ToJson(cJSON *jsonObject, const MetaCapabilityInfo &metaCapInfo);
 void FromJson(const cJSON *jsonObject, MetaCapabilityInfo &metaCapInfo);
+void FromJsonContinue(const cJSON *jsonObject, MetaCapabilityInfo &metaCapInfo);
 
 using MetaCapInfoMap = std::map<std::string, std::shared_ptr<MetaCapabilityInfo>>;
 } // namespace DistributedHardware

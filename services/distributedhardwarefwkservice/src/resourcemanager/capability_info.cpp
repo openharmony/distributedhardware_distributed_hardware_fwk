@@ -207,47 +207,54 @@ void FromJson(const cJSON *jsonObject, CapabilityInfo &capability)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    if (!IsString(jsonObject, DH_ID)) {
+    cJSON *dhIdJson = cJSON_GetObjectItem(jsonObject, DH_ID.c_str());
+    if (!IsString(dhIdJson)) {
         DHLOGE("DH_ID is invalid!");
         return;
     }
-    capability.SetDHId(cJSON_GetObjectItem(jsonObject, DH_ID.c_str())->valuestring);
+    capability.SetDHId(dhIdJson->valuestring);
 
-    if (!IsString(jsonObject, DEV_ID)) {
+    cJSON *devIdJson = cJSON_GetObjectItem(jsonObject, DEV_ID.c_str());
+    if (!IsString(devIdJson)) {
         DHLOGE("DEV_ID is invalid!");
         return;
     }
-    capability.SetDeviceId(cJSON_GetObjectItem(jsonObject, DEV_ID.c_str())->valuestring);
+    capability.SetDeviceId(devIdJson->valuestring);
 
-    if (!IsString(jsonObject, DEV_NAME)) {
+    cJSON *devNameJson = cJSON_GetObjectItem(jsonObject, DEV_NAME.c_str());
+    if (!IsString(devNameJson)) {
         DHLOGE("DEV_NAME is invalid!");
         return;
     }
-    capability.SetDeviceName(cJSON_GetObjectItem(jsonObject, DEV_NAME.c_str())->valuestring);
+    capability.SetDeviceName(devNameJson->valuestring);
 
-    if (!IsUInt16(jsonObject, DEV_TYPE)) {
+    cJSON *devTypeJson = cJSON_GetObjectItem(jsonObject, DEV_TYPE.c_str());
+    if (!IsUInt16(devTypeJson)) {
         DHLOGE("DEV_TYPE is invalid!");
         return;
     }
-    capability.SetDeviceType((uint16_t)cJSON_GetObjectItem(jsonObject, DEV_TYPE.c_str())->valuedouble);
+    capability.SetDeviceType(static_cast<uint16_t>(devTypeJson->valueint));
 
-    if (!IsUInt32(jsonObject, DH_TYPE)) {
+    cJSON *dhTypeJson = cJSON_GetObjectItem(jsonObject, DH_TYPE.c_str());
+    if (!IsUInt32(dhTypeJson)) {
         DHLOGE("DH_TYPE is invalid!");
         return;
     }
-    capability.SetDHType((DHType)cJSON_GetObjectItem(jsonObject, DH_TYPE.c_str())->valuedouble);
+    capability.SetDHType((DHType)dhTypeJson->valueint);
 
-    if (!IsString(jsonObject, DH_ATTRS)) {
+    cJSON *dhAttrsJson = cJSON_GetObjectItem(jsonObject, DH_ATTRS.c_str());
+    if (!IsString(dhAttrsJson)) {
         DHLOGE("DH_ATTRS is invalid!");
         return;
     }
-    capability.SetDHAttrs(cJSON_GetObjectItem(jsonObject, DH_ATTRS.c_str())->valuestring);
+    capability.SetDHAttrs(dhAttrsJson->valuestring);
 
-    if (!IsString(jsonObject, DH_SUBTYPE)) {
+    cJSON *dhSubtypeJson = cJSON_GetObjectItem(jsonObject, DH_SUBTYPE.c_str());
+    if (!IsString(dhSubtypeJson)) {
         DHLOGE("DH_SUBTYPE is invalid!");
         return;
     }
-    capability.SetDHSubtype(cJSON_GetObjectItem(jsonObject, DH_SUBTYPE.c_str())->valuestring);
+    capability.SetDHSubtype(dhSubtypeJson->valuestring);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

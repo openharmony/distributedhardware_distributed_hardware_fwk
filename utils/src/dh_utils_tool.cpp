@@ -163,64 +163,57 @@ std::string GetLocalNetworkId()
     return info.networkId;
 }
 
-bool IsUInt8(const cJSON* jsonObj, const std::string& key)
+bool IsUInt8(const cJSON* jsonObj)
 {
-    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
-    if (value == NULL || !cJSON_IsNumber(value)) {
+    if (jsonObj == NULL || !cJSON_IsNumber(jsonObj)) {
         return false;
     }
-    return (value->valuedouble >= 0 && value->valuedouble <= UINT8_MAX);
+    return (jsonObj->valueint >= 0 && jsonObj->valueint <= UINT8_MAX);
 }
 
-bool IsUInt16(const cJSON* jsonObj, const std::string& key)
+bool IsUInt16(const cJSON* jsonObj)
 {
-    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
-    if (value == NULL || !cJSON_IsNumber(value)) {
+    if (jsonObj == NULL || !cJSON_IsNumber(jsonObj)) {
         return false;
     }
-    return (value->valuedouble >= 0 && value->valuedouble <= UINT16_MAX);
+    return (jsonObj->valueint >= 0 && jsonObj->valueint <= UINT16_MAX);
 }
 
-bool IsInt32(const cJSON* jsonObj, const std::string& key)
+bool IsInt32(const cJSON* jsonObj)
 {
-    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
-    if (value == NULL || !cJSON_IsNumber(value)) {
+    if (jsonObj == NULL || !cJSON_IsNumber(jsonObj)) {
         return false;
     }
-    return (value->valuedouble >= INT32_MIN && value->valuedouble <= INT32_MAX);
+    return (jsonObj->valueint >= INT32_MIN && jsonObj->valueint <= INT32_MAX);
 }
 
-bool IsUInt32(const cJSON* jsonObj, const std::string& key)
+bool IsUInt32(const cJSON* jsonObj)
 {
-    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
-    if (value == NULL || !cJSON_IsNumber(value)) {
+    if (jsonObj == NULL || !cJSON_IsNumber(jsonObj)) {
         return false;
     }
-    return (value->valuedouble >= 0 && value->valuedouble <= UINT32_MAX);
+    return (jsonObj->valueint >= 0 && jsonObj->valueint <= UINT32_MAX);
 }
 
-bool IsBool(const cJSON* jsonObj, const std::string& key)
+bool IsBool(const cJSON* jsonObj)
 {
-    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
-    return (value != NULL && cJSON_IsBool(value));
+    return (jsonObj != NULL && cJSON_IsBool(jsonObj));
 }
 
-bool IsString(const cJSON* jsonObj, const std::string& key)
+bool IsString(const cJSON* jsonObj)
 {
-    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
-    if (value == NULL || !cJSON_IsString(value)) {
+    if (jsonObj == NULL || !cJSON_IsString(jsonObj)) {
         return false;
     }
-    return (strlen(value->valuestring) > MIN_MESSAGE_LEN && strlen(value->valuestring) <= MAX_MESSAGE_LEN);
+    return (strlen(jsonObj->valuestring) > MIN_MESSAGE_LEN && strlen(jsonObj->valuestring) <= MAX_MESSAGE_LEN);
 }
 
-bool IsArray(const cJSON* jsonObj, const std::string& key)
+bool IsArray(const cJSON* jsonObj)
 {
-    const cJSON* value = cJSON_GetObjectItem(jsonObj, key.c_str());
-    if (value == NULL || !cJSON_IsArray(value)) {
+    if (jsonObj == NULL || !cJSON_IsArray(jsonObj)) {
         return false;
     }
-    return ((uint32_t)cJSON_GetArraySize(value) >= 0 && (uint32_t)cJSON_GetArraySize(value) <= MAX_ARR_SIZE);
+    return ((uint32_t)cJSON_GetArraySize(jsonObj) >= 0 && (uint32_t)cJSON_GetArraySize(jsonObj) <= MAX_ARR_SIZE);
 }
 
 std::string Compress(const std::string& data)

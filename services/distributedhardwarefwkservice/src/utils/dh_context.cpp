@@ -324,13 +324,13 @@ void DHContext::DHFWKIsomerismListener::OnMessage(const DHTopic topic, const std
         return;
     }
     cJSON *eventObj = cJSON_GetObjectItemCaseSensitive(messageJson, ISOMERISM_EVENT_KEY.c_str());
-    if (eventObj == nullptr || !IsString(messageJson, ISOMERISM_EVENT_KEY)) {
+    if (!IsString(eventObj)) {
         cJSON_Delete(messageJson);
         DHLOGE("OnMessage event invaild");
         return;
     }
     cJSON *devObj = cJSON_GetObjectItemCaseSensitive(messageJson, DEV_ID.c_str());
-    if (devObj == nullptr || !IsString(messageJson, DEV_ID)) {
+    if (!IsString(devObj)) {
         cJSON_Delete(messageJson);
         DHLOGE("OnMessage deviceId invaild");
         return;
