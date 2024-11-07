@@ -63,6 +63,9 @@
       },
       {
         "name": "ohos.permission.GET_BUNDLE_INFO"
+      },
+      {
+        "name": "ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS_EXTENSION"
       }
     ],
     "extensionAbilities": [
