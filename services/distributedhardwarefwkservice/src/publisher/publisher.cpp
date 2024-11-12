@@ -15,6 +15,8 @@
 
 #include "publisher.h"
 
+#include "distributed_hardware_log.h"
+
 namespace OHOS {
 namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(Publisher);
@@ -38,17 +40,35 @@ Publisher::~Publisher()
 
 void Publisher::RegisterListener(const DHTopic topic, const sptr<IPublisherListener> listener)
 {
+    if (!IsTopicExist(topic)) {
+        return;
+    }
     publisherItems_[topic]->AddListener(listener);
 }
 
 void Publisher::UnregisterListener(const DHTopic topic, const sptr<IPublisherListener> listener)
 {
+    if (!IsTopicExist(topic)) {
+        return;
+    }
     publisherItems_[topic]->RemoveListener(listener);
 }
 
 void Publisher::PublishMessage(const DHTopic topic, const std::string &message)
 {
+    if (!IsTopicExist(topic)) {
+        return;
+    }
     publisherItems_[topic]->PublishMessage(message);
+}
+
+bool Publisher::IsTopicExist(const DHTopic topic)
+{
+    if (publisherItems_.find(topic) == publisherItems_.end()) {
+        DHLOGE("The topic: %{public}u is not exist.", static_cast<uint32_t>(topic));
+        return false;
+    }
+    return true;
 }
 } // namespace DistributedHardware
 } // namespace OHOS
