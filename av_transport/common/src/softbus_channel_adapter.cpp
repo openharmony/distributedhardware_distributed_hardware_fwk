@@ -28,9 +28,6 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "SoftbusChannelAdapter"
-
-IMPLEMENT_SINGLE_INSTANCE(SoftbusChannelAdapter);
-
 namespace {
 const static std::pair<std::string, std::string> LOCAL_TO_PEER_SESSION_NAME_MAP[] = {
     {OWNER_NAME_D_MIC + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX,
@@ -106,6 +103,12 @@ static void OnStreamReceived(int32_t sessionId, const StreamData *data, const St
 static void onDevTimeSyncResult(const TimeSyncResultInfo *info, int32_t result)
 {
     SoftbusChannelAdapter::GetInstance().OnSoftbusTimeSyncResult(info, result);
+}
+
+SoftbusChannelAdapter& SoftbusChannelAdapter::GetInstance()
+{
+    static SoftbusChannelAdapter instance;
+    return instance;
 }
 
 SoftbusChannelAdapter::SoftbusChannelAdapter()
