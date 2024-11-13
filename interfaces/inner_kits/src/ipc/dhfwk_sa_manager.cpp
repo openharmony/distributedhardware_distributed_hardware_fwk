@@ -192,6 +192,10 @@ int32_t DHFWKSAManager::AddPublisherListenerToCache(const DHTopic topic, sptr<IP
 void DHFWKSAManager::RemovePublisherListenerFromCache(const DHTopic topic, sptr<IPublisherListener> listener)
 {
     std::lock_guard<std::mutex> publisherListenersLock(publisherListenersMutex_);
+    if (publisherListenersCache_.find(topic) == publisherListenersCache_.end()) {
+        DHLOGE("Can not find the topic: %{public}u In publisherListenersCache_.", static_cast<uint32_t>(topic));
+        return;
+    }
     publisherListenersCache_[topic].erase(listener);
 }
 

@@ -31,6 +31,7 @@ public:
     void RegisterListener(const DHTopic topic, const sptr<IPublisherListener> listener);
     void UnregisterListener(const DHTopic topic, const sptr<IPublisherListener> listener);
     void PublishMessage(const DHTopic topic, const std::string &message);
+    bool IsTopicExist(const DHTopic topic);
 private:
     Publisher();
     std::unordered_map<DHTopic, std::shared_ptr<PublisherItem>> publisherItems_;

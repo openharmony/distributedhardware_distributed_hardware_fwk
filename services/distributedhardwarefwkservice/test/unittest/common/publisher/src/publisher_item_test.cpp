@@ -15,6 +15,8 @@
 
 #include "publisher_item_test.h"
 
+#include "publisher.h"
+
 using namespace testing::ext;
 using namespace std;
 namespace OHOS {
@@ -110,6 +112,48 @@ HWTEST_F(PublisherItemTest, PublishMessage_002, TestSize.Level0)
     item.AddListener(listener);
     item.PublishMessage(message);
     EXPECT_EQ(false, item.listeners_.empty());
+}
+
+HWTEST_F(PublisherItemTest, RegisterListener_001, TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_MIN;
+    sptr<IPublisherListener> listener(new MockIPublisherListener());
+    EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().RegisterListener(topic, listener));
+}
+
+HWTEST_F(PublisherItemTest, RegisterListener_002, TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
+    sptr<IPublisherListener> listener(new MockIPublisherListener());
+    EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().RegisterListener(topic, listener));
+}
+
+HWTEST_F(PublisherItemTest, UnregisterListener_001, TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_MIN;
+    sptr<IPublisherListener> listener(new MockIPublisherListener());
+    EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().UnregisterListener(topic, listener));
+}
+
+HWTEST_F(PublisherItemTest, UnregisterListener_002, TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
+    sptr<IPublisherListener> listener(new MockIPublisherListener());
+    EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().UnregisterListener(topic, listener));
+}
+
+HWTEST_F(PublisherItemTest, Publisher_PublishMessage_001, TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_MIN;
+    std::string message = "message_test";
+    EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().PublishMessage(topic, message));
+}
+
+HWTEST_F(PublisherItemTest, Publisher_PublishMessage_002, TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
+    std::string message = "message_test";
+    EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().PublishMessage(topic, message));
 }
 } // namespace DistributedHardware
 } // namespace OHOS
