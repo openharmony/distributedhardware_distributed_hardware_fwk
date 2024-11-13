@@ -208,8 +208,8 @@ int32_t MetaInfoManager::SyncRemoteMetaInfos()
                 DHLOGE("Get Metainfo ptr by value failed");
                 continue;
             }
-            const std::string &udidHash = metaCapInfo->GetUdidHash();
-            const std::string &localUdidHash = DHContext::GetInstance().GetDeviceInfo().udidHash;
+            const std::string udidHash = metaCapInfo->GetUdidHash();
+            const std::string localUdidHash = DHContext::GetInstance().GetDeviceInfo().udidHash;
             if (udidHash.compare(localUdidHash) == 0) {
                 DHLOGE("device MetaInfo not need sync from db");
                 continue;

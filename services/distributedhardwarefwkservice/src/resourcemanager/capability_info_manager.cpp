@@ -172,8 +172,8 @@ int32_t CapabilityInfoManager::SyncRemoteCapabilityInfos()
                 DHLOGE("Get capability ptr by value failed");
                 continue;
             }
-            const std::string &deviceId = capabilityInfo->GetDeviceId();
-            const std::string &localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+            const std::string deviceId = capabilityInfo->GetDeviceId();
+            const std::string localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
             if (deviceId.compare(localDeviceId) == 0) {
                 DHLOGE("local device info not need sync from db");
                 continue;

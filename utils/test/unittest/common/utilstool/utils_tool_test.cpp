@@ -149,98 +149,62 @@ HWTEST_F(UtilsToolTest, GetDeviceIdByUUID_002, TestSize.Level0)
 
 HWTEST_F(UtilsToolTest, IsUInt8_001, TestSize.Level0)
 {
-    cJSON* jsonObj = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObj != nullptr);
-    const std::string key = "int8_key";
-    cJSON_AddStringToObject(jsonObj, key.c_str(), "int8_key_test");
-
-    std::string inputKey = "key";
-    auto ret = IsUInt8(jsonObj, key);
-    cJSON_Delete(jsonObj);
-    EXPECT_EQ(false, ret);
-
     cJSON* jsonObj1 = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj1 != nullptr);
-    cJSON_AddStringToObject(jsonObj1, key.c_str(), "int8_key_test");
-    ret = IsUInt8(jsonObj1, key);
-    cJSON_Delete(jsonObj1);
-    EXPECT_EQ(false, ret);
-}
-
-HWTEST_F(UtilsToolTest, IsUInt8_002, TestSize.Level0)
-{
-    cJSON* jsonObj = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObj != nullptr);
     const std::string key = "int8_key";
-    const uint8_t keyVaule = 1;
-    cJSON_AddNumberToObject(jsonObj, key.c_str(), keyVaule);
-    auto ret = IsUInt8(jsonObj, key);
-    cJSON_Delete(jsonObj);
+    cJSON_AddStringToObject(jsonObj1, key.c_str(), "int8_key_test");
+    cJSON *keyJson1 = cJSON_GetObjectItem(jsonObj1, key.c_str());
+    auto ret = IsUInt8(keyJson1);
+    EXPECT_EQ(false, ret);
+    cJSON_Delete(jsonObj1);
+
+    cJSON* jsonObj2 = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj2 != nullptr);
+    cJSON_AddNumberToObject(jsonObj2, key.c_str(), 1);
+    cJSON *keyJson2 = cJSON_GetObjectItem(jsonObj2, key.c_str());
+    ret = IsUInt8(keyJson2);
     EXPECT_EQ(true, ret);
+    cJSON_Delete(jsonObj2);
 }
 
 HWTEST_F(UtilsToolTest, IsUInt16_001, TestSize.Level0)
 {
-    cJSON* jsonObj = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObj != nullptr);
-    const std::string key = "uint16_key";
-    cJSON_AddStringToObject(jsonObj, key.c_str(), "uint16_key_test");
-
-    std::string inputKey = "key";
-    auto ret = IsUInt16(jsonObj, key);
-    cJSON_Delete(jsonObj);
-    EXPECT_EQ(false, ret);
-
     cJSON* jsonObj1 = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj1 != nullptr);
+    const std::string key = "uint16_key";
     cJSON_AddStringToObject(jsonObj1, key.c_str(), "uint16_key_test");
-    ret = IsUInt16(jsonObj1, key);
+    cJSON *keyJson1 = cJSON_GetObjectItem(jsonObj1, key.c_str());
+    auto ret = IsUInt16(keyJson1);
     cJSON_Delete(jsonObj1);
     EXPECT_EQ(false, ret);
-}
 
-HWTEST_F(UtilsToolTest, IsUInt16_002, TestSize.Level0)
-{
-    cJSON* jsonObj = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObj != nullptr);
-    const std::string key = "uint16_key";
-    const uint16_t keyVaule = 1;
-    cJSON_AddNumberToObject(jsonObj, key.c_str(), keyVaule);
-    auto ret = IsUInt16(jsonObj, key);
-    cJSON_Delete(jsonObj);
+    cJSON* jsonObj2 = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj2 != nullptr);
+    cJSON_AddNumberToObject(jsonObj2, key.c_str(), 1);
+    cJSON *keyJson2 = cJSON_GetObjectItem(jsonObj2, key.c_str());
+    ret = IsUInt16(keyJson2);
     EXPECT_EQ(true, ret);
+    cJSON_Delete(jsonObj2);
 }
 
 HWTEST_F(UtilsToolTest, IsUInt32_001, TestSize.Level0)
 {
-    cJSON* jsonObj = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObj != nullptr);
-    const std::string key = "uint32_key";
-    cJSON_AddStringToObject(jsonObj, key.c_str(), "uint32_key_test");
-
-    std::string inputKey = "key";
-    auto ret = IsUInt32(jsonObj, key);
-    cJSON_Delete(jsonObj);
-    EXPECT_EQ(false, ret);
-
     cJSON* jsonObj1 = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj1 != nullptr);
-    cJSON_AddStringToObject(jsonObj1, key.c_str(), "uint32_key_test");
-    ret = IsUInt32(jsonObj1, key);
-    cJSON_Delete(jsonObj1);
-    EXPECT_EQ(false, ret);
-}
-
-HWTEST_F(UtilsToolTest, IsUInt32_002, TestSize.Level0)
-{
-    cJSON* jsonObj = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObj != nullptr);
     const std::string key = "uint32_key";
-    const uint32_t keyVaule = 1;
-    cJSON_AddNumberToObject(jsonObj, key.c_str(), keyVaule);
-    auto ret = IsUInt32(jsonObj, key);
-    cJSON_Delete(jsonObj);
+    cJSON_AddStringToObject(jsonObj1, key.c_str(), "uint32_key_test");
+    cJSON *keyJson1 = cJSON_GetObjectItem(jsonObj1, key.c_str());
+    auto ret = IsUInt32(keyJson1);
+    EXPECT_EQ(false, ret);
+    cJSON_Delete(jsonObj1);
+
+    cJSON* jsonObj2 = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj2 != nullptr);
+    cJSON_AddNumberToObject(jsonObj2, key.c_str(), 1);
+    cJSON *keyJson2 = cJSON_GetObjectItem(jsonObj2, key.c_str());
+    ret = IsUInt32(keyJson2);
     EXPECT_EQ(true, ret);
+    cJSON_Delete(jsonObj2);
 }
 
 HWTEST_F(UtilsToolTest, GetSysPara_001, TestSize.Level0)

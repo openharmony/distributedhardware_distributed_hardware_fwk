@@ -101,21 +101,25 @@ void FromJson(const cJSON *jsonObject, CompVersion &compVer)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    if (IsString(jsonObject, NAME)) {
-        compVer.name = cJSON_GetObjectItem(jsonObject, NAME.c_str())->valuestring;
+    cJSON *nameJson = cJSON_GetObjectItem(jsonObject, NAME.c_str());
+    if (IsString(nameJson)) {
+        compVer.name = nameJson->valuestring;
     }
-    if (IsUInt32(jsonObject, TYPE) &&
-        (DHType)cJSON_GetObjectItem(jsonObject, TYPE.c_str())->valuedouble <= DHType::MAX_DH) {
-        compVer.dhType = (DHType)(cJSON_GetObjectItem(jsonObject, TYPE.c_str())->valuedouble);
+    cJSON *typeJson = cJSON_GetObjectItem(jsonObject, TYPE.c_str());
+    if (IsUInt32(typeJson) && (DHType)typeJson->valueint <= DHType::MAX_DH) {
+        compVer.dhType = (DHType)typeJson->valueint;
     }
-    if (IsString(jsonObject, HANDLER)) {
-        compVer.handlerVersion = cJSON_GetObjectItem(jsonObject, HANDLER.c_str())->valuestring;
+    cJSON *handlerJson = cJSON_GetObjectItem(jsonObject, HANDLER.c_str());
+    if (IsString(handlerJson)) {
+        compVer.handlerVersion = handlerJson->valuestring;
     }
-    if (IsString(jsonObject, SOURCE_VER)) {
-        compVer.sourceVersion = cJSON_GetObjectItem(jsonObject, SOURCE_VER.c_str())->valuestring;
+    cJSON *sourceVerJson = cJSON_GetObjectItem(jsonObject, SOURCE_VER.c_str());
+    if (IsString(sourceVerJson)) {
+        compVer.sourceVersion = sourceVerJson->valuestring;
     }
-    if (IsString(jsonObject, SINK_VER)) {
-        compVer.sinkVersion = cJSON_GetObjectItem(jsonObject, SINK_VER.c_str())->valuestring;
+    cJSON *sinkVerJson = cJSON_GetObjectItem(jsonObject, SINK_VER.c_str());
+    if (IsString(sinkVerJson)) {
+        compVer.sinkVersion = sinkVerJson->valuestring;
     }
 }
 
@@ -125,12 +129,14 @@ void FromJson(const cJSON *jsonObject, VersionInfo &versionInfo)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    if (IsString(jsonObject, DEV_ID)) {
-        versionInfo.deviceId = cJSON_GetObjectItem(jsonObject, DEV_ID.c_str())->valuestring;
+    cJSON *devIdJson = cJSON_GetObjectItem(jsonObject, DEV_ID.c_str());
+    if (IsString(devIdJson)) {
+        versionInfo.deviceId = devIdJson->valuestring;
     }
 
-    if (IsString(jsonObject, DH_VER)) {
-        versionInfo.dhVersion = cJSON_GetObjectItem(jsonObject, DH_VER.c_str())->valuestring;
+    cJSON *dhVerJson = cJSON_GetObjectItem(jsonObject, DH_VER.c_str());
+    if (IsString(dhVerJson)) {
+        versionInfo.dhVersion = dhVerJson->valuestring;
     }
 
     const cJSON *compVer = cJSON_GetObjectItem(jsonObject, COMP_VER.c_str());

@@ -51,16 +51,15 @@ void FromJson(const cJSON *jsonObject, FullCapsRsp &capsRsp)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    std::string keyNetworkId(CAPS_RSP_NETWORKID_KEY);
-    if (IsString(jsonObject, keyNetworkId)) {
-        capsRsp.networkId = cJSON_GetObjectItem(jsonObject, CAPS_RSP_NETWORKID_KEY)->valuestring;
+    cJSON *capsRspJson = cJSON_GetObjectItem(jsonObject, CAPS_RSP_NETWORKID_KEY);
+    if (IsString(capsRspJson)) {
+        capsRsp.networkId = capsRspJson->valuestring;
     }
-    std::string keyCaps(CAPS_RSP_CAPS_KEY);
-    if (IsArray(jsonObject, keyCaps)) {
-        cJSON *capsArr = cJSON_GetObjectItem(jsonObject, CAPS_RSP_CAPS_KEY);
-        int32_t arrSize = cJSON_GetArraySize(capsArr);
+    cJSON *capsRspKeyJson = cJSON_GetObjectItem(jsonObject, CAPS_RSP_CAPS_KEY);
+    if (IsArray(capsRspKeyJson)) {
+        int32_t arrSize = cJSON_GetArraySize(capsRspKeyJson);
         for (int32_t i = 0; i < arrSize; i++) {
-            cJSON *cap = cJSON_GetArrayItem(capsArr, i);
+            cJSON *cap = cJSON_GetArrayItem(capsRspKeyJson, i);
             std::shared_ptr<CapabilityInfo> capPtr = std::make_shared<CapabilityInfo>();
             FromJson(cap, *capPtr);
             capsRsp.caps.push_back(capPtr);
@@ -85,13 +84,13 @@ void FromJson(const cJSON *jsonObject, CommMsg &commMsg)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    std::string keyCode(COMM_MSG_CODE_KEY);
-    if (IsInt32(jsonObject, keyCode)) {
-        commMsg.code = cJSON_GetObjectItem(jsonObject, COMM_MSG_CODE_KEY)->valueint;
+    cJSON *commMsgCodeJson = cJSON_GetObjectItem(jsonObject, COMM_MSG_CODE_KEY);
+    if (IsInt32(commMsgCodeJson)) {
+        commMsg.code = commMsgCodeJson->valueint;
     }
-    std::string keyMsg(COMM_MSG_MSG_KEY);
-    if (IsString(jsonObject, keyMsg)) {
-        commMsg.msg = cJSON_GetObjectItem(jsonObject, COMM_MSG_MSG_KEY)->valuestring;
+    cJSON *commMsgeJson = cJSON_GetObjectItem(jsonObject, COMM_MSG_MSG_KEY);
+    if (IsString(commMsgeJson)) {
+        commMsg.msg = commMsgeJson->valuestring;
     }
 }
 

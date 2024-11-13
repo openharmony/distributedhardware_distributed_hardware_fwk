@@ -163,59 +163,73 @@ void ToJson(cJSON *jsonObject, const MetaCapabilityInfo &metaCapInfo)
 
 void FromJson(const cJSON *jsonObject, MetaCapabilityInfo &metaCapInfo)
 {
-    if (!IsString(jsonObject, DH_ID)) {
+    cJSON *dhIdJson = cJSON_GetObjectItem(jsonObject, DH_ID.c_str());
+    if (!IsString(dhIdJson)) {
         DHLOGE("DH_ID is invalid!");
         return;
     }
-    metaCapInfo.SetDHId(cJSON_GetObjectItem(jsonObject, DH_ID.c_str())->valuestring);
+    metaCapInfo.SetDHId(dhIdJson->valuestring);
 
-    if (!IsString(jsonObject, DEV_ID)) {
+    cJSON *devIdJson = cJSON_GetObjectItem(jsonObject, DEV_ID.c_str());
+    if (!IsString(devIdJson)) {
         DHLOGE("DEV_ID is invalid!");
         return;
     }
-    metaCapInfo.SetDeviceId(cJSON_GetObjectItem(jsonObject, DEV_ID.c_str())->valuestring);
+    metaCapInfo.SetDeviceId(devIdJson->valuestring);
 
-    if (!IsString(jsonObject, DEV_NAME)) {
+    cJSON *devNameJson = cJSON_GetObjectItem(jsonObject, DEV_NAME.c_str());
+    if (!IsString(devNameJson)) {
         DHLOGE("DEV_NAME is invalid!");
         return;
     }
-    metaCapInfo.SetDeviceName(cJSON_GetObjectItem(jsonObject, DEV_NAME.c_str())->valuestring);
+    metaCapInfo.SetDeviceName(devNameJson->valuestring);
 
-    if (!IsUInt16(jsonObject, DEV_TYPE)) {
+    cJSON *devTypeJson = cJSON_GetObjectItem(jsonObject, DEV_TYPE.c_str());
+    if (!IsUInt16(devTypeJson)) {
         DHLOGE("DEV_TYPE is invalid!");
         return;
     }
-    metaCapInfo.SetDeviceType((uint16_t)cJSON_GetObjectItem(jsonObject, DEV_TYPE.c_str())->valuedouble);
+    metaCapInfo.SetDeviceType(static_cast<uint16_t>(devTypeJson->valueint));
 
-    if (!IsUInt32(jsonObject, DH_TYPE)) {
+    cJSON *dhTypeJson = cJSON_GetObjectItem(jsonObject, DH_TYPE.c_str());
+    if (!IsUInt32(dhTypeJson)) {
         DHLOGE("DH_TYPE is invalid!");
         return;
     }
-    metaCapInfo.SetDHType((DHType)cJSON_GetObjectItem(jsonObject, DH_TYPE.c_str())->valuedouble);
+    metaCapInfo.SetDHType((DHType)dhTypeJson->valueint);
 
-    if (!IsString(jsonObject, DH_ATTRS)) {
+    cJSON *dhAttrsObj = cJSON_GetObjectItem(jsonObject, DH_ATTRS.c_str());
+    if (!IsString(dhAttrsObj)) {
         DHLOGE("DH_ATTRS is invalid!");
         return;
     }
-    metaCapInfo.SetDHAttrs(cJSON_GetObjectItem(jsonObject, DH_ATTRS.c_str())->valuestring);
+    metaCapInfo.SetDHAttrs(dhAttrsObj->valuestring);
 
-    if (!IsString(jsonObject, DH_SUBTYPE)) {
+    FromJsonContinue(jsonObject, metaCapInfo);
+}
+
+void FromJsonContinue(const cJSON *jsonObject, MetaCapabilityInfo &metaCapInfo)
+{
+    cJSON *dhSubtypeJson = cJSON_GetObjectItem(jsonObject, DH_SUBTYPE.c_str());
+    if (!IsString(dhSubtypeJson)) {
         DHLOGE("DH_SUBTYPE is invalid!");
         return;
     }
-    metaCapInfo.SetDHSubtype(cJSON_GetObjectItem(jsonObject, DH_SUBTYPE.c_str())->valuestring);
+    metaCapInfo.SetDHSubtype(dhSubtypeJson->valuestring);
 
-    if (!IsString(jsonObject, DEV_UDID_HASH)) {
+    cJSON *udidHashJson = cJSON_GetObjectItem(jsonObject, DEV_UDID_HASH.c_str());
+    if (!IsString(udidHashJson)) {
         DHLOGE("DEV_UDID_HASH is invalid!");
         return;
     }
-    metaCapInfo.SetUdidHash(cJSON_GetObjectItem(jsonObject, DEV_UDID_HASH.c_str())->valuestring);
+    metaCapInfo.SetUdidHash(udidHashJson->valuestring);
 
-    if (!IsString(jsonObject, SINK_VER)) {
+    cJSON *sinkVerJson = cJSON_GetObjectItem(jsonObject, SINK_VER.c_str());
+    if (!IsString(sinkVerJson)) {
         DHLOGE("SINK_VER is invalid!");
         return;
     }
-    metaCapInfo.SetSinkVersion(cJSON_GetObjectItem(jsonObject, SINK_VER.c_str())->valuestring);
+    metaCapInfo.SetSinkVersion(sinkVerJson->valuestring);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
