@@ -74,11 +74,11 @@ struct ContinueSwitch {
   @State titleBarMargin: LocalizeMargin = {
     start: LengthMetrics.resource($r('sys.float.margin_left')),
   }
-  @State titleBarMargin_pc: LocalizeMargin = {
+  @State titleBarMarginPc: LocalizeMargin = {
     start: LengthMetrics.vp(16),
   }
-  @State paddingStart_normal: lengthMetrics = LengthMetrics.resource($r('sys.float.margin_left'));
-  @State paddingStart_pc: lengthMetrics = LengthMetrics.vp(16);
+  @State paddingStartNormal: lengthMetrics = LengthMetrics.resource($r('sys.float.margin_left'));
+  @State paddingStartPc: lengthMetrics = LengthMetrics.vp(16);
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
@@ -272,7 +272,7 @@ struct ContinueSwitch {
     }
     .hideTitleBar(false)
     .title(this.title, {
-      paddingStart: this.is2in1 ? this.paddingStart_pc : this.paddingStart_normal,
+      paddingStart: this.is2in1 ? this.paddingStartPc : this.paddingStartNormal,
     })
     .backgroundColor($r('sys.color.ohos_id_color_titlebar_sub_bg'))
   }
@@ -284,7 +284,7 @@ struct ContinueSwitch {
         leftIconStyle: EditableLeftIconType.Back,
         title: $r('app.string.continue_title'),
         isSaveIconRequired: false,
-        contentMargin: this.is2in1 ? this.titleBarMargin_pc : this.titleBarMargin,
+        contentMargin: this.is2in1 ? this.titleBarMarginPc : this.titleBarMargin,
         onCancel: () => {
           if (this.continueSession) {
             this.continueSession.sendData({ 'action': 'pop' })
