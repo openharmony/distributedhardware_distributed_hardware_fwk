@@ -71,14 +71,14 @@ struct ContinueSwitch {
   @StorageProp('currentFontSizeScale') @Watch('onFontSizeScaleChange') fontSizeScale: number = 1;
   @State phoneSwitchTextTopMargin: string = '17vp';
   @State phoneSwitchTextBottomMargin: string = '18vp';
-  @State titleBarMargin: LocalizeMargin = {
+  @State titleBarMargin: LocalizedMargin = {
     start: LengthMetrics.resource($r('sys.float.margin_left')),
   }
-  @State titleBarMarginPc: LocalizeMargin = {
+  @State titleBarMarginPc: LocalizedMargin = {
     start: LengthMetrics.vp(16),
   }
-  @State paddingStartNormal: lengthMetrics = LengthMetrics.resource($r('sys.float.margin_left'));
-  @State paddingStartPc: lengthMetrics = LengthMetrics.vp(16);
+  @State paddingStartNormal: LengthMetrics = LengthMetrics.resource($r('sys.float.margin_left'));
+  @State paddingStartPc: LengthMetrics = LengthMetrics.vp(16);
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
