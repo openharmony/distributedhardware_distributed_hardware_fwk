@@ -27,6 +27,7 @@ import { TipsJumpUtils } from '../utils/TipsJumpUtils';
 import osAccount from '@ohos.account.osAccount';
 import systemParameterEnhance from '@ohos.systemParameterEnhance';
 import i18n from '@ohos.i18n';
+import { LengthMetrics } from '@ohos.arkui.node';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
@@ -70,6 +71,14 @@ struct ContinueSwitch {
   @StorageProp('currentFontSizeScale') @Watch('onFontSizeScaleChange') fontSizeScale: number = 1;
   @State phoneSwitchTextTopMargin: string = '17vp';
   @State phoneSwitchTextBottomMargin: string = '18vp';
+  @State titleBarMargin: LocalizeMargin = {
+    start: LengthMetrics.resource($r('sys.float.margin_left')),
+  }
+  @State titleBarMargin_pc: LocalizeMargin = {
+    start: LengthMetrics.vp(16),
+  }
+  @State paddingStart_normal: lengthMetrics = LengthMetrics.resource($r('sys.float.margin_left'));
+  @State paddingStart_pc: lengthMetrics = LengthMetrics.vp(16);
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
@@ -262,7 +271,9 @@ struct ContinueSwitch {
       this.ContentBuilder();
     }
     .hideTitleBar(false)
-    .title(this.title)
+    .title(this.title, {
+      paddingStart: this.is2in1 ? this.paddingStart_pc : this.paddingStart_normal,
+    })
     .backgroundColor($r('sys.color.ohos_id_color_titlebar_sub_bg'))
   }
 
@@ -273,6 +284,7 @@ struct ContinueSwitch {
         leftIconStyle: EditableLeftIconType.Back,
         title: $r('app.string.continue_title'),
         isSaveIconRequired: false,
+        contentMargin: this.is2in1 ? this.titleBarMargin_pc : this.titleBarMargin,
         onCancel: () => {
           if (this.continueSession) {
             this.continueSession.sendData({ 'action': 'pop' })
