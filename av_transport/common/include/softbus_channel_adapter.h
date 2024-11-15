@@ -23,7 +23,6 @@
 #include "transport/socket.h"
 #include "transport/trans_type.h"
 #include "av_trans_types.h"
-#include "single_instance.h"
 #include "softbus_bus_center.h"
 #include "softbus_common.h"
 #include "av_trans_constants.h"
@@ -38,8 +37,8 @@ public:
 };
 
 class SoftbusChannelAdapter {
-    DECLARE_SINGLE_INSTANCE_BASE(SoftbusChannelAdapter);
 public:
+    static SoftbusChannelAdapter& GetInstance();
     int32_t CreateChannelServer(const std::string &pkgName, const std::string &sessName);
     int32_t RemoveChannelServer(const std::string &pkgName, const std::string &sessName);
 
@@ -71,6 +70,10 @@ public:
         const StreamFrameInfo *frameInfo);
 
 private:
+    SoftbusChannelAdapter(const SoftbusChannelAdapter&) = delete;
+    SoftbusChannelAdapter& operator= (const SoftbusChannelAdapter&) = delete;
+    SoftbusChannelAdapter(SoftbusChannelAdapter&&) = delete;
+    SoftbusChannelAdapter& operator= (SoftbusChannelAdapter&&) = delete;
     SoftbusChannelAdapter();
     ~SoftbusChannelAdapter();
 
