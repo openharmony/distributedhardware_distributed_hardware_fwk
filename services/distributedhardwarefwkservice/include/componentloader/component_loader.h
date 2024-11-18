@@ -18,6 +18,7 @@
 
 #include <atomic>
 #include <map>
+#include <mutex>
 #include <vector>
 
 #include "single_instance.h"
@@ -101,6 +102,7 @@ private:
 private:
     DHVersion localDHVersion_;
     std::map<DHType, CompHandler> compHandlerMap_;
+    std::mutex compHandlerMapMutex_;
     std::atomic<bool> isLocalVersionInit_;
     std::map<std::string, bool> resDescMap_;
 };

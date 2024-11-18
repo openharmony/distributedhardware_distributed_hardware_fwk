@@ -100,6 +100,7 @@ int32_t ComponentLoader::Init()
 
 std::vector<DHType> ComponentLoader::GetAllCompTypes()
 {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
     std::vector<DHType> DHTypeALL;
     for (std::map<DHType, CompHandler>::iterator it = compHandlerMap_.begin(); it != compHandlerMap_.end(); ++it) {
         DHTypeALL.push_back(it->first);
@@ -384,6 +385,7 @@ void *ComponentLoader::GetHandler(const std::string &soName)
 
 void ComponentLoader::GetAllHandler(std::map<DHType, CompConfig> &dhtypeMap)
 {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
     std::map<DHType, CompConfig>::iterator itor;
     for (itor = dhtypeMap.begin(); itor != dhtypeMap.end(); ++itor) {
         CompHandler comHandler;
@@ -404,6 +406,7 @@ void ComponentLoader::GetAllHandler(std::map<DHType, CompConfig> &dhtypeMap)
 
 int32_t ComponentLoader::GetHardwareHandler(const DHType dhType, IHardwareHandler *&hardwareHandlerPtr)
 {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
     if (compHandlerMap_.find(dhType) == compHandlerMap_.end()) {
         DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
         return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
@@ -428,6 +431,7 @@ int32_t ComponentLoader::GetHardwareHandler(const DHType dhType, IHardwareHandle
 
 int32_t ComponentLoader::GetSource(const DHType dhType, IDistributedHardwareSource *&sourcePtr)
 {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
     if (compHandlerMap_.find(dhType) == compHandlerMap_.end()) {
         DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
         return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
@@ -452,6 +456,7 @@ int32_t ComponentLoader::GetSource(const DHType dhType, IDistributedHardwareSour
 
 int32_t ComponentLoader::GetSink(const DHType dhType, IDistributedHardwareSink *&sinkPtr)
 {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
     if (compHandlerMap_.find(dhType) == compHandlerMap_.end()) {
         DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
         return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
@@ -542,6 +547,7 @@ int32_t ComponentLoader::UnInit()
 {
     DHLOGI("release all handler");
     DHTraceStart(COMPONENT_RELEASE_START);
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
     int32_t ret = DH_FWK_SUCCESS;
     for (std::map<DHType, CompHandler>::iterator iter = compHandlerMap_.begin();
         iter != compHandlerMap_.end(); ++iter) {
@@ -608,6 +614,7 @@ bool ComponentLoader::IsDHTypeExist(DHType dhType)
 
 int32_t ComponentLoader::GetSourceSaId(const DHType dhType)
 {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
     if (compHandlerMap_.find(dhType) == compHandlerMap_.end()) {
         DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
         return DEFAULT_SA_ID;
@@ -617,6 +624,7 @@ int32_t ComponentLoader::GetSourceSaId(const DHType dhType)
 
 DHType ComponentLoader::GetDHTypeBySrcSaId(const int32_t saId)
 {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
     DHType type = DHType::UNKNOWN;
     for (const auto &handler : compHandlerMap_) {
         if (handler.second.sourceSaId == saId) {
