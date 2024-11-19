@@ -27,7 +27,20 @@ namespace OHOS {
 namespace DistributedHardware {
 using namespace std;
 namespace {
-
+    const std::string SUBTYPE_MIC = "mic";
+    const std::string SUBTYPE_CAMERA = "camera";
+    const std::string NETWORK_ID = "123456789";
+    constexpr uint16_t DEVICE_TYPE_WIFI_CAMERA = 0x08;
+    constexpr uint16_t DEVICE_TYPE_AUDIO = 0x0A;
+    constexpr uint16_t DEVICE_TYPE_PC = 0x0C;
+    constexpr uint16_t DEVICE_TYPE_PHONE = 0x0E;
+    constexpr uint16_t DEVICE_TYPE_PAD = 0x11;
+    constexpr uint16_t DEVICE_TYPE_WATCH = 0x6D;
+    constexpr uint16_t DEVICE_TYPE_CAR = 0x83;
+    constexpr uint16_t DEVICE_TYPE_TV = 0x9C;
+    constexpr uint16_t DEVICE_TYPE_SMART_DISPLAY = 0xA02;
+    constexpr uint16_t DEVICE_TYPE_2IN1 = 0xA2F;
+    constexpr uint16_t DEVICE_TYPE_UNKNOWN = 0x00;
 }
 class ComponentPrivacyTest : public testing::Test {
 public:
@@ -58,107 +71,265 @@ void ComponentPrivacyTest::TearDown()
 
 HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_001, TestSize.Level0)
 {
-    if (compPrivacy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(compPrivacy_ != nullptr);
     ResourceEventType type = ResourceEventType::EVENT_TYPE_QUERY_RESOURCE;
-    std::string subtype = "mic";
-    std::string networkId = "networkId_test";
     bool isSensitive = true;
     bool isSameAccout = true;
-    int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, subtype, networkId, isSensitive, isSameAccout);
+    int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, SUBTYPE_MIC, NETWORK_ID, isSensitive, isSameAccout);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY, ret);
 }
 
 HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_002, TestSize.Level0)
 {
-    if (compPrivacy_ == nullptr) {
-        return;
-    }
-    ResourceEventType type = ResourceEventType::EVENT_TYPE_PULL_UP_PAGE;
-    std::string subtype = "mic";
-    std::string networkId = "networkId_test";
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    ResourceEventType type = ResourceEventType::EVENT_TYPE_QUERY_RESOURCE;
     bool isSensitive = true;
     bool isSameAccout = true;
-    int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, subtype, networkId, isSensitive, isSameAccout);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, SUBTYPE_MIC, "", isSensitive, isSameAccout);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_003, TestSize.Level0)
 {
-    if (compPrivacy_ == nullptr) {
-        return;
-    }
-    ResourceEventType type = ResourceEventType::EVENT_TYPE_CLOSE_PAGE;
-    std::string subtype = "mic";
-    std::string networkId = "networkId_test";
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    ResourceEventType type = ResourceEventType::EVENT_TYPE_PULL_UP_PAGE;
     bool isSensitive = true;
     bool isSameAccout = true;
-    int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, subtype, networkId, isSensitive, isSameAccout);
+    int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, SUBTYPE_MIC, "", isSensitive, isSameAccout);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(ComponentPrivacyTest, OnResourceInfoCallback_001, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_004, TestSize.Level0)
 {
-    if (compPrivacy_ == nullptr) {
-        return;
-    }
-    std::string subtype = "mic";
-    std::string networkId = "networkId_test";
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    ResourceEventType type = ResourceEventType::EVENT_TYPE_PULL_UP_PAGE;
     bool isSensitive = true;
     bool isSameAccout = true;
-    ComponentLoader::GetInstance().resDescMap_[subtype] = true;
-    int32_t ret = compPrivacy_->OnResourceInfoCallback(subtype, networkId, isSensitive, isSameAccout);
-    EXPECT_EQ(ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY, ret);
+    compPrivacy_->eventHandler_ = nullptr;
+    int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, SUBTYPE_MIC, NETWORK_ID, isSensitive, isSameAccout);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_005, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    ResourceEventType type = ResourceEventType::EVENT_TYPE_CLOSE_PAGE;
+    bool isSensitive = true;
+    bool isSameAccout = true;
+    int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, SUBTYPE_MIC, NETWORK_ID, isSensitive, isSameAccout);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_006, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    ResourceEventType type = ResourceEventType::EVENT_TYPE_CLOSE_PAGE;
+    bool isSensitive = true;
+    bool isSameAccout = true;
+    compPrivacy_->eventHandler_ = nullptr;
+    int32_t ret = compPrivacy_->OnPrivaceResourceMessage(type, SUBTYPE_MIC, NETWORK_ID, isSensitive, isSameAccout);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(ComponentPrivacyTest, HandlePullUpPage_002, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    compPrivacy_->eventHandler_ = nullptr;
+    EXPECT_NO_FATAL_FAILURE(compPrivacy_->HandlePullUpPage(SUBTYPE_MIC, NETWORK_ID));
+}
+
+HWTEST_F(ComponentPrivacyTest, HandleClosePage_001, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    compPrivacy_->eventHandler_ = nullptr;
+    EXPECT_NO_FATAL_FAILURE(compPrivacy_->HandleClosePage(SUBTYPE_MIC));
+}
+
+HWTEST_F(ComponentPrivacyTest, StartPrivacePage_001, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    auto ret = compPrivacy_->StartPrivacePage(SUBTYPE_MIC, "");
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_001, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    cJSON *jsonArrayMsg = cJSON_CreateArray();
+    if (jsonArrayMsg == NULL) {
+        return;
+    }
+
+    cJSON *tmpJson = cJSON_CreateObject();
+    if (tmpJson == NULL) {
+        cJSON_Delete(jsonArrayMsg);
+        return;
+    }
+    cJSON_AddNumberToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), 1);
+    cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID.c_str(), NETWORK_ID.c_str());
+    cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
+    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_START_PAGE,
+        std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
+    EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
+}
+
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_002, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    cJSON *jsonArrayMsg = cJSON_CreateArray();
+    if (jsonArrayMsg == NULL) {
+        return;
+    }
+
+    cJSON *tmpJson = cJSON_CreateObject();
+    if (tmpJson == NULL) {
+        cJSON_Delete(jsonArrayMsg);
+        return;
+    }
+    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), SUBTYPE_MIC.c_str());
+    cJSON_AddNumberToObject(tmpJson, PRIVACY_NETWORKID.c_str(), 1);
+    cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
+    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_START_PAGE,
+        std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
+    EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
+}
+
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_003, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    cJSON *jsonArrayMsg = cJSON_CreateArray();
+    if (jsonArrayMsg == NULL) {
+        return;
+    }
+
+    cJSON *tmpJson = cJSON_CreateObject();
+    if (tmpJson == NULL) {
+        cJSON_Delete(jsonArrayMsg);
+        return;
+    }
+    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), SUBTYPE_MIC.c_str());
+    cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID.c_str(), NETWORK_ID.c_str());
+    cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
+    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_START_PAGE,
+        std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
+    EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
+}
+
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_004, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    cJSON *jsonArrayMsg = cJSON_CreateArray();
+    if (jsonArrayMsg == NULL) {
+        return;
+    }
+
+    cJSON *tmpJson = cJSON_CreateObject();
+    if (tmpJson == NULL) {
+        cJSON_Delete(jsonArrayMsg);
+        return;
+    }
+    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), SUBTYPE_CAMERA.c_str());
+    cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID.c_str(), NETWORK_ID.c_str());
+    cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
+    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_START_PAGE,
+        std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
+    EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
+}
+
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_005, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    cJSON *jsonArrayMsg = cJSON_CreateArray();
+    if (jsonArrayMsg == NULL) {
+        return;
+    }
+
+    cJSON *tmpJson = cJSON_CreateObject();
+    if (tmpJson == NULL) {
+        cJSON_Delete(jsonArrayMsg);
+        return;
+    }
+    cJSON_AddNumberToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), 1);
+    cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
+    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE,
+        std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
+    EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
+}
+
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_006, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    cJSON *jsonArrayMsg = cJSON_CreateArray();
+    if (jsonArrayMsg == NULL) {
+        return;
+    }
+
+    cJSON *tmpJson = cJSON_CreateObject();
+    if (tmpJson == NULL) {
+        cJSON_Delete(jsonArrayMsg);
+        return;
+    }
+    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), SUBTYPE_CAMERA.c_str());
+    cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
+    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE,
+        std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
+    EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
+}
+
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_007, TestSize.Level0)
+{
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    cJSON *jsonArrayMsg = cJSON_CreateArray();
+    if (jsonArrayMsg == NULL) {
+        return;
+    }
+
+    cJSON *tmpJson = cJSON_CreateObject();
+    if (tmpJson == NULL) {
+        cJSON_Delete(jsonArrayMsg);
+        return;
+    }
+    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), SUBTYPE_MIC.c_str());
+    cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
+    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE,
+        std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
+    EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
 }
 
 HWTEST_F(ComponentPrivacyTest, DeviceTypeToString_001, TestSize.Level0)
 {
-    if (compPrivacy_ == nullptr) {
-        return;
-    }
-    uint16_t deviceTypeId = 0x08;
-    std::string ret = compPrivacy_->DeviceTypeToString(deviceTypeId);
+    ASSERT_TRUE(compPrivacy_ != nullptr);
+    std::string ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_WIFI_CAMERA);
     EXPECT_EQ("camera", ret);
 
-    deviceTypeId = 0x0A;
-    ret = compPrivacy_->DeviceTypeToString(deviceTypeId);
+    ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_AUDIO);
     EXPECT_EQ("audio", ret);
 
-    deviceTypeId = 0x0C;
-    ret = compPrivacy_->DeviceTypeToString(deviceTypeId);
+    ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_PC);
     EXPECT_EQ("pc", ret);
 
-    deviceTypeId = 0x0E;
-    ret = compPrivacy_->DeviceTypeToString(deviceTypeId);
+    ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_PHONE);
     EXPECT_EQ("phone", ret);
 
-    deviceTypeId = 0x11;
-    ret = compPrivacy_->DeviceTypeToString(deviceTypeId);
+    ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_PAD);
     EXPECT_EQ("pad", ret);
 
-    deviceTypeId = 0x6D;
-    ret = compPrivacy_->DeviceTypeToString(deviceTypeId);
+    ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_WATCH);
     EXPECT_EQ("watch", ret);
 
-    deviceTypeId = 0x83;
-    ret = compPrivacy_->DeviceTypeToString(deviceTypeId);
+    ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_CAR);
     EXPECT_EQ("car", ret);
 
-    deviceTypeId = 0x9C;
-    ret = compPrivacy_->DeviceTypeToString(deviceTypeId);
+    ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_TV);
     EXPECT_EQ("tv", ret);
 
-    deviceTypeId = 0xA02;
-    ret = compPrivacy_->DeviceTypeToString(deviceTypeId);
+    ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_SMART_DISPLAY);
     EXPECT_EQ("display", ret);
 
-    deviceTypeId = 0xA2F;
-    ret = compPrivacy_->DeviceTypeToString(deviceTypeId);
+    ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_2IN1);
     EXPECT_EQ("2in1", ret);
 
-    deviceTypeId = 0x00;
-    ret = compPrivacy_->DeviceTypeToString(deviceTypeId);
+    ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_UNKNOWN);
     EXPECT_EQ("unknown", ret);
 }
 }

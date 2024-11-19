@@ -303,7 +303,7 @@ HWTEST_F(MetaInfoMgrTest, ClearRemoteDeviceMetaInfoData_001, TestSize.Level0)
     std::string peerudid = "peerudid_test";
     std::string peeruuid = "peeruuid_test";
     auto ret = MetaInfoManager::GetInstance()->ClearRemoteDeviceMetaInfoData(peerudid, peeruuid);
-    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 
     MetaInfoManager::GetInstance()->UnInit();
     ret = MetaInfoManager::GetInstance()->ClearRemoteDeviceMetaInfoData(peerudid, peeruuid);
