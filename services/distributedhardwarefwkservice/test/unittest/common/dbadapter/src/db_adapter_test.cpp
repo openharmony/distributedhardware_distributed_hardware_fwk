@@ -410,7 +410,7 @@ HWTEST_F(DbAdapterTest, RemoveDeviceData_001, TestSize.Level0)
         return;
     }
     g_dbAdapterPtr->GetKvStorePtr(true, DistributedKv::DataType::TYPE_DYNAMICAL);
-    EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL, g_dbAdapterPtr->RemoveDeviceData(TEST_DEV_ID_0));
+    EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->RemoveDeviceData(TEST_DEV_ID_0));
 }
 
 /**
