@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,11 +22,20 @@
 #include "napi/native_node_api.h"
 #include "cJSON.h"
 
+constexpr int32_t ALL = 0;
+constexpr int32_t CAMERA = 1;
+constexpr int32_t SCREEN = 8;
+constexpr int32_t MODEM_MIC = 256;
+constexpr int32_t MODEM_SPEAKER = 512;
+constexpr int32_t MIC = 1024;
+constexpr int32_t SPEAKER = 2048;
+
 class DistributedHardwareManager {
 public:
     explicit DistributedHardwareManager(napi_env env, napi_value thisVar);
     ~DistributedHardwareManager();
     static napi_value Init(napi_env env, napi_value exports);
+    static void InitDistributedHardwareType(napi_env env, napi_value exports);
     static napi_value PauseDistributedHardware(napi_env env, napi_callback_info info);
     static napi_value ResumeDistributedHardware(napi_env env, napi_callback_info info);
     static napi_value StopDistributedHardware(napi_env env, napi_callback_info info);

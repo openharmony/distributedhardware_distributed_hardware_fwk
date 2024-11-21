@@ -291,6 +291,38 @@ napi_value DistributedHardwareManager::Init(napi_env env, napi_value exports)
     return exports;
 }
 
+void DistributedHardwareManager::InitDistributedHardwareType(napi_env env, napi_value exports)
+{
+    char propertyName[] = "DistributedHardwareType";
+    napi_value all = nullptr;
+    napi_value camera = nullptr;
+    napi_value screen = nullptr;
+    napi_value modemMic = nullptr;
+    napi_value modemSpk = nullptr;
+    napi_value mic = nullptr;
+    napi_value speaker = nullptr;
+    napi_create_int32(env, ALL, &all);
+    napi_create_int32(env, CAMERA, &camera);
+    napi_create_int32(env, SCREEN, &screen);
+    napi_create_int32(env, MODEM_MIC, &modemMic);
+    napi_create_int32(env, MODEM_SPEAKER, &modemSpk);
+    napi_create_int32(env, MIC, &mic);
+    napi_create_int32(env, SPEAKER, &speaker);
+    napi_property_descriptor desc[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("ALL", all),
+        DECLARE_NAPI_STATIC_PROPERTY("CAMERA", camera),
+        DECLARE_NAPI_STATIC_PROPERTY("SCREEN", screen),
+        DECLARE_NAPI_STATIC_PROPERTY("MODEM_MIC", modemMic),
+        DECLARE_NAPI_STATIC_PROPERTY("MODEM_SPEAKER", modemSpk),
+        DECLARE_NAPI_STATIC_PROPERTY("MIC", mic),
+        DECLARE_NAPI_STATIC_PROPERTY("SPEAKER", speaker)
+    };
+    napi_value obj = nullptr;
+    napi_create_object(env, &obj);
+    napi_define_properties(env, obj, sizeof(desc) / sizeof(desc[0]), desc);
+    napi_set_named_property(env, exports, propertyName, obj);
+}
+
 /*
  * Function registering all props and functions of ohos.distributedhardware
  */
@@ -298,6 +330,7 @@ static napi_value Export(napi_env env, napi_value exports)
 {
     DHLOGI("Export is called!");
     DistributedHardwareManager::Init(env, exports);
+    DistributedHardwareManager::InitDistributedHardwareType(env, exports);
     return exports;
 }
 
