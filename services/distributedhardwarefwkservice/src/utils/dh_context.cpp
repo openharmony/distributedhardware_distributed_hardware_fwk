@@ -281,14 +281,14 @@ std::string DHContext::GetDeviceIdByDBGetPrefix(const std::string &prefix)
 void DHContext::AddRealTimeOnlineDeviceNetworkId(const std::string &networkId)
 {
     DHLOGI("AddRealTimeOnlineDeviceNetworkId: %{public}s", GetAnonyString(networkId).c_str());
-    std::shared_lock<std::shared_mutex> lock(realTimeNetworkIdMutex_);
+    std::unique_lock<std::shared_mutex> lock(realTimeNetworkIdMutex_);
     realTimeOnLineNetworkIdSet_.insert(networkId);
 }
 
 void DHContext::DeleteRealTimeOnlineDeviceNetworkId(const std::string &networkId)
 {
     DHLOGI("DeleteRealTimeOnlineDeviceNetworkId: %{public}s", GetAnonyString(networkId).c_str());
-    std::shared_lock<std::shared_mutex> lock(realTimeNetworkIdMutex_);
+    std::unique_lock<std::shared_mutex> lock(realTimeNetworkIdMutex_);
     realTimeOnLineNetworkIdSet_.erase(networkId);
 }
 
@@ -352,7 +352,7 @@ void DHContext::AddIsomerismConnectDev(const std::string &IsomerismDeviceId)
         return;
     }
     DHLOGI("AddIsomerismConnectDev id = %{public}s", GetAnonyString(IsomerismDeviceId).c_str());
-    std::shared_lock<std::shared_mutex> lock(connectDevMutex_);
+    std::unique_lock<std::shared_mutex> lock(connectDevMutex_);
     connectedDevIds_.insert(IsomerismDeviceId);
 }
 
@@ -362,7 +362,7 @@ void DHContext::DelIsomerismConnectDev(const std::string &IsomerismDeviceId)
         return;
     }
     DHLOGI("DelIsomerismConnectDev id = %{public}s", GetAnonyString(IsomerismDeviceId).c_str());
-    std::shared_lock<std::shared_mutex> lock(connectDevMutex_);
+    std::unique_lock<std::shared_mutex> lock(connectDevMutex_);
     if (connectedDevIds_.find(IsomerismDeviceId) == connectedDevIds_.end()) {
         DHLOGI("DelIsomerismConnectDev is not exist.");
         return;
