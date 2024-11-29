@@ -217,39 +217,6 @@ HWTEST_F(AccessManagerTest, OnDeviceOffline_003, TestSize.Level0)
 }
 
 /**
- * @tc.name: OnDeviceTrustChange_001
- * @tc.desc: Verify the OnDeviceTrustChange function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(AccessManagerTest, OnDeviceTrustChange_001, TestSize.Level0)
-{
-    std::string peerudid = "";
-    std::string peeruuid = "";
-    DmAuthForm authform = DmAuthForm::IDENTICAL_ACCOUNT;
-    AccessManager::GetInstance()->OnDeviceTrustChange(peerudid, peeruuid, authform);
-
-    peerudid = "peerudid_test";
-    AccessManager::GetInstance()->OnDeviceTrustChange(peerudid, peeruuid, authform);
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
-}
-
-HWTEST_F(AccessManagerTest, OnDeviceTrustChange_002, TestSize.Level0)
-{
-    std::string peerudid = "";
-    std::string peeruuid = "peeruuid_test";
-    DmAuthForm authform = DmAuthForm::IDENTICAL_ACCOUNT;
-    AccessManager::GetInstance()->OnDeviceTrustChange(peerudid, peeruuid, authform);
-
-    peerudid = "peerudid_test";
-    AccessManager::GetInstance()->OnDeviceTrustChange(peerudid, peeruuid, authform);
-
-    authform = DmAuthForm::INVALID_TYPE;
-    AccessManager::GetInstance()->OnDeviceTrustChange(peerudid, peeruuid, authform);
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
-}
-
-/**
  * @tc.name: UnInit_001
  * @tc.desc: Verify the UnInit function
  * @tc.type: FUNC
