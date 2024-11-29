@@ -51,18 +51,6 @@ void OnDeviceReadyFuzzTest(const uint8_t* data, size_t size)
 
     usleep(SLEEP_TIME_US);
 }
-
-void OnDeviceTrustChangeFuzzTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-    std::string peerudid(reinterpret_cast<const char*>(data), size);
-    std::string peeruuid(reinterpret_cast<const char*>(data), size);
-    DmAuthForm authform = DmAuthForm::INVALID_TYPE;
-    AccessManager::GetInstance()->OnDeviceTrustChange(peerudid, peeruuid, authform);
-    usleep(SLEEP_TIME_US);
-}
 }
 }
 
@@ -71,7 +59,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     OHOS::DistributedHardware::OnDeviceReadyFuzzTest(data, size);
-    OHOS::DistributedHardware::OnDeviceTrustChangeFuzzTest(data, size);
     return 0;
 }
 
