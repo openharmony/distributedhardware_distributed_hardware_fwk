@@ -23,6 +23,7 @@
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
 #include "constants.h"
+#include "device_manager.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
@@ -180,6 +181,12 @@ void OffLineTask::CreateMetaDisableTask()
 {
     DHLOGI("CreateMetaDisableTask, networkId = %{public}s, uuid = %{public}s", GetAnonyString(GetNetworkId()).c_str(),
         GetAnonyString(GetUUID()).c_str());
+    int32_t deviceType = DmDeviceType::DEVICE_TYPE_UNKNOWN;
+    DeviceManager::GetInstance().GetDeviceType(DH_FWK_PKG_NAME, GetNetworkId(), deviceType);
+    if (deviceType != DmDeviceType::DEVICE_TYPE_PHONE) {
+        DHLOGI("CreateMetaDisableTask, offline device not phone, deviceType = %{public}d", deviceType);
+        return;
+    }
     TaskParam taskParam = {
         .networkId = GetNetworkId(),
         .uuid = GetUUID(),
