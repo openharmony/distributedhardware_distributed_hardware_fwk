@@ -34,8 +34,11 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "local_capability_info_manager.h"
 #include "mock_idistributed_hardware_sink.h"
 #include "mock_idistributed_hardware_source.h"
+#include "meta_capability_info.h"
+#include "meta_info_manager.h"
 #include "nativetoken_kit.h"
 #include "softbus_common.h"
 #include "mock_softbus_bus_center.h"
@@ -59,6 +62,8 @@ const std::string DEV_ID_TEST = "123456";
 const std::string DH_ID_TEST = "Camera_0";
 const std::string NETWORK_TEST = "nt36a637105409e904d4da83790a4a8";
 const std::string UUID_TEST = "bb536a637105409e904d4da78290ab1";
+const std::string UDID_TEST = "45da205792dsad47f5444871161c124";
+const std::string UDIDHASH_TEST = "12dsds4785df176a134fvd551czf454";
 const std::string DH_ATTR_1 = "attr1";
 const std::string DEVICE_NAME = "Dev1";
 const std::string DH_ID_1 = "Camera_1";
@@ -69,6 +74,9 @@ const std::string TEST_DH_VERSION = "3.1";
 const std::shared_ptr<CapabilityInfo> CAP_INFO_TEST =
     std::make_shared<CapabilityInfo>(DH_ID_TEST, DEV_ID_TEST, DEVICE_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1,
     DH_SUBTYPE_TEST);
+const std::shared_ptr<MetaCapabilityInfo> META_INFO_PTR_TEST = std::make_shared<MetaCapabilityInfo>(
+    DH_ID_TEST, DEV_ID_TEST, DEVICE_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1, DH_SUBTYPE_TEST, UDIDHASH_TEST,
+    TEST_SINK_VERSION_1);
 }
 
 void ComponentManagerTest::SetUpTestCase(void)
@@ -154,38 +162,6 @@ HWTEST_F(ComponentManagerTest, unInit_test_001, TestSize.Level0)
     ComponentManager::GetInstance().cameraCompPrivacy_->SetPageFlagTrue();
     auto ret = ComponentManager::GetInstance().UnInit();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
-}
-
-/**
- * @tc.name: enable_test_005
- * @tc.desc: Verify the Enable for Multi-thread
- * @tc.type: FUNC
- * @tc.require: AR000GHSK7
- */
-HWTEST_F(ComponentManagerTest, Enable_test_005, TestSize.Level0)
-{
-    std::string networkId = "";
-    std::string uuid = "";
-    std::string dhId = "";
-    ComponentManager::GetInstance().compSource_.clear();
-    auto ret = ComponentManager::GetInstance().Enable(networkId, uuid, dhId, DHType::CAMERA);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
-}
-
-/**
- * @tc.name: disable_test_005
- * @tc.desc: Verify the Disable for Multi-thread
- * @tc.type: FUNC
- * @tc.require: AR000GHSK9
- */
-HWTEST_F(ComponentManagerTest, Disable_test_005, TestSize.Level0)
-{
-    std::string networkId = "";
-    std::string uuid = "";
-    std::string dhId = "";
-    ComponentManager::GetInstance().compSource_.clear();
-    auto ret = ComponentManager::GetInstance().Disable(networkId, uuid, dhId, DHType::CAMERA);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 /**
@@ -323,8 +299,12 @@ HWTEST_F(ComponentManagerTest, UnInit_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, StartSource_001, TestSize.Level0)
 {
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
     auto ret = ComponentManager::GetInstance().StartSource();
     EXPECT_EQ(true, ret.empty());
+    ComponentManager::GetInstance().compSource_.clear();
 }
 
 /**
@@ -335,9 +315,15 @@ HWTEST_F(ComponentManagerTest, StartSource_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, StartSource_002, TestSize.Level0)
 {
-    DHType dhType = DHType::AUDIO;
-    auto ret = ComponentManager::GetInstance().StartSource(dhType);
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
+    auto ret = ComponentManager::GetInstance().StartSource(DHType::AUDIO);
     EXPECT_EQ(true, ret.empty());
+
+    ret = ComponentManager::GetInstance().StartSource(dhType);
+    EXPECT_EQ(true, ret.empty());
+    ComponentManager::GetInstance().compSource_.clear();
 }
 
 /**
@@ -348,8 +334,12 @@ HWTEST_F(ComponentManagerTest, StartSource_002, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, StartSink_001, TestSize.Level0)
 {
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSink *sinkPtr = nullptr;
+    ComponentManager::GetInstance().compSink_.insert(std::make_pair(dhType, sinkPtr));
     auto ret = ComponentManager::GetInstance().StartSink();
     EXPECT_EQ(true, ret.empty());
+    ComponentManager::GetInstance().compSink_.clear();
 }
 
 /**
@@ -360,9 +350,12 @@ HWTEST_F(ComponentManagerTest, StartSink_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, StartSink_002, TestSize.Level0)
 {
-    DHType dhType = DHType::AUDIO;
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSink *sinkPtr = nullptr;
+    ComponentManager::GetInstance().compSink_.insert(std::make_pair(dhType, sinkPtr));
     auto ret = ComponentManager::GetInstance().StartSink(dhType);
     EXPECT_EQ(true, ret.empty());
+    ComponentManager::GetInstance().compSink_.clear();
 }
 
 /**
@@ -373,8 +366,12 @@ HWTEST_F(ComponentManagerTest, StartSink_002, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, StopSource_001, TestSize.Level0)
 {
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
     auto ret = ComponentManager::GetInstance().StopSource();
     EXPECT_EQ(true, ret.empty());
+    ComponentManager::GetInstance().compSource_.clear();
 }
 
 /**
@@ -385,8 +382,12 @@ HWTEST_F(ComponentManagerTest, StopSource_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, StopSink_001, TestSize.Level0)
 {
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSink *sinkPtr = nullptr;
+    ComponentManager::GetInstance().compSink_.insert(std::make_pair(dhType, sinkPtr));
     auto ret = ComponentManager::GetInstance().StopSink();
     EXPECT_EQ(true, ret.empty());
+    ComponentManager::GetInstance().compSink_.clear();
 }
 
 /**
@@ -444,6 +445,21 @@ HWTEST_F(ComponentManagerTest, Enable_001, TestSize.Level0)
     DHType dhType = DHType::CAMERA;
     int32_t ret = ComponentManager::GetInstance().Enable(networkId, uuid, dhId, dhType);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Enable(NETWORK_TEST, uuid, dhId, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Enable(NETWORK_TEST, UUID_TEST, dhId, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Enable(networkId, UUID_TEST, DH_ID_TEST, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Enable(networkId, uuid, DH_ID_TEST, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Enable(networkId, UUID_TEST, dhId, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 /**
@@ -454,14 +470,15 @@ HWTEST_F(ComponentManagerTest, Enable_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, Enable_002, TestSize.Level0)
 {
-    std::string networkId;
-    std::string uuid;
-    std::string dhId;
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
     ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
-    int32_t ret = ComponentManager::GetInstance().Enable(networkId, uuid, dhId, dhType);
+    int32_t ret = ComponentManager::GetInstance().Enable(NETWORK_TEST, UUID_TEST, DH_ID_TEST, DHType::AUDIO);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Enable(NETWORK_TEST, UUID_TEST, DH_ID_TEST, dhType);
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED, ret);
+    ComponentManager::GetInstance().compSource_.clear();
 }
 
 /**
@@ -476,8 +493,23 @@ HWTEST_F(ComponentManagerTest, Disable_001, TestSize.Level0)
     std::string networkId;
     std::string uuid;
     std::string dhId;
-    DHType dhType = DHType::INPUT;
+    DHType dhType = DHType::CAMERA;
     int32_t ret = ComponentManager::GetInstance().Disable(networkId, uuid, dhId, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Disable(NETWORK_TEST, uuid, dhId, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Disable(NETWORK_TEST, UUID_TEST, dhId, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Disable(networkId, UUID_TEST, DH_ID_TEST, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Disable(networkId, uuid, DH_ID_TEST, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Disable(networkId, UUID_TEST, dhId, dhType);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
@@ -489,14 +521,27 @@ HWTEST_F(ComponentManagerTest, Disable_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, Disable_002, TestSize.Level0)
 {
-    std::string networkId;
-    std::string uuid;
-    std::string dhId;
-    DHType dhType = DHType::INPUT;
+    DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
     ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
-    int32_t ret = ComponentManager::GetInstance().Disable(networkId, uuid, dhId, dhType);
+    int32_t ret = ComponentManager::GetInstance().Disable(NETWORK_TEST, UUID_TEST, DH_ID_TEST, DHType::AUDIO);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().Disable(NETWORK_TEST, UUID_TEST, DH_ID_TEST, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+    ComponentManager::GetInstance().compSource_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, Disable_003, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
+    std::string udIdTets = "123456789";
+    DHContext::GetInstance().AddOnlineDevice(udIdTets, UUID_TEST, udIdTets);
+    int32_t ret = ComponentManager::GetInstance().Disable(NETWORK_TEST, UUID_TEST, DH_ID_TEST, dhType);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(NETWORK_TEST);
 }
 
 /**
@@ -527,6 +572,123 @@ HWTEST_F(ComponentManagerTest, GetDHType_002, TestSize.Level0)
     EXPECT_EQ(DHType::CAMERA, ret);
 }
 
+HWTEST_F(ComponentManagerTest, GetEnableCapParam_001, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    EnableParam param;
+    std::shared_ptr<CapabilityInfo> capability = nullptr;
+    int32_t ret = ComponentManager::GetInstance().GetEnableCapParam("", "", dhType, param, capability);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().GetEnableCapParam(NETWORK_TEST, "", dhType, param, capability);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().GetEnableCapParam("", UUID_TEST, dhType, param, capability);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+HWTEST_F(ComponentManagerTest, GetEnableCapParam_002, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    EnableParam param;
+    std::shared_ptr<CapabilityInfo> capability = nullptr;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[DEV_ID_TEST] = CAP_INFO_TEST;
+    int32_t ret = ComponentManager::GetInstance().GetEnableCapParam(NETWORK_TEST, UUID_TEST, dhType, param, capability);
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED, ret);
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, GetEnableMetaParam_001, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    EnableParam param;
+    std::shared_ptr<MetaCapabilityInfo> metaCapPtr = nullptr;
+    int32_t ret = ComponentManager::GetInstance().GetEnableMetaParam("", "", dhType, param, metaCapPtr);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().GetEnableMetaParam(NETWORK_TEST, "", dhType, param, metaCapPtr);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().GetEnableMetaParam("", UUID_TEST, dhType, param, metaCapPtr);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+HWTEST_F(ComponentManagerTest, GetEnableMetaParam_002, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    EnableParam param;
+    std::shared_ptr<MetaCapabilityInfo> metaCapPtr = nullptr;
+    std::string key = UDIDHASH_TEST + "###" + DH_ID_TEST;
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = META_INFO_PTR_TEST;
+    auto ret = ComponentManager::GetInstance().GetEnableMetaParam(NETWORK_TEST, UUID_TEST, dhType, param, metaCapPtr);
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED, ret);
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, GetCapParam_001, TestSize.Level0)
+{
+    std::shared_ptr<CapabilityInfo> capability = nullptr;
+    int32_t ret = ComponentManager::GetInstance().GetCapParam("", "", capability);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().GetCapParam(UUID_TEST, "", capability);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().GetCapParam("", DH_ID_TEST, capability);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+HWTEST_F(ComponentManagerTest, GetCapParam_002, TestSize.Level0)
+{
+    std::shared_ptr<CapabilityInfo> capability = nullptr;
+    std::string deviceId = "123456789";
+    std::string key = deviceId + "###" + DH_ID_TEST;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capability;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capability;
+    int32_t ret = ComponentManager::GetInstance().GetCapParam(UUID_TEST, DH_ID_TEST, capability);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND, ret);
+
+    deviceId = Sha256(UUID_TEST);
+    key = deviceId + "###" + DH_ID_TEST;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capability;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capability;
+    ret = ComponentManager::GetInstance().GetCapParam(UUID_TEST, DH_ID_TEST, capability);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capability;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = CAP_INFO_TEST;
+    ret = ComponentManager::GetInstance().GetCapParam(UUID_TEST, DH_ID_TEST, capability);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = CAP_INFO_TEST;
+    ret = ComponentManager::GetInstance().GetCapParam(UUID_TEST, DH_ID_TEST, capability);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(ComponentManagerTest, GetMetaParam_001, TestSize.Level0)
+{
+    std::shared_ptr<MetaCapabilityInfo> metaCapInfo = nullptr;
+    int32_t ret = ComponentManager::GetInstance().GetMetaParam("", "", metaCapInfo);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().GetMetaParam(UUID_TEST, "", metaCapInfo);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = ComponentManager::GetInstance().GetMetaParam("", DH_ID_TEST, metaCapInfo);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+HWTEST_F(ComponentManagerTest, GetMetaParam_002, TestSize.Level0)
+{
+    std::shared_ptr<MetaCapabilityInfo> metaCapInfo = nullptr;
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    std::string key = UDIDHASH_TEST + "###" + DH_ID_TEST;
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = metaCapInfo;
+    int32_t ret = ComponentManager::GetInstance().GetMetaParam(UUID_TEST, DH_ID_TEST, metaCapInfo);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND, ret);
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
+}
+
 /**
  * @tc.name: GetEnableParam_001
  * @tc.desc: Verify the GetEnableParam function
@@ -541,7 +703,7 @@ HWTEST_F(ComponentManagerTest, GetEnableParam_001, TestSize.Level0)
     DHType dhType = DHType::CAMERA;
     EnableParam param;
     int32_t ret = ComponentManager::GetInstance().GetEnableParam(networkId, uuid, dhId, dhType, param);
-    EXPECT_NE(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED, ret);
 }
 
 /**
@@ -645,14 +807,31 @@ HWTEST_F(ComponentManagerTest, GetVersionFromVerInfoMgr_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetSinkVersion_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetVersion_001, TestSize.Level0)
 {
-    std::string networkId;
     std::string uuid;
     DHType dhType = DHType::CAMERA;
     std::string sinkVersion;
     int32_t ret = ComponentManager::GetInstance().GetVersion(uuid, dhType, sinkVersion, true);
-    EXPECT_NE(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+HWTEST_F(ComponentManagerTest, GetVersion_002, TestSize.Level0)
+{
+    std::string uuid = "123456798";
+    DHType dhType = DHType::CAMERA;
+    std::string sinkVersion;
+    int32_t ret = ComponentManager::GetInstance().GetVersion(uuid, dhType, sinkVersion, true);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+HWTEST_F(ComponentManagerTest, GetVersion_003, TestSize.Level0)
+{
+    std::string uuid = "123456798";
+    DHType dhType = DHType::CAMERA;
+    std::string sinkVersion;
+    int32_t ret = ComponentManager::GetInstance().GetVersion(UUID_TEST, dhType, sinkVersion, true);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 /**
@@ -665,8 +844,9 @@ HWTEST_F(ComponentManagerTest, UpdateVersionCache_001, TestSize.Level0)
 {
     std::string uuid;
     VersionInfo versionInfo;
-    ComponentManager::GetInstance().UpdateVersionCache(uuid, versionInfo);
-    EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateVersionCache(uuid, versionInfo););
+
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateVersionCache(UUID_TEST, versionInfo));
 }
 
 /**
@@ -730,9 +910,21 @@ HWTEST_F(ComponentManagerTest, ReStartSA_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, RecoverDistributedHardware_001, TestSize.Level0)
 {
+    std::shared_ptr<MetaCapabilityInfo> metaCapInfo = std::make_shared<MetaCapabilityInfo>(
+        "", "", "devName_test", TEST_DEV_TYPE_PAD, DHType::CAMERA, "attrs_test", "subtype", "", "1.0");
     DHType dhType = DHType::CAMERA;
-    ComponentManager::GetInstance().RecoverDistributedHardware(dhType);
-    EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
+    std::string udidHash = Sha256(UDID_TEST);
+    std::string key = udidHash + "###" + DH_ID_TEST;
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = metaCapInfo;
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RecoverDistributedHardware(dhType));
+
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, "");
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = META_INFO_PTR_TEST;
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RecoverDistributedHardware(dhType));
+
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = META_INFO_PTR_TEST;
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RecoverDistributedHardware(dhType));
 }
 
 /**
@@ -758,9 +950,10 @@ HWTEST_F(ComponentManagerTest, RetryGetEnableParam_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, IsIdenticalAccount_001, TestSize.Level0)
 {
-    DHType dhType = DHType::CAMERA;
-    ComponentManager::GetInstance().RecoverDistributedHardware(dhType);
-    auto ret = ComponentManager::GetInstance().IsIdenticalAccount(NETWORK_TEST);
+    auto ret = ComponentManager::GetInstance().IsIdenticalAccount("");
+    EXPECT_EQ(ret, false);
+
+    ret = ComponentManager::GetInstance().IsIdenticalAccount(NETWORK_TEST);
     EXPECT_EQ(ret, false);
 }
 
@@ -794,35 +987,137 @@ HWTEST_F(ComponentManagerTest, OnRegisterResult_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_UNREGISTER_FAILED);
 }
 
+HWTEST_F(ComponentManagerTest, UpdateBusinessState_001, TestSize.Level0)
+{
+    BusinessState state = BusinessState::UNKNOWN;
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateBusinessState("", "", state));
+
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateBusinessState(NETWORK_TEST, "", state));
+
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateBusinessState("", DH_ID_TEST, state));
+
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateBusinessState(NETWORK_TEST, DH_ID_TEST, state));
+}
+
+HWTEST_F(ComponentManagerTest, UpdateBusinessState_002, TestSize.Level0)
+{
+    BusinessState state = BusinessState::IDLE;
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateBusinessState(NETWORK_TEST, DH_ID_TEST, state));
+
+    TaskParam taskParam = {
+        .networkId = NETWORK_TEST,
+        .uuid = UUID_TEST,
+        .udid = UDID_TEST,
+        .dhId = DH_ID_TEST,
+        .dhType = DHType::CAMERA,
+    };
+    ComponentManager::GetInstance().SaveNeedRefreshTask(taskParam);
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateBusinessState(NETWORK_TEST, DH_ID_TEST, state));
+}
+
 HWTEST_F(ComponentManagerTest, QueryBusinessState_001, TestSize.Level0)
 {
-    std::string networkId = "networkId_test";
-    std::string dhId = "dhId_test";
-    BusinessState state = BusinessState::UNKNOWN;
-    ComponentManager::GetInstance().UpdateBusinessState(networkId, dhId, state);
+    BusinessState ret = ComponentManager::GetInstance().QueryBusinessState("", "");
+    EXPECT_EQ(BusinessState::UNKNOWN, ret);
 
-    state = BusinessState::IDLE;
-    ComponentManager::GetInstance().needRefreshTaskParams_.clear();
-    ComponentManager::GetInstance().UpdateBusinessState(networkId, dhId, state);
+    ret = ComponentManager::GetInstance().QueryBusinessState(UUID_TEST, "");
+    EXPECT_EQ(BusinessState::UNKNOWN, ret);
 
-    TaskParam taskParam;
-    ComponentManager::GetInstance().needRefreshTaskParams_[{networkId, dhId}] = taskParam;
-    ComponentManager::GetInstance().UpdateBusinessState(networkId, dhId, state);
+    ret = ComponentManager::GetInstance().QueryBusinessState("", DH_ID_TEST);
+    EXPECT_EQ(BusinessState::UNKNOWN, ret);
+}
 
-    std::string uuid = "uuid_test";
-    ComponentManager::GetInstance().dhBizStates_[{uuid, dhId}] = state;
-    BusinessState ret = ComponentManager::GetInstance().QueryBusinessState(uuid, dhId);
+HWTEST_F(ComponentManagerTest, QueryBusinessState_002, TestSize.Level0)
+{
+    BusinessState ret = ComponentManager::GetInstance().QueryBusinessState(NETWORK_TEST, DH_ID_TEST);
     EXPECT_EQ(BusinessState::IDLE, ret);
 
     ComponentManager::GetInstance().dhBizStates_.clear();
-    ret = ComponentManager::GetInstance().QueryBusinessState(uuid, dhId);
+    ret = ComponentManager::GetInstance().QueryBusinessState(NETWORK_TEST, DH_ID_TEST);
     EXPECT_EQ(BusinessState::UNKNOWN, ret);
+}
+
+HWTEST_F(ComponentManagerTest, TriggerFullCapsSync_001, TestSize.Level0)
+{
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().TriggerFullCapsSync(""));
+
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().TriggerFullCapsSync(NETWORK_TEST));
+
+    ComponentManager::GetInstance().dhCommToolPtr_ = std::make_shared<DHCommTool>();
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().TriggerFullCapsSync(NETWORK_TEST));
 }
 
 HWTEST_F(ComponentManagerTest, GetDHSourceInstance_001, TestSize.Level0)
 {
     const IDistributedHardwareSource *sourcePtr = ComponentManager::GetInstance().GetDHSourceInstance(DHType::UNKNOWN);
     EXPECT_EQ(nullptr, sourcePtr);
+}
+
+HWTEST_F(ComponentManagerTest, GetDHSourceInstance_002, TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
+    IDistributedHardwareSource *dhSourcePtr = ComponentManager::GetInstance().GetDHSourceInstance(dhType);
+    EXPECT_EQ(nullptr, dhSourcePtr);
+    ComponentManager::GetInstance().compSource_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, InitSAMonitor_001, TestSize.Level0)
+{
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
+    ComponentManager::GetInstance().compSrcSaId_.insert(std::make_pair(DHType::AUDIO, 1));
+    auto ret = ComponentManager::GetInstance().InitSAMonitor();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+
+    ComponentManager::GetInstance().compSrcSaId_.insert(std::make_pair(dhType, 1));
+    ret = ComponentManager::GetInstance().InitSAMonitor();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    ComponentManager::GetInstance().compSource_.clear();
+    ComponentManager::GetInstance().compSrcSaId_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, RegisterDHStateListener_001, TestSize.Level0)
+{
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RegisterDHStateListener());
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnregisterDHStateListener());
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RegisterDataSyncTriggerListener());
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnregisterDataSyncTriggerListener());
+    ComponentManager::GetInstance().compSource_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, InitDHCommTool_001, TestSize.Level0)
+{
+    ComponentManager::GetInstance().dhCommToolPtr_ = nullptr;
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().InitDHCommTool());
+}
+
+HWTEST_F(ComponentManagerTest, UnInitSAMonitor_001, TestSize.Level0)
+{
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
+    DHType dhType = DHType::CAMERA;
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
+    ComponentManager::GetInstance().compSrcSaId_.insert(std::make_pair(DHType::AUDIO, 1));
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnInitSAMonitor());
+
+    ComponentManager::GetInstance().compSrcSaId_.insert(std::make_pair(dhType, 1));
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnInitSAMonitor());
+    ComponentManager::GetInstance().compSource_.clear();
+    ComponentManager::GetInstance().compSrcSaId_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, UnInitDHCommTool_001, TestSize.Level0)
+{
+    ComponentManager::GetInstance().dhCommToolPtr_ = nullptr;
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnInitDHCommTool());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
