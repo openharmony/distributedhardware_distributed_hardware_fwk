@@ -120,10 +120,30 @@ bool DistributedHardwareManager::IsSystemApp()
     return OHOS::Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(tokenId);
 }
 
+napi_value DistributedHardwareManager::CreateBusinessErr(napi_env env, int32_t errCode)
+{
+    napi_value error = nullptr;
+    switch (static_cast<DHBussinessErrorCode>(errCode)) {
+        case ERR_NOT_SYSTEM_APP:
+            napi_throw_error(env, std::to_string(errCode).c_str(), ERR_MESSAGE_NOT_SYSTEM_APP.c_str());
+            break;
+        case ERR_NO_PERMISSION:
+            napi_throw_error(env, std::to_string(errCode).c_str(), ERR_MESSAGE_NO_PERMISSION.c_str());
+            break;
+        case ERR_INVALID_PARAMS:
+            napi_throw_error(env, std::to_string(errCode).c_str(), ERR_MESSAGE_INVALID_PARAMS.c_str());
+            break;
+        default:
+            break;
+    }
+    return error;
+}
+
 napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, napi_callback_info info)
 {
     DHLOGI("PauseDistributedHardware in");
     if (!IsSystemApp()) {
+        CreateBusinessErr(env, ERR_NOT_SYSTEM_APP);
         return nullptr;
     }
     napi_value result = nullptr;
@@ -176,6 +196,7 @@ napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, n
 {
     DHLOGI("ResumeDistributedHardware in");
     if (!IsSystemApp()) {
+        CreateBusinessErr(env, ERR_NOT_SYSTEM_APP);
         return nullptr;
     }
     napi_value result = nullptr;
@@ -228,6 +249,7 @@ napi_value DistributedHardwareManager::StopDistributedHardware(napi_env env, nap
 {
     DHLOGI("StopDistributedHardware in");
     if (!IsSystemApp()) {
+        CreateBusinessErr(env, ERR_NOT_SYSTEM_APP);
         return nullptr;
     }
     napi_value result = nullptr;
