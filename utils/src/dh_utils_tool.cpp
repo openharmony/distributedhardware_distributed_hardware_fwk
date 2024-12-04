@@ -168,7 +168,7 @@ bool IsUInt8(const cJSON* jsonObj)
     if (jsonObj == NULL || !cJSON_IsNumber(jsonObj)) {
         return false;
     }
-    return (jsonObj->valueint >= 0 && jsonObj->valueint <= UINT8_MAX);
+    return (jsonObj->valueint >= 0 && static_cast<uint8_t>(jsonObj->valueint) <= UINT8_MAX);
 }
 
 bool IsUInt16(const cJSON* jsonObj)
@@ -176,7 +176,7 @@ bool IsUInt16(const cJSON* jsonObj)
     if (jsonObj == NULL || !cJSON_IsNumber(jsonObj)) {
         return false;
     }
-    return (jsonObj->valueint >= 0 && jsonObj->valueint <= UINT16_MAX);
+    return (jsonObj->valueint >= 0 && static_cast<uint16_t>(jsonObj->valueint) <= UINT16_MAX);
 }
 
 bool IsInt32(const cJSON* jsonObj)
@@ -192,7 +192,7 @@ bool IsUInt32(const cJSON* jsonObj)
     if (jsonObj == NULL || !cJSON_IsNumber(jsonObj)) {
         return false;
     }
-    return (jsonObj->valueint >= 0 && jsonObj->valueint <= UINT32_MAX);
+    return (jsonObj->valueint >= 0 && static_cast<uint32_t>(jsonObj->valueint) <= UINT32_MAX);
 }
 
 bool IsBool(const cJSON* jsonObj)
