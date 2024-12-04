@@ -21,6 +21,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 const std::string PLUGINNAME = "dsoftbus_output_plugin";
+constexpr uint32_t SLEEP_TIME_US = 1000 * 1000;
 void OutputControllerTest::SetUpTestCase(void) {}
 
 void OutputControllerTest::TearDownTestCase(void) {}
@@ -92,6 +93,7 @@ HWTEST_F(OutputControllerTest, StartControl_001, testing::ext::TestSize.Level1)
 
     controller->SetControlStatus(OutputController::ControlStatus::START);
     ret = controller->StartControl();
+    usleep(SLEEP_TIME_US);
     EXPECT_EQ(OutputController::ControlStatus::STARTED, ret);
 }
 
