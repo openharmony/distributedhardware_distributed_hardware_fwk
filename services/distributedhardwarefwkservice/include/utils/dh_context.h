@@ -146,7 +146,7 @@ private:
     std::unordered_set<std::string> connectedDevIds_;
 
     std::shared_mutex connectDevMutex_;
-    };
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
