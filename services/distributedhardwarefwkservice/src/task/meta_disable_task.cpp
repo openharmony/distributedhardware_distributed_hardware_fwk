@@ -64,14 +64,16 @@ void MetaDisableTask::DoTaskInner()
     auto result = Disable();
     auto state = (result == DH_FWK_SUCCESS) ? TaskState::SUCCESS : TaskState::FAIL;
     SetTaskState(state);
+
+    DHLOGD("finish meta disable task, remove it, id = %{public}s", GetId().c_str());
+    std::string taskId = GetId();
+    TaskBoard::GetInstance().RemoveTask(taskId);
     /* if finish task, notify father finish */
     std::shared_ptr<Task> father = GetFatherTask().lock();
     if (father != nullptr) {
         auto offLineTask = std::static_pointer_cast<OffLineTask>(father);
-        offLineTask->NotifyFatherFinish(GetId());
+        offLineTask->NotifyFatherFinish(taskId);
     }
-    DHLOGD("finish meta disable task, remove it, id = %{public}s", GetId().c_str());
-    TaskBoard::GetInstance().RemoveTask(GetId());
 }
 
 int32_t MetaDisableTask::Disable()
