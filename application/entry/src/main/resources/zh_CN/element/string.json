@@ -1,76 +1,112 @@
 {
-    "string":[
-        {
-            "name":"module_desc",
-            "value":"模块描述"
-        },
-        {
-            "name":"EntryAbility_desc",
-            "value":"description"
-        },
-        {
-            "name":"EntryAbility_label",
-            "value":"分布式硬件控制UI"
-        },
-        {
-            "name":"connected_to",
-            "value":"已连接至%1$s"
-        },
-        {
-            "name":"stop_device",
-            "value":"您可以断开连接以停止使用此设备的%1$s"
-        },
-        {
-            "name":"pause",
-            "value":"暂停"
-        },
-        {
-            "name":"continue",
-            "value":"继续"
-        },
-        {
-            "name":"DHTypeName_Camera",
-            "value":"相机"
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"麦克风"
-        },
-        {
-            "name":"disconnect",
-            "value":"断开连接"
-        },
-        {
-            "name":"ContinueSwitchAbility_desc",
-            "value":"description"
-        },
-        {
-            "name":"ContinueSwitchAbility_label",
-            "value":"label"
-        },
-        {
-            "name":"continue_title",
-            "value":"接续"
-        },
-        {
-            "name":"continue_desc_text",
-            "value":"在一台设备上浏览或编辑内容后，然后在附近另一台登录相同华为账号的设备的桌面任务栏上点击接续图标，即可继续使用。%s"
-        },
-        {
-            "name":"multi_device_collaboration",
-            "value":"多设备协同"
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"本服务需要使用 WLAN 和蓝牙功能，读取并传送本设备名称到要接续的设备。打开开关，即表示您同意上述内容。"
-        },
-        {
-            "name": "update_version_prompt",
-            "value":"对方需升级至 HarmonyOS NEXT 及以上版本"
-        },
-        {
-            "name": "learn_more",
-            "value":"了解详情"
-        }
-    ]
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "分布式硬件控制UI"
+    },
+    {
+      "name": "connected_to",
+      "value": "已连接至%1$s",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "stop_device",
+      "value": "您可以断开连接以停止使用此设备的%1$s",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "pause",
+      "value": "暂停",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "continue",
+      "value": "继续",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Camera",
+      "value": "相机",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "麦克风",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "disconnect",
+      "value": "断开连接",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "ContinueSwitchAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "ContinueSwitchAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "continue_title",
+      "value": "接续",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "continue_desc_text",
+      "value": "在一台设备上浏览或编辑内容，然后在附近另一台登录相同华为账号的设备的桌面任务栏上点击接续图标，即可继续使用。%s",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "multi_device_collaboration",
+      "value": "多设备协同"
+    },
+    {
+      "name": "continue_privacy_text",
+      "value": "本服务需要使用 WLAN 和蓝牙功能，读取并传送本设备名称到要接续的设备。打开开关，即表示您同意上述内容。",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "update_version_prompt",
+      "value": "对方需升级至 HarmonyOS NEXT 及以上版本",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "learn_more",
+      "value": "了解详情",
+      "attr": {
+        "priority": "translate"
+      }
+    }
+  ]
 }

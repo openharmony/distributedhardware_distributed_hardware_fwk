@@ -14,31 +14,52 @@
     },
     {
       "name": "connected_to",
-      "value": "Connected to %1$s"
+      "value": "Connected to %1$s",
+      "attr": {
+        "priority": "LT"
+      }
     },
     {
       "name": "stop_device",
-      "value": "Disconnect to stop using this device's %1$s."
+      "value": "Disconnect to stop using this device's %1$s.",
+      "attr": {
+        "priority": "LT"
+      }
     },
     {
       "name": "pause",
-      "value": "Pause"
+      "value": "Pause",
+      "attr": {
+        "priority": "LT"
+      }
     },
     {
       "name": "continue",
-      "value": "Resume"
+      "value": "Resume",
+      "attr": {
+        "priority": "LT"
+      }
     },
     {
       "name": "DHTypeName_Camera",
-      "value": "camera"
+      "value": "camera",
+      "attr": {
+        "priority": "LT"
+      }
     },
     {
       "name": "DHTypeName_Mic",
-      "value": "microphone"
+      "value": "microphone",
+      "attr": {
+        "priority": "LT"
+      }
     },
     {
       "name": "disconnect",
-      "value": "Disconnect"
+      "value": "Disconnect",
+      "attr": {
+        "priority": "LT"
+      }
     },
     {
       "name": "ContinueSwitchAbility_desc",
@@ -50,11 +71,17 @@
     },
     {
       "name": "continue_title",
-      "value": "Handover"
+      "value": "Handover",
+      "attr": {
+        "priority": "LT"
+      }
     },
     {
       "name": "continue_desc_text",
-      "value":"Start viewing or editing content on one device, and then instantly pick it up on a nearby device using the same HUAWEI ID. When Handover is available, an icon will appear in the app dock. %s"
+      "value": "Start viewing or editing content on one device, and then instantly pick it up on a nearby device logged in to the same HUAWEI ID. When Handover is available, an icon will appear in the app dock. %s",
+      "attr": {
+        "priority": "LT"
+      }
     },
     {
       "name": "multi_device_collaboration",
@@ -62,15 +89,24 @@
     },
     {
       "name": "continue_privacy_text",
-      "value":"This service uses Bluetooth and WLAN, and needs to send the name of this device to devices you handover to. By turning this on, you agree to these terms."
+      "value": "This service uses Bluetooth and WLAN and needs to send this device's name to devices you handover to. By turning this on, you agree to these terms.",
+      "attr": {
+        "priority": "LT"
+      }
     },
     {
       "name": "update_version_prompt",
-      "value":"Both devices must be running HarmonyOS NEXT"
+      "value": "Both devices must be running HarmonyOS NEXT",
+      "attr": {
+        "priority": "LT"
+      }
     },
     {
       "name": "learn_more",
-      "value":"Learn more"
+      "value": "Learn more",
+      "attr": {
+        "priority": "LT"
+      }
     }
   ]
 }
