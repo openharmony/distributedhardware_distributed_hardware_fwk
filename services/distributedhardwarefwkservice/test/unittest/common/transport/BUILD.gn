@@ -56,6 +56,7 @@ ohos_unittest("TransportTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",

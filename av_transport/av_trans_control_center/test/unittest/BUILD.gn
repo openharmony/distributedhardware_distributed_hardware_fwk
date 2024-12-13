@@ -66,6 +66,7 @@ ohos_unittest("AvTransControlCenterTest") {
     "bounds_checking_function:libsec_shared",
     "cJSON:cjson",
     "c_utils:utils",
+    "dsoftbus:softbus_client",
     "ipc:ipc_core",
   ]
 

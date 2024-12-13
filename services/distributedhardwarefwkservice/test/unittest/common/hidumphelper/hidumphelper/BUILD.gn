@@ -67,6 +67,7 @@ ohos_unittest("HidumpHelperTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",
     "kv_store:distributeddata_inner",

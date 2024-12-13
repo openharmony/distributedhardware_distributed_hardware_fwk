@@ -51,6 +51,7 @@ ohos_fuzztest("ComponentManagerFuzzTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "ipc:ipc_single",
   ]
