@@ -43,6 +43,7 @@ public:
                                  const int32_t destLen);
     static void JsObjectToInt(const napi_env &env, const napi_value &object, const std::string &fieldStr,
                               int32_t &fieldRef);
+    static napi_value CreateBusinessErr(napi_env env, int32_t errCode);
 
 private:
     static bool IsSystemApp();
