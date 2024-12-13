@@ -47,6 +47,7 @@ ohos_fuzztest("OnSoftbusTimeSyncResultFuzzTest") {
 
   external_deps = [
     "c_utils:utils",
+    "dsoftbus:softbus_client",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
   ]
