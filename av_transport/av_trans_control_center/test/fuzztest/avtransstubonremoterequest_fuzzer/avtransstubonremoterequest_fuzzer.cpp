@@ -15,6 +15,7 @@
 
 #include "avtransstubonremoterequest_fuzzer.h"
 
+#include <fuzzer/FuzzedDataProvider.h>
 #include "av_trans_control_center_callback_stub.h"
 #include "av_trans_control_center_callback.h"
 #include "av_sync_utils.h"
@@ -52,8 +53,9 @@ void AVTransStubOnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
         pdata.WriteUint32(tag);
         pdata.WriteString(value);
     } else if (code == (uint32_t)IAVTransControlCenterCallback::Message::SET_SHARED_MEMORY) {
-        int32_t fd = *(reinterpret_cast<const int32_t*>(data));
-        int32_t len = *(reinterpret_cast<const int32_t*>(data));
+        FuzzedDataProvider fdp(data, size);
+        int32_t fd = fdp.ConsumeIntegral<int32_t>();
+        int32_t len = fdp.ConsumeIntegral<int32_t>();
         std::string name(reinterpret_cast<const char*>(data), size);
         pdata.WriteFileDescriptor(fd);
         pdata.WriteInt32(len);

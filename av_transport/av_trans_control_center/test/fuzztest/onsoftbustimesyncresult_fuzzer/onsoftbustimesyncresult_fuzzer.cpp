@@ -19,6 +19,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <fuzzer/FuzzedDataProvider.h>
 #include <string>
 #include <thread>
 #include <unistd.h>
@@ -36,8 +37,9 @@ void OnSoftbusTimeSyncResultFuzzTest(const uint8_t *data, size_t size)
 
     int32_t result = *(reinterpret_cast<const int32_t*>(data));
     TimeSyncResultInfo info = {};
-    info.result.millisecond = *(reinterpret_cast<const int32_t*>(data));
-    info.result.microsecond = *(reinterpret_cast<const int32_t*>(data));
+    FuzzedDataProvider fdp(data, size);
+    info.result.millisecond = fdp.ConsumeIntegral<int32_t>();
+    info.result.microsecond = fdp.ConsumeIntegral<int32_t>();
 
     SoftbusChannelAdapter::GetInstance().OnSoftbusTimeSyncResult(&info, result);
 }
