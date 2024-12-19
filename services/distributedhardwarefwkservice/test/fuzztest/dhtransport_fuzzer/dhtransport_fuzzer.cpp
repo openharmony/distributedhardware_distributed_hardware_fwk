@@ -48,8 +48,7 @@ void DhTransportOnBytesReceivedFuzzTest(const uint8_t* data, size_t size)
     std::string remoteNetworkId = "remoteNetworkId_test";
     dhTransportTest->remoteDevSocketIds_[remoteNetworkId] = socketId;
     const char *paramData = fdp.ConsumeRandomLengthString().c_str();
-    uint32_t dataLen = fdp.ConsumeIntegral<uint32_t>();
-    dhTransportTest->OnBytesReceived(socketId, paramData, dataLen);
+    dhTransportTest->OnBytesReceived(socketId, paramData, size);
     dhTransportTest->remoteDevSocketIds_.clear();
 }
 
