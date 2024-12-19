@@ -22,6 +22,8 @@
 #include <string>
 #include <unistd.h>
 
+#include <fuzzer/FuzzedDataProvider.h>
+
 #include "constants.h"
 #include "dh_transport.h"
 #include "dh_comm_tool.h"
@@ -39,12 +41,15 @@ void DhTransportOnBytesReceivedFuzzTest(const uint8_t* data, size_t size)
         return;
     }
 
-    int32_t socketId = *(reinterpret_cast<const int32_t*>(data));
+    FuzzedDataProvider fdp(data, size);
+    int32_t socketId = fdp.ConsumeIntegral<int32_t>();
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     std::shared_ptr<DHTransport> dhTransportTest = std::make_shared<DHTransport>(dhCommTool);
     std::string remoteNetworkId = "remoteNetworkId_test";
     dhTransportTest->remoteDevSocketIds_[remoteNetworkId] = socketId;
-    dhTransportTest->OnBytesReceived(socketId, data, size);
+    const char *paramData = fdp.ConsumeRandomLengthString().c_str();
+    uint32_t dataLen = fdp.ConsumeIntegral<uint32_t>();
+    dhTransportTest->OnBytesReceived(socketId, paramData, dataLen);
     dhTransportTest->remoteDevSocketIds_.clear();
 }
 
@@ -114,8 +119,9 @@ void DhTransportSendFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
-    std::string remoteNetworkId(reinterpret_cast<const char*>(data), size);
-    std::string payload(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string remoteNetworkId = fdp.ConsumeRandomLengthString();
+    std::string payload = fdp.ConsumeRandomLengthString();
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     std::shared_ptr<DHTransport> dhTransportTest = std::make_shared<DHTransport>(dhCommTool);
     dhTransportTest->remoteDevSocketIds_[remoteNetworkId] = 1;
@@ -128,9 +134,10 @@ void DhTransportOnSocketOpenedFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size < sizeof(int32_t))) {
         return;
     }
-    int32_t socketId = *(reinterpret_cast<const int32_t*>(data));
-    std::string peerSocketName(reinterpret_cast<const char*>(data), size);
-    std::string remoteNetworkId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    int32_t socketId = fdp.ConsumeIntegral<int32_t>();
+    std::string peerSocketName = fdp.ConsumeRandomLengthString();
+    std::string remoteNetworkId = fdp.ConsumeRandomLengthString();
     PeerSocketInfo info = {
         .name = const_cast<char*>(peerSocketName.c_str()),
         .networkId = const_cast<char*>(remoteNetworkId.c_str()),
