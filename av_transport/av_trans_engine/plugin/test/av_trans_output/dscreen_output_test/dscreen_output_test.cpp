@@ -20,7 +20,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 const std::string PLUGINNAME = "dscreen_output";
-
+constexpr uint32_t SLEEP_TIME_US = 1000 * 1000;
 void DscreenOutputTest::SetUpTestCase(void) {}
 
 void DscreenOutputTest::TearDownTestCase(void) {}
@@ -120,14 +120,17 @@ HWTEST_F(DscreenOutputTest, Start_001, TestSize.Level1)
     auto plugin = std::make_shared<DscreenOutputPlugin>(PLUGINNAME);
     plugin->state_ = State::INITIALIZED;
     Status ret = plugin->Start();
+    usleep(SLEEP_TIME_US);
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
 
     plugin->state_ = State::PREPARED;
     ret = plugin->Start();
+    usleep(SLEEP_TIME_US);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 
     plugin->InitOutputController();
     ret = plugin->Start();
+    usleep(SLEEP_TIME_US);
     EXPECT_EQ(Status::OK, ret);
 }
 
