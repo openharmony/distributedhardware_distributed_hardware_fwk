@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -59,7 +59,8 @@ public:
         const DHType dhType);
     void UpdateBusinessState(const std::string &uuid, const std::string &dhId, BusinessState state);
     BusinessState QueryBusinessState(const std::string &uuid, const std::string &dhId);
-    void DumpLoadedComps(std::set<DHType> &compSourceType, std::set<DHType> &compSinkType);
+    void DumpLoadedCompsource(std::set<DHType> &compSourceType);
+    void DumpLoadedCompsink(std::set<DHType> &compSinkType);
     void Recover(DHType dhType);
     std::map<DHType, IDistributedHardwareSink*> GetDHSinkInstance();
     void TriggerFullCapsSync(const std::string &networkId);
@@ -141,7 +142,9 @@ private:
 
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
+    std::shared_mutex compSourceMutex_;
     std::map<DHType, IDistributedHardwareSink*> compSink_;
+    std::shared_mutex compSinkMutex_;
     std::map<DHType, int32_t> compSrcSaId_;
     std::shared_ptr<ComponentPrivacy> audioCompPrivacy_ = nullptr;
     std::shared_ptr<ComponentPrivacy> cameraCompPrivacy_ = nullptr;
