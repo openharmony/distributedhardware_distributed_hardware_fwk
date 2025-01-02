@@ -1,76 +1,76 @@
 {
-    "string":[
-        {
-            "name":"EntryAbility_label",
-            "value":"[TS_867710]_DHardwareUI"
-        },
-        {
-            "name":"DHTypeName_Camera",
-            "value":"[TS_894802]_camera"
-        },
-        {
-            "name":"EntryAbility_desc",
-            "value":"[TS_867705]_description"
-        },
-        {
-            "name":"pause",
-            "value":"[TS_867692]_Pause"
-        },
-        {
-            "name":"disconnect",
-            "value":"[TS_867695]_Disconnect"
-        },
-        {
-            "name":"connected_to",
-            "value":"[TS_867693]_Connected to %1$s"
-        },
-        {
-            "name":"stop_device",
-            "value":"[TS_867698]_Disconnect to stop using this device's %1$s."
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"[TS_894803]_microphone"
-        },
-        {
-            "name":"module_desc",
-            "value":"[TS_867699]_module description"
-        },
-        {
-            "name":"continue",
-            "value":"[TS_867711]_Resume"
-        },
-        {
-            "name":"continue_desc_text",
-            "value":"[TS_962336]_Start viewing or editing content on one device, then continue seamlessly on nearby devices using the same HUAWEI ID. When Handover is available, an icon will appear in the app dock. %s"
-        },
-        {
-            "name":"ContinueSwitchAbility_label",
-            "value":"[TS_921307]_label"
-        },
-        {
-            "name":"continue_title",
-            "value":"[TS_921305]_Handover"
-        },
-        {
-            "name":"ContinueSwitchAbility_desc",
-            "value":"[TS_921306]_description"
-        },
-        {
-            "name":"multi_device_collaboration",
-            "value":"[TS_932989]_More connectivity options"
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"[TS_932988]_This service uses Bluetooth and WLAN, and needs to send the name of this device to devices you handover to. By turning this on, you agree to these terms."
-        },
-        {
-            "name":"update_version_prompt",
-            "value":"[TS_961710]_Both devices must be running HarmonyOS NEXT."
-        },
-        {
-            "name":"learn_more",
-            "value":"[TS_961711]_Learn more"
-        }
-    ]
+  "string": [
+    {
+      "name": "EntryAbility_label",
+      "value": "[TS_867710]_DHardwareUI"
+    },
+    {
+      "name": "DHTypeName_Camera",
+      "value": "[TS_894802]_camera"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "[TS_867705]_description"
+    },
+    {
+      "name": "pause",
+      "value": "[TS_867692]_Pause"
+    },
+    {
+      "name": "disconnect",
+      "value": "[TS_867695]_Disconnect"
+    },
+    {
+      "name": "connected_to",
+      "value": "[TS_867693]_Connected to %1$s"
+    },
+    {
+      "name": "stop_device",
+      "value": "[TS_867698]_Disconnect to stop using this device's %1$s."
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "[TS_894803]_microphone"
+    },
+    {
+      "name": "module_desc",
+      "value": "[TS_867699]_module description"
+    },
+    {
+      "name": "continue",
+      "value": "[TS_867711]_Resume"
+    },
+    {
+      "name": "continue_desc_text",
+      "value": "[TS_962336]_Start viewing or editing content on one device, and then instantly pick it up on a nearby device logged in to the same HUAWEI ID. When Handover is available, an icon will appear in the app dock. %s"
+    },
+    {
+      "name": "ContinueSwitchAbility_label",
+      "value": "[TS_921307]_label"
+    },
+    {
+      "name": "continue_title",
+      "value": "[TS_921305]_Handover"
+    },
+    {
+      "name": "ContinueSwitchAbility_desc",
+      "value": "[TS_921306]_description"
+    },
+    {
+      "name": "multi_device_collaboration",
+      "value": "[TS_932989]_More connectivity options"
+    },
+    {
+      "name": "continue_privacy_text",
+      "value": "[TS_932988]_This service uses Bluetooth and WLAN and needs to send this device's name to devices you handover to. By turning this on, you agree to these terms."
+    },
+    {
+      "name": "learn_more",
+      "value": "[TS_961711]_Learn more"
+    },
+    {
+      "name": "update_version_prompt",
+      "value": "[TS_961710]_Both devices must be running HarmonyOS NEXT"
+    }
+  ]
 }
