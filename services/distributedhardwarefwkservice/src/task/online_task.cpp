@@ -17,6 +17,7 @@
 
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
+#include "device_manager.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -151,6 +152,12 @@ void OnLineTask::CreateMetaEnableTask()
 {
     DHLOGI("CreateMetaEnableTask, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
         GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetUDID()).c_str());
+    int32_t deviceType = DmDeviceType::DEVICE_TYPE_UNKNOWN;
+    DeviceManager::GetInstance().GetDeviceType(DH_FWK_PKG_NAME, GetNetworkId(), deviceType);
+    if (deviceType != DmDeviceType::DEVICE_TYPE_PHONE) {
+        DHLOGI("CreateMetaEnableTask, online device not phone, deviceType = %{public}d", deviceType);
+        return;
+    }
     TaskParam taskParam = {
         .networkId = GetNetworkId(),
         .uuid = GetUUID(),
