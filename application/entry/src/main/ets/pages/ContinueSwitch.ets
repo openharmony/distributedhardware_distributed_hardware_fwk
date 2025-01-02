@@ -79,6 +79,7 @@ struct ContinueSwitch {
   }
   @State paddingStartNormal: LengthMetrics = LengthMetrics.resource($r('sys.float.margin_left'));
   @State paddingStartPc: LengthMetrics = LengthMetrics.vp(16);
+  @State isBacked: boolean = false;
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
@@ -286,10 +287,20 @@ struct ContinueSwitch {
         isSaveIconRequired: false,
         contentMargin: this.is2in1 ? this.titleBarMarginPc : this.titleBarMargin,
         onCancel: () => {
-          if (this.continueSession) {
-            this.continueSession.sendData({ 'action': 'pop' })
-          } else {
-            logger.error(`${TAG} continueSession is undefined`);
+          logger.info(`${TAG} onCancel in.`);
+          if (this.isBacked) {
+            logger.info(`${TAG} onCancel: The back button has been clicked.`);
+            return;
+          }
+          try {
+            if (this.continueSession) {
+              this.continueSession.sendData({ 'action': 'pop' });
+              this.isBacked = true;
+            } else {
+              logger.error(`${TAG} continueSession is undefined`);
+            }
+          } catch (error) {
+            logger.error(`${TAG} continueSession sendData failed. error.message: ${error.message}`);
           }
         }
       })
