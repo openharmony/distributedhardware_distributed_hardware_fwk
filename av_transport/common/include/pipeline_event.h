@@ -23,6 +23,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace Pipeline {
 enum struct EventType : uint32_t {
     EVENT_READY = 0,
     EVENT_AUDIO_PROGRESS, // unit is HST_TIME_BASE
@@ -63,6 +64,7 @@ struct Event {
 };
 
 const char* GetEventName(EventType type);
+} // namespace Pipeline
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif //OHOS_AV_PIPELINE_EVENT_H
+#endif // OHOS_AV_PIPELINE_EVENT_H
