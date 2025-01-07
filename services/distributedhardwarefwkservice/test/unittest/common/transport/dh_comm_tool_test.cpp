@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -99,6 +99,26 @@ HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_001, TestSize.Level0)
     std::string remoteCaps = "";
     FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps);
     EXPECT_EQ("", ret.networkId);
+}
+
+HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_002, TestSize.Level0)
+{
+    if (dhCommToolTest_ == nullptr) {
+        return;
+    }
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    std::string networkId = "123456";
+    cJSON_AddStringToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, networkId.c_str());
+    char* cjson = cJSON_PrintUnformatted(jsonObject);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObject);
+        return;
+    }
+    std::string remoteCaps(cjson);
+    FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps);
+    EXPECT_EQ(networkId, ret.networkId);
+    cJSON_Delete(jsonObject);
 }
 
 HWTEST_F(DhCommToolTest, ProcessEvent_001, TestSize.Level0)

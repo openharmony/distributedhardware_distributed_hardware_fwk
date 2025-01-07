@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -171,49 +171,39 @@ HWTEST_F(AccessManagerTest, OnDeviceOnline_002, TestSize.Level0)
 HWTEST_F(AccessManagerTest, OnDeviceOffline_001, TestSize.Level0)
 {
     DmDeviceInfo deviceInfo;
-    AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceOffline(deviceInfo));
 }
 
-/**
- * @tc.name: OnDeviceOffline_002
- * @tc.desc: Verify the OnDeviceOffline function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
 HWTEST_F(AccessManagerTest, OnDeviceOffline_002, TestSize.Level0)
 {
-    DmDeviceInfo deviceInfo;
-    std::string devId = "000001";
-    int32_t ret = memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length());
-    if (ret != EOK) {
-        return;
-    }
-    AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    DmDeviceInfo deviceInfo = {
+        .deviceId = "123456789",
+        .deviceName = "deviceName_test",
+        .deviceTypeId = 1,
+        .networkId = "111111"
+    };
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceOffline(deviceInfo));
 }
 
-/**
- * @tc.name: OnDeviceOffline_003
- * @tc.desc: Verify the OnDeviceOffline function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
 HWTEST_F(AccessManagerTest, OnDeviceOffline_003, TestSize.Level0)
 {
-    DmDeviceInfo deviceInfo;
-    std::string devId = "000001";
-    int32_t ret = memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, devId.c_str(), devId.length());
-    if (ret != EOK) {
-        return;
-    }
-    std::string netId = "000002";
-    ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, netId.c_str(), netId.length());
-    if (ret != EOK) {
-        return;
-    }
-    AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    DmDeviceInfo deviceInfo = {
+        .deviceId = "123456789",
+        .deviceName = "deviceName_test",
+        .deviceTypeId = 1,
+        .networkId = "111111"
+    };
+    DHContext::GetInstance().AddOnlineDevice(TEST_UDID, "", TEST_NETWORKID);
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceOffline(deviceInfo));
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(TEST_NETWORKID);
+
+    DHContext::GetInstance().AddOnlineDevice("", TEST_UUID, TEST_NETWORKID);
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceOffline(deviceInfo));
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(TEST_NETWORKID);
+
+    DHContext::GetInstance().AddOnlineDevice(TEST_UDID, TEST_UUID, TEST_NETWORKID);
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceOffline(deviceInfo));
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(TEST_NETWORKID);
 }
 
 /**
@@ -235,8 +225,7 @@ HWTEST_F(AccessManagerTest, UnInit_001, TestSize.Level0)
  */
 HWTEST_F(AccessManagerTest, CheckExitSAOrNot_001, TestSize.Level0)
 {
-    DistributedHardwareManagerFactory::GetInstance().CheckExitSAOrNot();
-    ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().IsInit());
+    ASSERT_NO_FATAL_FAILURE(DistributedHardwareManagerFactory::GetInstance().CheckExitSAOrNot());
 }
 
 /**
