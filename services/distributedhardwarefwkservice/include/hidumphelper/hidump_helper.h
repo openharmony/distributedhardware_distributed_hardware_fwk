@@ -21,6 +21,7 @@
 
 #include "enabled_comps_dump.h"
 #include "device_type.h"
+#include "impl_utils.h"
 #include "single_instance.h"
 
 namespace OHOS {
