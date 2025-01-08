@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,6 +63,7 @@ constexpr uint32_t TEST_SIZE_0 = 0;
 constexpr uint32_t TEST_SIZE_2 = 2;
 constexpr uint32_t TEST_SIZE_5 = 5;
 constexpr uint32_t TEST_SIZE_10 = 10;
+constexpr uint32_t MAX_DB_RECORD_LENGTH = 10005;
 const std::string EMPTY_PREFIX = "";
 
 const shared_ptr<CapabilityInfo> CAP_INFO_0 =
@@ -182,18 +183,6 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_003, TestSize.Level0)
 }
 
 /**
- * @tc.name: resource_manager_test_004
- * @tc.desc: Verify the CapabilityInfoManager SyncRemoteCapabilityInfos function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSJE
- */
-HWTEST_F(ResourceManagerTest, resource_manager_test_004, TestSize.Level0)
-{
-    CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->SyncRemoteCapabilityInfos(), DH_FWK_SUCCESS);
-}
-
-/**
  * @tc.name: resource_manager_test_005
  * @tc.desc: Verify the CapabilityInfoManager AddCapability function.
  * @tc.type: FUNC
@@ -206,21 +195,6 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_005, TestSize.Level0)
     EXPECT_EQ(CapabilityInfoManager::GetInstance()->AddCapability(resInfos), DH_FWK_SUCCESS);
     EXPECT_EQ(CapabilityInfoManager::GetInstance()->globalCapInfoMap_.size(), TEST_SIZE_10);
 }
-
-/**
- * @tc.name: resource_manager_test_006
- * @tc.desc: Verify the CapabilityInfoManager AddCapabilityInMem function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSCV
- */
-HWTEST_F(ResourceManagerTest, resource_manager_test_006, TestSize.Level0)
-{
-    vector<shared_ptr<CapabilityInfo>> resInfos { CAP_INFO_0, CAP_INFO_1, CAP_INFO_2, CAP_INFO_3, CAP_INFO_4,
-        CAP_INFO_5, CAP_INFO_6, CAP_INFO_7, CAP_INFO_8, CAP_INFO_9 };
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->AddCapabilityInMem(resInfos), DH_FWK_SUCCESS);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->globalCapInfoMap_.size(), TEST_SIZE_10);
-}
-
 
 /**
  * @tc.name: resource_manager_test_007
@@ -288,26 +262,6 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_008, TestSize.Level0)
 }
 
 /**
- * @tc.name: resource_manager_test_009
- * @tc.desc: Verify the HasCapability function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSCV
- */
-HWTEST_F(ResourceManagerTest, resource_manager_test_009, TestSize.Level0)
-{
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->HasCapability(DEV_ID_0, DH_ID_0), true);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->HasCapability(DEV_ID_0, DH_ID_1), true);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->HasCapability(DEV_ID_0, DH_ID_2), true);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->HasCapability(DEV_ID_0, DH_ID_3), true);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->HasCapability(DEV_ID_0, DH_ID_4), true);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->HasCapability(DEV_ID_1, DH_ID_0), true);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->HasCapability(DEV_ID_1, DH_ID_1), true);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->HasCapability(DEV_ID_1, DH_ID_2), true);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->HasCapability(DEV_ID_1, DH_ID_3), true);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->HasCapability(DEV_ID_1, DH_ID_4), true);
-}
-
-/**
  * @tc.name: resource_manager_test_010
  * @tc.desc: Verify the GetCapabilitiesByDeviceId function.
  * @tc.type: FUNC
@@ -322,27 +276,6 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_010, TestSize.Level0)
     EXPECT_EQ(capInfos.size(), TEST_SIZE_5);
     CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(DEV_ID_1, capInfos);
     EXPECT_EQ(capInfos.size(), TEST_SIZE_10);
-}
-
-/**
- * @tc.name: resource_manager_test_011
- * @tc.desc: Verify the GetCapability function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSJE
- */
-HWTEST_F(ResourceManagerTest, resource_manager_test_011, TestSize.Level0)
-{
-    shared_ptr<CapabilityInfo> capInfo;
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_0, DH_ID_0, capInfo), DH_FWK_SUCCESS);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_0, DH_ID_1, capInfo), DH_FWK_SUCCESS);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_0, DH_ID_2, capInfo), DH_FWK_SUCCESS);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_0, DH_ID_3, capInfo), DH_FWK_SUCCESS);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_0, DH_ID_4, capInfo), DH_FWK_SUCCESS);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_1, DH_ID_0, capInfo), DH_FWK_SUCCESS);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_1, DH_ID_1, capInfo), DH_FWK_SUCCESS);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_1, DH_ID_2, capInfo), DH_FWK_SUCCESS);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_1, DH_ID_3, capInfo), DH_FWK_SUCCESS);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_1, DH_ID_4, capInfo), DH_FWK_SUCCESS);
 }
 
 /**
@@ -396,38 +329,6 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_013, TestSize.Level0)
     EXPECT_EQ(CapabilityInfoManager::GetInstance()->GetDataByKeyPrefix(CAP_INFO_9->GetDeviceId(), capMap),
         DH_FWK_SUCCESS);
     EXPECT_EQ(capMap.size(), TEST_SIZE_10);
-}
-
-/**
- * @tc.name: resource_manager_test_014
- * @tc.desc: Verify the RemoveCapabilityInfoInDB function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSJE
- */
-HWTEST_F(ResourceManagerTest, resource_manager_test_014, TestSize.Level0)
-{
-    std::string deviceIdEmpty = "";
-    int32_t ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceIdEmpty);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
-}
-
-/**
- * @tc.name: resource_manager_test_015
- * @tc.desc: Verify the GetCapabilityByValue function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSJE
- */
-HWTEST_F(ResourceManagerTest, resource_manager_test_015, TestSize.Level0)
-{
-    std::string value = "";
-    std::shared_ptr<CapabilityInfo> capPtr = nullptr;
-    int32_t ret = GetCapabilityByValue<CapabilityInfo>(value, capPtr);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
-
-    value = "invalid JSON string";
-    capPtr = nullptr;
-    ret = GetCapabilityByValue<CapabilityInfo>(value, capPtr);
-    EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
 }
 
 /**
@@ -730,6 +631,29 @@ HWTEST_F(ResourceManagerTest, HasCapability_001, TestSize.Level0)
     std::string dhId;
     bool ret = CapabilityInfoManager::GetInstance()->HasCapability(deviceId, dhId);
     EXPECT_EQ(false, ret);
+
+    deviceId = "123456";
+    ret = CapabilityInfoManager::GetInstance()->HasCapability(deviceId, dhId);
+    EXPECT_EQ(false, ret);
+
+    dhId = "111111";
+    deviceId = "";
+    ret = CapabilityInfoManager::GetInstance()->HasCapability(deviceId, dhId);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(ResourceManagerTest, HasCapability_002, TestSize.Level0)
+{
+    std::string devId = "123456";
+    std::string dhID = "111111";
+    std::string key = DEV_ID_0 + RESOURCE_SEPARATOR + DH_ID_0;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = CAP_INFO_0;
+    bool ret = CapabilityInfoManager::GetInstance()->HasCapability(devId, dhID);
+    EXPECT_EQ(false, ret);
+
+    ret = CapabilityInfoManager::GetInstance()->HasCapability(DEV_ID_0, DH_ID_0);
+    EXPECT_EQ(true, ret);
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
 }
 
 /**
@@ -746,6 +670,16 @@ HWTEST_F(ResourceManagerTest, SyncRemoteCapabilityInfos_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 }
 
+HWTEST_F(ResourceManagerTest, SyncRemoteCapabilityInfos_002, TestSize.Level0)
+{
+    CapabilityInfoManager::GetInstance()->Init();
+    DHContext::GetInstance().AddOnlineDevice("111111", "222222", "333333");
+    int32_t ret = CapabilityInfoManager::GetInstance()->SyncRemoteCapabilityInfos();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    CapabilityInfoManager::GetInstance()->UnInit();
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId("333333");
+}
+
 /**
  * @tc.name: RemoveCapabilityInfoInDB_001
  * @tc.desc: Verify the RemoveCapabilityInfoInDB function.
@@ -754,10 +688,8 @@ HWTEST_F(ResourceManagerTest, SyncRemoteCapabilityInfos_001, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, RemoveCapabilityInfoInDB_001, TestSize.Level0)
 {
-    std::string deviceIdEmpty;
-    uint32_t MAX_ID_LEN = 257;
-    deviceIdEmpty.resize(MAX_ID_LEN);
-    int32_t ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceIdEmpty);
+    std::string deviceId = "";
+    int32_t ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceId);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
@@ -769,10 +701,43 @@ HWTEST_F(ResourceManagerTest, RemoveCapabilityInfoInDB_001, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, RemoveCapabilityInfoInDB_002, TestSize.Level0)
 {
-    std::string deviceIdEmpty = "deviceIdEmpty";
+    std::string deviceId = "deviceIdEmpty";
     CapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
-    int32_t ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceIdEmpty);
+    int32_t ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceId);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+HWTEST_F(ResourceManagerTest, RemoveCapabilityInfoInDB_003, TestSize.Level0)
+{
+    CapabilityInfoManager::GetInstance()->Init();
+    std::string deviceId = "123456";
+    std::string dhId = "111111";
+    std::string key = deviceId + RESOURCE_SEPARATOR + dhId;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = CAP_INFO_0;
+    deviceId = "456789";
+    int32_t ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceId);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+
+    ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInMem(deviceId);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+
+    key = deviceId + RESOURCE_SEPARATOR + dhId;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = CAP_INFO_1;
+    ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceId);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+
+    deviceId = "123456";
+    ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInMem(deviceId);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    CapabilityInfoManager::GetInstance()->UnInit();
+}
+
+HWTEST_F(ResourceManagerTest, RemoveCapabilityInfoByKey_001, TestSize.Level0)
+{
+    std::string key = "";
+    int32_t ret = CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(key);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 /**
@@ -865,6 +830,92 @@ HWTEST_F(ResourceManagerTest, GetEntriesByKeys_001, TestSize.Level0)
     std::vector<std::string> keys {};
     auto entries = CapabilityInfoManager::GetInstance()->GetEntriesByKeys(keys);
     EXPECT_EQ(0, entries.size());
+
+    CapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    std::string key = "key_1";
+    keys.push_back(key);
+    entries = CapabilityInfoManager::GetInstance()->GetEntriesByKeys(keys);
+    EXPECT_EQ(0, entries.size());
+}
+
+HWTEST_F(ResourceManagerTest, SyncDeviceInfoFromDB_001, TestSize.Level0)
+{
+    std::string deviceId = "";
+    auto ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    deviceId = "123456";
+    ret = CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+HWTEST_F(ResourceManagerTest, AddCapabilityInMem_001, TestSize.Level0)
+{
+    std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
+    auto ret = CapabilityInfoManager::GetInstance()->AddCapabilityInMem(resInfos);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID, ret);
+}
+
+HWTEST_F(ResourceManagerTest, AddCapabilityInMem_002, TestSize.Level0)
+{
+    std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
+    for (int32_t i = 1; i < MAX_DB_RECORD_LENGTH; i++) {
+        std::shared_ptr<CapabilityInfo> capInfoTest = make_shared<CapabilityInfo>(std::to_string(i), std::to_string(i),
+            TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0, DH_SUBTYPE_0);
+        resInfos.push_back(capInfoTest);
+    }
+    auto ret = CapabilityInfoManager::GetInstance()->AddCapabilityInMem(resInfos);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID, ret);
+}
+
+HWTEST_F(ResourceManagerTest, AddCapabilityInMem_003, TestSize.Level0)
+{
+    std::vector<shared_ptr<CapabilityInfo>> resInfos;
+    resInfos.push_back(CAP_INFO_0);
+    auto ret = CapabilityInfoManager::GetInstance()->AddCapabilityInMem(resInfos);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(ResourceManagerTest, GetCapability_001, TestSize.Level0)
+{
+    std::string deviceId;
+    std::string dhId;
+    std::shared_ptr<CapabilityInfo> capPtr;
+    auto ret = CapabilityInfoManager::GetInstance()->GetCapability(deviceId, dhId, capPtr);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_0, dhId, capPtr);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    ret = CapabilityInfoManager::GetInstance()->GetCapability(deviceId, DH_ID_0, capPtr);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+HWTEST_F(ResourceManagerTest, GetCapability_002, TestSize.Level0)
+{
+    std::string deviceId = "123456";
+    std::string dhId = "111111";
+    std::shared_ptr<CapabilityInfo> capPtr;
+    std::string key = DEV_ID_0 + RESOURCE_SEPARATOR + DH_ID_0;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = CAP_INFO_0;
+    auto ret = CapabilityInfoManager::GetInstance()->GetCapability(deviceId, dhId, capPtr);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND, ret);
+
+    ret = CapabilityInfoManager::GetInstance()->GetCapability(DEV_ID_0, DH_ID_0, capPtr);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(ResourceManagerTest, GetDataByDHType_001, TestSize.Level0)
+{
+    std::string key = DEV_ID_0 + RESOURCE_SEPARATOR + DH_ID_0;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = CAP_INFO_0;
+    CapabilityInfoMap capabilityMap;
+    auto ret = CapabilityInfoManager::GetInstance()->GetDataByDHType(DHType::AUDIO, capabilityMap);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+
+    ret = CapabilityInfoManager::GetInstance()->GetDataByDHType(DHType::CAMERA, capabilityMap);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
 }
 } // namespace DistributedHardware
 } // namespace OHOS
