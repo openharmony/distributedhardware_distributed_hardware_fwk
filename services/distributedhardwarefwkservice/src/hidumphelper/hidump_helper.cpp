@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -129,17 +129,9 @@ int32_t HidumpHelper::ProcessDump(const HidumpFlag &flag, std::string &result)
     return errCode;
 }
 
-int32_t HidumpHelper::ShowAllLoadedComps(std::string &result)
+void HidumpHelper::ShowLoadCompSource(const std::set<DHType> &loadedCompSource, const DHVersion &dhVersion,
+    std::string &result)
 {
-    DHLOGI("Dump all loaded compTypes.");
-    std::set<DHType> loadedCompSource {};
-    std::set<DHType> loadedCompSink {};
-    ComponentManager::GetInstance().DumpLoadedComps(loadedCompSource, loadedCompSink);
-    DHVersion dhVersion;
-    ComponentLoader::GetInstance().GetLocalDHVersion(dhVersion);
-
-    result.append("Local loaded components:");
-    result.append("\nSource:");
     if (!loadedCompSource.empty()) {
         for (auto compSource : loadedCompSource) {
             std::string dhTypeStr = "UNKNOWN";
@@ -159,8 +151,11 @@ int32_t HidumpHelper::ShowAllLoadedComps(std::string &result)
             result.replace(result.size() - 1, 1, "\n");
         }
     }
+}
 
-    result.append("\nSink:");
+void HidumpHelper::ShowLoadCompSink(const std::set<DHType> &loadedCompSink, const DHVersion &dhVersion,
+    std::string &result)
+{
     if (!loadedCompSink.empty()) {
         for (auto compSink : loadedCompSink) {
             std::string dhTypeStr = "UNKNOWN";
@@ -180,6 +175,23 @@ int32_t HidumpHelper::ShowAllLoadedComps(std::string &result)
             result.replace(result.size() - 1, 1, "\n");
         }
     }
+}
+
+int32_t HidumpHelper::ShowAllLoadedComps(std::string &result)
+{
+    DHLOGI("Dump all loaded compTypes.");
+    std::set<DHType> loadedCompSource {};
+    std::set<DHType> loadedCompSink {};
+    ComponentManager::GetInstance().DumpLoadedCompsource(loadedCompSource);
+    ComponentManager::GetInstance().DumpLoadedCompsink(loadedCompSink);
+    DHVersion dhVersion;
+    ComponentLoader::GetInstance().GetLocalDHVersion(dhVersion);
+
+    result.append("Local loaded components:");
+    result.append("\nSource:");
+    ShowLoadCompSource(loadedCompSource, dhVersion, result);
+    result.append("\nSink:");
+    ShowLoadCompSink(loadedCompSink, dhVersion, result);
     return DH_FWK_SUCCESS;
 }
 

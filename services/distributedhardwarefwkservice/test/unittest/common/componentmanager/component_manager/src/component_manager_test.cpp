@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -850,16 +850,22 @@ HWTEST_F(ComponentManagerTest, UpdateVersionCache_001, TestSize.Level0)
 }
 
 /**
- * @tc.name: DumpLoadedComps_001
- * @tc.desc: Verify the DumpLoadedComps function
+ * @tc.name: DumpLoadedCompsource_001
+ * @tc.desc: Verify the DumpLoadedCompsource function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, DumpLoadedComps_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, DumpLoadedCompsource_001, TestSize.Level0)
 {
     std::set<DHType> compSourceType;
+    ComponentManager::GetInstance().DumpLoadedCompsource(compSourceType);
+    EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
+}
+
+HWTEST_F(ComponentManagerTest, DumpLoadedCompsink_001, TestSize.Level0)
+{
     std::set<DHType> compSinkType;
-    ComponentManager::GetInstance().DumpLoadedComps(compSourceType, compSinkType);
+    ComponentManager::GetInstance().DumpLoadedCompsink(compSinkType);
     EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
 }
 

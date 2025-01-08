@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -124,6 +124,7 @@ void ComponentManager::InitComponentHandler()
 
 int32_t ComponentManager::InitSAMonitor()
 {
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     if (compMonitorPtr_ == nullptr) {
         DHLOGE("compMonitorPtr_ is null.");
         return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
@@ -156,6 +157,7 @@ void ComponentManager::StartComponent()
 
 void ComponentManager::RegisterDHStateListener()
 {
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     for (const auto &item : compSource_) {
         DHLOGI("Register DH State listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
         if (item.second == nullptr) {
@@ -170,7 +172,7 @@ void ComponentManager::RegisterDataSyncTriggerListener()
 {
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
     eventHandler_ = std::make_shared<ComponentManager::ComponentManagerEventHandler>(runner);
-
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     for (const auto &item : compSource_) {
         DHLOGI("Register Data Sync Trigger listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
         if (item.second == nullptr) {
@@ -218,6 +220,7 @@ int32_t ComponentManager::UnInit()
 void ComponentManager::UnInitSAMonitor()
 {
     // clear SA monitor
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     if (compMonitorPtr_ == nullptr) {
         DHLOGE("compMonitorPtr_ is null.");
         return;
@@ -232,6 +235,7 @@ void ComponentManager::UnInitSAMonitor()
 
 void ComponentManager::UnregisterDHStateListener()
 {
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     for (const auto &item : compSource_) {
         DHLOGI("Unregister DH State listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
         if (item.second == nullptr) {
@@ -244,6 +248,7 @@ void ComponentManager::UnregisterDHStateListener()
 
 void ComponentManager::UnregisterDataSyncTriggerListener()
 {
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     for (const auto &item : compSource_) {
         DHLOGI("Unregister Data Sync Trigger listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
         if (item.second == nullptr) {
@@ -274,11 +279,8 @@ void ComponentManager::StopComponent()
         DHLOGE("StopSource failed, but want to continue");
     }
     if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
-        DHLOGE("StopSource failed, but want to continue");
+        DHLOGE("StopSink failed, but want to continue");
     }
-
-    compSource_.clear();
-    compSink_.clear();
 }
 
 void ComponentManager::StopPrivacy()
@@ -298,6 +300,7 @@ void ComponentManager::StopPrivacy()
 ActionResult ComponentManager::StartSource()
 {
     DHLOGI("start.");
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     for (const auto &item : compSource_) {
@@ -321,6 +324,7 @@ ActionResult ComponentManager::StartSource()
 ActionResult ComponentManager::StartSource(DHType dhType)
 {
     DHLOGI("Start Source, dhType: %{public}" PRIu32, (uint32_t)dhType);
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     if (compSource_.find(dhType) == compSource_.end()) {
         DHLOGE("Component for DHType: %{public}" PRIu32 " not init source handler", (uint32_t)dhType);
@@ -347,6 +351,7 @@ ActionResult ComponentManager::StartSource(DHType dhType)
 ActionResult ComponentManager::StartSink()
 {
     DHLOGI("start.");
+    std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     for (const auto &item : compSink_) {
@@ -378,6 +383,7 @@ ActionResult ComponentManager::StartSink()
 ActionResult ComponentManager::StartSink(DHType dhType)
 {
     DHLOGI("Start Sink, dhType: %{public}" PRIu32, (uint32_t)dhType);
+    std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     if (compSink_.find(dhType) == compSink_.end()) {
         DHLOGE("Component for DHType: %{public}" PRIu32 " not init sink handler", (uint32_t)dhType);
@@ -412,6 +418,7 @@ ActionResult ComponentManager::StartSink(DHType dhType)
 ActionResult ComponentManager::StopSource()
 {
     DHLOGI("start.");
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     for (const auto &item : compSource_) {
         if (item.second == nullptr) {
@@ -425,12 +432,14 @@ ActionResult ComponentManager::StopSource()
         }).detach();
         futures.emplace(item.first, f.share());
     }
+    compSource_.clear();
     return futures;
 }
 
 ActionResult ComponentManager::StopSink()
 {
     DHLOGI("start.");
+    std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     for (const auto &item : compSink_) {
         if (item.second == nullptr) {
@@ -452,6 +461,7 @@ ActionResult ComponentManager::StopSink()
         }).detach();
         futures.emplace(item.first, f.share());
     }
+    compSink_.clear();
     return futures;
 }
 
@@ -489,6 +499,7 @@ bool ComponentManager::WaitForResult(const Action &action, ActionResult actionsR
 bool ComponentManager::InitCompSource()
 {
     auto compTypes = ComponentLoader::GetInstance().GetAllCompTypes();
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     for (const auto &type : compTypes) {
         IDistributedHardwareSource *sourcePtr = nullptr;
         auto ret = ComponentLoader::GetInstance().GetSource(type, sourcePtr);
@@ -513,6 +524,7 @@ bool ComponentManager::InitCompSource()
 bool ComponentManager::InitCompSink()
 {
     auto compTypes = ComponentLoader::GetInstance().GetAllCompTypes();
+    std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
     for (const auto &type : compTypes) {
         IDistributedHardwareSink *sinkPtr = nullptr;
         auto ret = ComponentLoader::GetInstance().GetSink(type, sinkPtr);
@@ -532,10 +544,11 @@ bool ComponentManager::InitCompSink()
 int32_t ComponentManager::Enable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
     const DHType dhType)
 {
+    DHLOGI("start.");
     if (!IsIdLengthValid(networkId) || !IsIdLengthValid(uuid) || !IsIdLengthValid(dhId)) {
         return ERR_DH_FWK_PARA_INVALID;
     }
-    DHLOGI("start.");
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     if (compSource_.find(dhType) == compSource_.end()) {
         DHLOGE("can not find handler for dhId = %{public}s.", GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_PARA_INVALID;
@@ -620,9 +633,11 @@ int32_t ComponentManager::RetryGetEnableParam(const std::string &networkId, cons
 int32_t ComponentManager::Disable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
     const DHType dhType)
 {
+    DHLOGI("start.");
     if (!IsIdLengthValid(networkId) || !IsIdLengthValid(uuid) || !IsIdLengthValid(dhId)) {
         return ERR_DH_FWK_PARA_INVALID;
     }
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     auto find = compSource_.find(dhType);
     if (find == compSource_.end()) {
         DHLOGE("can not find handler for dhId = %{public}s.", GetAnonyString(dhId).c_str());
@@ -895,11 +910,17 @@ void ComponentManager::UpdateVersionCache(const std::string &uuid, const Version
     VersionManager::GetInstance().AddDHVersion(uuid, dhVersion);
 }
 
-void ComponentManager::DumpLoadedComps(std::set<DHType> &compSourceType, std::set<DHType> &compSinkType)
+void ComponentManager::DumpLoadedCompsource(std::set<DHType> &compSourceType)
 {
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     for (auto compSource : compSource_) {
         compSourceType.emplace(compSource.first);
     }
+}
+
+void ComponentManager::DumpLoadedCompsink(std::set<DHType> &compSinkType)
+{
+    std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
     for (auto compSink : compSink_) {
         compSinkType.emplace(compSink.first);
     }
@@ -969,6 +990,7 @@ void ComponentManager::RecoverDistributedHardware(DHType dhType)
 
 std::map<DHType, IDistributedHardwareSink*> ComponentManager::GetDHSinkInstance()
 {
+    std::shared_lock<std::shared_mutex> lock(compSinkMutex_);
     return compSink_;
 }
 
@@ -1022,6 +1044,7 @@ void ComponentManager::UpdateBusinessState(const std::string &networkId, const s
 
 IDistributedHardwareSource* ComponentManager::GetDHSourceInstance(DHType dhType)
 {
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     if (compSource_.find(dhType) == compSource_.end()) {
         DHLOGE("can not find handler for dhType = %{public}d.", dhType);
         return nullptr;
