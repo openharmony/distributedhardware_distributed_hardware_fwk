@@ -53,7 +53,6 @@ private:
     int32_t ShowIllealInfomation(std::string &result);
     void ShowLoadCompSource(const std::set<DHType> &loadedCompSource, const DHVersion &dhVersion, std::string &result);
     void ShowLoadCompSink(const std::set<DHType> &loadedCompSink, const DHVersion &dhVersion, std::string &result);
-
 };
 } // namespace DistributedHardware
 } // namespace OHOS
