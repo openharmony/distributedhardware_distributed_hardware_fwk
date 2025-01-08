@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,7 @@
 #include "access_manager.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_manager_factory.h"
+#include "dh_context.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -49,6 +50,28 @@ void AccessManagerOfflineFuzzTest(const uint8_t* data, size_t size)
 
     usleep(SLEEP_TIME_US);
 }
+
+void AccessManagerOfflineSecondFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0) || (size > DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    AccessManager::GetInstance()->Init();
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::string udId(reinterpret_cast<const char*>(data), size);
+    std::string uuId(reinterpret_cast<const char*>(data), size);
+    DHContext::GetInstance().AddOnlineDevice(udId, uuId, networkId);
+    DmDeviceInfo deviceInfo;
+    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), size);
+    if (ret != EOK) {
+        return;
+    }
+    
+    AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
+    usleep(SLEEP_TIME_US);
+}
 }
 }
 
@@ -57,6 +80,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     OHOS::DistributedHardware::AccessManagerOfflineFuzzTest(data, size);
+    OHOS::DistributedHardware::AccessManagerOfflineSecondFuzzTest(data, size);
     return 0;
 }
 
