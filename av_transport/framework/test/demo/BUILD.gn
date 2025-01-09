@@ -12,9 +12,9 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("../distributed_av_transport.gni")
+import("../../../distributed_av_transport.gni")
 
-config("av_pipeline_fwk_external_config") {
+config("av_pipeline_demo_external_config") {
   include_dirs = [
     "${common_path}/include",
     "${dh_fwk_sdk_path}/include",
@@ -22,7 +22,7 @@ config("av_pipeline_fwk_external_config") {
   ]
 }
 
-ohos_shared_library("distributed_av_pipeline_fwk") {
+ohos_executable("av_trans_pipelie_demo") {
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -34,44 +34,35 @@ ohos_shared_library("distributed_av_pipeline_fwk") {
     ubsan = true
   }
   branch_protector_ret = "pac_ret"
-  public_configs = [ ":av_pipeline_fwk_external_config" ]
+  public_configs = [ ":av_pipeline_demo_external_config" ]
 
   include_dirs = [
-    "${dh_fwk_utils_path}/include",
+    "./include",
     "${distributed_av_transport_path}/framework",
     "${distributed_av_transport_path}/framework/filter/include",
   ]
 
   sources = [
-    "${common_path}/src/av_trans_log.cpp",
-    "${distributed_av_transport_path}/framework/filter/src/filter.cpp",
-    "${distributed_av_transport_path}/framework/filter/src/filter_factory.cpp",
-    "${distributed_av_transport_path}/framework/pipeline/src/pipeline.cpp",
+    "${distributed_av_transport_path}/framework/test/demo/head_filter.cpp",
+    "${distributed_av_transport_path}/framework/test/demo/mid_filter.cpp",
+    "${distributed_av_transport_path}/framework/test/demo/pipe_demo.cpp",
+    "${distributed_av_transport_path}/framework/test/demo/tail_filter.cpp",
   ]
 
-  deps = [ "${dh_fwk_sdk_path}:libdhfwk_sdk" ]
+  deps = [
+    "${dh_fwk_sdk_path}:libdhfwk_sdk",
+    "${distributed_av_transport_path}/framework:distributed_av_pipeline_fwk",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"av_trans_fwk\"",
+    "DH_LOG_TAG=\"av_trans_pipe_demo\"",
     "LOG_DOMAIN=0xD004101",
   ]
 
   external_deps = [
-    "av_codec:av_codec_client",
-    "av_codec:native_media_acodec",
-    "bounds_checking_function:libsec_shared",
-    "cJSON:cjson",
     "c_utils:utils",
-    "dsoftbus:softbus_client",
     "hilog:libhilog",
-    "hisysevent:libhisysevent",
-    "hitrace:hitrace_meter",
-    "ipc:ipc_core",
-    "media_foundation:media_foundation",
-    "media_foundation:native_media_core",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
   ]
 
   if (histreamer_compile_part) {
@@ -84,10 +75,10 @@ ohos_shared_library("distributed_av_pipeline_fwk") {
     "-fPIC",
     "-O2",
     "-Wall",
-    "-Wno-c++20-extensions",
   ]
   cflags_cc = cflags
 
+  install_enable = false
   part_name = "distributed_hardware_fwk"
   subsystem_name = "distributedhardware"
 }
