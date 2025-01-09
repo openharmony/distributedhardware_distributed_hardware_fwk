@@ -342,13 +342,15 @@ HWTEST_F(MetaInfoMgrTest, OnChange_002, TestSize.Level0)
 {
     DistributedKv::Entry insert, update, del;
     std::vector<DistributedKv::Entry> inserts, updates, deleteds;
+    std::string tempStr;
     for (int32_t i = 1; i < MAX_DB_RECORD_LENGTH; i++) {
-        insert.key = std::to_string(i).c_str();
-        update.key = std::to_string(i).c_str();
-        del.key = std::to_string(i).c_str();
-        insert.value = std::to_string(i).c_str();
-        update.value = std::to_string(i).c_str();
-        del.value = std::to_string(i).c_str();
+        tempStr = std::to_string(i);
+        insert.key = "insert_key" + tempStr.c_str();
+        update.key = "update_key" + tempStr.c_str();
+        del.key = "del_key" + tempStr.c_str();
+        insert.value = "insert_vaule" + tempStr.c_str();
+        update.value = "update_vaule" + tempStr.c_str();
+        del.value = "del_vaule" + tempStr.c_str();
         inserts.push_back(insert);
         updates.push_back(update);
         deleteds.push_back(del);
