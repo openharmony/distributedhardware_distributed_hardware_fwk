@@ -345,12 +345,12 @@ HWTEST_F(MetaInfoMgrTest, OnChange_002, TestSize.Level0)
     std::string tempStr;
     for (int32_t i = 1; i < MAX_DB_RECORD_LENGTH; i++) {
         tempStr = std::to_string(i);
-        insert.key = "insert_key" + tempStr.c_str();
-        update.key = "update_key" + tempStr.c_str();
-        del.key = "del_key" + tempStr.c_str();
-        insert.value = "insert_vaule" + tempStr.c_str();
-        update.value = "update_vaule" + tempStr.c_str();
-        del.value = "del_vaule" + tempStr.c_str();
+        insert.key = tempStr.c_str();
+        update.key = tempStr.c_str();
+        del.key = tempStr.c_str();
+        insert.value = tempStr.c_str();
+        update.value = tempStr.c_str();
+        del.value = tempStr.c_str();
         inserts.push_back(insert);
         updates.push_back(update);
         deleteds.push_back(del);
