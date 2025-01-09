@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,10 +15,13 @@
 
 #include "capabilityinfomanager_fuzzer.h"
 
+#include "constants.h"
 #include "capability_info.h"
 #include "capability_utils.h"
 #include "capability_info_manager.h"
 #include "distributed_hardware_log.h"
+#include "dh_context.h"
+#include "dh_utils_tool.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -163,6 +166,138 @@ void GetDataByKeyFuzzTest(const uint8_t* data, size_t size)
     CapabilityInfoManager::GetInstance()->GetDataByKey(key, capInfoPtr);
     CapabilityInfoManager::GetInstance()->UnInit();
 }
+
+void CapabilityInfoManagerOnChangeInsertFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    cJSON *insertJson = cJSON_CreateObject();
+    if (insertJson == nullptr) {
+        return;
+    }
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::string udId(reinterpret_cast<const char*>(data), size);
+    std::string uuId(reinterpret_cast<const char*>(data), size);
+    DHContext::GetInstance().AddOnlineDevice(udId, uuId, networkId);
+    std::string deviceId = Sha256(uuId);
+    cJSON_AddStringToObject(insertJson, DH_ID.c_str(), "111111");
+    cJSON_AddStringToObject(insertJson, DEV_ID.c_str(), deviceId.c_str());
+    cJSON_AddStringToObject(insertJson, DEV_NAME.c_str(), "dev_name");
+    char* cjson = cJSON_PrintUnformatted(insertJson);
+    if (cjson == nullptr) {
+        cJSON_Delete(insertJson);
+        return;
+    }
+    std::string jsonStr(cjson);
+    DistributedKv::Entry insert;
+    insert.key = std::string(reinterpret_cast<const char*>(data), size);
+    insert.value = jsonStr;
+
+    DistributedKv::Entry update;
+    DistributedKv::Entry del;
+    std::vector<DistributedKv::Entry> inserts;
+    std::vector<DistributedKv::Entry> updates;
+    std::vector<DistributedKv::Entry> deleteds;
+    inserts.push_back(insert);
+    updates.push_back(update);
+    deleteds.push_back(del);
+
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds),
+        deviceId, true);
+    CapabilityInfoManager::GetInstance()->OnChange(changeIn);
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
+    cJSON_free(cjson);
+    cJSON_Delete(insertJson);
+}
+
+void CapabilityInfoManagerOnChangeUpdateFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    cJSON *updateJson = cJSON_CreateObject();
+    if (updateJson == nullptr) {
+        return;
+    }
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::string udId(reinterpret_cast<const char*>(data), size);
+    std::string uuId(reinterpret_cast<const char*>(data), size);
+    DHContext::GetInstance().AddOnlineDevice(udId, uuId, networkId);
+    std::string deviceId = Sha256(uuId);
+    cJSON_AddStringToObject(updateJson, DH_ID.c_str(), "222222");
+    cJSON_AddStringToObject(updateJson, DEV_ID.c_str(), deviceId.c_str());
+    cJSON_AddStringToObject(updateJson, DEV_NAME.c_str(), "dev_name");
+    char* cjson = cJSON_PrintUnformatted(updateJson);
+    if (cjson == nullptr) {
+        cJSON_Delete(updateJson);
+        return;
+    }
+    std::string jsonStr(cjson);
+    DistributedKv::Entry update;
+    update.key = std::string(reinterpret_cast<const char*>(data), size);
+    update.value = jsonStr;
+
+    DistributedKv::Entry insert;
+    DistributedKv::Entry del;
+    std::vector<DistributedKv::Entry> inserts;
+    std::vector<DistributedKv::Entry> updates;
+    std::vector<DistributedKv::Entry> deleteds;
+    inserts.push_back(insert);
+    updates.push_back(update);
+    deleteds.push_back(del);
+
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds),
+        deviceId, true);
+    CapabilityInfoManager::GetInstance()->OnChange(changeIn);
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
+    cJSON_free(cjson);
+    cJSON_Delete(updateJson);
+}
+
+void CapabilityInfoManagerOnChangeDeleteFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    cJSON *deleteJson = cJSON_CreateObject();
+    if (deleteJson == nullptr) {
+        return;
+    }
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::string udId(reinterpret_cast<const char*>(data), size);
+    std::string uuId(reinterpret_cast<const char*>(data), size);
+    DHContext::GetInstance().AddOnlineDevice(udId, uuId, networkId);
+    std::string deviceId = Sha256(uuId);
+    cJSON_AddStringToObject(deleteJson, DH_ID.c_str(), "333333");
+    cJSON_AddStringToObject(deleteJson, DEV_ID.c_str(), deviceId.c_str());
+    cJSON_AddStringToObject(deleteJson, DEV_NAME.c_str(), "dev_name");
+    char* cjson = cJSON_PrintUnformatted(deleteJson);
+    if (cjson == nullptr) {
+        cJSON_Delete(deleteJson);
+        return;
+    }
+    std::string jsonStr(cjson);
+    DistributedKv::Entry del;
+    del.key = std::string(reinterpret_cast<const char*>(data), size);
+    del.value = jsonStr;
+
+    DistributedKv::Entry insert;
+    DistributedKv::Entry update;
+    std::vector<DistributedKv::Entry> inserts;
+    std::vector<DistributedKv::Entry> updates;
+    std::vector<DistributedKv::Entry> deleteds;
+    inserts.push_back(insert);
+    updates.push_back(update);
+    deleteds.push_back(del);
+
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds),
+        deviceId, true);
+    CapabilityInfoManager::GetInstance()->OnChange(changeIn);
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
+    cJSON_free(cjson);
+    cJSON_Delete(deleteJson);
+}
 }
 }
 
@@ -178,6 +313,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::AddCapabilityInMemFuzzTest(data, size);
     OHOS::DistributedHardware::IsCapabilityMatchFilterFuzzTest(data, size);
     OHOS::DistributedHardware::GetDataByKeyFuzzTest(data, size);
+    OHOS::DistributedHardware::CapabilityInfoManagerOnChangeInsertFuzzTest(data, size);
+    OHOS::DistributedHardware::CapabilityInfoManagerOnChangeUpdateFuzzTest(data, size);
+    OHOS::DistributedHardware::CapabilityInfoManagerOnChangeDeleteFuzzTest(data, size);
     return 0;
 }
 
