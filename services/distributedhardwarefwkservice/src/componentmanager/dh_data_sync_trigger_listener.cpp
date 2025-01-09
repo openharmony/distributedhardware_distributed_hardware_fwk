@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,10 +44,6 @@ void DHDataSyncTriggerListener::OnDataSyncTrigger(const std::string &networkId)
         return;
     }
     DHLOGI("Receive data sync trigger, networkId: %{public}s", GetAnonyString(networkId).c_str());
-    if (networkId.empty()) {
-        DHLOGE("OnDataSyncTrigger networkId is empty");
-        return;
-    }
     std::shared_ptr<std::string> networkIdPtr = std::make_shared<std::string>(networkId);
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_DATA_SYNC_MANUAL, networkIdPtr);
     if (ComponentManager::GetInstance().GetEventHandler() == nullptr) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -513,10 +513,6 @@ std::vector<DistributedKv::Entry> MetaInfoManager::GetEntriesByKeys(const std::v
         return {};
     }
     DHLOGI("call");
-    if (keys.empty()) {
-        DHLOGE("keys empty.");
-        return {};
-    }
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
