@@ -59,9 +59,7 @@ void DhCommToolTest::TearDown()
 
 HWTEST_F(DhCommToolTest, TriggerReqFullDHCaps_001, TestSize.Level0)
 {
-    if (dhCommToolTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
     std::string remoteNetworkId = "";
     dhCommToolTest_->TriggerReqFullDHCaps(remoteNetworkId);
 
@@ -79,9 +77,7 @@ HWTEST_F(DhCommToolTest, TriggerReqFullDHCaps_001, TestSize.Level0)
 
 HWTEST_F(DhCommToolTest, GetAndSendLocalFullCaps_001, TestSize.Level0)
 {
-    if (dhCommToolTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
     std::string reqNetworkId = "";
     dhCommToolTest_->dhTransportPtr_ = nullptr;
     dhCommToolTest_->GetAndSendLocalFullCaps(reqNetworkId);
@@ -93,9 +89,7 @@ HWTEST_F(DhCommToolTest, GetAndSendLocalFullCaps_001, TestSize.Level0)
 
 HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_001, TestSize.Level0)
 {
-    if (dhCommToolTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
     std::string remoteCaps = "";
     FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps);
     EXPECT_EQ("", ret.networkId);
@@ -103,9 +97,7 @@ HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_001, TestSize.Level0)
 
 HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_002, TestSize.Level0)
 {
-    if (dhCommToolTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);
     std::string networkId = "123456";

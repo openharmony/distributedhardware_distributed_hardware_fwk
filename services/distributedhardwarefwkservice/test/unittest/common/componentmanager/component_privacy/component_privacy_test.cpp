@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -156,9 +156,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_001, TestSize.Level0)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
-    if (jsonArrayMsg == NULL) {
-        return;
-    }
+    ASSERT_TRUE(jsonArrayMsg != nullptr);
 
     cJSON *tmpJson = cJSON_CreateObject();
     if (tmpJson == NULL) {
@@ -177,9 +175,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_002, TestSize.Level0)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
-    if (jsonArrayMsg == NULL) {
-        return;
-    }
+    ASSERT_TRUE(jsonArrayMsg != nullptr);
 
     cJSON *tmpJson = cJSON_CreateObject();
     if (tmpJson == NULL) {
@@ -198,9 +194,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_003, TestSize.Level0)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
-    if (jsonArrayMsg == NULL) {
-        return;
-    }
+    ASSERT_TRUE(jsonArrayMsg != nullptr);
 
     cJSON *tmpJson = cJSON_CreateObject();
     if (tmpJson == NULL) {
@@ -219,9 +213,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_004, TestSize.Level0)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
-    if (jsonArrayMsg == NULL) {
-        return;
-    }
+    ASSERT_TRUE(jsonArrayMsg != nullptr);
 
     cJSON *tmpJson = cJSON_CreateObject();
     if (tmpJson == NULL) {
@@ -240,9 +232,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_005, TestSize.Level0)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
-    if (jsonArrayMsg == NULL) {
-        return;
-    }
+    ASSERT_TRUE(jsonArrayMsg != nullptr);
 
     cJSON *tmpJson = cJSON_CreateObject();
     if (tmpJson == NULL) {
@@ -260,9 +250,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_006, TestSize.Level0)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
-    if (jsonArrayMsg == NULL) {
-        return;
-    }
+    ASSERT_TRUE(jsonArrayMsg != nullptr);
 
     cJSON *tmpJson = cJSON_CreateObject();
     if (tmpJson == NULL) {
@@ -280,9 +268,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_007, TestSize.Level0)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
-    if (jsonArrayMsg == NULL) {
-        return;
-    }
+    ASSERT_TRUE(jsonArrayMsg != nullptr);
 
     cJSON *tmpJson = cJSON_CreateObject();
     if (tmpJson == NULL) {

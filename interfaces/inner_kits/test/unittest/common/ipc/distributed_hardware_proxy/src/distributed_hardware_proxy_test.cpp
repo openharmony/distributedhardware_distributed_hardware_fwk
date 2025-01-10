@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,9 +46,7 @@ void DistributedHardwareProxyTest::TearDown()
  */
 HWTEST_F(DistributedHardwareProxyTest, RegisterPublisherListener_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
     sptr<IPublisherListener> listener = nullptr;
     int32_t ret = hardwareProxy_->RegisterPublisherListener(topic, listener);
@@ -63,9 +61,7 @@ HWTEST_F(DistributedHardwareProxyTest, RegisterPublisherListener_001, TestSize.L
  */
 HWTEST_F(DistributedHardwareProxyTest, RegisterAbilityListener_002, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     int32_t invalid = 7;
     DHTopic topic = static_cast<DHTopic>(invalid);
     sptr<IPublisherListener> listener(new MockIPublisherListener());
@@ -81,9 +77,7 @@ HWTEST_F(DistributedHardwareProxyTest, RegisterAbilityListener_002, TestSize.Lev
  */
 HWTEST_F(DistributedHardwareProxyTest, RegisterAbilityListener_003, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
     sptr<IPublisherListener> listener(new MockIPublisherListener());
     int32_t ret = hardwareProxy_->RegisterPublisherListener(topic, listener);
@@ -98,9 +92,7 @@ HWTEST_F(DistributedHardwareProxyTest, RegisterAbilityListener_003, TestSize.Lev
  */
 HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
     sptr<IPublisherListener> listener = nullptr;
     int32_t ret = hardwareProxy_->UnregisterPublisherListener(topic, listener);
@@ -115,9 +107,7 @@ HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_001, TestSize
  */
 HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_002, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     int32_t invalid = 7;
     DHTopic topic = static_cast<DHTopic>(invalid);
     sptr<IPublisherListener> listener(new MockIPublisherListener());
@@ -133,9 +123,7 @@ HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_002, TestSize
  */
 HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_003, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
     sptr<IPublisherListener> listener(new MockIPublisherListener());
     int32_t ret = hardwareProxy_->UnregisterPublisherListener(topic, listener);
@@ -150,9 +138,7 @@ HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_003, TestSize
  */
 HWTEST_F(DistributedHardwareProxyTest, PublishMessage_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     int32_t invalid = 7;
     std::string msg;
     DHTopic topic = static_cast<DHTopic>(invalid);
@@ -168,9 +154,7 @@ HWTEST_F(DistributedHardwareProxyTest, PublishMessage_001, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareProxyTest, PublishMessage_002, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
     std::string msg;
     int32_t ret = hardwareProxy_->PublishMessage(topic, msg);
@@ -185,9 +169,7 @@ HWTEST_F(DistributedHardwareProxyTest, PublishMessage_002, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareProxyTest, PublishMessage_003, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_STOP_DSCREEN;
     std::string msg = "msg";
     int32_t ret = hardwareProxy_->PublishMessage(topic, msg);
@@ -202,9 +184,7 @@ HWTEST_F(DistributedHardwareProxyTest, PublishMessage_003, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareProxyTest, QueryLocalSysSpec_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     QueryLocalSysSpecType spec = QueryLocalSysSpecType::MIN;
     std::string ret = hardwareProxy_->QueryLocalSysSpec(spec);
     EXPECT_EQ(true, ret.empty());
@@ -218,9 +198,7 @@ HWTEST_F(DistributedHardwareProxyTest, QueryLocalSysSpec_001, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareProxyTest, InitializeAVCenter_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     TransRole transRole = TransRole::UNKNOWN;;
     int32_t engineId = 0;
     int32_t ret = hardwareProxy_->InitializeAVCenter(transRole, engineId);
@@ -235,9 +213,7 @@ HWTEST_F(DistributedHardwareProxyTest, InitializeAVCenter_001, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareProxyTest, ReleaseAVCenter_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     int32_t engineId = 0;
     int32_t ret = hardwareProxy_->ReleaseAVCenter(engineId);
     EXPECT_EQ(ERR_DH_AVT_SERVICE_REMOTE_IS_NULL, ret);
@@ -251,9 +227,7 @@ HWTEST_F(DistributedHardwareProxyTest, ReleaseAVCenter_001, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareProxyTest, CreateControlChannel_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     int32_t engineId = 0;
     std::string peerDevId = "peerDevId_test";
     int32_t ret = hardwareProxy_->CreateControlChannel(engineId, peerDevId);
@@ -268,9 +242,7 @@ HWTEST_F(DistributedHardwareProxyTest, CreateControlChannel_001, TestSize.Level0
  */
 HWTEST_F(DistributedHardwareProxyTest, NotifyAVCenter_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     int32_t engineId = 0;
     AVTransEvent event;
     int32_t ret = hardwareProxy_->NotifyAVCenter(engineId, event);
@@ -285,9 +257,7 @@ HWTEST_F(DistributedHardwareProxyTest, NotifyAVCenter_001, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareProxyTest, NotifySourceRemoteSinkStarted_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     std::string deviceId = "devid_test";
     int32_t ret = hardwareProxy_->NotifySourceRemoteSinkStarted(deviceId);
     EXPECT_EQ(ERR_DH_AVT_SERVICE_REMOTE_IS_NULL, ret);
@@ -301,9 +271,7 @@ HWTEST_F(DistributedHardwareProxyTest, NotifySourceRemoteSinkStarted_001, TestSi
  */
 HWTEST_F(DistributedHardwareProxyTest, PauseDistributedHardware_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     DHType dhType = DHType::CAMERA;
     std::string networkId = "networkId_test";
     int32_t ret = hardwareProxy_->PauseDistributedHardware(dhType, networkId);
@@ -318,9 +286,7 @@ HWTEST_F(DistributedHardwareProxyTest, PauseDistributedHardware_001, TestSize.Le
  */
 HWTEST_F(DistributedHardwareProxyTest, ResumeDistributedHardware_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     DHType dhType = DHType::CAMERA;
     std::string networkId = "networkId_test";
     int32_t ret = hardwareProxy_->ResumeDistributedHardware(dhType, networkId);
@@ -335,9 +301,7 @@ HWTEST_F(DistributedHardwareProxyTest, ResumeDistributedHardware_001, TestSize.L
  */
 HWTEST_F(DistributedHardwareProxyTest, StopDistributedHardware_001, TestSize.Level0)
 {
-    if (hardwareProxy_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(hardwareProxy_ != nullptr);
     DHType dhType = DHType::CAMERA;
     std::string networkId = "networkId_test";
     int32_t ret = hardwareProxy_->StopDistributedHardware(dhType, networkId);

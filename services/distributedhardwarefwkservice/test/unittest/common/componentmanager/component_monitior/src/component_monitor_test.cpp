@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,9 +55,7 @@ void ComponentMonitorTest::TearDown()
  */
 HWTEST_F(ComponentMonitorTest, AddSAMonitor_001, TestSize.Level0)
 {
-    if (compMonitorPtr_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(compMonitorPtr_ != nullptr);
     int32_t saId = static_cast<int32_t>(DHType::AUDIO);
     compMonitorPtr_->AddSAMonitor(saId);
     EXPECT_EQ(false, compMonitorPtr_->saListeners_.empty());
@@ -71,9 +69,7 @@ HWTEST_F(ComponentMonitorTest, AddSAMonitor_001, TestSize.Level0)
  */
 HWTEST_F(ComponentMonitorTest, AddSAMonitor_002, TestSize.Level0)
 {
-    if (compMonitorPtr_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(compMonitorPtr_ != nullptr);
     int32_t saId = static_cast<int32_t>(DHType::CAMERA);
     sptr<ComponentMonitor::CompSystemAbilityListener> listener(new ComponentMonitor::CompSystemAbilityListener());
     compMonitorPtr_->saListeners_.insert(std::make_pair(saId, listener));
@@ -89,9 +85,7 @@ HWTEST_F(ComponentMonitorTest, AddSAMonitor_002, TestSize.Level0)
  */
 HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_001, TestSize.Level0)
 {
-    if (compMonitorPtr_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(compMonitorPtr_ != nullptr);
     int32_t saId = static_cast<int32_t>(DHType::GPS);
     compMonitorPtr_->RemoveSAMonitor(saId);
     EXPECT_EQ(true, compMonitorPtr_->saListeners_.empty());
@@ -105,9 +99,7 @@ HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_001, TestSize.Level0)
  */
 HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_002, TestSize.Level0)
 {
-    if (compMonitorPtr_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(compMonitorPtr_ != nullptr);
     int32_t saId = static_cast<int32_t>(DHType::CAMERA);
     sptr<ComponentMonitor::CompSystemAbilityListener> listener(new ComponentMonitor::CompSystemAbilityListener());
     compMonitorPtr_->saListeners_.insert(std::make_pair(saId, listener));
@@ -123,9 +115,7 @@ HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_002, TestSize.Level0)
  */
 HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_001, TestSize.Level0)
 {
-    if (compMonitorPtr_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(compMonitorPtr_ != nullptr);
     sptr<ComponentMonitor::CompSystemAbilityListener> listener(new ComponentMonitor::CompSystemAbilityListener());
     int32_t saId = static_cast<int32_t>(DHType::UNKNOWN);
     std::string deviceId;
@@ -142,9 +132,7 @@ HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_001, TestSize.Level0)
  */
 HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_002, TestSize.Level0)
 {
-    if (compMonitorPtr_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(compMonitorPtr_ != nullptr);
     sptr<ComponentMonitor::CompSystemAbilityListener> listener(new ComponentMonitor::CompSystemAbilityListener());
     int32_t saId = static_cast<int32_t>(DHType::CAMERA);
     std::string deviceId;
