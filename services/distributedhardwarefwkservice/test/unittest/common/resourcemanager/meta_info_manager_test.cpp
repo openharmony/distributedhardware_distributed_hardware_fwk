@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,9 +19,12 @@
 
 #include "constants.h"
 #include "dh_utils_tool.h"
+#include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "meta_capability_info.h"
 #include "meta_info_manager.h"
+#include "task_board.h"
+#include "impl_utils.h"
 
 using namespace testing::ext;
 using namespace std;
@@ -30,6 +33,7 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     constexpr uint16_t DEV_TYPE_TEST = 14;
+    constexpr uint32_t MAX_DB_RECORD_LENGTH = 10005;
 }
 
 class MetaInfoMgrTest : public testing::Test {
@@ -120,6 +124,19 @@ HWTEST_F(MetaInfoMgrTest, SyncRemoteMetaInfos_001, TestSize.Level0)
     ret = MetaInfoManager::GetInstance()->SyncRemoteMetaInfos();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
     MetaInfoManager::GetInstance()->UnInit();
+}
+
+HWTEST_F(MetaInfoMgrTest, SyncRemoteMetaInfos_002, TestSize.Level0)
+{
+    std::string udid = "111111";
+    std::string uuid = "222222";
+    std::string networkId = "333333";
+    DHContext::GetInstance().AddOnlineDevice(udid, uuid, networkId);
+    MetaInfoManager::GetInstance()->Init();
+    auto ret = MetaInfoManager::GetInstance()->SyncRemoteMetaInfos();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    MetaInfoManager::GetInstance()->UnInit();
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
 }
 
 HWTEST_F(MetaInfoMgrTest, GetDataByKeyPrefix_001, TestSize.Level0)
@@ -308,6 +325,251 @@ HWTEST_F(MetaInfoMgrTest, ClearRemoteDeviceMetaInfoData_001, TestSize.Level0)
     MetaInfoManager::GetInstance()->UnInit();
     ret = MetaInfoManager::GetInstance()->ClearRemoteDeviceMetaInfoData(peerudid, peeruuid);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+HWTEST_F(MetaInfoMgrTest, OnChange_001, TestSize.Level0)
+{
+    DistributedKv::Entry insert, update, del;
+    std::vector<DistributedKv::Entry> inserts, updates, deleteds;
+    inserts.push_back(insert);
+    updates.push_back(update);
+    deleteds.push_back(del);
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), "", true);
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->OnChange(changeIn));
+}
+
+HWTEST_F(MetaInfoMgrTest, OnChange_002, TestSize.Level0)
+{
+    DistributedKv::Entry insert, update, del;
+    std::vector<DistributedKv::Entry> inserts, updates, deleteds;
+    std::string tempStr;
+    for (int32_t i = 1; i < MAX_DB_RECORD_LENGTH; i++) {
+        tempStr = std::to_string(i);
+        insert.key = tempStr.c_str();
+        update.key = tempStr.c_str();
+        del.key = tempStr.c_str();
+        insert.value = tempStr.c_str();
+        update.value = tempStr.c_str();
+        del.value = tempStr.c_str();
+        inserts.push_back(insert);
+        updates.push_back(update);
+        deleteds.push_back(del);
+    }
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), "", true);
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->OnChange(changeIn));
+}
+
+HWTEST_F(MetaInfoMgrTest, OnChange_003, TestSize.Level0)
+{
+    DistributedKv::Entry insert, update, del;
+    insert.key = "insert_key";
+    update.key = "update_key";
+    del.key = "del_key";
+    insert.value = "insert_value";
+    update.value = "update_value";
+    del.value = "del_value";
+    std::vector<DistributedKv::Entry> inserts, updates, deleteds;
+    inserts.push_back(insert);
+    updates.push_back(update);
+    deleteds.push_back(del);
+
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), "", true);
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->OnChange(changeIn));
+}
+
+HWTEST_F(MetaInfoMgrTest, OnChange_004, TestSize.Level0)
+{
+    DistributedKv::DataOrigin origin;
+    origin.id = {};
+    origin.store = "";
+    MetaInfoManager::Keys keys;
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->OnChange(origin, std::move(keys)));
+}
+
+HWTEST_F(MetaInfoMgrTest, OnChange_005, TestSize.Level0)
+{
+    DistributedKv::DataOrigin origin;
+    origin.id = {};
+    origin.store = "";
+    MetaInfoManager::Keys keys;
+    keys[MetaInfoManager::OP_INSERT] = {"insert"};
+    keys[MetaInfoManager::OP_UPDATE] = {"update"};
+    keys[MetaInfoManager::OP_DELETE] = {"delete"};
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->OnChange(origin, std::move(keys)));
+}
+
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_001, TestSize.Level0)
+{
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
+    std::vector<DistributedKv::Entry> insertRecords;
+    DistributedKv::Entry entry;
+    entry.key = "insert";
+    entry.value = jsonStr.c_str();
+    insertRecords.push_back(entry);
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->HandleMetaCapabilityAddChange(insertRecords));
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_002, TestSize.Level0)
+{
+    std::string uuid = "123456789";
+    std::string deviceId = Sha256(uuid);
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
+    DHContext::GetInstance().AddOnlineDevice("111111", uuid, "");
+    std::vector<DistributedKv::Entry> insertRecords;
+    DistributedKv::Entry entry;
+    entry.key = "insert";
+    entry.value = jsonStr.c_str();
+    insertRecords.push_back(entry);
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->HandleMetaCapabilityAddChange(insertRecords));
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_003, TestSize.Level0)
+{
+    std::string uuid = "123456789";
+    std::string deviceId = Sha256(uuid);
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
+    DHContext::GetInstance().AddOnlineDevice("111111", uuid, "222222");
+    std::vector<DistributedKv::Entry> insertRecords;
+    DistributedKv::Entry entry;
+    entry.key = "insert";
+    entry.value = jsonStr.c_str();
+    insertRecords.push_back(entry);
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->HandleMetaCapabilityAddChange(insertRecords));
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId("222222");
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_001, TestSize.Level0)
+{
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
+    std::vector<DistributedKv::Entry> updateRecords;
+    DistributedKv::Entry update;
+    update.key = "update";
+    update.value = jsonStr.c_str();
+    updateRecords.push_back(update);
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->HandleMetaCapabilityUpdateChange(updateRecords));
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_002, TestSize.Level0)
+{
+    std::string uuid = "123456789";
+    std::string deviceId = Sha256(uuid);
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
+    std::vector<DistributedKv::Entry> updateRecords;
+    DHContext::GetInstance().AddOnlineDevice("111111", uuid, "");
+    DistributedKv::Entry update;
+    update.key = "update";
+    update.value = jsonStr.c_str();
+    updateRecords.push_back(update);
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->HandleMetaCapabilityUpdateChange(updateRecords));
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_003, TestSize.Level0)
+{
+    std::string uuid = "123456789";
+    std::string deviceId = Sha256(uuid);
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
+    std::vector<DistributedKv::Entry> updateRecords;
+    DHContext::GetInstance().AddOnlineDevice("111111", uuid, "222222");
+    DistributedKv::Entry update;
+    update.key = "update";
+    update.value = jsonStr.c_str();
+    updateRecords.push_back(update);
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->HandleMetaCapabilityUpdateChange(updateRecords));
+
+    std::string enabledDeviceKey = deviceId + RESOURCE_SEPARATOR + "111111";
+    TaskParam taskParam;
+    TaskBoard::GetInstance().SaveEnabledDevice(enabledDeviceKey, taskParam);
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->HandleMetaCapabilityUpdateChange(updateRecords));
+
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId("222222");
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityDeleteChange_001, TestSize.Level0)
+{
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
+    std::vector<DistributedKv::Entry> deleteRecords;
+    DistributedKv::Entry del;
+    del.key = "update";
+    del.value = jsonStr.c_str();
+    deleteRecords.push_back(del);
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->HandleMetaCapabilityDeleteChange(deleteRecords));
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
 }
 
 HWTEST_F(MetaInfoMgrTest, GetEntriesByKeys_001, TestSize.Level0)
