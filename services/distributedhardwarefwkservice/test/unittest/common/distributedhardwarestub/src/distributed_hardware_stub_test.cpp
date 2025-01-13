@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,9 +45,7 @@ void DistributedHardwareStubTest::TearDown()
  */
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_001, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = 0;
     MessageParcel data;
     MessageParcel reply;
@@ -63,9 +61,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_001, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_002, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = 0;
     MessageParcel data;
     MessageParcel reply;
@@ -75,9 +71,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_002, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_003, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::REG_PUBLISHER_LISTNER);
     MessageParcel data;
     MessageParcel reply;
@@ -91,9 +85,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_003, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_004, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::PUBLISH_MESSAGE);
     MessageParcel data;
     MessageParcel reply;
@@ -107,9 +99,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_004, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_005, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::INIT_CTL_CEN);
     MessageParcel data;
     MessageParcel reply;
@@ -123,9 +113,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_005, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_006, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::RELEASE_CTL_CEN);
     MessageParcel data;
     MessageParcel reply;
@@ -139,9 +127,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_006, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_007, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::CREATE_CTL_CEN_CHANNEL);
     MessageParcel data;
     MessageParcel reply;
@@ -157,9 +143,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_007, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_008, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_AV_EVENT);
     MessageParcel data;
     MessageParcel reply;
@@ -179,9 +163,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_008, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_009, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::QUERY_LOCAL_SYS_SPEC);
     MessageParcel data;
     MessageParcel reply;
@@ -195,9 +177,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_009, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_010, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED);
     MessageParcel data;
     MessageParcel reply;
@@ -211,9 +191,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_010, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_011, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::PAUSE_DISTRIBUTED_HARDWARE);
     MessageParcel data;
     MessageParcel reply;
@@ -225,9 +203,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_011, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_012, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::RESUME_DISTRIBUTED_HARDWARE);
     MessageParcel data;
     MessageParcel reply;
@@ -239,9 +215,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_012, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_013, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::STOP_DISTRIBUTED_HARDWARE);
     MessageParcel data;
     MessageParcel reply;
@@ -253,9 +227,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_013, TestSize.Level0)
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_014, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_PUBLISHER_LISTENER);
     MessageParcel data;
     MessageParcel reply;
@@ -275,9 +247,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_014, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareStubTest, RegisterPublisherListenerInner_001, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     MessageParcel data;
     MessageParcel reply;
     EXPECT_NE(DH_FWK_SUCCESS, stubTest_->RegisterPublisherListenerInner(data, reply));
@@ -291,9 +261,7 @@ HWTEST_F(DistributedHardwareStubTest, RegisterPublisherListenerInner_001, TestSi
  */
 HWTEST_F(DistributedHardwareStubTest, UnregisterPublisherListenerInner_001, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     MessageParcel data;
     MessageParcel reply;
     EXPECT_NE(DH_FWK_SUCCESS, stubTest_->UnregisterPublisherListenerInner(data, reply));
@@ -307,9 +275,7 @@ HWTEST_F(DistributedHardwareStubTest, UnregisterPublisherListenerInner_001, Test
  */
 HWTEST_F(DistributedHardwareStubTest, PublishMessageInner_001, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     MessageParcel data;
     MessageParcel reply;
     EXPECT_NE(DH_FWK_SUCCESS, stubTest_->PublishMessageInner(data, reply));
@@ -323,9 +289,7 @@ HWTEST_F(DistributedHardwareStubTest, PublishMessageInner_001, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareStubTest, ValidTopic_001, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t topic = static_cast<uint32_t>(DHTopic::TOPIC_MIN);
     EXPECT_EQ(false, stubTest_->ValidTopic(topic));
 
@@ -344,9 +308,7 @@ HWTEST_F(DistributedHardwareStubTest, ValidTopic_001, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_001, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t spec = 1;
     EXPECT_EQ(true, stubTest_->ValidQueryLocalSpec(spec));
 }
@@ -359,9 +321,7 @@ HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_001, TestSize.Level0)
  */
 HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_002, TestSize.Level0)
 {
-    if (stubTest_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t spec = 0;
     EXPECT_EQ(false, stubTest_->ValidQueryLocalSpec(spec));
     spec = 5;

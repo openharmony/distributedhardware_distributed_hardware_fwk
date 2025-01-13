@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -281,9 +281,7 @@ HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_002, TestSize.Level0)
     std::string targetKey = "histmAudEnc";
     int32_t target = 100;
     cJSON *attrJson = cJSON_CreateObject();
-    if (attrJson == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(attrJson != nullptr);
     cJSON_AddNumberToObject(attrJson, targetKey.c_str(), target);
     char* cjson = cJSON_PrintUnformatted(attrJson);
     if (cjson == nullptr) {
@@ -298,9 +296,7 @@ HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_002, TestSize.Level0)
     cJSON_Delete(attrJson);
 
     cJSON *attrJson1 = cJSON_CreateObject();
-    if (attrJson1 == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(attrJson1 != nullptr);
     std::string targetKeyValue = "targetKeyValue";
     cJSON_AddStringToObject(attrJson1, targetKey.c_str(), targetKeyValue.c_str());
     char* cjson1 = cJSON_PrintUnformatted(attrJson1);

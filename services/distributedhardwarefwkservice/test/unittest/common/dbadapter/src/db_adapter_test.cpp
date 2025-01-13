@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -137,9 +137,7 @@ void DbAdapterTest::TearDown()
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_000, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->Init(true, DistributedKv::DataType::TYPE_DYNAMICAL));
 }
 
@@ -151,9 +149,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_000, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_001, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     vector<shared_ptr<CapabilityInfo>> resInfos { CAP_INFO_0, CAP_INFO_1, CAP_INFO_2, CAP_INFO_3, CAP_INFO_4,
         CAP_INFO_5, CAP_INFO_6, CAP_INFO_7, CAP_INFO_8, CAP_INFO_9 };
 
@@ -179,9 +175,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_001, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DH_ID_0) };
     std::vector<std::string> values { TEST_DH_ATTR_0 };
 
@@ -197,9 +191,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_003, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DH_ID_0) };
     std::vector<std::string> valuesEmpty;
 
@@ -214,9 +206,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_003, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_004, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::vector<std::string> keysEmpty;
     std::vector<std::string> values { TEST_DH_ATTR_0 };
 
@@ -231,9 +221,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_004, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_005, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::vector<std::string> keysEmpty;
     std::vector<std::string> valuesEmpty;
 
@@ -248,9 +236,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_005, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_006, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DH_ID_0) };
     std::vector<std::string> values { TEST_DH_ATTR_0, TEST_DH_ATTR_1 };
 
@@ -265,9 +251,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_006, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_007, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
     std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DH_ID_0) };
     std::vector<std::string> values { TEST_DH_ATTR_0 };
@@ -283,9 +267,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_007, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_008, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL, g_dbAdapterPtr->ReInit(true));
 }
@@ -298,9 +280,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_008, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_009, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL, g_dbAdapterPtr->RemoveDeviceData(TEST_DEV_ID_0));
 }
@@ -313,9 +293,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_009, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_010, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL, g_dbAdapterPtr->RemoveDataByKey("key"));
 }
@@ -328,9 +306,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_010, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_012, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL, g_dbAdapterPtr->UnRegisterChangeListener());
 }
@@ -343,9 +319,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_012, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_013, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::string key = std::string(TEST_DEV_ID_1 + TEST_DH_ID_1);
     std::string value = TEST_DH_ATTR_0;
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
@@ -360,9 +334,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_013, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_014, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::string networkId = DEV_NETWORK_ID_1;
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL, g_dbAdapterPtr->RegisterChangeListener());
@@ -376,9 +348,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_014, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, db_adapter_test_015, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL, g_dbAdapterPtr->UnRegisterChangeListener());
 }
@@ -391,9 +361,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_015, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, ReInit_001, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->GetKvStorePtr(true, DistributedKv::DataType::TYPE_DYNAMICAL);
     EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->ReInit(true));
 }
@@ -406,9 +374,7 @@ HWTEST_F(DbAdapterTest, ReInit_001, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, RemoveDeviceData_001, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->GetKvStorePtr(true, DistributedKv::DataType::TYPE_DYNAMICAL);
     EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->RemoveDeviceData(TEST_DEV_ID_0));
 }
@@ -421,9 +387,7 @@ HWTEST_F(DbAdapterTest, RemoveDeviceData_001, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, PutData_01, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::string key;
     std::string value;
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, g_dbAdapterPtr->PutData(key, value));
@@ -437,9 +401,7 @@ HWTEST_F(DbAdapterTest, PutData_01, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, PutData_02, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024 +1 ;
     std::string key = "key";
     key.resize(MAX_MESSAGE_LEN);
@@ -455,9 +417,7 @@ HWTEST_F(DbAdapterTest, PutData_02, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, PutData_03, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::string key = "key";
     std::string value;
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, g_dbAdapterPtr->PutData(key, value));
@@ -471,9 +431,7 @@ HWTEST_F(DbAdapterTest, PutData_03, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, PutData_04, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024 + 1;
     std::string key = "key";
     std::string value;
@@ -489,9 +447,7 @@ HWTEST_F(DbAdapterTest, PutData_04, TestSize.Level0)
  */
 HWTEST_F(DbAdapterTest, PutData_05, TestSize.Level0)
 {
-    if (g_dbAdapterPtr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::string key = "key";
     std::string value = "value";
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;

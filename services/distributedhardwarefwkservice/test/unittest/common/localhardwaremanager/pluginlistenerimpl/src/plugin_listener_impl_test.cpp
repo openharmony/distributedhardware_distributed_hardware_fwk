@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,9 +51,7 @@ void PluginListenerImplTest::TearDown() {}
  */
 HWTEST_F(PluginListenerImplTest, plugin_listener_impl_test_001, TestSize.Level0)
 {
-    if (g_mockHardwareHandler == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_mockHardwareHandler != nullptr);
     g_mockHardwareHandler->RegisterPluginListener(g_listener);
     EXPECT_EQ(g_mockHardwareHandler->PluginHardware(dhId, attrs, subtype), DH_FWK_SUCCESS);
 }
@@ -66,9 +64,7 @@ HWTEST_F(PluginListenerImplTest, plugin_listener_impl_test_001, TestSize.Level0)
  */
 HWTEST_F(PluginListenerImplTest, plugin_listener_impl_test_002, TestSize.Level0)
 {
-    if (g_mockHardwareHandler == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(g_mockHardwareHandler != nullptr);
     EXPECT_EQ(g_mockHardwareHandler->UnPluginHardware(dhId), DH_FWK_SUCCESS);
     g_mockHardwareHandler->UnRegisterPluginListener();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,9 +46,7 @@ void LowLatencyListenerTest::TearDown()
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_001, TestSize.Level0)
 {
-    if (listener_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_MIN;
     std::string message;
     listener_->OnMessage(topic, message);
@@ -63,9 +61,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_001, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_002, TestSize.Level0)
 {
-    if (listener_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     std::string message;
     listener_->OnMessage(topic, message);
@@ -80,9 +76,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_002, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_003, TestSize.Level0)
 {
-    if (listener_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     std::string message = "message";
     listener_->OnMessage(topic, message);
@@ -97,14 +91,10 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_003, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_004, TestSize.Level0)
 {
-    if (listener_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     cJSON* json = cJSON_CreateObject();
-    if (json == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(json != nullptr);
     const char* DH_TYPE = "dh_type";
     const char* LOW_LATENCY_ENABLE = "low_latency_enable";
 
@@ -130,9 +120,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_004, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_005, TestSize.Level0)
 {
-    if (listener_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     std::string message;
     uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024;
@@ -149,14 +137,10 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_005, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_006, TestSize.Level0)
 {
-    if (listener_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     cJSON* json = cJSON_CreateObject();
-    if (json == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(json != nullptr);
     const char* DH_TYPE = "dh_type";
     const char* LOW_LATENCY_ENABLE = "low_latency_enable";
     cJSON_AddNumberToObject(json, DH_TYPE, 0x01);
@@ -181,14 +165,10 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_006, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, OnMessage_007, TestSize.Level0)
 {
-    if (listener_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
     cJSON* json = cJSON_CreateObject();
-    if (json == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(json != nullptr);
     const char* DH_TYPE = "dh_type";
     const char* LOW_LATENCY_ENABLE = "low_latency_enable";
     cJSON_AddNumberToObject(json, DH_TYPE, 0x01);
@@ -213,9 +193,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_007, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, ExecuteInner_008, TestSize.Level0)
 {
-    if (listener_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(listener_ != nullptr);
     std::string timerId;
     int32_t delayTimeMs = 1;
     LowLatencyTimer timer(timerId, delayTimeMs);
@@ -231,9 +209,7 @@ HWTEST_F(LowLatencyListenerTest, ExecuteInner_008, TestSize.Level0)
  */
 HWTEST_F(LowLatencyListenerTest, HandleStopTimer_008, TestSize.Level0)
 {
-    if (listener_ == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(listener_ != nullptr);
     std::string timerId;
     int32_t delayTimeMs = 1;
     LowLatencyTimer timer(timerId, delayTimeMs);

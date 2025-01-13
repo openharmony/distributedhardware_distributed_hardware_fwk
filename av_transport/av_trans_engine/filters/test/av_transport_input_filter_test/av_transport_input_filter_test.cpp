@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -311,9 +311,6 @@ HWTEST_F(AvTransportInputFilterTest, ConfigMeta_001, testing::ext::TestSize.Leve
 {
     std::shared_ptr<AVInputFilter> avInputTest_ =
         FilterFactory::Instance().CreateFilterWithType<AVInputFilter>(AVINPUT_NAME, FILTERNAME);
-    if (avInputTest_ == nullptr) {
-        return;
-    }
     ASSERT_TRUE(avInputTest_ != nullptr);
     Plugin::Meta meta;
     ErrorCode ret = avInputTest_->ConfigMeta(meta);
