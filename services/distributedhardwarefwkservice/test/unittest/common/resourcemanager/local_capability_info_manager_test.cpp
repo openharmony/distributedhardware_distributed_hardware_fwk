@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@
 
 #include "constants.h"
 #include "capability_info.h"
+#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "local_capability_info_manager.h"
 
@@ -29,6 +30,7 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     constexpr uint16_t DEV_TYPE_TEST = 14;
+    constexpr uint32_t MAX_DB_RECORD_LENGTH = 10005;
 }
 class LocalCapInfoMgrTest : public testing::Test {
 public:
@@ -72,12 +74,23 @@ HWTEST_F(LocalCapInfoMgrTest, SyncDeviceInfoFromDB_001, TestSize.Level0)
     LocalCapabilityInfoManager::GetInstance()->Init();
     ret = LocalCapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
+
+    ret = LocalCapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB("");
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 HWTEST_F(LocalCapInfoMgrTest, AddCapability_001, TestSize.Level0)
 {
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
     auto ret = LocalCapabilityInfoManager::GetInstance()->AddCapability(resInfos);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID, ret);
+
+    for (int32_t i = 1; i < MAX_DB_RECORD_LENGTH; i++) {
+        std::shared_ptr<CapabilityInfo> capInfoTest = make_shared<CapabilityInfo>(std::to_string(i), std::to_string(i),
+            "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs", "subtype");
+        resInfos.push_back(capInfoTest);
+    }
+    ret = LocalCapabilityInfoManager::GetInstance()->AddCapability(resInfos);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID, ret);
 }
 
@@ -94,8 +107,10 @@ HWTEST_F(LocalCapInfoMgrTest, AddCapability_002, TestSize.Level0)
 HWTEST_F(LocalCapInfoMgrTest, AddCapability_003, TestSize.Level0)
 {
     std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
+    std::shared_ptr<CapabilityInfo> capInfo1 = nullptr;
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
     resInfos.push_back(capInfo);
+    resInfos.push_back(capInfo1);
     LocalCapabilityInfoManager::GetInstance()->Init();
     auto ret = LocalCapabilityInfoManager::GetInstance()->AddCapability(resInfos);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
@@ -238,6 +253,23 @@ HWTEST_F(LocalCapInfoMgrTest, ClearRemoteDeviceLocalInfoData_001, TestSize.Level
 
     LocalCapabilityInfoManager::GetInstance()->Init();
     ret = LocalCapabilityInfoManager::GetInstance()->ClearRemoteDeviceLocalInfoData(peeruuid);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(LocalCapInfoMgrTest, RemoveLocalInfoInMemByUuid_001, TestSize.Level0)
+{
+    std::string peeruuid = "123456789";
+    std::string dhid = "audio_132";
+    std::string deviceId = Sha256(peeruuid);
+
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "subtype");
+    std::string key = deviceId + "###" + dhid;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    auto ret = LocalCapabilityInfoManager::GetInstance()->RemoveLocalInfoInMemByUuid("111222333");
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+
+    ret = LocalCapabilityInfoManager::GetInstance()->RemoveLocalInfoInMemByUuid(peeruuid);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 }

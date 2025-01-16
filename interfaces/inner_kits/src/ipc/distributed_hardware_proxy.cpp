@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,7 +49,7 @@ int32_t DistributedHardwareProxy::RegisterPublisherListener(const DHTopic topic,
         DHLOGE("remote service is null");
         return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
     }
-    if (topic < DHTopic::TOPIC_MIN || topic > DHTopic::TOPIC_MAX) {
+    if (topic <= DHTopic::TOPIC_MIN || topic >= DHTopic::TOPIC_MAX) {
         DHLOGE("Topic is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
     }
@@ -98,7 +98,7 @@ int32_t DistributedHardwareProxy::UnregisterPublisherListener(const DHTopic topi
         DHLOGE("remote service is null");
         return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
     }
-    if (topic < DHTopic::TOPIC_MIN || topic > DHTopic::TOPIC_MAX) {
+    if (topic <= DHTopic::TOPIC_MIN || topic >= DHTopic::TOPIC_MAX) {
         DHLOGE("Topic is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
     }
@@ -141,7 +141,7 @@ int32_t DistributedHardwareProxy::PublishMessage(const DHTopic topic, const std:
         DHLOGE("remote service is null");
         return ERR_DH_FWK_SERVICE_REMOTE_IS_NULL;
     }
-    if (topic < DHTopic::TOPIC_MIN || topic > DHTopic::TOPIC_MAX) {
+    if (topic <= DHTopic::TOPIC_MIN || topic >= DHTopic::TOPIC_MAX) {
         DHLOGE("Topic is invalid!");
         return ERR_DH_FWK_PARA_INVALID;
     }
@@ -187,7 +187,7 @@ std::string DistributedHardwareProxy::QueryLocalSysSpec(QueryLocalSysSpecType sp
         DHLOGE("remote service is null");
         return "";
     }
-    if (spec < QueryLocalSysSpecType::MIN || spec > QueryLocalSysSpecType::MAX) {
+    if (spec <= QueryLocalSysSpecType::MIN || spec >= QueryLocalSysSpecType::MAX) {
         DHLOGE("Sys spec type is invalid!");
         return "";
     }

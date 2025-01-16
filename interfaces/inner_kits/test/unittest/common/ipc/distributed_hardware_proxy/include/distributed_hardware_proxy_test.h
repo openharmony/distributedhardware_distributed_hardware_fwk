@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@
 #include "distributed_hardware_errno.h"
 #include "idistributed_hardware.h"
 #include "distributed_hardware_proxy.h"
+#include "distributed_hardware_stub.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -34,97 +35,26 @@ public:
     virtual void SetUp();
     virtual void TearDown();
 
-    std::shared_ptr<DistributedHardwareProxy> hardwareProxy_ = nullptr;
-};
+    class TestDistributedHardwareStub : public
+        OHOS::DistributedHardware::DistributedHardwareStub {
+    public:
+        TestDistributedHardwareStub() = default;
+        virtual ~TestDistributedHardwareStub() = default;
+        int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> listener);
+        int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> listener);
+        int32_t PublishMessage(const DHTopic topic, const std::string &msg);
+        std::string QueryLocalSysSpec(QueryLocalSysSpecType spec);
 
-class MockIDistributedHardware : public IDistributedHardware {
-public:
-    sptr<IRemoteObject> AsObject()
-    {
-        return nullptr;
-    }
-
-    int32_t RegisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> listener)
-    {
-        (void)topic;
-        (void)listener;
-        return DH_FWK_SUCCESS;
-    }
-
-    int32_t UnregisterPublisherListener(const DHTopic topic, const sptr<IPublisherListener> listener)
-    {
-        (void)topic;
-        (void)listener;
-        return DH_FWK_SUCCESS;
-    }
-
-    int32_t PublishMessage(const DHTopic topic, const std::string &msg)
-    {
-        (void)topic;
-        (void)msg;
-        return DH_FWK_SUCCESS;
-    }
-
-    std::string QueryLocalSysSpec(QueryLocalSysSpecType spec)
-    {
-        (void)spec;
-        return 0;
-    }
-
-    int32_t InitializeAVCenter(const TransRole &transRole, int32_t &engineId)
-    {
-        (void)transRole;
-        (void)engineId;
-        return DH_FWK_SUCCESS;
-    }
-
-    int32_t ReleaseAVCenter(int32_t engineId)
-    {
-        (void)engineId;
-        return DH_FWK_SUCCESS;
-    }
-
-    int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId)
-    {
-        (void)engineId;
-        (void)peerDevId;
-        return DH_FWK_SUCCESS;
-    }
-
-    int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event)
-    {
-        (void)engineId;
-        (void)event;
-        return DH_FWK_SUCCESS;
-    }
-
-    int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> callback)
-    {
-        (void)engineId;
-        (void)callback;
-        return DH_FWK_SUCCESS;
-    }
-
-    int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId)
-    {
-        (void)dhType;
-        (void)networkId;
-        return DH_FWK_SUCCESS;
-    }
-
-    int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId)
-    {
-        (void)dhType;
-        (void)networkId;
-        return DH_FWK_SUCCESS;
-    }
-
-    int32_t StopDistributedHardware(DHType dhType, const std::string &networkId)
-    {
-        (void)dhType;
-        (void)networkId;
-        return DH_FWK_SUCCESS;
-    }
+        int32_t InitializeAVCenter(const TransRole &transRole, int32_t &engineId);
+        int32_t ReleaseAVCenter(int32_t engineId);
+        int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId);
+        int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event);
+        int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> callback);
+        int32_t NotifySourceRemoteSinkStarted(std::string &deviceId);
+        int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId);
+        int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId);
+        int32_t StopDistributedHardware(DHType dhType, const std::string &networkId);
+    };
 };
 
 class MockIPublisherListener : public IPublisherListener {
