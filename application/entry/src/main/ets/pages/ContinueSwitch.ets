@@ -203,6 +203,27 @@ struct ContinueSwitch {
     }
   }
 
+  initSwitchStatus(): void {
+    logger.info(`${TAG} initSwitchStatus in`);
+    try {
+      let value = settings.getValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
+        settings.domainName.USER_SECURITY);
+      this.isSwitchOn = value != switchState.close ? true : false;
+      logger.info(`${TAG} <initSwitchStatus> this.isSwitchOn : ${this.isSwitchOn}; value: ${value}`);
+
+      AppStorage.setOrCreate('isSwitchOn', this.isSwitchOn);
+      logger.info(`${TAG} AppStorage.get<boolean>(isSwitchOn) : ${AppStorage.get<boolean>('isSwitchOn')}`);
+
+      if (this.isSwitchOn) {
+        let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
+          settings.domainName.USER_SECURITY);
+        logger.info(`${TAG} set value success :${status}; set:Continue_Switch_Status is 1`);
+      }
+    } catch (error) {
+      logger.error(`${TAG} settings set or get failed. error.message: ${error.message}`);
+    }
+  }
+
   onPageShow() {
     logger.info(`${TAG} onPageShow in`);
     this.getGapLength();
@@ -217,21 +238,7 @@ struct ContinueSwitch {
 
   aboutToAppear() {
     logger.info(`${TAG} aboutToAppear in`);
-    // Switch State Initialization
-    let value = settings.getValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
-      settings.domainName.USER_SECURITY);
-    this.isSwitchOn = value != switchState.close ? true : false;
-    logger.info(`${TAG} <aboutToAppear> this.isSwitchOn : ${this.isSwitchOn}; value: ${value}`);
-
-    AppStorage.setOrCreate('isSwitchOn', this.isSwitchOn);
-    logger.info(`${TAG} AppStorage.get<boolean>(isSwitchOn) : ${AppStorage.get<boolean>('isSwitchOn')}`);
-
-    if (this.isSwitchOn) {
-      let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.open,
-        settings.domainName.USER_SECURITY);
-      logger.info(`${TAG} set value success :${status}; set:Continue_Switch_Status is 1`);
-    }
-
+    this.initSwitchStatus();
     this.getStringSync();
     this.getImageArray();
     this.getForegroundOsAccountLocalId();
@@ -374,14 +381,18 @@ struct ContinueSwitch {
                 logger.info(`${TAG} isOn: ${isOn}`);
                 this.isSwitchOn = isOn;
                 AppStorage.setAndLink('isSwitchOn', isOn);
-                if (isOn) {
-                  let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
-                    switchState.open, settings.domainName.USER_SECURITY);
-                  logger.info(`${TAG} is set success :${status}; set:Continue_Switch_Status is open`);
-                } else {
-                  let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
-                    switchState.close, settings.domainName.USER_SECURITY);
-                  logger.info(`${TAG} is set success :${status}; set:Continue_Switch_Status is close`);
+                try {
+                  if (isOn) {
+                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
+                      switchState.open, settings.domainName.USER_SECURITY);
+                    logger.info(`${TAG} is set success :${status}; set:Continue_Switch_Status is open`);
+                  } else {
+                    let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY,
+                      switchState.close, settings.domainName.USER_SECURITY);
+                    logger.info(`${TAG} is set success :${status}; set:Continue_Switch_Status is close`);
+                  }
+                } catch (error) {
+                  logger.error(`${TAG} settings.setValueSync failed. error.message: ${error.message}`);
                 }
               })
           }
@@ -547,8 +558,8 @@ struct ContinueSwitch {
 
   private checkFoldBackButton(): void {
     logger.info(`${TAG} checkFoldBackButton in`);
-    if (display.isFoldable()) {
-      try {
+    try {
+      if (display.isFoldable()) {
         display.on('foldStatusChange', (foldStatus: display.FoldStatus) => {
           let foldStatusValue = foldStatus.valueOf();
           logger.info(`${TAG} checkFoldBackButton: foldStatusValue is ${foldStatusValue}`);
@@ -556,9 +567,9 @@ struct ContinueSwitch {
         })
         let data: display.FoldStatus = display.getFoldStatus();
         this.refreshFoldStatus(data);
-      } catch (err) {
-        logger.error(`${TAG} Register failed. exception: ${err.message}`);
       }
+    } catch (err) {
+      logger.error(`${TAG} display.isFoldable,on failed. exception: ${err.message}`);
     }
   }
 
