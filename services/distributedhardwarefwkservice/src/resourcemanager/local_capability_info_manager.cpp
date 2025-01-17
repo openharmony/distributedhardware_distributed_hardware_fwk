@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -168,8 +168,7 @@ int32_t LocalCapabilityInfoManager::RemoveCapabilityInfoByKey(const std::string 
 void LocalCapabilityInfoManager::GetCapabilitiesByDeviceId(const std::string &deviceId,
     std::vector<std::shared_ptr<CapabilityInfo>> &resInfos)
 {
-    if (!IsIdLengthValid(deviceId) || resInfos.empty() || resInfos.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("On parameter error, maybe empty or too large!");
+    if (!IsIdLengthValid(deviceId)) {
         return;
     }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);

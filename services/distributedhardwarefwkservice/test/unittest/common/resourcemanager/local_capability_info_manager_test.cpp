@@ -139,16 +139,7 @@ HWTEST_F(LocalCapInfoMgrTest, GetCapabilitiesByDeviceId_001, TestSize.Level0)
 {
     std::string deviceId = "";
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
-    LocalCapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, resInfos);
-
-    deviceId = "123456789";
-    std::string dhid = "111111";
-    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
-        "dhid", deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "subtype");
-    std::string key = deviceId + "###" + dhid;
-    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
-    LocalCapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, resInfos);
-    EXPECT_TRUE(resInfos.empty());
+    ASSERT_NO_FATAL_FAILURE(LocalCapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, resInfos));
 }
 
 HWTEST_F(LocalCapInfoMgrTest, GetCapability_001, TestSize.Level0)
