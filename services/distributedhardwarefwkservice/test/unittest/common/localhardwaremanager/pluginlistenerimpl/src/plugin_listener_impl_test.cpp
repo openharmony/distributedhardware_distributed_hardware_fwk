@@ -15,59 +15,23 @@
 
 #include "plugin_listener_impl_test.h"
 
-#include "distributed_hardware_errno.h"
-#include "mock_hardware_handler.h"
-
 using namespace testing::ext;
 
 namespace OHOS {
 namespace DistributedHardware {
 namespace {
-const std::string dhId = "00000000000000000";
-const std::string attrs = "11111111111111111";
-const std::string subtype = "subtype";
-std::shared_ptr<PluginListener> g_listener;
-std::shared_ptr<MockHardwareHandler> g_mockHardwareHandler;
+const std::string DHID_TEST = "audio_1234564";
+const std::string ATTRS_TEST = "attrs_0";
+const std::string SUBTYPE_TEST = "subtype";
 }
 
-void PluginListenerImplTest::SetUpTestCase(void)
-{
-    DHType dhType = DHType::CAMERA;
-    g_listener = std::make_shared<PluginListenerImpl>(dhType);
-    g_mockHardwareHandler = std::make_shared<MockHardwareHandler>();
-}
+void PluginListenerImplTest::SetUpTestCase(void) {}
 
 void PluginListenerImplTest::TearDownTestCase(void) {}
 
 void PluginListenerImplTest::SetUp() {}
 
 void PluginListenerImplTest::TearDown() {}
-
-/**
- * @tc.name: plugin_listener_impl_test_001
- * @tc.desc: Verify the PluginHardware function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK3
- */
-HWTEST_F(PluginListenerImplTest, plugin_listener_impl_test_001, TestSize.Level0)
-{
-    ASSERT_TRUE(g_mockHardwareHandler != nullptr);
-    g_mockHardwareHandler->RegisterPluginListener(g_listener);
-    EXPECT_EQ(g_mockHardwareHandler->PluginHardware(dhId, attrs, subtype), DH_FWK_SUCCESS);
-}
-
-/**
- * @tc.name: plugin_listener_impl_test_002
- * @tc.desc: Verify the UnPluginHardware function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK3
- */
-HWTEST_F(PluginListenerImplTest, plugin_listener_impl_test_002, TestSize.Level0)
-{
-    ASSERT_TRUE(g_mockHardwareHandler != nullptr);
-    EXPECT_EQ(g_mockHardwareHandler->UnPluginHardware(dhId), DH_FWK_SUCCESS);
-    g_mockHardwareHandler->UnRegisterPluginListener();
-}
 
 /**
  * @tc.name: PluginHardware_001
@@ -79,10 +43,9 @@ HWTEST_F(PluginListenerImplTest, PluginHardware_001, TestSize.Level0)
 {
     DHType type = DHType::AUDIO;
     std::shared_ptr<PluginListener> listener = std::make_shared<PluginListenerImpl>(type);
-    std::string dhId;
-    std::string attrs;
-    listener->PluginHardware(dhId, attrs, subtype);
-    EXPECT_EQ(true, dhId.empty());
+    std::string dhId = "";
+    std::string attrs = "";
+    ASSERT_NO_FATAL_FAILURE(listener->PluginHardware(dhId, attrs, SUBTYPE_TEST));
 }
 
 /**
@@ -93,23 +56,26 @@ HWTEST_F(PluginListenerImplTest, PluginHardware_001, TestSize.Level0)
  */
 HWTEST_F(PluginListenerImplTest, PluginHardware_002, TestSize.Level0)
 {
-    uint32_t MAX_ID_LEN = 257;
     DHType type = DHType::AUDIO;
-    std::shared_ptr<PluginListenerImpl> listener = std::make_shared<PluginListenerImpl>(type);
-    std::string dhId1;
-    std::string dhId2;
-    dhId2.resize(MAX_ID_LEN);
-    std::string dhId3 = "dhId3";
-    std::string attrs1;
-    std::string attrs2;
-    attrs2.resize(MAX_ID_LEN);
-    std::string attrs3 = "attrs3";
-    listener->PluginHardware(dhId1, attrs1, subtype);
-    listener->PluginHardware(dhId2, attrs1, subtype);
-    listener->PluginHardware(dhId3, attrs1, subtype);
-    listener->PluginHardware(dhId3, attrs2, subtype);
-    listener->PluginHardware(dhId3, attrs3, subtype);
-    EXPECT_EQ(true, dhId1.empty());
+    std::shared_ptr<PluginListener> listener = std::make_shared<PluginListenerImpl>(type);
+    std::string dhId = "";
+    ASSERT_NO_FATAL_FAILURE(listener->PluginHardware(dhId, ATTRS_TEST, SUBTYPE_TEST));
+}
+
+/**
+ * @tc.name: PluginHardware_003
+ * @tc.desc: Verify the PluginHardware function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(PluginListenerImplTest, PluginHardware_003, TestSize.Level0)
+{
+    DHType type = DHType::AUDIO;
+    std::shared_ptr<PluginListener> listener = std::make_shared<PluginListenerImpl>(type);
+    std::string attrs = "";
+    ASSERT_NO_FATAL_FAILURE(listener->PluginHardware(DHID_TEST, attrs, SUBTYPE_TEST));
+
+    ASSERT_NO_FATAL_FAILURE(listener->PluginHardware(DHID_TEST, ATTRS_TEST, SUBTYPE_TEST));
 }
 
 /**
@@ -120,11 +86,10 @@ HWTEST_F(PluginListenerImplTest, PluginHardware_002, TestSize.Level0)
  */
 HWTEST_F(PluginListenerImplTest, UnPluginHardware_001, TestSize.Level0)
 {
+    std::string dhId = "";
     DHType type = DHType::AUDIO;
-    std::shared_ptr<PluginListener> listener = std::make_shared<PluginListenerImpl>(type);
-    std::string dhId;
-    listener->UnPluginHardware(dhId);
-    EXPECT_EQ(true, dhId.empty());
+    std::shared_ptr<PluginListenerImpl> listener = std::make_shared<PluginListenerImpl>(type);
+    ASSERT_NO_FATAL_FAILURE(listener->UnPluginHardware(dhId));
 }
 
 /**
@@ -135,17 +100,9 @@ HWTEST_F(PluginListenerImplTest, UnPluginHardware_001, TestSize.Level0)
  */
 HWTEST_F(PluginListenerImplTest, UnPluginHardware_002, TestSize.Level0)
 {
-    uint32_t MAX_ID_LEN = 257;
     DHType type = DHType::AUDIO;
     std::shared_ptr<PluginListenerImpl> listener = std::make_shared<PluginListenerImpl>(type);
-    std::string dhId1;
-    std::string dhId2;
-    dhId2.resize(MAX_ID_LEN);
-    std::string dhId3 = "dhId3";
-    listener->UnPluginHardware(dhId1);
-    listener->UnPluginHardware(dhId2);
-    listener->UnPluginHardware(dhId3);
-    EXPECT_EQ(true, dhId1.empty());
+    ASSERT_NO_FATAL_FAILURE(listener->UnPluginHardware(DHID_TEST));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,7 @@ int32_t PublisherListenerStub::OnRemoteRequest(
     switch (msgCode) {
         case IPublisherListener::Message::ON_MESSAGE: {
             DHTopic topic = static_cast<DHTopic>(data.ReadUint32());
-            if (topic < DHTopic::TOPIC_MIN || topic > DHTopic::TOPIC_MAX) {
+            if (topic <= DHTopic::TOPIC_MIN || topic >= DHTopic::TOPIC_MAX) {
                 DHLOGE("Topic is invalid!");
                 return ERR_INVALID_DATA;
             }

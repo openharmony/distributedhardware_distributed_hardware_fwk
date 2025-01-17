@@ -239,6 +239,18 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_014, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_015, TestSize.Level0)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::REGISTER_CTL_CEN_CALLBACK);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+}
+
 /**
  * @tc.name: RegisterPublisherListenerInner_001
  * @tc.desc: Verify the RegisterPublisherListenerInner function
@@ -327,7 +339,5 @@ HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_002, TestSize.Level0)
     spec = 5;
     EXPECT_EQ(false, stubTest_->ValidQueryLocalSpec(spec));
 }
-
-
 } // namespace DistributedHardware
 } // namespace OHOS
