@@ -51,6 +51,10 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_001, TestSize.Level0)
     std::string message;
     listener_->OnMessage(topic, message);
     EXPECT_EQ(nullptr, listener_->AsObject());
+
+    topic = DHTopic::TOPIC_MAX;
+    listener_->OnMessage(topic, message);
+    EXPECT_EQ(nullptr, listener_->AsObject());
 }
 
 /**

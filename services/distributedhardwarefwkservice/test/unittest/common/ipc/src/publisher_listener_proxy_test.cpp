@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,13 +29,16 @@ void PublisherListenerProxyTest::TearDownTestCase()
 
 void PublisherListenerProxyTest::SetUp()
 {
-    sptr<IRemoteObject> object = nullptr;
-    proxy_ = std::make_shared<PublisherListenerProxy>(object);
 }
 
 void PublisherListenerProxyTest::TearDown()
 {
-    proxy_ = nullptr;
+}
+
+void PublisherListenerProxyTest::TestPublisherListenerStub::OnMessage(const DHTopic topic, const std::string& message)
+{
+    (void)topic;
+    (void)message;
 }
 
 /**
@@ -46,14 +49,12 @@ void PublisherListenerProxyTest::TearDown()
  */
 HWTEST_F(PublisherListenerProxyTest, OnMessage_001, TestSize.Level0)
 {
-    if (proxy_ == nullptr) {
-        return;
-    }
-    uint32_t invalid = 8;
-    DHTopic topic = static_cast<DHTopic>(invalid);
-    std::string message;
-    proxy_->OnMessage(topic, message);
-    EXPECT_EQ(true, message.empty());
+    DHTopic topic = DHTopic::TOPIC_MIN;
+    std::string message = "";
+    sptr<IRemoteObject> listenerStub(new TestPublisherListenerStub());
+    ASSERT_TRUE(listenerStub != nullptr);
+    PublisherListenerProxy listenerProxy(listenerStub);
+    EXPECT_NO_FATAL_FAILURE(listenerProxy.OnMessage(topic, message));
 }
 
 /**
@@ -64,13 +65,12 @@ HWTEST_F(PublisherListenerProxyTest, OnMessage_001, TestSize.Level0)
  */
 HWTEST_F(PublisherListenerProxyTest, OnMessage_002, TestSize.Level0)
 {
-    if (proxy_ == nullptr) {
-        return;
-    }
-    DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
-    std::string message;
-    proxy_->OnMessage(topic, message);
-    EXPECT_EQ(true, message.empty());
+    DHTopic topic = DHTopic::TOPIC_MAX;
+    std::string message = "";
+    sptr<IRemoteObject> listenerStub(new TestPublisherListenerStub());
+    ASSERT_TRUE(listenerStub != nullptr);
+    PublisherListenerProxy listenerProxy(listenerStub);
+    EXPECT_NO_FATAL_FAILURE(listenerProxy.OnMessage(topic, message));
 }
 
 /**
@@ -81,13 +81,22 @@ HWTEST_F(PublisherListenerProxyTest, OnMessage_002, TestSize.Level0)
  */
 HWTEST_F(PublisherListenerProxyTest, OnMessage_003, TestSize.Level0)
 {
-    if (proxy_ == nullptr) {
-        return;
-    }
-    DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
-    std::string message = "message";
-    proxy_->OnMessage(topic, message);
-    EXPECT_EQ(false, message.empty());
+    DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
+    std::string message = "";
+    sptr<IRemoteObject> listenerStub(new TestPublisherListenerStub());
+    ASSERT_TRUE(listenerStub != nullptr);
+    PublisherListenerProxy listenerProxy(listenerStub);
+    EXPECT_NO_FATAL_FAILURE(listenerProxy.OnMessage(topic, message));
+}
+
+HWTEST_F(PublisherListenerProxyTest, OnMessage_004, TestSize.Level0)
+{
+    DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
+    std::string message = "message_test";
+    sptr<IRemoteObject> listenerStub(new TestPublisherListenerStub());
+    ASSERT_TRUE(listenerStub != nullptr);
+    PublisherListenerProxy listenerProxy(listenerStub);
+    EXPECT_NO_FATAL_FAILURE(listenerProxy.OnMessage(topic, message));
 }
 } // namespace DistributedHardware
 } // namespace OHOS
