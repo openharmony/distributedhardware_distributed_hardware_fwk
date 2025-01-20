@@ -168,6 +168,9 @@ int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frame
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
+    int mSize = 12;
+    TRUE_RETURN_V_MSG_E(memory.size < mSize, ERR_DH_AVT_INVALID_PARAM,
+        "Memory.size is too small, future access may exceed the limit");
     TRUE_RETURN_V_MSG_E((frameNum <= 0), ERR_DH_AVT_INVALID_PARAM, "invalid input frame number");
 
     int size = AshmemGetSize(memory.fd);
@@ -199,6 +202,9 @@ int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &fra
     AVTRANS_LOGI("read frame info from shared memory, name=%{public}s, size=%{public}" PRId32 ", fd=%{public}" PRId32,
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
+    int mSize = 12;
+    TRUE_RETURN_V_MSG_E(memory.size < mSize, ERR_DH_AVT_INVALID_PARAM,
+        "Memory.size is too small, future access may exceed the limit");
 
     int size = AshmemGetSize(memory.fd);
     TRUE_RETURN_V_MSG_E(size != memory.size, ERR_DH_AVT_SHARED_MEMORY_FAILED, "invalid memory size = %{public}" PRId32,
