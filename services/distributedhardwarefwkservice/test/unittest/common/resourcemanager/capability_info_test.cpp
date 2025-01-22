@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,8 @@
 #include "cJSON.h"
 
 #include "constants.h"
-#include "meta_capability_info.h"
+#include "capability_info.h"
+#include "capability_utils.h"
 
 using namespace testing::ext;
 using namespace std;
@@ -233,6 +234,27 @@ HWTEST_F(CapabilityInfoTest, FromJson_009, TestSize.Level0)
     cJSON_free(cjson);
     cJSON_Delete(jsonObj);
     EXPECT_FALSE(capability.GetDHId().empty());
+}
+
+HWTEST_F(CapabilityInfoTest, IsCapKeyMatchDeviceId_001, TestSize.Level0)
+{
+    std::string key = "";
+    std::string deviceId = "";
+    auto ret = IsCapKeyMatchDeviceId(key, deviceId);
+    EXPECT_EQ(false, ret);
+
+    key = "key###123";
+    ret = IsCapKeyMatchDeviceId(key, deviceId);
+    EXPECT_EQ(false, ret);
+
+    key = "";
+    deviceId = "123456";
+    ret = IsCapKeyMatchDeviceId(key, deviceId);
+    EXPECT_EQ(false, ret);
+
+    key = "key_test";
+    ret = IsCapKeyMatchDeviceId(key, deviceId);
+    EXPECT_EQ(false, ret);
 }
 }
 }

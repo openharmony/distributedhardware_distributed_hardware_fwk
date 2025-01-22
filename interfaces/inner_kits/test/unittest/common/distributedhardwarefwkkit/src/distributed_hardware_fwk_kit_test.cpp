@@ -332,6 +332,21 @@ HWTEST_F(DistributedHardwareFwkKitTest, NotifyAVCenter_001, testing::ext::TestSi
 }
 
 /**
+ * @tc.name: RegisterCtlCenterCallback_001
+ * @tc.desc: Verify the RegisterCtlCenterCallback function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, RegisterCtlCenterCallback_001, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    int32_t engineId = 0;
+    sptr<IAVTransControlCenterCallback> callback = nullptr;
+    int32_t ret = dhfwkPtr_->RegisterCtlCenterCallback(engineId, callback);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
  * @tc.name: PauseDistributedHardware_001
  * @tc.desc: Verify the PauseDistributedHardware function
  * @tc.type: FUNC

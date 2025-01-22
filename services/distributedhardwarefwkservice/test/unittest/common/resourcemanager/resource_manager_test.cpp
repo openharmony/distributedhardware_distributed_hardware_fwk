@@ -27,6 +27,9 @@
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "dh_utils_tool.h"
+#include "task_board.h"
+#include "impl_utils.h"
 
 using namespace testing::ext;
 using namespace std;
@@ -411,22 +414,48 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_020, TestSize.Level0)
  */
 HWTEST_F(ResourceManagerTest, OnChange_001, TestSize.Level0)
 {
+    std::vector<DistributedKv::Entry> inserts, updates, deleteds;
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), "", true);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->OnChange(changeIn));
+}
+
+HWTEST_F(ResourceManagerTest, OnChange_002, TestSize.Level0)
+{
     DistributedKv::Entry insert, update, del;
-    insert.key = "strBase";
-    update.key = "strBase";
-    del.key = "strBase";
-    insert.value = "strBase";
-    update.value = "strBase";
-    del.value = "strBase";
+    std::vector<DistributedKv::Entry> inserts, updates, deleteds;
+    std::string tempStr;
+    for (int32_t i = 1; i < MAX_DB_RECORD_LENGTH; i++) {
+        tempStr = std::to_string(i);
+        insert.key = tempStr.c_str();
+        update.key = tempStr.c_str();
+        del.key = tempStr.c_str();
+        insert.value = tempStr.c_str();
+        update.value = tempStr.c_str();
+        del.value = tempStr.c_str();
+        inserts.push_back(insert);
+        updates.push_back(update);
+        deleteds.push_back(del);
+    }
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), "", true);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->OnChange(changeIn));
+}
+
+HWTEST_F(ResourceManagerTest, OnChange_003, TestSize.Level0)
+{
+    DistributedKv::Entry insert, update, del;
+    insert.key = "insert_key";
+    update.key = "update_key";
+    del.key = "del_key";
+    insert.value = "insert_value";
+    update.value = "update_value";
+    del.value = "del_value";
     std::vector<DistributedKv::Entry> inserts, updates, deleteds;
     inserts.push_back(insert);
     updates.push_back(update);
     deleteds.push_back(del);
 
     DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), "", true);
-
-    CapabilityInfoManager::GetInstance()->OnChange(changeIn);
-    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->OnChange(changeIn));
 }
 
 /**
@@ -435,7 +464,7 @@ HWTEST_F(ResourceManagerTest, OnChange_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(ResourceManagerTest, OnChange_002, TestSize.Level0)
+HWTEST_F(ResourceManagerTest, OnChange_004, TestSize.Level0)
 {
     DistributedKv::DataOrigin origin;
     origin.id = {};
@@ -444,42 +473,140 @@ HWTEST_F(ResourceManagerTest, OnChange_002, TestSize.Level0)
     keys[CapabilityInfoManager::OP_INSERT] = {"strBase"};
     keys[CapabilityInfoManager::OP_UPDATE] = {"strBase"};
     keys[CapabilityInfoManager::OP_DELETE] = {"strBase"};
-    CapabilityInfoManager::GetInstance()->OnChange(origin, std::move(keys));
-    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->OnChange(origin, std::move(keys)));
 }
 
 /**
- * @tc.name: HandleCapabilityAddChange_001
- * @tc.desc: Verify the HandleCapabilityAddChange function
+ * @tc.name: HandleCapabilityChange
+ * @tc.desc: Verify the HandleCapabilityAddChange  HandleCapabilityUpdateChange HandleCapabilityDeleteChange function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ResourceManagerTest, HandleCapabilityAddChange_001, TestSize.Level0)
+HWTEST_F(ResourceManagerTest, HandleCapabilityChange_001, TestSize.Level0)
 {
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
     std::vector<DistributedKv::Entry> insertRecords;
     DistributedKv::Entry entry;
-    entry.key = "strBase";
-    entry.value = "strBase";
+    entry.key = "insert";
+    entry.value = jsonStr.c_str();
     insertRecords.push_back(entry);
-    CapabilityInfoManager::GetInstance()->HandleCapabilityAddChange(insertRecords);
-    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->HandleCapabilityAddChange(insertRecords));
+
+    std::vector<DistributedKv::Entry> updateRecords;
+    DistributedKv::Entry update;
+    update.key = "update";
+    update.value = jsonStr.c_str();
+    updateRecords.push_back(update);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->HandleCapabilityUpdateChange(updateRecords));
+
+    std::vector<DistributedKv::Entry> deleteRecords;
+    DistributedKv::Entry del;
+    del.key = "delete";
+    del.value = jsonStr.c_str();
+    deleteRecords.push_back(del);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->HandleCapabilityDeleteChange(deleteRecords));
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
 }
 
-/**
- * @tc.name: HandleCapabilityUpdateChange_001
- * @tc.desc: Verify the HandleCapabilityUpdateChange function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ResourceManagerTest, HandleCapabilityUpdateChange_001, TestSize.Level0)
+HWTEST_F(ResourceManagerTest, HandleCapabilityChange_002, TestSize.Level0)
 {
-    std::vector<DistributedKv::Entry> updateRecords;
+    std::string uuid = "123456789";
+    std::string deviceId = Sha256(uuid);
+    DeviceIdEntry idEntry = {
+        .networkId = "",
+        .uuid = uuid,
+        .deviceId = deviceId
+    };
+    DHContext::GetInstance().devIdEntrySet_.insert(idEntry);
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
+    std::vector<DistributedKv::Entry> insertRecords;
     DistributedKv::Entry entry;
-    entry.key = "strBase";
-    entry.value = "strBase";
-    updateRecords.push_back(entry);
-    CapabilityInfoManager::GetInstance()->HandleCapabilityUpdateChange(updateRecords);
-    EXPECT_NE(nullptr, CapabilityInfoManager::GetInstance()->dbAdapterPtr_);
+    entry.key = "insert";
+    entry.value = jsonStr.c_str();
+    insertRecords.push_back(entry);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->HandleCapabilityAddChange(insertRecords));
+
+    std::vector<DistributedKv::Entry> updateRecords;
+    DistributedKv::Entry update;
+    update.key = "update";
+    update.value = jsonStr.c_str();
+    updateRecords.push_back(update);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->HandleCapabilityUpdateChange(updateRecords));
+
+    std::vector<DistributedKv::Entry> deleteRecords;
+    DistributedKv::Entry del;
+    del.key = "delete";
+    del.value = jsonStr.c_str();
+    deleteRecords.push_back(del);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->HandleCapabilityDeleteChange(deleteRecords));
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(ResourceManagerTest, HandleCapabilityChange_003, TestSize.Level0)
+{
+    std::string uuid = "123456789";
+    std::string deviceId = Sha256(uuid);
+    DHContext::GetInstance().AddOnlineDevice("111111", uuid, "222222");
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
+    std::vector<DistributedKv::Entry> insertRecords;
+    DistributedKv::Entry entry;
+    entry.key = "insert";
+    entry.value = jsonStr.c_str();
+    insertRecords.push_back(entry);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->HandleCapabilityAddChange(insertRecords));
+
+    std::vector<DistributedKv::Entry> updateRecords;
+    DistributedKv::Entry update;
+    update.key = "update";
+    update.value = jsonStr.c_str();
+    updateRecords.push_back(update);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->HandleCapabilityUpdateChange(updateRecords));
+
+    std::string enabledDeviceKey = deviceId + RESOURCE_SEPARATOR + "111111";
+    TaskParam taskParam;
+    TaskBoard::GetInstance().SaveEnabledDevice(enabledDeviceKey, taskParam);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->HandleCapabilityUpdateChange(updateRecords));
+
+    std::vector<DistributedKv::Entry> deleteRecords;
+    DistributedKv::Entry del;
+    del.key = "delete";
+    del.value = jsonStr.c_str();
+    deleteRecords.push_back(del);
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->HandleCapabilityDeleteChange(deleteRecords));
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    TaskBoard::GetInstance().RemoveEnabledDevice(enabledDeviceKey);
+    cJSON_free(cjson);
+    cJSON_Delete(jsonObj);
 }
 
 /**
@@ -849,6 +976,29 @@ HWTEST_F(ResourceManagerTest, SyncDeviceInfoFromDB_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 }
 
+HWTEST_F(ResourceManagerTest, AddCapability_001, TestSize.Level0)
+{
+    std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
+    for (int32_t i = 1; i < MAX_DB_RECORD_LENGTH; i++) {
+        std::shared_ptr<CapabilityInfo> capInfoTest = make_shared<CapabilityInfo>(std::to_string(i), std::to_string(i),
+            TEST_DEV_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_0, DH_SUBTYPE_0);
+        resInfos.push_back(capInfoTest);
+    }
+    auto ret = CapabilityInfoManager::GetInstance()->AddCapability(resInfos);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID, ret);
+}
+
+HWTEST_F(ResourceManagerTest, AddCapability_002, TestSize.Level0)
+{
+    CapabilityInfoManager::GetInstance()->Init();
+    std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
+    std::shared_ptr<CapabilityInfo> capInfoTest = nullptr;
+    resInfos.push_back(capInfoTest);
+    auto ret = CapabilityInfoManager::GetInstance()->AddCapability(resInfos);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    CapabilityInfoManager::GetInstance()->UnInit();
+}
+
 HWTEST_F(ResourceManagerTest, AddCapabilityInMem_001, TestSize.Level0)
 {
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
@@ -873,6 +1023,11 @@ HWTEST_F(ResourceManagerTest, AddCapabilityInMem_003, TestSize.Level0)
     std::vector<shared_ptr<CapabilityInfo>> resInfos;
     resInfos.push_back(CAP_INFO_0);
     auto ret = CapabilityInfoManager::GetInstance()->AddCapabilityInMem(resInfos);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+
+    std::shared_ptr<CapabilityInfo> capInfoTest = nullptr;
+    resInfos.push_back(capInfoTest);
+    ret = CapabilityInfoManager::GetInstance()->AddCapabilityInMem(resInfos);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 

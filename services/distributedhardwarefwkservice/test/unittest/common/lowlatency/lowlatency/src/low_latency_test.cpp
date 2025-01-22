@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,10 +15,19 @@
 
 #include "low_latency_test.h"
 
+#include "low_latency.h"
+#include "low_latency_timer.h"
+
 using namespace testing::ext;
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    const std::string LOW_LATENCY_TIMER_ID = "low_latency_timer_id";
+    constexpr int32_t LOW_LATENCY_DELAY_MS = 50 * 1000;
+    constexpr uint32_t MAX_SWITCH_SIZE = 256;
+}
+
 void LowLatencyTest::SetUpTestCase()
 {
 }
@@ -33,7 +42,6 @@ void LowLatencyTest::SetUp()
 
 void LowLatencyTest::TearDown()
 {
-    LowLatency::GetInstance().lowLatencySwitchSet_.clear();
 }
 
 /**
@@ -47,6 +55,10 @@ HWTEST_F(LowLatencyTest, EnableLowLatency_001, TestSize.Level0)
     DHType dhType = DHType::UNKNOWN;
     LowLatency::GetInstance().EnableLowLatency(dhType);
     EXPECT_EQ(true, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
+
+    dhType = DHType::MAX_DH;
+    LowLatency::GetInstance().EnableLowLatency(dhType);
+    EXPECT_EQ(true, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
 }
 
 /**
@@ -58,6 +70,11 @@ HWTEST_F(LowLatencyTest, EnableLowLatency_001, TestSize.Level0)
 HWTEST_F(LowLatencyTest, EnableLowLatency_002, TestSize.Level0)
 {
     DHType dhType = DHType::CAMERA;
+    LowLatency::GetInstance().lowLatencyTimer_ = nullptr;
+    LowLatency::GetInstance().EnableLowLatency(dhType);
+    EXPECT_EQ(false, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
+
+    dhType = DHType::AUDIO;
     LowLatency::GetInstance().EnableLowLatency(dhType);
     EXPECT_EQ(false, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
 }
@@ -70,8 +87,13 @@ HWTEST_F(LowLatencyTest, EnableLowLatency_002, TestSize.Level0)
  */
 HWTEST_F(LowLatencyTest, EnableLowLatency_003, TestSize.Level0)
 {
-    LowLatency::GetInstance().lowLatencySwitchSet_.insert(DHType::AUDIO);
     DHType dhType = DHType::CAMERA;
+    LowLatency::GetInstance().lowLatencySwitchSet_.clear();
+    LowLatency::GetInstance().lowLatencyTimer_ = std::make_shared<LowLatencyTimer>(LOW_LATENCY_TIMER_ID,
+        LOW_LATENCY_DELAY_MS);
+    LowLatency::GetInstance().EnableLowLatency(dhType);
+    EXPECT_EQ(false, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
+
     LowLatency::GetInstance().EnableLowLatency(dhType);
     EXPECT_EQ(false, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
 }
@@ -84,13 +106,13 @@ HWTEST_F(LowLatencyTest, EnableLowLatency_003, TestSize.Level0)
  */
 HWTEST_F(LowLatencyTest, EnableLowLatency_004, TestSize.Level0)
 {
-    uint32_t MAX_SWITCH_SIZE = 256;
     for (uint32_t i = 0; i <= MAX_SWITCH_SIZE; ++i) {
         LowLatency::GetInstance().lowLatencySwitchSet_.insert(static_cast<DHType>(i));
     }
     DHType dhType = DHType::CAMERA;
     LowLatency::GetInstance().EnableLowLatency(dhType);
     EXPECT_EQ(false, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
+    LowLatency::GetInstance().lowLatencySwitchSet_.clear();
 }
 
 /**
@@ -104,6 +126,10 @@ HWTEST_F(LowLatencyTest, DisableLowLatency_001, TestSize.Level0)
     DHType dhType = DHType::UNKNOWN;
     LowLatency::GetInstance().DisableLowLatency(dhType);
     EXPECT_EQ(true, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
+
+    dhType = DHType::MAX_DH;
+    LowLatency::GetInstance().DisableLowLatency(dhType);
+    EXPECT_EQ(true, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
 }
 
 /**
@@ -114,22 +140,33 @@ HWTEST_F(LowLatencyTest, DisableLowLatency_001, TestSize.Level0)
  */
 HWTEST_F(LowLatencyTest, DisableLowLatency_002, TestSize.Level0)
 {
+    LowLatency::GetInstance().lowLatencySwitchSet_.clear();
     DHType dhType = DHType::CAMERA;
-    LowLatency::GetInstance().lowLatencySwitchSet_.insert(dhType);
+    LowLatency::GetInstance().lowLatencyTimer_ = nullptr;
     LowLatency::GetInstance().DisableLowLatency(dhType);
     EXPECT_EQ(true, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
+
+    LowLatency::GetInstance().lowLatencyTimer_ = nullptr;
+    DHType dhType1 = DHType::AUDIO;
+    LowLatency::GetInstance().lowLatencySwitchSet_.insert(dhType);
+    LowLatency::GetInstance().lowLatencySwitchSet_.insert(dhType1);
+    LowLatency::GetInstance().DisableLowLatency(dhType);
+    EXPECT_EQ(false, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
 }
 
-/**
- * @tc.name: CloseLowLatency_001
- * @tc.desc: Verify the CloseLowLatency function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(LowLatencyTest, CloseLowLatency_001, TestSize.Level0)
+HWTEST_F(LowLatencyTest, DisableLowLatency_003, TestSize.Level0)
 {
-    LowLatency::GetInstance().CloseLowLatency();
+    DHType dhType = DHType::AUDIO;
+    LowLatency::GetInstance().lowLatencyTimer_ = std::make_shared<LowLatencyTimer>(LOW_LATENCY_TIMER_ID,
+        LOW_LATENCY_DELAY_MS);
+    LowLatency::GetInstance().DisableLowLatency(dhType);
     EXPECT_EQ(true, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
+
+    DHType dhType1 = DHType::CAMERA;
+    LowLatency::GetInstance().lowLatencySwitchSet_.insert(dhType);
+    LowLatency::GetInstance().lowLatencySwitchSet_.insert(dhType1);
+    LowLatency::GetInstance().DisableLowLatency(dhType);
+    EXPECT_EQ(false, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

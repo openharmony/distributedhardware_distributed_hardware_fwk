@@ -69,8 +69,17 @@ HWTEST_F(MetaInfoMgrTest, UnInit_001, TestSize.Level0)
 
 HWTEST_F(MetaInfoMgrTest, AddMetaCapInfos_001, TestSize.Level0)
 {
+    std::string udidHash = "udidHash_test";
     std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
     auto ret = MetaInfoManager::GetInstance()->AddMetaCapInfos(metaCapInfos);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID, ret);
+
+    for (int32_t i = 1; i < MAX_DB_RECORD_LENGTH; i++) {
+        std::shared_ptr<MetaCapabilityInfo> mateCapInfoTest = make_shared<MetaCapabilityInfo>(std::to_string(i),
+            std::to_string(i), "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs", "subtype", udidHash, "1.0");
+        metaCapInfos.push_back(mateCapInfoTest);
+    }
+    ret = MetaInfoManager::GetInstance()->AddMetaCapInfos(metaCapInfos);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID, ret);
 }
 
@@ -87,6 +96,8 @@ HWTEST_F(MetaInfoMgrTest, AddMetaCapInfos_002, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 
     MetaInfoManager::GetInstance()->Init();
+    std::shared_ptr<MetaCapabilityInfo> mateCapInfoTest = nullptr;
+    metaCapInfos.push_back(mateCapInfoTest);
     ret = MetaInfoManager::GetInstance()->AddMetaCapInfos(metaCapInfos);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
     MetaInfoManager::GetInstance()->UnInit();
@@ -317,9 +328,14 @@ HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoInMemByUdid_001, TestSize.Level0)
 HWTEST_F(MetaInfoMgrTest, ClearRemoteDeviceMetaInfoData_001, TestSize.Level0)
 {
     MetaInfoManager::GetInstance()->Init();
-    std::string peerudid = "peerudid_test";
-    std::string peeruuid = "peeruuid_test";
+    std::string peerudid = "";
+    std::string peeruuid = "";
     auto ret = MetaInfoManager::GetInstance()->ClearRemoteDeviceMetaInfoData(peerudid, peeruuid);
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
+
+    peerudid = "peerudid_test";
+    peeruuid = "peeruuid_test";
+    ret = MetaInfoManager::GetInstance()->ClearRemoteDeviceMetaInfoData(peerudid, peeruuid);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 
     MetaInfoManager::GetInstance()->UnInit();
@@ -424,6 +440,12 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_002, TestSize.Level0)
 {
     std::string uuid = "123456789";
     std::string deviceId = Sha256(uuid);
+    DeviceIdEntry idEntry = {
+        .networkId = "",
+        .uuid = uuid,
+        .deviceId = deviceId
+    };
+    DHContext::GetInstance().devIdEntrySet_.insert(idEntry);
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
     cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
@@ -434,13 +456,13 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_002, TestSize.Level0)
         return;
     }
     std::string jsonStr(cjson);
-    DHContext::GetInstance().AddOnlineDevice("111111", uuid, "");
     std::vector<DistributedKv::Entry> insertRecords;
     DistributedKv::Entry entry;
     entry.key = "insert";
     entry.value = jsonStr.c_str();
     insertRecords.push_back(entry);
     ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->HandleMetaCapabilityAddChange(insertRecords));
+    DHContext::GetInstance().devIdEntrySet_.clear();
     cJSON_free(cjson);
     cJSON_Delete(jsonObj);
 }
@@ -497,6 +519,11 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_002, TestSize.Level0)
 {
     std::string uuid = "123456789";
     std::string deviceId = Sha256(uuid);
+    DeviceIdEntry idEntry = {
+        .networkId = "",
+        .uuid = uuid,
+        .deviceId = deviceId
+    };
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
     cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
@@ -508,12 +535,12 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_002, TestSize.Level0)
     }
     std::string jsonStr(cjson);
     std::vector<DistributedKv::Entry> updateRecords;
-    DHContext::GetInstance().AddOnlineDevice("111111", uuid, "");
     DistributedKv::Entry update;
     update.key = "update";
     update.value = jsonStr.c_str();
     updateRecords.push_back(update);
     ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->HandleMetaCapabilityUpdateChange(updateRecords));
+    DHContext::GetInstance().devIdEntrySet_.clear();
     cJSON_free(cjson);
     cJSON_Delete(jsonObj);
 }

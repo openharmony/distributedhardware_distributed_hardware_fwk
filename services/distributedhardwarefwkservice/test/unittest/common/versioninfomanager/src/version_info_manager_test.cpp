@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,6 +45,7 @@ const string VERSION_1 = "1.0";
 const string VERSION_2 = "2.0";
 const string VERSION_3 = "3.0";
 std::vector<VersionInfo> g_versionInfos;
+constexpr uint32_t MAX_DB_RECORD_LENGTH = 10005;
 }
 
 std::vector<VersionInfo> CreateVersionInfos()
@@ -364,62 +365,109 @@ HWTEST_F(VersionInfoManagerTest, OnChange_001, TestSize.Level0)
     inserts.push_back(insert);
     updates.push_back(update);
     deleteds.push_back(del);
-
     DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), "", true);
+    ASSERT_NO_FATAL_FAILURE(VersionInfoManager::GetInstance()->OnChange(changeIn));
+}
 
-    VersionInfoManager::GetInstance()->OnChange(changeIn);
-    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
+HWTEST_F(VersionInfoManagerTest, OnChange_002, TestSize.Level0)
+{
+    DistributedKv::Entry insert, update, del;
+    std::vector<DistributedKv::Entry> inserts, updates, deleteds;
+    std::string tempStr;
+    for (int32_t i = 1; i < MAX_DB_RECORD_LENGTH; i++) {
+        tempStr = std::to_string(i);
+        insert.key = tempStr.c_str();
+        update.key = tempStr.c_str();
+        del.key = tempStr.c_str();
+        insert.value = tempStr.c_str();
+        update.value = tempStr.c_str();
+        del.value = tempStr.c_str();
+        inserts.push_back(insert);
+        updates.push_back(update);
+        deleteds.push_back(del);
+    }
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), "", true);
+    ASSERT_NO_FATAL_FAILURE(VersionInfoManager::GetInstance()->OnChange(changeIn));
+}
+
+HWTEST_F(VersionInfoManagerTest, OnChange_003, TestSize.Level0)
+{
+    DistributedKv::Entry insert, update, del;
+    std::vector<DistributedKv::Entry> inserts, updates, deleteds;
+    inserts.push_back(insert);
+    updates.push_back(update);
+    deleteds.push_back(del);
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds), "", true);
+    ASSERT_NO_FATAL_FAILURE(VersionInfoManager::GetInstance()->OnChange(changeIn));
 }
 
 /**
- * @tc.name: HandleVersionAddChange_001
- * @tc.desc: Verify the HandleVersionAddChange function
+ * @tc.name: HandleVersionChange_001
+ * @tc.desc: Verify the HandleVersionAddChange HandleVersionUpdateChange HandleVersionDeleteChange function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, HandleVersionAddChange_001, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, HandleVersionChange_001, TestSize.Level0)
 {
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
+    cJSON_AddStringToObject(jsonObj, DH_VER.c_str(), "1.0");
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
+
     std::vector<DistributedKv::Entry> insertRecords;
     DistributedKv::Entry entry;
-    entry.key = "strBase";
-    entry.value = "strBase";
+    entry.key = "insert";
+    entry.value = jsonStr.c_str();
     insertRecords.push_back(entry);
-    VersionInfoManager::GetInstance()->HandleVersionAddChange(insertRecords);
-    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
-}
+    ASSERT_NO_FATAL_FAILURE(VersionInfoManager::GetInstance()->HandleVersionAddChange(insertRecords));
 
-/**
- * @tc.name: HandleVersionUpdateChange_001
- * @tc.desc: Verify the HandleVersionUpdateChange function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(VersionInfoManagerTest, HandleVersionUpdateChange_001, TestSize.Level0)
-{
     std::vector<DistributedKv::Entry> updateRecords;
-    DistributedKv::Entry entry;
-    entry.key = "strBase";
-    entry.value = "strBase";
-    updateRecords.push_back(entry);
-    VersionInfoManager::GetInstance()->HandleVersionUpdateChange(updateRecords);
-    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
+    DistributedKv::Entry update;
+    update.key = "update";
+    update.value = jsonStr.c_str();
+    updateRecords.push_back(update);
+    ASSERT_NO_FATAL_FAILURE(VersionInfoManager::GetInstance()->HandleVersionUpdateChange(updateRecords));
+
+    std::vector<DistributedKv::Entry> deleteRecords;
+    DistributedKv::Entry del;
+    del.key = "delete";
+    del.value = jsonStr.c_str();
+    deleteRecords.push_back(del);
+    ASSERT_NO_FATAL_FAILURE(VersionInfoManager::GetInstance()->HandleVersionDeleteChange(deleteRecords));
 }
 
 /**
- * @tc.name: HandleVersionDeleteChange_001
+ * @tc.name: HandleVersionChange_002
  * @tc.desc: Verify the HandleVersionDeleteChange function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, HandleVersionDeleteChange_001, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, HandleVersionChange_002, TestSize.Level0)
 {
+    std::string uuid = "123456789";
+    DHContext::GetInstance().AddOnlineDevice("111111", uuid, "222222");
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
+    cJSON_AddStringToObject(jsonObj, DH_VER.c_str(), "1.0");
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
     std::vector<DistributedKv::Entry> deleteRecords;
-    DistributedKv::Entry entry;
-    entry.key = "strBase";
-    entry.value = "strBase";
-    deleteRecords.push_back(entry);
-    VersionInfoManager::GetInstance()->HandleVersionDeleteChange(deleteRecords);
-    EXPECT_EQ(DH_FWK_SUCCESS, VersionInfoManager::GetInstance()->Init());
+    DistributedKv::Entry del;
+    del.key = "delete";
+    del.value = jsonStr.c_str();
+    deleteRecords.push_back(del);
+    ASSERT_NO_FATAL_FAILURE(VersionInfoManager::GetInstance()->HandleVersionDeleteChange(deleteRecords));
 }
 
 /**
@@ -450,6 +498,5 @@ HWTEST_F(VersionInfoManagerTest, GetVersionInfoByDeviceId_002, TestSize.Level0)
     int32_t ret = VersionInfoManager::GetInstance()->GetVersionInfoByDeviceId(deviceId, versionInfo);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
-
 } // namespace DistributedHardware
 } // namespace OHOS
