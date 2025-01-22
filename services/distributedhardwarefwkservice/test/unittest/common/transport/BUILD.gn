@@ -58,6 +58,8 @@ ohos_unittest("TransportTest") {
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "ipc:ipc_core",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
   ]
