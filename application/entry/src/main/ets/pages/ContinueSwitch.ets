@@ -150,12 +150,22 @@ struct ContinueSwitch {
 
   getImageArray(): void {
     logger.info(`${TAG} getImageArray in`);
-    for (let i = 0; i <= CommonConstants.IMAGE_COUNT; ++i) {
-      this.imageArray.push({
-        src: $r(`app.media.continue_${i}`),
-        duration: (i == CommonConstants.IMAGE_COUNT) ? CommonConstants.IMG_ANIMATOR_OVER_DURATION
-          : CommonConstants.IMG_ANIMATOR_NORMAL_DURATION
-      })
+    if (deviceInfo.deviceType === '2in1') {
+      for (let i = 0; i <= CommonConstants.IMAGE_COUNT; ++i) {
+        this.imageArray.push({
+          src: $r(`app.media.continuePC_${i}`),
+          duration: (i == CommonConstants.IMAGE_COUNT) ? CommonConstants.IMG_ANIMATOR_OVER_DURATION
+            : CommonConstants.IMG_ANIMATOR_NORMAL_DURATION
+        })
+      }
+    } else {
+      for (let i = 0; i <= CommonConstants.IMAGE_COUNT; ++i) {
+        this.imageArray.push({
+          src: $r(`app.media.continue_${i}`),
+          duration: (i == CommonConstants.IMAGE_COUNT) ? CommonConstants.IMG_ANIMATOR_OVER_DURATION
+            : CommonConstants.IMG_ANIMATOR_NORMAL_DURATION
+        })
+      }
     }
   }
 
@@ -494,7 +504,18 @@ struct ContinueSwitch {
     .height('100%')
     .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
     .onAreaChange((oldArea: Area, newArea: Area) => {
-      logger.info(`${TAG} build column , oldArea.height = ${oldArea.height}, newArea.height = ${newArea.height}`);
+      logger.info(`${TAG} onAreaChange: newArea.width = ${newArea.width}, newArea.height = ${newArea.height}`);
+      if (typeof newArea.width === 'number' && newArea.height === 'number') {
+        let width = newArea.width as number;
+        let halfHeight = (newArea.height as number) / 2;
+        if (width > halfHeight) {
+          this.imageAnimatorWidth = halfHeight * 0.8;
+          this.imageAnimatorHeight = this.imageAnimatorWidth * 2 / 3;
+        } else {
+          this.imageAnimatorWidth = width * 0.8;
+          this.imageAnimatorHeight = this.imageAnimatorWidth * 2 / 3;
+        }
+      }
       logger.info(`${TAG} this.shortSideSize = ${this.shortSideSize}, this.imageAnimatorWidth =
         ${this.imageAnimatorWidth}, this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
     })
