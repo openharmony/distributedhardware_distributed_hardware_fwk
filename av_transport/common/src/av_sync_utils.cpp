@@ -81,6 +81,9 @@ int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUni
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
+    int mSize = 12;
+    TRUE_RETURN_V_MSG_E(memory.size < mSize, ERR_DH_AVT_INVALID_PARAM,
+        "Memory.size is too small, future access may exceed the limit");
     AVTRANS_LOGI("clock unit index=%{public}" PRId32 ", frameNum=%{public}" PRId32 ", pts=%{public}lld",
         clockUnit.index, clockUnit.frameNum, (long long)clockUnit.pts);
     TRUE_RETURN_V_MSG_E(IsInValidClockUnit(clockUnit), ERR_DH_AVT_INVALID_PARAM, "invalid input clock unit");
@@ -121,6 +124,9 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
+    int mSize = 12;
+    TRUE_RETURN_V_MSG_E(memory.size < mSize, ERR_DH_AVT_INVALID_PARAM,
+        "Memory.size is too small, future access may exceed the limit");
     AVTRANS_LOGI("clock unit index=%{public}" PRId32 ", frameNum=%{public}" PRId32,
         clockUnit.index, clockUnit.frameNum);
     TRUE_RETURN_V_MSG_E((clockUnit.frameNum <= 0), ERR_DH_AVT_INVALID_PARAM, "invalid input frame number");
