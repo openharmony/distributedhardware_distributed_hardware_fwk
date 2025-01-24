@@ -516,8 +516,7 @@ struct ContinueSwitch {
           this.imageAnimatorHeight = this.imageAnimatorWidth * 2 / 3;
         }
       }
-      logger.info(`${TAG} this.shortSideSize = ${this.shortSideSize}, this.imageAnimatorWidth =
-        ${this.imageAnimatorWidth}, this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
+      logger.info(`${TAG} this.imageAnimatorWidth = ${this.imageAnimatorWidth}, this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
     })
   }
 
