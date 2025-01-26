@@ -505,7 +505,7 @@ struct ContinueSwitch {
     .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
     .onAreaChange((oldArea: Area, newArea: Area) => {
       logger.info(`${TAG} onAreaChange: newArea.width = ${newArea.width}, newArea.height = ${newArea.height}`);
-      if (typeof newArea.width === 'number' && newArea.height === 'number') {
+      if (typeof newArea.width === 'number' && typeof newArea.height === 'number') {
         let width = newArea.width as number;
         let halfHeight = (newArea.height as number) / 2;
         if (width > halfHeight) {
@@ -516,8 +516,7 @@ struct ContinueSwitch {
           this.imageAnimatorHeight = this.imageAnimatorWidth * 2 / 3;
         }
       }
-      logger.info(`${TAG} this.shortSideSize = ${this.shortSideSize}, this.imageAnimatorWidth =
-        ${this.imageAnimatorWidth}, this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
+      logger.info(`${TAG} this.imageAnimatorWidth = ${this.imageAnimatorWidth}, this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
     })
   }
 
