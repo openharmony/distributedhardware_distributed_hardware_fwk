@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,7 +44,8 @@
 namespace OHOS {
 namespace DistributedHardware {
 namespace {
-    constexpr int32_t DOUBLE_FRAME_DEVICE_TYPE = -1;
+    constexpr int32_t OLD_HO_DEVICE_TYPE = -1;
+    constexpr int32_t NEW_HO_DEVICE_TYPE = 11;
 }
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DistributedHardwareManagerFactory"
@@ -187,7 +188,7 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
         MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
     }
 
-    if (osType == DOUBLE_FRAME_DEVICE_TYPE) {
+    if (osType == OLD_HO_DEVICE_TYPE || osType == NEW_HO_DEVICE_TYPE) {
         DHLOGE("double frame device, networkId = %{public}s, uuid = %{public}s, udid = %{public}s, need clear data.",
             GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
         ClearRemoteDeviceMetaInfoData(udid, uuid);
