@@ -22,6 +22,8 @@
 
 #include "iremote_broker.h"
 #include "device_type.h"
+#include "dhardware_descriptor.h"
+#include "ihardware_status_listener.h"
 
 #include "distributed_hardware_fwk_kit_paras.h"
 #include "iav_trans_control_center_callback.h"

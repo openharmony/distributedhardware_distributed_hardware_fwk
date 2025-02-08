@@ -64,6 +64,8 @@ namespace {
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
     constexpr int32_t INVALID_SA_ID = -1;
     constexpr int32_t UNINIT_COMPONENT_TIMEOUT_SECONDS = 2;
+    constexpr int32_t SYNC_DEVICE_INFO_TIMEOUT_MILLISECONDS = 2000;
+    constexpr int32_t SYNC_DEVICE_INFO_INTERVAL_MILLISECONDS = 200;
     const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
 }
 
@@ -1138,5 +1140,306 @@ std::shared_ptr<ComponentManager::ComponentManagerEventHandler> ComponentManager
     return this->eventHandler_;
 }
 
+int32_t ComponentManager::ForceDisableSinkInternal(
+    const DHDescriptor &dhDescriptor, std::vector<sptr<IHDSinkStatusListener>> &listeners)
+{
+    std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
+
+    // Check if the input parameters and device type support it
+    if (!ComponentLoader::GetInstance().IsDHTypeSupport(dhDescriptor.dhType)) {
+        DHLOGE("Not support dhType: %{public}#X!", dhDescriptor.dhType);
+        return ERR_DH_FWK_TYPE_NOT_EXIST;
+    }
+
+    auto &status = dhSinkStatus_[dhDescriptor.dhType];
+    auto itEnableInfo = status.enableInfos.find(dhDescriptor.id);
+    if (itEnableInfo == status.enableInfos.end()) {
+        DHLOGE("Repeat call ForceDisableSink, dhType = %{public}u, id = %{public}s.",
+            dhDescriptor.dhType, dhDescriptor.id.c_str());
+        return ERR_DH_FWK_COMPONENT_REPEAT_CALL;
+    }
+    auto &enableInfo = itEnableInfo->second;
+
+    // Collect listeners and reduce the load count
+    for (auto &item : enableInfo.dhStatusCtrl) {
+        if (item.second.enableState != EnableState::DISABLED) {
+            auto it = status.listeners.find(item.first);
+            if (it != status.listeners.end()) {
+                auto listener = it->second;
+                listeners.push_back(listener);
+            }
+        }
+    }
+    status.refLoad -= enableInfo.refEnable;
+    status.enableInfos.erase(itEnableInfo);
+    if (status.refLoad > 0) {
+        return DH_FWK_SUCCESS;
+    }
+
+    // Unload component
+    auto sinkResult = StopSink(dhDescriptor.dhType);
+    if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
+        DHLOGE("StopSource failed, but want to continue!");
+        return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
+    }
+    auto ret = UninitCompSink(dhDescriptor.dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("UninitCompSink failed, ret = %{public}d.", ret);
+        return ret;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::ForceDisableSourceInternal(const std::string &networkId,
+    const DHDescriptor &dhDescriptor, std::vector<sptr<IHDSourceStatusListener>> &listeners)
+{
+    std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
+
+    // Check if the input parameters and device type support it
+    if (!ComponentLoader::GetInstance().IsDHTypeSupport(dhDescriptor.dhType)) {
+        DHLOGE("Not support dhType: %{public}#X!", dhDescriptor.dhType);
+        return ERR_DH_FWK_TYPE_NOT_EXIST;
+    }
+
+    DHStatusSourceEnableInfoKey enableInfoKey {
+        .networkId = networkId,
+        .dhId = dhDescriptor.id
+    };
+    auto &status = dhSourceStatus_[dhDescriptor.dhType];
+    auto itEnableInfo = status.enableInfos.find(enableInfoKey);
+    if (itEnableInfo == status.enableInfos.end()) {
+        DHLOGE("Repeat call ForceDisableSource, networkId = %{public}s, dhType = %{public}u, id = %{public}s.",
+            GetAnonyString(networkId).c_str(), dhDescriptor.dhType, dhDescriptor.id.c_str());
+        return ERR_DH_FWK_COMPONENT_REPEAT_CALL;
+    }
+    auto &enableInfo = itEnableInfo->second;
+
+    // First, disable the hardware
+    auto uuid = DHContext::GetInstance().GetUUIDByNetworkId(networkId);
+    auto ret = Disable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Disable failed, ret = %{public}d.", ret);
+        return ret;
+    }
+
+    // Then collect listeners and reduce the load count
+    for (auto &item : enableInfo.dhStatusCtrl) {
+        if (item.second.enableState != EnableState::DISABLED) {
+            auto it = status.listeners.find(item.first);
+            if (it != status.listeners.end()) {
+                auto listener = it->second;
+                listeners.push_back(listener);
+            }
+        }
+    }
+    status.refLoad -= enableInfo.refEnable;
+    status.enableInfos.erase(itEnableInfo);
+    if (status.refLoad > 0) {
+        return DH_FWK_SUCCESS;
+    }
+
+    // Unload component
+    auto sinkResult = StopSource(dhDescriptor.dhType);
+    if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
+        DHLOGE("StopSource timeout!");
+        return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
+    }
+    ret = UninitCompSource(dhDescriptor.dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("UninitCompSource failed, ret = %{public}d.", ret);
+        return ret;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::RealEnableSource(const std::string &networkId, const std::string &uuid,
+    const DHDescriptor &dhDescriptor, DHStatusCtrl &statusCtrl,
+    DHStatusEnableInfo &enableInfo, DHSourceStatus &status)
+{
+    auto ret = InitCompSource(dhDescriptor.dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("InitCompSource failed, ret = %{public}d.", ret);
+        return ret;
+    }
+    auto sourceResult = StartSource(dhDescriptor.dhType);
+    if (!WaitForResult(Action::START_SOURCE, sourceResult)) {
+        DHLOGE("StartSource failed, some virtual components maybe cannot work, but want to continue!");
+        HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            "dhfwk start source failed.");
+        UninitCompSource(dhDescriptor.dhType);
+        return ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT;
+    }
+    ret = Enable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Enable failed, ret = %{public}d.", ret);
+        StopSource(dhDescriptor.dhType);
+        UninitCompSource(dhDescriptor.dhType);
+        return ret;
+    }
+    // Change status, we won't call back directly here because there is a lock
+    statusCtrl.enableState = EnableState::ENABLED;
+    enableInfo.refEnable = 1;
+    status.refLoad = 1;
+    return ret;
+}
+
+int32_t ComponentManager::RealDisableSource(const std::string &networkId, const std::string &uuid,
+    const DHDescriptor &dhDescriptor, DHStatusCtrl &statusCtrl,
+    DHStatusEnableInfo &enableInfo, DHSourceStatus &status)
+{
+    auto ret = Disable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Disable failed, ret = %{public}d.", ret);
+        return ret;
+    }
+    auto sinkResult = StopSource(dhDescriptor.dhType);
+    if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
+        DHLOGE("StopSource timeout!");
+        return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
+    }
+    ret = UninitCompSource(dhDescriptor.dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("UninitCompSource failed, ret = %{public}d.", ret);
+        return ret;
+    }
+    // Change status, we won't call back directly here because there is a lock
+    statusCtrl.enableState = EnableState::DISABLED;
+    enableInfo.refEnable = 0;
+    status.refLoad = 0;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::InitCompSource(DHType dhType)
+{
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    auto ret = ComponentLoader::GetInstance().GetSource(dhType, sourcePtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("GetSource failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
+        return ret;
+    }
+    if (sourcePtr == nullptr) {
+        DHLOGE("sourcePtr is null, compType = %{public}#X.", dhType);
+        return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
+    }
+    compSource_.insert(std::make_pair(dhType, sourcePtr));
+    auto saId = ComponentLoader::GetInstance().GetSourceSaId(dhType);
+    if (saId != INVALID_SA_ID) {
+        compSrcSaId_.insert(std::make_pair(dhType, saId));
+        compMonitorPtr_->AddSAMonitor(saId);
+    } else {
+        DHLOGE("GetSourceSaId return INVALID_SA_ID, compType = %{public}#X.", dhType);
+    }
+    sourcePtr->RegisterDistributedHardwareStateListener(dhStateListener_);
+    sourcePtr->RegisterDataSyncTriggerListener(dataSyncTriggerListener_);
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::UninitCompSource(DHType dhType)
+{
+    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    auto ret = ComponentLoader::GetInstance().GetSource(dhType, sourcePtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("GetSource failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
+        return ret;
+    }
+    if (sourcePtr == nullptr) {
+        DHLOGE("sourcePtr is null, compType = %{public}#X.", dhType);
+        return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
+    }
+    sourcePtr->UnregisterDataSyncTriggerListener();
+    sourcePtr->UnregisterDistributedHardwareStateListener();
+    compMonitorPtr_->RemoveSAMonitor(compSrcSaId_.at(dhType));
+    ret = ComponentLoader::GetInstance().ReleaseSource(dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("GetSource failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
+        return ret;
+    }
+    compSrcSaId_.erase(dhType);
+    compSource_.erase(dhType);
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::InitCompSink(DHType dhType)
+{
+    std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
+    IDistributedHardwareSink *sinkPtr = nullptr;
+    auto ret = ComponentLoader::GetInstance().GetSink(dhType, sinkPtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("GetSink failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
+        return ret;
+    }
+    if (sinkPtr == nullptr) {
+        DHLOGE("sinkPtr is null, compType = %{public}#X.", dhType);
+        return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
+    }
+    compSink_.insert(std::make_pair(dhType, sinkPtr));
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::UninitCompSink(DHType dhType)
+{
+    std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
+    auto ret = ComponentLoader::GetInstance().ReleaseSink(dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("GetSource failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
+        return ret;
+    }
+    compSink_.erase(dhType);
+    return DH_FWK_SUCCESS;
+}
+
+ActionResult ComponentManager::StopSource(DHType dhType)
+{
+    std::shared_lock<std::shared_mutex> lock(compSourceMutex_);
+    std::unordered_map<DHType, std::shared_future<int32_t>> futures;
+    if (compSource_.find(dhType) == compSource_.end()) {
+        DHLOGE("Component for DHType: %{public}" PRIu32 " not init source handler.", (uint32_t)dhType);
+        return futures;
+    }
+    auto sourcePtr = compSource_[dhType];
+    if (sourcePtr == nullptr) {
+        DHLOGE("comp source ptr is null.");
+        return futures;
+    }
+    std::promise<int32_t> p;
+    std::future<int32_t> f = p.get_future();
+    std::thread([p = std::move(p), sourcePtr] () mutable {
+        p.set_value(sourcePtr->ReleaseSource());
+    }).detach();
+    futures.emplace(dhType, f.share());
+    return futures;
+}
+
+ActionResult ComponentManager::StopSink(DHType dhType)
+{
+    std::shared_lock<std::shared_mutex> lock(compSinkMutex_);
+    std::unordered_map<DHType, std::shared_future<int32_t>> futures;
+    if (compSink_.find(dhType) == compSink_.end()) {
+        DHLOGE("Component for DHType: %{public}" PRIu32 " not init sink handler.", (uint32_t)dhType);
+        return futures;
+    }
+    auto sinkPtr = compSink_[dhType];
+    if (sinkPtr == nullptr) {
+        DHLOGE("comp sink ptr is null.");
+        return futures;
+    }
+    std::promise<int32_t> p;
+    std::future<int32_t> f = p.get_future();
+    std::thread([p = std::move(p), sinkPtr, dhType] () mutable {
+        p.set_value(sinkPtr->ReleaseSink());
+        IHardwareHandler *hardwareHandler = nullptr;
+        int32_t status = ComponentLoader::GetInstance().GetHardwareHandler(dhType, hardwareHandler);
+        if (status != DH_FWK_SUCCESS || hardwareHandler == nullptr) {
+            DHLOGE("GetHardwareHandler %{public}#X failed.", dhType);
+            return status;
+        }
+        hardwareHandler->UnRegisterPluginListener();
+        return status;
+    }).detach();
+    futures.emplace(dhType, f.share());
+    return futures;
+}
 } // namespace DistributedHardware
 } // namespace OHOS
