@@ -30,7 +30,7 @@ struct ListenerCompare {
 public:
     bool operator () (const sptr<IPublisherListener> originalListener, const sptr<IPublisherListener> currentListener)
     {
-        return originalListener->AsObject().GetRefPtr() != currentListener->AsObject().GetRefPtr();
+        return originalListener->AsObject().GetRefPtr() < currentListener->AsObject().GetRefPtr();
     }
 };
 class PublisherItem {
