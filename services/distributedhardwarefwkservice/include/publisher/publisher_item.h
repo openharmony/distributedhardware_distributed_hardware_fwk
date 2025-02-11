@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,13 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+struct ListenerCompare {
+public:
+    bool operator () (const sptr<IPublisherListener> originalListener, const sptr<IPublisherListener> currentListener)
+    {
+        return originalListener->AsObject().GetRefPtr() < currentListener->AsObject().GetRefPtr();
+    }
+};
 class PublisherItem {
 REMOVE_NO_USE_CONSTRUCTOR(PublisherItem);
 public:
@@ -38,7 +45,7 @@ public:
 private:
     DHTopic topic_;
     std::mutex mutex_;
-    std::set<sptr<IPublisherListener>> listeners_;
+    std::set<sptr<IPublisherListener>, ListenerCompare> listeners_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
