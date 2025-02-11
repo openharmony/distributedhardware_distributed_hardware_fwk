@@ -60,6 +60,9 @@ struct CompVersion {
     std::string handlerVersion;
     std::string sourceVersion;
     std::string sinkVersion;
+    bool haveFeature;
+    std::vector<std::string> sourceFeatureFilters;
+    std::vector<std::string> sinkSupportedFeatures;
 };
 
 struct DHVersion {

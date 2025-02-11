@@ -49,6 +49,8 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_COMPONENT_MONITOR_NULL = -10011;
     constexpr int32_t ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED = -10012;
     constexpr int32_t ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED = -10013;
+    constexpr int32_t ERR_DH_FWK_COMPONENT_LIMIT_DEMAND_START = -10014;
+    constexpr int32_t ERR_DH_FWK_COMPONENT_REPEAT_CALL = -10015;
 
     /* ResourceManager errno, range: [-10400, -10499] */
     constexpr int32_t ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL = -10400;
@@ -79,6 +81,12 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_LOADER_GET_LOCAL_VERSION_FAIL = -10602;
     constexpr int32_t ERR_DH_FWK_LOADER_DLCLOSE_FAIL = -10603;
     constexpr int32_t ERR_DH_FWK_LOADER_PROFILE_PATH_IS_NULL = -10604;
+    constexpr int32_t ERR_DH_FWK_LOADER_SINK_IS_LOADED = -10605;
+    constexpr int32_t ERR_DH_FWK_LOADER_SOURCE_IS_LOADED = -10606;
+    constexpr int32_t ERR_DH_FWK_LOADER_HANDLER_IS_LOADED = -10607;
+    constexpr int32_t ERR_DH_FWK_LOADER_SINK_NOT_LOADED = -10608;
+    constexpr int32_t ERR_DH_FWK_LOADER_SOURCE_NOT_LOADED = -10609;
+    constexpr int32_t ERR_DH_FWK_LOADER_HANDLER_NOT_LOADED = -10610;
 
     /* Task errno, range: [-10700, -10799] */
     constexpr int32_t ERR_DH_FWK_TASK_TIMEOUT = -10700;

@@ -84,6 +84,7 @@ public:
     int32_t GetSourceSaId(const DHType dhType);
     DHType GetDHTypeBySrcSaId(const int32_t saId);
     std::map<std::string, bool> GetCompResourceDesc();
+    bool IsDHTypeSupport(DHType dhType);
 
 private:
     void *GetHandler(const std::string &soName);

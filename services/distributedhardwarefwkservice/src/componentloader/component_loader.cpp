@@ -675,5 +675,10 @@ std::map<std::string, bool> ComponentLoader::GetCompResourceDesc()
 {
     return resDescMap_;
 }
+
+bool ComponentLoader::IsDHTypeSupport(DHType dhType)
+{
+    return IsDHTypeExist(dhType);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -79,6 +79,22 @@ public:
      */
     bool FetchNeedRefreshTask(const std::pair<std::string, std::string> &taskKey, TaskParam &taskParam);
 
+    int32_t CheckDemandStart(const std::string &uuid, const DHType dhType, bool &enableSink, bool &enableSource);
+    int32_t RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener, int32_t callingUid, int32_t callingPid);
+    int32_t UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener, int32_t callingUid, int32_t callingPid);
+    int32_t RegisterDHStatusListener(const std::string &networkId,
+        sptr<IHDSourceStatusListener> listener, int32_t callingUid, int32_t callingPid);
+    int32_t UnregisterDHStatusListener(const std::string &networkId,
+        sptr<IHDSourceStatusListener> listener, int32_t callingUid, int32_t callingPid);
+    int32_t EnableSink(const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid);
+    int32_t DisableSink(const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid);
+    int32_t EnableSource(const std::string &networkId,
+        const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid);
+    int32_t DisableSource(const std::string &networkId,
+        const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid);
+    int32_t ForceDisableSink(const DHDescriptor &dhDescriptor);
+    int32_t ForceDisableSource(const std::string &networkId, const DHDescriptor &dhDescriptor);
+
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
     public:
         ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner);
@@ -95,15 +111,101 @@ private:
         STOP_SINK
     };
 
+    enum class EnableState : int32_t {
+        DISABLED,
+        ENABLED
+    };
+
+    struct DHStatusCtrlKey {
+        int32_t uid;
+        int32_t pid;
+
+        bool operator == (const DHStatusCtrlKey &other) const
+        {
+            return (uid == other.uid) && (pid == other.pid);
+        }
+
+        bool operator < (const DHStatusCtrlKey &other) const
+        {
+            if (uid < other.uid) {
+                return true;
+            } else if (uid > other.uid) {
+                return false;
+            }
+            return pid < other.pid;
+        }
+    };
+
+    struct DHStatusCtrl {
+        EnableState enableState;
+        DHStatusCtrl()
+        {
+            enableState = EnableState::DISABLED;
+        }
+    };
+
+    struct DHStatusEnableInfo {
+        int32_t refEnable;
+        std::map<DHStatusCtrlKey, DHStatusCtrl> dhStatusCtrl;
+        DHStatusEnableInfo()
+        {
+            refEnable = 0;
+        }
+    };
+
+    struct DHStatusSourceEnableInfoKey {
+        std::string networkId;
+        std::string dhId;
+        bool operator == (const DHStatusSourceEnableInfoKey &other) const
+        {
+            return (networkId == other.networkId) && (dhId == other.dhId);
+        }
+        bool operator < (const DHStatusSourceEnableInfoKey &other) const
+        {
+            if (networkId < other.networkId) {
+                return true;
+            } else if (networkId > other.networkId) {
+                return false;
+            }
+            return dhId < other.dhId;
+        }
+    };
+
+    struct DHSinkStatus {
+        int32_t refLoad;
+        std::map<std::string, DHStatusEnableInfo> enableInfos;
+        std::map<DHStatusCtrlKey, sptr<IHDSinkStatusListener>> listeners;
+        DHSinkStatus()
+        {
+            refLoad = 0;
+        }
+    };
+
+    struct DHSourceStatus {
+        int32_t refLoad;
+        std::map<DHStatusSourceEnableInfoKey, DHStatusEnableInfo> enableInfos;
+        std::map<DHStatusCtrlKey, sptr<IHDSourceStatusListener>> listeners;
+        DHSourceStatus()
+        {
+            refLoad = 0;
+        }
+    };
+
     DHType GetDHType(const std::string &uuid, const std::string &dhId) const;
     bool InitCompSource();
+    int32_t InitCompSource(DHType dhType);
+    int32_t UninitCompSource(DHType dhType);
     bool InitCompSink();
+    int32_t InitCompSink(DHType dhType);
+    int32_t UninitCompSink(DHType dhType);
     ActionResult StartSource();
     ActionResult StartSource(DHType dhType);
     ActionResult StopSource();
+    ActionResult StopSource(DHType dhType);
     ActionResult StartSink();
     ActionResult StartSink(DHType dhType);
     ActionResult StopSink();
+    ActionResult StopSink(DHType dhType);
     bool WaitForResult(const Action &action, ActionResult result);
     int32_t GetEnableParam(const std::string &networkId, const std::string &uuid, const std::string &dhId,
         DHType dhType, EnableParam &param);
@@ -140,6 +242,26 @@ private:
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
     int32_t CheckSubtypeResource(const std::string &subtype, const std::string &networkId);
 
+    int32_t GetRemoteVerInfo(VersionInfo &versionInfo, const std::string &uuid, DHType dhType);
+    bool IsFeatureMatched(const std::vector<std::string> &sourceFeatureFilters,
+        const std::vector<std::string> &sinkSupportedFeatures);
+    int32_t EnableSinkInternal(const DHDescriptor &dhDescriptor,
+        int32_t callingUid, int32_t callingPid, sptr<IHDSinkStatusListener> &listener);
+    int32_t DisableSinkInternal(const DHDescriptor &dhDescriptor,
+        int32_t callingUid, int32_t callingPid, sptr<IHDSinkStatusListener> &listener);
+    int32_t EnableSourceInternal(const std::string &networkId, const DHDescriptor &dhDescriptor,
+        int32_t callingUid, int32_t callingPid, sptr<IHDSourceStatusListener> &listener);
+    int32_t DisableSourceInternal(const std::string &networkId, const DHDescriptor &dhDescriptor,
+        int32_t callingUid, int32_t callingPid, sptr<IHDSourceStatusListener> &listener);
+    int32_t ForceDisableSinkInternal(
+        const DHDescriptor &dhDescriptor, std::vector<sptr<IHDSinkStatusListener>> &listeners);
+    int32_t ForceDisableSourceInternal(const std::string &networkId,
+        const DHDescriptor &dhDescriptor, std::vector<sptr<IHDSourceStatusListener>> &listeners);
+    int32_t RealEnableSource(const std::string &networkId, const std::string &uuid, const DHDescriptor &dhDescriptor,
+        DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status);
+    int32_t RealDisableSource(const std::string &networkId, const std::string &uuid, const DHDescriptor &dhDescriptor,
+        DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status);
+
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::shared_mutex compSourceMutex_;
@@ -164,6 +286,12 @@ private:
     // save those remote dh that need refresh by full capability, {{device networkId, dhId}, TaskParam}.
     std::map<std::pair<std::string, std::string>, TaskParam> needRefreshTaskParams_;
     std::mutex needRefreshTaskParamsMtx_;
+
+    // distributed hardware enable status maintenance.
+    std::map<DHType, DHSinkStatus> dhSinkStatus_;
+    std::mutex dhSinkStatusMtx_;
+    std::map<DHType, DHSourceStatus> dhSourceStatus_;
+    std::mutex dhSourceStatusMtx_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
