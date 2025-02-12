@@ -49,7 +49,7 @@ export default class ContinueSwitchAbility extends UIExtensionAbility {
     let pushParams = want.parameters?.pushParams as string | undefined;
     let startReason = '';
     let isShowBack =
-      pushParams?.includes('isShowBack') ? (pushParams?.includes('isShowBack:false') ? false : true) : true;
+      pushParams?.includes('isShowBack') ? (pushParams.includes('isShowBack:false') ? false : true) : true;
     if (parameters) {
       startReason = parameters['startReason'] as string;
     }
@@ -61,8 +61,7 @@ export default class ContinueSwitchAbility extends UIExtensionAbility {
     };
     let storage: LocalStorage = new LocalStorage(param);
     session.loadContent('pages/ContinueSwitch', storage);
-    console.log(TAG,
-      `onSessionCreate end. AppStorage.get<string>('startReason')= ${AppStorage.get<string>('startReason')}`);
+    console.log(TAG, `onSessionCreate end. startReason: ${startReason},isShowBack: ${isShowBack}`);
   }
 
   onSessionDestroy(session: UIExtensionContentSession) {
