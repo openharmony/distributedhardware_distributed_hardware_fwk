@@ -57,7 +57,7 @@ export class DeviceUtil {
 
   private static isDeviceTablet(deviceType: number): boolean {
     logger.info(`${TAG} isDeviceTablet in. deviceType: ${deviceType}`);
-    return deviceInfo.deviceType === DeviceType.TYPE_TABLET;
+    return deviceType === DeviceType.TYPE_TABLET;
   }
 
   private static isExpandingNewForms(deviceType: number): boolean {
@@ -73,7 +73,7 @@ export class DeviceUtil {
   private static getFoldProductType(): number {
     logger.info(`${TAG} getFoldProductType in.`);
     if (DeviceUtil.foldProductTypeValue !== FoldPhoneTypeValue.INVALID_VALUE) {
-      return FoldPhoneTypeValue.foldProductTypeValue;
+      return DeviceUtil.foldProductTypeValue;
     }
     try {
       let productValue: string = systemParameterEnhance.getSync('const.window.foldscreen.type', '0.0.0.0');
@@ -95,7 +95,7 @@ export class DeviceUtil {
    *
    * @returns boolean
    */
-  private static isSmallFoldProduct(): boolean {
+  public static isSmallFoldProduct(): boolean {
     logger.info(`${TAG} isSmallFoldProduct in.`);
     return [FoldPhoneTypeValue.SMALL_FOLD,
       FoldPhoneTypeValue.EXPANDING_NEW_FORMS].includes(DeviceUtil.getFoldProductType());

@@ -565,15 +565,15 @@ struct ContinueSwitch {
    */
   private refreshFoldStatus(foldStatus: display.FoldStatus): void {
     logger.info(`${TAG} refreshFoldStatus in. foldStatus: ${foldStatus}. startReason: ${this.startReason}`);
-    this.isShowBack = (this.startReason !== 'from_search' || display.FoldStatus.FOLD_STATUS_FOLDED);
+    this.isShowBack = (this.startReason !== 'from_search' || foldStatus === display.FoldStatus.FOLD_STATUS_FOLDED);
     logger.info(`${TAG} refreshFoldStatus end. this.isShowBack: ${this.isShowBack}.`);
   }
 
   /**
    * 折叠状态发生变化
    */
-  private displayCallback(data: display.FoldStatus): CallBack<display.FoldStatus> {
-    this.refreshFoldStatus(data)
+  private displayCallback: Callback<display.FoldStatus> = (data: display.FoldStatus) => {
+    this.refreshFoldStatus(data);
   }
 
   private registerFoldChangeListener(): void {
