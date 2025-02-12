@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -89,6 +89,101 @@ int32_t EnableTask::RegisterHardware()
         GetAnonyString(GetDhId()).c_str());
     DHTraceEnd();
     return result;
+}
+
+void EnableTask::SetEffectSink(bool isEffect)
+{
+    effectSink_ = isEffect;
+}
+
+bool EnableTask::GetEffectSink()
+{
+    return effectSink_;
+}
+
+void EnableTask::SetEffectSource(bool isEffect)
+{
+    effectSource_ = isEffect;
+}
+
+bool EnableTask::GetEffectSource()
+{
+    return effectSource_;
+}
+
+void EnableTask::SetCallingUid(int32_t callingUid)
+{
+    callingUid_ = callingUid;
+}
+
+int32_t EnableTask::GetCallingUid()
+{
+    return callingUid_;
+}
+
+void EnableTask::SetCallingPid(int32_t callingPid)
+{
+    callingPid_ = callingPid;
+}
+
+int32_t EnableTask::GetCallingPid()
+{
+    return callingPid_;
+}
+
+int32_t EnableTask::DoAutoEnable()
+{
+    bool enableSink = false;
+    bool enableSource = false;
+    int32_t ret = ComponentManager::GetInstance().CheckDemandStart(GetUUID(), GetDhType(), enableSink, enableSource);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("CheckDemandStart failed!");
+        return ret;
+    }
+    if (!enableSink && !enableSource) {
+        return ERR_DH_FWK_COMPONENT_LIMIT_DEMAND_START;
+    }
+    DHDescriptor dhDescriptor {
+        .dhType = GetDhType(),
+        .id = GetDhId()
+    };
+    if (enableSink) {
+        ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, GetCallingUid(), GetCallingPid());
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("EnableSink failed!");
+        }
+    }
+    if (enableSource) {
+        ret = ComponentManager::GetInstance().EnableSource(
+            GetNetworkId(), dhDescriptor, GetCallingUid(), GetCallingPid());
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("EnableSource failed!");
+        }
+    }
+    return ret;
+}
+
+int32_t EnableTask::DoActiveEnable()
+{
+    int32_t ret = DH_FWK_SUCCESS;
+    DHDescriptor dhDescriptor {
+        .dhType = GetDhType(),
+        .id = GetDhId()
+    };
+    if (GetEffectSink()) {
+        ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, GetCallingUid(), GetCallingPid());
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("EnableSink failed!");
+        }
+    }
+    if (GetEffectSource()) {
+        ret = ComponentManager::GetInstance().EnableSource(
+            GetNetworkId(), dhDescriptor, GetCallingUid(), GetCallingPid());
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("EnableSource failed!");
+        }
+    }
+    return ret;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

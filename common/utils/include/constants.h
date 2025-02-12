@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -65,6 +65,8 @@ namespace DistributedHardware {
     const std::string HANDLER = "handler";
     const std::string SOURCE_VER = "source_ver";
     const std::string SINK_VER = "sink_ver";
+    const std::string SOURCE_FEATURE_FILTER = "source_feature_filter";
+    const std::string SINK_SUPPORTED_FEATURE = "sink_supported_feature";
     const std::string DH_TASK_NAME_PREFIX = "Task_";
     const std::string DH_FWK_PKG_NAME = "ohos.dhardware";
     const std::string DH_FWK_SESSION_NAME = "ohos.dhardware.session_";

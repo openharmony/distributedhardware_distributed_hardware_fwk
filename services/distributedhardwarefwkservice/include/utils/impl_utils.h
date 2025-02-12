@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -81,7 +81,15 @@ struct TaskParam {
     // remote device dhid
     std::string dhId;
     // remote device dh type
-    DHType dhType;
+    DHType dhType{ DHType::UNKNOWN };
+    // effect sink
+    bool effectSink{ false };
+    // effect source
+    bool effectSource{ false };
+    // enable or disable calling uid
+    int32_t callingUid{ 0 };
+    // enable or disable calling pid
+    int32_t callingPid{ 0 };
 };
 
 struct TaskDump {

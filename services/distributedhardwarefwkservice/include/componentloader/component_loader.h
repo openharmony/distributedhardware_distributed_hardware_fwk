@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,17 +38,6 @@ struct ResourceDesc {
 };
 
 namespace {
-struct CompHandler {
-    DHType type;
-    void *sourceHandler;
-    int32_t sourceSaId;
-    void *sinkHandler;
-    int32_t sinkSaId;
-    void *hardwareHandler;
-    std::vector<ResourceDesc> resourceDesc;
-};
-}
-
 struct CompConfig {
     std::string name;
     DHType type;
@@ -61,7 +50,22 @@ struct CompConfig {
     std::string compSinkVersion;
     int32_t compSinkSaId;
     std::vector<ResourceDesc> compResourceDesc;
+    bool haveFeature;
+    std::vector<std::string> sourceFeatureFilters;
+    std::vector<std::string> sinkSupportedFeatures;
 };
+
+struct CompHandler {
+    DHType type;
+    void *sourceHandler;
+    int32_t sourceSaId;
+    void *sinkHandler;
+    int32_t sinkSaId;
+    void *hardwareHandler;
+    std::vector<ResourceDesc> resourceDesc;
+    CompConfig compConfig;
+};
+}
 
 class ComponentLoader {
     DECLARE_SINGLE_INSTANCE_BASE(ComponentLoader);
@@ -84,6 +88,10 @@ public:
     int32_t GetSourceSaId(const DHType dhType);
     DHType GetDHTypeBySrcSaId(const int32_t saId);
     std::map<std::string, bool> GetCompResourceDesc();
+
+    int32_t GetSource(const DHType dhType);
+    int32_t GetSink(const DHType dhType);
+    int32_t GetHardwareHandler(const DHType dhType);
     bool IsDHTypeSupport(DHType dhType);
 
 private:
@@ -95,9 +103,15 @@ private:
     int32_t ParseConfig();
     void StoreLocalDHVersionInDB();
     bool IsDHTypeExist(DHType dhType);
+    bool IsDHTypeSinkLoaded(DHType dhType);
+    bool IsDHTypeSourceLoaded(DHType dhType);
+    bool IsDHTypeHandlerLoaded(DHType dhType);
     std::string Readfile(const std::string &filePath);
     void ParseCompConfigFromJson(cJSON *component, CompConfig &config);
     void ParseResourceDescFromJson(cJSON *resourceDescs, CompConfig &config);
+    void ParseSourceFeatureFiltersFromJson(cJSON *sourceFeatureFilters, CompConfig &config);
+    void ParseSinkSupportedFeaturesFromJson(cJSON *sinkSupportedFeatures, CompConfig &config);
+    void CheckAndParseFeatures(cJSON *component, CompConfig &config);
     bool CheckComponentEnable(const CompConfig &config);
 
 private:

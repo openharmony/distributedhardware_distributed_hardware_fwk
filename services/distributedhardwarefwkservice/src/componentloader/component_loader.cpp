@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -380,6 +380,41 @@ void ComponentLoader::ParseResourceDescFromJson(cJSON *resourceDescs, CompConfig
     }
 }
 
+void ComponentLoader::ParseSourceFeatureFiltersFromJson(cJSON *sourceFeatureFilters, CompConfig &config)
+{
+    cJSON *filter = nullptr;
+    config.sourceFeatureFilters.clear();
+    cJSON_ArrayForEach(filter, sourceFeatureFilters) {
+        config.sourceFeatureFilters.push_back(filter->valuestring);
+    }
+}
+
+void ComponentLoader::ParseSinkSupportedFeaturesFromJson(cJSON *sinkSupportedFeatures, CompConfig &config)
+{
+    cJSON *feature = nullptr;
+    config.sinkSupportedFeatures.clear();
+    cJSON_ArrayForEach(feature, sinkSupportedFeatures) {
+        config.sinkSupportedFeatures.push_back(feature->valuestring);
+    }
+}
+
+void ComponentLoader::CheckAndParseFeatures(cJSON *component, CompConfig &config)
+{
+    cJSON *sourceFeatureFilters = cJSON_GetObjectItem(component, SOURCE_FEATURE_FILTER.c_str());
+    cJSON *sinkSupportedFeatures = cJSON_GetObjectItem(component, SINK_SUPPORTED_FEATURE.c_str());
+    if (sourceFeatureFilters || sinkSupportedFeatures) {
+        config.haveFeature = true;
+        if (IsArray(sourceFeatureFilters)) {
+            ParseSourceFeatureFiltersFromJson(sourceFeatureFilters, config);
+        }
+        if (IsArray(sinkSupportedFeatures)) {
+            ParseSinkSupportedFeaturesFromJson(sinkSupportedFeatures, config);
+        }
+    } else {
+        config.haveFeature = false;
+    }
+}
+
 int32_t ComponentLoader::GetLocalDHVersion(DHVersion &dhVersion)
 {
     if (!isLocalVersionInit_.load()) {
@@ -648,6 +683,33 @@ bool ComponentLoader::IsDHTypeExist(DHType dhType)
     return true;
 }
 
+bool ComponentLoader::IsDHTypeSinkLoaded(DHType dhType)
+{
+    if (compHandlerMap_[dhType].sinkHandler == nullptr) {
+        DHLOGE("fail, dhType: %{public}#X sink not loaded", dhType);
+        return false;
+    }
+    return true;
+}
+
+bool ComponentLoader::IsDHTypeSourceLoaded(DHType dhType)
+{
+    if (compHandlerMap_[dhType].sourceHandler == nullptr) {
+        DHLOGE("fail, dhType: %{public}#X source not loaded", dhType);
+        return false;
+    }
+    return true;
+}
+
+bool ComponentLoader::IsDHTypeHandlerLoaded(DHType dhType)
+{
+    if (compHandlerMap_[dhType].hardwareHandler == nullptr) {
+        DHLOGE("fail, dhType: %{public}#X handler not loaded", dhType);
+        return false;
+    }
+    return true;
+}
+
 int32_t ComponentLoader::GetSourceSaId(const DHType dhType)
 {
     std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
@@ -674,6 +736,57 @@ DHType ComponentLoader::GetDHTypeBySrcSaId(const int32_t saId)
 std::map<std::string, bool> ComponentLoader::GetCompResourceDesc()
 {
     return resDescMap_;
+}
+
+int32_t ComponentLoader::GetSource(const DHType dhType)
+{
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+    auto iter = compHandlerMap_.find(dhType);
+    if (iter == compHandlerMap_.end()) {
+        DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
+        return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
+    }
+    CompHandler &compHandler = iter->second;
+    if (compHandler.sourceHandler != nullptr) {
+        DHLOGE("sourceHandler is loaded.");
+        return ERR_DH_FWK_LOADER_SOURCE_LOAD;
+    }
+    compHandler.sourceHandler = GetHandler(compHandler.compConfig.compSourceLoc);
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentLoader::GetSink(const DHType dhType)
+{
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+    auto iter = compHandlerMap_.find(dhType);
+    if (iter == compHandlerMap_.end()) {
+        DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
+        return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
+    }
+    CompHandler &compHandler = iter->second;
+    if (compHandler.sinkHandler != nullptr) {
+        DHLOGE("sinkHandler is loaded.");
+        return ERR_DH_FWK_LOADER_SINK_LOAD;
+    }
+    compHandler.sinkHandler = GetHandler(compHandler.compConfig.compSinkLoc);
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentLoader::GetHardwareHandler(const DHType dhType)
+{
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+    auto iter = compHandlerMap_.find(dhType);
+    if (iter == compHandlerMap_.end()) {
+        DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
+        return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
+    }
+    CompHandler &compHandler = iter->second;
+    if (compHandler.hardwareHandler != nullptr) {
+        DHLOGE("hardwareHandler is loaded.");
+        return ERR_DH_FWK_LOADER_HANDLER_LOAD;
+    }
+    compHandler.hardwareHandler = GetHandler(compHandler.compConfig.compHandlerLoc);
+    return DH_FWK_SUCCESS;
 }
 
 bool ComponentLoader::IsDHTypeSupport(DHType dhType)

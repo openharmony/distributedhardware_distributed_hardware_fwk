@@ -173,7 +173,7 @@ private:
 
     struct DHSinkStatus {
         int32_t refLoad;
-        std::map<std::string, DHStatusEnableInfo> enableInfos;
+        std::map<std::string, DHStatusEnableInfo> enableInfos;  // key is dhid
         std::map<DHStatusCtrlKey, sptr<IHDSinkStatusListener>> listeners;
         DHSinkStatus()
         {

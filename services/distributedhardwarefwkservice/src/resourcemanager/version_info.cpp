@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -64,6 +64,40 @@ std::string VersionInfo::ToJsonString() const
     return result;
 }
 
+void ToJson(cJSON *jsonObject, const CompVersion &compVer)
+{
+    if (jsonObject == nullptr) {
+        DHLOGE("Json pointer is nullptr!");
+        return;
+    }
+    cJSON_AddStringToObject(jsonObject, NAME.c_str(), compVer.name.c_str());
+    cJSON_AddNumberToObject(jsonObject, TYPE.c_str(), (double)compVer.dhType);
+    cJSON_AddStringToObject(jsonObject, HANDLER.c_str(), compVer.handlerVersion.c_str());
+    cJSON_AddStringToObject(jsonObject, SOURCE_VER.c_str(), compVer.sourceVersion.c_str());
+    cJSON_AddStringToObject(jsonObject, SINK_VER.c_str(), compVer.sinkVersion.c_str());
+    if (compVer.haveFeature) {
+        cJSON *sourceFeatureFilters = cJSON_CreateArray();
+        if (sourceFeatureFilters == NULL) {
+            DHLOGE("Failed to create cJSON object.");
+            return;
+        }
+        cJSON *sinkSupportedFeatures = cJSON_CreateArray();
+        if (sinkSupportedFeatures == NULL) {
+            cJSON_Delete(sourceFeatureFilters);
+            DHLOGE("Failed to create cJSON object.");
+            return;
+        }
+        for (const auto &filter : compVer.sourceFeatureFilters) {
+            cJSON_AddItemToArray(sourceFeatureFilters, cJSON_CreateString(filter.c_str()));
+        }
+        cJSON_AddItemToObject(jsonObject, SOURCE_FEATURE_FILTER.c_str(), sourceFeatureFilters);
+        for (const auto &feature : compVer.sinkSupportedFeatures) {
+            cJSON_AddItemToArray(sinkSupportedFeatures, cJSON_CreateString(feature.c_str()));
+        }
+        cJSON_AddItemToObject(jsonObject, SINK_SUPPORTED_FEATURE.c_str(), sinkSupportedFeatures);
+    }
+}
+
 void ToJson(cJSON *jsonObject, const VersionInfo &versionInfo)
 {
     if (jsonObject == nullptr) {
@@ -85,11 +119,7 @@ void ToJson(cJSON *jsonObject, const VersionInfo &versionInfo)
             DHLOGE("Failed to create cJSON object.");
             return;
         }
-        cJSON_AddStringToObject(compVer, NAME.c_str(), compVersion.second.name.c_str());
-        cJSON_AddNumberToObject(compVer, TYPE.c_str(), (double)compVersion.second.dhType);
-        cJSON_AddStringToObject(compVer, HANDLER.c_str(), compVersion.second.handlerVersion.c_str());
-        cJSON_AddStringToObject(compVer, SOURCE_VER.c_str(), compVersion.second.sourceVersion.c_str());
-        cJSON_AddStringToObject(compVer, SINK_VER.c_str(), compVersion.second.sinkVersion.c_str());
+        ToJson(compVer, compVersion.second);
         cJSON_AddItemToArray(compVers, compVer);
     }
     cJSON_AddItemToObject(jsonObject, COMP_VER.c_str(), compVers);
@@ -120,6 +150,27 @@ void FromJson(const cJSON *jsonObject, CompVersion &compVer)
     cJSON *sinkVerJson = cJSON_GetObjectItem(jsonObject, SINK_VER.c_str());
     if (IsString(sinkVerJson)) {
         compVer.sinkVersion = sinkVerJson->valuestring;
+    }
+    cJSON *sourceFeatureFilters = cJSON_GetObjectItem(jsonObject, SOURCE_FEATURE_FILTER.c_str());
+    cJSON *sinkSupportedFeatures = cJSON_GetObjectItem(jsonObject, SINK_SUPPORTED_FEATURE.c_str());
+    if (sourceFeatureFilters || sinkSupportedFeatures) {
+        compVer.haveFeature = true;
+        if (sourceFeatureFilters) {
+            cJSON *filterObj = nullptr;
+            compVer.sourceFeatureFilters.clear();
+            cJSON_ArrayForEach(filterObj, sourceFeatureFilters) {
+                compVer.sourceFeatureFilters.push_back(filterObj->valuestring);
+            }
+        }
+        if (sinkSupportedFeatures) {
+            cJSON *featureObj = nullptr;
+            compVer.sinkSupportedFeatures.clear();
+            cJSON_ArrayForEach(featureObj, sinkSupportedFeatures) {
+                compVer.sinkSupportedFeatures.push_back(featureObj->valuestring);
+            }
+        }
+    } else {
+        compVer.haveFeature = false;
     }
 }
 

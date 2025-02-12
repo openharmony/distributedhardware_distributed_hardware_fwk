@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,7 @@
 #include "capability_utils.h"
 #include "component_manager.h"
 #include "constants.h"
+#include "dh_context.h"
 #include "dh_utils_hitrace.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
@@ -93,6 +94,100 @@ int32_t DisableTask::UnRegisterHardware()
         GetAnonyString(GetDhId()).c_str());
     DHTraceEnd();
     return result;
+}
+
+void DisableTask::SetEffectSink(bool isEffect)
+{
+    effectSink_ = isEffect;
+}
+
+bool DisableTask::GetEffectSink()
+{
+    return effectSink_;
+}
+
+void DisableTask::SetEffectSource(bool isEffect)
+{
+    effectSource_ = isEffect;
+}
+
+bool DisableTask::GetEffectSource()
+{
+    return effectSource_;
+}
+
+void DisableTask::SetCallingUid(int32_t callingUid)
+{
+    callingUid_ = callingUid;
+}
+
+int32_t DisableTask::GetCallingUid()
+{
+    return callingUid_;
+}
+
+void DisableTask::SetCallingPid(int32_t callingPid)
+{
+    callingPid_ = callingPid;
+}
+
+int32_t DisableTask::GetCallingPid()
+{
+    return callingPid_;
+}
+
+int32_t DisableTask::DoAutoDisable()
+{
+    bool disableSink = false;
+    bool disableSource = false;
+    int32_t ret = ComponentManager::GetInstance().CheckDemandStart(GetUUID(), GetDhType(), disableSink, disableSource);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("CheckDemandStart failed!");
+        return ret;
+    }
+    if (DHContext::GetInstance().GetRealTimeOnlineDeviceCount() == 0 &&
+        DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
+        DHDescriptor dhDescriptor {
+            .dhType = GetDhType(),
+            .id = GetDhId()
+        };
+        if (disableSink) {
+            ret = ComponentManager::GetInstance().ForceDisableSink(dhDescriptor);
+            if (ret != DH_FWK_SUCCESS) {
+                DHLOGE("DisableSink failed!");
+            }
+        }
+        if (disableSource) {
+            ret = ComponentManager::GetInstance().ForceDisableSource(GetNetworkId(), dhDescriptor);
+            if (ret != DH_FWK_SUCCESS) {
+                DHLOGE("DisableSource failed!");
+            }
+        }
+    }
+    return ret;
+}
+
+int32_t DisableTask::DoActiveDisable()
+{
+    int32_t ret = DH_FWK_SUCCESS;
+    DHDescriptor dhDescriptor {
+        .dhType = GetDhType(),
+        .id = GetDhId()
+    };
+    if (GetEffectSink()) {
+        ret = ComponentManager::GetInstance().DisableSink(dhDescriptor, GetCallingUid(), GetCallingPid());
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("DisableSink failed!");
+        }
+    }
+    if (GetEffectSource()) {
+        ret = ComponentManager::GetInstance().DisableSource(
+            GetNetworkId(), dhDescriptor, GetCallingUid(), GetCallingPid());
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("DisableSource failed!");
+        }
+    }
+    return ret;
 }
 } // namespace DistributedHardware
 } // namespace OHOS
