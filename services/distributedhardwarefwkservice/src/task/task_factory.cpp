@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -81,6 +81,32 @@ std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskP
     TaskBoard::GetInstance().AddTask(task);
 
     return task;
+}
+
+std::shared_ptr<Task> TaskFactory::CreateEnableTask(const TaskParam &taskParam)
+{
+    auto enableTask = std::make_shared<EnableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+        taskParam.dhId, taskParam.dhType);
+    if (enableTask != nullptr) {
+        enableTask->SetEffectSink(taskParam.effectSink);
+        enableTask->SetEffectSource(taskParam.effectSource);
+        enableTask->SetCallingUid(taskParam.callingUid);
+        enableTask->SetCallingPid(taskParam.callingPid);
+    }
+    return enableTask;
+}
+
+std::shared_ptr<Task> TaskFactory::CreateDisableTask(const TaskParam &taskParam)
+{
+    auto disableTask = std::make_shared<DisableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+        taskParam.dhId, taskParam.dhType);
+    if (disableTask != nullptr) {
+        disableTask->SetEffectSink(taskParam.effectSink);
+        disableTask->SetEffectSource(taskParam.effectSource);
+        disableTask->SetCallingUid(taskParam.callingUid);
+        disableTask->SetCallingPid(taskParam.callingPid);
+    }
+    return disableTask;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

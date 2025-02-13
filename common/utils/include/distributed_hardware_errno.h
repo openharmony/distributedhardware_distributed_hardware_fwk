@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -81,12 +81,12 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_LOADER_GET_LOCAL_VERSION_FAIL = -10602;
     constexpr int32_t ERR_DH_FWK_LOADER_DLCLOSE_FAIL = -10603;
     constexpr int32_t ERR_DH_FWK_LOADER_PROFILE_PATH_IS_NULL = -10604;
-    constexpr int32_t ERR_DH_FWK_LOADER_SINK_IS_LOADED = -10605;
-    constexpr int32_t ERR_DH_FWK_LOADER_SOURCE_IS_LOADED = -10606;
-    constexpr int32_t ERR_DH_FWK_LOADER_HANDLER_IS_LOADED = -10607;
-    constexpr int32_t ERR_DH_FWK_LOADER_SINK_NOT_LOADED = -10608;
-    constexpr int32_t ERR_DH_FWK_LOADER_SOURCE_NOT_LOADED = -10609;
-    constexpr int32_t ERR_DH_FWK_LOADER_HANDLER_NOT_LOADED = -10610;
+    constexpr int32_t ERR_DH_FWK_LOADER_SINK_LOAD = -10605;
+    constexpr int32_t ERR_DH_FWK_LOADER_SOURCE_LOAD = -10606;
+    constexpr int32_t ERR_DH_FWK_LOADER_HANDLER_LOAD = -10607;
+    constexpr int32_t ERR_DH_FWK_LOADER_SINK_UNLOAD = -10608;
+    constexpr int32_t ERR_DH_FWK_LOADER_SOURCE_UNLOAD = -10609;
+    constexpr int32_t ERR_DH_FWK_LOADER_HANDLER_UNLOAD = -10610;
 
     /* Task errno, range: [-10700, -10799] */
     constexpr int32_t ERR_DH_FWK_TASK_TIMEOUT = -10700;
