@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,7 +82,7 @@ int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &d
             return StopDistributedHardwareInner(data, reply);
         }
         default:
-            return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
+            return OnRemoteRequestEx(code, data, reply, option);
     }
     return DH_FWK_SUCCESS;
 }
@@ -385,6 +385,257 @@ int32_t DistributedHardwareStub::StopDistributedHardwareInner(MessageParcel &dat
     if (!reply.WriteInt32(ret)) {
         DHLOGE("Write ret code failed");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::GetDistributedHardwareInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+
+    std::vector<DHDescriptor> descriptors;
+    std::string networkId = data.ReadString();
+    int32_t ret = GetDistributedHardware(networkId, descriptors);
+    if (WriteDescriptors(reply, descriptors)) {
+        DHLOGE("WriteDescriptors failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::RegisterDHStatusSinkListenerInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    sptr<IHDSinkStatusListener> listener = iface_cast<IHDSinkStatusListener>(data.ReadRemoteObject());
+    if (listener == nullptr) {
+        DHLOGE("Input distributed hardware status sink listener is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    int32_t ret = RegisterDHStatusListener(listener);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::UnregisterDHStatusSinkListenerInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    sptr<IHDSinkStatusListener> listener = iface_cast<IHDSinkStatusListener>(data.ReadRemoteObject());
+    if (listener == nullptr) {
+        DHLOGE("Input distributed hardware status sink listener is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    int32_t ret = UnregisterDHStatusListener(listener);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::RegisterDHStatusSourceListenerInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+
+    std::string networkId = data.ReadString();
+    sptr<IHDSourceStatusListener> listener = iface_cast<IHDSourceStatusListener>(data.ReadRemoteObject());
+    if (listener == nullptr) {
+        DHLOGE("Input distributed hardware status source listener is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    int32_t ret = RegisterDHStatusListener(networkId, listener);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::UnregisterDHStatusSourceListenerInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+
+    std::string networkId = data.ReadString();
+    sptr<IHDSourceStatusListener> listener = iface_cast<IHDSourceStatusListener>(data.ReadRemoteObject());
+    if (listener == nullptr) {
+        DHLOGE("Input distributed hardware status source listener is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    int32_t ret = UnregisterDHStatusListener(networkId, listener);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::EnableSinkInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+
+    std::vector<DHDescriptor> descriptors;
+    ReadDescriptors(data, descriptors);
+    int32_t ret = EnableSink(descriptors);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::DisableSinkInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+
+    std::vector<DHDescriptor> descriptors;
+    ReadDescriptors(data, descriptors);
+    int32_t ret = DisableSink(descriptors);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::EnableSourceInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+
+    std::string networkId = data.ReadString();
+    std::vector<DHDescriptor> descriptors;
+    ReadDescriptors(data, descriptors);
+    int32_t ret = EnableSource(networkId, descriptors);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::DisableSourceInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+
+    std::string networkId = data.ReadString();
+    std::vector<DHDescriptor> descriptors;
+    ReadDescriptors(data, descriptors);
+    int32_t ret = DisableSource(networkId, descriptors);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors)
+{
+    int32_t size = data.ReadInt32();
+    if (size > int32_t(MAX_DH_DESCRIPTOR_ARRAY_SIZE)) {
+        DHLOGE("The array descriptors are too large, size: %{public}d!", size);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    for (int32_t i = 0; i < size; ++i) {
+        DHDescriptor descriptor;
+        descriptor.dhType = static_cast<DHType>(data.ReadInt32());
+        descriptor.id = data.ReadString();
+        descriptors.push_back(descriptor);
+    }
+    return NO_ERROR;
+}
+
+int32_t DistributedHardwareStub::WriteDescriptors(MessageParcel &data, const std::vector<DHDescriptor> &descriptors)
+{
+    int32_t size = (int32_t)descriptors.size();
+    if (size > int32_t(MAX_DH_DESCRIPTOR_ARRAY_SIZE)) {
+        DHLOGE("The array descriptors are too large, size: %{public}d!", size);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (!data.WriteInt32(size)) {
+        DHLOGE("Write descriptors size failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    for (int32_t i = 0; i < size; ++i) {
+        const DHDescriptor &descriptor = descriptors.at(i);
+        int32_t type = static_cast<int32_t>(descriptor.dhType);
+        if (!data.WriteInt32(type)) {
+            DHLOGE("Write descriptor.dhType failed!");
+            return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+        }
+        if (!data.WriteString(descriptor.id)) {
+            DHLOGE("Write descriptor.id failed!");
+            return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+        }
+    }
+
+    return NO_ERROR;
+}
+
+int32_t DistributedHardwareStub::OnRemoteRequestEx(uint32_t code, MessageParcel &data, MessageParcel &reply,
+    MessageOption &option)
+{
+    switch (code) {
+        case static_cast<uint32_t>(DHMsgInterfaceCode::GET_DISTRIBUTED_HARDWARE): {
+            return GetDistributedHardwareInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::REG_DH_SINK_STATUS_LISTNER): {
+            return RegisterDHStatusSinkListenerInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_DH_SINK_STATUS_LISTNER): {
+            return UnregisterDHStatusSinkListenerInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::REG_DH_SOURCE_STATUS_LISTNER): {
+            return RegisterDHStatusSourceListenerInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_DH_SOURCE_STATUS_LISTNER): {
+            return UnregisterDHStatusSourceListenerInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::ENABLE_SINK): {
+            return EnableSinkInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SINK): {
+            return DisableSinkInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::ENABLE_SOURCE): {
+            return EnableSourceInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SOURCE): {
+            return DisableSourceInner(data, reply);
+        }
+        default:
+            return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
     return DH_FWK_SUCCESS;
 }

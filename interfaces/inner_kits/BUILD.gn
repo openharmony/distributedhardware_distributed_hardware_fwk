@@ -53,6 +53,7 @@ ohos_shared_library("libdhfwk_sdk") {
     "${innerkits_path}/src/distributed_hardware_fwk_kit.cpp",
     "${innerkits_path}/src/ipc/dhfwk_sa_manager.cpp",
     "${innerkits_path}/src/ipc/distributed_hardware_proxy.cpp",
+    "${innerkits_path}/src/ipc/hardware_status_listener_stub.cpp",
     "${innerkits_path}/src/ipc/publisher_listener_stub.cpp",
   ]
 

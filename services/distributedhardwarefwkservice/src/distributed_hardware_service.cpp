@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,7 @@
 #include "access_manager.h"
 #include "av_trans_control_center.h"
 #include "capability_info_manager.h"
+#include "meta_info_manager.h"
 #include "component_manager.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
@@ -39,6 +40,8 @@
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager_factory.h"
 #include "publisher.h"
+#include "task_executor.h"
+#include "task_factory.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -48,6 +51,7 @@ REGISTER_SYSTEM_ABILITY_BY_ID(DistributedHardwareService, DISTRIBUTED_HARDWARE_S
 namespace {
     constexpr int32_t INIT_BUSINESS_DELAY_TIME_MS = 5 * 100;
     const std::string INIT_TASK_ID = "CheckAndInitDH";
+    const std::string LOCAL_NETWORKID_ALIAS = "local";
 }
 
 DistributedHardwareService::DistributedHardwareService(int32_t saId, bool runOnCreate)
@@ -355,6 +359,180 @@ int32_t DistributedHardwareService::StopDistributedHardware(DHType dhType, const
     if (ret != 0) {
         DHLOGE("StopDistributedHardware for DHType: %{public}u failed, ret: %{public}d", (uint32_t)dhType, ret);
         return ret;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::GetDistributedHardware(
+    const std::string &networkId, std::vector<DHDescriptor> &descriptors)
+{
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    std::string deviceId;
+    if (networkId == LOCAL_NETWORKID_ALIAS) {
+        deviceId = GetLocalDeviceInfo().deviceId;
+    } else {
+        deviceId = GetDeviceIdByUUID(DHContext::GetInstance().GetUUIDByNetworkId(networkId));
+    }
+    std::vector<std::shared_ptr<CapabilityInfo>> capabilities;
+    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, capabilities);
+    if (capabilities.empty()) {
+        CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
+        std::string udid = DHContext::GetInstance().GetUDIDByNetworkId(networkId);
+        std::string udidHash = Sha256(udid);
+        std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
+        MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(udidHash, metaCapInfos);
+        for (const auto &metaCapInfo : metaCapInfos) {
+            DHDescriptor descriptor;
+            descriptor.id = metaCapInfo->GetDHId();
+            descriptor.dhType = metaCapInfo->GetDHType();
+            descriptors.push_back(descriptor);
+        }
+    } else {
+        for (const auto &capabilitie : capabilities) {
+            DHDescriptor descriptor;
+            descriptor.id = capabilitie->GetDHId();
+            descriptor.dhType = capabilitie->GetDHType();
+            descriptors.push_back(descriptor);
+        }
+    }
+
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener)
+{
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    int32_t callingPid = IPCSkeleton::GetCallingPid();
+    int32_t ret = ComponentManager::GetInstance().RegisterDHStatusListener(listener, callingUid, callingPid);
+    if (ret != 0) {
+        DHLOGE("RegisterDHStatusListener failed, ret: %{public}d.", ret);
+        return ret;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener)
+{
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    int32_t callingPid = IPCSkeleton::GetCallingPid();
+    int32_t ret = ComponentManager::GetInstance().UnregisterDHStatusListener(listener, callingUid, callingPid);
+    if (ret != 0) {
+        DHLOGE("UnregisterDHStatusListener failed, ret: %{public}d.", ret);
+        return ret;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::RegisterDHStatusListener(
+    const std::string &networkId, sptr<IHDSourceStatusListener> listener)
+{
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    int32_t callingPid = IPCSkeleton::GetCallingPid();
+    int32_t ret = ComponentManager::GetInstance().RegisterDHStatusListener(
+        networkId, listener, callingUid, callingPid);
+    if (ret != 0) {
+        DHLOGE("RegisterDHStatusListener failed, ret: %{public}d.", ret);
+        return ret;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::UnregisterDHStatusListener(
+    const std::string &networkId, sptr<IHDSourceStatusListener> listener)
+{
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    int32_t callingPid = IPCSkeleton::GetCallingPid();
+    int32_t ret = ComponentManager::GetInstance().UnregisterDHStatusListener(
+        networkId, listener, callingUid, callingPid);
+    if (ret != 0) {
+        DHLOGE("UnregisterDHStatusListener failed, ret: %{public}d.", ret);
+        return ret;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::EnableSink(const std::vector<DHDescriptor> &descriptors)
+{
+    for (const auto &descriptor : descriptors) {
+        TaskParam taskParam = {
+            .dhId = descriptor.id,
+            .dhType = descriptor.dhType,
+            .effectSink = true,
+            .effectSource = false,
+            .callingUid = IPCSkeleton::GetCallingUid(),
+            .callingPid = IPCSkeleton::GetCallingPid()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
+        TaskExecutor::GetInstance().PushTask(task);
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::DisableSink(const std::vector<DHDescriptor> &descriptors)
+{
+    for (const auto &descriptor : descriptors) {
+        TaskParam taskParam = {
+            .dhId = descriptor.id,
+            .dhType = descriptor.dhType,
+            .effectSink = true,
+            .effectSource = false,
+            .callingUid = IPCSkeleton::GetCallingUid(),
+            .callingPid = IPCSkeleton::GetCallingPid()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, nullptr);
+        TaskExecutor::GetInstance().PushTask(task);
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::EnableSource(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors)
+{
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    for (const auto &descriptor : descriptors) {
+        TaskParam taskParam = {
+            .networkId = networkId,
+            .dhId = descriptor.id,
+            .dhType = descriptor.dhType,
+            .effectSink = false,
+            .effectSource = true,
+            .callingUid = IPCSkeleton::GetCallingUid(),
+            .callingPid = IPCSkeleton::GetCallingPid()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
+        TaskExecutor::GetInstance().PushTask(task);
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::DisableSource(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors)
+{
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    for (const auto &descriptor : descriptors) {
+        TaskParam taskParam = {
+            .networkId = networkId,
+            .dhId = descriptor.id,
+            .dhType = descriptor.dhType,
+            .effectSink = false,
+            .effectSource = true,
+            .callingUid = IPCSkeleton::GetCallingUid(),
+            .callingPid = IPCSkeleton::GetCallingPid()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, nullptr);
+        TaskExecutor::GetInstance().PushTask(task);
     }
     return DH_FWK_SUCCESS;
 }

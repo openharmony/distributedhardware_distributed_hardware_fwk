@@ -40,6 +40,7 @@ namespace DistributedHardware {
     constexpr uint32_t MAX_JSON_SIZE = 40 * 1024 * 1024;
     constexpr uint32_t MAX_HASH_SIZE = 64;
     constexpr uint32_t MAX_KEY_SIZE = 256;
+    constexpr uint32_t MAX_DH_DESCRIPTOR_ARRAY_SIZE = 4096;
 
     const std::string LOW_LATENCY_KEY = "identity";
     const std::u16string DHMS_STUB_INTERFACE_TOKEN = u"ohos.distributedhardware.accessToken";

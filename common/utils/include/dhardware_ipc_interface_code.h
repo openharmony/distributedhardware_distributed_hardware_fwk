@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,6 +34,15 @@ enum class DHMsgInterfaceCode : uint32_t {
     PAUSE_DISTRIBUTED_HARDWARE = 480010,
     RESUME_DISTRIBUTED_HARDWARE = 480011,
     STOP_DISTRIBUTED_HARDWARE = 480012,
+    GET_DISTRIBUTED_HARDWARE = 480013,
+    REG_DH_SINK_STATUS_LISTNER = 480014,
+    UNREG_DH_SINK_STATUS_LISTNER = 480015,
+    REG_DH_SOURCE_STATUS_LISTNER = 480016,
+    UNREG_DH_SOURCE_STATUS_LISTNER = 480017,
+    ENABLE_SINK = 480018,
+    DISABLE_SINK = 480019,
+    ENABLE_SOURCE = 480020,
+    DISABLE_SOURCE = 480021,
     NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED = 1,
 };
 } // namespace DistributedHardware

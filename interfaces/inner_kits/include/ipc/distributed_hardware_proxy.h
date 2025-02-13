@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,6 +47,19 @@ public:
     int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId) override;
     int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId) override;
     int32_t StopDistributedHardware(DHType dhType, const std::string &networkId) override;
+    int32_t GetDistributedHardware(const std::string &networkId, std::vector<DHDescriptor> &descriptors) override;
+    int32_t RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener) override;
+    int32_t UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener) override;
+    int32_t RegisterDHStatusListener(const std::string &networkId, sptr<IHDSourceStatusListener> listener) override;
+    int32_t UnregisterDHStatusListener(const std::string &networkId, sptr<IHDSourceStatusListener> listener) override;
+    int32_t EnableSink(const std::vector<DHDescriptor> &descriptors) override;
+    int32_t DisableSink(const std::vector<DHDescriptor> &descriptors) override;
+    int32_t EnableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors) override;
+    int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors) override;
+
+private:
+    int32_t ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors);
+    int32_t WriteDescriptors(MessageParcel &data, const std::vector<DHDescriptor> &descriptors);
 
 private:
     static inline BrokerDelegator<DistributedHardwareProxy> delegator_;

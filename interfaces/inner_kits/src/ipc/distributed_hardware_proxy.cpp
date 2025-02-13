@@ -530,5 +530,361 @@ int32_t DistributedHardwareProxy::StopDistributedHardware(DHType dhType, const s
 
     return reply.ReadInt32();
 }
+
+int32_t DistributedHardwareProxy::GetDistributedHardware(
+    const std::string &networkId, std::vector<DHDescriptor> &descriptors)
+{
+    DHLOGI("DistributedHardwareProxy GetDistributedHardware.");
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null!");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (!data.WriteString(networkId)) {
+        DHLOGE("Write networkId failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::GET_DISTRIBUTED_HARDWARE),
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d!", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    descriptors.clear();
+    ReadDescriptors(reply, descriptors);
+
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener)
+{
+    DHLOGI("DistributedHardwareProxy RegisterDHStatusListener.");
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null!");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (!data.WriteRemoteObject(listener->AsObject())) {
+        DHLOGE("Write listener failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::REG_DH_SINK_STATUS_LISTNER),
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d!", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener)
+{
+    DHLOGI("DistributedHardwareProxy UnregisterDHStatusListener.");
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null!");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (!data.WriteRemoteObject(listener->AsObject())) {
+        DHLOGE("Write listener failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_DH_SINK_STATUS_LISTNER),
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d!", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::RegisterDHStatusListener(
+    const std::string &networkId, sptr<IHDSourceStatusListener> listener)
+{
+    DHLOGI("DistributedHardwareProxy RegisterDHStatusListener.");
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null!");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (!data.WriteString(networkId)) {
+        DHLOGE("Write networkId failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteRemoteObject(listener->AsObject())) {
+        DHLOGE("Write listener failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::REG_DH_SOURCE_STATUS_LISTNER),
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d!", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::UnregisterDHStatusListener(
+    const std::string &networkId, sptr<IHDSourceStatusListener> listener)
+{
+    DHLOGI("DistributedHardwareProxy UnregisterDHStatusListener.");
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null!");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (!data.WriteString(networkId)) {
+        DHLOGE("Write networkId failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteRemoteObject(listener->AsObject())) {
+        DHLOGE("Write listener failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_DH_SOURCE_STATUS_LISTNER),
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d!", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::EnableSink(const std::vector<DHDescriptor> &descriptors)
+{
+    DHLOGI("DistributedHardwareProxy EnableSink.");
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null!");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (WriteDescriptors(data, descriptors)) {
+        DHLOGE("WriteDescriptors failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::ENABLE_SINK), data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d!", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::DisableSink(const std::vector<DHDescriptor> &descriptors)
+{
+    DHLOGI("DistributedHardwareProxy DisableSink.");
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null!");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (WriteDescriptors(data, descriptors)) {
+        DHLOGE("WriteDescriptors failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SINK), data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d!", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::EnableSource(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors)
+{
+    DHLOGI("DistributedHardwareProxy EnableSource.");
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null!");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (!data.WriteString(networkId)) {
+        DHLOGE("Write networkId failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (WriteDescriptors(data, descriptors)) {
+        DHLOGE("WriteDescriptors failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::ENABLE_SOURCE), data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d!", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::DisableSource(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors)
+{
+    DHLOGI("DistributedHardwareProxy DisableSource.");
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("remote service is null!");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    if (!data.WriteString(networkId)) {
+        DHLOGE("Write networkId failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (WriteDescriptors(data, descriptors)) {
+        DHLOGE("WriteDescriptors failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SOURCE), data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d!", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors)
+{
+    int32_t size = data.ReadInt32();
+    if (size > int32_t(MAX_DH_DESCRIPTOR_ARRAY_SIZE)) {
+        DHLOGE("The array descriptors are too large, size: %{public}d!", size);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    for (int32_t i = 0; i < size; ++i) {
+        DHDescriptor descriptor;
+        descriptor.dhType = static_cast<DHType>(data.ReadInt32());
+        descriptor.id = data.ReadString();
+        descriptors.push_back(descriptor);
+    }
+    return NO_ERROR;
+}
+
+int32_t DistributedHardwareProxy::WriteDescriptors(MessageParcel &data, const std::vector<DHDescriptor> &descriptors)
+{
+    int32_t size = (int32_t)descriptors.size();
+    if (size > int32_t(MAX_DH_DESCRIPTOR_ARRAY_SIZE)) {
+        DHLOGE("The array descriptors are too large, size: %{public}d!", size);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (!data.WriteInt32(size)) {
+        DHLOGE("Write descriptors size failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    for (int32_t i = 0; i < size; ++i) {
+        const DHDescriptor &descriptor = descriptors.at(i);
+        int32_t type = static_cast<int32_t>(descriptor.dhType);
+        if (!data.WriteInt32(type)) {
+            DHLOGE("Write descriptor.dhType failed!");
+            return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+        }
+        if (!data.WriteString(descriptor.id)) {
+            DHLOGE("Write descriptor.id failed!");
+            return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+        }
+    }
+    return NO_ERROR;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

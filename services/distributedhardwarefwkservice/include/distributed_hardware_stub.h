@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,6 +41,19 @@ private:
     int32_t PauseDistributedHardwareInner(MessageParcel &data, MessageParcel &reply);
     int32_t ResumeDistributedHardwareInner(MessageParcel &data, MessageParcel &reply);
     int32_t StopDistributedHardwareInner(MessageParcel &data, MessageParcel &reply);
+    int32_t GetDistributedHardwareInner(MessageParcel &data, MessageParcel &reply);
+    int32_t RegisterDHStatusSinkListenerInner(MessageParcel &data, MessageParcel &reply);
+    int32_t UnregisterDHStatusSinkListenerInner(MessageParcel &data, MessageParcel &reply);
+    int32_t RegisterDHStatusSourceListenerInner(MessageParcel &data, MessageParcel &reply);
+    int32_t UnregisterDHStatusSourceListenerInner(MessageParcel &data, MessageParcel &reply);
+    int32_t EnableSinkInner(MessageParcel &data, MessageParcel &reply);
+    int32_t DisableSinkInner(MessageParcel &data, MessageParcel &reply);
+    int32_t EnableSourceInner(MessageParcel &data, MessageParcel &reply);
+    int32_t DisableSourceInner(MessageParcel &data, MessageParcel &reply);
+
+    int32_t ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors);
+    int32_t WriteDescriptors(MessageParcel &data, const std::vector<DHDescriptor> &descriptors);
+    int32_t OnRemoteRequestEx(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option);
 
     bool ValidTopic(uint32_t topic);
     bool ValidQueryLocalSpec(uint32_t spec);
