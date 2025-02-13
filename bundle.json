@@ -58,7 +58,8 @@
         "openssl",
         "ffmpeg",
         "zlib",
-        "ffrt"
+        "ffrt",
+        "libevdev"
       ]
     },
     "build": {

@@ -67,8 +67,10 @@ ohos_unittest("ComponentManagerTest") {
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
+    "hilog:libhilog",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
+    "samgr:samgr_proxy",
   ]
 
   defines = [

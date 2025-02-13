@@ -51,8 +51,11 @@ ohos_fuzztest("AccessManagerOfflineFuzzTest") {
   external_deps = [
     "c_utils:utils",
     "device_manager:devicemanagersdk",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
     "init:libbegetutil",
     "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
 }
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2023-2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -83,6 +83,9 @@ ohos_unittest("DBAdapterTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "ipc:ipc_core",
     "kv_store:distributeddata_inner",
   ]
 }
@@ -138,6 +141,7 @@ ohos_unittest("MetaCapInfoTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "hilog:libhilog",
     "kv_store:distributeddata_inner",
   ]
@@ -167,6 +171,7 @@ ohos_unittest("MetaInfoMgrTest") {
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
+    "ipc:ipc_core",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
   ]
@@ -196,6 +201,7 @@ ohos_unittest("ResourceManagerTest") {
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
+    "ipc:ipc_core",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
   ]
