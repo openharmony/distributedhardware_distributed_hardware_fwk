@@ -28,6 +28,7 @@ import osAccount from '@ohos.account.osAccount';
 import systemParameterEnhance from '@ohos.systemParameterEnhance';
 import i18n from '@ohos.i18n';
 import { LengthMetrics } from '@ohos.arkui.node';
+import { DeviceUtil } from '../utils/DeviceUtil';
 
 const TAG = '[ContinueSwitch_Page] : ';
 let context = getContext(this) as common.UIAbilityContext;
@@ -43,7 +44,7 @@ let switchState: switchStatus = {
   close: CommonConstants.SWITCH_STATUS_CLOSE
 }
 
-@Entry
+@Entry(localStorage)
 @Component
 struct ContinueSwitch {
   @StorageLink('isSwitchOn') isSwitchOn: boolean | undefined = true;
@@ -87,6 +88,7 @@ struct ContinueSwitch {
   private continueDesc: ResourceStr = $r('app.string.continue_desc_text', '');
   private accountManager: osAccount.AccountManager = osAccount.getAccountManager();
   private startReason?: string = '';
+  private isSmallFoldProduct: boolean = DeviceUtil.isSmallFoldProduct();
 
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult): void {
     logger.info(`${TAG} 'onPortrait in`);
@@ -255,14 +257,11 @@ struct ContinueSwitch {
     this.listener.on('change', (mediaQueryResult: mediaQuery.MediaQueryResult) => {
       this.onPortrait(mediaQueryResult);
     })
+    this.registerFoldChangeListener();
     this.extContext = localStorage.get<common.UIExtensionContext>('context');
     this.startReason = AppStorage.get<string>('startReason');
     this.isShowBack = AppStorage.get<boolean>('isShowBack') ?? true;
     logger.info(`${TAG} aboutToAppear: startReason is ${this.startReason}, isShowBack: ${this.isShowBack}`);
-    if (this.isPhone()) {
-      this.checkFoldBackButton();
-    }
-    this.checkPcPadBackButton();
     this.phoneSwitchTextMarginInit();
     setTimeout(() => {
       this.isAnimatorDone = true;
@@ -271,6 +270,7 @@ struct ContinueSwitch {
 
   aboutToDisappear() {
     logger.info(`${TAG} aboutToDisappear in`);
+    this.unRegisterFoldChangeListener();
   }
 
   onBackPress() {
@@ -508,6 +508,15 @@ struct ContinueSwitch {
       if (typeof newArea.width === 'number' && typeof newArea.height === 'number') {
         let width = newArea.width as number;
         let halfHeight = (newArea.height as number) / 2;
+        try {
+          let displayInfo: display.Display | undefined = display.getDefaultDisplaySync();
+          if (displayInfo) {
+            halfHeight = px2vp(displayInfo.height / 2);
+            logger.info(`${TAG} display: halfHeight = ${halfHeight}`);
+          }
+        } catch (error) {
+          logger.error(`${TAG} getDefaultDisplaySync failed. error.message: ${error.message}`);
+        }
         if (width > halfHeight) {
           this.imageAnimatorWidth = halfHeight * 0.8;
           this.imageAnimatorHeight = this.imageAnimatorWidth * 2 / 3;
@@ -546,60 +555,59 @@ struct ContinueSwitch {
     return CommonConstants.ANIMATOR_WIDTH_PHONE;
   }
 
-  private checkPcPadBackButton(): void {
-    logger.info(`${TAG} checkPcPadBackButton in`);
-    if (this.startReason === 'from_search') {
-      if (deviceInfo.deviceType === '2in1' || deviceInfo.deviceType === 'tablet') {
-        this.isShowBack = false;
-      }
-    }
-  }
-
   private isPhone(): boolean {
     logger.info(`${TAG} isPhone in`);
     return (deviceInfo.deviceType === 'phone' || deviceInfo.deviceType === 'default');
   }
 
+  /**
+   * 根据折叠状态更新是否显示返回按钮
+   */
   private refreshFoldStatus(foldStatus: display.FoldStatus): void {
     logger.info(`${TAG} refreshFoldStatus in. foldStatus: ${foldStatus}. startReason: ${this.startReason}`);
-    if (this.startReason === 'from_search') {
-      if (foldStatus === display.FoldStatus.FOLD_STATUS_FOLDED) {
-        this.isShowBack = true;
-        logger.info(`${TAG} foldStatus: ${foldStatus}. this.isShowBack: ${this.isShowBack}`);
-      } else {
-        this.isShowBack = false;
-        logger.info(`${TAG} foldStatus: ${foldStatus}. this.isShowBack: ${this.isShowBack}`);
-      }
-    } else {
-      this.isShowBack = true;
-      logger.info(`${TAG} startReason: ${this.startReason}. this.isShowBack: ${this.isShowBack}`);
-    }
+    this.isShowBack = (this.startReason !== 'from_search' || foldStatus === display.FoldStatus.FOLD_STATUS_FOLDED);
+    logger.info(`${TAG} refreshFoldStatus end. this.isShowBack: ${this.isShowBack}.`);
   }
 
-  private checkFoldBackButton(): void {
-    logger.info(`${TAG} checkFoldBackButton in`);
+  /**
+   * 折叠状态发生变化
+   */
+  private displayCallback: Callback<display.FoldStatus> = (data: display.FoldStatus) => {
+    this.refreshFoldStatus(data);
+  }
+
+  private registerFoldChangeListener(): void {
+    logger.info(`${TAG} registerFoldChangeListener in.isSmallFoldProduct: ${this.isSmallFoldProduct}`);
     try {
-      if (display.isFoldable()) {
-        display.on('foldStatusChange', (foldStatus: display.FoldStatus) => {
-          let foldStatusValue = foldStatus.valueOf();
-          logger.info(`${TAG} checkFoldBackButton: foldStatusValue is ${foldStatusValue}`);
-          this.refreshFoldStatus(foldStatusValue);
-        })
+      // 首次非L+V折叠刷新isShowBack
+      if (!this.isSmallFoldProduct && display.isFoldable()) {
         let data: display.FoldStatus = display.getFoldStatus();
         this.refreshFoldStatus(data);
       }
+      display.on('foldStatusChange', this.displayCallback);
     } catch (err) {
-      logger.error(`${TAG} display.isFoldable,on failed. exception: ${err.message}`);
+      logger.error(`${TAG} registerFoldChangeListener failed. err.message: ${err.message}`);
     }
   }
 
-  private isMirrorLanguages(): boolean {
+  private unRegisterFoldChangeListener(): void {
+    logger.info(`${TAG} unRegisterFoldChangeListener in.`);
+    try {
+      display.off('foldStatusChange', this.displayCallback);
+    } catch (err) {
+      logger.error(`${TAG} unRegisterFoldChangeListener failed. err.message: ${err.message}`);
+    }
+  }
+
+  private isMirrorLanguages():
+    boolean {
     logger.info(`${TAG} isMirrorLanguages in`);
     let locale = new Intl.Locale(i18n.System.getSystemLanguage()).toString();
     return CommonConstants.MIRROR_LANGUAGES.includes(locale);
   }
 
-  private isTibetanLanguages(): boolean {
+  private isTibetanLanguages():
+    boolean {
     logger.info(`${TAG} isTibetanLanguages in`);
     let locale = new Intl.Locale(i18n.System.getSystemLanguage()).toString();
     logger.info(`${TAG} isTibetanLanguages: ${locale}`);
