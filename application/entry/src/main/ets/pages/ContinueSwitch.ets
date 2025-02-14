@@ -474,7 +474,7 @@ struct ContinueSwitch {
         try {
           let displayInfo: display.Display | undefined = display.getDefaultDisplaySync();
           if (displayInfo) {
-            halfHeight = px2vp(displayInfo.height / 2);
+            halfHeight = !this.is2in1 && displayInfo.height > 0 ? px2vp(displayInfo.height / 2) : (newArea.height / 2);
             logger.info(`${TAG} display: halfHeight = ${halfHeight}`);
           }
         } catch (error) {
