@@ -24,7 +24,6 @@ import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 import CommonConstants, { FontSizeScale } from '../common/constants/CommonConstants';
 import { logger } from '../utils/Logger';
 import { TipsJumpUtils } from '../utils/TipsJumpUtils';
-import osAccount from '@ohos.account.osAccount';
 import systemParameterEnhance from '@ohos.systemParameterEnhance';
 import i18n from '@ohos.i18n';
 import { LengthMetrics } from '@ohos.arkui.node';
@@ -86,7 +85,6 @@ struct ContinueSwitch {
   private scroller: Scroller = new Scroller();
   private learnMore: ResourceStr = $r('app.string.learn_more');
   private continueDesc: ResourceStr = $r('app.string.continue_desc_text', '');
-  private accountManager: osAccount.AccountManager = osAccount.getAccountManager();
   private startReason?: string = '';
   private isSmallFoldProduct: boolean = DeviceUtil.isSmallFoldProduct();
 
@@ -181,40 +179,6 @@ struct ContinueSwitch {
     logger.info(`${TAG} this.gapLength : ${this.gapLength}`);
   }
 
-  getForegroundOsAccountLocalId(): void {
-    logger.info(`${TAG} getForegroundOsAccountLocalId in`);
-    try {
-      this.accountManager.getForegroundOsAccountLocalId().then((localId: number) => {
-        logger.info(`${TAG} getForegroundOsAccountLocalId, localId: ${localId}`);
-        this.getAccountInfo(localId);
-      }).catch((err: BusinessError) => {
-        logger.error(`${TAG} getForegroundOsAccountLocalId errCode: ${err?.code}`);
-      });
-    } catch (err) {
-      logger.error(`${TAG} getForegroundOsAccountLocalId exception: ${err?.message}`);
-    }
-  }
-
-  getAccountInfo(localId: number): void {
-    logger.info(`${TAG} getAccountInfo in`);
-    try {
-      this.accountManager.queryOsAccountById(localId).then((accountInfo: osAccount.OsAccountInfo) => {
-        logger.info(`${TAG} queryOsAccountById, accountInfo.type: ${accountInfo.type}`);
-        if (accountInfo.type === osAccount.OsAccountType.PRIVATE) {
-          let status: boolean = settings.setValueSync(context, CommonConstants.CONTINUE_SWITCH_KEY, switchState.close,
-            settings.domainName.USER_SECURITY);
-          this.isSwitchOn = false;
-          this.isEnabled = false;
-          logger.info(`${TAG} set value isSuccess : status = ${status}; set:Continue_Switch_Status is 0`);
-        }
-      }).catch((err: BusinessError) => {
-        logger.error(`${TAG} queryOsAccountById errCode: ${err?.code}`);
-      });
-    } catch (err) {
-      logger.error(`${TAG} queryOsAccountById exception: ${err?.message}`);
-    }
-  }
-
   initSwitchStatus(): void {
     logger.info(`${TAG} initSwitchStatus in`);
     try {
@@ -253,7 +217,6 @@ struct ContinueSwitch {
     this.initSwitchStatus();
     this.getStringSync();
     this.getImageArray();
-    this.getForegroundOsAccountLocalId();
     this.listener.on('change', (mediaQueryResult: mediaQuery.MediaQueryResult) => {
       this.onPortrait(mediaQueryResult);
     })
@@ -511,7 +474,7 @@ struct ContinueSwitch {
         try {
           let displayInfo: display.Display | undefined = display.getDefaultDisplaySync();
           if (displayInfo) {
-            halfHeight = px2vp(displayInfo.height / 2);
+            halfHeight = !this.is2in1 && displayInfo.height > 0 ? px2vp(displayInfo.height / 2) : (newArea.height / 2);
             logger.info(`${TAG} display: halfHeight = ${halfHeight}`);
           }
         } catch (error) {

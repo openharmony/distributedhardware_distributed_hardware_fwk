@@ -2,8 +2,8 @@
   "app": {
     "bundleName": "com.ohos.dhardwareui",
     "vendor": "example",
-    "versionCode": 10000035,
-    "versionName": "1.0.35",
+    "versionCode": 10000036,
+    "versionName": "1.0.36",
     "icon": "$media:app_icon",
     "label": "$string:app_name",
     "minAPIVersion": 12,
