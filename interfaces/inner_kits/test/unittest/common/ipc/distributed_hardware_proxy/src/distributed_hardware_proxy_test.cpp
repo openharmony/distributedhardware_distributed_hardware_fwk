@@ -129,6 +129,74 @@ int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::StopDistribut
     return DH_FWK_SUCCESS;
 }
 
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::GetDistributedHardware(
+    const std::string &networkId, std::vector<DHDescriptor> &descriptors)
+{
+    (void)networkId;
+    (void)descriptors;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::RegisterDHStatusListener(
+    sptr<IHDSinkStatusListener> listener)
+{
+    (void)listener;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::UnregisterDHStatusListener(
+    sptr<IHDSinkStatusListener> listener)
+{
+    (void)listener;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::RegisterDHStatusListener(
+    const std::string &networkId, sptr<IHDSourceStatusListener> listener)
+{
+    (void)networkId;
+    (void)listener;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::UnregisterDHStatusListener(
+    const std::string &networkId, sptr<IHDSourceStatusListener> listener)
+{
+    (void)networkId;
+    (void)listener;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::EnableSink(
+    const std::vector<DHDescriptor> &descriptors)
+{
+    (void)descriptors;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::DisableSink(
+    const std::vector<DHDescriptor> &descriptors)
+{
+    (void)descriptors;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::EnableSource(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors)
+{
+    (void)networkId;
+    (void)descriptors;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::DisableSource(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors)
+{
+    (void)networkId;
+    (void)descriptors;
+    return DH_FWK_SUCCESS;
+}
+
 /**
  * @tc.name: RegisterPublisherListener_001
  * @tc.desc: Verify the RegisterPublisherListener function

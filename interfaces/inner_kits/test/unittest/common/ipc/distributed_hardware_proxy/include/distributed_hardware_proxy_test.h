@@ -54,6 +54,15 @@ public:
         int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId);
         int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId);
         int32_t StopDistributedHardware(DHType dhType, const std::string &networkId);
+        int32_t GetDistributedHardware(const std::string &networkId, std::vector<DHDescriptor> &descriptors);
+        int32_t RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener);
+        int32_t UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener);
+        int32_t RegisterDHStatusListener(const std::string &networkId, sptr<IHDSourceStatusListener> listener);
+        int32_t UnregisterDHStatusListener(const std::string &networkId, sptr<IHDSourceStatusListener> listener);
+        int32_t EnableSink(const std::vector<DHDescriptor> &descriptors);
+        int32_t DisableSink(const std::vector<DHDescriptor> &descriptors);
+        int32_t EnableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors);
+        int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors);
     };
 };
 

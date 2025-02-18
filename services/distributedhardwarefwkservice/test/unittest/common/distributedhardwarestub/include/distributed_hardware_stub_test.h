@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -120,6 +120,65 @@ int32_t StopDistributedHardware(DHType dhType, const std::string &networkId)
 {
     (void)dhType;
     (void)networkId;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t GetDistributedHardware(const std::string &networkId, std::vector<DHDescriptor> &descriptors)
+{
+    (void)networkId;
+    (void)descriptors;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener)
+{
+    (void)listener;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener)
+{
+    (void)listener;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t RegisterDHStatusListener(const std::string &networkId, sptr<IHDSourceStatusListener> listener)
+{
+    (void)networkId;
+    (void)listener;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t UnregisterDHStatusListener(const std::string &networkId, sptr<IHDSourceStatusListener> listener)
+{
+    (void)networkId;
+    (void)listener;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t EnableSink(const std::vector<DHDescriptor> &descriptors)
+{
+    (void)descriptors;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DisableSink(const std::vector<DHDescriptor> &descriptors)
+{
+    (void)descriptors;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t EnableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors)
+{
+    (void)networkId;
+    (void)descriptors;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors)
+{
+    (void)networkId;
+    (void)descriptors;
     return DH_FWK_SUCCESS;
 }
 };
