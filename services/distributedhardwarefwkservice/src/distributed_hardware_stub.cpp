@@ -395,7 +395,6 @@ int32_t DistributedHardwareStub::GetDistributedHardwareInner(MessageParcel &data
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
-
     std::vector<DHDescriptor> descriptors;
     std::string networkId = data.ReadString();
     int32_t ret = GetDistributedHardware(networkId, descriptors);
@@ -454,7 +453,6 @@ int32_t DistributedHardwareStub::RegisterDHStatusSourceListenerInner(MessageParc
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
-
     std::string networkId = data.ReadString();
     sptr<IHDSourceStatusListener> listener = iface_cast<IHDSourceStatusListener>(data.ReadRemoteObject());
     if (listener == nullptr) {
@@ -475,7 +473,6 @@ int32_t DistributedHardwareStub::UnregisterDHStatusSourceListenerInner(MessagePa
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
-
     std::string networkId = data.ReadString();
     sptr<IHDSourceStatusListener> listener = iface_cast<IHDSourceStatusListener>(data.ReadRemoteObject());
     if (listener == nullptr) {
@@ -496,7 +493,6 @@ int32_t DistributedHardwareStub::EnableSinkInner(MessageParcel &data, MessagePar
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
-
     std::vector<DHDescriptor> descriptors;
     ReadDescriptors(data, descriptors);
     int32_t ret = EnableSink(descriptors);
@@ -513,7 +509,6 @@ int32_t DistributedHardwareStub::DisableSinkInner(MessageParcel &data, MessagePa
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
-
     std::vector<DHDescriptor> descriptors;
     ReadDescriptors(data, descriptors);
     int32_t ret = DisableSink(descriptors);
@@ -530,7 +525,6 @@ int32_t DistributedHardwareStub::EnableSourceInner(MessageParcel &data, MessageP
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
-
     std::string networkId = data.ReadString();
     std::vector<DHDescriptor> descriptors;
     ReadDescriptors(data, descriptors);
@@ -548,7 +542,6 @@ int32_t DistributedHardwareStub::DisableSourceInner(MessageParcel &data, Message
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
-
     std::string networkId = data.ReadString();
     std::vector<DHDescriptor> descriptors;
     ReadDescriptors(data, descriptors);
@@ -599,7 +592,6 @@ int32_t DistributedHardwareStub::WriteDescriptors(MessageParcel &data, const std
             return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
         }
     }
-
     return NO_ERROR;
 }
 

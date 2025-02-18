@@ -543,11 +543,9 @@ int32_t DistributedHardwareProxy::GetDistributedHardware(
         DHLOGE("remote service is null!");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
-
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         DHLOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
@@ -562,10 +560,8 @@ int32_t DistributedHardwareProxy::GetDistributedHardware(
         DHLOGE("Send Request failed, ret: %{public}d!", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
-
     descriptors.clear();
     ReadDescriptors(reply, descriptors);
-
     return reply.ReadInt32();
 }
 
@@ -577,11 +573,9 @@ int32_t DistributedHardwareProxy::RegisterDHStatusListener(sptr<IHDSinkStatusLis
         DHLOGE("remote service is null!");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
-
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         DHLOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
@@ -596,7 +590,6 @@ int32_t DistributedHardwareProxy::RegisterDHStatusListener(sptr<IHDSinkStatusLis
         DHLOGE("Send Request failed, ret: %{public}d!", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
-
     return reply.ReadInt32();
 }
 
@@ -608,11 +601,9 @@ int32_t DistributedHardwareProxy::UnregisterDHStatusListener(sptr<IHDSinkStatusL
         DHLOGE("remote service is null!");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
-
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         DHLOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
@@ -627,7 +618,6 @@ int32_t DistributedHardwareProxy::UnregisterDHStatusListener(sptr<IHDSinkStatusL
         DHLOGE("Send Request failed, ret: %{public}d!", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
-
     return reply.ReadInt32();
 }
 
@@ -643,11 +633,9 @@ int32_t DistributedHardwareProxy::RegisterDHStatusListener(
         DHLOGE("remote service is null!");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
-
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         DHLOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
@@ -666,7 +654,6 @@ int32_t DistributedHardwareProxy::RegisterDHStatusListener(
         DHLOGE("Send Request failed, ret: %{public}d!", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
-
     return reply.ReadInt32();
 }
 
@@ -682,11 +669,9 @@ int32_t DistributedHardwareProxy::UnregisterDHStatusListener(
         DHLOGE("remote service is null!");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
-
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         DHLOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
@@ -705,7 +690,6 @@ int32_t DistributedHardwareProxy::UnregisterDHStatusListener(
         DHLOGE("Send Request failed, ret: %{public}d!", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
-
     return reply.ReadInt32();
 }
 
@@ -717,11 +701,9 @@ int32_t DistributedHardwareProxy::EnableSink(const std::vector<DHDescriptor> &de
         DHLOGE("remote service is null!");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
-
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         DHLOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
@@ -735,7 +717,6 @@ int32_t DistributedHardwareProxy::EnableSink(const std::vector<DHDescriptor> &de
         DHLOGE("Send Request failed, ret: %{public}d!", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
-
     return reply.ReadInt32();
 }
 
@@ -747,11 +728,9 @@ int32_t DistributedHardwareProxy::DisableSink(const std::vector<DHDescriptor> &d
         DHLOGE("remote service is null!");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
-
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         DHLOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
@@ -765,7 +744,6 @@ int32_t DistributedHardwareProxy::DisableSink(const std::vector<DHDescriptor> &d
         DHLOGE("Send Request failed, ret: %{public}d!", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
-
     return reply.ReadInt32();
 }
 
@@ -781,11 +759,9 @@ int32_t DistributedHardwareProxy::EnableSource(
         DHLOGE("remote service is null!");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
-
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         DHLOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
@@ -803,7 +779,6 @@ int32_t DistributedHardwareProxy::EnableSource(
         DHLOGE("Send Request failed, ret: %{public}d!", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
-
     return reply.ReadInt32();
 }
 
@@ -819,11 +794,9 @@ int32_t DistributedHardwareProxy::DisableSource(
         DHLOGE("remote service is null!");
         return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
     }
-
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         DHLOGE("WriteInterfaceToken fail!");
         return ERR_DH_AVT_SERVICE_WRITE_TOKEN_FAIL;
@@ -841,7 +814,6 @@ int32_t DistributedHardwareProxy::DisableSource(
         DHLOGE("Send Request failed, ret: %{public}d!", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
-
     return reply.ReadInt32();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,8 +24,10 @@
 #include "refbase.h"
 
 #include "distributed_hardware_fwk_kit_paras.h"
+#include "dhardware_descriptor.h"
 #include "ipublisher_listener.h"
 #include "idistributed_hardware.h"
+#include "ihardware_status_listener.h"
 
 #ifndef API_EXPORT
 #define API_EXPORT __attribute__((visibility("default")))
@@ -156,6 +158,83 @@ public:
      * @return Returns 0 if success.
      */
     API_EXPORT int32_t StopDistributedHardware(DHType dhType, const std::string &networkId);
+
+    /**
+     * @brief Get distributed hardware.
+     *
+     * @param networkId distributed hardware networkId.
+     * @param descriptors distributed hardware descriptor list.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t GetDistributedHardware(const std::string &networkId, std::vector<DHDescriptor> &descriptors);
+
+    /**
+     * @brief Register distributed hardware status listener.
+     *
+     * @param listener distributed hardware status listener.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener);
+
+    /**
+     * @brief Unregister distributed hardware status listener.
+     *
+     * @param listener distributed hardware status listener.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener);
+
+    /**
+     * @brief Register distributed hardware status listener.
+     *
+     * @param networkId distributed hardware networkId.
+     * @param listener distributed hardware status listener.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t RegisterDHStatusListener(const std::string &networkId, sptr<IHDSourceStatusListener> listener);
+
+    /**
+     * @brief Unregister distributed hardware status listener.
+     *
+     * @param networkId distributed hardware networkId.
+     * @param listener distributed hardware status listener.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t UnregisterDHStatusListener(const std::string &networkId, sptr<IHDSourceStatusListener> listener);
+
+    /**
+     * @brief Enable distributed hardware sink.
+     *
+     * @param descriptors distributed hardware descriptor list.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t EnableSink(const std::vector<DHDescriptor> &descriptors);
+
+    /**
+     * @brief Disable distributed hardware sink.
+     *
+     * @param descriptors distributed hardware descriptor list.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t DisableSink(const std::vector<DHDescriptor> &descriptors);
+
+    /**
+     * @brief Enable distributed hardware source.
+     *
+     * @param networkId distributed hardware networkId.
+     * @param descriptors distributed hardware descriptor list.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t EnableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors);
+
+    /**
+     * @brief Disable distributed hardware source.
+     *
+     * @param networkId distributed hardware networkId.
+     * @param descriptors distributed hardware descriptor list.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors);
 
 private:
     /**

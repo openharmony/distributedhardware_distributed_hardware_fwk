@@ -192,19 +192,13 @@ private:
     };
 
     DHType GetDHType(const std::string &uuid, const std::string &dhId) const;
-    bool InitCompSource();
     int32_t InitCompSource(DHType dhType);
     int32_t UninitCompSource(DHType dhType);
-    bool InitCompSink();
     int32_t InitCompSink(DHType dhType);
     int32_t UninitCompSink(DHType dhType);
-    ActionResult StartSource();
     ActionResult StartSource(DHType dhType);
-    ActionResult StopSource();
     ActionResult StopSource(DHType dhType);
-    ActionResult StartSink();
     ActionResult StartSink(DHType dhType);
-    ActionResult StopSink();
     ActionResult StopSink(DHType dhType);
     bool WaitForResult(const Action &action, ActionResult result);
     int32_t GetEnableParam(const std::string &networkId, const std::string &uuid, const std::string &dhId,
@@ -220,18 +214,6 @@ private:
     bool IsIdenticalAccount(const std::string &networkId);
     int32_t RetryGetEnableParam(const std::string &networkId, const std::string &uuid,
         const std::string &dhId, const DHType dhType, EnableParam &param);
-    void InitComponentHandler();
-    int32_t InitSAMonitor();
-    void StartComponent();
-    void RegisterDHStateListener();
-    void RegisterDataSyncTriggerListener();
-    void InitDHCommTool();
-
-    void UnInitSAMonitor();
-    void UnregisterDHStateListener();
-    void UnregisterDataSyncTriggerListener();
-    void UnInitDHCommTool();
-    void StopComponent();
     void StopPrivacy();
     int32_t GetEnableCapParam(const std::string &networkId, const std::string &uuid, DHType dhType, EnableParam &param,
         std::shared_ptr<CapabilityInfo> capability);

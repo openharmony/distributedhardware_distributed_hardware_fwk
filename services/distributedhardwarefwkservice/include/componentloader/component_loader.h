@@ -62,7 +62,6 @@ struct CompHandler {
     void *sinkHandler;
     int32_t sinkSaId;
     void *hardwareHandler;
-    std::vector<ResourceDesc> resourceDesc;
     CompConfig compConfig;
 };
 }
@@ -80,9 +79,6 @@ public:
     int32_t GetSource(const DHType dhType, IDistributedHardwareSource *&sourcePtr);
     int32_t GetSink(const DHType dhType, IDistributedHardwareSink *&sinkPtr);
     int32_t UnInit();
-    int32_t ReleaseHardwareHandler(const DHType dhType);
-    int32_t ReleaseSource(const DHType dhType);
-    int32_t ReleaseSink(const DHType dhType);
     std::vector<DHType> GetAllCompTypes();
     int32_t GetLocalDHVersion(DHVersion &dhVersion);
     int32_t GetSourceSaId(const DHType dhType);
@@ -90,8 +86,11 @@ public:
     std::map<std::string, bool> GetCompResourceDesc();
 
     int32_t GetSource(const DHType dhType);
+    int32_t ReleaseSource(const DHType dhType);
     int32_t GetSink(const DHType dhType);
+    int32_t ReleaseSink(const DHType dhType);
     int32_t GetHardwareHandler(const DHType dhType);
+    int32_t ReleaseHardwareHandler(const DHType dhType);
     bool IsDHTypeSupport(DHType dhType);
 
 private:

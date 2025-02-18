@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,6 +28,23 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+
+std::string DumpDescriptors(const std::vector<DHDescriptor> &descriptors)
+{
+    std::string descriptorsInfo = "[";
+    for (auto& descriptor : descriptors) {
+        descriptorsInfo += "[";
+        descriptorsInfo += "dhType:";
+        descriptorsInfo += std::to_string((uint32_t)descriptor.dhType);
+        descriptorsInfo += ",";
+        descriptorsInfo += "id:";
+        descriptorsInfo += descriptor.id;
+        descriptorsInfo += "]";
+    }
+    descriptorsInfo += "]";
+    return descriptorsInfo;
+}
+
 DistributedHardwareFwkKit::DistributedHardwareFwkKit() : isDHFWKOnLine_(false)
 {
     DHLOGI("Ctor DistributedHardwareFwkKit");
@@ -250,6 +267,118 @@ int32_t DistributedHardwareFwkKit::StopDistributedHardware(DHType dhType, const 
     HiSysEventWriteMsg(DHFWK_EXIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "user stop sink ui.");
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->StopDistributedHardware(dhType, networkId);
+}
+
+int32_t DistributedHardwareFwkKit::GetDistributedHardware(
+    const std::string &networkId, std::vector<DHDescriptor> &descriptors)
+{
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    DHLOGI("Get distributed hardware networkId %{public}s.", GetAnonyString(networkId).c_str());
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->GetDistributedHardware(networkId, descriptors);
+}
+
+int32_t DistributedHardwareFwkKit::RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener)
+{
+    DHLOGI("Register distributed hardware status sink listener.");
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterDHStatusListener(listener);
+}
+
+int32_t DistributedHardwareFwkKit::UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener)
+{
+    DHLOGI("Unregister distributed hardware status sink listener.");
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->UnregisterDHStatusListener(listener);
+}
+
+int32_t DistributedHardwareFwkKit::RegisterDHStatusListener(
+    const std::string &networkId, sptr<IHDSourceStatusListener> listener)
+{
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    DHLOGI("Register distributed hardware status source listener %{public}s.", GetAnonyString(networkId).c_str());
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterDHStatusListener(networkId, listener);
+}
+
+int32_t DistributedHardwareFwkKit::UnregisterDHStatusListener(
+    const std::string &networkId, sptr<IHDSourceStatusListener> listener)
+{
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    DHLOGI("Unregister distributed hardware status source listener %{public}s.", GetAnonyString(networkId).c_str());
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->UnregisterDHStatusListener(networkId, listener);
+}
+
+int32_t DistributedHardwareFwkKit::EnableSink(const std::vector<DHDescriptor> &descriptors)
+{
+    DHLOGI("Enable distributed hardware sink descriptors %{public}s.", DumpDescriptors(descriptors).c_str());
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->EnableSink(descriptors);
+}
+
+int32_t DistributedHardwareFwkKit::DisableSink(const std::vector<DHDescriptor> &descriptors)
+{
+    DHLOGI("Disable distributed hardware sink descriptors %{public}s.", DumpDescriptors(descriptors).c_str());
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->DisableSink(descriptors);
+}
+
+int32_t DistributedHardwareFwkKit::EnableSource(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors)
+{
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    DHLOGI("Enable distributed hardware source networkId %{public}s, descriptors %{public}s.",
+        GetAnonyString(networkId).c_str(), DumpDescriptors(descriptors).c_str());
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->EnableSource(networkId, descriptors);
+}
+
+int32_t DistributedHardwareFwkKit::DisableSource(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors)
+{
+    if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    DHLOGI("Disable distributed hardware source networkId %{public}s, descriptors %{public}s.",
+        GetAnonyString(networkId).c_str(), DumpDescriptors(descriptors).c_str());
+    if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->DisableSource(networkId, descriptors);
 }
 } // DistributedHardware
 } // OHOS
