@@ -63,6 +63,12 @@ struct Event {
     Media::Any param;
 };
 
+typedef enum {
+    AUDIO_CODEC_AAC = 0,
+    AUDIO_CODEC_FLAC = 1,
+    AUDIO_CODEC_AAC_EN = 2
+} AudioCodecType;
+
 const char* GetEventName(EventType type);
 } // namespace Pipeline
 } // namespace DistributedHardware

@@ -74,6 +74,8 @@ const std::string KEY_GROUP_INFO_ARRAY = "groupInfoArray";
 const std::string KEY_SHARED_MEM_FD = "sharedMemoryFd";
 const std::string KEY_SHARED_MEM_SIZE = "sharedMemorySize";
 const std::string KEY_SHARED_MEM_NAME = "sharedMemoryName";
+const std::string KEY_ONWER_NAME = "ownerName";
+const std::string KEY_PEERDEVID_NAME = "peerDevId";
 
 const std::string SCREEN_FILE_NAME_BEFOREENCODING = "/data/data/dscreen/BeforeEncoding.h265";
 const std::string SCREEN_FILE_NAME_AFTERCODING = "/data/data/dscreen/AfterCoding.h265";
