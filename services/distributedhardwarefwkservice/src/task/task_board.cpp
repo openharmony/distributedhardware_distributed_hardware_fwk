@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -65,6 +65,22 @@ void TaskBoard::AddTask(std::shared_ptr<Task> task)
         return;
     }
     this->tasks_.emplace(task->GetId(), task);
+}
+
+bool TaskBoard::IsAllDisableTaskFinish()
+{
+    std::lock_guard<std::mutex> lock(tasksMtx_);
+    int32_t disableCount = 0;
+    for (auto iter = tasks_.begin(); iter != tasks_.end(); iter++) {
+        if (iter->second->GetTaskType() == TaskType::DISABLE || iter->second->GetTaskType() == TaskType::META_DISABLE) {
+            disableCount++;
+        }
+    }
+    DHLOGI("DisableTask count: %{public}d", disableCount);
+    if (disableCount == 0) {
+        return true;
+    }
+    return false;
 }
 
 void TaskBoard::RemoveTask(std::string taskId)

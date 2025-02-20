@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -98,8 +98,8 @@ void OffLineTask::DoTaskInner()
     TaskBoard::GetInstance().RemoveTask(this->GetId());
     if (DHContext::GetInstance().GetRealTimeOnlineDeviceCount() == 0 &&
         DHContext::GetInstance().GetIsomerismConnectCount() == 0 &&
-        TaskBoard::GetInstance().IsAllTaskFinish()) {
-        DHLOGI("all devices are offline, start to free the resource");
+        TaskBoard::GetInstance().IsAllDisableTaskFinish()) {
+        DHLOGI("all devices are offline and all disable tasks are finished, start to free the resource");
         DistributedHardwareManagerFactory::GetInstance().UnInit();
     }
 }
