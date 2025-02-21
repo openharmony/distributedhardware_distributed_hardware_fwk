@@ -39,13 +39,11 @@ std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskP
     std::shared_ptr<Task> task = nullptr;
     switch (taskType) {
         case TaskType::ENABLE: {
-            task = std::make_shared<EnableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
-                taskParam.dhId, taskParam.dhType);
+            task = CreateEnableTask(taskParam);
             break;
         }
         case TaskType::DISABLE: {
-            task = std::make_shared<DisableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
-                taskParam.dhId, taskParam.dhType);
+            task = CreateDisableTask(taskParam);
             break;
         }
         case TaskType::ON_LINE: {

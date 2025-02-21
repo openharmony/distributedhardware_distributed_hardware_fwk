@@ -88,12 +88,22 @@ void DisableTask::DoTaskInner()
 int32_t DisableTask::UnRegisterHardware()
 {
     DHCompMgrTraceStart(GetAnonyString(GetNetworkId()), GetAnonyString(GetDhId()), DH_DISABLE_START);
-    auto result = ComponentManager::GetInstance().Disable(GetNetworkId(), GetUUID(), GetDhId(), GetDhType());
-    DHLOGI("disable task %{public}s, id = %{public}s, uuid = %{public}s, dhId = %{public}s",
-        (result == DH_FWK_SUCCESS) ? "success" : "failed", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
+
+    int32_t ret = DH_FWK_SUCCESS;
+
+    // Determine whether it is an active disable
+    if (GetCallingUid() || GetCallingPid()) {
+        // It is an active disable
+        ret = DoActiveDisable();
+    } else {
+        // It is an auto disable
+        ret = DoAutoDisable();
+    }
+    DHLOGI("disable task %{public}s, id = %{public}s, uuid = %{public}s, dhId = %{public}s.",
+        (ret == DH_FWK_SUCCESS) ? "success" : "failed", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
         GetAnonyString(GetDhId()).c_str());
     DHTraceEnd();
-    return result;
+    return ret;
 }
 
 void DisableTask::SetEffectSink(bool isEffect)

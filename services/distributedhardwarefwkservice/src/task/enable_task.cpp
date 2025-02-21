@@ -83,12 +83,22 @@ void EnableTask::DoTaskInner()
 int32_t EnableTask::RegisterHardware()
 {
     DHCompMgrTraceStart(GetAnonyString(GetNetworkId()), GetAnonyString(GetDhId()), DH_ENABLE_START);
-    auto result = ComponentManager::GetInstance().Enable(GetNetworkId(), GetUUID(), GetDhId(), GetDhType());
-    DHLOGI("enable task %{public}s, id = %{public}s, uuid = %{public}s, dhId = %{public}s",
-        (result == DH_FWK_SUCCESS) ? "success" : "failed", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
+
+    int32_t ret = DH_FWK_SUCCESS;
+
+    // Determine whether it is an active enable
+    if (GetCallingUid() || GetCallingPid()) {
+        // It is an active enable
+        ret = DoActiveEnable();
+    } else {
+        // It is an auto enable
+        ret = DoAutoEnable();
+    }
+    DHLOGI("enable task %{public}s, id = %{public}s, uuid = %{public}s, dhId = %{public}s.",
+        (ret == DH_FWK_SUCCESS) ? "success" : "failed", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
         GetAnonyString(GetDhId()).c_str());
     DHTraceEnd();
-    return result;
+    return ret;
 }
 
 void EnableTask::SetEffectSink(bool isEffect)

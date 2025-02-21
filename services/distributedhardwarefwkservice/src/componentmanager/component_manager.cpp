@@ -91,18 +91,6 @@ int32_t ComponentManager::Init()
 {
     DHLOGI("start.");
     DHTraceStart(COMPONENT_INIT_START);
-    InitComponentHandler();
-
-    int32_t ret = InitSAMonitor();
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Init SA monitor failed, ret: %{public}d", ret);
-        return ret;
-    }
-
-    StartComponent();
-    RegisterDHStateListener();
-    RegisterDataSyncTriggerListener();
-    InitDHCommTool();
 #ifdef DHARDWARE_LOW_LATENCY
     Publisher::GetInstance().RegisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
 #endif
@@ -111,178 +99,20 @@ int32_t ComponentManager::Init()
     return DH_FWK_SUCCESS;
 }
 
-void ComponentManager::InitComponentHandler()
-{
-    DHLOGI("start.");
-    if (!InitCompSource()) {
-        DHLOGE("InitCompSource failed.");
-        DHTraceEnd();
-    }
-    if (!InitCompSink()) {
-        DHLOGE("InitCompSink failed.");
-        DHTraceEnd();
-    }
-}
-
-int32_t ComponentManager::InitSAMonitor()
-{
-    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
-    if (compMonitorPtr_ == nullptr) {
-        DHLOGE("compMonitorPtr_ is null.");
-        return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
-    }
-    for (const auto &comp : compSource_) {
-        if (compSrcSaId_.find(comp.first) == compSrcSaId_.end()) {
-            continue;
-        }
-        compMonitorPtr_->AddSAMonitor(compSrcSaId_.at(comp.first));
-    }
-    return DH_FWK_SUCCESS;
-}
-
-void ComponentManager::StartComponent()
-{
-    auto sourceResult = StartSource();
-    auto sinkResult = StartSink();
-
-    if (!WaitForResult(Action::START_SOURCE, sourceResult)) {
-        DHLOGE("StartSource failed, some virtual components maybe cannot work, but want to continue");
-        HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
-            "dhfwk start source failed.");
-    }
-    if (!WaitForResult(Action::START_SINK, sinkResult)) {
-        DHLOGE("StartSink failed, some virtual components maybe cannot work, but want to continue");
-        HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
-            "dhfwk start sink failed.");
-    }
-}
-
-void ComponentManager::RegisterDHStateListener()
-{
-    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
-    for (const auto &item : compSource_) {
-        DHLOGI("Register DH State listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
-        if (item.second == nullptr) {
-            DHLOGE("comp source ptr is null");
-            continue;
-        }
-        item.second->RegisterDistributedHardwareStateListener(dhStateListener_);
-    }
-}
-
-void ComponentManager::RegisterDataSyncTriggerListener()
-{
-    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
-    eventHandler_ = std::make_shared<ComponentManager::ComponentManagerEventHandler>(runner);
-    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
-    for (const auto &item : compSource_) {
-        DHLOGI("Register Data Sync Trigger listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
-        if (item.second == nullptr) {
-            DHLOGE("comp source ptr is null");
-            continue;
-        }
-        item.second->RegisterDataSyncTriggerListener(dataSyncTriggerListener_);
-    }
-}
-
-void ComponentManager::InitDHCommTool()
-{
-    if (dhCommToolPtr_ == nullptr) {
-        DHLOGE("DH communication tool ptr is null");
-        return;
-    }
-    DHLOGI("Init DH communication tool");
-    dhCommToolPtr_->Init();
-}
-
 int32_t ComponentManager::UnInit()
 {
     DHLOGI("start.");
-    UnregisterDHStateListener();
-    UnregisterDataSyncTriggerListener();
-    UnInitDHCommTool();
     StopPrivacy();
-    UnInitSAMonitor();
-    StopComponent();
-
 #ifdef DHARDWARE_LOW_LATENCY
     Publisher::GetInstance().UnregisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
     LowLatency::GetInstance().CloseLowLatency();
 #endif
     DHLOGI("Release component success");
-
     if (isUnInitTimeOut_.load()) {
         DHLOGE("Some component stop timeout, FORCE exit!");
         _Exit(0);
     }
-
     return DH_FWK_SUCCESS;
-}
-
-void ComponentManager::UnInitSAMonitor()
-{
-    // clear SA monitor
-    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
-    if (compMonitorPtr_ == nullptr) {
-        DHLOGE("compMonitorPtr_ is null.");
-        return;
-    }
-    for (const auto &comp : compSource_) {
-        if (compSrcSaId_.find(comp.first) == compSrcSaId_.end()) {
-            continue;
-        }
-        compMonitorPtr_->RemoveSAMonitor(compSrcSaId_.at(comp.first));
-    }
-}
-
-void ComponentManager::UnregisterDHStateListener()
-{
-    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
-    for (const auto &item : compSource_) {
-        DHLOGI("Unregister DH State listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
-        if (item.second == nullptr) {
-            DHLOGE("comp source ptr is null");
-            continue;
-        }
-        item.second->UnregisterDistributedHardwareStateListener();
-    }
-}
-
-void ComponentManager::UnregisterDataSyncTriggerListener()
-{
-    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
-    for (const auto &item : compSource_) {
-        DHLOGI("Unregister Data Sync Trigger listener, dhType: %{public}" PRIu32, (uint32_t)item.first);
-        if (item.second == nullptr) {
-            DHLOGE("comp source ptr is null");
-            continue;
-        }
-        item.second->UnregisterDataSyncTriggerListener();
-    }
-}
-
-void ComponentManager::UnInitDHCommTool()
-{
-    if (dhCommToolPtr_ == nullptr) {
-        DHLOGE("DH communication tool ptr is null");
-        return;
-    }
-    DHLOGI("UnInit DH communication tool");
-    dhCommToolPtr_->UnInit();
-}
-
-void ComponentManager::StopComponent()
-{
-    // stop source and sink sa
-    auto sourceResult = StopSource();
-    auto sinkResult = StopSink();
-
-    if (!WaitForResult(Action::STOP_SOURCE, sourceResult)) {
-        DHLOGE("StopSource failed, but want to continue");
-    }
-    if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
-        DHLOGE("StopSink failed, but want to continue");
-    }
 }
 
 void ComponentManager::StopPrivacy()
@@ -297,30 +127,6 @@ void ComponentManager::StopPrivacy()
         audioCompPrivacy_->StopPrivacePage("mic");
         audioCompPrivacy_->SetPageFlagFalse();
     }
-}
-
-ActionResult ComponentManager::StartSource()
-{
-    DHLOGI("start.");
-    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
-    std::unordered_map<DHType, std::shared_future<int32_t>> futures;
-    std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
-    for (const auto &item : compSource_) {
-        if (item.second == nullptr) {
-            DHLOGE("comp source ptr is null");
-            continue;
-        }
-        CompVersion compversion;
-        VersionManager::GetInstance().GetCompVersion(uuid, item.first, compversion);
-        auto params = compversion.sourceVersion;
-        std::promise<int32_t> p;
-        std::future<int32_t> f = p.get_future();
-        std::thread([p = std::move(p), item, params] () mutable {
-            p.set_value(item.second->InitSource(params));
-        }).detach();
-        futures.emplace(item.first, f.share());
-    }
-    return futures;
 }
 
 ActionResult ComponentManager::StartSource(DHType dhType)
@@ -347,38 +153,6 @@ ActionResult ComponentManager::StartSource(DHType dhType)
     }).detach();
     futures.emplace(dhType, f.share());
 
-    return futures;
-}
-
-ActionResult ComponentManager::StartSink()
-{
-    DHLOGI("start.");
-    std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
-    std::unordered_map<DHType, std::shared_future<int32_t>> futures;
-    std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
-    for (const auto &item : compSink_) {
-        if (item.second == nullptr) {
-            DHLOGE("comp sink ptr is null");
-            continue;
-        }
-        CompVersion compversion;
-        VersionManager::GetInstance().GetCompVersion(uuid, item.first, compversion);
-        auto params = compversion.sinkVersion;
-        std::promise<int32_t> p;
-        std::future<int32_t> f = p.get_future();
-        std::thread([p = std::move(p), item, params] () mutable {
-            p.set_value(item.second->InitSink(params));
-        }).detach();
-        futures.emplace(item.first, f.share());
-        if (cameraCompPrivacy_ == nullptr && item.first == DHType::CAMERA) {
-            cameraCompPrivacy_ = std::make_shared<ComponentPrivacy>();
-            item.second->RegisterPrivacyResources(cameraCompPrivacy_);
-        }
-        if (audioCompPrivacy_ == nullptr && item.first == DHType::AUDIO) {
-            audioCompPrivacy_ = std::make_shared<ComponentPrivacy>();
-            item.second->RegisterPrivacyResources(audioCompPrivacy_);
-        }
-    }
     return futures;
 }
 
@@ -417,56 +191,6 @@ ActionResult ComponentManager::StartSink(DHType dhType)
     return futures;
 }
 
-ActionResult ComponentManager::StopSource()
-{
-    DHLOGI("start.");
-    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
-    std::unordered_map<DHType, std::shared_future<int32_t>> futures;
-    for (const auto &item : compSource_) {
-        if (item.second == nullptr) {
-            DHLOGE("comp source ptr is null");
-            continue;
-        }
-        std::promise<int32_t> p;
-        std::future<int32_t> f = p.get_future();
-        std::thread([p = std::move(p), item] () mutable {
-            p.set_value(item.second->ReleaseSource());
-        }).detach();
-        futures.emplace(item.first, f.share());
-    }
-    compSource_.clear();
-    return futures;
-}
-
-ActionResult ComponentManager::StopSink()
-{
-    DHLOGI("start.");
-    std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
-    std::unordered_map<DHType, std::shared_future<int32_t>> futures;
-    for (const auto &item : compSink_) {
-        if (item.second == nullptr) {
-            DHLOGE("comp sink ptr is null");
-            continue;
-        }
-        std::promise<int32_t> p;
-        std::future<int32_t> f = p.get_future();
-        std::thread([p = std::move(p), item] () mutable {
-            p.set_value(item.second->ReleaseSink());
-            IHardwareHandler *hardwareHandler = nullptr;
-            int32_t status = ComponentLoader::GetInstance().GetHardwareHandler(item.first, hardwareHandler);
-            if (status != DH_FWK_SUCCESS || hardwareHandler == nullptr) {
-                DHLOGE("GetHardwareHandler %{public}#X failed", item.first);
-                return status;
-            }
-            hardwareHandler->UnRegisterPluginListener();
-            return status;
-        }).detach();
-        futures.emplace(item.first, f.share());
-    }
-    compSink_.clear();
-    return futures;
-}
-
 bool ComponentManager::WaitForResult(const Action &action, ActionResult actionsResult)
 {
     DHLOGD("start.");
@@ -496,51 +220,6 @@ bool ComponentManager::WaitForResult(const Action &action, ActionResult actionsR
     }
     DHLOGD("end.");
     return ret;
-}
-
-bool ComponentManager::InitCompSource()
-{
-    auto compTypes = ComponentLoader::GetInstance().GetAllCompTypes();
-    std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
-    for (const auto &type : compTypes) {
-        IDistributedHardwareSource *sourcePtr = nullptr;
-        auto ret = ComponentLoader::GetInstance().GetSource(type, sourcePtr);
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGW("GetSource failed, compType = %{public}#X, ret = %{public}d.", type, ret);
-            continue;
-        }
-        if (sourcePtr == nullptr) {
-            DHLOGW("sourcePtr is null, compType = %{public}#X.", type);
-            continue;
-        }
-        compSource_.insert(std::make_pair(type, sourcePtr));
-
-        int32_t saId = ComponentLoader::GetInstance().GetSourceSaId(type);
-        if (saId != INVALID_SA_ID) {
-            compSrcSaId_.insert(std::make_pair(type, saId));
-        }
-    }
-    return !compSource_.empty();
-}
-
-bool ComponentManager::InitCompSink()
-{
-    auto compTypes = ComponentLoader::GetInstance().GetAllCompTypes();
-    std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
-    for (const auto &type : compTypes) {
-        IDistributedHardwareSink *sinkPtr = nullptr;
-        auto ret = ComponentLoader::GetInstance().GetSink(type, sinkPtr);
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGW("GetSink failed, compType = %{public}#X, ret = %{public}d.", type, ret);
-            continue;
-        }
-        if (sinkPtr == nullptr) {
-            DHLOGW("sinkPtr is null, compType = %{public}#X.", type);
-            continue;
-        }
-        compSink_.insert(std::make_pair(type, sinkPtr));
-    }
-    return !compSink_.empty();
 }
 
 int32_t ComponentManager::Enable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
@@ -1311,6 +990,7 @@ int32_t ComponentManager::EnableSink(const DHDescriptor &dhDescriptor, int32_t c
     if (ret == DH_FWK_SUCCESS) {
         if (listener) {
             listener->OnEnable(dhDescriptor);
+            DHLOGI("Callback business sink OnEnable.");
         }
     }
     return ret;
@@ -1323,6 +1003,7 @@ int32_t ComponentManager::DisableSink(const DHDescriptor &dhDescriptor, int32_t 
     if (ret == DH_FWK_SUCCESS) {
         if (listener) {
             listener->OnDisable(dhDescriptor);
+            DHLOGI("Callback business sink OnDisable.");
         }
     }
     return ret;
@@ -1336,6 +1017,7 @@ int32_t ComponentManager::EnableSource(const std::string &networkId,
     if (ret == DH_FWK_SUCCESS) {
         if (listener) {
             listener->OnEnable(networkId, dhDescriptor);
+            DHLOGI("Callback business source OnEnable.");
         }
     }
     return ret;
@@ -1349,6 +1031,7 @@ int32_t ComponentManager::DisableSource(const std::string &networkId,
     if (ret == DH_FWK_SUCCESS) {
         if (listener) {
             listener->OnDisable(networkId, dhDescriptor);
+            DHLOGI("Callback business source OnDisable.");
         }
     }
     return ret;
@@ -1361,6 +1044,7 @@ int32_t ComponentManager::ForceDisableSink(const DHDescriptor &dhDescriptor)
     if (ret == DH_FWK_SUCCESS) {
         for (auto listener : listeners) {
             listener->OnDisable(dhDescriptor);
+            DHLOGI("Callback business sink OnDisable.");
         }
     }
     return ret;
@@ -1373,6 +1057,7 @@ int32_t ComponentManager::ForceDisableSource(const std::string &networkId, const
     if (ret == DH_FWK_SUCCESS) {
         for (auto listener : listeners) {
             listener->OnDisable(networkId, dhDescriptor);
+            DHLOGI("Callback business source OnDisable.");
         }
     }
     return ret;
@@ -1868,6 +1553,10 @@ int32_t ComponentManager::InitCompSource(DHType dhType)
     auto saId = ComponentLoader::GetInstance().GetSourceSaId(dhType);
     if (saId != INVALID_SA_ID) {
         compSrcSaId_.insert(std::make_pair(dhType, saId));
+        if (compMonitorPtr_ == nullptr) {
+            DHLOGE("compMonitorPtr_ is null.");
+            return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
+        }
         compMonitorPtr_->AddSAMonitor(saId);
     } else {
         DHLOGE("GetSourceSaId return INVALID_SA_ID, compType = %{public}#X.", dhType);
@@ -1892,13 +1581,20 @@ int32_t ComponentManager::UninitCompSource(DHType dhType)
     }
     sourcePtr->UnregisterDataSyncTriggerListener();
     sourcePtr->UnregisterDistributedHardwareStateListener();
-    compMonitorPtr_->RemoveSAMonitor(compSrcSaId_.at(dhType));
+    auto it = compSrcSaId_.find(dhType);
+    if (it != compSrcSaId_.end()) {
+        if (compMonitorPtr_ == nullptr) {
+            DHLOGE("compMonitorPtr_ is null.");
+            return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
+        }
+        compMonitorPtr_->RemoveSAMonitor(it->second);
+        compSrcSaId_.erase(it);
+    }
     ret = ComponentLoader::GetInstance().ReleaseSource(dhType);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("GetSource failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
         return ret;
     }
-    compSrcSaId_.erase(dhType);
     compSource_.erase(dhType);
     return DH_FWK_SUCCESS;
 }

@@ -174,7 +174,7 @@ HWTEST_F(ComponentManagerTest, init_compSource_test_001, TestSize.Level0)
 {
     ComponentLoader::GetInstance().Init();
     ComponentManager::GetInstance().compSource_.clear();
-    auto ret = ComponentManager::GetInstance().InitCompSource();
+    auto ret = ComponentManager::GetInstance().InitCompSource(DHType::INPUT);
     EXPECT_NE(ret, ComponentManager::GetInstance().compSource_.empty());
 }
 
@@ -188,7 +188,7 @@ HWTEST_F(ComponentManagerTest, init_compSink_test_001, TestSize.Level0)
 {
     ComponentLoader::GetInstance().Init();
     ComponentManager::GetInstance().compSink_.clear();
-    auto ret = ComponentManager::GetInstance().InitCompSink();
+    auto ret = ComponentManager::GetInstance().InitCompSink(DHType::INPUT);
     EXPECT_NE(ret, ComponentManager::GetInstance().compSink_.empty());
 }
 
@@ -302,7 +302,7 @@ HWTEST_F(ComponentManagerTest, StartSource_001, TestSize.Level0)
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
     ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
-    auto ret = ComponentManager::GetInstance().StartSource();
+    auto ret = ComponentManager::GetInstance().StartSource(dhType);
     EXPECT_EQ(true, ret.empty());
     ComponentManager::GetInstance().compSource_.clear();
 }
@@ -337,22 +337,6 @@ HWTEST_F(ComponentManagerTest, StartSink_001, TestSize.Level0)
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSink *sinkPtr = nullptr;
     ComponentManager::GetInstance().compSink_.insert(std::make_pair(dhType, sinkPtr));
-    auto ret = ComponentManager::GetInstance().StartSink();
-    EXPECT_EQ(true, ret.empty());
-    ComponentManager::GetInstance().compSink_.clear();
-}
-
-/**
- * @tc.name: StartSink_002
- * @tc.desc: Verify the StartSink function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ComponentManagerTest, StartSink_002, TestSize.Level0)
-{
-    DHType dhType = DHType::CAMERA;
-    IDistributedHardwareSink *sinkPtr = nullptr;
-    ComponentManager::GetInstance().compSink_.insert(std::make_pair(dhType, sinkPtr));
     auto ret = ComponentManager::GetInstance().StartSink(dhType);
     EXPECT_EQ(true, ret.empty());
     ComponentManager::GetInstance().compSink_.clear();
@@ -369,7 +353,7 @@ HWTEST_F(ComponentManagerTest, StopSource_001, TestSize.Level0)
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
     ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
-    auto ret = ComponentManager::GetInstance().StopSource();
+    auto ret = ComponentManager::GetInstance().StopSource(dhType);
     EXPECT_EQ(true, ret.empty());
     ComponentManager::GetInstance().compSource_.clear();
 }
@@ -385,7 +369,7 @@ HWTEST_F(ComponentManagerTest, StopSink_001, TestSize.Level0)
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSink *sinkPtr = nullptr;
     ComponentManager::GetInstance().compSink_.insert(std::make_pair(dhType, sinkPtr));
-    auto ret = ComponentManager::GetInstance().StopSink();
+    auto ret = ComponentManager::GetInstance().StopSink(dhType);
     EXPECT_EQ(true, ret.empty());
     ComponentManager::GetInstance().compSink_.clear();
 }
@@ -413,7 +397,7 @@ HWTEST_F(ComponentManagerTest, WaitForResult_001, TestSize.Level0)
      */
     HWTEST_F(ComponentManagerTest, InitCompSource_001, TestSize.Level0)
     {
-        bool ret = ComponentManager::GetInstance().InitCompSource();
+        bool ret = ComponentManager::GetInstance().InitCompSource(DHType::AUDIO);
         EXPECT_EQ(true, ret);
     }
 #endif
@@ -426,7 +410,7 @@ HWTEST_F(ComponentManagerTest, WaitForResult_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, InitCompSink_001, TestSize.Level0)
 {
-    bool ret = ComponentManager::GetInstance().InitCompSink();
+    bool ret = ComponentManager::GetInstance().InitCompSink(DHType::AUDIO);
     EXPECT_EQ(true, ret);
 }
 
@@ -1067,63 +1051,6 @@ HWTEST_F(ComponentManagerTest, GetDHSourceInstance_002, TestSize.Level0)
     IDistributedHardwareSource *dhSourcePtr = ComponentManager::GetInstance().GetDHSourceInstance(dhType);
     EXPECT_EQ(nullptr, dhSourcePtr);
     ComponentManager::GetInstance().compSource_.clear();
-}
-
-HWTEST_F(ComponentManagerTest, InitSAMonitor_001, TestSize.Level0)
-{
-    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
-    DHType dhType = DHType::CAMERA;
-    IDistributedHardwareSource *sourcePtr = nullptr;
-    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
-    ComponentManager::GetInstance().compSrcSaId_.insert(std::make_pair(DHType::AUDIO, 1));
-    auto ret = ComponentManager::GetInstance().InitSAMonitor();
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-
-    ComponentManager::GetInstance().compSrcSaId_.insert(std::make_pair(dhType, 1));
-    ret = ComponentManager::GetInstance().InitSAMonitor();
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-    ComponentManager::GetInstance().compSource_.clear();
-    ComponentManager::GetInstance().compSrcSaId_.clear();
-}
-
-HWTEST_F(ComponentManagerTest, RegisterDHStateListener_001, TestSize.Level0)
-{
-    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
-    DHType dhType = DHType::CAMERA;
-    IDistributedHardwareSource *sourcePtr = nullptr;
-    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
-    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RegisterDHStateListener());
-    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnregisterDHStateListener());
-    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RegisterDataSyncTriggerListener());
-    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnregisterDataSyncTriggerListener());
-    ComponentManager::GetInstance().compSource_.clear();
-}
-
-HWTEST_F(ComponentManagerTest, InitDHCommTool_001, TestSize.Level0)
-{
-    ComponentManager::GetInstance().dhCommToolPtr_ = nullptr;
-    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().InitDHCommTool());
-}
-
-HWTEST_F(ComponentManagerTest, UnInitSAMonitor_001, TestSize.Level0)
-{
-    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
-    DHType dhType = DHType::CAMERA;
-    IDistributedHardwareSource *sourcePtr = nullptr;
-    ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
-    ComponentManager::GetInstance().compSrcSaId_.insert(std::make_pair(DHType::AUDIO, 1));
-    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnInitSAMonitor());
-
-    ComponentManager::GetInstance().compSrcSaId_.insert(std::make_pair(dhType, 1));
-    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnInitSAMonitor());
-    ComponentManager::GetInstance().compSource_.clear();
-    ComponentManager::GetInstance().compSrcSaId_.clear();
-}
-
-HWTEST_F(ComponentManagerTest, UnInitDHCommTool_001, TestSize.Level0)
-{
-    ComponentManager::GetInstance().dhCommToolPtr_ = nullptr;
-    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnInitDHCommTool());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
