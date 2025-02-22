@@ -484,7 +484,7 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionNam
     EventType type = (result == 0) ? EventType::EVENT_CHANNEL_OPENED : EventType::EVENT_CHANNEL_OPEN_FAIL;
     AVTransEvent event = {type, mySessionName, peerDevId};
     {
-        std::lock_guard<std::mutex> lock(listenerMtx_);
+        std::lock_guard<std::mutex> subLock(listenerMtx_);
         for (auto it = listenerMap_.begin(); it != listenerMap_.end(); it++) {
             if (((it->first).find(mySessionName) != std::string::npos) && (it->second != nullptr)) {
                 std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->first, event).detach();
@@ -553,7 +553,7 @@ void SoftbusChannelAdapter::OnSoftbusStreamReceived(int32_t sessionId, const Str
     std::lock_guard<std::mutex> lock(idMapMutex_);
     for (auto it = devId2SessIdMap_.begin(); it != devId2SessIdMap_.end(); it++) {
         if (it->second == sessionId) {
-            std::lock_guard<std::mutex> lock(listenerMtx_);
+            std::lock_guard<std::mutex> subLock(listenerMtx_);
             ISoftbusChannelListener *listener = listenerMap_[it->first];
             TRUE_RETURN(listener == nullptr, "Can not find channel listener.");
             listener->OnStreamReceived(data, ext);
@@ -580,7 +580,7 @@ void SoftbusChannelAdapter::OnSoftbusTimeSyncResult(const TimeSyncResultInfo *in
     std::string masterDevId(info->target.masterNetworkId);
     std::lock_guard<std::mutex> lock(timeSyncMtx_);
     for (auto sessName : timeSyncSessNames_) {
-        std::lock_guard<std::mutex> lock(listenerMtx_);
+        std::lock_guard<std::mutex> subLock(listenerMtx_);
         ISoftbusChannelListener *listener = listenerMap_[sessName];
         if (listener != nullptr) {
             listener->OnChannelEvent({EventType::EVENT_TIME_SYNC_RESULT, std::to_string(millisecond), targetDevId});

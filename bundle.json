@@ -69,7 +69,6 @@
         "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_engine/av_sender:distributed_av_sender",
         "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/av_trans_handler/histreamer_ability_querier:histreamer_ability_querier",
         "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/framework:distributed_av_pipeline_fwk",
-        "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/framework/test/demo:av_trans_pipelie_demo",
         "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/inner_kits:libdhfwk_sdk",
         "//foundation/distributedhardware/distributed_hardware_fwk/interfaces/kits/napi:hardwaremanager",
         "//foundation/distributedhardware/distributed_hardware_fwk/sa_profile:dhardware.cfg",

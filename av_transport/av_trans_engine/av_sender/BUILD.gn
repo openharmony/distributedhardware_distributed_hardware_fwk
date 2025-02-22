@@ -35,6 +35,12 @@ ohos_shared_library("distributed_av_sender") {
   public_configs = [ ":sender_external_config" ]
 
   include_dirs = [
+    "${distributed_av_transport_path}/av_trans_engine/filters/av_trans_coder",
+    "${distributed_av_transport_path}/av_trans_engine/filters/av_trans_input",
+    "${distributed_av_transport_path}/av_trans_engine/filters/av_trans_output",
+    "${distributed_av_transport_path}/framework",
+    "${distributed_av_transport_path}/framework/filter/include",
+    "${distributed_av_transport_path}/framework/pipeline/include",
     "${dh_fwk_utils_path}/include",
     "${control_center_path}/inner_kits/include",
     "${control_center_path}/inner_kits/include/ipc",
@@ -52,12 +58,15 @@ ohos_shared_library("distributed_av_sender") {
     "${common_path}/src/av_trans_meta.cpp",
     "${common_path}/src/av_trans_utils.cpp",
     "${common_path}/src/softbus_channel_adapter.cpp",
+    "${engine_path}/av_sender/src/av_audio_sender_engine.cpp",
+    "${engine_path}/av_sender/src/av_audio_sender_engine_provider.cpp",
     "${engine_path}/av_sender/src/av_sender_engine.cpp",
     "${engine_path}/av_sender/src/av_sender_engine_provider.cpp",
   ]
 
   deps = [
     "${dh_fwk_sdk_path}:libdhfwk_sdk",
+    "${distributed_av_transport_path}/framework:distributed_av_pipeline_fwk",
     "${filters_path}:avtrans_input_filter",
     "${filters_path}:avtrans_output_filter",
   ]
@@ -88,6 +97,8 @@ ohos_shared_library("distributed_av_sender") {
   }
 
   external_deps += [
+    "av_codec:av_codec_client",
+    "av_codec:native_media_acodec",
     "bounds_checking_function:libsec_shared",
     "cJSON:cjson",
     "c_utils:utils",
