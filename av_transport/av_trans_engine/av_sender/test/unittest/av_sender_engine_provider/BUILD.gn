@@ -98,7 +98,96 @@ ohos_unittest("AvSenderEngineProviderTest") {
   ]
 }
 
+config("module_audio_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "${dh_fwk_utils_path}/include",
+    "${common_path}/include",
+    "${dh_fwk_sdk_path}/include",
+    "${engine_path}/av_sender/include",
+    "${control_center_path}/inner_kits/include",
+    "${control_center_path}/inner_kits/include/ipc",
+    "${filters_path}/av_transport_input",
+    "${filters_path}/av_transport_output",
+    "${filters_path}/av_trans_coder",
+    "${filters_path}/av_trans_input",
+    "${filters_path}/av_trans_output",
+    "${engine_path}/av_sender/test/unittest/av_sender_engine_provider/include",
+    "${distributed_av_transport_path}/framework/filter/include",
+    "${distributed_av_transport_path}/framework/pipeline/include",
+    "${interface_path}",
+  ]
+}
+
+ohos_unittest("AvAudioSenderEngineProviderTest") {
+  module_out_path = module_out_path
+
+  sources = [ "src/av_audio_sender_engine_provider_test.cpp" ]
+
+  configs = [ ":module_audio_private_config" ]
+
+  cflags = [
+    "-O2",
+    "-fPIC",
+    "-Wall",
+
+    "-fexceptions",
+    "-Dprivate = public",
+    "-Dprotected = public",
+  ]
+  cflags_cc = cflags
+
+  deps = [
+    "${dh_fwk_sdk_path}:libdhfwk_sdk",
+    "${engine_path}/av_sender:distributed_av_sender",
+    "${filters_path}:avtrans_input_filter",
+    "${filters_path}:avtrans_output_filter",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"AvAudioSenderEngineProviderTest\"",
+    "LOG_DOMAIN=0xD004101",
+  ]
+
+  defines += [
+    "MEDIA_OHOS",
+    "RECORDER_SUPPORT",
+    "VIDEO_SUPPORT",
+    "HST_ANY_WITH_NO_RTTI",
+  ]
+
+  if (histreamer_compile_part) {
+    external_deps = [
+      "media_foundation:histreamer_base",
+      "media_foundation:histreamer_codec_filters",
+      "media_foundation:histreamer_ffmpeg_convert",
+    ]
+  }
+
+  external_deps += [
+    "av_codec:av_codec_client",
+    "av_codec:native_media_acodec",
+    "bounds_checking_function:libsec_shared",
+    "cJSON:cjson",
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "googletest:gtest",
+    "graphic_2d:libgraphic_utils",
+    "graphic_surface:surface",
+    "hilog:libhilog",
+    "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+}
+
 group("av_sender_engine_provider_test") {
   testonly = true
-  deps = [ ":AvSenderEngineProviderTest" ]
+  deps = [
+    ":AvAudioSenderEngineProviderTest",
+    ":AvSenderEngineProviderTest",
+  ]
 }
