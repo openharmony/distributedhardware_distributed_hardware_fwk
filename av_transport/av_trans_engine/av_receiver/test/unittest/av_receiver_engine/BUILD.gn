@@ -96,7 +96,91 @@ ohos_unittest("AvReceiverEngineTest") {
   ]
 }
 
+config("module_audio_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "${dh_fwk_utils_path}/include",
+    "${common_path}/include",
+    "${dh_fwk_sdk_path}/include",
+    "${engine_path}/av_receiver/include",
+    "${control_center_path}/inner_kits/include",
+    "${control_center_path}/inner_kits/include/ipc",
+    "${filters_path}/av_trans_coder",
+    "${filters_path}/av_trans_input",
+    "${filters_path}/av_trans_output",
+    "${engine_path}/av_receiver/test/unittest/av_receiver_engine/include",
+    "${interface_path}",
+    "${distributed_av_transport_path}/framework/filter/include",
+    "${distributed_av_transport_path}/framework/pipeline/include",
+  ]
+}
+
+ohos_unittest("AvAudioReceiverEngineTest") {
+  module_out_path = module_out_path
+
+  sources = [ "src/av_audio_receiver_engine_test.cpp" ]
+
+  configs = [ ":module_audio_private_config" ]
+
+  cflags = [
+    "-O2",
+    "-fPIC",
+    "-Wall",
+    "-frtti",
+    "-fexceptions",
+    "-Dprivate = public",
+    "-Dprotected = public",
+  ]
+  cflags_cc = cflags
+
+  deps = [
+    "${dh_fwk_sdk_path}:libdhfwk_sdk",
+    "${distributed_av_transport_path}/framework:distributed_av_pipeline_fwk",
+    "${engine_path}/av_receiver:distributed_av_receiver",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"AvReceiverEngineTest\"",
+    "LOG_DOMAIN=0xD004101",
+  ]
+
+  defines += [
+    "MEDIA_OHOS",
+    "RECORDER_SUPPORT",
+    "VIDEO_SUPPORT",
+  ]
+
+  if (histreamer_compile_part) {
+    external_deps = [
+      "media_foundation:histreamer_base",
+      "media_foundation:histreamer_codec_filters",
+      "media_foundation:histreamer_ffmpeg_convert",
+    ]
+  }
+
+  external_deps += [
+    "av_codec:av_codec_client",
+    "av_codec:native_media_acodec",
+    "cJSON:cjson",
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "googletest:gtest",
+    "graphic_2d:libgraphic_utils",
+    "graphic_surface:surface",
+    "hilog:libhilog",
+    "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+}
+
 group("av_receiver_engine_test") {
   testonly = true
-  deps = [ ":AvReceiverEngineTest" ]
+  deps = [
+    ":AvAudioReceiverEngineTest",
+    ":AvReceiverEngineTest",
+  ]
 }
