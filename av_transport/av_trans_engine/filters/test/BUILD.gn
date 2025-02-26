@@ -15,6 +15,9 @@ group("filter_test") {
   testonly = true
 
   deps = [
+    "av_trans_coder_filter_test:av_trans_coder_filter_unittest",
+    "av_trans_input_filter_test:av_trans_input_filter_unittest",
+    "av_trans_output_filter_test:av_trans_audio_output_filter_unittest",
     "av_transport_input_filter_test:input_filter_unittest",
     "av_transport_output_filter_test:output_filter_unittest",
   ]
