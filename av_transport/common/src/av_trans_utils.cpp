@@ -16,6 +16,7 @@
 #include "av_trans_utils.h"
 
 #include <cstddef>
+#include <charconv>
 #include <securec.h>
 
 #include "av_trans_constants.h"
@@ -182,9 +183,13 @@ void Convert2HiSBufferMeta(std::shared_ptr<AVTransBuffer> transBuffer, std::shar
         hisVMeta->height_ = static_cast<uint32_t>(std::atoi(value.c_str()));
 
         TRUE_LOG_MSG(!transMeta->GetMetaItem(AVTransTag::PRE_TIMESTAMP, value), "get PRE_TIMESTAMP meta failed");
-        hisVMeta->pts_ = std::stoll(value.c_str());
 
-        hisBuffer->pts = std::stoll(value.c_str());
+        unsigned long num;
+        auto res = std::from_chars(value.data(), value.data() + value.size(), num);
+        if (res.ec == std::errc()) {
+            hisVMeta->pts_ = num;
+            hisBuffer->pts = num;
+        }
         hisBuffer->UpdateBufferMeta(*hisVMeta);
     }
 }
@@ -271,6 +276,12 @@ bool IsString(const cJSON *jsonObj, const std::string &key)
     cJSON *keyObj = cJSON_GetObjectItemCaseSensitive(jsonObj, key.c_str());
     return (keyObj != nullptr) && cJSON_IsString(keyObj) &&
         strlen(cJSON_GetStringValue(keyObj)) <= MAX_MESSAGES_LEN;
+}
+
+bool convertToInt(const std::string& str, int& value)
+{
+    auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), value);
+    return ec == std::errc{} && ptr == str.data() + str.size();
 }
 
 int64_t GetCurrentTime()
