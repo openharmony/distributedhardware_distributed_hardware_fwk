@@ -47,6 +47,7 @@ HWTEST_F(AvTransportAudioOutputFilterTest, Init_001, testing::ext::TestSize.Leve
 {
     ASSERT_TRUE(dAudioOutputTest_ != nullptr);
     dAudioOutputTest_->Init(nullptr, nullptr);
+    ASSERT_TRUE(dAudioOutputTest_ != nullptr);
 }
 
 HWTEST_F(AvTransportAudioOutputFilterTest, DoInitAfterLink_001, testing::ext::TestSize.Level1)
@@ -60,6 +61,7 @@ HWTEST_F(AvTransportAudioOutputFilterTest, PrepareInputBuffer_001, testing::ext:
 {
     ASSERT_TRUE(dAudioOutputTest_ != nullptr);
     dAudioOutputTest_->PrepareInputBuffer();
+    EXPECT_NE(dAudioOutputTest_->outputBufQue_, nullptr);
 }
 
 HWTEST_F(AvTransportAudioOutputFilterTest, DoPrepare_001, testing::ext::TestSize.Level1)

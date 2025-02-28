@@ -46,8 +46,8 @@ HWTEST_F(AvTransportBusInputFilterTest, Init_001, testing::ext::TestSize.Level1)
     std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
         std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
             Pipeline::FilterType::AUDIO_DATA_SOURCE);
-    ASSERT_TRUE(avBusInputTest_ != nullptr);
     avBusInputTest_->Init(nullptr, nullptr);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
 }
 
 HWTEST_F(AvTransportBusInputFilterTest, DoInitAfterLink_001, testing::ext::TestSize.Level1)
@@ -65,8 +65,8 @@ HWTEST_F(AvTransportBusInputFilterTest, PrepareInputBuffer_001, testing::ext::Te
     std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
         std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
             Pipeline::FilterType::AUDIO_DATA_SOURCE);
-    ASSERT_TRUE(avBusInputTest_ != nullptr);
     avBusInputTest_->PrepareInputBuffer();
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
 }
 
 HWTEST_F(AvTransportBusInputFilterTest, ProcessAndSendBuffer_001, testing::ext::TestSize.Level1)

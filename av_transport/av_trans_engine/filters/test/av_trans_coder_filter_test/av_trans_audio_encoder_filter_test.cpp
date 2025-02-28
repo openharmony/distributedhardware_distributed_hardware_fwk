@@ -144,8 +144,8 @@ HWTEST_F(AvTransportAudioEncoderFilterTest, ProcessData_001, testing::ext::TestS
     // initial codeMem
     OH_AVBuffer *codecMem = nullptr;
     ret = avAudioEncoderTest_->ProcessData(audioData, 0, codecMem);
-    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
     delete codecMem;
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
 HWTEST_F(AvTransportAudioEncoderFilterTest, OnEncInputBufferAvailable_001, testing::ext::TestSize.Level1)
@@ -153,8 +153,8 @@ HWTEST_F(AvTransportAudioEncoderFilterTest, OnEncInputBufferAvailable_001, testi
     std::shared_ptr<Pipeline::AudioEncoderFilter> avAudioEncoderTest_ =
         std::make_shared<Pipeline::AudioEncoderFilter>("builtin.recorder.audioencoderfilter",
             Pipeline::FilterType::FILTERTYPE_AENC);
-    ASSERT_TRUE(avAudioEncoderTest_ != nullptr);
     avAudioEncoderTest_->OnEncInputBufferAvailable(1, nullptr);
+    ASSERT_TRUE(avAudioEncoderTest_ != nullptr);
 }
 
 HWTEST_F(AvTransportAudioEncoderFilterTest, OnEncOutputBufferAvailable_001, testing::ext::TestSize.Level1)
@@ -162,8 +162,8 @@ HWTEST_F(AvTransportAudioEncoderFilterTest, OnEncOutputBufferAvailable_001, test
     std::shared_ptr<Pipeline::AudioEncoderFilter> avAudioEncoderTest_ =
         std::make_shared<Pipeline::AudioEncoderFilter>("builtin.recorder.audioencoderfilter",
             Pipeline::FilterType::FILTERTYPE_AENC);
-    ASSERT_TRUE(avAudioEncoderTest_ != nullptr);
     avAudioEncoderTest_->OnEncOutputBufferAvailable(1, nullptr);
+    ASSERT_TRUE(avAudioEncoderTest_ != nullptr);
 }
 
 HWTEST_F(AvTransportAudioEncoderFilterTest, DoPrepare_001, testing::ext::TestSize.Level1)
