@@ -61,6 +61,7 @@ HWTEST_F(AvTransportAudioOutputFilterTest, PrepareInputBuffer_001, testing::ext:
 {
     ASSERT_TRUE(dSoftbusOutputTest_ != nullptr);
     dSoftbusOutputTest_->PrepareInputBuffer();
+    EXPECT_NE(dSoftbusOutputTest_->outputBufQue_, nullptr);
 }
 
 HWTEST_F(AvTransportAudioOutputFilterTest, DoPrepare_001, testing::ext::TestSize.Level1)
