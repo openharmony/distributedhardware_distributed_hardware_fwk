@@ -76,7 +76,8 @@ HWTEST_F(MetaInfoMgrTest, AddMetaCapInfos_001, TestSize.Level0)
 
     for (int32_t i = 1; i < MAX_DB_RECORD_LENGTH; i++) {
         std::shared_ptr<MetaCapabilityInfo> mateCapInfoTest = make_shared<MetaCapabilityInfo>(std::to_string(i),
-            std::to_string(i), "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs", "subtype", udidHash, "1.0");
+            std::to_string(i), "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs", "subtype", udidHash,
+            CompVersion{ .sinkVersion = "1.0" });
         metaCapInfos.push_back(mateCapInfoTest);
     }
     ret = MetaInfoManager::GetInstance()->AddMetaCapInfos(metaCapInfos);
@@ -88,8 +89,10 @@ HWTEST_F(MetaInfoMgrTest, AddMetaCapInfos_002, TestSize.Level0)
     std::string deviceId = "deviceId_test";
     std::string udidHash = "udidHash_test";
     std::string dhId = "dhId_test";
+    CompVersion compVersion;
+    compVersion.sinkVersion = "1.0";
     std::shared_ptr<MetaCapabilityInfo> metaCapInfo = std::make_shared<MetaCapabilityInfo>(
-        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash, "1.0");
+        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash, compVersion);
     std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
     metaCapInfos.push_back(metaCapInfo);
     auto ret = MetaInfoManager::GetInstance()->AddMetaCapInfos(metaCapInfos);
@@ -215,9 +218,10 @@ HWTEST_F(MetaInfoMgrTest, GetMetaCapInfo_002, TestSize.Level0)
     std::string deviceId = "deviceId_test";
     std::string udidHash = "udidHash_test";
     std::string dhId = "dhId_test";
+    CompVersion compVersion{ .sinkVersion = "1.0" };
     std::shared_ptr<MetaCapabilityInfo> metaCapPtr;
     std::shared_ptr<MetaCapabilityInfo> dhMetaCapInfo = std::make_shared<MetaCapabilityInfo>(
-        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash, "1.0");
+        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash, compVersion);
     std::string key = udidHash + "###" + dhId;
     MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = dhMetaCapInfo;
     auto ret = MetaInfoManager::GetInstance()->GetMetaCapInfo(deviceId, dhId, metaCapPtr);
@@ -238,7 +242,8 @@ HWTEST_F(MetaInfoMgrTest, GetMetaCapInfosByUdidHash_001, TestSize.Level0)
     std::string deviceId = "deviceId_test";
     std::string dhId = "dhId_test";
     std::shared_ptr<MetaCapabilityInfo> metaCapInfo = std::make_shared<MetaCapabilityInfo>(
-        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash, "1.0");
+        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash,
+        CompVersion{ .sinkVersion = "1.0" });
     std::string key = udidHash + "###" + dhId;
     MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = metaCapInfo;
     MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(deviceId, metaCapInfos);
@@ -264,7 +269,8 @@ HWTEST_F(MetaInfoMgrTest, GetMetaCapByValue_001, TestSize.Level0)
     std::string udidHash = "udidHash_test";
     std::string dhId = "dhId_test";
     metaCapPtr = std::make_shared<MetaCapabilityInfo>(
-        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash, "1.0");
+        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash,
+        CompVersion{ .sinkVersion = "1.0" });
     ret = MetaInfoManager::GetInstance()->GetMetaCapByValue(value, metaCapPtr);
     EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
 }
@@ -276,7 +282,8 @@ HWTEST_F(MetaInfoMgrTest, GetMetaDataByDHType_001, TestSize.Level0)
     std::string dhId = "dhId_test";
     MetaCapInfoMap metaInfoMap;
     std::shared_ptr<MetaCapabilityInfo> dhMetaCapInfo = std::make_shared<MetaCapabilityInfo>(
-        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash, "1.0");
+        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash,
+        CompVersion{ .sinkVersion = "1.0" });
     std::string key = udidHash + "###" + dhId;
     MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = dhMetaCapInfo;
     auto ret = MetaInfoManager::GetInstance()->GetMetaDataByDHType(DHType::AUDIO, metaInfoMap);
@@ -315,7 +322,8 @@ HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoInMemByUdid_001, TestSize.Level0)
     std::string udidHash = "udidHash_test";
     std::string dhId = "dhId_test";
     std::shared_ptr<MetaCapabilityInfo> metaCapPtr = std::make_shared<MetaCapabilityInfo>(
-        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash, "1.0");
+        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash,
+        CompVersion{ .sinkVersion = "1.0" });
     std::string key = peerudIdHash + "###" + dhId;
     MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = metaCapPtr;
     auto ret = MetaInfoManager::GetInstance()->RemoveMetaInfoInMemByUdid(deviceId);

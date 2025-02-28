@@ -76,7 +76,7 @@ const std::shared_ptr<CapabilityInfo> CAP_INFO_TEST =
     DH_SUBTYPE_TEST);
 const std::shared_ptr<MetaCapabilityInfo> META_INFO_PTR_TEST = std::make_shared<MetaCapabilityInfo>(
     DH_ID_TEST, DEV_ID_TEST, DEVICE_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1, DH_SUBTYPE_TEST, UDIDHASH_TEST,
-    TEST_SINK_VERSION_1);
+    CompVersion{ .sinkVersion = TEST_SINK_VERSION_1 });
 }
 
 void ComponentManagerTest::SetUpTestCase(void)
@@ -900,8 +900,10 @@ HWTEST_F(ComponentManagerTest, ReStartSA_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, RecoverDistributedHardware_001, TestSize.Level0)
 {
+    CompVersion compVersion;
+    compVersion.sinkVersion = "1.0";
     std::shared_ptr<MetaCapabilityInfo> metaCapInfo = std::make_shared<MetaCapabilityInfo>(
-        "", "", "devName_test", TEST_DEV_TYPE_PAD, DHType::CAMERA, "attrs_test", "subtype", "", "1.0");
+        "", "", "devName_test", TEST_DEV_TYPE_PAD, DHType::CAMERA, "attrs_test", "subtype", "", compVersion);
     DHType dhType = DHType::CAMERA;
     std::string udidHash = Sha256(UDID_TEST);
     std::string key = udidHash + "###" + DH_ID_TEST;

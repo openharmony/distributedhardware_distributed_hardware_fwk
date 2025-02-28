@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,19 +24,22 @@
 
 #include "capability_info.h"
 #include "device_type.h"
+#include "impl_utils.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class MetaCapabilityInfo : public CapabilityInfo {
 public:
     MetaCapabilityInfo()
-        : CapabilityInfo("", "", "", 0, DHType::UNKNOWN, "", ""), udidHash_(""), sinkVersion_("")
-    {}
+        : CapabilityInfo("", "", "", 0, DHType::UNKNOWN, "", ""), udidHash_("")
+    {
+        compVersion_.haveFeature = false;
+    }
 
     MetaCapabilityInfo(std::string dhId, std::string devId, std::string devName, uint16_t devType, DHType dhType,
-        std::string dhAttrs, std::string dhSubtype, std::string udidHash, std::string sinkVersion)
+        std::string dhAttrs, std::string dhSubtype, std::string udidHash, CompVersion compVersion)
         : CapabilityInfo(dhId, devId, devName, devType, dhType, dhAttrs, dhSubtype),
-          udidHash_(udidHash), sinkVersion_(sinkVersion) {}
+          udidHash_(udidHash), compVersion_(compVersion) {}
 
     virtual ~MetaCapabilityInfo() {}
 
@@ -44,6 +47,9 @@ public:
     void SetUdidHash(const std::string &udidHash);
     std::string GetSinkVersion() const;
     void SetSinkVersion(const std::string &sinkVersion);
+    CompVersion& GetCompVersion();
+    CompVersion GetCompVersion() const;
+    void SetCompVersion(const CompVersion &compVersion);
 
     virtual int32_t FromJsonString(const std::string &jsonStr);
     virtual std::string ToJsonString();
@@ -53,7 +59,7 @@ public:
 
 private:
     std::string udidHash_;
-    std::string sinkVersion_;
+    CompVersion compVersion_;
 };
 
 void ToJson(cJSON *jsonObject, const MetaCapabilityInfo &metaCapInfo);

@@ -61,7 +61,8 @@ HWTEST_F(MetaCapInfoTest, FromJsonString_001, TestSize.Level0)
 {
     uint16_t devType = 1;
     std::shared_ptr<MetaCapabilityInfo> metaCapInfo =
-        std::make_shared<MetaCapabilityInfo>("", "", "", devType, DHType::CAMERA, "", "", "", "");
+        std::make_shared<MetaCapabilityInfo>("", "", "", devType, DHType::CAMERA, "", "", "",
+            CompVersion{ .sinkVersion = "" });
     std::string jsonStr = "";
     auto ret = metaCapInfo->FromJsonString(jsonStr);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
@@ -71,7 +72,8 @@ HWTEST_F(MetaCapInfoTest, FromJsonString_002, TestSize.Level0)
 {
     uint16_t devType = 1;
     std::shared_ptr<MetaCapabilityInfo> metaCapInfo =
-        std::make_shared<MetaCapabilityInfo>("", "", "", devType, DHType::CAMERA, "", "", "", "");
+        std::make_shared<MetaCapabilityInfo>("", "", "", devType, DHType::CAMERA, "", "", "",
+            CompVersion{ .sinkVersion = "" });
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
     cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), DHID_TEST.c_str());
@@ -247,9 +249,10 @@ HWTEST_F(MetaCapInfoTest, FromJson_010, TestSize.Level0)
 HWTEST_F(MetaCapInfoTest, Compare_001, TestSize.Level0)
 {
     uint16_t devType = 1;
-    MetaCapabilityInfo metaCapInfo("", "", "", devType, DHType::CAMERA, "", "", "", "");
+    MetaCapabilityInfo metaCapInfo("", "", "", devType, DHType::CAMERA, "", "", "", CompVersion{ .sinkVersion = "" });
     std::shared_ptr<MetaCapabilityInfo> metaCapInfoPtr =
-        std::make_shared<MetaCapabilityInfo>("devid_123", "", "", devType, DHType::CAMERA, "", "", "", "");
+        std::make_shared<MetaCapabilityInfo>("devid_123", "", "", devType, DHType::CAMERA, "", "", "",
+            CompVersion{ .sinkVersion = "" });
     auto ret = metaCapInfoPtr->Compare(metaCapInfo);
     EXPECT_EQ(false, ret);
 }
@@ -257,9 +260,11 @@ HWTEST_F(MetaCapInfoTest, Compare_001, TestSize.Level0)
 HWTEST_F(MetaCapInfoTest, Compare_002, TestSize.Level0)
 {
     uint16_t devType = 1;
-    MetaCapabilityInfo metaCapInfo("devid_123", "", "", devType, DHType::CAMERA, "", "", "", "");
+    MetaCapabilityInfo metaCapInfo("devid_123", "", "", devType, DHType::CAMERA, "", "", "",
+        CompVersion{ .sinkVersion = "" });
     std::shared_ptr<MetaCapabilityInfo> metaCapInfoPtr =
-        std::make_shared<MetaCapabilityInfo>("devid_123", "dhid_123", "", devType, DHType::CAMERA, "", "", "", "");
+        std::make_shared<MetaCapabilityInfo>("devid_123", "dhid_123", "", devType, DHType::CAMERA, "", "", "",
+            CompVersion{ .sinkVersion = "" });
     auto ret = metaCapInfoPtr->Compare(metaCapInfo);
     EXPECT_EQ(false, ret);
 }
@@ -267,9 +272,10 @@ HWTEST_F(MetaCapInfoTest, Compare_002, TestSize.Level0)
 HWTEST_F(MetaCapInfoTest, Compare_003, TestSize.Level0)
 {
     uint16_t devType = 1;
-    MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "", devType, DHType::CAMERA, "", "", "", "");
+    MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "", devType, DHType::CAMERA, "", "", "",
+        CompVersion{ .sinkVersion = "" });
     std::shared_ptr<MetaCapabilityInfo> metaCapInfoPtr = std::make_shared<MetaCapabilityInfo>(
-        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "", "", "", "");
+        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "", "", "", CompVersion{ .sinkVersion = "" });
     auto ret = metaCapInfoPtr->Compare(metaCapInfo);
     EXPECT_EQ(false, ret);
 }
@@ -277,9 +283,11 @@ HWTEST_F(MetaCapInfoTest, Compare_003, TestSize.Level0)
 HWTEST_F(MetaCapInfoTest, Compare_004, TestSize.Level0)
 {
     uint16_t devType = 1;
-    MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "", "", "", "");
+    MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "", "", "",
+        CompVersion{ .sinkVersion = "" });
     std::shared_ptr<MetaCapabilityInfo> metaCapInfoPtr =
-        std::make_shared<MetaCapabilityInfo>("devid_123", "dhid_123", "devname", 2, DHType::CAMERA, "", "", "", "");
+        std::make_shared<MetaCapabilityInfo>("devid_123", "dhid_123", "devname", 2, DHType::CAMERA, "", "", "",
+            CompVersion{ .sinkVersion = "" });
     auto ret = metaCapInfoPtr->Compare(metaCapInfo);
     EXPECT_EQ(false, ret);
 }
@@ -287,9 +295,10 @@ HWTEST_F(MetaCapInfoTest, Compare_004, TestSize.Level0)
 HWTEST_F(MetaCapInfoTest, Compare_005, TestSize.Level0)
 {
     uint16_t devType = 1;
-    MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "", "", "", "");
+    MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "", "", "",
+        CompVersion{ .sinkVersion = "" });
     std::shared_ptr<MetaCapabilityInfo> metaCapInfoPtr = std::make_shared<MetaCapabilityInfo>(
-        "devid_123", "dhid_123", "devname", devType, DHType::AUDIO, "", "", "", "");
+        "devid_123", "dhid_123", "devname", devType, DHType::AUDIO, "", "", "", CompVersion{ .sinkVersion = "" });
     auto ret = metaCapInfoPtr->Compare(metaCapInfo);
     EXPECT_EQ(false, ret);
 }
@@ -297,9 +306,11 @@ HWTEST_F(MetaCapInfoTest, Compare_005, TestSize.Level0)
 HWTEST_F(MetaCapInfoTest, Compare_006, TestSize.Level0)
 {
     uint16_t devType = 1;
-    MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "", "", "", "");
+    MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "", "", "",
+        CompVersion{ .sinkVersion = "" });
     std::shared_ptr<MetaCapabilityInfo> metaCapInfoPtr = std::make_shared<MetaCapabilityInfo>(
-        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "", "", "");
+        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "", "",
+        CompVersion{ .sinkVersion = "" });
     auto ret = metaCapInfoPtr->Compare(metaCapInfo);
     EXPECT_EQ(false, ret);
 }
@@ -307,9 +318,11 @@ HWTEST_F(MetaCapInfoTest, Compare_006, TestSize.Level0)
 HWTEST_F(MetaCapInfoTest, Compare_007, TestSize.Level0)
 {
     uint16_t devType = 1;
-    MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "", "", "");
+    MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "", "",
+        CompVersion{ .sinkVersion = "" });
     std::shared_ptr<MetaCapabilityInfo> metaCapInfoPtr = std::make_shared<MetaCapabilityInfo>(
-        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "subtype", "", "");
+        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "subtype", "",
+        CompVersion{ .sinkVersion = "" });
     auto ret = metaCapInfoPtr->Compare(metaCapInfo);
     EXPECT_EQ(false, ret);
 }
@@ -318,9 +331,10 @@ HWTEST_F(MetaCapInfoTest, Compare_008, TestSize.Level0)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname",
-        devType, DHType::CAMERA, "attrs", "subtype", "", "");
+        devType, DHType::CAMERA, "attrs", "subtype", "", CompVersion{ .sinkVersion = "" });
     std::shared_ptr<MetaCapabilityInfo> metaCapInfoPtr = std::make_shared<MetaCapabilityInfo>(
-        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "subtype", "udidhash_123", "");
+        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "subtype", "udidhash_123",
+        CompVersion{ .sinkVersion = "" });
     auto ret = metaCapInfoPtr->Compare(metaCapInfo);
     EXPECT_EQ(false, ret);
 }
@@ -329,9 +343,10 @@ HWTEST_F(MetaCapInfoTest, Compare_009, TestSize.Level0)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname",
-        devType, DHType::CAMERA, "attrs", "subtype", "udidhash_123", "");
+        devType, DHType::CAMERA, "attrs", "subtype", "udidhash_123", CompVersion{ .sinkVersion = "" });
     std::shared_ptr<MetaCapabilityInfo> metaCapInfoPtr = std::make_shared<MetaCapabilityInfo>(
-        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "subtype", "udidhash_123", "1.0");
+        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "subtype", "udidhash_123",
+        CompVersion{ .sinkVersion = "1.0" });
     auto ret = metaCapInfoPtr->Compare(metaCapInfo);
     EXPECT_EQ(false, ret);
 }
@@ -340,9 +355,10 @@ HWTEST_F(MetaCapInfoTest, Compare_010, TestSize.Level0)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname",
-        devType, DHType::CAMERA, "attrs", "subtype", "udidhash_123", "1.0");
+        devType, DHType::CAMERA, "attrs", "subtype", "udidhash_123", CompVersion{ .sinkVersion = "1.0" });
     std::shared_ptr<MetaCapabilityInfo> metaCapInfoPtr = std::make_shared<MetaCapabilityInfo>(
-        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "subtype", "udidhash_123", "1.0");
+        "devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "subtype", "udidhash_123",
+        CompVersion{ .sinkVersion = "1.0" });
     auto ret = metaCapInfoPtr->Compare(metaCapInfo);
     EXPECT_EQ(true, ret);
 }

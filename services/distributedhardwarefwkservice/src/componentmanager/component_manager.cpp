@@ -223,7 +223,7 @@ bool ComponentManager::WaitForResult(const Action &action, ActionResult actionsR
 }
 
 int32_t ComponentManager::Enable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
-    const DHType dhType)
+    const DHType dhType, bool isActive)
 {
     DHLOGI("start.");
     if (!IsIdLengthValid(networkId) || !IsIdLengthValid(uuid) || !IsIdLengthValid(dhId)) {
@@ -243,10 +243,12 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
             return ret;
         }
     }
-    ret = CheckSubtypeResource(param.subtype, networkId);
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("CheckSubtypeResource failed, ret = %{public}d.", ret);
-        return ret;
+    if (!isActive) {
+        ret = CheckSubtypeResource(param.subtype, networkId);
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("CheckSubtypeResource failed, ret = %{public}d.", ret);
+            return ret;
+        }
     }
 
     auto compEnable = std::make_shared<ComponentEnable>();
@@ -827,8 +829,8 @@ int32_t ComponentManager::CheckDemandStart(const std::string &uuid,
     enableSource = false;
 
     // Get remote config
-    VersionInfo versionInfo;
-    auto ret = GetRemoteVerInfo(versionInfo, uuid, dhType);
+    CompVersion compVersion;
+    auto ret = GetRemoteVerInfo(compVersion, uuid, dhType);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("GetRemoteVerInfo fail, errCode = %{public}d!", ret);
         return ret;
@@ -848,12 +850,6 @@ int32_t ComponentManager::CheckDemandStart(const std::string &uuid,
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
 
-    auto iterRemote = versionInfo.compVersions.find(dhType);
-    if (iterRemote == versionInfo.compVersions.end()) {
-        DHLOGE("Not find dhType in remote: %{public}#X!", dhType);
-        return ERR_DH_FWK_TYPE_NOT_EXIST;
-    }
-
     // Check local config
     if (!iterLocal->second.haveFeature) {
         enableSink = true;
@@ -870,17 +866,17 @@ int32_t ComponentManager::CheckDemandStart(const std::string &uuid,
     }
 
     // Check remote config
-    if (!iterRemote->second.haveFeature) {   // Remote config is null, need enable source
+    if (!compVersion.haveFeature) {   // Remote config is null, need enable source
         enableSource = true;
         return DH_FWK_SUCCESS;
     }
 
-    if (iterRemote->second.sinkSupportedFeatures.size() == 0) {  // Remote sink config is empty, not enable source
+    if (compVersion.sinkSupportedFeatures.size() == 0) {  // Remote sink config is empty, not enable source
         return DH_FWK_SUCCESS;
     }
 
     // Check if the configurations on both ends match
-    enableSource = IsFeatureMatched(iterLocal->second.sourceFeatureFilters, iterRemote->second.sinkSupportedFeatures);
+    enableSource = IsFeatureMatched(iterLocal->second.sourceFeatureFilters, compVersion.sinkSupportedFeatures);
 
     return DH_FWK_SUCCESS;
 }
@@ -1063,38 +1059,45 @@ int32_t ComponentManager::ForceDisableSource(const std::string &networkId, const
     return ret;
 }
 
-int32_t ComponentManager::GetRemoteVerInfo(VersionInfo &versionInfo, const std::string &uuid, DHType dhType)
+int32_t ComponentManager::CheckIdenticalAccount(const std::string &networkId,
+    const std::string &uuid, const DHDescriptor &dhDescriptor)
 {
-    auto deviceId = GetDeviceIdByUUID(uuid);
-    auto ret = VersionInfoManager::GetInstance()->GetVersionInfoByDeviceId(deviceId, versionInfo);
+    EnableParam param;
+    auto ret = GetEnableParam(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType, param);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Get Version info Manager failed, uuid =%{public}s, dhType = %{public}#X, errCode = %{public}d.",
-            GetAnonyString(uuid).c_str(), dhType, ret);
-        for (int32_t retryCount = 0;
-            retryCount < SYNC_DEVICE_INFO_TIMEOUT_MILLISECONDS/SYNC_DEVICE_INFO_INTERVAL_MILLISECONDS;
-            ++retryCount) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_DEVICE_INFO_INTERVAL_MILLISECONDS));
-            ret = VersionInfoManager::GetInstance()->GetVersionInfoByDeviceId(deviceId, versionInfo);
-            if (ret == DH_FWK_SUCCESS) {
-                break;
-            } else {
-                DHLOGE("Attempted to retrieve VersionInfo again but still failed, "
-                    "uuid =%{public}s, dhType = %{public}#X, errCode = %{public}d.",
-                    GetAnonyString(uuid).c_str(), dhType, ret);
-            }
-        }
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGE("After trying again, it ultimately failed, "
-                "uuid =%{public}s, dhType = %{public}#X, errCode = %{public}d.",
-                GetAnonyString(uuid).c_str(), dhType, ret);
+        DHLOGE("GetEnableParam failed, uuid = %{public}s, dhId = %{public}s, errCode = %{public}d",
+            GetAnonyString(uuid).c_str(), GetAnonyString(dhDescriptor.id).c_str(), ret);
+        if (ComponentManager::GetInstance().RetryGetEnableParam(
+            networkId, uuid, dhDescriptor.id, dhDescriptor.dhType, param) != DH_FWK_SUCCESS) {
             return ret;
-        } else {
-            DHLOGI("After multiple attempts, obtaining VersionInfo was successful, "
-                "uuid =%{public}s, dhType = %{public}#X, errCode = %{public}d.",
-                GetAnonyString(uuid).c_str(), dhType, ret);
         }
     }
-    return ret;
+    ret = CheckSubtypeResource(param.subtype, networkId);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("CheckSubtypeResource failed, ret = %{public}d.", ret);
+        return ret;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::GetRemoteVerInfo(CompVersion &compVersion, const std::string &uuid, DHType dhType)
+{
+    MetaCapInfoMap metaInfoMap;
+    auto ret = MetaInfoManager::GetInstance()->GetMetaDataByDHType(dhType, metaInfoMap);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("GetMetaDataByDHType failed, uuid =%{public}s, dhType = %{public}#X, errCode = %{public}d.",
+            GetAnonyString(uuid).c_str(), dhType, ret);
+        return ret;
+    }
+    for (const auto &metaInfo : metaInfoMap) {
+        if (DHContext::GetInstance().GetUUIDByDeviceId(metaInfo.second->GetDeviceId()) == uuid) {
+            compVersion = metaInfo.second->GetCompVersion();
+            return DH_FWK_SUCCESS;
+        }
+    }
+    DHLOGE("The metaInfo corresponding to uuid was not found, uuid =%{public}s, dhType = %{public}#X.",
+        GetAnonyString(uuid).c_str(), dhType);
+    return ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND;
 }
 
 bool ComponentManager::IsFeatureMatched(const std::vector<std::string> &sourceFeatureFilters,
@@ -1238,14 +1241,8 @@ int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
 
-    DHStatusSourceEnableInfoKey enableInfoKey {
-        .networkId = networkId,
-        .dhId = dhDescriptor.id
-    };
-    DHStatusCtrlKey ctrlKey {
-        .uid = callingUid,
-        .pid = callingPid
-    };
+    DHStatusSourceEnableInfoKey enableInfoKey { .networkId = networkId, .dhId = dhDescriptor.id };
+    DHStatusCtrlKey ctrlKey { .uid = callingUid, .pid = callingPid };
     auto uuid = DHContext::GetInstance().GetUUIDByNetworkId(networkId);
 
     std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
@@ -1277,7 +1274,8 @@ int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
 
     // Check load reference count
     if (status.refLoad) {
-        auto ret = Enable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType);
+        auto ret = Enable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType,
+            (callingUid != 0) || (callingPid != 0));
         if (ret != DH_FWK_SUCCESS) {
             DHLOGE("Enable failed, ret = %{public}d.", ret);
             return ret;
@@ -1289,7 +1287,8 @@ int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
         return DH_FWK_SUCCESS;
     }
 
-    auto ret = RealEnableSource(networkId, uuid, dhDescriptor, statusCtrl, enableInfo, status);
+    auto ret = RealEnableSource(networkId, uuid, dhDescriptor, statusCtrl, enableInfo, status,
+        (callingUid != 0) || (callingPid != 0));
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("RealEnableSource failed, ret = %{public}d.", ret);
         return ret;
@@ -1481,7 +1480,7 @@ int32_t ComponentManager::ForceDisableSourceInternal(const std::string &networkI
 
 int32_t ComponentManager::RealEnableSource(const std::string &networkId, const std::string &uuid,
     const DHDescriptor &dhDescriptor, DHStatusCtrl &statusCtrl,
-    DHStatusEnableInfo &enableInfo, DHSourceStatus &status)
+    DHStatusEnableInfo &enableInfo, DHSourceStatus &status, bool isActive)
 {
     auto ret = InitCompSource(dhDescriptor.dhType);
     if (ret != DH_FWK_SUCCESS) {
@@ -1496,7 +1495,7 @@ int32_t ComponentManager::RealEnableSource(const std::string &networkId, const s
         UninitCompSource(dhDescriptor.dhType);
         return ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT;
     }
-    ret = Enable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType);
+    ret = Enable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType, isActive);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Enable failed, ret = %{public}d.", ret);
         StopSource(dhDescriptor.dhType);

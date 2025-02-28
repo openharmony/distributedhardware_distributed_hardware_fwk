@@ -64,7 +64,8 @@ void GetMetaCapInfoFuzzTest(const uint8_t* data, size_t size)
     std::string dhId(reinterpret_cast<const char*>(data), size);
     uint16_t deviceType = 14;
     std::shared_ptr<MetaCapabilityInfo> metaCapPtr = std::make_shared<MetaCapabilityInfo>(
-        dhId, deviceId, "devName_test", deviceType, DHType::CAMERA, "attrs_test", "subtype", udidHash, "1.0");
+        dhId, deviceId, "devName_test", deviceType, DHType::CAMERA, "attrs_test", "subtype", udidHash,
+        CompVersion{ .sinkVersion = "1.0" });
     std::string key = deviceId + "###" + dhId;
     MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = metaCapPtr;
     MetaInfoManager::GetInstance()->GetMetaCapInfo(deviceId, dhId, metaCapPtr);

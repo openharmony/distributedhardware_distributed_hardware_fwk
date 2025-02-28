@@ -54,7 +54,7 @@ public:
     int32_t Init();
     int32_t UnInit();
     int32_t Enable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
-        const DHType dhType);
+        const DHType dhType, bool isActive = false);
     int32_t Disable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
         const DHType dhType);
     void UpdateBusinessState(const std::string &uuid, const std::string &dhId, BusinessState state);
@@ -94,6 +94,8 @@ public:
         const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid);
     int32_t ForceDisableSink(const DHDescriptor &dhDescriptor);
     int32_t ForceDisableSource(const std::string &networkId, const DHDescriptor &dhDescriptor);
+    int32_t CheckIdenticalAccount(const std::string &networkId,
+        const std::string &uuid, const DHDescriptor &dhDescriptor);
 
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
     public:
@@ -224,7 +226,7 @@ private:
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
     int32_t CheckSubtypeResource(const std::string &subtype, const std::string &networkId);
 
-    int32_t GetRemoteVerInfo(VersionInfo &versionInfo, const std::string &uuid, DHType dhType);
+    int32_t GetRemoteVerInfo(CompVersion &compVersion, const std::string &uuid, DHType dhType);
     bool IsFeatureMatched(const std::vector<std::string> &sourceFeatureFilters,
         const std::vector<std::string> &sinkSupportedFeatures);
     int32_t EnableSinkInternal(const DHDescriptor &dhDescriptor,
@@ -240,7 +242,7 @@ private:
     int32_t ForceDisableSourceInternal(const std::string &networkId,
         const DHDescriptor &dhDescriptor, std::vector<sptr<IHDSourceStatusListener>> &listeners);
     int32_t RealEnableSource(const std::string &networkId, const std::string &uuid, const DHDescriptor &dhDescriptor,
-        DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status);
+        DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status, bool isActive);
     int32_t RealDisableSource(const std::string &networkId, const std::string &uuid, const DHDescriptor &dhDescriptor,
         DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status);
 

@@ -51,6 +51,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED = -10013;
     constexpr int32_t ERR_DH_FWK_COMPONENT_LIMIT_DEMAND_START = -10014;
     constexpr int32_t ERR_DH_FWK_COMPONENT_REPEAT_CALL = -10015;
+    constexpr int32_t ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND = -10016;
 
     /* ResourceManager errno, range: [-10400, -10499] */
     constexpr int32_t ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL = -10400;
