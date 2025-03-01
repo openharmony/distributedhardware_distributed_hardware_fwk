@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -156,7 +156,7 @@ void LocalHardwareManager::AddLocalMetaCapInfo(const std::vector<DHItem> &dhItem
     for (auto dhItem : dhItems) {
         std::shared_ptr<MetaCapabilityInfo> dhMetaCapInfo = std::make_shared<MetaCapabilityInfo>(
             dhItem.dhId, deviceId, devName, devType, dhType, dhItem.attrs, dhItem.subtype, udidHash,
-            compversion.sinkVersion);
+            compversion);
         metaCapInfos.push_back(dhMetaCapInfo);
     }
 }

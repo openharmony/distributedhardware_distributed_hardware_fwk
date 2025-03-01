@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "version_info.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -42,12 +43,27 @@ void MetaCapabilityInfo::SetUdidHash(const std::string &udidHash)
 
 std::string MetaCapabilityInfo::GetSinkVersion() const
 {
-    return sinkVersion_;
+    return compVersion_.sinkVersion;
 }
 
 void MetaCapabilityInfo::SetSinkVersion(const std::string &sinkVersion)
 {
-    this->sinkVersion_ = sinkVersion;
+    this->compVersion_.sinkVersion = sinkVersion;
+}
+
+CompVersion& MetaCapabilityInfo::GetCompVersion()
+{
+    return compVersion_;
+}
+
+CompVersion MetaCapabilityInfo::GetCompVersion() const
+{
+    return compVersion_;
+}
+
+void MetaCapabilityInfo::SetCompVersion(const CompVersion &compVersion)
+{
+    this->compVersion_ = compVersion;
 }
 
 int32_t MetaCapabilityInfo::FromJsonString(const std::string &jsonStr)
@@ -158,7 +174,13 @@ void ToJson(cJSON *jsonObject, const MetaCapabilityInfo &metaCapInfo)
     cJSON_AddStringToObject(jsonObject, DH_ATTRS.c_str(), metaCapInfo.GetDHAttrs().c_str());
     cJSON_AddStringToObject(jsonObject, DH_SUBTYPE.c_str(), metaCapInfo.GetDHSubtype().c_str());
     cJSON_AddStringToObject(jsonObject, DEV_UDID_HASH.c_str(), metaCapInfo.GetUdidHash().c_str());
-    cJSON_AddStringToObject(jsonObject, SINK_VER.c_str(), metaCapInfo.GetSinkVersion().c_str());
+    cJSON *jsonObjCompVersion = cJSON_CreateObject();
+    if (jsonObjCompVersion == NULL) {
+        DHLOGE("Failed to create cJSON object.");
+        return;
+    }
+    ToJson(jsonObjCompVersion, metaCapInfo.GetCompVersion());
+    cJSON_AddItemToObject(jsonObject, COMP_VER.c_str(), jsonObjCompVersion);
 }
 
 void FromJson(const cJSON *jsonObject, MetaCapabilityInfo &metaCapInfo)
@@ -224,12 +246,12 @@ void FromJsonContinue(const cJSON *jsonObject, MetaCapabilityInfo &metaCapInfo)
     }
     metaCapInfo.SetUdidHash(udidHashJson->valuestring);
 
-    cJSON *sinkVerJson = cJSON_GetObjectItem(jsonObject, SINK_VER.c_str());
-    if (!IsString(sinkVerJson)) {
-        DHLOGE("SINK_VER is invalid!");
+    cJSON *compVersionJson = cJSON_GetObjectItem(jsonObject, COMP_VER.c_str());
+    if (compVersionJson == nullptr) {
+        DHLOGE("CompVersion is invalid!");
         return;
     }
-    metaCapInfo.SetSinkVersion(sinkVerJson->valuestring);
+    FromJson(compVersionJson, metaCapInfo.GetCompVersion());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
