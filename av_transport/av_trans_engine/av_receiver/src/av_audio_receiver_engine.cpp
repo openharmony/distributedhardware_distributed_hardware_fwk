@@ -251,9 +251,6 @@ int32_t AVAudioReceiverEngine::Release()
     isInitialized_ = false;
     pipeline_ = nullptr;
     dhFwkKit_ = nullptr;
-    avInput_ = nullptr;
-    audioDecoder_ = nullptr;
-    avOutput_ = nullptr;
     ctlCtrCallback_ = nullptr;
     SetCurrentState(StateId::IDLE);
     return DH_AVT_SUCCESS;

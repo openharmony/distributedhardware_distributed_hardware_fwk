@@ -264,9 +264,6 @@ int32_t AVAudioSenderEngine::Release()
     isInitialized_ = false;
     pipeline_ = nullptr;
     dhFwkKit_ = nullptr;
-    avInput_ = nullptr;
-    encoderFilter_ = nullptr;
-    avOutput_ = nullptr;
     senderCallback_ = nullptr;
     ctlCenCallback_ = nullptr;
     SetCurrentState(StateId::IDLE);
