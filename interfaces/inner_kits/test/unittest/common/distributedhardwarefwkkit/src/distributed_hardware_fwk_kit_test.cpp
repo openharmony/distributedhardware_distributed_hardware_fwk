@@ -73,6 +73,30 @@ uint32_t DistributedHardwareFwkKitTest::TestPublisherListener::GetTopicMsgCnt(co
     return msgCnts_[topic];
 }
 
+void DistributedHardwareFwkKitTest::TestHDSinkStatusListener::OnEnable(const DHDescriptor &dhDescriptor)
+{
+    (void)dhDescriptor;
+}
+
+void DistributedHardwareFwkKitTest::TestHDSinkStatusListener::OnDisable(const DHDescriptor &dhDescriptor)
+{
+    (void)dhDescriptor;
+}
+
+void DistributedHardwareFwkKitTest::TestHDSourceStatusListener::OnEnable(
+    const std::string &networkId, const DHDescriptor &dhDescriptor)
+{
+    (void)networkId;
+    (void)dhDescriptor;
+}
+
+void DistributedHardwareFwkKitTest::TestHDSourceStatusListener::OnDisable(
+    const std::string &networkId, const DHDescriptor &dhDescriptor)
+{
+    (void)networkId;
+    (void)dhDescriptor;
+}
+
 /**
  * @tc.name: RegisterPublisherListener_001
  * @tc.desc: Verify the RegisterPublisherListener function
@@ -400,6 +424,157 @@ HWTEST_F(DistributedHardwareFwkKitTest, StopDistributedHardware_001, testing::ex
 
     networkId = "networkId_test";
     ret = dhfwkPtr_->StopDistributedHardware(dhType, networkId);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: GetDistributedHardware_001
+ * @tc.desc: Verify the GetDistributedHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, GetDistributedHardware_001, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    std::string networkId = "";
+    std::vector<DHDescriptor> descriptors;
+    int32_t ret = dhfwkPtr_->GetDistributedHardware(networkId, descriptors);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    networkId = "networkId_test";
+    ret = dhfwkPtr_->GetDistributedHardware(networkId, descriptors);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: RegisterDHStatusListener_001
+ * @tc.desc: Verify the RegisterDHStatusListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, RegisterDHStatusListener_001, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    sptr<IHDSinkStatusListener> listener(new TestHDSinkStatusListener());
+    int32_t ret = dhfwkPtr_->RegisterDHStatusListener(listener);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: RegisterDHStatusListener_002
+ * @tc.desc: Verify the RegisterDHStatusListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, RegisterDHStatusListener_002, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    std::string networkId = "";
+    sptr<IHDSourceStatusListener> listener(new TestHDSourceStatusListener());
+    int32_t ret = dhfwkPtr_->RegisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    networkId = "networkId_test";
+    ret = dhfwkPtr_->RegisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: UnregisterDHStatusListener_001
+ * @tc.desc: Verify the UnregisterDHStatusListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, UnregisterDHStatusListener_001, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    sptr<IHDSinkStatusListener> listener(new TestHDSinkStatusListener());
+    int32_t ret = dhfwkPtr_->UnregisterDHStatusListener(listener);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: UnregisterDHStatusListener_002
+ * @tc.desc: Verify the UnregisterDHStatusListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, UnregisterDHStatusListener_002, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    std::string networkId = "";
+    sptr<IHDSourceStatusListener> listener(new TestHDSourceStatusListener());
+    int32_t ret = dhfwkPtr_->UnregisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    networkId = "networkId_test";
+    ret = dhfwkPtr_->UnregisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: EnableSink_001
+ * @tc.desc: Verify the EnableSink function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, EnableSink_001, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    std::vector<DHDescriptor> descriptors;
+    int32_t ret = dhfwkPtr_->EnableSink(descriptors);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: DisableSink_001
+ * @tc.desc: Verify the DisableSink function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, DisableSink_001, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    std::vector<DHDescriptor> descriptors;
+    int32_t ret = dhfwkPtr_->DisableSink(descriptors);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: EnableSource_001
+ * @tc.desc: Verify the EnableSource function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, EnableSource_001, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    std::string networkId = "";
+    std::vector<DHDescriptor> descriptors;
+    int32_t ret = dhfwkPtr_->EnableSource(networkId, descriptors);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    networkId = "networkId_test";
+    ret = dhfwkPtr_->EnableSource(networkId, descriptors);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: DisableSource_001
+ * @tc.desc: Verify the DisableSource function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, DisableSource_001, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    std::string networkId = "";
+    std::vector<DHDescriptor> descriptors;
+    int32_t ret = dhfwkPtr_->DisableSource(networkId, descriptors);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    networkId = "networkId_test";
+    ret = dhfwkPtr_->DisableSource(networkId, descriptors);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
 } // namespace DistributedHardware

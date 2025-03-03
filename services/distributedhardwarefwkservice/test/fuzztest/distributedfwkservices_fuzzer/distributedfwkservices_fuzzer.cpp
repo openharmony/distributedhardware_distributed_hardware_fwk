@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -118,6 +118,96 @@ void FwkServicesStopDistributedHardwareFuzzTest(const uint8_t* data, size_t size
     std::string networkId(reinterpret_cast<const char*>(data), size);
     
     service.StopDistributedHardware(dhType, networkId);
+}
+
+void FwkServicesGetDistributedHardwareFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    DistributedHardwareService service(SAID, true);
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::vector<DHDescriptor> descriptors;
+
+    service.GetDistributedHardware(networkId, descriptors);
+}
+
+void FwkServicesRegisterDHStatusListenerFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    DistributedHardwareService service(SAID, true);
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    sptr<IHDSourceStatusListener> listener = nullptr;
+
+    service.RegisterDHStatusListener(networkId, listener);
+}
+
+void FwkServicesUnregisterDHStatusListenerFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    DistributedHardwareService service(SAID, true);
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    sptr<IHDSourceStatusListener> listener = nullptr;
+
+    service.UnregisterDHStatusListener(networkId, listener);
+}
+
+void FwkServicesEnableSinkFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    DistributedHardwareService service(SAID, true);
+    std::vector<DHDescriptor> descriptors = {
+        { std::string(reinterpret_cast<const char*>(data), size), DHType::AUDIO }
+    };
+
+    service.EnableSink(descriptors);
+}
+
+void FwkServicesDisableSinkFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    DistributedHardwareService service(SAID, true);
+    std::vector<DHDescriptor> descriptors = {
+        { std::string(reinterpret_cast<const char*>(data), size), DHType::AUDIO }
+    };
+
+    service.DisableSink(descriptors);
+}
+
+void FwkServicesEnableSourceFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    DistributedHardwareService service(SAID, true);
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::vector<DHDescriptor> descriptors = {
+        { std::string(reinterpret_cast<const char*>(data), size), DHType::AUDIO }
+    };
+
+    service.EnableSource(networkId, descriptors);
+}
+
+void FwkServicesDisableSourceFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    DistributedHardwareService service(SAID, true);
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::vector<DHDescriptor> descriptors = {
+        { std::string(reinterpret_cast<const char*>(data), size), DHType::AUDIO }
+    };
+
+    service.DisableSource(networkId, descriptors);
 }
 }
 }

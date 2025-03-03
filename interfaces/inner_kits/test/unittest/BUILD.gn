@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Copyright (c) 2022-2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -18,6 +18,7 @@ group("kit_test") {
     "common/distributedhardwarefwkkit:distributed_hardware_fwk_kit_test",
     "common/ipc/dhfwk_sa_manager:dhfwk_sa_manager_test",
     "common/ipc/distributed_hardware_proxy:DistributedHardwareProxyTest",
+    "common/ipc/hardware_status_listener_stub:HardwareStatusListenerStubTest",
     "common/ipc/publisher_listener_stub:PublisherListenerStubTest",
   ]
 }

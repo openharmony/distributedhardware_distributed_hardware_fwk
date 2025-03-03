@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -27,6 +27,7 @@ group("test") {
     "common/hidumphelper/enabledcompsdump:enabled_comps_dump_test",
     "common/hidumphelper/hidumphelper:hidump_helper_test",
     "common/ipc:publisher_listener_proxy_test",
+    "common/ipc/hardware_status_listener_proxy:hardware_status_listener_proxy_test",
     "common/localhardwaremanager/localhardwaremanager:local_hardware_manager_test",
     "common/localhardwaremanager/pluginlistenerimpl:plugin_listener_impl_test",
     "common/lowlatency/lowlatency:low_latency_test",
