@@ -86,6 +86,7 @@ bool DistributedHardwareManagerFactory::Init()
         return false;
     }
     isInit_.store(true);
+    releaseStatus_.store(false);
     DHLOGI("success");
     return true;
 }
@@ -93,6 +94,12 @@ bool DistributedHardwareManagerFactory::Init()
 void DistributedHardwareManagerFactory::UnInit()
 {
     DHLOGI("start");
+    std::lock_guard<std::mutex> lock(releaseProcessMutex_);
+    if (releaseStatus_.load()) {
+        DHLOGE("Releasing resources is complete, not need to be released again.");
+        return;
+    }
+    releaseStatus_.store(true);
     DHTraceStart(COMPONENT_UNLOAD_START);
     HiSysEventWriteMsg(DHFWK_EXIT_BEGIN, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "dhfwk sa exit begin.");
