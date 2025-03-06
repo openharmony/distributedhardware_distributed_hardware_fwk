@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -56,6 +56,30 @@ HWTEST_F(VersionInfoTest, ToJson_001, TestSize.Level0)
     VersionInfo verInfo;
     ToJson(jsonObj, verInfo);
     EXPECT_TRUE(verInfo.deviceId.empty());
+}
+
+HWTEST_F(VersionInfoTest, ToJson_002, TestSize.Level0)
+{
+    CompVersion compVerTo;
+    CompVersion compVerFrom;
+    compVerFrom.name = "name_test";
+    compVerFrom.dhType = DHType::AUDIO;
+    compVerFrom.handlerVersion = "handler_ver_1.0";
+    compVerFrom.sourceVersion = "source_ver_1.0";
+    compVerFrom.sinkVersion = "sink_ver_1.0";
+    compVerFrom.haveFeature = true;
+    compVerFrom.sourceFeatureFilters = { "feature0", "feature1"};
+    compVerFrom.sinkSupportedFeatures = { "feature0", "feature1"};
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    ToJson(jsonObj, compVerFrom);
+    FromJson(jsonObj, compVerTo);
+    cJSON_Delete(jsonObj);
+    EXPECT_EQ(compVerTo.name, compVerFrom.name);
+    EXPECT_EQ(compVerTo.dhType, compVerFrom.dhType);
+    EXPECT_EQ(compVerTo.haveFeature, compVerFrom.haveFeature);
+    EXPECT_EQ(compVerTo.sourceFeatureFilters, compVerFrom.sourceFeatureFilters);
+    EXPECT_EQ(compVerTo.sinkSupportedFeatures, compVerFrom.sinkSupportedFeatures);
 }
 
 HWTEST_F(VersionInfoTest, FromJson_CompVersion_001, TestSize.Level0)

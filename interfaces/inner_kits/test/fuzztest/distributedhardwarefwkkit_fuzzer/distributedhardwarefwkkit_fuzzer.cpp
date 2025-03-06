@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +38,30 @@ void TestPublisherListener::OnMessage(const DHTopic topic, const std::string &me
 {
     (void)topic;
     (void)message;
+}
+
+void TestHDSinkStatusListener::OnEnable(const DHDescriptor &dhDescriptor)
+{
+    (void)dhDescriptor;
+}
+
+void TestHDSinkStatusListener::OnDisable(const DHDescriptor &dhDescriptor)
+{
+    (void)dhDescriptor;
+}
+
+void TestHDSourceStatusListener::OnEnable(
+    const std::string &networkId, const DHDescriptor &dhDescriptor)
+{
+    (void)networkId;
+    (void)dhDescriptor;
+}
+
+void TestHDSourceStatusListener::OnDisable(
+    const std::string &networkId, const DHDescriptor &dhDescriptor)
+{
+    (void)networkId;
+    (void)dhDescriptor;
 }
 
 void RegisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
@@ -168,6 +192,66 @@ void StopDistributedHardwareFuzzTest(const uint8_t *data, size_t size)
     DHType dhType = DHType::AUDIO;
     std::string networkId(reinterpret_cast<const char*>(data), size);
     dhfwkKit.StopDistributedHardware(dhType, networkId);
+}
+
+void GetDistributedHardwareFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    std::vector<DHDescriptor> descriptors;
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    dhfwkKit.GetDistributedHardware(networkId, descriptors);
+}
+
+void RegisterDHStatusListenerFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    sptr<IHDSourceStatusListener> listener(new TestHDSourceStatusListener());
+    dhfwkKit.RegisterDHStatusListener(networkId, listener);
+}
+
+void UnregisterDHStatusListenerFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    sptr<IHDSourceStatusListener> listener(new TestHDSourceStatusListener());
+    dhfwkKit.UnregisterDHStatusListener(networkId, listener);
+}
+
+void EnableSourceFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::vector<DHDescriptor> descriptors;
+    dhfwkKit.EnableSource(networkId, descriptors);
+}
+
+void DisableSourceFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::vector<DHDescriptor> descriptors;
+    dhfwkKit.DisableSource(networkId, descriptors);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

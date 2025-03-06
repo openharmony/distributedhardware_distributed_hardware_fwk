@@ -218,7 +218,7 @@ HWTEST_F(ComponentLoaderTest, ReleaseHardwareHandler_001, TestSize.Level0)
     comHandler.hardwareHandler = nullptr;
     ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = comHandler;
     ret = ComponentLoader::GetInstance().ReleaseHardwareHandler(DHType::AUDIO);
-    EXPECT_EQ(ERR_DH_FWK_LOADER_HANDLER_IS_NULL, ret);
+    EXPECT_EQ(ERR_DH_FWK_LOADER_HANDLER_UNLOAD, ret);
     ComponentLoader::GetInstance().compHandlerMap_.clear();
 }
 
@@ -237,7 +237,7 @@ HWTEST_F(ComponentLoaderTest, ReleaseSource_001, TestSize.Level0)
     comHandler.sourceHandler = nullptr;
     ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = comHandler;
     ret = ComponentLoader::GetInstance().ReleaseSource(DHType::AUDIO);
-    EXPECT_EQ(ERR_DH_FWK_LOADER_HANDLER_IS_NULL, ret);
+    EXPECT_EQ(ERR_DH_FWK_LOADER_SOURCE_UNLOAD, ret);
     ComponentLoader::GetInstance().compHandlerMap_.clear();
 }
 
@@ -256,7 +256,7 @@ HWTEST_F(ComponentLoaderTest, ReleaseSink_001, TestSize.Level0)
     comHandler.sinkHandler = nullptr;
     ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = comHandler;
     ret = ComponentLoader::GetInstance().ReleaseSink(DHType::AUDIO);
-    EXPECT_EQ(ERR_DH_FWK_LOADER_HANDLER_IS_NULL, ret);
+    EXPECT_EQ(ERR_DH_FWK_LOADER_SINK_UNLOAD, ret);
     ComponentLoader::GetInstance().compHandlerMap_.clear();
 }
 
@@ -1052,6 +1052,30 @@ HWTEST_F(ComponentLoaderTest, GetDHTypeBySrcSaId_001, TestSize.Level0)
     int32_t saId = 4801;
     auto ret = ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId);
     EXPECT_EQ(ret, DHType::UNKNOWN);
+}
+
+HWTEST_F(ComponentLoaderTest, GetSource_004, TestSize.Level0)
+{
+    auto ret = ComponentLoader::GetInstance().GetSource(DHType::AUDIO);
+    EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
+}
+
+HWTEST_F(ComponentLoaderTest, GetSink_004, TestSize.Level0)
+{
+    auto ret = ComponentLoader::GetInstance().GetSink(DHType::AUDIO);
+    EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
+}
+
+HWTEST_F(ComponentLoaderTest, GetHardwareHandler_004, TestSize.Level0)
+{
+    auto ret = ComponentLoader::GetInstance().GetHardwareHandler(DHType::AUDIO);
+    EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
+}
+
+HWTEST_F(ComponentLoaderTest, IsDHTypeSupport_001, TestSize.Level0)
+{
+    auto ret = ComponentLoader::GetInstance().IsDHTypeSupport(DHType::AUDIO);
+    EXPECT_EQ(ret, false);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

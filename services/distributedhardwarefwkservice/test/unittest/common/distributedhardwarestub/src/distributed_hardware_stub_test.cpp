@@ -251,6 +251,127 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_015, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_016, TestSize.Level0)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::GET_DISTRIBUTED_HARDWARE);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteString("netWorkId_test");
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_017, TestSize.Level0)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::REG_DH_SINK_STATUS_LISTNER);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_018, TestSize.Level0)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_DH_SINK_STATUS_LISTNER);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_019, TestSize.Level0)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::REG_DH_SOURCE_STATUS_LISTNER);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_020, TestSize.Level0)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_DH_SOURCE_STATUS_LISTNER);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_021, TestSize.Level0)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::ENABLE_SINK);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteInt32(1);
+    data.WriteInt32(static_cast<int32_t>(DHType::AUDIO));
+    data.WriteString("id_test");
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_022, TestSize.Level0)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SINK);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteInt32(1);
+    data.WriteInt32(static_cast<int32_t>(DHType::AUDIO));
+    data.WriteString("id_test");
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_023, TestSize.Level0)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::ENABLE_SOURCE);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteInt32(1);
+    data.WriteInt32(static_cast<int32_t>(DHType::AUDIO));
+    data.WriteString("id_test");
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_024, TestSize.Level0)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SOURCE);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteInt32(1);
+    data.WriteInt32(static_cast<int32_t>(DHType::AUDIO));
+    data.WriteString("id_test");
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+}
+
 /**
  * @tc.name: RegisterPublisherListenerInner_001
  * @tc.desc: Verify the RegisterPublisherListenerInner function

@@ -244,6 +244,150 @@ HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_001, TestSize.L
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
+/**
+ * @tc.name: GetDistributedHardware_001
+ * @tc.desc: Verify the GetDistributedHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::vector<DHDescriptor> descriptors;
+
+    std::string networkId = "111";
+    auto ret = service.GetDistributedHardware(networkId, descriptors);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    networkId = "local";
+    ret = service.GetDistributedHardware(networkId, descriptors);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: RegisterDHStatusListener_001
+ * @tc.desc: Verify the RegisterDHStatusListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, RegisterDHStatusListener_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    sptr<IHDSinkStatusListener> listener = nullptr;
+
+    auto ret = service.RegisterDHStatusListener(listener);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: RegisterDHStatusListener_002
+ * @tc.desc: Verify the RegisterDHStatusListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, RegisterDHStatusListener_002, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    sptr<IHDSourceStatusListener> listener = nullptr;
+
+    std::string networkId = "111";
+    auto ret = service.RegisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: UnregisterDHStatusListener_001
+ * @tc.desc: Verify the UnregisterDHStatusListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, UnregisterDHStatusListener_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    sptr<IHDSinkStatusListener> listener = nullptr;
+
+    auto ret = service.UnregisterDHStatusListener(listener);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: UnregisterDHStatusListener_002
+ * @tc.desc: Verify the UnregisterDHStatusListener function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, UnregisterDHStatusListener_002, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    sptr<IHDSourceStatusListener> listener = nullptr;
+
+    std::string networkId = "111";
+    auto ret = service.UnregisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: EnableSink_001
+ * @tc.desc: Verify the EnableSink function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, EnableSink_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::vector<DHDescriptor> descriptors{{"id_test", DHType::AUDIO}};
+
+    auto ret = service.EnableSink(descriptors);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: DisableSink_001
+ * @tc.desc: Verify the DisableSink function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, DisableSink_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::vector<DHDescriptor> descriptors{{"id_test", DHType::AUDIO}};
+
+    auto ret = service.DisableSink(descriptors);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: EnableSource_001
+ * @tc.desc: Verify the EnableSource function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, EnableSource_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    std::vector<DHDescriptor> descriptors{{"id_test", DHType::AUDIO}};
+
+    auto ret = service.EnableSource(networkId, descriptors);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: DisableSource_001
+ * @tc.desc: Verify the DisableSource function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, DisableSource_001, TestSize.Level0)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    std::vector<DHDescriptor> descriptors{{"id_test", DHType::AUDIO}};
+
+    auto ret = service.DisableSource(networkId, descriptors);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
 HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_002, TestSize.Level0)
 {
     DistributedHardwareService service(ASID, true);

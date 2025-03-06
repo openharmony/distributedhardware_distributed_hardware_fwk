@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,7 @@ namespace {
 }
 void ComponentManagerFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(int32_t))) {
         return;
     }
 
@@ -47,10 +47,31 @@ void ComponentManagerFuzzTest(const uint8_t* data, size_t size)
     std::string uuid(reinterpret_cast<const char*>(data), size);
     std::string dhId(reinterpret_cast<const char*>(data), size);
     DHType dhType = dhTypeFuzz[data[0] % DH_TYPE_SIZE];
+    bool enableSink = false;
+    bool enableSource = false;
+    sptr<IHDSinkStatusListener> sinkListener = nullptr;
+    sptr<IHDSourceStatusListener> sourceListener = nullptr;
+    int32_t callingUid = *(reinterpret_cast<const int32_t*>(data));
+    int32_t callingPid = *(reinterpret_cast<const int32_t*>(data));
+    DHDescriptor dhDescriptor {
+        .id = std::string(reinterpret_cast<const char*>(data), size),
+        .dhType = dhType
+    };
 
     ComponentManager::GetInstance().Init();
     ComponentManager::GetInstance().Enable(networkId, uuid, dhId, dhType);
     ComponentManager::GetInstance().Disable(networkId, uuid, dhId, dhType);
+    ComponentManager::GetInstance().CheckDemandStart(uuid, dhType, enableSink, enableSource);
+    ComponentManager::GetInstance().RegisterDHStatusListener(sinkListener, callingUid, callingPid);
+    ComponentManager::GetInstance().UnregisterDHStatusListener(sinkListener, callingUid, callingPid);
+    ComponentManager::GetInstance().RegisterDHStatusListener(networkId, sourceListener, callingUid, callingPid);
+    ComponentManager::GetInstance().UnregisterDHStatusListener(networkId, sourceListener, callingUid, callingPid);
+    ComponentManager::GetInstance().EnableSink(dhDescriptor, callingUid, callingPid);
+    ComponentManager::GetInstance().DisableSink(dhDescriptor, callingUid, callingPid);
+    ComponentManager::GetInstance().EnableSource(networkId, dhDescriptor, callingUid, callingPid);
+    ComponentManager::GetInstance().DisableSource(networkId, dhDescriptor, callingUid, callingPid);
+    ComponentManager::GetInstance().ForceDisableSink(dhDescriptor);
+    ComponentManager::GetInstance().ForceDisableSource(networkId, dhDescriptor);
     ComponentManager::GetInstance().UnInit();
 }
 

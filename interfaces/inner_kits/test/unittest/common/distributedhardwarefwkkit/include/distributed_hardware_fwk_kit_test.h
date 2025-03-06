@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@
 #include <refbase.h>
 
 #include "distributed_hardware_fwk_kit.h"
+#include "hardware_status_listener_stub.h"
 #include "publisher_listener_stub.h"
 #include "system_ability_load_callback_stub.h"
 
@@ -48,6 +49,24 @@ public:
     private:
         std::mutex mutex_;
         std::map<DHTopic, uint32_t> msgCnts_ = {};
+    };
+
+    class TestHDSinkStatusListener : public HDSinkStatusListenerStub {
+    public:
+        TestHDSinkStatusListener() = default;
+        virtual ~TestHDSinkStatusListener() = default;
+    protected:
+        void OnEnable(const DHDescriptor &dhDescriptor) override;
+        void OnDisable(const DHDescriptor &dhDescriptor) override;
+    };
+
+    class TestHDSourceStatusListener : public HDSourceStatusListenerStub {
+    public:
+        TestHDSourceStatusListener() = default;
+        virtual ~TestHDSourceStatusListener() = default;
+    protected:
+        void OnEnable(const std::string &networkId, const DHDescriptor &dhDescriptor) override;
+        void OnDisable(const std::string &networkId, const DHDescriptor &dhDescriptor) override;
     };
 
 public:

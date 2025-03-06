@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@
 #define FUZZ_PROJECT_NAME "distributedhardwarefwkkit_fuzzer"
 
 #include <string>
+#include "hardware_status_listener_stub.h"
 #include "publisher_listener_stub.h"
 
 namespace OHOS {
@@ -28,6 +29,24 @@ public:
     TestPublisherListener() = default;
     virtual ~TestPublisherListener() = default;
     void OnMessage(const DHTopic topic, const std::string &message);
+};
+
+class TestHDSinkStatusListener : public HDSinkStatusListenerStub {
+public:
+    TestHDSinkStatusListener() = default;
+    virtual ~TestHDSinkStatusListener() = default;
+protected:
+    void OnEnable(const DHDescriptor &dhDescriptor) override;
+    void OnDisable(const DHDescriptor &dhDescriptor) override;
+};
+
+class TestHDSourceStatusListener : public HDSourceStatusListenerStub {
+public:
+    TestHDSourceStatusListener() = default;
+    virtual ~TestHDSourceStatusListener() = default;
+protected:
+    void OnEnable(const std::string &networkId, const DHDescriptor &dhDescriptor) override;
+    void OnDisable(const std::string &networkId, const DHDescriptor &dhDescriptor) override;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
