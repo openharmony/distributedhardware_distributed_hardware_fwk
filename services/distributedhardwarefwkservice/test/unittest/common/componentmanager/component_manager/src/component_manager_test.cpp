@@ -55,11 +55,15 @@ namespace DistributedHardware {
 
 namespace {
 constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
+constexpr int32_t TEST_COMP_SINK_SA_ID = 4804;
+constexpr int32_t TEST_SINK_SA_ID = 12345;
+constexpr int32_t TEST_SOURCE_SA_ID = 12345;
 const std::string DATABASE_DIR = "/data/service/el1/public/database/dtbhardware_manager_service/";
 const std::string NAME_CAMERA = "distributed_camera";
 const std::string VERSION_1 = "1.0";
 const std::string DEV_ID_TEST = "123456";
 const std::string DH_ID_TEST = "Camera_0";
+const std::string AUDIO_ID_TEST = "1";
 const std::string NETWORK_TEST = "nt36a637105409e904d4da83790a4a8";
 const std::string UUID_TEST = "bb536a637105409e904d4da78290ab1";
 const std::string UDID_TEST = "45da205792dsad47f5444871161c124";
@@ -124,6 +128,42 @@ void ComponentManagerTest::TearDown()
     ComponentManager::GetInstance().compSink_.clear();
 }
 
+void SetUpComponentLoaderConfig()
+{
+    if (ComponentLoader::GetInstance().compHandlerMap_.find(DHType::AUDIO)
+        == ComponentLoader::GetInstance().compHandlerMap_.end()) {
+        CompHandler handler;
+        handler.compConfig.name = "distributed_audio";
+        handler.compConfig.type = DHType::AUDIO;
+        handler.compConfig.compHandlerLoc = "libdistributed_camera_handler.z.so";
+        handler.compConfig.compHandlerVersion = "1.0";
+        handler.compConfig.compSourceLoc = "libdistributed_camera_source_sdk.z.so";
+        handler.compConfig.compSourceVersion = "1.0";
+        handler.compConfig.compSinkLoc = "libdistributed_camera_sink_sdk.z.so";
+        handler.compConfig.compSinkVersion = "2.0";
+        handler.compConfig.compSinkSaId = TEST_COMP_SINK_SA_ID;
+        handler.compConfig.haveFeature = false;
+        handler.hardwareHandler = nullptr;
+        handler.sourceHandler = nullptr;
+        handler.sinkHandler = nullptr;
+        handler.type = DHType::AUDIO;
+        handler.sinkSaId = TEST_SINK_SA_ID;
+        handler.sourceSaId = TEST_SOURCE_SA_ID;
+        ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = handler;
+    }
+}
+
+void SetDownComponentLoaderConfig()
+{
+    auto itHandler = ComponentLoader::GetInstance().compHandlerMap_.find(DHType::AUDIO);
+    if (itHandler != ComponentLoader::GetInstance().compHandlerMap_.end()) {
+        CompHandler &handler = itHandler->second;
+        if (handler.sinkSaId == TEST_SINK_SA_ID && handler.sourceSaId == TEST_SOURCE_SA_ID) {
+            ComponentLoader::GetInstance().compHandlerMap_.erase(itHandler);
+        }
+    }
+}
+
 /**
  * @tc.name: init_test_001
  * @tc.desc: Verify the Init function
@@ -175,7 +215,9 @@ HWTEST_F(ComponentManagerTest, init_compSource_test_001, TestSize.Level0)
     ComponentLoader::GetInstance().Init();
     ComponentManager::GetInstance().compSource_.clear();
     ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
-    auto ret = ComponentManager::GetInstance().InitCompSource(DHType::INPUT);
+    SetUpComponentLoaderConfig();
+    auto ret = ComponentManager::GetInstance().InitCompSource(DHType::AUDIO);
+    SetDownComponentLoaderConfig();
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_MONITOR_NULL);
 }
 
@@ -189,7 +231,9 @@ HWTEST_F(ComponentManagerTest, init_compSink_test_001, TestSize.Level0)
 {
     ComponentLoader::GetInstance().Init();
     ComponentManager::GetInstance().compSink_.clear();
-    auto ret = ComponentManager::GetInstance().InitCompSink(DHType::INPUT);
+    SetUpComponentLoaderConfig();
+    auto ret = ComponentManager::GetInstance().InitCompSink(DHType::AUDIO);
+    SetDownComponentLoaderConfig();
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
     EXPECT_EQ(ComponentManager::GetInstance().compSink_.empty(), false);
 }
@@ -412,7 +456,9 @@ HWTEST_F(ComponentManagerTest, WaitForResult_001, TestSize.Level0)
  */
 HWTEST_F(ComponentManagerTest, InitCompSink_001, TestSize.Level0)
 {
+    SetUpComponentLoaderConfig();
     bool ret = ComponentManager::GetInstance().InitCompSink(DHType::AUDIO);
+    SetDownComponentLoaderConfig();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
@@ -1096,72 +1142,90 @@ HWTEST_F(ComponentManagerTest, UnregisterDHStatusListener_002, TestSize.Level0)
 HWTEST_F(ComponentManagerTest, EnableSink_001, TestSize.Level0)
 {
     DHDescriptor dhDescriptor {
-        .id = DH_ID_TEST,
-        .dhType = DHType::CAMERA
+        .id = AUDIO_ID_TEST,
+        .dhType = DHType::AUDIO
     };
+    SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, 0, 0);
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
 HWTEST_F(ComponentManagerTest, DisableSink_001, TestSize.Level0)
 {
     DHDescriptor dhDescriptor {
-        .id = DH_ID_TEST,
-        .dhType = DHType::CAMERA
+        .id = AUDIO_ID_TEST,
+        .dhType = DHType::AUDIO
     };
     auto ret = ComponentManager::GetInstance().DisableSink(dhDescriptor, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    ret = ComponentManager::GetInstance().DisableSink(dhDescriptor, 0, 0);
+    SetDownComponentLoaderConfig();
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
 HWTEST_F(ComponentManagerTest, EnableSource_001, TestSize.Level0)
 {
     DHDescriptor dhDescriptor {
-        .id = DH_ID_TEST,
-        .dhType = DHType::CAMERA
+        .id = AUDIO_ID_TEST,
+        .dhType = DHType::AUDIO
     };
+    SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().EnableSource(NETWORK_TEST, dhDescriptor, 0, 0);
+    SetDownComponentLoaderConfig();
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_MONITOR_NULL);
 }
 
 HWTEST_F(ComponentManagerTest, DisableSource_001, TestSize.Level0)
 {
     DHDescriptor dhDescriptor {
-        .id = DH_ID_TEST,
-        .dhType = DHType::CAMERA
+        .id = AUDIO_ID_TEST,
+        .dhType = DHType::AUDIO
     };
+    SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().DisableSource(NETWORK_TEST, dhDescriptor, 0, 0);
+    SetDownComponentLoaderConfig();
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
 HWTEST_F(ComponentManagerTest, ForceDisableSink_001, TestSize.Level0)
 {
     DHDescriptor dhDescriptor {
-        .id = DH_ID_TEST,
-        .dhType = DHType::CAMERA
+        .id = AUDIO_ID_TEST,
+        .dhType = DHType::AUDIO
     };
+    SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().ForceDisableSink(dhDescriptor);
+    SetDownComponentLoaderConfig();
     EXPECT_EQ(ret, ERR_DH_FWK_LOADER_SINK_UNLOAD);
 }
 
 HWTEST_F(ComponentManagerTest, ForceDisableSource_001, TestSize.Level0)
 {
     DHDescriptor dhDescriptor {
-        .id = DH_ID_TEST,
-        .dhType = DHType::CAMERA
+        .id = AUDIO_ID_TEST,
+        .dhType = DHType::AUDIO
     };
+    SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().ForceDisableSource(NETWORK_TEST, dhDescriptor);
+    SetDownComponentLoaderConfig();
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
 HWTEST_F(ComponentManagerTest, UninitCompSource_001, TestSize.Level0)
 {
-    auto ret = ComponentManager::GetInstance().UninitCompSource(DHType::CAMERA);
+    SetUpComponentLoaderConfig();
+    auto ret = ComponentManager::GetInstance().UninitCompSource(DHType::AUDIO);
+    SetDownComponentLoaderConfig();
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_MONITOR_NULL);
 }
 
 HWTEST_F(ComponentManagerTest, UninitCompSink_001, TestSize.Level0)
 {
-    auto ret = ComponentManager::GetInstance().UninitCompSink(DHType::CAMERA);
+    SetUpComponentLoaderConfig();
+    auto ret = ComponentManager::GetInstance().UninitCompSink(DHType::AUDIO);
+    SetDownComponentLoaderConfig();
     EXPECT_EQ(ret, ERR_DH_FWK_LOADER_SINK_UNLOAD);
 }
 } // namespace DistributedHardware
