@@ -14,7 +14,10 @@
  */
 
 #include "av_trans_audio_decoder_filter_test.h"
-
+#include "av_trans_audio_encoder_filter.h"
+#include "av_trans_log.h"
+#include "av_sync_utils.h"
+#include "native_avmagic.h"
 #include "av_trans_constants.h"
 
 using namespace testing::ext;
@@ -23,6 +26,42 @@ using namespace std;
 
 namespace OHOS {
 namespace DistributedHardware {
+
+class AudioFilterDecCallback : public Pipeline::FilterLinkCallback {
+public:
+    explicit AudioFilterDecCallback(std::shared_ptr<Pipeline::AudioDecoderFilter> filter)
+        : inputFilter_(std::move(filter)) {}
+    ~AudioFilterDecCallback() = default;
+
+    void OnLinkedResult(const sptr<Media::AVBufferQueueProducer> &queue,
+                        std::shared_ptr<Media::Meta> &meta) override
+    {
+        if (auto filter = inputFilter_.lock()) {
+            filter->OnLinkedResult(queue, meta);
+        } else {
+            AVTRANS_LOGE("Invalid inputfilter");
+        }
+    }
+    void OnUnlinkedResult(std::shared_ptr<Media::Meta> &meta) override
+    {
+        if (auto filter = inputFilter_.lock()) {
+            filter->OnUnLinkedResult(meta);
+        } else {
+            AVTRANS_LOGE("Invalid inputfilter");
+        }
+    }
+    void OnUpdatedResult(std::shared_ptr<Media::Meta> &meta) override
+    {
+        if (auto filter = inputFilter_.lock()) {
+            filter->OnUpdatedResult(meta);
+        } else {
+            AVTRANS_LOGE("Invalid inputfilter");
+        }
+    }
+
+private:
+    std::weak_ptr<Pipeline::AudioDecoderFilter> inputFilter_{};
+};
 
 const std::string FILTERNAME = "audioDec";
 static constexpr int32_t DEFAULT_BUFFER_NUM = 8;
@@ -251,6 +290,312 @@ HWTEST_F(AvTransportAudioDecoderFilterTest, OnLinked_001, testing::ext::TestSize
     ASSERT_TRUE(avAudioDecoderTest_ != nullptr);
     Status ret = avAudioDecoderTest_->OnLinked(Pipeline::StreamType::STREAMTYPE_RAW_AUDIO, nullptr, nullptr);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, DoInitAfterLink_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    Status status = avAudioDecoderTest_->DoInitAfterLink();
+    EXPECT_EQ(status, Status::OK);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, DoPause_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    Status status = avAudioDecoderTest_->DoPause();
+    EXPECT_EQ(status, Status::OK);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, DoPauseDragging_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    Status status = avAudioDecoderTest_->DoPauseDragging();
+    EXPECT_EQ(status, Status::OK);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, DoResume_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    Status status = avAudioDecoderTest_->DoResume();
+    EXPECT_EQ(status, Status::OK);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, DoResumeDragging_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    Status status = avAudioDecoderTest_->DoResumeDragging();
+    EXPECT_EQ(status, Status::OK);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, DoProcessOutputBuffer_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    EXPECT_EQ(avAudioDecoderTest_->DoProcessOutputBuffer(0, false, false, 0, 0), Status::OK);
+    EXPECT_EQ(avAudioDecoderTest_->DoProcessOutputBuffer(-1, false, false, 0, 0), Status::OK);
+    EXPECT_EQ(avAudioDecoderTest_->DoProcessOutputBuffer(0, false, false,
+                                                         std::numeric_limits<uint32_t>::max(), 0),
+              Status::OK);
+    EXPECT_EQ(avAudioDecoderTest_->DoProcessOutputBuffer(0, false, false,
+                                                         0, std::numeric_limits<int64_t>::max()),
+              Status::OK);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, SetParameter_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    std::shared_ptr<Media::Meta> meta = std::make_shared<Media::Meta>();
+    avAudioDecoderTest_->SetParameter(meta);
+    EXPECT_EQ(avAudioDecoderTest_->meta_, meta);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, LinkNext_002, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    std::shared_ptr<Pipeline::AudioEncoderFilter> nextFilter =
+        std::make_shared<Pipeline::AudioEncoderFilter>("builtin.recorder.audioencoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_AENC);
+    Status ret = avAudioDecoderTest_->LinkNext(nextFilter, Pipeline::StreamType::STREAMTYPE_DECODED_AUDIO);
+    EXPECT_EQ(ret, Status::ERROR_NULL_POINTER);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, UpdateNext_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    std::shared_ptr<Pipeline::AudioEncoderFilter> nextFilter =
+        std::make_shared<Pipeline::AudioEncoderFilter>("builtin.recorder.audioencoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_AENC);
+    Status status = avAudioDecoderTest_->UpdateNext(nextFilter, Pipeline::StreamType::STREAMTYPE_DECODED_AUDIO);
+    EXPECT_EQ(status, Status::OK);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, UnLinkNext_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    Status status = avAudioDecoderTest_->UnLinkNext(nullptr, Pipeline::StreamType::STREAMTYPE_DECODED_AUDIO);
+    EXPECT_EQ(status, Status::OK);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, OnLinked_002, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    Pipeline::StreamType inType = Pipeline::StreamType::STREAMTYPE_DECODED_AUDIO;
+    std::shared_ptr<Media::Meta> meta = std::make_shared<Media::Meta>();
+    std::shared_ptr<AudioFilterDecCallback> callback = std::make_shared<AudioFilterDecCallback>(avAudioDecoderTest_);
+    Status status = avAudioDecoderTest_->OnLinked(inType, meta, callback);
+    EXPECT_EQ(status, Status::OK);
+    status = avAudioDecoderTest_->OnLinked(inType, meta, nullptr);
+    EXPECT_EQ(status, Status::ERROR_NULL_POINTER);
+    status = avAudioDecoderTest_->OnLinked(inType, nullptr, callback);
+    EXPECT_EQ(status, Status::ERROR_NULL_POINTER);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, OnUpdated_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    std::shared_ptr<Media::Meta> meta = std::make_shared<Media::Meta>();
+    std::shared_ptr<AudioFilterDecCallback> callback = std::make_shared<AudioFilterDecCallback>(avAudioDecoderTest_);
+    Status status = avAudioDecoderTest_->OnUpdated(Pipeline::StreamType::STREAMTYPE_DECODED_AUDIO, meta, callback);
+    EXPECT_EQ(status, Status::OK);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, OnUnLinked_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    auto status = avAudioDecoderTest_->OnUnLinked(Pipeline::StreamType::STREAMTYPE_DECODED_AUDIO, nullptr);
+    EXPECT_EQ(status, Status::OK);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, OnLinkedResult_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    sptr<Media::AVBufferQueueProducer> queue = nullptr;
+    std::shared_ptr<Media::Meta> meta = nullptr;
+    avAudioDecoderTest_->OnLinkedResult(queue, meta);
+    EXPECT_EQ(avAudioDecoderTest_->outputProducer_, nullptr);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, OnUnLinkedResult_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Media::Meta> meta = std::make_shared<Media::Meta>();
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    ASSERT_TRUE(avAudioDecoderTest_ != nullptr);
+    avAudioDecoderTest_->OnUnLinkedResult(meta);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, OnUpdatedResult_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Media::Meta> meta = std::make_shared<Media::Meta>();
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    ASSERT_TRUE(avAudioDecoderTest_ != nullptr);
+    avAudioDecoderTest_->OnUpdatedResult(meta);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, ConfigureAudioCodec_002, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    Pipeline::ADecInitParams initParams;
+    Status status = avAudioDecoderTest_->ConfigureAudioCodec(initParams);
+    EXPECT_EQ(status, Status::ERROR_INVALID_PARAMETER);
+    initParams = {};
+    status = avAudioDecoderTest_->ConfigureAudioCodec(initParams);
+    EXPECT_EQ(status, Status::ERROR_INVALID_PARAMETER);
+    avAudioDecoderTest_->audioDecoder_ = nullptr;
+    status = avAudioDecoderTest_->ConfigureAudioCodec(initParams);
+    EXPECT_EQ(status, Status::ERROR_INVALID_PARAMETER);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, SetDecoderFormat_002, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    ASSERT_TRUE(avAudioDecoderTest_ != nullptr);
+    Pipeline::ADecInitParams decInitParams;
+    decInitParams.channel = 2;
+    decInitParams.sampleRate = 44100;
+    decInitParams.sampleDepth = MediaAVCodec::AudioSampleFormat::SAMPLE_U8;
+    Status status = avAudioDecoderTest_->SetDecoderFormat(decInitParams);
+    EXPECT_EQ(status, Status::ERROR_NULL_POINTER);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, CheckDecoderFormat_002, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    Pipeline::ADecInitParams initParams;
+    initParams.channel = 2;
+    initParams.sampleRate = 44100;
+    initParams.sampleDepth = MediaAVCodec::AudioSampleFormat::SAMPLE_U8;
+    Status status = avAudioDecoderTest_->CheckDecoderFormat(initParams);
+    EXPECT_EQ(status, Status::OK);
+
+    initParams.channel = 0;
+    initParams.sampleRate = 44100;
+    initParams.sampleDepth = MediaAVCodec::AudioSampleFormat::SAMPLE_U8;
+    status = avAudioDecoderTest_->CheckDecoderFormat(initParams);
+    EXPECT_EQ(status, Status::ERROR_INVALID_PARAMETER);
+
+    initParams.channel = 2;
+    initParams.sampleRate = 1000;
+    initParams.sampleDepth = MediaAVCodec::AudioSampleFormat::SAMPLE_U8;
+    status = avAudioDecoderTest_->CheckDecoderFormat(initParams);
+    EXPECT_EQ(status, Status::ERROR_INVALID_PARAMETER);
+
+    initParams.channel = 2;
+    initParams.sampleRate = 1000;
+    initParams.sampleDepth = MediaAVCodec::AudioSampleFormat::INVALID_WIDTH;
+    status = avAudioDecoderTest_->CheckDecoderFormat(initParams);
+    EXPECT_EQ(status, Status::ERROR_INVALID_PARAMETER);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, InputDecodeAudioData_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> filter =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    filter->isDecoderRunning_.store(true);
+    std::shared_ptr<Media::AVBuffer> audioData = std::make_shared<Media::AVBuffer>();
+    filter->inputDataBufferQueue_.push(audioData);
+    OH_AVBuffer *codecMem = new OH_AVBuffer(audioData);
+    filter->codecBufQueue_.push(codecMem);
+    filter->codecIndexQueue_.push(1);
+    filter->InputDecodeAudioData();
+    EXPECT_TRUE(filter->inputConsumer_ == nullptr);
+    delete codecMem;
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, ProcessData_002, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    ASSERT_TRUE(avAudioDecoderTest_ != nullptr);
+    avAudioDecoderTest_->isDecoderRunning_.store(true);
+    OH_AVCodec audioDecoder(AVMagic::AVCODEC_MAGIC_AUDIO_DECODER);
+    avAudioDecoderTest_->audioDecoder_ = &audioDecoder;
+    std::shared_ptr<Media::AVBuffer> audioData = std::make_shared<Media::AVBuffer>();
+    Status status = avAudioDecoderTest_->ProcessData(audioData, 0, nullptr);
+    avAudioDecoderTest_->isDecoderRunning_.store(false);
+    avAudioDecoderTest_->audioDecoder_ = nullptr;
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, status);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, OnDecError_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> filter =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    int32_t normalErrorCode = 100;
+    filter->OnDecError(normalErrorCode);
+    EXPECT_FALSE(filter->isDecoderRunning_.load());
+    int32_t boundaryErrorCode = -1;
+    filter->OnDecError(boundaryErrorCode);
+    EXPECT_FALSE(filter->isDecoderRunning_.load());
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, OnDecOutputFormatChanged, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> filter =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    ASSERT_TRUE(filter != nullptr);
+    OH_AVFormat *nullFormat = nullptr;
+    filter->OnDecOutputFormatChanged(nullFormat);
+    OH_AVFormat *validFormat = new (std::nothrow) OH_AVFormat();
+    filter->OnDecOutputFormatChanged(validFormat);
+}
+
+HWTEST_F(AvTransportAudioDecoderFilterTest, OnDecInputBufferAvailable_002, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioDecoderFilter> filter =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_ADEC);
+    ASSERT_TRUE(filter != nullptr);
+    OH_AVBuffer *nullBuffer = nullptr;
+    std::shared_ptr<Media::AVBuffer> audioData = std::make_shared<Media::AVBuffer>();
+    filter->OnDecInputBufferAvailable(0, nullBuffer);
+    for (int i = 0; i < 10; i++)
+    {
+        OH_AVBuffer *buffer = new OH_AVBuffer(audioData);
+        filter->OnDecInputBufferAvailable(i, buffer);
+    }
+    OH_AVBuffer *normalBuffer = new OH_AVBuffer(audioData);
+    filter->OnDecInputBufferAvailable(10, normalBuffer);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
