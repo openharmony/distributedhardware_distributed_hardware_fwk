@@ -340,7 +340,6 @@ int32_t MetaInfoManager::SyncDataByNetworkId(const std::string &networkId)
 int32_t MetaInfoManager::RemoveMetaInfoInMemByUdid(const std::string &peerudid)
 {
     DHLOGI("remove device metainfo in memory, peerudid: %{public}s", GetAnonyString(peerudid).c_str());
-    std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     std::string udIdHash = Sha256(peerudid);
     for (auto iter = globalMetaInfoMap_.begin(); iter != globalMetaInfoMap_.end();) {
         if (!IsCapKeyMatchDeviceId(iter->first, udIdHash)) {
@@ -355,6 +354,7 @@ int32_t MetaInfoManager::RemoveMetaInfoInMemByUdid(const std::string &peerudid)
 
 int32_t MetaInfoManager::ClearRemoteDeviceMetaInfoData(const std::string &peerudid, const std::string &peeruuid)
 {
+    std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;

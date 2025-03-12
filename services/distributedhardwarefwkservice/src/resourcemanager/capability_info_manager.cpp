@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -644,6 +644,7 @@ int32_t CapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, 
 
 void CapabilityInfoManager::DumpCapabilityInfos(std::vector<CapabilityInfo> &capInfos)
 {
+    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
     for (auto info : globalCapInfoMap_) {
         CapabilityInfo capInfo = *(info.second);
         capInfos.emplace_back(capInfo);
