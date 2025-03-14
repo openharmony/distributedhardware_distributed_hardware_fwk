@@ -168,6 +168,17 @@ HWTEST_F(AvAudioSenderEngineTest, Start_003, testing::ext::TestSize.Level1)
     EXPECT_EQ(ERR_DH_AVT_CREATE_CHANNEL_FAILED, ret);
 }
 
+HWTEST_F(AvAudioSenderEngineTest, Start_004, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->currentState_ = StateId::IDLE;
+    sender->pipeline_ = nullptr;
+    int32_t ret = sender->Start();
+    EXPECT_EQ(ERR_DH_AVT_START_FAILED, ret);
+}
+
 HWTEST_F(AvAudioSenderEngineTest, Stop_001, testing::ext::TestSize.Level1)
 {
     std::string ownerName = "001";
@@ -178,6 +189,18 @@ HWTEST_F(AvAudioSenderEngineTest, Stop_001, testing::ext::TestSize.Level1)
     sender->Start();
     int32_t ret = sender->Stop();
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
+}
+
+HWTEST_F(AvAudioSenderEngineTest, Stop_002, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->currentState_ = StateId::CH_CREATED;
+    sender->pipeline_ = nullptr;
+    sender->Start();
+    int32_t ret = sender->Stop();
+    EXPECT_EQ(ERR_DH_AVT_STOP_FAILED, ret);
 }
 
 HWTEST_F(AvAudioSenderEngineTest, SetParameter_001, testing::ext::TestSize.Level1)
@@ -365,6 +388,46 @@ HWTEST_F(AvAudioSenderEngineTest, SetParameter_012, testing::ext::TestSize.Level
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 
+HWTEST_F(AvAudioSenderEngineTest, SetParameter_013, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "ohos.dhardware.dscreen";
+    std::string peerDevId = "pEid";
+    std::string value = "500";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->InitPipeline();
+    sender->RegRespFunMap();
+
+    int32_t ret = sender->SetParameter(AVTransTag::FRAME_NUMBER, value);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
+}
+
+HWTEST_F(AvAudioSenderEngineTest, SetParameter_014, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "ohos.dhardware.dscreen";
+    std::string peerDevId = "pEid";
+    std::string value = "500";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->meta_ = nullptr;
+    sender->SetParameter(AVTransTag::VIDEO_WIDTH, "H264");
+    sender->SetParameter(AVTransTag::VIDEO_HEIGHT, "1");
+    sender->SetParameter(AVTransTag::VIDEO_FRAME_RATE, "2");
+    sender->SetParameter(AVTransTag::AUDIO_BIT_RATE, "3");
+    sender->SetParameter(AVTransTag::VIDEO_FRAME_RATE, "4");
+    sender->SetParameter(AVTransTag::VIDEO_CODEC_TYPE, "5");
+    sender->SetParameter(AVTransTag::AUDIO_CODEC_TYPE, "6");
+    sender->SetParameter(AVTransTag::AUDIO_CHANNEL_MASK, "7");
+    sender->SetParameter(AVTransTag::AUDIO_SAMPLE_RATE, "8");
+    sender->SetParameter(AVTransTag::AUDIO_CHANNEL_LAYOUT, "9");
+    sender->SetParameter(AVTransTag::AUDIO_SAMPLE_FORMAT, "10");
+    sender->SetParameter(AVTransTag::AUDIO_FRAME_SIZE, "11");
+    sender->SetParameter(AVTransTag::TIME_SYNC_RESULT, "12");
+    sender->SetParameter(AVTransTag::START_AV_SYNC, "13");
+    sender->SetParameter(AVTransTag::STOP_AV_SYNC, "14");
+    sender->SetParameter(AVTransTag::SHARED_MEMORY_FD, "15");
+    sender->SetParameter(AVTransTag::ENGINE_READY, "16");
+    EXPECT_EQ(sender->meta_, nullptr);
+}
+
 HWTEST_F(AvAudioSenderEngineTest, PushData_001, testing::ext::TestSize.Level1)
 {
     std::string ownerName = "001";
@@ -425,6 +488,39 @@ HWTEST_F(AvAudioSenderEngineTest, PushData_005, testing::ext::TestSize.Level1)
     EXPECT_EQ(ERR_DH_AVT_PUSH_DATA_FAILED, ret);
 }
 
+HWTEST_F(AvAudioSenderEngineTest, PushData_006, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    std::string value = "value";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    std::shared_ptr<AVTransBuffer> buffer = std::make_shared<AVTransBuffer>();
+    sender->currentState_ = StateId::STARTED;
+    sender->avInput_ = std::make_shared<Pipeline::AVTransAudioInputFilter>("builtin.avtrans.audio.input",
+        Pipeline::FilterType::FILTERTYPE_SOURCE);
+    int32_t ret = sender->PushData(buffer);
+    EXPECT_EQ(ERR_DH_AVT_PUSH_DATA_FAILED, ret);
+}
+
+HWTEST_F(AvAudioSenderEngineTest, Prepare_001, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    std::string value = "value";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->avInput_ = std::make_shared<Pipeline::AVTransAudioInputFilter>("builtin.avtrans.audio.input",
+        Pipeline::FilterType::FILTERTYPE_SOURCE);
+    EXPECT_EQ(sender->Prepare(), Status::ERROR_INVALID_OPERATION);
+
+    sender->avInput_ = std::make_shared<Pipeline::AVTransAudioInputFilter>("builtin.avtrans.audio.input",
+        Pipeline::FilterType::FILTERTYPE_SOURCE);
+    sender->pipeline_ = nullptr;
+    EXPECT_EQ(sender->Prepare(), Status::ERROR_INVALID_OPERATION);
+
+    sender->pipeline_ = std::make_shared<Pipeline::Pipeline>();
+    EXPECT_EQ(sender->Prepare(), Status::OK);
+}
+
 HWTEST_F(AvAudioSenderEngineTest, PreparePipeline_001, testing::ext::TestSize.Level1)
 {
     std::string ownerName = "001";
@@ -480,6 +576,32 @@ HWTEST_F(AvAudioSenderEngineTest, PreparePipeline_005, testing::ext::TestSize.Le
 
     int32_t ret = sender->PreparePipeline(configParam);
     EXPECT_EQ(ERR_DH_AVT_NULL_POINTER, ret);
+}
+
+HWTEST_F(AvAudioSenderEngineTest, PreparePipeline_006, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    std::string configParam = "value";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->currentState_ = StateId::INITIALIZED;
+    sender->pipeline_ = std::make_shared<Pipeline::Pipeline>();
+    sender->meta_ = std::make_shared<Media::Meta>();
+    int32_t ret = sender->PreparePipeline(configParam);
+    EXPECT_EQ(ERR_DH_AVT_PREPARE_FAILED, ret);
+}
+
+HWTEST_F(AvAudioSenderEngineTest, PreparePipeline_007, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    std::string configParam = "value";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->currentState_ = StateId::INITIALIZED;
+    sender->pipeline_ = nullptr;
+    sender->meta_ = std::make_shared<Media::Meta>();
+    int32_t ret = sender->PreparePipeline(configParam);
+    EXPECT_EQ(ERR_DH_AVT_SET_PARAM_FAILED, ret);
 }
 
 HWTEST_F(AvAudioSenderEngineTest, StartDumpMediaData_001, testing::ext::TestSize.Level1)
@@ -557,6 +679,18 @@ HWTEST_F(AvAudioSenderEngineTest, SendMessage_003, testing::ext::TestSize.Level1
 }
 
 HWTEST_F(AvAudioSenderEngineTest, SendMessage_004, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_VIRMODEM_SPEAKER;
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    EventType type = EventType::EVENT_ADD_STREAM;
+    sender->NotifyStreamChange(type);
+    std::shared_ptr<AVTransMessage> message = std::make_shared<AVTransMessage>();
+    int32_t ret = sender->SendMessage(message);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
+}
+
+HWTEST_F(AvAudioSenderEngineTest, SendMessage_005, testing::ext::TestSize.Level1)
 {
     std::string ownerName = OWNER_NAME_D_VIRMODEM_SPEAKER;
     std::string peerDevId = "pEid";
