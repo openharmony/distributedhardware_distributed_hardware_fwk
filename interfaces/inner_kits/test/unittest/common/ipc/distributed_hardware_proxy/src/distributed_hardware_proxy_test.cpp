@@ -203,7 +203,7 @@ int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::DisableSource
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, RegisterPublisherListener_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, RegisterPublisherListener_001, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_MIN;
     sptr<IPublisherListener> listener = nullptr;
@@ -229,7 +229,7 @@ HWTEST_F(DistributedHardwareProxyTest, RegisterPublisherListener_001, TestSize.L
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, RegisterPublisherListener_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, RegisterPublisherListener_002, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
     sptr<IPublisherListener> listener(new MockIPublisherListener());
@@ -247,7 +247,7 @@ HWTEST_F(DistributedHardwareProxyTest, RegisterPublisherListener_002, TestSize.L
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_001, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_MIN;
     sptr<IPublisherListener> listener = nullptr;
@@ -273,7 +273,7 @@ HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_001, TestSize
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_003, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_003, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
     sptr<IPublisherListener> listener(new MockIPublisherListener());
@@ -290,7 +290,7 @@ HWTEST_F(DistributedHardwareProxyTest, UnregisterPublisherListener_003, TestSize
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, PublishMessage_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, PublishMessage_001, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_MIN;
     std::string msg = "";
@@ -311,7 +311,7 @@ HWTEST_F(DistributedHardwareProxyTest, PublishMessage_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, PublishMessage_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, PublishMessage_002, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
     std::string msg = "";
@@ -332,7 +332,7 @@ HWTEST_F(DistributedHardwareProxyTest, PublishMessage_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, QueryLocalSysSpec_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, QueryLocalSysSpec_001, TestSize.Level1)
 {
     QueryLocalSysSpecType spec = QueryLocalSysSpecType::MIN;
     sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
@@ -346,7 +346,7 @@ HWTEST_F(DistributedHardwareProxyTest, QueryLocalSysSpec_001, TestSize.Level0)
     EXPECT_EQ("", ret);
 }
 
-HWTEST_F(DistributedHardwareProxyTest, QueryLocalSysSpec_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, QueryLocalSysSpec_002, TestSize.Level1)
 {
     QueryLocalSysSpecType spec = QueryLocalSysSpecType::HISTREAMER_AUDIO_ENCODER;
     sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
@@ -362,7 +362,7 @@ HWTEST_F(DistributedHardwareProxyTest, QueryLocalSysSpec_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, InitializeAVCenter_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, InitializeAVCenter_001, TestSize.Level1)
 {
     TransRole transRole = TransRole::UNKNOWN;
     int32_t engineId = 0;
@@ -379,7 +379,7 @@ HWTEST_F(DistributedHardwareProxyTest, InitializeAVCenter_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, ReleaseAVCenter_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, ReleaseAVCenter_001, TestSize.Level1)
 {
     int32_t engineId = 0;
     sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
@@ -395,7 +395,7 @@ HWTEST_F(DistributedHardwareProxyTest, ReleaseAVCenter_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, CreateControlChannel_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, CreateControlChannel_001, TestSize.Level1)
 {
     int32_t engineId = 0;
     std::string peerDevId = "peerDevId_test";
@@ -412,7 +412,7 @@ HWTEST_F(DistributedHardwareProxyTest, CreateControlChannel_001, TestSize.Level0
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, NotifyAVCenter_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, NotifyAVCenter_001, TestSize.Level1)
 {
     int32_t engineId = 0;
     AVTransEvent event;
@@ -429,7 +429,7 @@ HWTEST_F(DistributedHardwareProxyTest, NotifyAVCenter_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, RegisterCtlCenterCallback_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, RegisterCtlCenterCallback_001, TestSize.Level1)
 {
     int32_t engineId = 0;
     sptr<IAVTransControlCenterCallback> callback = nullptr;
@@ -446,7 +446,7 @@ HWTEST_F(DistributedHardwareProxyTest, RegisterCtlCenterCallback_001, TestSize.L
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, NotifySourceRemoteSinkStarted_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, NotifySourceRemoteSinkStarted_001, TestSize.Level1)
 {
     std::string deviceId = "devid_test";
     sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
@@ -462,7 +462,7 @@ HWTEST_F(DistributedHardwareProxyTest, NotifySourceRemoteSinkStarted_001, TestSi
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, PauseDistributedHardware_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, PauseDistributedHardware_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     std::string networkId = "";
@@ -483,7 +483,7 @@ HWTEST_F(DistributedHardwareProxyTest, PauseDistributedHardware_001, TestSize.Le
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, ResumeDistributedHardware_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, ResumeDistributedHardware_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     std::string networkId = "";
@@ -504,7 +504,7 @@ HWTEST_F(DistributedHardwareProxyTest, ResumeDistributedHardware_001, TestSize.L
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareProxyTest, StopDistributedHardware_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareProxyTest, StopDistributedHardware_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     std::string networkId = "";

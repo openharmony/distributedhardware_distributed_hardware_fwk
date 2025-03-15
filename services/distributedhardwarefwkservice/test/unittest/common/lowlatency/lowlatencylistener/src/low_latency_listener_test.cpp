@@ -44,7 +44,7 @@ void LowLatencyListenerTest::TearDown()
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyListenerTest, OnMessage_001, TestSize.Level0)
+HWTEST_F(LowLatencyListenerTest, OnMessage_001, TestSize.Level1)
 {
     ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_MIN;
@@ -63,7 +63,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyListenerTest, OnMessage_002, TestSize.Level0)
+HWTEST_F(LowLatencyListenerTest, OnMessage_002, TestSize.Level1)
 {
     ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
@@ -78,7 +78,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyListenerTest, OnMessage_003, TestSize.Level0)
+HWTEST_F(LowLatencyListenerTest, OnMessage_003, TestSize.Level1)
 {
     ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
@@ -93,7 +93,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyListenerTest, OnMessage_004, TestSize.Level0)
+HWTEST_F(LowLatencyListenerTest, OnMessage_004, TestSize.Level1)
 {
     ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
@@ -122,7 +122,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_004, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyListenerTest, OnMessage_005, TestSize.Level0)
+HWTEST_F(LowLatencyListenerTest, OnMessage_005, TestSize.Level1)
 {
     ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
@@ -139,7 +139,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_005, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyListenerTest, OnMessage_006, TestSize.Level0)
+HWTEST_F(LowLatencyListenerTest, OnMessage_006, TestSize.Level1)
 {
     ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
@@ -167,7 +167,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_006, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyListenerTest, OnMessage_007, TestSize.Level0)
+HWTEST_F(LowLatencyListenerTest, OnMessage_007, TestSize.Level1)
 {
     ASSERT_TRUE(listener_ != nullptr);
     DHTopic topic = DHTopic::TOPIC_START_DSCREEN;
@@ -195,7 +195,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_007, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyListenerTest, ExecuteInner_008, TestSize.Level0)
+HWTEST_F(LowLatencyListenerTest, ExecuteInner_008, TestSize.Level1)
 {
     ASSERT_TRUE(listener_ != nullptr);
     std::string timerId;
@@ -211,7 +211,7 @@ HWTEST_F(LowLatencyListenerTest, ExecuteInner_008, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyListenerTest, HandleStopTimer_008, TestSize.Level0)
+HWTEST_F(LowLatencyListenerTest, HandleStopTimer_008, TestSize.Level1)
 {
     ASSERT_TRUE(listener_ != nullptr);
     std::string timerId;

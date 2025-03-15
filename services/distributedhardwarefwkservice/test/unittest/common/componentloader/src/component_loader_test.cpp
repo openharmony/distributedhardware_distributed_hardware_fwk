@@ -40,7 +40,7 @@ void ComponentLoaderTest::TearDown()
 {
 }
 
-HWTEST_F(ComponentLoaderTest, CheckComponentEnable_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, CheckComponentEnable_001, TestSize.Level1)
 {
     CompConfig config = {
         .name = "name",
@@ -67,7 +67,7 @@ HWTEST_F(ComponentLoaderTest, CheckComponentEnable_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, GetLocalDHVersion_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetLocalDHVersion_001, TestSize.Level1)
 {
     DHVersion dhVersion;
     ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
@@ -86,7 +86,7 @@ HWTEST_F(ComponentLoaderTest, GetLocalDHVersion_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, GetHardwareHandler_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetHardwareHandler_001, TestSize.Level1)
 {
     IHardwareHandler *hardwareHandlerPtr = nullptr;
     auto ret = ComponentLoader::GetInstance().GetHardwareHandler(DHType::UNKNOWN, hardwareHandlerPtr);
@@ -107,7 +107,7 @@ HWTEST_F(ComponentLoaderTest, GetHardwareHandler_001, TestSize.Level0)
      * @tc.type: FUNC
      * @tc.require: AR000GHSK3
      */
-    HWTEST_F(ComponentLoaderTest, GetHardwareHandler_002, TestSize.Level0)
+    HWTEST_F(ComponentLoaderTest, GetHardwareHandler_002, TestSize.Level1)
     {
         ComponentLoader::GetInstance().Init();
         IHardwareHandler *hardwareHandlerPtr = nullptr;
@@ -123,7 +123,7 @@ HWTEST_F(ComponentLoaderTest, GetHardwareHandler_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, GetSource_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetSource_001, TestSize.Level1)
 {
     IDistributedHardwareSource *sourcePtr = nullptr;
     auto ret = ComponentLoader::GetInstance().GetSource(DHType::UNKNOWN, sourcePtr);
@@ -143,7 +143,7 @@ HWTEST_F(ComponentLoaderTest, GetSource_001, TestSize.Level0)
      * @tc.type: FUNC
      * @tc.require: AR000GHSK3
      */
-    HWTEST_F(ComponentLoaderTest, GetSource_002, TestSize.Level0)
+    HWTEST_F(ComponentLoaderTest, GetSource_002, TestSize.Level1)
     {
         ComponentLoader::GetInstance().Init();
         IDistributedHardwareSource *sourcePtr = nullptr;
@@ -159,7 +159,7 @@ HWTEST_F(ComponentLoaderTest, GetSource_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, GetSink_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetSink_001, TestSize.Level1)
 {
     IDistributedHardwareSink *sinkPtr = nullptr;
     auto ret = ComponentLoader::GetInstance().GetSink(DHType::UNKNOWN, sinkPtr);
@@ -180,7 +180,7 @@ HWTEST_F(ComponentLoaderTest, GetSink_001, TestSize.Level0)
      * @tc.type: FUNC
      * @tc.require: AR000GHSK3
      */
-    HWTEST_F(ComponentLoaderTest, GetSink_002, TestSize.Level0)
+    HWTEST_F(ComponentLoaderTest, GetSink_002, TestSize.Level1)
     {
         ComponentLoader::GetInstance().Init();
         IDistributedHardwareSink *sinkPtr = nullptr;
@@ -196,7 +196,7 @@ HWTEST_F(ComponentLoaderTest, GetSink_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, Readfile_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, Readfile_001, TestSize.Level1)
 {
     std::string filePath = "";
     auto ret = ComponentLoader::GetInstance().Readfile(filePath);
@@ -209,7 +209,7 @@ HWTEST_F(ComponentLoaderTest, Readfile_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, ReleaseHardwareHandler_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ReleaseHardwareHandler_001, TestSize.Level1)
 {
     auto ret = ComponentLoader::GetInstance().ReleaseHardwareHandler(DHType::AUDIO);
     EXPECT_EQ(ERR_DH_FWK_TYPE_NOT_EXIST, ret);
@@ -228,7 +228,7 @@ HWTEST_F(ComponentLoaderTest, ReleaseHardwareHandler_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, ReleaseSource_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ReleaseSource_001, TestSize.Level1)
 {
     auto ret = ComponentLoader::GetInstance().ReleaseSource(DHType::AUDIO);
     EXPECT_EQ(ERR_DH_FWK_TYPE_NOT_EXIST, ret);
@@ -247,7 +247,7 @@ HWTEST_F(ComponentLoaderTest, ReleaseSource_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, ReleaseSink_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ReleaseSink_001, TestSize.Level1)
 {
     auto ret = ComponentLoader::GetInstance().ReleaseSink(DHType::AUDIO);
     EXPECT_EQ(ERR_DH_FWK_TYPE_NOT_EXIST, ret);
@@ -266,7 +266,7 @@ HWTEST_F(ComponentLoaderTest, ReleaseSink_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, GetHandler_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetHandler_001, TestSize.Level1)
 {
     std::string soNameEmpty = "";
     auto handler = ComponentLoader::GetInstance().GetHandler(soNameEmpty);
@@ -279,7 +279,7 @@ HWTEST_F(ComponentLoaderTest, GetHandler_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_017, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_017, TestSize.Level1)
 {
     std::string jsonStr = "";
     std::map<DHType, CompConfig> dhtypeMap;
@@ -293,7 +293,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_017, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_018, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_018, TestSize.Level1)
 {
     const char *NAME = "NAME";
     const char *TYPE = "TYPE";
@@ -327,7 +327,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_018, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, IsDHTypeExist_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, IsDHTypeExist_001, TestSize.Level1)
 {
     CompHandler comHandler;
     ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = comHandler;
@@ -342,7 +342,7 @@ HWTEST_F(ComponentLoaderTest, IsDHTypeExist_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, GetSourceSaId_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetSourceSaId_001, TestSize.Level1)
 {
     CompHandler comHandler;
     ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = comHandler;
@@ -361,7 +361,7 @@ HWTEST_F(ComponentLoaderTest, GetSourceSaId_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_022, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_022, TestSize.Level1)
 {
     int32_t ret = ComponentLoader::GetInstance().ParseConfig();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
@@ -373,7 +373,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_022, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_023, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_023, TestSize.Level1)
 {
     void *handler = nullptr;
     int32_t ret = ComponentLoader::GetInstance().ReleaseHandler(handler);
@@ -386,7 +386,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_023, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_024, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_024, TestSize.Level1)
 {
     DHType dhType = DHType::GPS;
     int32_t ret = ComponentLoader::GetInstance().ReleaseHardwareHandler(dhType);
@@ -399,7 +399,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_024, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_025, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_025, TestSize.Level1)
 {
     DHType dhType = DHType::GPS;
     int32_t ret = ComponentLoader::GetInstance().ReleaseSource(dhType);
@@ -412,7 +412,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_025, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_026, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_026, TestSize.Level1)
 {
     DHType dhType = DHType::GPS;
     int32_t ret = ComponentLoader::GetInstance().ReleaseSink(dhType);
@@ -425,7 +425,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_026, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_027, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_027, TestSize.Level1)
 {
     DHType dhType = DHType::GPS;
     bool ret = ComponentLoader::GetInstance().IsDHTypeExist(dhType);
@@ -438,7 +438,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_027, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_028, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_028, TestSize.Level1)
 {
     int32_t saId = 4801;
     DHType dhType = ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId);
@@ -451,7 +451,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_028, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_029, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_029, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -469,7 +469,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_029, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_030, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_030, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -488,7 +488,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_030, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_031, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_031, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -508,7 +508,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_031, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_032, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_032, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -529,7 +529,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_032, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_033, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_033, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -551,7 +551,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_033, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_034, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_034, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -574,7 +574,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_034, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_035, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_035, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -598,7 +598,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_035, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_036, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_036, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -623,7 +623,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_036, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_037, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_037, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -649,7 +649,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_037, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_038, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_038, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -676,7 +676,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_038, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(ComponentLoaderTest, component_loader_test_039, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, component_loader_test_039, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -697,7 +697,7 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_039, TestSize.Level0)
     EXPECT_EQ(4802, cfg.compSinkSaId);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseSink_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseSink_001, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -708,7 +708,7 @@ HWTEST_F(ComponentLoaderTest, ParseSink_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseSink_002, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseSink_002, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -720,7 +720,7 @@ HWTEST_F(ComponentLoaderTest, ParseSink_002, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseSink_003, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseSink_003, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -733,7 +733,7 @@ HWTEST_F(ComponentLoaderTest, ParseSink_003, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseSink_004, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseSink_004, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -746,7 +746,7 @@ HWTEST_F(ComponentLoaderTest, ParseSink_004, TestSize.Level0)
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseResourceDesc_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseResourceDesc_001, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *array = cJSON_CreateArray();
@@ -787,7 +787,7 @@ HWTEST_F(ComponentLoaderTest, ParseResourceDesc_001, TestSize.Level0)
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseResourceDesc_002, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseResourceDesc_002, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -815,7 +815,7 @@ HWTEST_F(ComponentLoaderTest, ParseResourceDesc_002, TestSize.Level0)
     cJSON_Delete(component1);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseResourceDesc_003, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseResourceDesc_003, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *jsonArr = cJSON_CreateArray();
@@ -832,7 +832,7 @@ HWTEST_F(ComponentLoaderTest, ParseResourceDesc_003, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseResourceDescFromJson_003, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseResourceDescFromJson_003, TestSize.Level1)
 {
     CompConfig config;
     cJSON *resourceDescs = cJSON_CreateArray();
@@ -856,7 +856,7 @@ HWTEST_F(ComponentLoaderTest, ParseResourceDescFromJson_003, TestSize.Level0)
     EXPECT_TRUE(config.compResourceDesc.empty());
 }
 
-HWTEST_F(ComponentLoaderTest, from_json_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, from_json_001, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -889,7 +889,7 @@ HWTEST_F(ComponentLoaderTest, from_json_001, TestSize.Level0)
     cJSON_Delete(Json2);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseComponent_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseComponent_001, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -900,7 +900,7 @@ HWTEST_F(ComponentLoaderTest, ParseComponent_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseComponent_002, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseComponent_002, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -912,7 +912,7 @@ HWTEST_F(ComponentLoaderTest, ParseComponent_002, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseComponent_003, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseComponent_003, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -925,7 +925,7 @@ HWTEST_F(ComponentLoaderTest, ParseComponent_003, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseComponent_004, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseComponent_004, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -939,7 +939,7 @@ HWTEST_F(ComponentLoaderTest, ParseComponent_004, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseComponent_005, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseComponent_005, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -953,7 +953,7 @@ HWTEST_F(ComponentLoaderTest, ParseComponent_005, TestSize.Level0)
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseSource_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseSource_001, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -964,7 +964,7 @@ HWTEST_F(ComponentLoaderTest, ParseSource_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseSource_002, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseSource_002, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -976,7 +976,7 @@ HWTEST_F(ComponentLoaderTest, ParseSource_002, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseSource_003, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseSource_003, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -989,7 +989,7 @@ HWTEST_F(ComponentLoaderTest, ParseSource_003, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_JSON_PARSE_FAILED);
 }
 
-HWTEST_F(ComponentLoaderTest, ParseSource_004, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ParseSource_004, TestSize.Level1)
 {
     CompConfig cfg;
     cJSON *json = cJSON_CreateObject();
@@ -1002,7 +1002,7 @@ HWTEST_F(ComponentLoaderTest, ParseSource_004, TestSize.Level0)
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
-HWTEST_F(ComponentLoaderTest, GetHardwareHandler_003, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetHardwareHandler_003, TestSize.Level1)
 {
     ComponentLoader::GetInstance().compHandlerMap_.clear();
     DHType dhType = DHType::AUDIO;
@@ -1011,7 +1011,7 @@ HWTEST_F(ComponentLoaderTest, GetHardwareHandler_003, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
 }
 
-HWTEST_F(ComponentLoaderTest, GetSource_003, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetSource_003, TestSize.Level1)
 {
     ComponentLoader::GetInstance().compHandlerMap_.clear();
     DHType dhType = DHType::AUDIO;
@@ -1020,7 +1020,7 @@ HWTEST_F(ComponentLoaderTest, GetSource_003, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
 }
 
-HWTEST_F(ComponentLoaderTest, GetSink_003, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetSink_003, TestSize.Level1)
 {
     ComponentLoader::GetInstance().compHandlerMap_.clear();
     DHType dhType = DHType::AUDIO;
@@ -1029,7 +1029,7 @@ HWTEST_F(ComponentLoaderTest, GetSink_003, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
 }
 
-HWTEST_F(ComponentLoaderTest, ReleaseHardwareHandler_002, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, ReleaseHardwareHandler_002, TestSize.Level1)
 {
     ComponentLoader::GetInstance().compHandlerMap_.clear();
     DHType dhType = DHType::AUDIO;
@@ -1046,7 +1046,7 @@ HWTEST_F(ComponentLoaderTest, ReleaseHardwareHandler_002, TestSize.Level0)
     EXPECT_EQ(ret, DEFAULT_SA_ID);
 }
 
-HWTEST_F(ComponentLoaderTest, GetDHTypeBySrcSaId_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetDHTypeBySrcSaId_001, TestSize.Level1)
 {
     ComponentLoader::GetInstance().compHandlerMap_.clear();
     int32_t saId = 4801;
@@ -1054,25 +1054,25 @@ HWTEST_F(ComponentLoaderTest, GetDHTypeBySrcSaId_001, TestSize.Level0)
     EXPECT_EQ(ret, DHType::UNKNOWN);
 }
 
-HWTEST_F(ComponentLoaderTest, GetSource_004, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetSource_004, TestSize.Level1)
 {
     auto ret = ComponentLoader::GetInstance().GetSource(DHType::AUDIO);
     EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
 }
 
-HWTEST_F(ComponentLoaderTest, GetSink_004, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetSink_004, TestSize.Level1)
 {
     auto ret = ComponentLoader::GetInstance().GetSink(DHType::AUDIO);
     EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
 }
 
-HWTEST_F(ComponentLoaderTest, GetHardwareHandler_004, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, GetHardwareHandler_004, TestSize.Level1)
 {
     auto ret = ComponentLoader::GetInstance().GetHardwareHandler(DHType::AUDIO);
     EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
 }
 
-HWTEST_F(ComponentLoaderTest, IsDHTypeSupport_001, TestSize.Level0)
+HWTEST_F(ComponentLoaderTest, IsDHTypeSupport_001, TestSize.Level1)
 {
     auto ret = ComponentLoader::GetInstance().IsDHTypeSupport(DHType::AUDIO);
     EXPECT_EQ(ret, false);

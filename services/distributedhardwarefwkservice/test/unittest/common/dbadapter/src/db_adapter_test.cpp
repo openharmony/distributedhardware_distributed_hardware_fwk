@@ -135,7 +135,7 @@ void DbAdapterTest::TearDown()
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_000, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_000, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     EXPECT_EQ(DH_FWK_SUCCESS, g_dbAdapterPtr->Init(true, DistributedKv::DataType::TYPE_DYNAMICAL));
@@ -147,7 +147,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_000, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_001, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_001, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     vector<shared_ptr<CapabilityInfo>> resInfos { CAP_INFO_0, CAP_INFO_1, CAP_INFO_2, CAP_INFO_3, CAP_INFO_4,
@@ -173,7 +173,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DH_ID_0) };
@@ -189,7 +189,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_003, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_003, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DH_ID_0) };
@@ -204,7 +204,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_004, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_004, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::vector<std::string> keysEmpty;
@@ -219,7 +219,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_004, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_005, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_005, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::vector<std::string> keysEmpty;
@@ -234,7 +234,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_005, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_006, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_006, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::vector<std::string> keys { std::string(TEST_DEV_ID_2 + TEST_DH_ID_0) };
@@ -249,7 +249,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_006, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_007, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_007, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
@@ -265,7 +265,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_007, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_008, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_008, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
@@ -278,7 +278,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_008, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_009, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_009, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
@@ -291,7 +291,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_009, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_010, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_010, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
@@ -304,7 +304,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_010, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_012, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_012, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
@@ -317,7 +317,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_012, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_013, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_013, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::string key = std::string(TEST_DEV_ID_1 + TEST_DH_ID_1);
@@ -332,7 +332,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_013, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_014, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_014, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::string networkId = DEV_NETWORK_ID_1;
@@ -346,7 +346,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_014, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, db_adapter_test_015, TestSize.Level0)
+HWTEST_F(DbAdapterTest, db_adapter_test_015, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->kvStoragePtr_ = nullptr;
@@ -359,7 +359,7 @@ HWTEST_F(DbAdapterTest, db_adapter_test_015, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, ReInit_001, TestSize.Level0)
+HWTEST_F(DbAdapterTest, ReInit_001, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->GetKvStorePtr(true, DistributedKv::DataType::TYPE_DYNAMICAL);
@@ -372,7 +372,7 @@ HWTEST_F(DbAdapterTest, ReInit_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DbAdapterTest, RemoveDeviceData_001, TestSize.Level0)
+HWTEST_F(DbAdapterTest, RemoveDeviceData_001, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     g_dbAdapterPtr->GetKvStorePtr(true, DistributedKv::DataType::TYPE_DYNAMICAL);
@@ -385,7 +385,7 @@ HWTEST_F(DbAdapterTest, RemoveDeviceData_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, PutData_01, TestSize.Level0)
+HWTEST_F(DbAdapterTest, PutData_01, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::string key;
@@ -399,7 +399,7 @@ HWTEST_F(DbAdapterTest, PutData_01, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, PutData_02, TestSize.Level0)
+HWTEST_F(DbAdapterTest, PutData_02, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024 +1 ;
@@ -415,7 +415,7 @@ HWTEST_F(DbAdapterTest, PutData_02, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, PutData_03, TestSize.Level0)
+HWTEST_F(DbAdapterTest, PutData_03, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::string key = "key";
@@ -429,7 +429,7 @@ HWTEST_F(DbAdapterTest, PutData_03, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, PutData_04, TestSize.Level0)
+HWTEST_F(DbAdapterTest, PutData_04, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024 + 1;
@@ -445,7 +445,7 @@ HWTEST_F(DbAdapterTest, PutData_04, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(DbAdapterTest, PutData_05, TestSize.Level0)
+HWTEST_F(DbAdapterTest, PutData_05, TestSize.Level1)
 {
     ASSERT_TRUE(g_dbAdapterPtr != nullptr);
     std::string key = "key";

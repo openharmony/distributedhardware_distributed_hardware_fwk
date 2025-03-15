@@ -43,7 +43,7 @@ void DistributedHardwareStubTest::TearDown()
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_001, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = 0;
@@ -59,7 +59,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_002, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = 0;
@@ -69,7 +69,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_002, TestSize.Level0)
     EXPECT_EQ(ERR_INVALID_DATA, stubTest_->OnRemoteRequest(code, data, reply, option));
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_003, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_003, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::REG_PUBLISHER_LISTNER);
@@ -83,7 +83,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_003, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_004, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_004, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::PUBLISH_MESSAGE);
@@ -97,7 +97,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_004, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_005, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_005, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::INIT_CTL_CEN);
@@ -111,7 +111,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_005, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_006, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_006, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::RELEASE_CTL_CEN);
@@ -125,7 +125,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_006, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_007, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_007, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::CREATE_CTL_CEN_CHANNEL);
@@ -141,7 +141,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_007, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_008, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_008, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_AV_EVENT);
@@ -161,7 +161,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_008, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_009, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_009, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::QUERY_LOCAL_SYS_SPEC);
@@ -175,7 +175,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_009, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_010, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_010, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED);
@@ -189,7 +189,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_010, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_011, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_011, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::PAUSE_DISTRIBUTED_HARDWARE);
@@ -201,7 +201,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_011, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_012, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_012, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::RESUME_DISTRIBUTED_HARDWARE);
@@ -213,7 +213,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_012, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_013, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_013, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::STOP_DISTRIBUTED_HARDWARE);
@@ -225,7 +225,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_013, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_014, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_014, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_PUBLISHER_LISTENER);
@@ -239,7 +239,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_014, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_015, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_015, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::REGISTER_CTL_CEN_CALLBACK);
@@ -251,7 +251,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_015, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_016, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_016, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::GET_DISTRIBUTED_HARDWARE);
@@ -264,7 +264,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_016, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_017, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_017, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::REG_DH_SINK_STATUS_LISTNER);
@@ -276,7 +276,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_017, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_018, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_018, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_DH_SINK_STATUS_LISTNER);
@@ -288,7 +288,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_018, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_019, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_019, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::REG_DH_SOURCE_STATUS_LISTNER);
@@ -300,7 +300,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_019, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_020, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_020, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_DH_SOURCE_STATUS_LISTNER);
@@ -312,7 +312,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_020, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_021, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_021, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::ENABLE_SINK);
@@ -327,7 +327,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_021, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_022, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_022, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SINK);
@@ -342,7 +342,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_022, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_023, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_023, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::ENABLE_SOURCE);
@@ -357,7 +357,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_023, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
-HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_024, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_024, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SOURCE);
@@ -378,7 +378,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_024, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareStubTest, RegisterPublisherListenerInner_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, RegisterPublisherListenerInner_001, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     MessageParcel data;
@@ -392,7 +392,7 @@ HWTEST_F(DistributedHardwareStubTest, RegisterPublisherListenerInner_001, TestSi
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareStubTest, UnregisterPublisherListenerInner_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, UnregisterPublisherListenerInner_001, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     MessageParcel data;
@@ -406,7 +406,7 @@ HWTEST_F(DistributedHardwareStubTest, UnregisterPublisherListenerInner_001, Test
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareStubTest, PublishMessageInner_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, PublishMessageInner_001, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     MessageParcel data;
@@ -420,7 +420,7 @@ HWTEST_F(DistributedHardwareStubTest, PublishMessageInner_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareStubTest, ValidTopic_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, ValidTopic_001, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t topic = static_cast<uint32_t>(DHTopic::TOPIC_MIN);
@@ -439,7 +439,7 @@ HWTEST_F(DistributedHardwareStubTest, ValidTopic_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_001, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t spec = 1;
@@ -452,7 +452,7 @@ HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_002, TestSize.Level1)
 {
     ASSERT_TRUE(stubTest_ != nullptr);
     uint32_t spec = 0;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,7 @@ void PublisherItemTest::TearDown() {}
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(PublisherItemTest, AddListener_001, TestSize.Level0)
+HWTEST_F(PublisherItemTest, AddListener_001, TestSize.Level1)
 {
     PublisherItem item(DHTopic::TOPIC_MIN);
     sptr<IPublisherListener> listener = nullptr;
@@ -53,7 +53,7 @@ HWTEST_F(PublisherItemTest, AddListener_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(PublisherItemTest, AddListener_002, TestSize.Level0)
+HWTEST_F(PublisherItemTest, AddListener_002, TestSize.Level1)
 {
     PublisherItem item(DHTopic::TOPIC_MIN);
     sptr<IPublisherListener> listener(new MockIPublisherListener());
@@ -67,7 +67,7 @@ HWTEST_F(PublisherItemTest, AddListener_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(PublisherItemTest, RemoveListener_001, TestSize.Level0)
+HWTEST_F(PublisherItemTest, RemoveListener_001, TestSize.Level1)
 {
     PublisherItem item(DHTopic::TOPIC_MIN);
     sptr<IPublisherListener> listener = nullptr;
@@ -86,7 +86,7 @@ HWTEST_F(PublisherItemTest, RemoveListener_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(PublisherItemTest, PublishMessage_001, TestSize.Level0)
+HWTEST_F(PublisherItemTest, PublishMessage_001, TestSize.Level1)
 {
     PublisherItem item(DHTopic::TOPIC_MIN);
     std::string message = "";
@@ -104,7 +104,7 @@ HWTEST_F(PublisherItemTest, PublishMessage_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(PublisherItemTest, PublishMessage_002, TestSize.Level0)
+HWTEST_F(PublisherItemTest, PublishMessage_002, TestSize.Level1)
 {
     PublisherItem item(DHTopic::TOPIC_MIN);
     std::string message = "message";
@@ -114,42 +114,42 @@ HWTEST_F(PublisherItemTest, PublishMessage_002, TestSize.Level0)
     EXPECT_EQ(false, item.listeners_.empty());
 }
 
-HWTEST_F(PublisherItemTest, RegisterListener_001, TestSize.Level0)
+HWTEST_F(PublisherItemTest, RegisterListener_001, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_MIN;
     sptr<IPublisherListener> listener(new MockIPublisherListener());
     EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().RegisterListener(topic, listener));
 }
 
-HWTEST_F(PublisherItemTest, RegisterListener_002, TestSize.Level0)
+HWTEST_F(PublisherItemTest, RegisterListener_002, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
     sptr<IPublisherListener> listener(new MockIPublisherListener());
     EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().RegisterListener(topic, listener));
 }
 
-HWTEST_F(PublisherItemTest, UnregisterListener_001, TestSize.Level0)
+HWTEST_F(PublisherItemTest, UnregisterListener_001, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_MIN;
     sptr<IPublisherListener> listener(new MockIPublisherListener());
     EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().UnregisterListener(topic, listener));
 }
 
-HWTEST_F(PublisherItemTest, UnregisterListener_002, TestSize.Level0)
+HWTEST_F(PublisherItemTest, UnregisterListener_002, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
     sptr<IPublisherListener> listener(new MockIPublisherListener());
     EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().UnregisterListener(topic, listener));
 }
 
-HWTEST_F(PublisherItemTest, Publisher_PublishMessage_001, TestSize.Level0)
+HWTEST_F(PublisherItemTest, Publisher_PublishMessage_001, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_MIN;
     std::string message = "message_test";
     EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().PublishMessage(topic, message));
 }
 
-HWTEST_F(PublisherItemTest, Publisher_PublishMessage_002, TestSize.Level0)
+HWTEST_F(PublisherItemTest, Publisher_PublishMessage_002, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
     std::string message = "message_test";

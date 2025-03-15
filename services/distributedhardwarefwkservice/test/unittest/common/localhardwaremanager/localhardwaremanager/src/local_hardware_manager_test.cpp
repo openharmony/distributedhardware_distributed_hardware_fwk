@@ -37,7 +37,7 @@ void LocalHardwareManagerTest::TearDown() {}
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(LocalHardwareManagerTest, Init_001, TestSize.Level0)
+HWTEST_F(LocalHardwareManagerTest, Init_001, TestSize.Level1)
 {
     LocalHardwareManager::GetInstance().Init();
     EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
@@ -49,7 +49,7 @@ HWTEST_F(LocalHardwareManagerTest, Init_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(LocalHardwareManagerTest, CheckNonExistCapabilityInfo_001, TestSize.Level0)
+HWTEST_F(LocalHardwareManagerTest, CheckNonExistCapabilityInfo_001, TestSize.Level1)
 {
     std::vector<DHItem> dhItems;
     DHType dhType =  DHType::INPUT;
@@ -63,7 +63,7 @@ HWTEST_F(LocalHardwareManagerTest, CheckNonExistCapabilityInfo_001, TestSize.Lev
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(LocalHardwareManagerTest, CheckNonExistCapabilityInfo_002, TestSize.Level0)
+HWTEST_F(LocalHardwareManagerTest, CheckNonExistCapabilityInfo_002, TestSize.Level1)
 {
     std::vector<DHItem> dhItems;
     DHType dhType =  DHType::AUDIO;
@@ -77,7 +77,7 @@ HWTEST_F(LocalHardwareManagerTest, CheckNonExistCapabilityInfo_002, TestSize.Lev
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(LocalHardwareManagerTest, GetLocalCapabilityMapByPrefix_001, TestSize.Level0)
+HWTEST_F(LocalHardwareManagerTest, GetLocalCapabilityMapByPrefix_001, TestSize.Level1)
 {
     DHType dhType =  DHType::INPUT;
     CapabilityInfoMap capabilityInfoMap;
@@ -91,7 +91,7 @@ HWTEST_F(LocalHardwareManagerTest, GetLocalCapabilityMapByPrefix_001, TestSize.L
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(LocalHardwareManagerTest, GetLocalCapabilityMapByPrefix_002, TestSize.Level0)
+HWTEST_F(LocalHardwareManagerTest, GetLocalCapabilityMapByPrefix_002, TestSize.Level1)
 {
     DHType dhType = DHType::GPS;
     CapabilityInfoMap capabilityInfoMap;
@@ -100,7 +100,7 @@ HWTEST_F(LocalHardwareManagerTest, GetLocalCapabilityMapByPrefix_002, TestSize.L
     EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
 }
 
-HWTEST_F(LocalHardwareManagerTest, QueryLocalHardware_001, TestSize.Level0)
+HWTEST_F(LocalHardwareManagerTest, QueryLocalHardware_001, TestSize.Level1)
 {
     DHType dhType = DHType::INPUT;
     IHardwareHandler *hardwareHandler = nullptr;
@@ -108,7 +108,7 @@ HWTEST_F(LocalHardwareManagerTest, QueryLocalHardware_001, TestSize.Level0)
     EXPECT_EQ(true, LocalHardwareManager::GetInstance().pluginListenerMap_.empty());
 }
 
-HWTEST_F(LocalHardwareManagerTest, QueryLocalHardware_002, TestSize.Level0)
+HWTEST_F(LocalHardwareManagerTest, QueryLocalHardware_002, TestSize.Level1)
 {
     DHType dhType = DHType::INPUT;
     IHardwareHandler *hardwareHandler = nullptr;

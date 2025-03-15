@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,7 +62,7 @@ void DhTransportTest::TearDown()
 {
 }
 
-HWTEST_F(DhTransportTest, OnSocketClosed_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, OnSocketClosed_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     ShutdownReason reason = ShutdownReason::SHUTDOWN_REASON_UNKNOWN;
@@ -73,7 +73,7 @@ HWTEST_F(DhTransportTest, OnSocketClosed_001, TestSize.Level0)
     EXPECT_EQ(0, dhTransportTest_->remoteDevSocketIds_.size());
 }
 
-HWTEST_F(DhTransportTest, OnBytesReceived_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, OnBytesReceived_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     int32_t sessionId = -1;
@@ -105,7 +105,7 @@ HWTEST_F(DhTransportTest, OnBytesReceived_001, TestSize.Level0)
     EXPECT_EQ(1, dhTransportTest_->remoteDevSocketIds_.size());
 }
 
-HWTEST_F(DhTransportTest, Init_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, Init_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     dhTransportTest_->isSocketSvrCreateFlag_ = true;
@@ -117,7 +117,7 @@ HWTEST_F(DhTransportTest, Init_001, TestSize.Level0)
     EXPECT_NE(ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED, ret);
 }
 
-HWTEST_F(DhTransportTest, UnInit_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, UnInit_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     auto ret = dhTransportTest_->UnInit();
@@ -128,7 +128,7 @@ HWTEST_F(DhTransportTest, UnInit_001, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(DhTransportTest, IsDeviceSessionOpened_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, IsDeviceSessionOpened_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     dhTransportTest_->remoteDevSocketIds_.clear();
@@ -140,7 +140,7 @@ HWTEST_F(DhTransportTest, IsDeviceSessionOpened_001, TestSize.Level0)
     EXPECT_EQ(true, ret);
 }
 
-HWTEST_F(DhTransportTest, IsDeviceSessionOpened_002, TestSize.Level0)
+HWTEST_F(DhTransportTest, IsDeviceSessionOpened_002, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::string remoteNetworkId = "";
@@ -148,7 +148,7 @@ HWTEST_F(DhTransportTest, IsDeviceSessionOpened_002, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(DhTransportTest, StartSocket_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, StartSocket_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     dhTransportTest_->remoteDevSocketIds_[g_networkid] = g_socketid;
@@ -160,7 +160,7 @@ HWTEST_F(DhTransportTest, StartSocket_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED, ret);
 }
 
-HWTEST_F(DhTransportTest, StartSocket_002, TestSize.Level0)
+HWTEST_F(DhTransportTest, StartSocket_002, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::string remoteNetworkId = "";
@@ -168,7 +168,7 @@ HWTEST_F(DhTransportTest, StartSocket_002, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(DhTransportTest, StopSocket_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, StopSocket_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     dhTransportTest_->remoteDevSocketIds_.clear();
@@ -180,7 +180,7 @@ HWTEST_F(DhTransportTest, StopSocket_001, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(DhTransportTest, StopSocket_002, TestSize.Level0)
+HWTEST_F(DhTransportTest, StopSocket_002, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::string remoteNetworkId = "";
@@ -188,7 +188,7 @@ HWTEST_F(DhTransportTest, StopSocket_002, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(DhTransportTest, Send_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, Send_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::string payload = "payload_test";
@@ -197,7 +197,7 @@ HWTEST_F(DhTransportTest, Send_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED, ret);
 }
 
-HWTEST_F(DhTransportTest, Send_002, TestSize.Level0)
+HWTEST_F(DhTransportTest, Send_002, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::string payload = "payload_test";
@@ -207,7 +207,7 @@ HWTEST_F(DhTransportTest, Send_002, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED, ret);
 }
 
-HWTEST_F(DhTransportTest, GetRemoteNetworkIdBySocketId_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, GetRemoteNetworkIdBySocketId_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::string networkid = "123456";
@@ -229,7 +229,7 @@ HWTEST_F(DhTransportTest, GetRemoteNetworkIdBySocketId_001, TestSize.Level0)
     dhTransportTest_->HandleReceiveMessage(payload);
 }
 
-HWTEST_F(DhTransportTest, ToJson_FullCapsRsp_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, ToJson_FullCapsRsp_001, TestSize.Level1)
 {
     cJSON *json = nullptr;
     FullCapsRsp capsRsp;
@@ -248,7 +248,7 @@ HWTEST_F(DhTransportTest, ToJson_FullCapsRsp_001, TestSize.Level0)
     EXPECT_FALSE(capsRsp.networkId.empty());
 }
 
-HWTEST_F(DhTransportTest, FromJson_FullCapsRsp_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, FromJson_FullCapsRsp_001, TestSize.Level1)
 {
     cJSON *json = nullptr;
     FullCapsRsp capsRsp;
@@ -263,7 +263,7 @@ HWTEST_F(DhTransportTest, FromJson_FullCapsRsp_001, TestSize.Level0)
     EXPECT_FALSE(capsRsp.networkId.empty());
 }
 
-HWTEST_F(DhTransportTest, FromJson_FullCapsRsp_002, TestSize.Level0)
+HWTEST_F(DhTransportTest, FromJson_FullCapsRsp_002, TestSize.Level1)
 {
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);
@@ -282,7 +282,7 @@ HWTEST_F(DhTransportTest, FromJson_FullCapsRsp_002, TestSize.Level0)
     EXPECT_TRUE(capsRsp.networkId.empty());
 }
 
-HWTEST_F(DhTransportTest, ToJson_CommMsg_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, ToJson_CommMsg_001, TestSize.Level1)
 {
     cJSON *json = nullptr;
     CommMsg commMsg;
@@ -294,7 +294,7 @@ HWTEST_F(DhTransportTest, ToJson_CommMsg_001, TestSize.Level0)
     cJSON_Delete(jsonObject);
 }
 
-HWTEST_F(DhTransportTest, FromJson_CommMsg_001, TestSize.Level0)
+HWTEST_F(DhTransportTest, FromJson_CommMsg_001, TestSize.Level1)
 {
     cJSON *json = nullptr;
     CommMsg commMsg;
@@ -309,7 +309,7 @@ HWTEST_F(DhTransportTest, FromJson_CommMsg_001, TestSize.Level0)
     EXPECT_FALSE(commMsg.msg.empty());
 }
 
-HWTEST_F(DhTransportTest, FromJson_CommMsg_002, TestSize.Level0)
+HWTEST_F(DhTransportTest, FromJson_CommMsg_002, TestSize.Level1)
 {
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);

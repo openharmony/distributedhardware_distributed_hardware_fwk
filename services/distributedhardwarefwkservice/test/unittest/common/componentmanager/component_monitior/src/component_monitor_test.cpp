@@ -53,7 +53,7 @@ void ComponentMonitorTest::TearDown()
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentMonitorTest, AddSAMonitor_001, TestSize.Level0)
+HWTEST_F(ComponentMonitorTest, AddSAMonitor_001, TestSize.Level1)
 {
     ASSERT_TRUE(compMonitorPtr_ != nullptr);
     int32_t saId = static_cast<int32_t>(DHType::AUDIO);
@@ -67,7 +67,7 @@ HWTEST_F(ComponentMonitorTest, AddSAMonitor_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentMonitorTest, AddSAMonitor_002, TestSize.Level0)
+HWTEST_F(ComponentMonitorTest, AddSAMonitor_002, TestSize.Level1)
 {
     ASSERT_TRUE(compMonitorPtr_ != nullptr);
     int32_t saId = static_cast<int32_t>(DHType::CAMERA);
@@ -83,7 +83,7 @@ HWTEST_F(ComponentMonitorTest, AddSAMonitor_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_001, TestSize.Level0)
+HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_001, TestSize.Level1)
 {
     ASSERT_TRUE(compMonitorPtr_ != nullptr);
     int32_t saId = static_cast<int32_t>(DHType::GPS);
@@ -97,7 +97,7 @@ HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_002, TestSize.Level0)
+HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_002, TestSize.Level1)
 {
     ASSERT_TRUE(compMonitorPtr_ != nullptr);
     int32_t saId = static_cast<int32_t>(DHType::CAMERA);
@@ -113,7 +113,7 @@ HWTEST_F(ComponentMonitorTest, RemoveSAMonitor_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_001, TestSize.Level0)
+HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_001, TestSize.Level1)
 {
     ASSERT_TRUE(compMonitorPtr_ != nullptr);
     sptr<ComponentMonitor::CompSystemAbilityListener> listener(new ComponentMonitor::CompSystemAbilityListener());
@@ -130,7 +130,7 @@ HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_002, TestSize.Level0)
+HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_002, TestSize.Level1)
 {
     ASSERT_TRUE(compMonitorPtr_ != nullptr);
     sptr<ComponentMonitor::CompSystemAbilityListener> listener(new ComponentMonitor::CompSystemAbilityListener());

@@ -57,7 +57,7 @@ void DhCommToolTest::TearDown()
 {
 }
 
-HWTEST_F(DhCommToolTest, TriggerReqFullDHCaps_001, TestSize.Level0)
+HWTEST_F(DhCommToolTest, TriggerReqFullDHCaps_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhCommToolTest_ != nullptr);
     std::string remoteNetworkId = "";
@@ -75,7 +75,7 @@ HWTEST_F(DhCommToolTest, TriggerReqFullDHCaps_001, TestSize.Level0)
     EXPECT_NE(nullptr, dhCommToolTest_->dhTransportPtr_);
 }
 
-HWTEST_F(DhCommToolTest, GetAndSendLocalFullCaps_001, TestSize.Level0)
+HWTEST_F(DhCommToolTest, GetAndSendLocalFullCaps_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhCommToolTest_ != nullptr);
     std::string reqNetworkId = "";
@@ -87,7 +87,7 @@ HWTEST_F(DhCommToolTest, GetAndSendLocalFullCaps_001, TestSize.Level0)
     EXPECT_NE(nullptr, dhCommToolTest_->dhTransportPtr_);
 }
 
-HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_001, TestSize.Level0)
+HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhCommToolTest_ != nullptr);
     std::string remoteCaps = "";
@@ -95,7 +95,7 @@ HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_001, TestSize.Level0)
     EXPECT_EQ("", ret.networkId);
 }
 
-HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_002, TestSize.Level0)
+HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_002, TestSize.Level1)
 {
     ASSERT_TRUE(dhCommToolTest_ != nullptr);
     cJSON *jsonObject = cJSON_CreateObject();
@@ -113,7 +113,7 @@ HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_002, TestSize.Level0)
     cJSON_Delete(jsonObject);
 }
 
-HWTEST_F(DhCommToolTest, ProcessEvent_001, TestSize.Level0)
+HWTEST_F(DhCommToolTest, ProcessEvent_001, TestSize.Level1)
 {
     std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);

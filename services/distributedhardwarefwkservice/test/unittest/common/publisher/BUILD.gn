@@ -15,7 +15,7 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/publisher_item_test"
+module_out_path = unittest_output_path
 
 config("module_private_config") {
   visibility = [ ":*" ]

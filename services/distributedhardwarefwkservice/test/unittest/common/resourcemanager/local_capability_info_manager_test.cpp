@@ -48,7 +48,7 @@ void LocalCapInfoMgrTest::SetUpTestCase() {}
 
 void LocalCapInfoMgrTest::TearDownTestCase() {}
 
-HWTEST_F(LocalCapInfoMgrTest, Init_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, Init_001, TestSize.Level1)
 {
     auto ret = LocalCapabilityInfoManager::GetInstance()->Init();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
@@ -57,14 +57,14 @@ HWTEST_F(LocalCapInfoMgrTest, Init_001, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, UnInit_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, UnInit_001, TestSize.Level1)
 {
     LocalCapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
     auto ret = LocalCapabilityInfoManager::GetInstance()->UnInit();
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_UNINIT_DB_FAILED, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, SyncDeviceInfoFromDB_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, SyncDeviceInfoFromDB_001, TestSize.Level1)
 {
     std::string deviceId = "deviceId_test";
     LocalCapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
@@ -79,7 +79,7 @@ HWTEST_F(LocalCapInfoMgrTest, SyncDeviceInfoFromDB_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, AddCapability_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, AddCapability_001, TestSize.Level1)
 {
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
     auto ret = LocalCapabilityInfoManager::GetInstance()->AddCapability(resInfos);
@@ -94,7 +94,7 @@ HWTEST_F(LocalCapInfoMgrTest, AddCapability_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, AddCapability_002, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, AddCapability_002, TestSize.Level1)
 {
     std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
@@ -104,7 +104,7 @@ HWTEST_F(LocalCapInfoMgrTest, AddCapability_002, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, AddCapability_003, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, AddCapability_003, TestSize.Level1)
 {
     std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
     std::shared_ptr<CapabilityInfo> capInfo1 = nullptr;
@@ -116,14 +116,14 @@ HWTEST_F(LocalCapInfoMgrTest, AddCapability_003, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, RemoveCapabilityInfoByKey_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, RemoveCapabilityInfoByKey_001, TestSize.Level1)
 {
     std::string key = "";
     auto ret = LocalCapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(key);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, RemoveCapabilityInfoByKey_002, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, RemoveCapabilityInfoByKey_002, TestSize.Level1)
 {
     std::string key = "deviceId_test";
     LocalCapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
@@ -135,14 +135,14 @@ HWTEST_F(LocalCapInfoMgrTest, RemoveCapabilityInfoByKey_002, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, GetCapabilitiesByDeviceId_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, GetCapabilitiesByDeviceId_001, TestSize.Level1)
 {
     std::string deviceId = "";
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
     ASSERT_NO_FATAL_FAILURE(LocalCapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, resInfos));
 }
 
-HWTEST_F(LocalCapInfoMgrTest, GetCapability_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, GetCapability_001, TestSize.Level1)
 {
     std::string deviceId = "";
     std::string dhId = "";
@@ -160,7 +160,7 @@ HWTEST_F(LocalCapInfoMgrTest, GetCapability_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, GetCapability_002, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, GetCapability_002, TestSize.Level1)
 {
     std::string deviceId = "deviceId_test";
     std::string dhId = "dhId_test";
@@ -177,7 +177,7 @@ HWTEST_F(LocalCapInfoMgrTest, GetCapability_002, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, GetDataByKey_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, GetDataByKey_001, TestSize.Level1)
 {
     std::string key = "";
     std::shared_ptr<CapabilityInfo> capPtr;
@@ -185,7 +185,7 @@ HWTEST_F(LocalCapInfoMgrTest, GetDataByKey_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, GetDataByKey_002, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, GetDataByKey_002, TestSize.Level1)
 {
     std::string key = "key_test";
     std::shared_ptr<CapabilityInfo> capPtr;
@@ -198,7 +198,7 @@ HWTEST_F(LocalCapInfoMgrTest, GetDataByKey_002, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, GetDataByDHType_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, GetDataByDHType_001, TestSize.Level1)
 {
     CapabilityInfoMap capabilityMap;
     std::string deviceId = "deviceId_test";
@@ -214,7 +214,7 @@ HWTEST_F(LocalCapInfoMgrTest, GetDataByDHType_001, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, GetDataByKeyPrefix_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, GetDataByKeyPrefix_001, TestSize.Level1)
 {
     std::string keyPrefix = "";
     CapabilityInfoMap capabilityMap;
@@ -222,7 +222,7 @@ HWTEST_F(LocalCapInfoMgrTest, GetDataByKeyPrefix_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, GetDataByKeyPrefix_002, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, GetDataByKeyPrefix_002, TestSize.Level1)
 {
     std::string keyPrefix = "keyPrefix_test";
     CapabilityInfoMap capabilityMap;
@@ -235,7 +235,7 @@ HWTEST_F(LocalCapInfoMgrTest, GetDataByKeyPrefix_002, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, ClearRemoteDeviceLocalInfoData_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, ClearRemoteDeviceLocalInfoData_001, TestSize.Level1)
 {
     std::string peeruuid = "";
     LocalCapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
@@ -247,7 +247,7 @@ HWTEST_F(LocalCapInfoMgrTest, ClearRemoteDeviceLocalInfoData_001, TestSize.Level
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(LocalCapInfoMgrTest, RemoveLocalInfoInMemByUuid_001, TestSize.Level0)
+HWTEST_F(LocalCapInfoMgrTest, RemoveLocalInfoInMemByUuid_001, TestSize.Level1)
 {
     std::string peeruuid = "123456789";
     std::string dhid = "audio_132";

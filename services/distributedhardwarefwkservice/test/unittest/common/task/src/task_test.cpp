@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -88,7 +88,7 @@ void TaskTest::TearDown()
  * @tc.type: FUNC
  * @tc.require: AR000GHSKP
  */
-HWTEST_F(TaskTest, task_test_001, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_001, TestSize.Level1)
 {
     std::shared_ptr<MockOnLineTask> onlineTask = std::static_pointer_cast<MockOnLineTask>(
         MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, TASK_PARAM_1, nullptr));
@@ -106,7 +106,7 @@ HWTEST_F(TaskTest, task_test_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(TaskTest, task_test_002, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_002, TestSize.Level1)
 {
     std::shared_ptr<MockOnLineTask> onlineTask1 = std::static_pointer_cast<MockOnLineTask>(
         MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, TASK_PARAM_1, nullptr));
@@ -129,7 +129,7 @@ HWTEST_F(TaskTest, task_test_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(TaskTest, task_test_004, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_004, TestSize.Level1)
 {
     std::shared_ptr<MockOnLineTask> onlineTask1 = std::static_pointer_cast<MockOnLineTask>(
         MockTaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, TASK_PARAM_1, nullptr));
@@ -154,7 +154,7 @@ HWTEST_F(TaskTest, task_test_004, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(TaskTest, task_test_005, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_005, TestSize.Level1)
 {
     std::shared_ptr<Task> task = nullptr;
     TaskExecutor::GetInstance().PushTask(task);
@@ -167,7 +167,7 @@ HWTEST_F(TaskTest, task_test_005, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(TaskTest, task_test_006, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_006, TestSize.Level1)
 {
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, taskParam, nullptr);
@@ -180,7 +180,7 @@ HWTEST_F(TaskTest, task_test_006, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(TaskTest, task_test_007, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_007, TestSize.Level1)
 {
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, nullptr);
@@ -193,7 +193,7 @@ HWTEST_F(TaskTest, task_test_007, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(TaskTest, task_test_008, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_008, TestSize.Level1)
 {
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::ON_LINE, taskParam, nullptr);
@@ -206,7 +206,7 @@ HWTEST_F(TaskTest, task_test_008, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(TaskTest, task_test_009, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_009, TestSize.Level1)
 {
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);
@@ -219,7 +219,7 @@ HWTEST_F(TaskTest, task_test_009, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(TaskTest, task_test_010, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_010, TestSize.Level1)
 {
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::UNKNOWN, taskParam, nullptr);
@@ -232,7 +232,7 @@ HWTEST_F(TaskTest, task_test_010, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(TaskTest, task_test_011, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_011, TestSize.Level1)
 {
     std::string taskId;
     TaskBoard::GetInstance().tasks_.clear();
@@ -246,7 +246,7 @@ HWTEST_F(TaskTest, task_test_011, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(TaskTest, task_test_012, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_012, TestSize.Level1)
 {
     std::vector<TaskDump> taskInfos;
     std::shared_ptr<Task> childrenTask = std::make_shared<OnLineTask>("networkId", "uuid", "udid", "dhId",
@@ -262,7 +262,7 @@ HWTEST_F(TaskTest, task_test_012, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(TaskTest, task_test_013, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_013, TestSize.Level1)
 {
     std::string enabledDeviceKey;
     TaskParam taskParam;
@@ -276,7 +276,7 @@ HWTEST_F(TaskTest, task_test_013, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(TaskTest, task_test_014, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_014, TestSize.Level1)
 {
     std::string enabledDeviceKey;
     TaskBoard::GetInstance().RemoveEnabledDevice(enabledDeviceKey);
@@ -289,7 +289,7 @@ HWTEST_F(TaskTest, task_test_014, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(TaskTest, task_test_015, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_015, TestSize.Level1)
 {
     TaskBoard::GetInstance().enabledDevices_.clear();
     auto ret = TaskBoard::GetInstance().GetEnabledDevice();
@@ -302,7 +302,7 @@ HWTEST_F(TaskTest, task_test_015, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(TaskTest, task_test_016, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_016, TestSize.Level1)
 {
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, nullptr);
@@ -316,7 +316,7 @@ HWTEST_F(TaskTest, task_test_016, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(TaskTest, task_test_017, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_017, TestSize.Level1)
 {
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
@@ -330,7 +330,7 @@ HWTEST_F(TaskTest, task_test_017, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(TaskTest, task_test_018, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_018, TestSize.Level1)
 {
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);
@@ -347,7 +347,7 @@ HWTEST_F(TaskTest, task_test_018, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(TaskTest, task_test_019, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_019, TestSize.Level1)
 {
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);
@@ -364,7 +364,7 @@ HWTEST_F(TaskTest, task_test_019, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(TaskTest, task_test_020, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_020, TestSize.Level1)
 {
     std::shared_ptr<Task> childrenTask = std::make_shared<OnLineTask>("networkId", "uuid", "udid", "dhId",
         DHType::AUDIO);
@@ -380,14 +380,14 @@ HWTEST_F(TaskTest, task_test_020, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(TaskTest, task_test_021, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_021, TestSize.Level1)
 {
     TaskExecutor::GetInstance().taskThreadFlag_ = false;
     TaskExecutor::GetInstance().TriggerTask();
     ASSERT_EQ(true, TaskExecutor::GetInstance().taskQueue_.empty());
 }
 
-HWTEST_F(TaskTest, task_test_022, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_022, TestSize.Level1)
 {
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::META_ENABLE, taskParam, nullptr);
@@ -395,7 +395,7 @@ HWTEST_F(TaskTest, task_test_022, TestSize.Level0)
     ASSERT_TRUE(task->childrenTasks_.empty());
 }
 
-HWTEST_F(TaskTest, task_test_023, TestSize.Level0)
+HWTEST_F(TaskTest, task_test_023, TestSize.Level1)
 {
     TaskParam taskParam;
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::OFF_LINE, taskParam, nullptr);

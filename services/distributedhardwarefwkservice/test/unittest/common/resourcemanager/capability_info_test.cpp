@@ -42,7 +42,7 @@ void CapabilityInfoTest::SetUpTestCase() {}
 
 void CapabilityInfoTest::TearDownTestCase() {}
 
-HWTEST_F(CapabilityInfoTest, ToJson_001, TestSize.Level0)
+HWTEST_F(CapabilityInfoTest, ToJson_001, TestSize.Level1)
 {
     cJSON *jsonObject = nullptr;
     CapabilityInfo capability;
@@ -50,7 +50,7 @@ HWTEST_F(CapabilityInfoTest, ToJson_001, TestSize.Level0)
     EXPECT_TRUE(capability.GetDHId().empty());
 }
 
-HWTEST_F(CapabilityInfoTest, FromJson_001, TestSize.Level0)
+HWTEST_F(CapabilityInfoTest, FromJson_001, TestSize.Level1)
 {
     cJSON *jsonObject = nullptr;
     CapabilityInfo capability;
@@ -58,7 +58,7 @@ HWTEST_F(CapabilityInfoTest, FromJson_001, TestSize.Level0)
     EXPECT_TRUE(capability.GetDHId().empty());
 }
 
-HWTEST_F(CapabilityInfoTest, FromJson_002, TestSize.Level0)
+HWTEST_F(CapabilityInfoTest, FromJson_002, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -76,7 +76,7 @@ HWTEST_F(CapabilityInfoTest, FromJson_002, TestSize.Level0)
     EXPECT_TRUE(capability.GetDeviceId().empty());
 }
 
-HWTEST_F(CapabilityInfoTest, FromJson_003, TestSize.Level0)
+HWTEST_F(CapabilityInfoTest, FromJson_003, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -95,7 +95,7 @@ HWTEST_F(CapabilityInfoTest, FromJson_003, TestSize.Level0)
     EXPECT_FALSE(capability.GetDHId().empty());
 }
 
-HWTEST_F(CapabilityInfoTest, FromJson_004, TestSize.Level0)
+HWTEST_F(CapabilityInfoTest, FromJson_004, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -115,7 +115,7 @@ HWTEST_F(CapabilityInfoTest, FromJson_004, TestSize.Level0)
     EXPECT_FALSE(capability.GetDHId().empty());
 }
 
-HWTEST_F(CapabilityInfoTest, FromJson_005, TestSize.Level0)
+HWTEST_F(CapabilityInfoTest, FromJson_005, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -136,7 +136,7 @@ HWTEST_F(CapabilityInfoTest, FromJson_005, TestSize.Level0)
     EXPECT_FALSE(capability.GetDHId().empty());
 }
 
-HWTEST_F(CapabilityInfoTest, FromJson_006, TestSize.Level0)
+HWTEST_F(CapabilityInfoTest, FromJson_006, TestSize.Level1)
 {
     const uint16_t devType = 1;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -159,7 +159,7 @@ HWTEST_F(CapabilityInfoTest, FromJson_006, TestSize.Level0)
     EXPECT_FALSE(capability.GetDHId().empty());
 }
 
-HWTEST_F(CapabilityInfoTest, FromJson_007, TestSize.Level0)
+HWTEST_F(CapabilityInfoTest, FromJson_007, TestSize.Level1)
 {
     const uint16_t devType = 1;
     const uint32_t dhType = 1;
@@ -184,7 +184,7 @@ HWTEST_F(CapabilityInfoTest, FromJson_007, TestSize.Level0)
     EXPECT_FALSE(capability.GetDHId().empty());
 }
 
-HWTEST_F(CapabilityInfoTest, FromJson_008, TestSize.Level0)
+HWTEST_F(CapabilityInfoTest, FromJson_008, TestSize.Level1)
 {
     const uint16_t devType = 1;
     const uint32_t dhType = 1;
@@ -210,7 +210,7 @@ HWTEST_F(CapabilityInfoTest, FromJson_008, TestSize.Level0)
     EXPECT_FALSE(capability.GetDHId().empty());
 }
 
-HWTEST_F(CapabilityInfoTest, FromJson_009, TestSize.Level0)
+HWTEST_F(CapabilityInfoTest, FromJson_009, TestSize.Level1)
 {
     const uint16_t devType = 1;
     const uint32_t dhType = 1;
@@ -236,7 +236,7 @@ HWTEST_F(CapabilityInfoTest, FromJson_009, TestSize.Level0)
     EXPECT_FALSE(capability.GetDHId().empty());
 }
 
-HWTEST_F(CapabilityInfoTest, IsCapKeyMatchDeviceId_001, TestSize.Level0)
+HWTEST_F(CapabilityInfoTest, IsCapKeyMatchDeviceId_001, TestSize.Level1)
 {
     std::string key = "";
     std::string deviceId = "";

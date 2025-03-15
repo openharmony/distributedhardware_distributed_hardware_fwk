@@ -115,7 +115,7 @@ HWTEST_F(AccessManagerTest, SendOffLineEvent_001, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(AccessManagerTest, Init_001, TestSize.Level0)
+HWTEST_F(AccessManagerTest, Init_001, TestSize.Level1)
 {
     EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
 }
@@ -126,7 +126,7 @@ HWTEST_F(AccessManagerTest, Init_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(AccessManagerTest, OnRemoteDied_001, TestSize.Level0)
+HWTEST_F(AccessManagerTest, OnRemoteDied_001, TestSize.Level1)
 {
     AccessManager::GetInstance()->OnRemoteDied();
     EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
@@ -138,7 +138,7 @@ HWTEST_F(AccessManagerTest, OnRemoteDied_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(AccessManagerTest, OnDeviceOnline_001, TestSize.Level0)
+HWTEST_F(AccessManagerTest, OnDeviceOnline_001, TestSize.Level1)
 {
     DmDeviceInfo deviceInfo = {
         .deviceId = "123456789",
@@ -150,7 +150,7 @@ HWTEST_F(AccessManagerTest, OnDeviceOnline_001, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
 }
 
-HWTEST_F(AccessManagerTest, OnDeviceOnline_002, TestSize.Level0)
+HWTEST_F(AccessManagerTest, OnDeviceOnline_002, TestSize.Level1)
 {
     DmDeviceInfo deviceInfo = {
         .deviceId = "123456789",
@@ -168,13 +168,13 @@ HWTEST_F(AccessManagerTest, OnDeviceOnline_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(AccessManagerTest, OnDeviceOffline_001, TestSize.Level0)
+HWTEST_F(AccessManagerTest, OnDeviceOffline_001, TestSize.Level1)
 {
     DmDeviceInfo deviceInfo;
     ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceOffline(deviceInfo));
 }
 
-HWTEST_F(AccessManagerTest, OnDeviceOffline_002, TestSize.Level0)
+HWTEST_F(AccessManagerTest, OnDeviceOffline_002, TestSize.Level1)
 {
     DmDeviceInfo deviceInfo = {
         .deviceId = "123456789",
@@ -185,7 +185,7 @@ HWTEST_F(AccessManagerTest, OnDeviceOffline_002, TestSize.Level0)
     ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceOffline(deviceInfo));
 }
 
-HWTEST_F(AccessManagerTest, OnDeviceOffline_003, TestSize.Level0)
+HWTEST_F(AccessManagerTest, OnDeviceOffline_003, TestSize.Level1)
 {
     DmDeviceInfo deviceInfo = {
         .deviceId = "123456789",
@@ -212,7 +212,7 @@ HWTEST_F(AccessManagerTest, OnDeviceOffline_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(AccessManagerTest, UnInit_001, TestSize.Level0)
+HWTEST_F(AccessManagerTest, UnInit_001, TestSize.Level1)
 {
     EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->UnInit());
 }
@@ -223,7 +223,7 @@ HWTEST_F(AccessManagerTest, UnInit_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(AccessManagerTest, CheckExitSAOrNot_001, TestSize.Level0)
+HWTEST_F(AccessManagerTest, CheckExitSAOrNot_001, TestSize.Level1)
 {
     ASSERT_NO_FATAL_FAILURE(DistributedHardwareManagerFactory::GetInstance().CheckExitSAOrNot());
 }
@@ -234,7 +234,7 @@ HWTEST_F(AccessManagerTest, CheckExitSAOrNot_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(AccessManagerTest, InitLocalDevInfo_001, TestSize.Level0)
+HWTEST_F(AccessManagerTest, InitLocalDevInfo_001, TestSize.Level1)
 {
     ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().InitLocalDevInfo());
 }

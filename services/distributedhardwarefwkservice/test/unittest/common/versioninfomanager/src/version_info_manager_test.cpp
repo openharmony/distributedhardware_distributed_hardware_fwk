@@ -130,7 +130,7 @@ void VersionInfoManagerTest::TearDown()
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(VersionInfoManagerTest, version_info_manager_test_001, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, version_info_manager_test_001, TestSize.Level1)
 {
     EXPECT_EQ(VersionInfoManager::GetInstance()->Init(), DH_FWK_SUCCESS);
 }
@@ -141,7 +141,7 @@ HWTEST_F(VersionInfoManagerTest, version_info_manager_test_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSCV
  */
-HWTEST_F(VersionInfoManagerTest, version_info_manager_test_002, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, version_info_manager_test_002, TestSize.Level1)
 {
     for (const auto& verInfo : g_versionInfos) {
         EXPECT_EQ(VersionInfoManager::GetInstance()->AddVersion(verInfo), DH_FWK_SUCCESS);
@@ -154,7 +154,7 @@ HWTEST_F(VersionInfoManagerTest, version_info_manager_test_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(VersionInfoManagerTest, version_info_manager_test_003, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, version_info_manager_test_003, TestSize.Level1)
 {
     VersionInfo versionInfo;
     for (const auto& verInfo : g_versionInfos) {
@@ -169,7 +169,7 @@ HWTEST_F(VersionInfoManagerTest, version_info_manager_test_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(VersionInfoManagerTest, version_info_manager_test_004, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, version_info_manager_test_004, TestSize.Level1)
 {
     EXPECT_EQ(VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(DEV_ID_1), DH_FWK_SUCCESS);
 }
@@ -180,12 +180,12 @@ HWTEST_F(VersionInfoManagerTest, version_info_manager_test_004, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(VersionInfoManagerTest, version_info_manager_test_005, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, version_info_manager_test_005, TestSize.Level1)
 {
     EXPECT_EQ(VersionInfoManager::GetInstance()->UnInit(), DH_FWK_SUCCESS);
 }
 
-HWTEST_F(VersionInfoManagerTest, version_info_manager_test_006, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, version_info_manager_test_006, TestSize.Level1)
 {
     VersionInfoManager::GetInstance()->dbAdapterPtr_= nullptr;
     auto ret = VersionInfoManager::GetInstance()->UnInit();
@@ -198,7 +198,7 @@ HWTEST_F(VersionInfoManagerTest, version_info_manager_test_006, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_001, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_001, TestSize.Level1)
 {
     VersionInfo versionInfo;
     versionInfo.deviceId = "deviceId";
@@ -213,7 +213,7 @@ HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_002, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_002, TestSize.Level1)
 {
     std::string testUdid = "111111";
     std::string testUuid = "222222";
@@ -234,7 +234,7 @@ HWTEST_F(VersionInfoManagerTest, UpdateVersionCache_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, RemoveVersionInfoByDeviceId_001, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, RemoveVersionInfoByDeviceId_001, TestSize.Level1)
 {
     std::string deviceId = DEV_ID_1;
     VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
@@ -253,7 +253,7 @@ HWTEST_F(VersionInfoManagerTest, RemoveVersionInfoByDeviceId_001, TestSize.Level
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, RemoveVersionInfoByDeviceId_002, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, RemoveVersionInfoByDeviceId_002, TestSize.Level1)
 {
     std::string deviceId = "deviceId";
     std::string appId;
@@ -270,7 +270,7 @@ HWTEST_F(VersionInfoManagerTest, RemoveVersionInfoByDeviceId_002, TestSize.Level
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_001, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_001, TestSize.Level1)
 {
     std::string deviceId = DEV_ID_1;
     VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
@@ -289,7 +289,7 @@ HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_002, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_002, TestSize.Level1)
 {
     std::string deviceId = "deviceId";
     std::string appId;
@@ -306,7 +306,7 @@ HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_003, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_003, TestSize.Level1)
 {
     std::string deviceId = "device";
     int32_t ret =  VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(deviceId);
@@ -319,7 +319,7 @@ HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_001, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_001, TestSize.Level1)
 {
     VersionInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
     int32_t ret = VersionInfoManager::GetInstance()->SyncRemoteVersionInfos();
@@ -332,7 +332,7 @@ HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_002, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_002, TestSize.Level1)
 {
     std::string udid = "udid_123456";
     std::string uuid = "uuid_123456";
@@ -352,7 +352,7 @@ HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, OnChange_001, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, OnChange_001, TestSize.Level1)
 {
     DistributedKv::Entry insert, update, del;
     insert.key = "strBase";
@@ -369,7 +369,7 @@ HWTEST_F(VersionInfoManagerTest, OnChange_001, TestSize.Level0)
     ASSERT_NO_FATAL_FAILURE(VersionInfoManager::GetInstance()->OnChange(changeIn));
 }
 
-HWTEST_F(VersionInfoManagerTest, OnChange_002, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, OnChange_002, TestSize.Level1)
 {
     DistributedKv::Entry insert, update, del;
     std::vector<DistributedKv::Entry> inserts, updates, deleteds;
@@ -390,7 +390,7 @@ HWTEST_F(VersionInfoManagerTest, OnChange_002, TestSize.Level0)
     ASSERT_NO_FATAL_FAILURE(VersionInfoManager::GetInstance()->OnChange(changeIn));
 }
 
-HWTEST_F(VersionInfoManagerTest, OnChange_003, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, OnChange_003, TestSize.Level1)
 {
     DistributedKv::Entry insert, update, del;
     std::vector<DistributedKv::Entry> inserts, updates, deleteds;
@@ -407,7 +407,7 @@ HWTEST_F(VersionInfoManagerTest, OnChange_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, HandleVersionChange_001, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, HandleVersionChange_001, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -448,7 +448,7 @@ HWTEST_F(VersionInfoManagerTest, HandleVersionChange_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(VersionInfoManagerTest, HandleVersionChange_002, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, HandleVersionChange_002, TestSize.Level1)
 {
     std::string uuid = "123456789";
     DHContext::GetInstance().AddOnlineDevice("111111", uuid, "222222");
@@ -476,7 +476,7 @@ HWTEST_F(VersionInfoManagerTest, HandleVersionChange_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJE
  */
-HWTEST_F(VersionInfoManagerTest, GetVersionInfoByDeviceId_001, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, GetVersionInfoByDeviceId_001, TestSize.Level1)
 {
     std::string deviceId = DEV_ID_1;
     VersionInfo versionInfo;
@@ -490,7 +490,7 @@ HWTEST_F(VersionInfoManagerTest, GetVersionInfoByDeviceId_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(VersionInfoManagerTest, GetVersionInfoByDeviceId_002, TestSize.Level0)
+HWTEST_F(VersionInfoManagerTest, GetVersionInfoByDeviceId_002, TestSize.Level1)
 {
     std::string deviceId = DEV_ID_1;
     VersionInfo versionInfo;

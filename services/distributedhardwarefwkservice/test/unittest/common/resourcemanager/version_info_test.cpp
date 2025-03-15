@@ -42,7 +42,7 @@ void VersionInfoTest::SetUpTestCase() {}
 
 void VersionInfoTest::TearDownTestCase() {}
 
-HWTEST_F(VersionInfoTest, FromJsonString_001, TestSize.Level0)
+HWTEST_F(VersionInfoTest, FromJsonString_001, TestSize.Level1)
 {
     std::shared_ptr<VersionInfo> versionInfoPtr = std::make_shared<VersionInfo>();
     std::string jsonStr = "";
@@ -50,7 +50,7 @@ HWTEST_F(VersionInfoTest, FromJsonString_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(VersionInfoTest, ToJson_001, TestSize.Level0)
+HWTEST_F(VersionInfoTest, ToJson_001, TestSize.Level1)
 {
     cJSON *jsonObj = nullptr;
     VersionInfo verInfo;
@@ -58,7 +58,7 @@ HWTEST_F(VersionInfoTest, ToJson_001, TestSize.Level0)
     EXPECT_TRUE(verInfo.deviceId.empty());
 }
 
-HWTEST_F(VersionInfoTest, ToJson_002, TestSize.Level0)
+HWTEST_F(VersionInfoTest, ToJson_002, TestSize.Level1)
 {
     CompVersion compVerTo;
     CompVersion compVerFrom;
@@ -82,7 +82,7 @@ HWTEST_F(VersionInfoTest, ToJson_002, TestSize.Level0)
     EXPECT_EQ(compVerTo.sinkSupportedFeatures, compVerFrom.sinkSupportedFeatures);
 }
 
-HWTEST_F(VersionInfoTest, FromJson_CompVersion_001, TestSize.Level0)
+HWTEST_F(VersionInfoTest, FromJson_CompVersion_001, TestSize.Level1)
 {
     cJSON *jsonObj = nullptr;
     CompVersion compVer;
@@ -90,7 +90,7 @@ HWTEST_F(VersionInfoTest, FromJson_CompVersion_001, TestSize.Level0)
     EXPECT_TRUE(compVer.name.empty());
 }
 
-HWTEST_F(VersionInfoTest, FromJson_CompVersion_002, TestSize.Level0)
+HWTEST_F(VersionInfoTest, FromJson_CompVersion_002, TestSize.Level1)
 {
     const uint32_t dhType = 1;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -106,7 +106,7 @@ HWTEST_F(VersionInfoTest, FromJson_CompVersion_002, TestSize.Level0)
     EXPECT_FALSE(compVer.name.empty());
 }
 
-HWTEST_F(VersionInfoTest, FromJson_CompVersion_003, TestSize.Level0)
+HWTEST_F(VersionInfoTest, FromJson_CompVersion_003, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -121,7 +121,7 @@ HWTEST_F(VersionInfoTest, FromJson_CompVersion_003, TestSize.Level0)
     EXPECT_TRUE(compVer.name.empty());
 }
 
-HWTEST_F(VersionInfoTest, FromJson_VersionInfo_001, TestSize.Level0)
+HWTEST_F(VersionInfoTest, FromJson_VersionInfo_001, TestSize.Level1)
 {
     cJSON *jsonObj = nullptr;
     VersionInfo verInfo;
@@ -129,7 +129,7 @@ HWTEST_F(VersionInfoTest, FromJson_VersionInfo_001, TestSize.Level0)
     EXPECT_TRUE(verInfo.deviceId.empty());
 }
 
-HWTEST_F(VersionInfoTest, FromJson_VersionInfo_002, TestSize.Level0)
+HWTEST_F(VersionInfoTest, FromJson_VersionInfo_002, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -149,7 +149,7 @@ HWTEST_F(VersionInfoTest, FromJson_VersionInfo_002, TestSize.Level0)
     EXPECT_FALSE(verInfo.deviceId.empty());
 }
 
-HWTEST_F(VersionInfoTest, FromJson_VersionInfo_003, TestSize.Level0)
+HWTEST_F(VersionInfoTest, FromJson_VersionInfo_003, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);

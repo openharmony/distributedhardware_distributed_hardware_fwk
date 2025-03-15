@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -57,7 +57,7 @@ void MetaCapInfoTest::SetUpTestCase() {}
 
 void MetaCapInfoTest::TearDownTestCase() {}
 
-HWTEST_F(MetaCapInfoTest, FromJsonString_001, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJsonString_001, TestSize.Level1)
 {
     uint16_t devType = 1;
     std::shared_ptr<MetaCapabilityInfo> metaCapInfo =
@@ -68,7 +68,7 @@ HWTEST_F(MetaCapInfoTest, FromJsonString_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(MetaCapInfoTest, FromJsonString_002, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJsonString_002, TestSize.Level1)
 {
     uint16_t devType = 1;
     std::shared_ptr<MetaCapabilityInfo> metaCapInfo =
@@ -89,14 +89,14 @@ HWTEST_F(MetaCapInfoTest, FromJsonString_002, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(MetaCapInfoTest, ToJson_001, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, ToJson_001, TestSize.Level1)
 {
     cJSON *jsonObject = nullptr;
     MetaCapabilityInfo metaCapInfo;
     EXPECT_NO_FATAL_FAILURE(ToJson(jsonObject, metaCapInfo));
 }
 
-HWTEST_F(MetaCapInfoTest, FromJson_001, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJson_001, TestSize.Level1)
 {
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -106,7 +106,7 @@ HWTEST_F(MetaCapInfoTest, FromJson_001, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaCapInfoTest, FromJson_002, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJson_002, TestSize.Level1)
 {
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -117,7 +117,7 @@ HWTEST_F(MetaCapInfoTest, FromJson_002, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaCapInfoTest, FromJson_003, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJson_003, TestSize.Level1)
 {
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -129,7 +129,7 @@ HWTEST_F(MetaCapInfoTest, FromJson_003, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaCapInfoTest, FromJson_004, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJson_004, TestSize.Level1)
 {
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -143,7 +143,7 @@ HWTEST_F(MetaCapInfoTest, FromJson_004, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaCapInfoTest, FromJson_005, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJson_005, TestSize.Level1)
 {
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -158,7 +158,7 @@ HWTEST_F(MetaCapInfoTest, FromJson_005, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaCapInfoTest, FromJson_006, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJson_006, TestSize.Level1)
 {
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -174,7 +174,7 @@ HWTEST_F(MetaCapInfoTest, FromJson_006, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaCapInfoTest, FromJson_007, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJson_007, TestSize.Level1)
 {
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -191,7 +191,7 @@ HWTEST_F(MetaCapInfoTest, FromJson_007, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaCapInfoTest, FromJson_008, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJson_008, TestSize.Level1)
 {
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -209,7 +209,7 @@ HWTEST_F(MetaCapInfoTest, FromJson_008, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaCapInfoTest, FromJson_009, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJson_009, TestSize.Level1)
 {
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -228,7 +228,7 @@ HWTEST_F(MetaCapInfoTest, FromJson_009, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaCapInfoTest, FromJson_010, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, FromJson_010, TestSize.Level1)
 {
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
@@ -246,7 +246,7 @@ HWTEST_F(MetaCapInfoTest, FromJson_010, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaCapInfoTest, Compare_001, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, Compare_001, TestSize.Level1)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("", "", "", devType, DHType::CAMERA, "", "", "", CompVersion{ .sinkVersion = "" });
@@ -257,7 +257,7 @@ HWTEST_F(MetaCapInfoTest, Compare_001, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(MetaCapInfoTest, Compare_002, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, Compare_002, TestSize.Level1)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "", "", devType, DHType::CAMERA, "", "", "",
@@ -269,7 +269,7 @@ HWTEST_F(MetaCapInfoTest, Compare_002, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(MetaCapInfoTest, Compare_003, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, Compare_003, TestSize.Level1)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "", devType, DHType::CAMERA, "", "", "",
@@ -280,7 +280,7 @@ HWTEST_F(MetaCapInfoTest, Compare_003, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(MetaCapInfoTest, Compare_004, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, Compare_004, TestSize.Level1)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "", "", "",
@@ -292,7 +292,7 @@ HWTEST_F(MetaCapInfoTest, Compare_004, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(MetaCapInfoTest, Compare_005, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, Compare_005, TestSize.Level1)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "", "", "",
@@ -303,7 +303,7 @@ HWTEST_F(MetaCapInfoTest, Compare_005, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(MetaCapInfoTest, Compare_006, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, Compare_006, TestSize.Level1)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "", "", "",
@@ -315,7 +315,7 @@ HWTEST_F(MetaCapInfoTest, Compare_006, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(MetaCapInfoTest, Compare_007, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, Compare_007, TestSize.Level1)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname", devType, DHType::CAMERA, "attrs", "", "",
@@ -327,7 +327,7 @@ HWTEST_F(MetaCapInfoTest, Compare_007, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(MetaCapInfoTest, Compare_008, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, Compare_008, TestSize.Level1)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname",
@@ -339,7 +339,7 @@ HWTEST_F(MetaCapInfoTest, Compare_008, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(MetaCapInfoTest, Compare_009, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, Compare_009, TestSize.Level1)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname",
@@ -351,7 +351,7 @@ HWTEST_F(MetaCapInfoTest, Compare_009, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(MetaCapInfoTest, Compare_010, TestSize.Level0)
+HWTEST_F(MetaCapInfoTest, Compare_010, TestSize.Level1)
 {
     uint16_t devType = 1;
     MetaCapabilityInfo metaCapInfo("devid_123", "dhid_123", "devname",

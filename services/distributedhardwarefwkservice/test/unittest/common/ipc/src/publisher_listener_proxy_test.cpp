@@ -47,7 +47,7 @@ void PublisherListenerProxyTest::TestPublisherListenerStub::OnMessage(const DHTo
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(PublisherListenerProxyTest, OnMessage_001, TestSize.Level0)
+HWTEST_F(PublisherListenerProxyTest, OnMessage_001, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_MIN;
     std::string message = "";
@@ -63,7 +63,7 @@ HWTEST_F(PublisherListenerProxyTest, OnMessage_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(PublisherListenerProxyTest, OnMessage_002, TestSize.Level0)
+HWTEST_F(PublisherListenerProxyTest, OnMessage_002, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_MAX;
     std::string message = "";
@@ -79,7 +79,7 @@ HWTEST_F(PublisherListenerProxyTest, OnMessage_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(PublisherListenerProxyTest, OnMessage_003, TestSize.Level0)
+HWTEST_F(PublisherListenerProxyTest, OnMessage_003, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
     std::string message = "";
@@ -89,7 +89,7 @@ HWTEST_F(PublisherListenerProxyTest, OnMessage_003, TestSize.Level0)
     EXPECT_NO_FATAL_FAILURE(listenerProxy.OnMessage(topic, message));
 }
 
-HWTEST_F(PublisherListenerProxyTest, OnMessage_004, TestSize.Level0)
+HWTEST_F(PublisherListenerProxyTest, OnMessage_004, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
     std::string message = "message_test";

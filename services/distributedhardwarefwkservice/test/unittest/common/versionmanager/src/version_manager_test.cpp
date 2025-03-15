@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,7 +62,7 @@ const std::string TEST_COMPONENT_NAME_3 = "distributed_mic";
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(VersionManagerTest, version_manager_test_001, TestSize.Level0)
+HWTEST_F(VersionManagerTest, version_manager_test_001, TestSize.Level1)
 {
     auto ret = VersionManager::GetInstance().Init();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
@@ -84,7 +84,7 @@ void CompVersionGetValue(CompVersion &cVs, std::string name, DHType dhType, std:
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(VersionManagerTest, version_manager_test_002, TestSize.Level0)
+HWTEST_F(VersionManagerTest, version_manager_test_002, TestSize.Level1)
 {
     DHVersion dhVersion;
     CompVersion cVs1;
@@ -114,7 +114,7 @@ HWTEST_F(VersionManagerTest, version_manager_test_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(VersionManagerTest, version_manager_test_003, TestSize.Level0)
+HWTEST_F(VersionManagerTest, version_manager_test_003, TestSize.Level1)
 {
     std::string strVersion = VersionManager::GetInstance().GetLocalDeviceVersion();
     EXPECT_EQ(DH_LOCAL_VERSION, strVersion);
@@ -126,7 +126,7 @@ HWTEST_F(VersionManagerTest, version_manager_test_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(VersionManagerTest, version_manager_test_004, TestSize.Level0)
+HWTEST_F(VersionManagerTest, version_manager_test_004, TestSize.Level1)
 {
     DHVersion dhVersion;
     int32_t ret = VersionManager::GetInstance().GetDHVersion(TEST_DEVICE_ID_2, dhVersion);
@@ -143,7 +143,7 @@ HWTEST_F(VersionManagerTest, version_manager_test_004, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(VersionManagerTest, version_manager_test_005, TestSize.Level0)
+HWTEST_F(VersionManagerTest, version_manager_test_005, TestSize.Level1)
 {
     int32_t ret = VersionManager::GetInstance().RemoveDHVersion(TEST_DEVICE_ID_2);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
@@ -161,7 +161,7 @@ HWTEST_F(VersionManagerTest, version_manager_test_005, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(VersionManagerTest, version_manager_test_006, TestSize.Level0)
+HWTEST_F(VersionManagerTest, version_manager_test_006, TestSize.Level1)
 {
     DHVersion dhVersion;
     CompVersion cVs1;
@@ -182,7 +182,7 @@ HWTEST_F(VersionManagerTest, version_manager_test_006, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(VersionManagerTest, version_manager_test_007, TestSize.Level0)
+HWTEST_F(VersionManagerTest, version_manager_test_007, TestSize.Level1)
 {
     DHVersion dhVersion;
     CompVersion cVs1;
@@ -203,7 +203,7 @@ HWTEST_F(VersionManagerTest, version_manager_test_007, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSKN
  */
-HWTEST_F(VersionManagerTest, version_manager_test_008, TestSize.Level0)
+HWTEST_F(VersionManagerTest, version_manager_test_008, TestSize.Level1)
 {
     ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
     int32_t ret = VersionManager::GetInstance().Init();

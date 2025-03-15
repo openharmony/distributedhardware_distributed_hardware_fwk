@@ -58,7 +58,7 @@ void DistributedHardwareServiceTest::TearDown() {}
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, register_publisher_listener_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, register_publisher_listener_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     auto ret = service.RegisterPublisherListener(TOPIC, g_listener);
@@ -72,7 +72,7 @@ HWTEST_F(DistributedHardwareServiceTest, register_publisher_listener_001, TestSi
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, register_publisher_listener_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, register_publisher_listener_002, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     sptr<IPublisherListener> listener = nullptr;
@@ -86,7 +86,7 @@ HWTEST_F(DistributedHardwareServiceTest, register_publisher_listener_002, TestSi
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, unregister_publisher_listener_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, unregister_publisher_listener_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     service.RegisterPublisherListener(TOPIC, g_listener);
@@ -101,7 +101,7 @@ HWTEST_F(DistributedHardwareServiceTest, unregister_publisher_listener_001, Test
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, publish_message_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, publish_message_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string msg;
@@ -117,7 +117,7 @@ HWTEST_F(DistributedHardwareServiceTest, publish_message_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, publish_message_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, publish_message_002, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string msg = "msg";
@@ -133,7 +133,7 @@ HWTEST_F(DistributedHardwareServiceTest, publish_message_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, onStop_test_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, onStop_test_002, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     service.OnStop();
@@ -147,7 +147,7 @@ HWTEST_F(DistributedHardwareServiceTest, onStop_test_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, dump_test_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, dump_test_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     int32_t fd = 1;
@@ -170,7 +170,7 @@ HWTEST_F(DistributedHardwareServiceTest, dump_test_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, OnStart_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, OnStart_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     service.state_ = ServiceRunningState::STATE_RUNNING;
@@ -185,7 +185,7 @@ HWTEST_F(DistributedHardwareServiceTest, OnStart_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, QueryLocalSysSpec_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, QueryLocalSysSpec_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string ret = service.QueryLocalSysSpec(QueryLocalSysSpecType::HISTREAMER_AUDIO_ENCODER);
@@ -202,7 +202,7 @@ HWTEST_F(DistributedHardwareServiceTest, QueryLocalSysSpec_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, PauseDistributedHardware_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, PauseDistributedHardware_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string networkId = "111";
@@ -218,7 +218,7 @@ HWTEST_F(DistributedHardwareServiceTest, PauseDistributedHardware_001, TestSize.
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string networkId = "111";
@@ -234,7 +234,7 @@ HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_001, TestSize
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string networkId = "111";
@@ -250,7 +250,7 @@ HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_001, TestSize.L
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::vector<DHDescriptor> descriptors;
@@ -270,7 +270,7 @@ HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Le
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, RegisterDHStatusListener_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, RegisterDHStatusListener_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     sptr<IHDSinkStatusListener> listener = nullptr;
@@ -285,7 +285,7 @@ HWTEST_F(DistributedHardwareServiceTest, RegisterDHStatusListener_001, TestSize.
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, RegisterDHStatusListener_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, RegisterDHStatusListener_002, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     sptr<IHDSourceStatusListener> listener = nullptr;
@@ -301,7 +301,7 @@ HWTEST_F(DistributedHardwareServiceTest, RegisterDHStatusListener_002, TestSize.
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, UnregisterDHStatusListener_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, UnregisterDHStatusListener_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     sptr<IHDSinkStatusListener> listener = nullptr;
@@ -316,7 +316,7 @@ HWTEST_F(DistributedHardwareServiceTest, UnregisterDHStatusListener_001, TestSiz
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, UnregisterDHStatusListener_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, UnregisterDHStatusListener_002, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     sptr<IHDSourceStatusListener> listener = nullptr;
@@ -332,7 +332,7 @@ HWTEST_F(DistributedHardwareServiceTest, UnregisterDHStatusListener_002, TestSiz
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, EnableSink_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, EnableSink_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::vector<DHDescriptor> descriptors{{"id_test", DHType::AUDIO}};
@@ -347,7 +347,7 @@ HWTEST_F(DistributedHardwareServiceTest, EnableSink_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, DisableSink_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, DisableSink_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::vector<DHDescriptor> descriptors{{"id_test", DHType::AUDIO}};
@@ -362,7 +362,7 @@ HWTEST_F(DistributedHardwareServiceTest, DisableSink_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, EnableSource_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, EnableSource_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string networkId = "111";
@@ -378,7 +378,7 @@ HWTEST_F(DistributedHardwareServiceTest, EnableSource_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareServiceTest, DisableSource_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, DisableSource_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string networkId = "111";
@@ -388,7 +388,7 @@ HWTEST_F(DistributedHardwareServiceTest, DisableSource_001, TestSize.Level0)
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
-HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_002, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string networkId = "111";
@@ -396,7 +396,7 @@ HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_002, TestSize
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
-HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_002, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string networkId = "111";
@@ -404,14 +404,14 @@ HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_002, TestSize.L
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
-HWTEST_F(DistributedHardwareServiceTest, DoBusinessInit_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, DoBusinessInit_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     auto ret = service.DoBusinessInit();
     EXPECT_EQ(true, ret);
 }
 
-HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_001, TestSize.Level1)
 {
     std::string targetKey = "";
     std::string attrs = "";
@@ -420,7 +420,7 @@ HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_001, TestSize.Level0)
     EXPECT_EQ(0, ret.length());
 }
 
-HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_002, TestSize.Level0)
+HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_002, TestSize.Level1)
 {
     std::string targetKey = "histmAudEnc";
     int32_t target = 100;
