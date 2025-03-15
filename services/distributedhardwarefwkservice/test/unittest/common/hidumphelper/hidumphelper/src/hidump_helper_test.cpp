@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,7 +48,7 @@ void HidumpHelperTest::TearDown() {}
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, Dump_001, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, Dump_001, TestSize.Level1)
 {
     std::vector<std::string> args;
     std::string result;
@@ -62,7 +62,7 @@ HWTEST_F(HidumpHelperTest, Dump_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, Dump_002, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, Dump_002, TestSize.Level1)
 {
     std::vector<std::string> args;
     args.push_back("ARGS_HELP");
@@ -77,7 +77,7 @@ HWTEST_F(HidumpHelperTest, Dump_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ProcessDump_001, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ProcessDump_001, TestSize.Level1)
 {
     HidumpFlag flag = HidumpFlag::UNKNOWN;
     std::string result;
@@ -91,7 +91,7 @@ HWTEST_F(HidumpHelperTest, ProcessDump_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ShowAllLoadedComps_001, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ShowAllLoadedComps_001, TestSize.Level1)
 {
     std::string result;
     int32_t ret = HidumpHelper::GetInstance().ShowAllLoadedComps(result);
@@ -104,7 +104,7 @@ HWTEST_F(HidumpHelperTest, ShowAllLoadedComps_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ShowAllLoadedComps_002, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ShowAllLoadedComps_002, TestSize.Level1)
 {
     std::string result;
     DHType dhType = DHType::CAMERA;
@@ -120,7 +120,7 @@ HWTEST_F(HidumpHelperTest, ShowAllLoadedComps_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ShowAllLoadedComps_003, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ShowAllLoadedComps_003, TestSize.Level1)
 {
     std::string result;
     DHType dhType = DHType::CAMERA;
@@ -136,7 +136,7 @@ HWTEST_F(HidumpHelperTest, ShowAllLoadedComps_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ShowAllEnabledComps_001, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ShowAllEnabledComps_001, TestSize.Level1)
 {
     std::string result;
     int32_t ret = HidumpHelper::GetInstance().ShowAllEnabledComps(result);
@@ -149,7 +149,7 @@ HWTEST_F(HidumpHelperTest, ShowAllEnabledComps_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ShowAllEnabledComps_002, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ShowAllEnabledComps_002, TestSize.Level1)
 {
     std::string result;
     std::string networkId = "networkId_test";
@@ -166,7 +166,7 @@ HWTEST_F(HidumpHelperTest, ShowAllEnabledComps_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ShowAllTaskInfos_001, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ShowAllTaskInfos_001, TestSize.Level1)
 {
     std::string result;
     int32_t ret = HidumpHelper::GetInstance().ShowAllTaskInfos(result);
@@ -179,7 +179,7 @@ HWTEST_F(HidumpHelperTest, ShowAllTaskInfos_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ShowAllTaskInfos_002, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ShowAllTaskInfos_002, TestSize.Level1)
 {
     std::string result;
     std::string networkId = "networkId_test";
@@ -199,7 +199,7 @@ HWTEST_F(HidumpHelperTest, ShowAllTaskInfos_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ShowAllCapabilityInfos_001, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ShowAllCapabilityInfos_001, TestSize.Level1)
 {
     std::string result;
     int32_t ret = HidumpHelper::GetInstance().ShowAllCapabilityInfos(result);
@@ -212,7 +212,7 @@ HWTEST_F(HidumpHelperTest, ShowAllCapabilityInfos_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ShowAllCapabilityInfos_002, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ShowAllCapabilityInfos_002, TestSize.Level1)
 {
     std::string result;
     std::string key  = "1";
@@ -234,7 +234,7 @@ HWTEST_F(HidumpHelperTest, ShowAllCapabilityInfos_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ShowHelp_001, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ShowHelp_001, TestSize.Level1)
 {
     std::string result;
     int32_t ret = HidumpHelper::GetInstance().ShowHelp(result);
@@ -247,7 +247,7 @@ HWTEST_F(HidumpHelperTest, ShowHelp_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(HidumpHelperTest, ShowIllealInfomation_001, TestSize.Level0)
+HWTEST_F(HidumpHelperTest, ShowIllealInfomation_001, TestSize.Level1)
 {
     std::string result;
     int32_t ret = HidumpHelper::GetInstance().ShowIllealInfomation(result);

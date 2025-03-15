@@ -170,7 +170,7 @@ void SetDownComponentLoaderConfig()
  * @tc.type: FUNC
  * @tc.require: AR000GHSK5
  */
-HWTEST_F(ComponentManagerTest, init_test_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, init_test_001, TestSize.Level1)
 {
     ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
     auto ret = ComponentManager::GetInstance().Init();
@@ -183,7 +183,7 @@ HWTEST_F(ComponentManagerTest, init_test_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK5
  */
-HWTEST_F(ComponentManagerTest, init_test_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, init_test_002, TestSize.Level1)
 {
     ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
     auto ret = ComponentManager::GetInstance().Init();
@@ -196,7 +196,7 @@ HWTEST_F(ComponentManagerTest, init_test_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK5
  */
-HWTEST_F(ComponentManagerTest, unInit_test_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, unInit_test_001, TestSize.Level1)
 {
     ComponentManager::GetInstance().cameraCompPrivacy_ = std::make_shared<ComponentPrivacy>();
     ComponentManager::GetInstance().cameraCompPrivacy_->SetPageFlagTrue();
@@ -210,7 +210,7 @@ HWTEST_F(ComponentManagerTest, unInit_test_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(ComponentManagerTest, init_compSource_test_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, init_compSource_test_001, TestSize.Level1)
 {
     ComponentLoader::GetInstance().Init();
     ComponentManager::GetInstance().compSource_.clear();
@@ -227,7 +227,7 @@ HWTEST_F(ComponentManagerTest, init_compSource_test_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(ComponentManagerTest, init_compSink_test_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, init_compSink_test_001, TestSize.Level1)
 {
     ComponentLoader::GetInstance().Init();
     ComponentManager::GetInstance().compSink_.clear();
@@ -244,7 +244,7 @@ HWTEST_F(ComponentManagerTest, init_compSink_test_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level1)
 {
     DeviceInfo devInfo { "", "", "", "", "", "", 0 };
     auto info = std::make_unique<MockDmDeviceInfo>();
@@ -290,7 +290,7 @@ HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(ComponentManagerTest, get_sinkversion_fromvermgr_test_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, get_sinkversion_fromvermgr_test_001, TestSize.Level1)
 {
     CompVersion compVersions1 = {
         .name = NAME_CAMERA,
@@ -316,7 +316,7 @@ HWTEST_F(ComponentManagerTest, get_sinkversion_fromvermgr_test_001, TestSize.Lev
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(ComponentManagerTest, GetDHType_test_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetDHType_test_001, TestSize.Level1)
 {
     std::string uuid = "distribueted_111222333";
     std::string dhId = "camera_1234567489";
@@ -330,7 +330,7 @@ HWTEST_F(ComponentManagerTest, GetDHType_test_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, UnInit_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, UnInit_001, TestSize.Level1)
 {
     ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
     int32_t ret = ComponentManager::GetInstance().UnInit();
@@ -343,7 +343,7 @@ HWTEST_F(ComponentManagerTest, UnInit_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, StartSource_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, StartSource_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
@@ -359,7 +359,7 @@ HWTEST_F(ComponentManagerTest, StartSource_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, StartSource_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, StartSource_002, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
@@ -378,7 +378,7 @@ HWTEST_F(ComponentManagerTest, StartSource_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, StartSink_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, StartSink_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSink *sinkPtr = nullptr;
@@ -394,7 +394,7 @@ HWTEST_F(ComponentManagerTest, StartSink_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, StopSource_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, StopSource_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
@@ -410,7 +410,7 @@ HWTEST_F(ComponentManagerTest, StopSource_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, StopSink_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, StopSink_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSink *sinkPtr = nullptr;
@@ -426,7 +426,7 @@ HWTEST_F(ComponentManagerTest, StopSink_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, WaitForResult_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, WaitForResult_001, TestSize.Level1)
 {
     ComponentManager::Action action = ComponentManager::Action::START_SINK;
     ActionResult actionsResult;
@@ -441,7 +441,7 @@ HWTEST_F(ComponentManagerTest, WaitForResult_001, TestSize.Level0)
      * @tc.type: FUNC
      * @tc.require: AR000GHSJM
      */
-    HWTEST_F(ComponentManagerTest, InitCompSource_001, TestSize.Level0)
+    HWTEST_F(ComponentManagerTest, InitCompSource_001, TestSize.Level1)
     {
         bool ret = ComponentManager::GetInstance().InitCompSource(DHType::AUDIO);
         EXPECT_EQ(true, ret);
@@ -454,7 +454,7 @@ HWTEST_F(ComponentManagerTest, WaitForResult_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, InitCompSink_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, InitCompSink_001, TestSize.Level1)
 {
     SetUpComponentLoaderConfig();
     bool ret = ComponentManager::GetInstance().InitCompSink(DHType::AUDIO);
@@ -468,7 +468,7 @@ HWTEST_F(ComponentManagerTest, InitCompSink_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, Enable_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, Enable_001, TestSize.Level1)
 {
     ComponentManager::GetInstance().compSource_.clear();
     std::string networkId;
@@ -500,7 +500,7 @@ HWTEST_F(ComponentManagerTest, Enable_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, Enable_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, Enable_002, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
@@ -519,7 +519,7 @@ HWTEST_F(ComponentManagerTest, Enable_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, Disable_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, Disable_001, TestSize.Level1)
 {
     ComponentManager::GetInstance().compSource_.clear();
     std::string networkId;
@@ -551,7 +551,7 @@ HWTEST_F(ComponentManagerTest, Disable_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, Disable_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, Disable_002, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
@@ -564,7 +564,7 @@ HWTEST_F(ComponentManagerTest, Disable_002, TestSize.Level0)
     ComponentManager::GetInstance().compSource_.clear();
 }
 
-HWTEST_F(ComponentManagerTest, Disable_003, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, Disable_003, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
@@ -582,7 +582,7 @@ HWTEST_F(ComponentManagerTest, Disable_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetDHType_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetDHType_001, TestSize.Level1)
 {
     std::string uuid;
     std::string dhId;
@@ -596,7 +596,7 @@ HWTEST_F(ComponentManagerTest, GetDHType_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetDHType_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetDHType_002, TestSize.Level1)
 {
     std::string key = Sha256(UUID_TEST) + RESOURCE_SEPARATOR + DH_ID_1;
     CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = CAP_INFO_TEST;
@@ -604,7 +604,7 @@ HWTEST_F(ComponentManagerTest, GetDHType_002, TestSize.Level0)
     EXPECT_EQ(DHType::CAMERA, ret);
 }
 
-HWTEST_F(ComponentManagerTest, GetEnableCapParam_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetEnableCapParam_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     EnableParam param;
@@ -619,7 +619,7 @@ HWTEST_F(ComponentManagerTest, GetEnableCapParam_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(ComponentManagerTest, GetEnableCapParam_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetEnableCapParam_002, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     EnableParam param;
@@ -630,7 +630,7 @@ HWTEST_F(ComponentManagerTest, GetEnableCapParam_002, TestSize.Level0)
     CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
 }
 
-HWTEST_F(ComponentManagerTest, GetEnableMetaParam_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetEnableMetaParam_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     EnableParam param;
@@ -645,7 +645,7 @@ HWTEST_F(ComponentManagerTest, GetEnableMetaParam_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(ComponentManagerTest, GetEnableMetaParam_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetEnableMetaParam_002, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     EnableParam param;
@@ -657,7 +657,7 @@ HWTEST_F(ComponentManagerTest, GetEnableMetaParam_002, TestSize.Level0)
     MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
 }
 
-HWTEST_F(ComponentManagerTest, GetCapParam_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetCapParam_001, TestSize.Level1)
 {
     std::shared_ptr<CapabilityInfo> capability = nullptr;
     int32_t ret = ComponentManager::GetInstance().GetCapParam("", "", capability);
@@ -670,7 +670,7 @@ HWTEST_F(ComponentManagerTest, GetCapParam_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(ComponentManagerTest, GetCapParam_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetCapParam_002, TestSize.Level1)
 {
     std::shared_ptr<CapabilityInfo> capability = nullptr;
     std::string deviceId = "123456789";
@@ -697,7 +697,7 @@ HWTEST_F(ComponentManagerTest, GetCapParam_002, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(ComponentManagerTest, GetMetaParam_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetMetaParam_001, TestSize.Level1)
 {
     std::shared_ptr<MetaCapabilityInfo> metaCapInfo = nullptr;
     int32_t ret = ComponentManager::GetInstance().GetMetaParam("", "", metaCapInfo);
@@ -710,7 +710,7 @@ HWTEST_F(ComponentManagerTest, GetMetaParam_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(ComponentManagerTest, GetMetaParam_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetMetaParam_002, TestSize.Level1)
 {
     std::shared_ptr<MetaCapabilityInfo> metaCapInfo = nullptr;
     DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
@@ -727,7 +727,7 @@ HWTEST_F(ComponentManagerTest, GetMetaParam_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetEnableParam_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetEnableParam_001, TestSize.Level1)
 {
     std::string networkId;
     std::string uuid;
@@ -744,7 +744,7 @@ HWTEST_F(ComponentManagerTest, GetEnableParam_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetEnableParam_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetEnableParam_002, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     EnableParam param;
@@ -759,7 +759,7 @@ HWTEST_F(ComponentManagerTest, GetEnableParam_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_001, TestSize.Level1)
 {
     std::string uuid;
     DHType dhType = DHType::CAMERA;
@@ -774,7 +774,7 @@ HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_002, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     std::string sinkVersion;
@@ -789,7 +789,7 @@ HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_003, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_003, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     DHVersion dhVersion;
@@ -809,7 +809,7 @@ HWTEST_F(ComponentManagerTest, GetVersionFromVerMgr_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetVersionFromVerInfoMgr_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetVersionFromVerInfoMgr_001, TestSize.Level1)
 {
     std::string uuid;
     DHType dhType = DHType::CAMERA;
@@ -824,7 +824,7 @@ HWTEST_F(ComponentManagerTest, GetVersionFromVerInfoMgr_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetVersionFromVerInfoMgr_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetVersionFromVerInfoMgr_002, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     std::string sinkVersion;
@@ -839,7 +839,7 @@ HWTEST_F(ComponentManagerTest, GetVersionFromVerInfoMgr_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, GetVersion_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetVersion_001, TestSize.Level1)
 {
     std::string uuid;
     DHType dhType = DHType::CAMERA;
@@ -848,7 +848,7 @@ HWTEST_F(ComponentManagerTest, GetVersion_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(ComponentManagerTest, GetVersion_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetVersion_002, TestSize.Level1)
 {
     std::string uuid = "123456798";
     DHType dhType = DHType::CAMERA;
@@ -857,7 +857,7 @@ HWTEST_F(ComponentManagerTest, GetVersion_002, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 }
 
-HWTEST_F(ComponentManagerTest, GetVersion_003, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetVersion_003, TestSize.Level1)
 {
     std::string uuid = "123456798";
     DHType dhType = DHType::CAMERA;
@@ -872,7 +872,7 @@ HWTEST_F(ComponentManagerTest, GetVersion_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, UpdateVersionCache_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, UpdateVersionCache_001, TestSize.Level1)
 {
     std::string uuid;
     VersionInfo versionInfo;
@@ -887,14 +887,14 @@ HWTEST_F(ComponentManagerTest, UpdateVersionCache_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, DumpLoadedCompsource_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, DumpLoadedCompsource_001, TestSize.Level1)
 {
     std::set<DHType> compSourceType;
     ComponentManager::GetInstance().DumpLoadedCompsource(compSourceType);
     EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
 }
 
-HWTEST_F(ComponentManagerTest, DumpLoadedCompsink_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, DumpLoadedCompsink_001, TestSize.Level1)
 {
     std::set<DHType> compSinkType;
     ComponentManager::GetInstance().DumpLoadedCompsink(compSinkType);
@@ -907,7 +907,7 @@ HWTEST_F(ComponentManagerTest, DumpLoadedCompsink_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, Recover_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, Recover_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     ComponentManager::GetInstance().Recover(dhType);
@@ -920,7 +920,7 @@ HWTEST_F(ComponentManagerTest, Recover_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, DoRecover_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, DoRecover_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     ComponentManager::GetInstance().DoRecover(dhType);
@@ -933,7 +933,7 @@ HWTEST_F(ComponentManagerTest, DoRecover_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, ReStartSA_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, ReStartSA_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     ComponentManager::GetInstance().ReStartSA(dhType);
@@ -946,7 +946,7 @@ HWTEST_F(ComponentManagerTest, ReStartSA_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, RecoverDistributedHardware_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, RecoverDistributedHardware_001, TestSize.Level1)
 {
     CompVersion compVersion;
     compVersion.sinkVersion = "1.0";
@@ -973,7 +973,7 @@ HWTEST_F(ComponentManagerTest, RecoverDistributedHardware_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, RetryGetEnableParam_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, RetryGetEnableParam_001, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     EnableParam param;
@@ -988,7 +988,7 @@ HWTEST_F(ComponentManagerTest, RetryGetEnableParam_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, IsIdenticalAccount_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, IsIdenticalAccount_001, TestSize.Level1)
 {
     auto ret = ComponentManager::GetInstance().IsIdenticalAccount("");
     EXPECT_EQ(ret, false);
@@ -997,7 +997,7 @@ HWTEST_F(ComponentManagerTest, IsIdenticalAccount_001, TestSize.Level0)
     EXPECT_EQ(ret, false);
 }
 
-HWTEST_F(ComponentManagerTest, OnUnregisterResult_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, OnUnregisterResult_001, TestSize.Level1)
 {
     std::string networkId = "networkId_test";
     std::string dhId = "dhId_test";
@@ -1012,7 +1012,7 @@ HWTEST_F(ComponentManagerTest, OnUnregisterResult_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_UNREGISTER_FAILED);
 }
 
-HWTEST_F(ComponentManagerTest, OnRegisterResult_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, OnRegisterResult_001, TestSize.Level1)
 {
     std::string networkId = "networkId_test";
     std::string dhId = "dhId_test";
@@ -1027,7 +1027,7 @@ HWTEST_F(ComponentManagerTest, OnRegisterResult_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_UNREGISTER_FAILED);
 }
 
-HWTEST_F(ComponentManagerTest, UpdateBusinessState_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, UpdateBusinessState_001, TestSize.Level1)
 {
     BusinessState state = BusinessState::UNKNOWN;
     EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateBusinessState("", "", state));
@@ -1039,7 +1039,7 @@ HWTEST_F(ComponentManagerTest, UpdateBusinessState_001, TestSize.Level0)
     EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateBusinessState(NETWORK_TEST, DH_ID_TEST, state));
 }
 
-HWTEST_F(ComponentManagerTest, UpdateBusinessState_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, UpdateBusinessState_002, TestSize.Level1)
 {
     BusinessState state = BusinessState::IDLE;
     EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateBusinessState(NETWORK_TEST, DH_ID_TEST, state));
@@ -1055,7 +1055,7 @@ HWTEST_F(ComponentManagerTest, UpdateBusinessState_002, TestSize.Level0)
     EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateBusinessState(NETWORK_TEST, DH_ID_TEST, state));
 }
 
-HWTEST_F(ComponentManagerTest, QueryBusinessState_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, QueryBusinessState_001, TestSize.Level1)
 {
     BusinessState ret = ComponentManager::GetInstance().QueryBusinessState("", "");
     EXPECT_EQ(BusinessState::UNKNOWN, ret);
@@ -1067,7 +1067,7 @@ HWTEST_F(ComponentManagerTest, QueryBusinessState_001, TestSize.Level0)
     EXPECT_EQ(BusinessState::UNKNOWN, ret);
 }
 
-HWTEST_F(ComponentManagerTest, QueryBusinessState_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, QueryBusinessState_002, TestSize.Level1)
 {
     BusinessState ret = ComponentManager::GetInstance().QueryBusinessState(NETWORK_TEST, DH_ID_TEST);
     EXPECT_EQ(BusinessState::IDLE, ret);
@@ -1077,7 +1077,7 @@ HWTEST_F(ComponentManagerTest, QueryBusinessState_002, TestSize.Level0)
     EXPECT_EQ(BusinessState::UNKNOWN, ret);
 }
 
-HWTEST_F(ComponentManagerTest, TriggerFullCapsSync_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, TriggerFullCapsSync_001, TestSize.Level1)
 {
     EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().TriggerFullCapsSync(""));
 
@@ -1087,13 +1087,13 @@ HWTEST_F(ComponentManagerTest, TriggerFullCapsSync_001, TestSize.Level0)
     EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().TriggerFullCapsSync(NETWORK_TEST));
 }
 
-HWTEST_F(ComponentManagerTest, GetDHSourceInstance_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetDHSourceInstance_001, TestSize.Level1)
 {
     const IDistributedHardwareSource *sourcePtr = ComponentManager::GetInstance().GetDHSourceInstance(DHType::UNKNOWN);
     EXPECT_EQ(nullptr, sourcePtr);
 }
 
-HWTEST_F(ComponentManagerTest, GetDHSourceInstance_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, GetDHSourceInstance_002, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
@@ -1103,7 +1103,7 @@ HWTEST_F(ComponentManagerTest, GetDHSourceInstance_002, TestSize.Level0)
     ComponentManager::GetInstance().compSource_.clear();
 }
 
-HWTEST_F(ComponentManagerTest, CheckDemandStart_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, CheckDemandStart_001, TestSize.Level1)
 {
     bool enableSink = false;
     bool enableSource = false;
@@ -1111,35 +1111,35 @@ HWTEST_F(ComponentManagerTest, CheckDemandStart_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND);
 }
 
-HWTEST_F(ComponentManagerTest, RegisterDHStatusListener_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, RegisterDHStatusListener_001, TestSize.Level1)
 {
     sptr<IHDSinkStatusListener> listener = nullptr;
     auto ret = ComponentManager::GetInstance().RegisterDHStatusListener(listener, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
-HWTEST_F(ComponentManagerTest, RegisterDHStatusListener_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, RegisterDHStatusListener_002, TestSize.Level1)
 {
     sptr<IHDSourceStatusListener> listener = nullptr;
     auto ret = ComponentManager::GetInstance().RegisterDHStatusListener(NETWORK_TEST, listener, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
-HWTEST_F(ComponentManagerTest, UnregisterDHStatusListener_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, UnregisterDHStatusListener_001, TestSize.Level1)
 {
     sptr<IHDSinkStatusListener> listener = nullptr;
     auto ret = ComponentManager::GetInstance().UnregisterDHStatusListener(listener, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
-HWTEST_F(ComponentManagerTest, UnregisterDHStatusListener_002, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, UnregisterDHStatusListener_002, TestSize.Level1)
 {
     sptr<IHDSourceStatusListener> listener = nullptr;
     auto ret = ComponentManager::GetInstance().UnregisterDHStatusListener(NETWORK_TEST, listener, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
-HWTEST_F(ComponentManagerTest, EnableSink_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, EnableSink_001, TestSize.Level1)
 {
     DHDescriptor dhDescriptor {
         .id = AUDIO_ID_TEST,
@@ -1152,7 +1152,7 @@ HWTEST_F(ComponentManagerTest, EnableSink_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
-HWTEST_F(ComponentManagerTest, DisableSink_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, DisableSink_001, TestSize.Level1)
 {
     DHDescriptor dhDescriptor {
         .id = AUDIO_ID_TEST,
@@ -1165,7 +1165,7 @@ HWTEST_F(ComponentManagerTest, DisableSink_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
-HWTEST_F(ComponentManagerTest, EnableSource_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, EnableSource_001, TestSize.Level1)
 {
     DHDescriptor dhDescriptor {
         .id = AUDIO_ID_TEST,
@@ -1177,7 +1177,7 @@ HWTEST_F(ComponentManagerTest, EnableSource_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_MONITOR_NULL);
 }
 
-HWTEST_F(ComponentManagerTest, DisableSource_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, DisableSource_001, TestSize.Level1)
 {
     DHDescriptor dhDescriptor {
         .id = AUDIO_ID_TEST,
@@ -1189,7 +1189,7 @@ HWTEST_F(ComponentManagerTest, DisableSource_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
-HWTEST_F(ComponentManagerTest, ForceDisableSink_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, ForceDisableSink_001, TestSize.Level1)
 {
     DHDescriptor dhDescriptor {
         .id = AUDIO_ID_TEST,
@@ -1201,7 +1201,7 @@ HWTEST_F(ComponentManagerTest, ForceDisableSink_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_LOADER_SINK_UNLOAD);
 }
 
-HWTEST_F(ComponentManagerTest, ForceDisableSource_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, ForceDisableSource_001, TestSize.Level1)
 {
     DHDescriptor dhDescriptor {
         .id = AUDIO_ID_TEST,
@@ -1213,7 +1213,7 @@ HWTEST_F(ComponentManagerTest, ForceDisableSource_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
-HWTEST_F(ComponentManagerTest, UninitCompSource_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, UninitCompSource_001, TestSize.Level1)
 {
     SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().UninitCompSource(DHType::AUDIO);
@@ -1221,7 +1221,7 @@ HWTEST_F(ComponentManagerTest, UninitCompSource_001, TestSize.Level0)
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_MONITOR_NULL);
 }
 
-HWTEST_F(ComponentManagerTest, UninitCompSink_001, TestSize.Level0)
+HWTEST_F(ComponentManagerTest, UninitCompSink_001, TestSize.Level1)
 {
     SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().UninitCompSink(DHType::AUDIO);

@@ -69,7 +69,7 @@ void ComponentPrivacyTest::TearDown()
     compPrivacy_ = nullptr;
 }
 
-HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_001, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_001, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     ResourceEventType type = ResourceEventType::EVENT_TYPE_QUERY_RESOURCE;
@@ -79,7 +79,7 @@ HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY, ret);
 }
 
-HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_002, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_002, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     ResourceEventType type = ResourceEventType::EVENT_TYPE_QUERY_RESOURCE;
@@ -89,7 +89,7 @@ HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_002, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_003, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_003, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     ResourceEventType type = ResourceEventType::EVENT_TYPE_PULL_UP_PAGE;
@@ -99,7 +99,7 @@ HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_003, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_004, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_004, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     ResourceEventType type = ResourceEventType::EVENT_TYPE_PULL_UP_PAGE;
@@ -110,7 +110,7 @@ HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_004, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_005, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_005, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     ResourceEventType type = ResourceEventType::EVENT_TYPE_CLOSE_PAGE;
@@ -120,7 +120,7 @@ HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_005, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_006, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_006, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     ResourceEventType type = ResourceEventType::EVENT_TYPE_CLOSE_PAGE;
@@ -131,28 +131,28 @@ HWTEST_F(ComponentPrivacyTest, OnPrivaceResourceMessage_006, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(ComponentPrivacyTest, HandlePullUpPage_002, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, HandlePullUpPage_002, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     compPrivacy_->eventHandler_ = nullptr;
     EXPECT_NO_FATAL_FAILURE(compPrivacy_->HandlePullUpPage(SUBTYPE_MIC, NETWORK_ID));
 }
 
-HWTEST_F(ComponentPrivacyTest, HandleClosePage_001, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, HandleClosePage_001, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     compPrivacy_->eventHandler_ = nullptr;
     EXPECT_NO_FATAL_FAILURE(compPrivacy_->HandleClosePage(SUBTYPE_MIC));
 }
 
-HWTEST_F(ComponentPrivacyTest, StartPrivacePage_001, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, StartPrivacePage_001, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     auto ret = compPrivacy_->StartPrivacePage(SUBTYPE_MIC, "");
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(ComponentPrivacyTest, ProcessEvent_001, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_001, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
@@ -171,7 +171,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_001, TestSize.Level0)
     EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
 }
 
-HWTEST_F(ComponentPrivacyTest, ProcessEvent_002, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_002, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
@@ -190,7 +190,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_002, TestSize.Level0)
     EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
 }
 
-HWTEST_F(ComponentPrivacyTest, ProcessEvent_003, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_003, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
@@ -209,7 +209,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_003, TestSize.Level0)
     EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
 }
 
-HWTEST_F(ComponentPrivacyTest, ProcessEvent_004, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_004, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
@@ -228,7 +228,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_004, TestSize.Level0)
     EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
 }
 
-HWTEST_F(ComponentPrivacyTest, ProcessEvent_005, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_005, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
@@ -246,7 +246,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_005, TestSize.Level0)
     EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
 }
 
-HWTEST_F(ComponentPrivacyTest, ProcessEvent_006, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_006, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
@@ -264,7 +264,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_006, TestSize.Level0)
     EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
 }
 
-HWTEST_F(ComponentPrivacyTest, ProcessEvent_007, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, ProcessEvent_007, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     cJSON *jsonArrayMsg = cJSON_CreateArray();
@@ -282,7 +282,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_007, TestSize.Level0)
     EXPECT_NO_FATAL_FAILURE(compPrivacy_->eventHandler_->ProcessEvent(msgEvent));
 }
 
-HWTEST_F(ComponentPrivacyTest, DeviceTypeToString_001, TestSize.Level0)
+HWTEST_F(ComponentPrivacyTest, DeviceTypeToString_001, TestSize.Level1)
 {
     ASSERT_TRUE(compPrivacy_ != nullptr);
     std::string ret = compPrivacy_->DeviceTypeToString(DEVICE_TYPE_WIFI_CAMERA);

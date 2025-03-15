@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,7 @@ void DistributedHardwareManagerTest::TearDown() {}
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareManagerTest, Initialize_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareManagerTest, Initialize_001, TestSize.Level1)
 {
     auto ret = DistributedHardwareManager::GetInstance().Initialize();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
@@ -54,7 +54,7 @@ HWTEST_F(DistributedHardwareManagerTest, Initialize_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareManagerTest, LocalInit_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareManagerTest, LocalInit_001, TestSize.Level1)
 {
     int32_t ret =  DistributedHardwareManager::GetInstance().LocalInit();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
@@ -66,7 +66,7 @@ HWTEST_F(DistributedHardwareManagerTest, LocalInit_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DistributedHardwareManagerTest, GetComponentVersion_001, TestSize.Level0)
+HWTEST_F(DistributedHardwareManagerTest, GetComponentVersion_001, TestSize.Level1)
 {
     ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
     std::unordered_map<DHType, std::string> versionMap;

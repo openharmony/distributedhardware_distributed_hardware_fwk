@@ -65,7 +65,7 @@ void HardwareStatusListenerProxyTest::TestHDSourceStatusListenerStub::OnDisable(
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(HardwareStatusListenerProxyTest, OnMessage_001, TestSize.Level0)
+HWTEST_F(HardwareStatusListenerProxyTest, OnMessage_001, TestSize.Level1)
 {
     DHDescriptor dhDescriptor {
         .id = "id_test",
@@ -83,7 +83,7 @@ HWTEST_F(HardwareStatusListenerProxyTest, OnMessage_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(HardwareStatusListenerProxyTest, OnMessage_002, TestSize.Level0)
+HWTEST_F(HardwareStatusListenerProxyTest, OnMessage_002, TestSize.Level1)
 {
     DHDescriptor dhDescriptor {
         .id = "id_test",
@@ -101,7 +101,7 @@ HWTEST_F(HardwareStatusListenerProxyTest, OnMessage_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(HardwareStatusListenerProxyTest, OnMessage_101, TestSize.Level0)
+HWTEST_F(HardwareStatusListenerProxyTest, OnMessage_101, TestSize.Level1)
 {
     DHDescriptor dhDescriptor {
         .id = "id_test",
@@ -119,7 +119,7 @@ HWTEST_F(HardwareStatusListenerProxyTest, OnMessage_101, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(HardwareStatusListenerProxyTest, OnMessage_102, TestSize.Level0)
+HWTEST_F(HardwareStatusListenerProxyTest, OnMessage_102, TestSize.Level1)
 {
     DHDescriptor dhDescriptor {
         .id = "id_test",

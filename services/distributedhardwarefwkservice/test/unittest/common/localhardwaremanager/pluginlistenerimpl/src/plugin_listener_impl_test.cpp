@@ -39,7 +39,7 @@ void PluginListenerImplTest::TearDown() {}
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(PluginListenerImplTest, PluginHardware_001, TestSize.Level0)
+HWTEST_F(PluginListenerImplTest, PluginHardware_001, TestSize.Level1)
 {
     DHType type = DHType::AUDIO;
     std::shared_ptr<PluginListener> listener = std::make_shared<PluginListenerImpl>(type);
@@ -54,7 +54,7 @@ HWTEST_F(PluginListenerImplTest, PluginHardware_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(PluginListenerImplTest, PluginHardware_002, TestSize.Level0)
+HWTEST_F(PluginListenerImplTest, PluginHardware_002, TestSize.Level1)
 {
     DHType type = DHType::AUDIO;
     std::shared_ptr<PluginListener> listener = std::make_shared<PluginListenerImpl>(type);
@@ -68,7 +68,7 @@ HWTEST_F(PluginListenerImplTest, PluginHardware_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(PluginListenerImplTest, PluginHardware_003, TestSize.Level0)
+HWTEST_F(PluginListenerImplTest, PluginHardware_003, TestSize.Level1)
 {
     DHType type = DHType::AUDIO;
     std::shared_ptr<PluginListener> listener = std::make_shared<PluginListenerImpl>(type);
@@ -84,7 +84,7 @@ HWTEST_F(PluginListenerImplTest, PluginHardware_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(PluginListenerImplTest, UnPluginHardware_001, TestSize.Level0)
+HWTEST_F(PluginListenerImplTest, UnPluginHardware_001, TestSize.Level1)
 {
     std::string dhId = "";
     DHType type = DHType::AUDIO;
@@ -98,7 +98,7 @@ HWTEST_F(PluginListenerImplTest, UnPluginHardware_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
-HWTEST_F(PluginListenerImplTest, UnPluginHardware_002, TestSize.Level0)
+HWTEST_F(PluginListenerImplTest, UnPluginHardware_002, TestSize.Level1)
 {
     DHType type = DHType::AUDIO;
     std::shared_ptr<PluginListenerImpl> listener = std::make_shared<PluginListenerImpl>(type);

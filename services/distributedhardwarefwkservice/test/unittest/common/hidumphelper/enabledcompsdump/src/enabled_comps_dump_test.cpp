@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,7 @@ void EnabledCompsDumpTest::TearDown() {}
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(EnabledCompsDumpTest, DumpEnabledComp_001, TestSize.Level0)
+HWTEST_F(EnabledCompsDumpTest, DumpEnabledComp_001, TestSize.Level1)
 {
     std::string networkId;
     DHType dhType = DHType::CAMERA;
@@ -53,7 +53,7 @@ HWTEST_F(EnabledCompsDumpTest, DumpEnabledComp_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(EnabledCompsDumpTest, DumpDisabledComp_001, TestSize.Level0)
+HWTEST_F(EnabledCompsDumpTest, DumpDisabledComp_001, TestSize.Level1)
 {
     std::string networkId;
     DHType dhType = DHType::CAMERA;
@@ -68,7 +68,7 @@ HWTEST_F(EnabledCompsDumpTest, DumpDisabledComp_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(EnabledCompsDumpTest, Dump_001, TestSize.Level0)
+HWTEST_F(EnabledCompsDumpTest, Dump_001, TestSize.Level1)
 {
     std::set<HidumpCompInfo> compInfoSet;
     EnabledCompsDump::GetInstance().Dump(compInfoSet);

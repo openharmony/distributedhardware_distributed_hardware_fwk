@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -59,7 +59,7 @@ void UtilsToolTest::TearDown()
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(UtilsToolTest, GetAnonyString_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetAnonyString_001, TestSize.Level1)
 {
     std::string value = "";
     auto ret = GetAnonyString(value);
@@ -84,7 +84,7 @@ HWTEST_F(UtilsToolTest, GetAnonyString_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(UtilsToolTest, GetAnonyInt32_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetAnonyInt32_001, TestSize.Level1)
 {
     int32_t value = 123456;
     auto ret = GetAnonyInt32(value);
@@ -97,14 +97,14 @@ HWTEST_F(UtilsToolTest, GetAnonyInt32_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(UtilsToolTest, GetUUIDByDm_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetUUIDByDm_001, TestSize.Level1)
 {
     std::string networkId = "";
     std::string ret = GetUUIDByDm(networkId);
     EXPECT_EQ(0, ret.size());
 }
 
-HWTEST_F(UtilsToolTest, GetUDIDByDm_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetUDIDByDm_001, TestSize.Level1)
 {
     std::string networkId = "";
     std::string ret = GetUDIDByDm(networkId);
@@ -117,7 +117,7 @@ HWTEST_F(UtilsToolTest, GetUDIDByDm_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(UtilsToolTest, GetDeviceIdByUUID_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetDeviceIdByUUID_001, TestSize.Level1)
 {
     std::string uuidEmpty = "";
     std::string ret = GetDeviceIdByUUID(uuidEmpty);
@@ -134,7 +134,7 @@ HWTEST_F(UtilsToolTest, GetDeviceIdByUUID_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK0
  */
-HWTEST_F(UtilsToolTest, GetDeviceIdByUUID_002, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetDeviceIdByUUID_002, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     DHQueryTraceStart(dhType);
@@ -147,7 +147,7 @@ HWTEST_F(UtilsToolTest, GetDeviceIdByUUID_002, TestSize.Level0)
     EXPECT_NE(0, ret.size());
 }
 
-HWTEST_F(UtilsToolTest, IsUInt8_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, IsUInt8_001, TestSize.Level1)
 {
     cJSON* jsonObj1 = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj1 != nullptr);
@@ -167,7 +167,7 @@ HWTEST_F(UtilsToolTest, IsUInt8_001, TestSize.Level0)
     cJSON_Delete(jsonObj2);
 }
 
-HWTEST_F(UtilsToolTest, IsUInt16_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, IsUInt16_001, TestSize.Level1)
 {
     cJSON* jsonObj1 = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj1 != nullptr);
@@ -187,7 +187,7 @@ HWTEST_F(UtilsToolTest, IsUInt16_001, TestSize.Level0)
     cJSON_Delete(jsonObj2);
 }
 
-HWTEST_F(UtilsToolTest, IsUInt32_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, IsUInt32_001, TestSize.Level1)
 {
     cJSON* jsonObj1 = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj1 != nullptr);
@@ -207,7 +207,7 @@ HWTEST_F(UtilsToolTest, IsUInt32_001, TestSize.Level0)
     cJSON_Delete(jsonObj2);
 }
 
-HWTEST_F(UtilsToolTest, GetSysPara_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetSysPara_001, TestSize.Level1)
 {
     char *key = nullptr;
     bool value = false;
@@ -215,7 +215,7 @@ HWTEST_F(UtilsToolTest, GetSysPara_001, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(UtilsToolTest, IsJsonLengthValid_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, IsJsonLengthValid_001, TestSize.Level1)
 {
     std::string inputJsonStr = "";
     auto ret = IsJsonLengthValid(inputJsonStr);
@@ -226,7 +226,7 @@ HWTEST_F(UtilsToolTest, IsJsonLengthValid_001, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(UtilsToolTest, IsKeySizeValid_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, IsKeySizeValid_001, TestSize.Level1)
 {
     std::string inputKey = "";
     auto ret = IsKeySizeValid(inputKey);
@@ -237,14 +237,14 @@ HWTEST_F(UtilsToolTest, IsKeySizeValid_001, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(UtilsToolTest, GetDeviceSystemType_001, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetDeviceSystemType_001, TestSize.Level1)
 {
     std::string extraData = "";
     auto ret = GetDeviceSystemType(extraData);
     EXPECT_EQ(ERR_DH_FWK_INVALID_OSTYPE, ret);
 }
 
-HWTEST_F(UtilsToolTest, GetDeviceSystemType_002, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetDeviceSystemType_002, TestSize.Level1)
 {
     cJSON* jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -262,7 +262,7 @@ HWTEST_F(UtilsToolTest, GetDeviceSystemType_002, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_INVALID_OSTYPE, ret);
 }
 
-HWTEST_F(UtilsToolTest, GetDeviceSystemType_003, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetDeviceSystemType_003, TestSize.Level1)
 {
     cJSON* jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -280,7 +280,7 @@ HWTEST_F(UtilsToolTest, GetDeviceSystemType_003, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_INVALID_OSTYPE, ret);
 }
 
-HWTEST_F(UtilsToolTest, GetDeviceSystemType_004, TestSize.Level0)
+HWTEST_F(UtilsToolTest, GetDeviceSystemType_004, TestSize.Level1)
 {
     cJSON* jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);

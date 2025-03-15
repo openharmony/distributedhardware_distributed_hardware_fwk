@@ -52,7 +52,7 @@ void MetaInfoMgrTest::SetUpTestCase() {}
 
 void MetaInfoMgrTest::TearDownTestCase() {}
 
-HWTEST_F(MetaInfoMgrTest, Init_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, Init_001, TestSize.Level1)
 {
     auto ret = MetaInfoManager::GetInstance()->Init();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
@@ -60,14 +60,14 @@ HWTEST_F(MetaInfoMgrTest, Init_001, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, UnInit_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, UnInit_001, TestSize.Level1)
 {
     MetaInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
     auto ret = MetaInfoManager::GetInstance()->UnInit();
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_UNINIT_DB_FAILED, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, AddMetaCapInfos_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, AddMetaCapInfos_001, TestSize.Level1)
 {
     std::string udidHash = "udidHash_test";
     std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
@@ -84,7 +84,7 @@ HWTEST_F(MetaInfoMgrTest, AddMetaCapInfos_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, AddMetaCapInfos_002, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, AddMetaCapInfos_002, TestSize.Level1)
 {
     std::string deviceId = "deviceId_test";
     std::string udidHash = "udidHash_test";
@@ -106,21 +106,21 @@ HWTEST_F(MetaInfoMgrTest, AddMetaCapInfos_002, TestSize.Level0)
     MetaInfoManager::GetInstance()->UnInit();
 }
 
-HWTEST_F(MetaInfoMgrTest, SyncMetaInfoFromDB_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, SyncMetaInfoFromDB_001, TestSize.Level1)
 {
     std::string udidHash = "";
     auto ret = MetaInfoManager::GetInstance()->SyncMetaInfoFromDB(udidHash);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, SyncMetaInfoFromDB_002, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, SyncMetaInfoFromDB_002, TestSize.Level1)
 {
     std::string udidHash = "132456798";
     auto ret = MetaInfoManager::GetInstance()->SyncMetaInfoFromDB(udidHash);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, SyncMetaInfoFromDB_003, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, SyncMetaInfoFromDB_003, TestSize.Level1)
 {
     std::string udidHash = "132456798";
     MetaInfoManager::GetInstance()->Init();
@@ -129,7 +129,7 @@ HWTEST_F(MetaInfoMgrTest, SyncMetaInfoFromDB_003, TestSize.Level0)
     MetaInfoManager::GetInstance()->UnInit();
 }
 
-HWTEST_F(MetaInfoMgrTest, SyncRemoteMetaInfos_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, SyncRemoteMetaInfos_001, TestSize.Level1)
 {
     auto ret = MetaInfoManager::GetInstance()->SyncRemoteMetaInfos();
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
@@ -140,7 +140,7 @@ HWTEST_F(MetaInfoMgrTest, SyncRemoteMetaInfos_001, TestSize.Level0)
     MetaInfoManager::GetInstance()->UnInit();
 }
 
-HWTEST_F(MetaInfoMgrTest, SyncRemoteMetaInfos_002, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, SyncRemoteMetaInfos_002, TestSize.Level1)
 {
     std::string udid = "111111";
     std::string uuid = "222222";
@@ -153,7 +153,7 @@ HWTEST_F(MetaInfoMgrTest, SyncRemoteMetaInfos_002, TestSize.Level0)
     DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
 }
 
-HWTEST_F(MetaInfoMgrTest, GetDataByKeyPrefix_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, GetDataByKeyPrefix_001, TestSize.Level1)
 {
     std::string keyPrefix = "";
     MetaCapInfoMap metaCapMap;
@@ -165,7 +165,7 @@ HWTEST_F(MetaInfoMgrTest, GetDataByKeyPrefix_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, GetDataByKeyPrefix_002, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, GetDataByKeyPrefix_002, TestSize.Level1)
 {
     std::string keyPrefix = "keyPrefix_test";
     MetaCapInfoMap metaCapMap;
@@ -175,7 +175,7 @@ HWTEST_F(MetaInfoMgrTest, GetDataByKeyPrefix_002, TestSize.Level0)
     MetaInfoManager::GetInstance()->UnInit();
 }
 
-HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoByKey_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoByKey_001, TestSize.Level1)
 {
     std::string key = "";
     auto ret = MetaInfoManager::GetInstance()->RemoveMetaInfoByKey(key);
@@ -186,7 +186,7 @@ HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoByKey_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoByKey_002, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoByKey_002, TestSize.Level1)
 {
     std::string key = "key_test";
     MetaInfoManager::GetInstance()->Init();
@@ -195,7 +195,7 @@ HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoByKey_002, TestSize.Level0)
     MetaInfoManager::GetInstance()->UnInit();
 }
 
-HWTEST_F(MetaInfoMgrTest, GetMetaCapInfo_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, GetMetaCapInfo_001, TestSize.Level1)
 {
     std::string udidHash = "";
     std::string dhId = "";
@@ -213,7 +213,7 @@ HWTEST_F(MetaInfoMgrTest, GetMetaCapInfo_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, GetMetaCapInfo_002, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, GetMetaCapInfo_002, TestSize.Level1)
 {
     std::string deviceId = "deviceId_test";
     std::string udidHash = "udidHash_test";
@@ -232,7 +232,7 @@ HWTEST_F(MetaInfoMgrTest, GetMetaCapInfo_002, TestSize.Level0)
     MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
 }
 
-HWTEST_F(MetaInfoMgrTest, GetMetaCapInfosByUdidHash_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, GetMetaCapInfosByUdidHash_001, TestSize.Level1)
 {
     std::string udidHash = "";
     std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
@@ -254,7 +254,7 @@ HWTEST_F(MetaInfoMgrTest, GetMetaCapInfosByUdidHash_001, TestSize.Level0)
     MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
 }
 
-HWTEST_F(MetaInfoMgrTest, GetMetaCapByValue_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, GetMetaCapByValue_001, TestSize.Level1)
 {
     std::string value = "";
     std::shared_ptr<MetaCapabilityInfo> metaCapPtr = nullptr;
@@ -275,7 +275,7 @@ HWTEST_F(MetaInfoMgrTest, GetMetaCapByValue_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_JSON_PARSE_FAILED, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, GetMetaDataByDHType_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, GetMetaDataByDHType_001, TestSize.Level1)
 {
     std::string deviceId = "deviceId_test";
     std::string udidHash = "udidHash_test";
@@ -294,7 +294,7 @@ HWTEST_F(MetaInfoMgrTest, GetMetaDataByDHType_001, TestSize.Level0)
     MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
 }
 
-HWTEST_F(MetaInfoMgrTest, SyncDataByNetworkId_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, SyncDataByNetworkId_001, TestSize.Level1)
 {
     std::string networkId = "";
     auto ret = MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
@@ -305,7 +305,7 @@ HWTEST_F(MetaInfoMgrTest, SyncDataByNetworkId_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, SyncDataByNetworkId_002, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, SyncDataByNetworkId_002, TestSize.Level1)
 {
     std::string networkId = "networkId_test";
     MetaInfoManager::GetInstance()->Init();
@@ -314,7 +314,7 @@ HWTEST_F(MetaInfoMgrTest, SyncDataByNetworkId_002, TestSize.Level0)
     MetaInfoManager::GetInstance()->UnInit();
 }
 
-HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoInMemByUdid_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoInMemByUdid_001, TestSize.Level1)
 {
     std::string peerudid = "123456789";
     std::string peerudIdHash = Sha256(peerudid);
@@ -333,7 +333,7 @@ HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoInMemByUdid_001, TestSize.Level0)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, ClearRemoteDeviceMetaInfoData_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, ClearRemoteDeviceMetaInfoData_001, TestSize.Level1)
 {
     MetaInfoManager::GetInstance()->Init();
     std::string peerudid = "";
@@ -351,7 +351,7 @@ HWTEST_F(MetaInfoMgrTest, ClearRemoteDeviceMetaInfoData_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
 }
 
-HWTEST_F(MetaInfoMgrTest, OnChange_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, OnChange_001, TestSize.Level1)
 {
     DistributedKv::Entry insert, update, del;
     std::vector<DistributedKv::Entry> inserts, updates, deleteds;
@@ -362,7 +362,7 @@ HWTEST_F(MetaInfoMgrTest, OnChange_001, TestSize.Level0)
     ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->OnChange(changeIn));
 }
 
-HWTEST_F(MetaInfoMgrTest, OnChange_002, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, OnChange_002, TestSize.Level1)
 {
     DistributedKv::Entry insert, update, del;
     std::vector<DistributedKv::Entry> inserts, updates, deleteds;
@@ -383,7 +383,7 @@ HWTEST_F(MetaInfoMgrTest, OnChange_002, TestSize.Level0)
     ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->OnChange(changeIn));
 }
 
-HWTEST_F(MetaInfoMgrTest, OnChange_003, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, OnChange_003, TestSize.Level1)
 {
     DistributedKv::Entry insert, update, del;
     insert.key = "insert_key";
@@ -401,7 +401,7 @@ HWTEST_F(MetaInfoMgrTest, OnChange_003, TestSize.Level0)
     ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->OnChange(changeIn));
 }
 
-HWTEST_F(MetaInfoMgrTest, OnChange_004, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, OnChange_004, TestSize.Level1)
 {
     DistributedKv::DataOrigin origin;
     origin.id = {};
@@ -410,7 +410,7 @@ HWTEST_F(MetaInfoMgrTest, OnChange_004, TestSize.Level0)
     ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->OnChange(origin, std::move(keys)));
 }
 
-HWTEST_F(MetaInfoMgrTest, OnChange_005, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, OnChange_005, TestSize.Level1)
 {
     DistributedKv::DataOrigin origin;
     origin.id = {};
@@ -422,7 +422,7 @@ HWTEST_F(MetaInfoMgrTest, OnChange_005, TestSize.Level0)
     ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->OnChange(origin, std::move(keys)));
 }
 
-HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_001, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -444,7 +444,7 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_001, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_002, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_002, TestSize.Level1)
 {
     std::string uuid = "123456789";
     std::string deviceId = Sha256(uuid);
@@ -475,7 +475,7 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_002, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_003, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_003, TestSize.Level1)
 {
     std::string uuid = "123456789";
     std::string deviceId = Sha256(uuid);
@@ -501,7 +501,7 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_003, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_001, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -523,7 +523,7 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_001, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_002, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_002, TestSize.Level1)
 {
     std::string uuid = "123456789";
     std::string deviceId = Sha256(uuid);
@@ -553,7 +553,7 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_002, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_003, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_003, TestSize.Level1)
 {
     std::string uuid = "123456789";
     std::string deviceId = Sha256(uuid);
@@ -585,7 +585,7 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_003, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityDeleteChange_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityDeleteChange_001, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
@@ -607,7 +607,7 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityDeleteChange_001, TestSize.Level0)
     cJSON_Delete(jsonObj);
 }
 
-HWTEST_F(MetaInfoMgrTest, GetEntriesByKeys_001, TestSize.Level0)
+HWTEST_F(MetaInfoMgrTest, GetEntriesByKeys_001, TestSize.Level1)
 {
     std::vector<std::string> keys;
     auto ret = MetaInfoManager::GetInstance()->GetEntriesByKeys(keys);

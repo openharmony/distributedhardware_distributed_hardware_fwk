@@ -48,7 +48,7 @@ void DHFWKSaStateCallback(bool callback)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_001, TestSize.Level0)
+HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_001, TestSize.Level1)
 {
     DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.store(false);
     DHFWKSAManager::GetInstance().saListener_ = nullptr;
@@ -62,7 +62,7 @@ HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_002, TestSize.Level0)
+HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_002, TestSize.Level1)
 {
     DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.store(true);
     DHFWKSAManager::GetInstance().RegisterAbilityListener();
@@ -75,7 +75,7 @@ HWTEST_F(DHFWKSAManagerTest, RegisterAbilityListener_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_001, TestSize.Level0)
+HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_001, TestSize.Level1)
 {
     DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.store(false);
     DHFWKSAManager::GetInstance().dhfwkProxy_ = nullptr;
@@ -89,7 +89,7 @@ HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_002, TestSize.Level0)
+HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_002, TestSize.Level1)
 {
     DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.store(true);
     DHFWKSAManager::GetInstance().dhfwkProxy_ = sptr<MockIDistributedHardware>(new MockIDistributedHardware());
@@ -103,7 +103,7 @@ HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DHFWKSAManagerTest, RegisterSAStateCallback_001, TestSize.Level0)
+HWTEST_F(DHFWKSAManagerTest, RegisterSAStateCallback_001, TestSize.Level1)
 {
     DHFWKSAStateCb callback;
     DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.store(true);
@@ -117,7 +117,7 @@ HWTEST_F(DHFWKSAManagerTest, RegisterSAStateCallback_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_001, TestSize.Level0)
+HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_001, TestSize.Level1)
 {
     DHFWKSAManager::GetInstance().saListener_ =
         sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());
@@ -134,7 +134,7 @@ HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_002, TestSize.Level0)
+HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_002, TestSize.Level1)
 {
     DHFWKSAManager::GetInstance().saListener_ =
         sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());
@@ -151,7 +151,7 @@ HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_003, TestSize.Level0)
+HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_003, TestSize.Level1)
 {
     DHFWKSAManager::GetInstance().saListener_ =
         sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());
@@ -169,7 +169,7 @@ HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_001, TestSize.Level0)
+HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_001, TestSize.Level1)
 {
     DHFWKSAManager::GetInstance().saListener_ =
         sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());
@@ -186,7 +186,7 @@ HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_002, TestSize.Level0)
+HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_002, TestSize.Level1)
 {
     DHFWKSAManager::GetInstance().saListener_ =
         sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());
@@ -203,7 +203,7 @@ HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_003, TestSize.Level0)
+HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_003, TestSize.Level1)
 {
     DHFWKSAManager::GetInstance().saListener_ =
         sptr<DHFWKSAManager::SystemAbilityListener>(new DHFWKSAManager::SystemAbilityListener());

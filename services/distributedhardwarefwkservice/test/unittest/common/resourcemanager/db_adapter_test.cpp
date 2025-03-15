@@ -67,7 +67,7 @@ void DBAdapterTest::TearDownTestCase()
     MetaInfoManager::GetInstance()->UnInit();
 }
 
-HWTEST_F(DBAdapterTest, GetNetworkIdByKey_001, TestSize.Level0)
+HWTEST_F(DBAdapterTest, GetNetworkIdByKey_001, TestSize.Level1)
 {
     ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
     std::string key = "";
@@ -79,14 +79,14 @@ HWTEST_F(DBAdapterTest, GetNetworkIdByKey_001, TestSize.Level0)
     EXPECT_TRUE(ret.empty());
 }
 
-HWTEST_F(DBAdapterTest, SyncByNotFound_001, TestSize.Level0)
+HWTEST_F(DBAdapterTest, SyncByNotFound_001, TestSize.Level1)
 {
     ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
     std::string key = "";
     ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->dbAdapterPtr_->SyncByNotFound(key));
 }
 
-HWTEST_F(DBAdapterTest, SyncByNotFound_002, TestSize.Level0)
+HWTEST_F(DBAdapterTest, SyncByNotFound_002, TestSize.Level1)
 {
     ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
     DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORKID_TEST);
@@ -96,7 +96,7 @@ HWTEST_F(DBAdapterTest, SyncByNotFound_002, TestSize.Level0)
     DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(NETWORKID_TEST);
 }
 
-HWTEST_F(DBAdapterTest, SyncDBForRecover_001, TestSize.Level0)
+HWTEST_F(DBAdapterTest, SyncDBForRecover_001, TestSize.Level1)
 {
     ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
     ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->dbAdapterPtr_->SyncDBForRecover());
@@ -112,7 +112,7 @@ HWTEST_F(DBAdapterTest, SyncDBForRecover_001, TestSize.Level0)
     VersionInfoManager::GetInstance()->UnInit();
 }
 
-HWTEST_F(DBAdapterTest, RemoveDeviceData_001, TestSize.Level0)
+HWTEST_F(DBAdapterTest, RemoveDeviceData_001, TestSize.Level1)
 {
     ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
     std::string deviceId = "";
@@ -120,7 +120,7 @@ HWTEST_F(DBAdapterTest, RemoveDeviceData_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(DBAdapterTest, RemoveDataByKey_001, TestSize.Level0)
+HWTEST_F(DBAdapterTest, RemoveDataByKey_001, TestSize.Level1)
 {
     ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
     std::string key = "";
@@ -128,7 +128,7 @@ HWTEST_F(DBAdapterTest, RemoveDataByKey_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
-HWTEST_F(DBAdapterTest, GetEntriesByKeys_001, TestSize.Level0)
+HWTEST_F(DBAdapterTest, GetEntriesByKeys_001, TestSize.Level1)
 {
     ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
     std::vector<std::string> keys;
@@ -136,7 +136,7 @@ HWTEST_F(DBAdapterTest, GetEntriesByKeys_001, TestSize.Level0)
     EXPECT_TRUE(ret.empty());
 }
 
-HWTEST_F(DBAdapterTest, GetEntriesByKeys_002, TestSize.Level0)
+HWTEST_F(DBAdapterTest, GetEntriesByKeys_002, TestSize.Level1)
 {
     ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
     std::vector<std::string> keys;
@@ -147,7 +147,7 @@ HWTEST_F(DBAdapterTest, GetEntriesByKeys_002, TestSize.Level0)
     EXPECT_TRUE(ret.empty());
 }
 
-HWTEST_F(DBAdapterTest, SyncDataByNetworkId_001, TestSize.Level0)
+HWTEST_F(DBAdapterTest, SyncDataByNetworkId_001, TestSize.Level1)
 {
     ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
     std::string networkId = "123456789";
@@ -156,7 +156,7 @@ HWTEST_F(DBAdapterTest, SyncDataByNetworkId_001, TestSize.Level0)
     EXPECT_EQ(false, ret);
 }
 
-HWTEST_F(DBAdapterTest, ClearDataByPrefix_001, TestSize.Level0)
+HWTEST_F(DBAdapterTest, ClearDataByPrefix_001, TestSize.Level1)
 {
     ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
     std::string prefix = "123###456";

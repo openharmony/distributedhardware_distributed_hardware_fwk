@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("../../../../../../../distributedhardwarefwk.gni")
 
-module_out_path = "distributed_hardware_fwk/hardware_status_listener_stub_test"
+module_out_path = unittest_output_path
 
 config("module_private_config") {
   visibility = [ ":*" ]

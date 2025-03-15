@@ -50,7 +50,7 @@ void LowLatencyTest::TearDown()
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyTest, EnableLowLatency_001, TestSize.Level0)
+HWTEST_F(LowLatencyTest, EnableLowLatency_001, TestSize.Level1)
 {
     DHType dhType = DHType::UNKNOWN;
     LowLatency::GetInstance().EnableLowLatency(dhType);
@@ -67,7 +67,7 @@ HWTEST_F(LowLatencyTest, EnableLowLatency_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyTest, EnableLowLatency_002, TestSize.Level0)
+HWTEST_F(LowLatencyTest, EnableLowLatency_002, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     LowLatency::GetInstance().lowLatencyTimer_ = nullptr;
@@ -85,7 +85,7 @@ HWTEST_F(LowLatencyTest, EnableLowLatency_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyTest, EnableLowLatency_003, TestSize.Level0)
+HWTEST_F(LowLatencyTest, EnableLowLatency_003, TestSize.Level1)
 {
     DHType dhType = DHType::CAMERA;
     LowLatency::GetInstance().lowLatencySwitchSet_.clear();
@@ -104,7 +104,7 @@ HWTEST_F(LowLatencyTest, EnableLowLatency_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyTest, EnableLowLatency_004, TestSize.Level0)
+HWTEST_F(LowLatencyTest, EnableLowLatency_004, TestSize.Level1)
 {
     for (uint32_t i = 0; i <= MAX_SWITCH_SIZE; ++i) {
         LowLatency::GetInstance().lowLatencySwitchSet_.insert(static_cast<DHType>(i));
@@ -121,7 +121,7 @@ HWTEST_F(LowLatencyTest, EnableLowLatency_004, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyTest, DisableLowLatency_001, TestSize.Level0)
+HWTEST_F(LowLatencyTest, DisableLowLatency_001, TestSize.Level1)
 {
     DHType dhType = DHType::UNKNOWN;
     LowLatency::GetInstance().DisableLowLatency(dhType);
@@ -138,7 +138,7 @@ HWTEST_F(LowLatencyTest, DisableLowLatency_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(LowLatencyTest, DisableLowLatency_002, TestSize.Level0)
+HWTEST_F(LowLatencyTest, DisableLowLatency_002, TestSize.Level1)
 {
     LowLatency::GetInstance().lowLatencySwitchSet_.clear();
     DHType dhType = DHType::CAMERA;
@@ -154,7 +154,7 @@ HWTEST_F(LowLatencyTest, DisableLowLatency_002, TestSize.Level0)
     EXPECT_EQ(false, LowLatency::GetInstance().lowLatencySwitchSet_.empty());
 }
 
-HWTEST_F(LowLatencyTest, DisableLowLatency_003, TestSize.Level0)
+HWTEST_F(LowLatencyTest, DisableLowLatency_003, TestSize.Level1)
 {
     DHType dhType = DHType::AUDIO;
     LowLatency::GetInstance().lowLatencyTimer_ = std::make_shared<LowLatencyTimer>(LOW_LATENCY_TIMER_ID,
