@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("../../../../../distributed_av_transport.gni")
 
-module_out_path = "distributed_hardware_fwk/dsoftbus_input_audio_plugin_test"
+module_out_path = "distributed_hardware_fwk/distributed_hardware_fwk/dsoftbus_input_audio_plugin_test"
 
 ohos_unittest("DsoftbusInputAudioPluginTest") {
   module_out_path = module_out_path

@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("../../../../distributed_av_transport.gni")
 
-module_out_path = "distributed_hardware_fwk/avtrans_input_output_unittest"
+module_out_path = "distributed_hardware_fwk/distributed_hardware_fwk/avtrans_input_output_unittest"
 
 ohos_unittest("AvTransInputOutputTest") {
   module_out_path = module_out_path

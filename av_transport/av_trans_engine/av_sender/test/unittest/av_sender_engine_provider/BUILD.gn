@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("../../../../../distributed_av_transport.gni")
 
-module_out_path = "distributed_hardware_fwk/av_sender_engine_provider_test"
+module_out_path = "distributed_hardware_fwk/distributed_hardware_fwk/av_sender_engine_provider_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]

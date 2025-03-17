@@ -16,7 +16,7 @@ import("//build/test.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
 
-module_out_path = "distributed_hardware_fwk/histreamer_ability_querier_test"
+module_out_path = "distributed_hardware_fwk/distributed_hardware_fwk/histreamer_ability_querier_test"
 
 config("module_private_config") {
   visibility = [ ":*" ]
