@@ -16,6 +16,7 @@
 #include "av_trans_bus_input_filter_test.h"
 #include "av_trans_constants.h"
 #include "av_trans_audio_encoder_filter.h"
+#include "av_trans_types.h"
 using namespace testing::ext;
 using namespace OHOS::DistributedHardware;
 using namespace std;
@@ -77,6 +78,47 @@ HWTEST_F(AvTransportBusInputFilterTest, ProcessAndSendBuffer_001, testing::ext::
     ASSERT_TRUE(avBusInputTest_ != nullptr);
     std::shared_ptr<Media::AVBuffer> audioData = std::make_shared<Media::AVBuffer>();
     Status ret = avBusInputTest_->ProcessAndSendBuffer(audioData);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+}
+
+
+HWTEST_F(AvTransportBusInputFilterTest, ProcessAndSendBuffer_002, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.audio.input",
+            Pipeline::FilterType::FILTERTYPE_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    std::shared_ptr<Media::AVBuffer> audioData = std::make_shared<Media::AVBuffer>();
+    Status ret = avBusInputTest_->ProcessAndSendBuffer(audioData);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+    // Create memory
+    if (audioData->memory_ == nullptr) {
+        audioData->memory_ = std::make_shared<Media::AVMemory>();
+        ASSERT_TRUE(audioData->memory_ != nullptr);
+    }
+    ret = avBusInputTest_->ProcessAndSendBuffer(audioData);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+    // Create audioData meta
+    if (audioData->meta_ == nullptr) {
+        audioData->meta_ = std::make_shared<Media::Meta>();
+        ASSERT_TRUE(audioData->meta_ != nullptr);
+    }
+    ret = avBusInputTest_->ProcessAndSendBuffer(audioData);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+    // set meta parameter
+    if (avBusInputTest_->meta_ == nullptr) {
+        avBusInputTest_->meta_ = std::make_shared<Media::Meta>();
+        ASSERT_TRUE(avBusInputTest_->meta_ != nullptr);
+    }
+    uint64_t pts = 8434234234;
+    uint32_t frameNumber = 20;
+    BufferDataType dataType = BufferDataType::AUDIO;
+
+    audioData->meta_->SetData(Media::Tag::MEDIA_STREAM_TYPE, dataType);
+    audioData->meta_->SetData(Media::Tag::AUDIO_OBJECT_NUMBER, frameNumber);
+    audioData->meta_->SetData(Media::Tag::USER_FRAME_PTS, pts);
+
+    ret = avBusInputTest_->ProcessAndSendBuffer(audioData);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 }
 
