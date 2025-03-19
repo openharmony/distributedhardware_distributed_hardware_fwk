@@ -409,6 +409,9 @@ HWTEST_F(AvTransportAudioDecoderFilterTest, OnLinked_002, testing::ext::TestSize
     EXPECT_EQ(status, Status::ERROR_NULL_POINTER);
     status = avAudioDecoderTest_->OnLinked(inType, nullptr, callback);
     EXPECT_EQ(status, Status::ERROR_NULL_POINTER);
+    avAudioDecoderTest_->initDecParams_.codecType = Pipeline::AudioCodecType::AUDIO_CODEC_OPUS;
+    status = avAudioDecoderTest_->OnLinked(inType, meta, callback);
+    EXPECT_EQ(status, Status::OK);
 }
 
 HWTEST_F(AvTransportAudioDecoderFilterTest, OnUpdated_001, testing::ext::TestSize.Level1)

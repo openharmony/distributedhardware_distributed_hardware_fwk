@@ -41,9 +41,10 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace Pipeline {
 typedef struct {
-    int32_t codecType;
+    AudioCodecType codecType;
     int32_t channel;
     int32_t sampleRate;
+    int32_t bitRate;
     MediaAVCodec::AudioSampleFormat sampleDepth;
 } AEncInitParams;
 
@@ -109,6 +110,7 @@ private:
     constexpr static int32_t CHANNEL_MASK_MAX = 2;
     constexpr static int32_t SAMPLE_RATE_MIN = 8000;
     constexpr static int32_t SAMPLE_RATE_MAX = 96000;
+    constexpr static int32_t BITRATE_OPUS = 32000;
 
     std::shared_ptr<Filter> nextFilter_ {nullptr};
     std::shared_ptr<EventReceiver> eventReceiver_ {nullptr};

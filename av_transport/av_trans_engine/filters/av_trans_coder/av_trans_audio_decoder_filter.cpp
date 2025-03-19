@@ -303,6 +303,13 @@ Status AudioDecoderFilter::OnLinked(StreamType inType, const std::shared_ptr<Med
     meta->GetData(Media::Tag::AUDIO_CHANNEL_COUNT, initDecParams_.channel);
     meta->GetData(Media::Tag::AUDIO_SAMPLE_RATE, initDecParams_.sampleRate);
     meta->GetData(Media::Tag::AUDIO_SAMPLE_FORMAT, initDecParams_.sampleDepth);
+    meta->GetData(Media::Tag::MEDIA_BITRATE, initDecParams_.bitRate);
+    int32_t mimeType = 0;
+    meta->GetData(Media::Tag::MIME_TYPE, mimeType);
+    initDecParams_.codecType = static_cast<AudioCodecType>(mimeType);
+    if (initDecParams_.codecType == AudioCodecType::AUDIO_CODEC_OPUS) {
+        initDecParams_.bitRate = BITRATE_OPUS;
+    }
     meta_ = meta;
     return Status::OK;
 }
@@ -341,8 +348,13 @@ void AudioDecoderFilter::OnUpdatedResult(std::shared_ptr<Media::Meta>& meta)
 
 Status AudioDecoderFilter::CreateAudioCodec()
 {
-    AVTRANS_LOGI("enter");
-    audioDecoder_ = OH_AudioCodec_CreateByName((MediaAVCodec::AVCodecCodecName::AUDIO_DECODER_AAC_NAME).data());
+    if (initDecParams_.codecType == AudioCodecType::AUDIO_CODEC_OPUS) {
+        AVTRANS_LOGI("decoderType::opus");
+        audioDecoder_ = OH_AudioCodec_CreateByName((MediaAVCodec::AVCodecCodecName::AUDIO_DECODER_OPUS_NAME).data());
+    } else {
+        AVTRANS_LOGI("decoderType::aac");
+        audioDecoder_ = OH_AudioCodec_CreateByName((MediaAVCodec::AVCodecCodecName::AUDIO_DECODER_AAC_NAME).data());
+    }
     TRUE_RETURN_V_MSG_E(audioDecoder_ == nullptr, Status::ERROR_NULL_POINTER, "Create AudioCodec failed");
     OH_AVCodecCallback cb = {&OnError, &OnOutputFormatChanged, &OnInputBufferAvailable, &OnOutputBufferAvailable};
     int32_t ret = OH_AudioCodec_RegisterCallback(audioDecoder_, cb, this);
@@ -395,14 +407,18 @@ Status AudioDecoderFilter::SetDecoderFormat(const ADecInitParams& initDecParams)
     OH_AVFormat *format = OH_AVFormat_Create();
     TRUE_RETURN_V_MSG_E(format == nullptr, Status::ERROR_NULL_POINTER, "Create AV format failed.");
     OH_AVFormat_SetIntValue(format, MediaAVCodec::MediaDescriptionKey::MD_KEY_CHANNEL_COUNT.data(),
-                            initDecParams.channel);
+        initDecParams.channel);
     OH_AVFormat_SetIntValue(format, MediaAVCodec::MediaDescriptionKey::MD_KEY_SAMPLE_RATE.data(),
-                            initDecParams.sampleRate);
+        initDecParams.sampleRate);
     OH_AVFormat_SetIntValue(format, MediaAVCodec::MediaDescriptionKey::MD_KEY_AUDIO_SAMPLE_FORMAT.data(),
-                            initDecParams.sampleDepth);
+        initDecParams.sampleDepth);
+    if (initDecParams.codecType == AudioCodecType::AUDIO_CODEC_OPUS) {
+        OH_AVFormat_SetLongValue(format, MediaAVCodec::MediaDescriptionKey::MD_KEY_BITRATE.data(),
+            initDecParams.bitRate);
+    }
     int32_t res = OH_AudioCodec_Configure(audioDecoder_, format);
     if (res != AV_ERR_OK) {
-        AVTRANS_LOGE("configure decoder failed: %{public}d", ret);
+        AVTRANS_LOGE("configure decoder failed: %{public}d", res);
         OH_AVFormat_Destroy(format);
         return Status::ERROR_INVALID_OPERATION;
     }
