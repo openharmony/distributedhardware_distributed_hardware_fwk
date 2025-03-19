@@ -158,8 +158,8 @@ int32_t DisableTask::DoAutoDisable()
     if (DHContext::GetInstance().GetRealTimeOnlineDeviceCount() == 0 &&
         DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
         DHDescriptor dhDescriptor {
-            .dhType = GetDhType(),
-            .id = GetDhId()
+            .id = GetDhId(),
+            .dhType = GetDhType()
         };
         if (disableSink) {
             ret = ComponentManager::GetInstance().ForceDisableSink(dhDescriptor);
@@ -181,8 +181,8 @@ int32_t DisableTask::DoActiveDisable()
 {
     int32_t ret = DH_FWK_SUCCESS;
     DHDescriptor dhDescriptor {
-        .dhType = GetDhType(),
-        .id = GetDhId()
+        .id = GetDhId(),
+        .dhType = GetDhType()
     };
     if (GetEffectSink()) {
         ret = ComponentManager::GetInstance().DisableSink(dhDescriptor, GetCallingUid(), GetCallingPid());
