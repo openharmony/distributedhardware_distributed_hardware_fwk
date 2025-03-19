@@ -221,7 +221,6 @@ HWTEST_F(AvTransportAudioOutputFilterTest, OnUnLinked_001, testing::ext::TestSiz
 HWTEST_F(AvTransportAudioOutputFilterTest, DoPrepare_002, testing::ext::TestSize.Level1)
 {
     ASSERT_TRUE(dSoftbusOutputTest_ != nullptr);
-
     std::shared_ptr<Media::Meta> meta = std::make_shared<Media::Meta>();
     ASSERT_TRUE(meta != nullptr);
     dSoftbusOutputTest_->SetParameter(meta);
@@ -229,6 +228,8 @@ HWTEST_F(AvTransportAudioOutputFilterTest, DoPrepare_002, testing::ext::TestSize
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
+    ret = dSoftbusOutputTest_->DoPrepare();
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
     std::string ownerName = "audiotest";
     cJSON_AddStringToObject(jsonObj, KEY_ONWER_NAME.c_str(), ownerName.c_str());
     auto str = cJSON_PrintUnformatted(jsonObj);
@@ -248,6 +249,11 @@ HWTEST_F(AvTransportAudioOutputFilterTest, DoPrepare_002, testing::ext::TestSize
     cJSON_Delete(jsonObj);
     meta->SetData(Media::Tag::MEDIA_DESCRIPTION, jsonStr);
     dSoftbusOutputTest_->SetParameter(meta);
+    std::shared_ptr<Pipeline::AudioEncoderFilter> avAudioEncoderTest_ =
+        std::make_shared<Pipeline::AudioEncoderFilter>("builtin.recorder.audioencoderfilter",
+            Pipeline::FilterType::FILTERTYPE_AENC);
+    ret = dSoftbusOutputTest_->LinkNext(avAudioEncoderTest_, Pipeline::StreamType::STREAMTYPE_RAW_AUDIO);
+    ASSERT_TRUE(ret == Status::OK);
     ret = dSoftbusOutputTest_->DoPrepare();
     EXPECT_EQ(Status::OK, ret);
 }
@@ -296,5 +302,17 @@ HWTEST_F(AvTransportAudioOutputFilterTest, ProcessAndSendBuffer_002, testing::ex
     EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
+HWTEST_F(AvTransportAudioOutputFilterTest, OnChannelEvent_001, testing::ext::TestSize.Level1)
+{
+    AVTransEvent event;
+    event.type = EventType::EVENT_REMOVE_STREAM;
+    dSoftbusOutputTest_->OnChannelEvent(event);
+    dSoftbusOutputTest_->eventReceiver_ = std::make_shared<EventReceiverTest>();
+    std::shared_ptr<EventReceiverTest> eventReceiverTest_ = std::static_pointer_cast<EventReceiverTest>(
+        dSoftbusOutputTest_->eventReceiver_);
+    eventReceiverTest_->type_ = OHOS::DistributedHardware::Pipeline::EventType::EVENT_READY;
+    dSoftbusOutputTest_->OnChannelEvent(event);
+    EXPECT_EQ(OHOS::DistributedHardware::Pipeline::EventType::EVENT_AUDIO_PROGRESS, eventReceiverTest_->type_);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

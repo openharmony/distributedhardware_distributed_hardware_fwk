@@ -34,6 +34,15 @@ public:
 private:
     std::shared_ptr<Pipeline::DSoftbusOutputFilter> dSoftbusOutputTest_;
 };
+
+class EventReceiverTest : public Pipeline::EventReceiver {
+public:
+    OHOS::DistributedHardware::Pipeline::EventType type_;
+    void OnEvent(const Pipeline::Event& event)
+    {
+        type_ = event.type;
+    }
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 

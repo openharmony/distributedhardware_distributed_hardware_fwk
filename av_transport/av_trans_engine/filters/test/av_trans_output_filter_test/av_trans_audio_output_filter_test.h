@@ -34,6 +34,11 @@ public:
 private:
     std::shared_ptr<Pipeline::DAudioOutputFilter> dAudioOutputTest_;
 };
+
+class EventReceiverTest : public Pipeline::EventReceiver {
+public:
+    void OnEvent(const Pipeline::Event& event) {}
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 
