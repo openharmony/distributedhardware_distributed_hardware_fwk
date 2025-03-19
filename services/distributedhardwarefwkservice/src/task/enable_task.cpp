@@ -154,8 +154,8 @@ int32_t EnableTask::DoAutoEnable()
         return ERR_DH_FWK_COMPONENT_LIMIT_DEMAND_START;
     }
     DHDescriptor dhDescriptor {
-        .dhType = GetDhType(),
-        .id = GetDhId()
+        .id = GetDhId(),
+        .dhType = GetDhType()
     };
     if (enableSink) {
         ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, GetCallingUid(), GetCallingPid());
@@ -177,8 +177,8 @@ int32_t EnableTask::DoActiveEnable()
 {
     int32_t ret = DH_FWK_SUCCESS;
     DHDescriptor dhDescriptor {
-        .dhType = GetDhType(),
-        .id = GetDhId()
+        .id = GetDhId(),
+        .dhType = GetDhType()
     };
     if (GetEffectSink()) {
         ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, GetCallingUid(), GetCallingPid());
