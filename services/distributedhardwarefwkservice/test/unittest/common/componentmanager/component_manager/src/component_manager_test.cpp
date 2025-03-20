@@ -35,8 +35,6 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "local_capability_info_manager.h"
-#include "mock_idistributed_hardware_sink.h"
-#include "mock_idistributed_hardware_source.h"
 #include "meta_capability_info.h"
 #include "meta_info_manager.h"
 #include "nativetoken_kit.h"
