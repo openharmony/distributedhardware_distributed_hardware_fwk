@@ -181,6 +181,18 @@ HWTEST_F(AvSenderEngineTest, Start_003, testing::ext::TestSize.Level1)
     EXPECT_EQ(ERR_DH_AVT_CREATE_CHANNEL_FAILED, ret);
 }
 
+HWTEST_F(AvSenderEngineTest, Start_004, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
+    sender->currentState_ = StateId::CH_CREATED;
+    sender->pipeline_ = nullptr;
+    int32_t ret = sender->Start();
+    sender->Stop();
+    EXPECT_EQ(ERR_DH_AVT_START_FAILED, ret);
+}
+
 HWTEST_F(AvSenderEngineTest, Stop_001, testing::ext::TestSize.Level1)
 {
     std::string ownerName = "001";
@@ -381,6 +393,61 @@ HWTEST_F(AvSenderEngineTest, SetParameter_012, testing::ext::TestSize.Level1)
 
     ret = sender->SetParameter(AVTransTag::ENGINE_RESUME, value);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
+}
+
+HWTEST_F(AvSenderEngineTest, SetParameter_013, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "ohos.dhardware.dscreen";
+    std::string peerDevId = "pEid";
+    std::string value = "500";
+    auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
+    sender->InitPipeline();
+    sender->RegRespFunMap();
+
+    int32_t ret = sender->SetParameter(AVTransTag::ENGINE_READY, value);
+    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+    
+    ret = sender->SetParameter(AVTransTag::AUDIO_CHANNELS, value);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
+}
+
+
+HWTEST_F(AvSenderEngineTest, SetParameter_014, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "ohos.dhardware.dscreen";
+    std::string peerDevId = "pEid";
+    std::string value = "500";
+    auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
+    sender->avInput_ = nullptr;
+    sender->SetVideoWidth(value);
+    sender->SetVideoHeight(value);
+    sender->SetVideoPixelFormat(value);
+    sender->SetVideoFrameRate(value);
+    sender->SetAudioBitRate(value);
+    sender->SetVideoBitRate(value);
+    sender->SetVideoCodecType(value);
+    sender->SetAudioCodecType(value);
+    sender->SetAudioChannelMask(value);
+    sender->SetAudioSampleRate(value);
+    sender->SetAudioChannelLayout(value);
+    sender->SetAudioSampleFormat(value);
+    sender->SetAudioFrameSize(value);
+    sender->SetSharedMemoryFd(value);
+    sender->SetSharedMemoryFd(value);
+    int32_t ret = sender->SetParameter(AVTransTag::AUDIO_CHANNELS, value);
+    EXPECT_EQ(ERR_DH_AVT_SETUP_FAILED, ret);
+}
+HWTEST_F(AvSenderEngineTest, SetParameterInner_001, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "ohos.dhardware.dscreen";
+    std::string peerDevId = "pEid";
+    std::string value = "500";
+    auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
+    sender->InitPipeline();
+    sender->RegRespFunMap();
+
+    sender->SetParameterInner(AVTransTag::AUDIO_CHANNELS, value);
+    EXPECT_NE(sender, nullptr);
 }
 
 HWTEST_F(AvSenderEngineTest, PushData_001, testing::ext::TestSize.Level1)
@@ -590,13 +657,24 @@ HWTEST_F(AvSenderEngineTest, SendMessage_003, testing::ext::TestSize.Level1)
 
 HWTEST_F(AvSenderEngineTest, SendMessage_004, testing::ext::TestSize.Level1)
 {
-    std::string ownerName = OWNER_NAME_D_VIRMODEM_SPEAKER;
+    std::string ownerName = OWNER_NAME_D_CAMERA;
     std::string peerDevId = "pEid";
     auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
     EventType type = EventType::EVENT_ADD_STREAM;
     sender->NotifyStreamChange(type);
     std::shared_ptr<AVTransMessage> message = std::make_shared<AVTransMessage>();
     int32_t ret = sender->SendMessage(message);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
+}
+
+HWTEST_F(AvSenderEngineTest, SendMessage_005, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_MIC;
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
+    EventType type = EventType::EVENT_ADD_STREAM;
+    sender->NotifyStreamChange(type);
+    int32_t ret = sender->SendMessage(nullptr);
     EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
 }
 
