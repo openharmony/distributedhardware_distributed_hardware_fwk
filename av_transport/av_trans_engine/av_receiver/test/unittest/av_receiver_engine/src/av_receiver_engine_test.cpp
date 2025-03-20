@@ -170,6 +170,18 @@ HWTEST_F(AvReceiverEngineTest, Start_002, testing::ext::TestSize.Level1)
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 
+HWTEST_F(AvReceiverEngineTest, Start_003, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+    receiver->currentState_ = StateId::CH_CREATED;
+    receiver->pipeline_ = nullptr;
+    int32_t ret = receiver->Start();
+    receiver->Stop();
+    EXPECT_EQ(ERR_DH_AVT_START_FAILED, ret);
+}
+
 HWTEST_F(AvReceiverEngineTest, Stop_001, testing::ext::TestSize.Level1)
 {
     std::string ownerName = "001";
@@ -228,6 +240,88 @@ HWTEST_F(AvReceiverEngineTest, SetParameter_004, testing::ext::TestSize.Level1)
     receiver->pipeline_ = std::make_shared<OHOS::Media::Pipeline::PipelineCore>();
     int32_t ret = receiver->SetParameter(AVTransTag::VIDEO_WIDTH, value);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
+}
+
+HWTEST_F(AvReceiverEngineTest, SetParameter_005, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    std::string value = "123";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+    receiver->avInput_ = FilterFactory::Instance().CreateFilterWithType<AVInputFilter>(AVINPUT_NAME, "avinput");
+    receiver->avOutput_ = FilterFactory::Instance().CreateFilterWithType<AVOutputFilter>(AVOUTPUT_NAME, "avoutput");
+
+    std::shared_ptr<OHOS::Media::Pipeline::PipelineCore> pipeline_ = nullptr;
+    receiver->pipeline_ = std::make_shared<OHOS::Media::Pipeline::PipelineCore>();
+    int32_t ret = receiver->SetParameter(AVTransTag::VIDEO_WIDTH, value);
+    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+}
+
+HWTEST_F(AvReceiverEngineTest, SetParameter_006, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    std::string value = "123";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+    receiver->avInput_ = FilterFactory::Instance().CreateFilterWithType<AVInputFilter>(AVINPUT_NAME, "avinput");
+    receiver->avOutput_ = FilterFactory::Instance().CreateFilterWithType<AVOutputFilter>(AVOUTPUT_NAME, "avoutput");
+
+    std::shared_ptr<OHOS::Media::Pipeline::PipelineCore> pipeline_ = nullptr;
+    receiver->pipeline_ = std::make_shared<OHOS::Media::Pipeline::PipelineCore>();
+    int32_t ret = receiver->SetParameter(AVTransTag::VIDEO_HEIGHT, value);
+    ret = receiver->SetParameter(AVTransTag::VIDEO_FRAME_RATE, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_BIT_RATE, value);
+    ret = receiver->SetParameter(AVTransTag::VIDEO_BIT_RATE, value);
+    ret = receiver->SetParameter(AVTransTag::VIDEO_CODEC_TYPE, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_CODEC_TYPE, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_CHANNEL_MASK, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_SAMPLE_RATE, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_CHANNEL_LAYOUT, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_SAMPLE_FORMAT, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_FRAME_SIZE, value);
+    ret = receiver->SetParameter(AVTransTag::TIME_SYNC_RESULT, value);
+    ret = receiver->SetParameter(AVTransTag::START_AV_SYNC, value);
+    ret = receiver->SetParameter(AVTransTag::STOP_AV_SYNC, value);
+    ret = receiver->SetParameter(AVTransTag::SHARED_MEMORY_FD, value);
+    ret = receiver->SetParameter(AVTransTag::ENGINE_READY, value);
+    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+    receiver->SetParameterInner(AVTransTag::AUDIO_RENDER_FLAGS, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_RENDER_FLAGS, value);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
+}
+
+HWTEST_F(AvReceiverEngineTest, SetParameter_007, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    std::string value = "123";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+    receiver->avInput_ = FilterFactory::Instance().CreateFilterWithType<AVInputFilter>(AVINPUT_NAME, "avinput");
+    receiver->avOutput_ = FilterFactory::Instance().CreateFilterWithType<AVOutputFilter>(AVOUTPUT_NAME, "avoutput");
+
+    std::shared_ptr<OHOS::Media::Pipeline::PipelineCore> pipeline_ = nullptr;
+    receiver->pipeline_ = std::make_shared<OHOS::Media::Pipeline::PipelineCore>();
+    int32_t ret = receiver->SetParameter(AVTransTag::VIDEO_WIDTH, value);
+    ret = receiver->SetParameter(AVTransTag::VIDEO_HEIGHT, value);
+    ret = receiver->SetParameter(AVTransTag::VIDEO_FRAME_RATE, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_BIT_RATE, value);
+    ret = receiver->SetParameter(AVTransTag::VIDEO_BIT_RATE, value);
+    ret = receiver->SetParameter(AVTransTag::VIDEO_CODEC_TYPE, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_CODEC_TYPE, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_CHANNEL_MASK, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_SAMPLE_RATE, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_CHANNEL_LAYOUT, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_SAMPLE_FORMAT, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_FRAME_SIZE, value);
+    ret = receiver->SetParameter(AVTransTag::TIME_SYNC_RESULT, value);
+    ret = receiver->SetParameter(AVTransTag::START_AV_SYNC, value);
+    ret = receiver->SetParameter(AVTransTag::STOP_AV_SYNC, value);
+    ret = receiver->SetParameter(AVTransTag::SHARED_MEMORY_FD, value);
+    ret = receiver->SetParameter(AVTransTag::ENGINE_READY, value);
+    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+    receiver->SetParameterInner(AVTransTag::AUDIO_RENDER_FLAGS, value);
+    ret = receiver->SetParameter(AVTransTag::AUDIO_RENDER_FLAGS, value);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
 }
 
 HWTEST_F(AvReceiverEngineTest, PreparePipeline_001, testing::ext::TestSize.Level1)
@@ -293,6 +387,24 @@ HWTEST_F(AvReceiverEngineTest, PreparePipeline_005, testing::ext::TestSize.Level
     receiver->pipeline_ = std::make_shared<OHOS::Media::Pipeline::PipelineCore>();
     int32_t ret = receiver->PreparePipeline(configParam);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
+}
+
+HWTEST_F(AvReceiverEngineTest, PreparePipeline_006, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_MIC;
+    std::string peerDevId = "pEid";
+    std::string configParam = "value";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+    std::shared_ptr<AVInputFilter> avInput = nullptr;
+    avInput = FilterFactory::Instance().CreateFilterWithType<AVInputFilter>(AVINPUT_NAME, "avinput");
+    receiver->currentState_ = StateId::INITIALIZED;
+    std::shared_ptr<AVOutputFilter> avOutput = nullptr;
+    avOutput = FilterFactory::Instance().CreateFilterWithType<AVOutputFilter>(AVOUTPUT_NAME, "avoutput");
+    receiver->avInput_ = avInput;
+    receiver->avOutput_ = avOutput;
+    receiver->pipeline_ = nullptr;
+    int32_t ret = receiver->PreparePipeline(configParam);
+    EXPECT_EQ(ERR_DH_AVT_SET_PARAM_FAILED, ret);
 }
 
 HWTEST_F(AvReceiverEngineTest, SendMessage_001, testing::ext::TestSize.Level1)
@@ -427,6 +539,48 @@ HWTEST_F(AvReceiverEngineTest, Release_001, testing::ext::TestSize.Level1)
 
     receiver->currentState_ = StateId::IDLE;
     receiver->dhFwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
+    int32_t ret = receiver->Release();
+    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+}
+
+HWTEST_F(AvReceiverEngineTest, Release_002, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVReceiverEngine>(ownerName, peerDevId);
+    receiver->RegRespFunMap();
+    std::string value = "50";
+    std::shared_ptr<AVInputFilter> avInput = nullptr;
+    avInput = FilterFactory::Instance().CreateFilterWithType<AVInputFilter>(AVINPUT_NAME, "avinput");
+    std::shared_ptr<AVOutputFilter> avOutput = nullptr;
+    avOutput = FilterFactory::Instance().CreateFilterWithType<AVOutputFilter>(AVOUTPUT_NAME, "avoutput");
+    receiver->avInput_ = avInput;
+    receiver->avOutput_ = avOutput;
+    receiver->SetVideoWidth(value);
+    receiver->SetVideoHeight(value);
+    receiver->SetVideoFrameRate(value);
+    receiver->SetAudioBitRate(value);
+    receiver->SetVideoBitRate(value);
+    std::string codecType = MIME_VIDEO_H264;
+    receiver->SetVideoCodecType(codecType);
+    codecType = MIME_VIDEO_H265;
+    receiver->SetVideoCodecType(codecType);
+    receiver->SetAudioCodecType(codecType);
+    receiver->SetAudioChannelMask(value);
+    receiver->SetAudioSampleRate(value);
+    receiver->SetAudioChannelLayout(value);
+    receiver->SetAudioSampleFormat(value);
+    receiver->SetAudioFrameSize(value);
+
+    std::string params = "";
+    receiver->SetSyncResult(params);
+    receiver->SetStartAvSync(params);
+    receiver->SetStopAvSync(params);
+    receiver->SetSharedMemoryFd(params);
+    receiver->SetEngineReady(params);
+
+    receiver->currentState_ = StateId::IDLE;
+    receiver->dhFwkKit_ = nullptr;
     int32_t ret = receiver->Release();
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
