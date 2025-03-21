@@ -154,6 +154,18 @@ HWTEST_F(AvTransportAudioOutputFilterTest, ProcessAndSendBuffer_001, testing::ex
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 }
 
+HWTEST_F(AvTransportAudioOutputFilterTest, ProcessAndSendBuffer_002, testing::ext::TestSize.Level1)
+{
+    ASSERT_TRUE(dAudioOutputTest_ != nullptr);
+    std::shared_ptr<Media::AVBuffer> audioData;
+    Status ret = dAudioOutputTest_->ProcessAndSendBuffer(audioData);
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    audioData = std::make_shared<Media::AVBuffer>();
+    dAudioOutputTest_->eventReceiver_ = std::make_shared<EventReceiverTest>();
+    ret = dAudioOutputTest_->ProcessAndSendBuffer(audioData);
+    EXPECT_EQ(Status::OK, ret);
+}
+
 HWTEST_F(AvTransportAudioOutputFilterTest, SetParameterAndGetParameter_001, testing::ext::TestSize.Level1)
 {
     std::shared_ptr<Media::Meta> meta = nullptr;
@@ -215,6 +227,5 @@ HWTEST_F(AvTransportAudioOutputFilterTest, OnUnLinked_001, testing::ext::TestSiz
     Status ret = dAudioOutputTest_->OnUnLinked(Pipeline::StreamType::STREAMTYPE_RAW_AUDIO, nullptr);
     EXPECT_EQ(Status::OK, ret);
 }
-
 } // namespace DistributedHardware
 } // namespace OHOS

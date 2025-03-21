@@ -372,6 +372,21 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_024, TestSize.Level1)
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
 }
 
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_025, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(0xffff);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteInt32(1);
+    data.WriteInt32(static_cast<int32_t>(DHType::AUDIO));
+    data.WriteString("id_test");
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_NE(DH_FWK_SUCCESS, ret);
+}
+
 /**
  * @tc.name: RegisterPublisherListenerInner_001
  * @tc.desc: Verify the RegisterPublisherListenerInner function

@@ -122,6 +122,19 @@ HWTEST_F(AvTransportBusInputFilterTest, ProcessAndSendBuffer_002, testing::ext::
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 }
 
+HWTEST_F(AvTransportBusInputFilterTest, ProcessAndSendBuffer_003, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.audio.input",
+            Pipeline::FilterType::FILTERTYPE_SOURCE);
+    std::shared_ptr<Media::AVBufferQueue> outputBufQue = Media::AVBufferQueue::Create(DEFAULT_BUFFER_NUM,
+        Media::MemoryType::VIRTUAL_MEMORY, INPUT_BUFFER_QUEUE_NAME);
+    avBusInputTest_->outputBufQueProducer_ = outputBufQue->GetProducer();
+    std::shared_ptr<Media::AVBuffer> audioData = std::make_shared<Media::AVBuffer>();
+    Status ret = avBusInputTest_->ProcessAndSendBuffer(audioData);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+}
+
 HWTEST_F(AvTransportBusInputFilterTest, DoProcessOutputBuffer_001, testing::ext::TestSize.Level1)
 {
     std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
@@ -237,6 +250,18 @@ HWTEST_F(AvTransportBusInputFilterTest, DoProcessInputBuffer_001, testing::ext::
                                                                 INPUT_BUFFER_QUEUE_NAME);
     ret = avBusInputTest_->DoProcessInputBuffer(1, true);
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, DoProcessInputBuffer_002, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    avBusInputTest_->PrepareInputBuffer();
+    avBusInputTest_->curState_ = Pipeline::FilterState::RUNNING;
+    Status ret = avBusInputTest_->DoProcessInputBuffer(1, true);
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
 HWTEST_F(AvTransportBusInputFilterTest, LinkNext_001, testing::ext::TestSize.Level1)
