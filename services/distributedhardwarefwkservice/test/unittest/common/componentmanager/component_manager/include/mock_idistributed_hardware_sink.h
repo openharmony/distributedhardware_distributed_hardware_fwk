@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_MOCK_IDISTRIBUTED_HARDWARE_SINK_H
 #define OHOS_DISTRIBUTED_HARDWARE_MOCK_IDISTRIBUTED_HARDWARE_SINK_H
 
+#include <gmock/gmock.h>
 #include <string>
 
 #include "idistributed_hardware_sink.h"
@@ -25,38 +26,14 @@ namespace DistributedHardware {
 class MockIDistributedHardwareSink : public IDistributedHardwareSink {
 public:
     virtual ~MockIDistributedHardwareSink() {}
-    int32_t InitSink(const std::string &params)
-    {
-        return 0;
-    }
-    int32_t ReleaseSink()
-    {
-        return 0;
-    }
-    int32_t SubscribeLocalHardware(const std::string &dhId, const std::string &parameter)
-    {
-        return 0;
-    }
-    int32_t UnsubscribeLocalHardware(const std::string &dhId)
-    {
-        return 0;
-    }
-    int32_t RegisterPrivacyResources(std::shared_ptr<PrivacyResourcesListener> listener)
-    {
-        return 0;
-    }
-    int32_t PauseDistributedHardware(const std::string &networkId)
-    {
-        return 0;
-    }
-    int32_t ResumeDistributedHardware(const std::string &networkId)
-    {
-        return 0;
-    }
-    int32_t StopDistributedHardware(const std::string &networkId)
-    {
-        return 0;
-    }
+    MOCK_METHOD(int32_t, InitSink, (const std::string &));
+    MOCK_METHOD(int32_t, ReleaseSink, ());
+    MOCK_METHOD(int32_t, SubscribeLocalHardware, (const std::string &, const std::string &));
+    MOCK_METHOD(int32_t, UnsubscribeLocalHardware, (const std::string &));
+    MOCK_METHOD(int32_t, RegisterPrivacyResources, (std::shared_ptr<PrivacyResourcesListener>));
+    MOCK_METHOD(int32_t, PauseDistributedHardware, (const std::string &));
+    MOCK_METHOD(int32_t, ResumeDistributedHardware, (const std::string &));
+    MOCK_METHOD(int32_t, StopDistributedHardware, (const std::string &));
 };
 } // namespace DistributedHardware
 } // namespace OHOS
