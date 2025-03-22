@@ -34,6 +34,7 @@ public:
         : CapabilityInfo("", "", "", 0, DHType::UNKNOWN, "", ""), udidHash_("")
     {
         compVersion_.haveFeature = false;
+        compVersion_.dhType = DHType::UNKNOWN;
     }
 
     MetaCapabilityInfo(std::string dhId, std::string devId, std::string devName, uint16_t devType, DHType dhType,
