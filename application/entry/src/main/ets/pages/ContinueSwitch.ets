@@ -325,8 +325,8 @@ struct ContinueSwitch {
         .margin({
           bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM,
           top: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_TOP,
-          left: $('app.float.margin_8'),
-          right: $('app.float.margin_8')
+          left: $r('app.float.margin_8'),
+          right: $r('app.float.margin_8')
         })
         .textAlign(TextAlign.Center)
         .width('100%')
@@ -493,7 +493,7 @@ struct ContinueSwitch {
       logger.info(`${TAG} this.imageAnimatorWidth = ${this.imageAnimatorWidth}, this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
     })
     .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
-    .padding({ bottom: $('app.float.margin_16') })
+    .padding({ bottom: $r('app.float.margin_16') })
   }
 
   private getContentVisibility(): Visibility {
