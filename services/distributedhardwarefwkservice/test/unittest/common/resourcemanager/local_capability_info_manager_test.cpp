@@ -79,6 +79,14 @@ HWTEST_F(LocalCapInfoMgrTest, SyncDeviceInfoFromDB_001, TestSize.Level1)
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
+HWTEST_F(LocalCapInfoMgrTest, SyncDeviceInfoFromDB_002, TestSize.Level1)
+{
+    std::string deviceId(266, 'A');
+    LocalCapabilityInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    auto ret = LocalCapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
 HWTEST_F(LocalCapInfoMgrTest, AddCapability_001, TestSize.Level1)
 {
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
@@ -140,6 +148,26 @@ HWTEST_F(LocalCapInfoMgrTest, GetCapabilitiesByDeviceId_001, TestSize.Level1)
     std::string deviceId = "";
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
     ASSERT_NO_FATAL_FAILURE(LocalCapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, resInfos));
+}
+
+HWTEST_F(LocalCapInfoMgrTest, GetCapabilitiesByDeviceId_002, TestSize.Level1)
+{
+    std::string deviceId = "test_device_id";
+    auto localCapInfoMgr = LocalCapabilityInfoManager::GetInstance();
+    std::shared_ptr<CapabilityInfo> capInfo1 = std::make_shared<CapabilityInfo>(
+        "dhId_test1", deviceId, "devName_test1", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "subtype");
+    std::shared_ptr<CapabilityInfo> capInfo2 = std::make_shared<CapabilityInfo>(
+        "dhId_test2", "other_device_id", "devName_test2", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "subtype");
+
+    std::string key1 = GetCapabilityKey(deviceId, "dhId_test1");
+    std::string key2 = GetCapabilityKey("other_device_id", "dhId_test2");
+
+    localCapInfoMgr->globalCapInfoMap_[key1] = capInfo1;
+    localCapInfoMgr->globalCapInfoMap_[key2] = capInfo2;
+
+    std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
+    localCapInfoMgr->GetCapabilitiesByDeviceId(deviceId, resInfos);
+    ASSERT_EQ(resInfos.size(), 1);
 }
 
 HWTEST_F(LocalCapInfoMgrTest, GetCapability_001, TestSize.Level1)
