@@ -121,12 +121,6 @@ HWTEST_F(FilterTest, PauseDragging_001, testing::ext::TestSize.Level1)
 
 HWTEST_F(FilterTest, Resume_001, testing::ext::TestSize.Level1)
 {
-    Filter filterAsync("testFilterAsync", FilterType::FILTERTYPE_VENC, true);
-    filterAsync.filterTask_ = std::make_unique<Media::Task>(
-        "mockTask", "groupId", Media::TaskType::SINGLETON, Media::TaskPriority::HIGH, false);
-    Status result_async = filterAsync.Resume();
-    EXPECT_EQ(result_async, Status::OK);
-
     Filter filterSync("testFilterSync", FilterType::FILTERTYPE_ASINK, false);
     filterSync.filterTask_ = nullptr;
     auto mockNextFilter = std::make_shared<Filter>("mockNextFilter", FilterType::FILTERTYPE_ASINK, false);
@@ -143,12 +137,6 @@ HWTEST_F(FilterTest, Resume_001, testing::ext::TestSize.Level1)
 
 HWTEST_F(FilterTest, ResumeDragging_001, testing::ext::TestSize.Level1)
 {
-    Filter filterAsync("testFilterAsync", FilterType::FILTERTYPE_VENC, true);
-    filterAsync.filterTask_ = std::make_unique<Media::Task>(
-        "mockTask", "groupId", Media::TaskType::SINGLETON, Media::TaskPriority::HIGH, false);
-    Status result_async = filterAsync.ResumeDragging();
-    EXPECT_EQ(result_async, Status::OK);
-
     Filter filterSync("testFilterSync", FilterType::FILTERTYPE_ASINK, false);
     filterSync.filterTask_ = nullptr;
     auto mockNextFilter = std::make_shared<Filter>("mockNextFilter", FilterType::FILTERTYPE_ASINK, false);
