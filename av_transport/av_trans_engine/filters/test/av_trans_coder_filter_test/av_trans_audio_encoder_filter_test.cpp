@@ -103,6 +103,7 @@ HWTEST_F(AvTransportAudioEncoderFilterTest, StartAudioCodec_001, testing::ext::T
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 
     // Create Audio Codec
+    avAudioEncoderTest_->initEncParams_.codecType = Pipeline::AudioCodecType::AUDIO_CODEC_AAC;
     ret = avAudioEncoderTest_->CreateAudioCodec();
     EXPECT_EQ(Status::OK, ret);
 }
@@ -144,6 +145,7 @@ HWTEST_F(AvTransportAudioEncoderFilterTest, CreateAudioCodec_001, testing::ext::
         std::make_shared<Pipeline::AudioEncoderFilter>("builtin.recorder.audioencoderfilter",
             Pipeline::FilterType::FILTERTYPE_AENC);
     ASSERT_TRUE(avAudioEncoderTest_ != nullptr);
+    avAudioEncoderTest_->initEncParams_.codecType = Pipeline::AudioCodecType::AUDIO_CODEC_AAC;
     Status ret = avAudioEncoderTest_->CreateAudioCodec();
     EXPECT_EQ(Status::OK, ret);
 }
@@ -409,6 +411,9 @@ HWTEST_F(AvTransportAudioEncoderFilterTest, OnLinked_002, testing::ext::TestSize
     EXPECT_EQ(status, Status::ERROR_NULL_POINTER);
     status = avAudioEncoderTest_->OnLinked(inType, nullptr, callback);
     EXPECT_EQ(status, Status::ERROR_NULL_POINTER);
+    meta->SetData(Media::Tag::MIME_TYPE, Pipeline::AudioCodecType::AUDIO_CODEC_OPUS);
+    status = avAudioEncoderTest_->OnLinked(inType, meta, callback);
+    EXPECT_EQ(status, Status::OK);
 }
 
 HWTEST_F(AvTransportAudioEncoderFilterTest, OnUpdated_001, testing::ext::TestSize.Level1)
@@ -490,6 +495,24 @@ HWTEST_F(AvTransportAudioEncoderFilterTest, SetEncoderFormat_002, testing::ext::
     encInitParams.sampleDepth = MediaAVCodec::AudioSampleFormat::SAMPLE_U8;
     Status status = avAudioEncoderTest_->SetEncoderFormat(encInitParams);
     EXPECT_EQ(status, Status::ERROR_NULL_POINTER);
+}
+
+HWTEST_F(AvTransportAudioEncoderFilterTest, SetEncoderFormat_003, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AudioEncoderFilter> avAudioEncoderTest_ =
+        std::make_shared<Pipeline::AudioEncoderFilter>("builtin.recorder.audioencoderfilter",
+                                                       Pipeline::FilterType::FILTERTYPE_AENC);
+    ASSERT_TRUE(avAudioEncoderTest_ != nullptr);
+    Pipeline::AEncInitParams encInitParams;
+    encInitParams.channel = 2;
+    encInitParams.sampleRate = 44100;
+    encInitParams.sampleDepth = MediaAVCodec::AudioSampleFormat::SAMPLE_U8;
+    encInitParams.codecType = Pipeline::AudioCodecType::AUDIO_CODEC_OPUS;
+    OH_AVCodec audioEncoder(AVMagic::AVCODEC_MAGIC_AUDIO_ENCODER);
+    avAudioEncoderTest_->audioEncoder_ = &audioEncoder;
+    Status status = avAudioEncoderTest_->SetEncoderFormat(encInitParams);
+    avAudioEncoderTest_->audioEncoder_ = nullptr;
+    EXPECT_EQ(status, Status::ERROR_INVALID_OPERATION);
 }
 
 HWTEST_F(AvTransportAudioEncoderFilterTest, CheckEncoderFormat_002, testing::ext::TestSize.Level1)

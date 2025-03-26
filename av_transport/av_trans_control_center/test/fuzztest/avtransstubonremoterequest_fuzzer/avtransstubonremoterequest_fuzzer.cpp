@@ -54,10 +54,8 @@ void AVTransStubOnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
         pdata.WriteString(value);
     } else if (code == (uint32_t)IAVTransControlCenterCallback::Message::SET_SHARED_MEMORY) {
         FuzzedDataProvider fdp(data, size);
-        int32_t fd = fdp.ConsumeIntegral<int32_t>();
         int32_t len = fdp.ConsumeIntegral<int32_t>();
         std::string name(reinterpret_cast<const char*>(data), size);
-        pdata.WriteFileDescriptor(fd);
         pdata.WriteInt32(len);
         pdata.WriteString(name);
     } else if (code == (uint32_t)IAVTransControlCenterCallback::Message::NOTIFY_AV_EVENT) {
