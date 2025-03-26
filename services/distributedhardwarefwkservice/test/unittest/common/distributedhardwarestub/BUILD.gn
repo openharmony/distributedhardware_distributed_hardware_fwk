@@ -37,7 +37,10 @@ config("module_private_config") {
 ohos_unittest("DistributedHardwareStubTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/distributed_hardware_stub_test.cpp" ]
+  sources = [
+    "src/accesstoken_kit_mock.cpp",
+    "src/distributed_hardware_stub_test.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 
@@ -59,9 +62,14 @@ ohos_unittest("DistributedHardwareStubTest") {
   ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
+    "access_token:libnativetoken",
+    "access_token:libtoken_setproc",
     "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
+    "googletest:gmock",
+    "googletest:gmock_main",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
   ]

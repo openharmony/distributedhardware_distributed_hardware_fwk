@@ -518,5 +518,105 @@ HWTEST_F(DistributedHardwareProxyTest, StopDistributedHardware_001, TestSize.Lev
     ret = dhProxy.StopDistributedHardware(dhType, networkId);
     EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
 }
+
+HWTEST_F(DistributedHardwareProxyTest, GetDistributedHardware_001, TestSize.Level1)
+{
+    std::string networkId = "123456";
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+
+    std::vector<DHDescriptor> descriptors;
+    auto ret = dhProxy.GetDistributedHardware(networkId, descriptors);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, RegisterDHStatusListener_Source_001, TestSize.Level1)
+{
+    std::string networkId = "123456";
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+    sptr<IHDSourceStatusListener> listener(new MockHDSourceStatusListenerStub());
+    auto ret = dhProxy.RegisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, UnregisterDHStatusListener_Source_001, TestSize.Level1)
+{
+    std::string networkId = "123456";
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+    sptr<IHDSourceStatusListener> listener(new MockHDSourceStatusListenerStub());
+    auto ret = dhProxy.UnregisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, RegisterDHStatusListener_Sink_001, TestSize.Level1)
+{
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+    sptr<IHDSinkStatusListener> listener(new MockHDSinkStatusListenerStub());
+    auto ret = dhProxy.RegisterDHStatusListener(listener);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, UnregisterDHStatusListener_Sink_001, TestSize.Level1)
+{
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+    sptr<IHDSinkStatusListener> listener(new MockHDSinkStatusListenerStub());
+    auto ret = dhProxy.UnregisterDHStatusListener(listener);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, EnableSink_001, TestSize.Level1)
+{
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+
+    std::vector<DHDescriptor> descriptors = {{ .id = "camera_1", .dhType = DHType::CAMERA }};
+    auto ret = dhProxy.EnableSink(descriptors);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, DisableSink_001, TestSize.Level1)
+{
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+
+    std::vector<DHDescriptor> descriptors = {{ .id = "camera_1", .dhType = DHType::CAMERA }};
+    auto ret = dhProxy.DisableSink(descriptors);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, EnableSource_001, TestSize.Level1)
+{
+    std::string networkId = "123456";
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+
+    std::vector<DHDescriptor> descriptors;
+    auto ret = dhProxy.EnableSource(networkId, descriptors);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, DisableSource_001, TestSize.Level1)
+{
+    std::string networkId = "123456";
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+
+    std::vector<DHDescriptor> descriptors;
+    auto ret = dhProxy.DisableSource(networkId, descriptors);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -79,6 +79,34 @@ public:
         (void)message;
     }
 };
+
+class MockHDSinkStatusListenerStub : public IRemoteStub<IHDSinkStatusListener> {
+public:
+    void OnEnable(const DHDescriptor &dhDescriptor) override
+    {
+        (void)dhDescriptor;
+    }
+
+    void OnDisable(const DHDescriptor &dhDescriptor) override
+    {
+        (void)dhDescriptor;
+    }
+};
+
+class MockHDSourceStatusListenerStub : public IRemoteStub<IHDSourceStatusListener> {
+public:
+    void OnEnable(const std::string &networkId, const DHDescriptor &dhDescriptor) override
+    {
+        (void)networkId;
+        (void)dhDescriptor;
+    }
+
+    void OnDisable(const std::string &networkId, const DHDescriptor &dhDescriptor) override
+    {
+        (void)networkId;
+        (void)dhDescriptor;
+    }
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DISTRIBUTED_HARDWARE_PROXY_TEST_H
