@@ -113,11 +113,9 @@ HWTEST_F(AvTransportBusInputFilterTest, ProcessAndSendBuffer_002, testing::ext::
     uint64_t pts = 8434234234;
     uint32_t frameNumber = 20;
     BufferDataType dataType = BufferDataType::AUDIO;
-
     audioData->meta_->SetData(Media::Tag::MEDIA_STREAM_TYPE, dataType);
     audioData->meta_->SetData(Media::Tag::AUDIO_OBJECT_NUMBER, frameNumber);
     audioData->meta_->SetData(Media::Tag::USER_FRAME_PTS, pts);
-
     ret = avBusInputTest_->ProcessAndSendBuffer(audioData);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
 }
@@ -133,6 +131,41 @@ HWTEST_F(AvTransportBusInputFilterTest, ProcessAndSendBuffer_003, testing::ext::
     std::shared_ptr<Media::AVBuffer> audioData = std::make_shared<Media::AVBuffer>();
     Status ret = avBusInputTest_->ProcessAndSendBuffer(audioData);
     EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, ProcessAndSendBuffer_004, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.audio.input",
+            Pipeline::FilterType::FILTERTYPE_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    std::shared_ptr<Media::AVBuffer> audioData = std::make_shared<Media::AVBuffer>();
+    // Create memory
+    if (audioData->memory_ == nullptr) {
+        audioData->memory_ = std::make_shared<Media::AVMemory>();
+        ASSERT_TRUE(audioData->memory_ != nullptr);
+    }
+    std::shared_ptr<Media::AVBufferQueue> outputBufQue = Media::AVBufferQueue::Create(DEFAULT_BUFFER_NUM,
+        Media::MemoryType::VIRTUAL_MEMORY, INPUT_BUFFER_QUEUE_NAME);
+    avBusInputTest_->outputBufQueProducer_ = outputBufQue->GetProducer();
+    // Create audioData meta
+    if (audioData->meta_ == nullptr) {
+        audioData->meta_ = std::make_shared<Media::Meta>();
+        ASSERT_TRUE(audioData->meta_ != nullptr);
+    }
+    // set meta parameter
+    if (avBusInputTest_->meta_ == nullptr) {
+        avBusInputTest_->meta_ = std::make_shared<Media::Meta>();
+        ASSERT_TRUE(avBusInputTest_->meta_ != nullptr);
+    }
+    uint64_t pts = 8434234234;
+    uint32_t frameNumber = 20;
+    BufferDataType dataType = BufferDataType::AUDIO;
+    audioData->meta_->SetData(Media::Tag::MEDIA_STREAM_TYPE, dataType);
+    audioData->meta_->SetData(Media::Tag::AUDIO_OBJECT_NUMBER, frameNumber);
+    audioData->meta_->SetData(Media::Tag::USER_FRAME_PTS, pts);
+    Status ret = avBusInputTest_->ProcessAndSendBuffer(audioData);
+    EXPECT_EQ(Status::OK, ret);
 }
 
 HWTEST_F(AvTransportBusInputFilterTest, DoProcessOutputBuffer_001, testing::ext::TestSize.Level1)
@@ -151,6 +184,64 @@ HWTEST_F(AvTransportBusInputFilterTest, DoPrepare_001, testing::ext::TestSize.Le
         std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
             Pipeline::FilterType::AUDIO_DATA_SOURCE);
     ASSERT_TRUE(avBusInputTest_ != nullptr);
+    Status ret = avBusInputTest_->DoPrepare();
+    EXPECT_NE(Status::OK, ret);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, DoPrepare_002, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    avBusInputTest_->meta_ = std::make_shared<Media::Meta>();
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, "ownerName_111", "ownerName_111");
+    auto str = cJSON_PrintUnformatted(jsonObj);
+    std::string jsonStr = std::string(str);
+    cJSON_free(str);
+    cJSON_Delete(jsonObj);
+    avBusInputTest_->meta_->SetData(Media::Tag::MEDIA_DESCRIPTION, jsonStr);
+    Status ret = avBusInputTest_->DoPrepare();
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, DoPrepare_003, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    avBusInputTest_->meta_ = std::make_shared<Media::Meta>();
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, KEY_ONWER_NAME.c_str(), "ownerName_111");
+    auto str = cJSON_PrintUnformatted(jsonObj);
+    std::string jsonStr = std::string(str);
+    cJSON_free(str);
+    cJSON_Delete(jsonObj);
+    avBusInputTest_->meta_->SetData(Media::Tag::MEDIA_DESCRIPTION, jsonStr);
+    Status ret = avBusInputTest_->DoPrepare();
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, ret);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, DoPrepare_004, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    avBusInputTest_->meta_ = std::make_shared<Media::Meta>();
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, KEY_ONWER_NAME.c_str(), "ownerName_111");
+    cJSON_AddStringToObject(jsonObj, KEY_PEERDEVID_NAME.c_str(), "peerDevId_111");
+    auto str = cJSON_PrintUnformatted(jsonObj);
+    std::string jsonStr = std::string(str);
+    cJSON_free(str);
+    cJSON_Delete(jsonObj);
+    avBusInputTest_->meta_->SetData(Media::Tag::MEDIA_DESCRIPTION, jsonStr);
     Status ret = avBusInputTest_->DoPrepare();
     EXPECT_NE(Status::OK, ret);
 }
@@ -368,6 +459,38 @@ HWTEST_F(AvTransportBusInputFilterTest, TransName2PkgName_002, testing::ext::Tes
     ASSERT_TRUE(avBusInputTest_ != nullptr);
     std::string result = avBusInputTest_->TransName2PkgName(OWNER_NAME_D_SCREEN);
     EXPECT_EQ(PKG_NAME_D_SCREEN, result);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, OnChannelEvent_001, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    avBusInputTest_->receiver_ = std::make_shared<EventReceiverTest>();
+    std::shared_ptr<EventReceiverTest> receiverTest_ = std::static_pointer_cast<EventReceiverTest>(
+        avBusInputTest_->receiver_);
+
+    receiverTest_->type_ = OHOS::DistributedHardware::Pipeline::EventType::EVENT_READY;
+    AVTransEvent event;
+    event.type = EventType::EVENT_CHANNEL_OPENED;
+    avBusInputTest_->OnChannelEvent(event);
+    EXPECT_EQ(receiverTest_->type_, OHOS::DistributedHardware::Pipeline::EventType::EVENT_AUDIO_PROGRESS);
+
+    receiverTest_->type_ = OHOS::DistributedHardware::Pipeline::EventType::EVENT_READY;
+    event.type = EventType::EVENT_CHANNEL_OPEN_FAIL;
+    avBusInputTest_->OnChannelEvent(event);
+    EXPECT_EQ(receiverTest_->type_, OHOS::DistributedHardware::Pipeline::EventType::EVENT_READY);
+
+    receiverTest_->type_ = OHOS::DistributedHardware::Pipeline::EventType::EVENT_READY;
+    event.type = EventType::EVENT_CHANNEL_CLOSED;
+    avBusInputTest_->OnChannelEvent(event);
+    EXPECT_EQ(receiverTest_->type_, OHOS::DistributedHardware::Pipeline::EventType::EVENT_READY);
+
+    receiverTest_->type_ = OHOS::DistributedHardware::Pipeline::EventType::EVENT_READY;
+    event.type = EventType::EVENT_REMOVE_STREAM;
+    avBusInputTest_->OnChannelEvent(event);
+    EXPECT_EQ(receiverTest_->type_, OHOS::DistributedHardware::Pipeline::EventType::EVENT_READY);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

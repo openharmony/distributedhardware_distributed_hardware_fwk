@@ -32,6 +32,15 @@ public:
     void SetUp() override;
     void TearDown() override;
 };
+
+class EventReceiverTest : public Pipeline::EventReceiver {
+public:
+    OHOS::DistributedHardware::Pipeline::EventType type_;
+    void OnEvent(const Pipeline::Event& event)
+    {
+        type_ = event.type;
+    }
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 
