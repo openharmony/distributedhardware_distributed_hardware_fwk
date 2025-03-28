@@ -442,7 +442,7 @@ struct ContinueSwitch {
     .width('100%')
     .height(this.screenHeight)
     .scrollable(ScrollDirection.Vertical)
-    .scrollBar(BarState.On)
+    .scrollBar(BarState.Off)
     .align(Alignment.TopStart)
     .friction(0.6)
     .edgeEffect(EdgeEffect.Spring)
@@ -455,6 +455,9 @@ struct ContinueSwitch {
     .onAreaChange((oldArea: Area, newArea: Area) => {
       logger.info(`${TAG} Scroll, oldArea.height = ${oldArea.height}, newArea.height = ${newArea.height}`);
     })
+
+    ScrollBar({ scroller: this.scroller, direction: ScrollBarDirection.Vertical, state: BarState.Auto })
+      .position({ right: 0, bottom: 16 })
   }
 
   build() {
