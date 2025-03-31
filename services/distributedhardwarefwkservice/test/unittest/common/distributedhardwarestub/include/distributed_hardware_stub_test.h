@@ -18,6 +18,7 @@
 
 #include <gtest/gtest.h>
 
+#include "accesstoken_kit_mock.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_fwk_kit_paras.h"
 #include "distributed_hardware_stub.h"
@@ -31,6 +32,7 @@ public:
     void SetUp();
     void TearDown();
     std::shared_ptr<DistributedHardwareStub> stubTest_ = nullptr;
+    std::shared_ptr<AccessTokenKitMock> token_ = nullptr;
 };
 
 class MockDistributedHardwareStub : public DistributedHardwareStub {
@@ -181,6 +183,43 @@ int32_t DisableSource(const std::string &networkId, const std::vector<DHDescript
     (void)descriptors;
     return DH_FWK_SUCCESS;
 }
+};
+
+class MockIPublisherListener : public IRemoteStub<IPublisherListener> {
+public:
+    void OnMessage(const DHTopic topic, const std::string& message)
+    {
+        (void)topic;
+        (void)message;
+    }
+};
+
+class MockHDSinkStatusListenerStub : public IRemoteStub<IHDSinkStatusListener> {
+public:
+    void OnEnable(const DHDescriptor &dhDescriptor) override
+    {
+        (void)dhDescriptor;
+    }
+
+    void OnDisable(const DHDescriptor &dhDescriptor) override
+    {
+        (void)dhDescriptor;
+    }
+};
+
+class MockHDSourceStatusListenerStub : public IRemoteStub<IHDSourceStatusListener> {
+public:
+    void OnEnable(const std::string &networkId, const DHDescriptor &dhDescriptor) override
+    {
+        (void)networkId;
+        (void)dhDescriptor;
+    }
+
+    void OnDisable(const std::string &networkId, const DHDescriptor &dhDescriptor) override
+    {
+        (void)networkId;
+        (void)dhDescriptor;
+    }
 };
 } // namespace DistributedHardware
 } // namespace OHOS

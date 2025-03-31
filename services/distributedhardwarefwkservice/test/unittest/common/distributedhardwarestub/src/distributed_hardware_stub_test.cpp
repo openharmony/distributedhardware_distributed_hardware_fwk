@@ -19,6 +19,9 @@
 
 #include "iremote_stub.h"
 #include "dhardware_ipc_interface_code.h"
+
+using namespace OHOS::Security::AccessToken;
+using namespace testing;
 using namespace testing::ext;
 
 namespace OHOS {
@@ -30,11 +33,17 @@ void DistributedHardwareStubTest::TearDownTestCase(void) {}
 void DistributedHardwareStubTest::SetUp()
 {
     stubTest_ = std::make_shared<MockDistributedHardwareStub>();
+    auto token = AccessTokenKitInterface::GetOrCreateAccessTokenKit();
+    token_ = std::static_pointer_cast<AccessTokenKitMock>(token);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_DENIED));
 }
 
 void DistributedHardwareStubTest::TearDown()
 {
     stubTest_ = nullptr;
+    AccessTokenKitInterface::ReleaseAccessTokenKit();
+    token_ = nullptr;
 }
 
 /**
@@ -385,6 +394,208 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_025, TestSize.Level1)
     data.WriteString("id_test");
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
     EXPECT_NE(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_026, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::REG_PUBLISHER_LISTNER);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    uint32_t topicInt = (uint32_t)DHTopic::TOPIC_START_DSCREEN;
+    data.WriteUint32(topicInt);
+
+    sptr<IRemoteObject> listener(new MockIPublisherListener());
+    data.WriteRemoteObject(listener);
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_027, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_PUBLISHER_LISTENER);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    uint32_t topicInt = (uint32_t)DHTopic::TOPIC_START_DSCREEN;
+    data.WriteUint32(topicInt);
+
+    sptr<IRemoteObject> listener(new MockIPublisherListener());
+    data.WriteRemoteObject(listener);
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_028, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::GET_DISTRIBUTED_HARDWARE);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteString("netWorkId_test");
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_029, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::REG_DH_SINK_STATUS_LISTNER);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    sptr<IRemoteObject> listener(new MockHDSinkStatusListenerStub());
+    data.WriteRemoteObject(listener);
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_030, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_DH_SINK_STATUS_LISTNER);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    sptr<IRemoteObject> listener(new MockHDSinkStatusListenerStub());
+    data.WriteRemoteObject(listener);
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_031, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::REG_DH_SOURCE_STATUS_LISTNER);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteString("networkId_test");
+    sptr<IRemoteObject> listener(new MockHDSourceStatusListenerStub());
+    data.WriteRemoteObject(listener);
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_032, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::UNREG_DH_SOURCE_STATUS_LISTNER);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteString("networkId_test");
+    sptr<IRemoteObject> listener(new MockHDSourceStatusListenerStub());
+    data.WriteRemoteObject(listener);
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_033, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::ENABLE_SINK);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    size_t descriptorCount = 1;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteInt32(descriptorCount);
+    data.WriteInt32(static_cast<int32_t>(DHType::AUDIO));
+    data.WriteString("id_test");
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_034, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SINK);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    size_t descriptorCount = 1;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteInt32(descriptorCount);
+    data.WriteInt32(static_cast<int32_t>(DHType::AUDIO));
+    data.WriteString("id_test");
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_035, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::ENABLE_SOURCE);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    size_t descriptorCount = 1;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteInt32(descriptorCount);
+    data.WriteInt32(static_cast<int32_t>(DHType::AUDIO));
+    data.WriteString("id_test");
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_036, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SOURCE);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    size_t descriptorCount = 1;
+    data.WriteInterfaceToken(stubTest_->GetDescriptor());
+    data.WriteInt32(descriptorCount);
+    data.WriteInt32(static_cast<int32_t>(DHType::AUDIO));
+    data.WriteString("id_test");
+    auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 /**
