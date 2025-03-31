@@ -324,7 +324,9 @@ struct ContinueSwitch {
         }
         .margin({
           bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM,
-          top: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_TOP
+          top: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_TOP,
+          left: $r('app.float.margin_8'),
+          right: $r('app.float.margin_8')
         })
         .textAlign(TextAlign.Center)
         .width('100%')
@@ -453,6 +455,9 @@ struct ContinueSwitch {
     .onAreaChange((oldArea: Area, newArea: Area) => {
       logger.info(`${TAG} Scroll, oldArea.height = ${oldArea.height}, newArea.height = ${newArea.height}`);
     })
+
+    ScrollBar({ scroller: this.scroller, direction: ScrollBarDirection.Vertical, state: BarState.Auto })
+      .position({ right: 0, bottom: 16 })
   }
 
   build() {
@@ -490,6 +495,8 @@ struct ContinueSwitch {
       }
       logger.info(`${TAG} this.imageAnimatorWidth = ${this.imageAnimatorWidth}, this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
     })
+    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
+    .padding({ bottom: $r('app.float.margin_16') })
   }
 
   private getContentVisibility(): Visibility {
