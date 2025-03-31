@@ -44,7 +44,7 @@ OffLineTask::OffLineTask(const std::string &networkId, const std::string &uuid, 
 {
     this->SetTaskType(TaskType::OFF_LINE);
     this->SetTaskSteps({TaskStep::META_DISABLE_TASK, TaskStep::UNREGISTER_OFFLINE_DISTRIBUTED_HARDWARE,
-        TaskStep::WAIT_UNREGISTGER_COMPLETE, TaskStep::CLEAR_OFFLINE_INFO});
+        TaskStep::DISABLE_SINK, TaskStep::WAIT_UNREGISTGER_COMPLETE, TaskStep::CLEAR_OFFLINE_INFO});
     DHLOGD("OffLineTask id: %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
         GetId().c_str(), GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str(),
         GetAnonyString(GetUDID()).c_str());
@@ -75,6 +75,10 @@ void OffLineTask::DoTaskInner()
                 CreateDisableTask();
                 break;
             }
+            case TaskStep::DISABLE_SINK: {
+                CreateDisableSinkTask();
+                break;
+            }
             case TaskStep::WAIT_UNREGISTGER_COMPLETE: {
                 WaitDisableTaskFinish();
                 break;
@@ -94,7 +98,7 @@ void OffLineTask::DoTaskInner()
     }
 
     this->SetTaskState(TaskState::SUCCESS);
-    DHLOGD("Finish OffLine task, remove it, id: %{public}s", GetId().c_str());
+    DHLOGI("Finish OffLine task, remove it, id: %{public}s", GetId().c_str());
     TaskBoard::GetInstance().RemoveTask(this->GetId());
     if (DHContext::GetInstance().GetRealTimeOnlineDeviceCount() == 0 &&
         DHContext::GetInstance().GetIsomerismConnectCount() == 0 &&
@@ -129,6 +133,7 @@ void OffLineTask::CreateDisableTask()
     if (devDhInfos.empty()) {
         DHLOGE("Can not get cap info, uuid = %{public}s, deviceId = %{public}s", GetAnonyString(GetUUID()).c_str(),
             GetAnonyString(deviceId).c_str());
+        return;
     }
 
     for (const auto &info : devDhInfos) {
@@ -137,6 +142,33 @@ void OffLineTask::CreateDisableTask()
             .uuid = GetUUID(),
             .dhId = info.first,
             .dhType = info.second
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, shared_from_this());
+        TaskExecutor::GetInstance().PushTask(task);
+    }
+}
+
+void OffLineTask::CreateDisableSinkTask()
+{
+    DHLOGI("CreateDisableSinkTask start");
+    DeviceInfo localDeviceInfo = GetLocalDeviceInfo();
+    std::vector<std::pair<std::string, DHType>> localMetaInfos;
+    std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
+    MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(localDeviceInfo.udidHash, metaCapInfos);
+    std::for_each(metaCapInfos.begin(), metaCapInfos.end(), [&](std::shared_ptr<MetaCapabilityInfo> localMetaInfo) {
+            localMetaInfos.push_back({localMetaInfo->GetDHId(), localMetaInfo->GetDHType()});
+    });
+    if (localMetaInfos.empty()) {
+        DHLOGE("Can not get localMetainfo.");
+        return;
+    }
+    for (const auto &localInfo : localMetaInfos) {
+        TaskParam taskParam = {
+            .networkId = localDeviceInfo.networkId,
+            .uuid = localDeviceInfo.uuid,
+            .udid = localDeviceInfo.udid,
+            .dhId = localInfo.first,
+            .dhType = localInfo.second
         };
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, shared_from_this());
         TaskExecutor::GetInstance().PushTask(task);

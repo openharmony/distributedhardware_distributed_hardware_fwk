@@ -821,11 +821,9 @@ std::shared_ptr<ComponentManager::ComponentManagerEventHandler> ComponentManager
     return this->eventHandler_;
 }
 
-int32_t ComponentManager::CheckDemandStart(const std::string &uuid,
-    const DHType dhType, bool &enableSink, bool &enableSource)
+int32_t ComponentManager::CheckDemandStart(const std::string &uuid, const DHType dhType, bool &enableSource)
 {
     // Initialize output parameters
-    enableSink = false;
     enableSource = false;
 
     // Get remote config
@@ -845,33 +843,13 @@ int32_t ComponentManager::CheckDemandStart(const std::string &uuid,
     }
 
     auto iterLocal = dhVersion.compVersions.find(dhType);
-    if (iterLocal == dhVersion.compVersions.end()) {
-        DHLOGE("Not find dhType in local: %{public}#X!", dhType);
-        return ERR_DH_FWK_TYPE_NOT_EXIST;
-    }
-
     // Check local config
     if (!iterLocal->second.haveFeature) {
-        enableSink = true;
         enableSource = true;
         return DH_FWK_SUCCESS;
-    }
-
-    if (iterLocal->second.sinkSupportedFeatures.size()) {
-        enableSink = true;
     }
 
     if (iterLocal->second.sourceFeatureFilters.size() == 0) {
-        return DH_FWK_SUCCESS;
-    }
-
-    // Check remote config
-    if (!compVersion.haveFeature) {   // Remote config is null, need enable source
-        enableSource = true;
-        return DH_FWK_SUCCESS;
-    }
-
-    if (compVersion.sinkSupportedFeatures.size() == 0) {  // Remote sink config is empty, not enable source
         return DH_FWK_SUCCESS;
     }
 

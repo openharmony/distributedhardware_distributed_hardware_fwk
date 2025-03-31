@@ -485,13 +485,9 @@ HWTEST_F(ComponentManagerTestExt, CheckDemandStart_001, testing::ext::TestSize.L
     EXPECT_CALL(*componentLoader_, GetLocalDHVersion(_))
         .WillRepeatedly(DoAll(SetArgReferee<0>(dhVersion), Return(DH_FWK_SUCCESS)));
 
-    bool isEnableSink = false;
     bool isEnableSource = false;
-    auto ret = ComponentManager::GetInstance().CheckDemandStart(
-        VALUABLE_DEVICE_INFO.uuid, targetType, isEnableSink, isEnableSource);
+    auto ret = ComponentManager::GetInstance().CheckDemandStart(VALUABLE_DEVICE_INFO.uuid, targetType, isEnableSource);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    EXPECT_TRUE(isEnableSink);
-    EXPECT_TRUE(isEnableSource);
 }
 
 HWTEST_F(ComponentManagerTestExt, CheckDemandStart_002, testing::ext::TestSize.Level2)
@@ -507,10 +503,9 @@ HWTEST_F(ComponentManagerTestExt, CheckDemandStart_002, testing::ext::TestSize.L
         }));
 
     for (size_t i = 0; i < 2; ++i) {
-        bool isEnableSink = false;
         bool isEnableSource = false;
         auto ret = ComponentManager::GetInstance().CheckDemandStart(
-            VALUABLE_DEVICE_INFO.uuid, DHType::CAMERA, isEnableSink, isEnableSource);
+            VALUABLE_DEVICE_INFO.uuid, DHType::CAMERA, isEnableSource);
         EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND);
     }
 }
@@ -537,10 +532,9 @@ HWTEST_F(ComponentManagerTestExt, CheckDemandStart_003, testing::ext::TestSize.L
         }));
 
     for (size_t i = 0; i < 2; ++i) {
-        bool isEnableSink = false;
         bool isEnableSource = false;
         auto ret = ComponentManager::GetInstance().CheckDemandStart(
-            VALUABLE_DEVICE_INFO.uuid, DHType::CAMERA, isEnableSink, isEnableSource);
+            VALUABLE_DEVICE_INFO.uuid, DHType::CAMERA, isEnableSource);
         EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
     }
 }

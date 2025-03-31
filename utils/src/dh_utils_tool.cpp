@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -161,6 +161,17 @@ std::string GetLocalNetworkId()
         return "";
     }
     return info.networkId;
+}
+
+std::string GetLocalUdid()
+{
+    DmDeviceInfo info;
+    auto ret = DeviceManager::GetInstance().GetLocalDeviceInfo(DH_FWK_PKG_NAME, info);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("GetLocalNodeDeviceInfo failed, errCode = %{public}d", ret);
+        return "";
+    }
+    return GetUDIDByDm(info.networkId);
 }
 
 bool IsUInt8(const cJSON* jsonObj)

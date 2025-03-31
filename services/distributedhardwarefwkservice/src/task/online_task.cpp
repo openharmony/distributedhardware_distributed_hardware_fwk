@@ -38,7 +38,7 @@ OnLineTask::OnLineTask(const std::string &networkId, const std::string &uuid, co
 {
     SetTaskType(TaskType::ON_LINE);
     SetTaskSteps(std::vector<TaskStep> { TaskStep::SYNC_ONLINE_INFO, TaskStep::REGISTER_ONLINE_DISTRIBUTED_HARDWARE,
-        TaskStep::META_ENABLE_TASK});
+        TaskStep::ENABLE_SINK, TaskStep::META_ENABLE_TASK});
     DHLOGD("OnLineTask id: %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
         GetId().c_str(), GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(),
         GetAnonyString(udid).c_str());
@@ -65,6 +65,10 @@ void OnLineTask::DoTask()
                 CreateEnableTask();
                 break;
             }
+            case TaskStep::ENABLE_SINK: {
+                CreateEnableSinkTask();
+                break;
+            }
             case TaskStep::META_ENABLE_TASK: {
                 CreateMetaEnableTask();
                 break;
@@ -75,7 +79,7 @@ void OnLineTask::DoTask()
         }
     }
     SetTaskState(TaskState::SUCCESS);
-    DHLOGD("finish online task, remove it, id = %{public}s.", GetId().c_str());
+    DHLOGI("finish online task, remove it, id = %{public}s.", GetId().c_str());
     TaskBoard::GetInstance().RemoveTask(this->GetId());
 }
 
@@ -134,6 +138,7 @@ void OnLineTask::CreateEnableTask()
     if (devDhInfos.empty()) {
         DHLOGE("Can not get cap info, uuid = %{public}s, deviceId = %{public}s", GetAnonyString(GetUUID()).c_str(),
             GetAnonyString(deviceId).c_str());
+        return;
     }
 
     for (const auto &info : devDhInfos) {
@@ -143,6 +148,33 @@ void OnLineTask::CreateEnableTask()
             .udid = GetUDID(),
             .dhId = info.first,
             .dhType = info.second
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, shared_from_this());
+        TaskExecutor::GetInstance().PushTask(task);
+    }
+}
+
+void OnLineTask::CreateEnableSinkTask()
+{
+    DHLOGI("CreateEnableSinkTask start");
+    DeviceInfo localDeviceInfo = GetLocalDeviceInfo();
+    std::vector<std::pair<std::string, DHType>> localMetaInfos;
+    std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
+    MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(localDeviceInfo.udidHash, metaCapInfos);
+    std::for_each(metaCapInfos.begin(), metaCapInfos.end(), [&](std::shared_ptr<MetaCapabilityInfo> localMetaInfo) {
+            localMetaInfos.push_back({localMetaInfo->GetDHId(), localMetaInfo->GetDHType()});
+    });
+    if (localMetaInfos.empty()) {
+        DHLOGE("Can not get localMetainfo.");
+        return;
+    }
+    for (const auto &localInfo : localMetaInfos) {
+        TaskParam taskParam = {
+            .networkId = localDeviceInfo.networkId,
+            .uuid = localDeviceInfo.uuid,
+            .udid = localDeviceInfo.udid,
+            .dhId = localInfo.first,
+            .dhType = localInfo.second
         };
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, shared_from_this());
         TaskExecutor::GetInstance().PushTask(task);

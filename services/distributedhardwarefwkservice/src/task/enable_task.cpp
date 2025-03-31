@@ -143,32 +143,37 @@ int32_t EnableTask::GetCallingPid()
 
 int32_t EnableTask::DoAutoEnable()
 {
-    bool enableSink = false;
+    std::string localUdid = GetLocalUdid();
+    if (localUdid == GetUDID()) {
+        DHDescriptor dhDescriptor {
+            .id = GetDhId(),
+            .dhType = GetDhType()
+        };
+        DHLOGI("EnableSink DhType = %{public}#X", GetDhType());
+        auto ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, GetCallingUid(), GetCallingPid());
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("EnableSink DhType = %{public}#X, failed!", GetDhType());
+        }
+        return ret;
+    }
+
     bool enableSource = false;
-    int32_t ret = ComponentManager::GetInstance().CheckDemandStart(GetUUID(), GetDhType(), enableSink, enableSource);
+    int32_t ret = ComponentManager::GetInstance().CheckDemandStart(GetUUID(), GetDhType(), enableSource);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("CheckDemandStart failed!");
         return ret;
     }
-    if (!enableSink && !enableSource) {
+    if (!enableSource) {
+        DHLOGE("No need Enablesource.");
         return ERR_DH_FWK_COMPONENT_LIMIT_DEMAND_START;
     }
     DHDescriptor dhDescriptor {
         .id = GetDhId(),
         .dhType = GetDhType()
     };
-    if (enableSink) {
-        ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, GetCallingUid(), GetCallingPid());
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGE("EnableSink failed!");
-        }
-    }
-    if (enableSource) {
-        ret = ComponentManager::GetInstance().EnableSource(
-            GetNetworkId(), dhDescriptor, GetCallingUid(), GetCallingPid());
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGE("EnableSource failed!");
-        }
+    ret = ComponentManager::GetInstance().EnableSource(GetNetworkId(), dhDescriptor, GetCallingUid(), GetCallingPid());
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("EnableSource DhType = %{public}#X, failed!", GetDhType());
     }
     return ret;
 }

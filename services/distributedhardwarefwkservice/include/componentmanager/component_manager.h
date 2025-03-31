@@ -79,7 +79,7 @@ public:
      */
     bool FetchNeedRefreshTask(const std::pair<std::string, std::string> &taskKey, TaskParam &taskParam);
 
-    int32_t CheckDemandStart(const std::string &uuid, const DHType dhType, bool &enableSink, bool &enableSource);
+    int32_t CheckDemandStart(const std::string &uuid, const DHType dhType, bool &enableSource);
     int32_t RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener, int32_t callingUid, int32_t callingPid);
     int32_t UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener, int32_t callingUid, int32_t callingPid);
     int32_t RegisterDHStatusListener(const std::string &networkId,
