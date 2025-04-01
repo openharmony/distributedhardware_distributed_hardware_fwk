@@ -157,7 +157,8 @@ int32_t DisableTask::DoAutoDisable()
                 .id = GetDhId(),
                 .dhType = GetDhType()
             };
-            DHLOGI("DisableSinkTask DhType = %{public}#X, id= %{public}s", GetDhType(), GetAnonyString(GetDhId()).c_str());
+            DHLOGI("DisableSinkTask DhType = %{public}#X, id= %{public}s", GetDhType(),
+                GetAnonyString(GetDhId()).c_str());
             ret = ComponentManager::GetInstance().ForceDisableSink(dhDescriptor);
             if (ret != DH_FWK_SUCCESS) {
                 DHLOGE("DisableTask DhType = %{public}#X, failed!", GetDhType());
