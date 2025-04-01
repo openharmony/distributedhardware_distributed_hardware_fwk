@@ -157,10 +157,10 @@ int32_t DisableTask::DoAutoDisable()
                 .id = GetDhId(),
                 .dhType = GetDhType()
             };
-            DHLOGI("DisableTask DhType = %{public}#X, id= %{public}s", GetDhType(), GetAnonyString(GetDhId()).c_str());
+            DHLOGI("DisableSinkTask DhType = %{public}#X, id= %{public}s", GetDhType(), GetAnonyString(GetDhId()).c_str());
             ret = ComponentManager::GetInstance().ForceDisableSink(dhDescriptor);
             if (ret != DH_FWK_SUCCESS) {
-                DHLOGE("EnableSink DhType = %{public}#X, failed!", GetDhType());
+                DHLOGE("DisableTask DhType = %{public}#X, failed!", GetDhType());
             }
         }
         return ret;
@@ -170,7 +170,7 @@ int32_t DisableTask::DoAutoDisable()
         .id = GetDhId(),
         .dhType = GetDhType()
     };
-    DHLOGI("EnableSource DhType = %{public}#X, id= %{public}s", GetDhType(), GetAnonyString(GetDhId()).c_str());
+    DHLOGI("DisableSourceTask DhType = %{public}#X, id= %{public}s", GetDhType(), GetAnonyString(GetDhId()).c_str());
     auto ret = ComponentManager::GetInstance().ForceDisableSource(GetNetworkId(), dhDescriptor);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DisableSource failed!");
