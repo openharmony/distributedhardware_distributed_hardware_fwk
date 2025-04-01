@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 #include "avtransonsessionclosed_fuzzer.h"
 
 #include <algorithm>
+#include <fuzzer/FuzzedDataProvider.h>
 #include <securec.h>
 #include <thread>
 #include <unistd.h>
@@ -29,8 +30,10 @@ void AVTransOnSessionClosedFuzzTest(const uint8_t *data, size_t size)
     if ((data == nullptr) || (size < sizeof(int32_t))) {
         return;
     }
-    int32_t sessionId = *(reinterpret_cast<const int32_t*>(data));
-    ShutdownReason reason = *(reinterpret_cast<const ShutdownReason*>(data));
+    FuzzedDataProvider fdp(data, size);
+    int32_t sessionId = fdp.ConsumeIntegral<int32_t>();
+    int32_t reasonValue = fdp.ConsumeIntegral<int32_t>();
+    ShutdownReason reason = static_cast<ShutdownReason>(reasonValue);
 
     SoftbusChannelAdapter::GetInstance().OnSoftbusChannelClosed(sessionId, reason);
 }

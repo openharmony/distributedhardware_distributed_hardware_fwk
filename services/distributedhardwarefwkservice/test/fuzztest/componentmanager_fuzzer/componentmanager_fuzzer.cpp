@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "component_disable.h"
 #include "component_enable.h"
@@ -51,8 +52,9 @@ void ComponentManagerFuzzTest(const uint8_t* data, size_t size)
     bool enableSource = false;
     sptr<IHDSinkStatusListener> sinkListener = nullptr;
     sptr<IHDSourceStatusListener> sourceListener = nullptr;
-    int32_t callingUid = *(reinterpret_cast<const int32_t*>(data));
-    int32_t callingPid = *(reinterpret_cast<const int32_t*>(data));
+    FuzzedDataProvider fdp(data, size);
+    int32_t callingUid = fdp.ConsumeIntegral<int32_t>();
+    int32_t callingPid = fdp.ConsumeIntegral<int32_t>();
     DHDescriptor dhDescriptor {
         .id = std::string(reinterpret_cast<const char*>(data), size),
         .dhType = dhType
