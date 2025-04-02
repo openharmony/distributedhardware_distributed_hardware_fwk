@@ -26,7 +26,7 @@ void AvTransOutputTest::SetUp() {}
 
 void AvTransOutputTest::TearDown() {}
 
-HWTEST_F(AvTransOutputTest, PushData_001, TestSize.Level0)
+HWTEST_F(AvTransOutputTest, PushData_001, TestSize.Level1)
 {
     uint32_t pkgVer = 2;
     uint32_t apiVer = 2;
@@ -40,7 +40,7 @@ HWTEST_F(AvTransOutputTest, PushData_001, TestSize.Level0)
     EXPECT_EQ(Status::OK, ret);
 }
 
-HWTEST_F(AvTransOutputTest, SetDataCallback_001, TestSize.Level0)
+HWTEST_F(AvTransOutputTest, SetDataCallback_001, TestSize.Level1)
 {
     uint32_t pkgVer = 2;
     uint32_t apiVer = 2;

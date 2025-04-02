@@ -92,7 +92,7 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_parameter_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVTransControlCenterCallbackTest, set_shared_memory_001, TestSize.Level0)
+HWTEST_F(AVTransControlCenterCallbackTest, set_shared_memory_001, TestSize.Level1)
 {
     callBack_ = std::make_shared<AVTransControlCenterCallback>();
     callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();
@@ -110,7 +110,7 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_shared_memory_001, TestSize.Level
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVTransControlCenterCallbackTest, notify_001, TestSize.Level0)
+HWTEST_F(AVTransControlCenterCallbackTest, notify_001, TestSize.Level1)
 {
     callBack_ = std::make_shared<AVTransControlCenterCallback>();
     callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();

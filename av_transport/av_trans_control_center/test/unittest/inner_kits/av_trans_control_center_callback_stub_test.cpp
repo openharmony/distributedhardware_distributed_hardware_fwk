@@ -79,7 +79,7 @@ HWTEST_F(AVTransControlCenterCallbackStubTest, set_parameter_001, TestSize.Level
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVTransControlCenterCallbackStubTest, set_shared_memory_001, TestSize.Level0)
+HWTEST_F(AVTransControlCenterCallbackStubTest, set_shared_memory_001, TestSize.Level1)
 {
     sptr<IRemoteObject> CallbackStubPtr(new TestControlCenterCallbackStub());
     AVTransControlCenterCallbackProxy callbackProxy(CallbackStubPtr);

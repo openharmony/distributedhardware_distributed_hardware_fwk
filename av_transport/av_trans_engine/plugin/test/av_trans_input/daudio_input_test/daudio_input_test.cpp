@@ -42,7 +42,7 @@ void DaudioInputTest::SetUp() {}
 
 void DaudioInputTest::TearDown() {}
 
-HWTEST_F(DaudioInputTest, Pause_001, TestSize.Level0)
+HWTEST_F(DaudioInputTest, Pause_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DaudioInputPlugin>(PLUGINNAME);
     AVTransSharedMemory sharedMemory1 {1, 0, ""};
@@ -84,7 +84,7 @@ HWTEST_F(DaudioInputTest, GetParameter_001, TestSize.Level0)
     EXPECT_EQ(Status::ERROR_NOT_EXISTED, ret);
 }
 
-HWTEST_F(DaudioInputTest, PushData_001, TestSize.Level0)
+HWTEST_F(DaudioInputTest, PushData_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DaudioInputPlugin>(PLUGINNAME);
     std::shared_ptr<AVBuffer> buffer = nullptr;
@@ -132,7 +132,7 @@ HWTEST_F(DaudioInputTest, MarshalAudioMeta_001, TestSize.Level0)
     EXPECT_EQ(false, ret.empty());
 }
 
-HWTEST_F(DaudioInputTest, UnmarshalAudioMeta_001, TestSize.Level0)
+HWTEST_F(DaudioInputTest, UnmarshalAudioMeta_001, TestSize.Level1)
 {
     auto meta = std::make_shared<AVTransAudioBufferMeta>();
     cJSON *metaJson = cJSON_CreateObject();
@@ -169,7 +169,7 @@ HWTEST_F(DaudioInputTest, UnmarshalAudioMeta_001, TestSize.Level0)
     cJSON_Delete(metaJson2);
 }
 
-HWTEST_F(DaudioInputTest, UnmarshalAudioMeta_002, TestSize.Level0)
+HWTEST_F(DaudioInputTest, UnmarshalAudioMeta_002, TestSize.Level1)
 {
     auto meta = std::make_shared<AVTransAudioBufferMeta>();
     cJSON *metaJson3 = cJSON_CreateObject();
@@ -230,7 +230,7 @@ HWTEST_F(DaudioInputTest, MarshalVideoMeta_002, TestSize.Level0)
     EXPECT_EQ(false, ret.empty());
 }
 
-HWTEST_F(DaudioInputTest, UnmarshalVideoMeta_001, TestSize.Level0)
+HWTEST_F(DaudioInputTest, UnmarshalVideoMeta_001, TestSize.Level1)
 {
     auto meta = std::make_shared<AVTransVideoBufferMeta>();
     std::string str = "";
@@ -268,7 +268,7 @@ HWTEST_F(DaudioInputTest, UnmarshalVideoMeta_001, TestSize.Level0)
     cJSON_Delete(metaJson2);
 }
 
-HWTEST_F(DaudioInputTest, UnmarshalVideoMeta_002, TestSize.Level0)
+HWTEST_F(DaudioInputTest, UnmarshalVideoMeta_002, TestSize.Level1)
 {
     auto meta = std::make_shared<AVTransVideoBufferMeta>();
     cJSON *metaJson3 = cJSON_CreateObject();
@@ -319,7 +319,7 @@ HWTEST_F(DaudioInputTest, ParseChannelDescription_001, TestSize.Level0)
     EXPECT_EQ(true, descJsonStr.empty());
 }
 
-HWTEST_F(DaudioInputTest, ParseChannelDescription_002, TestSize.Level0)
+HWTEST_F(DaudioInputTest, ParseChannelDescription_002, TestSize.Level1)
 {
     std::string ownerName = "";
     std::string peerDevId = "";
@@ -365,7 +365,7 @@ HWTEST_F(DaudioInputTest, HiSBuffer2TransBuffer_001, TestSize.Level0)
     EXPECT_EQ(nullptr, ret);
 }
 
-HWTEST_F(DaudioInputTest, CastEventType_001, TestSize.Level0)
+HWTEST_F(DaudioInputTest, CastEventType_001, TestSize.Level1)
 {
     Plugin::PluginEventType type = Plugin::PluginEventType::EVENT_CHANNEL_OPENED;
     bool isAbnormal = true;
@@ -417,7 +417,7 @@ HWTEST_F(DaudioInputTest, MarshalMessage_001, TestSize.Level0)
     EXPECT_EQ(false, ret.empty());
 }
 
-HWTEST_F(DaudioInputTest, UnmarshalMessage_001, TestSize.Level0)
+HWTEST_F(DaudioInputTest, UnmarshalMessage_001, TestSize.Level1)
 {
     auto avMessage = std::make_shared<AVTransMessage>();
     std::string peerDevId = "peerDevId_test";
@@ -476,7 +476,7 @@ HWTEST_F(DaudioInputTest, CreateChannelServer_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_AVT_SESSION_ERROR, ret);
 }
 
-HWTEST_F(DaudioInputTest, RemoveChannelServer_001, TestSize.Level0)
+HWTEST_F(DaudioInputTest, RemoveChannelServer_001, TestSize.Level1)
 {
     SoftbusChannelAdapter::GetInstance().serverMap_.clear();
     SoftbusChannelAdapter::GetInstance().devId2SessIdMap_.clear();
@@ -492,7 +492,7 @@ HWTEST_F(DaudioInputTest, RemoveChannelServer_001, TestSize.Level0)
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 
-HWTEST_F(DaudioInputTest, OpenSoftbusChannel_001, TestSize.Level0)
+HWTEST_F(DaudioInputTest, OpenSoftbusChannel_001, TestSize.Level1)
 {
     SoftbusChannelAdapter::GetInstance().devId2SessIdMap_.clear();
     std::string mySessName = "mySessName_test";
@@ -509,7 +509,7 @@ HWTEST_F(DaudioInputTest, OpenSoftbusChannel_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_AVT_SESSION_ERROR, ret);
 }
 
-HWTEST_F(DaudioInputTest, SendBytesData_001, TestSize.Level0)
+HWTEST_F(DaudioInputTest, SendBytesData_001, TestSize.Level1)
 {
     SoftbusChannelAdapter::GetInstance().devId2SessIdMap_.clear();
     std::string sessName = "sessName_test";
@@ -525,7 +525,7 @@ HWTEST_F(DaudioInputTest, SendBytesData_001, TestSize.Level0)
     EXPECT_EQ(ERR_DH_AVT_SEND_DATA_FAILED, ret);
 }
 
-HWTEST_F(DaudioInputTest, GetSessionNameById_001, TestSize.Level0)
+HWTEST_F(DaudioInputTest, GetSessionNameById_001, TestSize.Level1)
 {
     SoftbusChannelAdapter::GetInstance().devId2SessIdMap_.clear();
     std::string sessName = "sessName_test";
@@ -547,7 +547,7 @@ HWTEST_F(DaudioInputTest, GetSessionNameById_001, TestSize.Level0)
     EXPECT_EQ(key, ret);
 }
 
-HWTEST_F(DaudioInputTest, GetPeerDevIdBySessId_001, TestSize.Level0)
+HWTEST_F(DaudioInputTest, GetPeerDevIdBySessId_001, TestSize.Level1)
 {
     SoftbusChannelAdapter::GetInstance().devId2SessIdMap_.clear();
     std::string peerDevId = "peerDevIdtest";
