@@ -71,7 +71,7 @@ HWTEST_F(AVSyncManagerTest, add_stream_info_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVSyncManagerTest, remove_stream_info_001, TestSize.Level0)
+HWTEST_F(AVSyncManagerTest, remove_stream_info_001, TestSize.Level1)
 {
     syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
@@ -95,7 +95,7 @@ HWTEST_F(AVSyncManagerTest, remove_stream_info_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVSyncManagerTest, enable_sender_av_sync_001, TestSize.Level0)
+HWTEST_F(AVSyncManagerTest, enable_sender_av_sync_001, TestSize.Level1)
 {
     syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
@@ -114,7 +114,7 @@ HWTEST_F(AVSyncManagerTest, enable_sender_av_sync_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVSyncManagerTest, disable_sender_av_sync_001, TestSize.Level0)
+HWTEST_F(AVSyncManagerTest, disable_sender_av_sync_001, TestSize.Level1)
 {
     syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
@@ -153,7 +153,7 @@ HWTEST_F(AVSyncManagerTest, disable_sender_av_sync_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVSyncManagerTest, handle_av_sync_message_001, TestSize.Level0)
+HWTEST_F(AVSyncManagerTest, handle_av_sync_message_001, TestSize.Level1)
 {
     syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
@@ -174,7 +174,7 @@ HWTEST_F(AVSyncManagerTest, handle_av_sync_message_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVSyncManagerTest, handle_av_sync_message_002, TestSize.Level0)
+HWTEST_F(AVSyncManagerTest, handle_av_sync_message_002, TestSize.Level1)
 {
     syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
@@ -255,7 +255,7 @@ HWTEST_F(AVSyncManagerTest, merge_group_info_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVSyncManagerTest, merge_group_info_002, TestSize.Level0)
+HWTEST_F(AVSyncManagerTest, merge_group_info_002, TestSize.Level1)
 {
     syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
@@ -280,7 +280,7 @@ HWTEST_F(AVSyncManagerTest, merge_group_info_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVSyncManagerTest, merge_group_info_003, TestSize.Level0)
+HWTEST_F(AVSyncManagerTest, merge_group_info_003, TestSize.Level1)
 {
     syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();
@@ -305,7 +305,7 @@ HWTEST_F(AVSyncManagerTest, merge_group_info_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVSyncManagerTest, merge_group_info_004, TestSize.Level0)
+HWTEST_F(AVSyncManagerTest, merge_group_info_004, TestSize.Level1)
 {
     syncManager_ = std::make_shared<AVSyncManager>();
     syncManager_->streamInfoList_.clear();

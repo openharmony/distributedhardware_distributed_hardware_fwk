@@ -55,7 +55,7 @@ HWTEST_F(DsoftbusOutputAudioPluginTest, Prepare_001, TestSize.Level0)
     EXPECT_EQ(Status::ERROR_WRONG_STATE, ret);
 }
 
-HWTEST_F(DsoftbusOutputAudioPluginTest, Prepare_002, TestSize.Level0)
+HWTEST_F(DsoftbusOutputAudioPluginTest, Prepare_002, TestSize.Level1)
 {
     auto plugin = std::make_shared<DsoftbusOutputAudioPlugin>(PLUGINNAME);
     plugin->state_ = State::INITIALIZED;

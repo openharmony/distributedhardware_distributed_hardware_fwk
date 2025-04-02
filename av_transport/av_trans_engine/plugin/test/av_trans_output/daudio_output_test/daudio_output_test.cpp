@@ -63,7 +63,7 @@ HWTEST_F(DaudioOutputTest, Prepare_001, TestSize.Level0)
     plugin->RampleInit(channels, sampleRate, channelLayout);
 }
 
-HWTEST_F(DaudioOutputTest, Prepare_002, TestSize.Level0)
+HWTEST_F(DaudioOutputTest, Prepare_002, TestSize.Level1)
 {
     auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
     plugin->state_ = State::INITIALIZED;
@@ -94,7 +94,7 @@ HWTEST_F(DaudioOutputTest, Prepare_002, TestSize.Level0)
     EXPECT_NE(Status::OK, ret);
 }
 
-HWTEST_F(DaudioOutputTest, Prepare_003, TestSize.Level0)
+HWTEST_F(DaudioOutputTest, Prepare_003, TestSize.Level1)
 {
     auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
     plugin->state_ = State::INITIALIZED;
@@ -106,7 +106,7 @@ HWTEST_F(DaudioOutputTest, Prepare_003, TestSize.Level0)
 }
 
 
-HWTEST_F(DaudioOutputTest, SetParameter_001, TestSize.Level0)
+HWTEST_F(DaudioOutputTest, SetParameter_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DaudioOutputPlugin>(PLUGINNAME);
     std::string value = "dsoftbus_output_test";

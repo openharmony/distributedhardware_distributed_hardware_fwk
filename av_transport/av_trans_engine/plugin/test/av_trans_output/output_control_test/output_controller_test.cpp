@@ -32,7 +32,7 @@ void OutputControllerTest::TearDown(void) {}
 
 const int32_t TEST_QUEUE_MAX_SIZE = 100;
 
-HWTEST_F(OutputControllerTest, SetParameter_001, TestSize.Level0)
+HWTEST_F(OutputControllerTest, SetParameter_001, TestSize.Level1)
 {
     auto controller = std::make_shared<OutputController>();
     std::string value = "dscreen_output_test";

@@ -67,7 +67,7 @@ HWTEST_F(AvSyncUtilsTest, CloseAVTransSharedMemory_001, TestSize.Level0)
     EXPECT_EQ(0, memory.size);
 }
 
-HWTEST_F(AvSyncUtilsTest, CloseAVTransSharedMemory_002, TestSize.Level0)
+HWTEST_F(AvSyncUtilsTest, CloseAVTransSharedMemory_002, TestSize.Level1)
 {
     AVTransSharedMemory memory = {
         .fd = -1,
@@ -104,7 +104,7 @@ HWTEST_F(AvSyncUtilsTest, UnmarshalSharedMemory_001, TestSize.Level0)
     EXPECT_EQ(0, ret.fd);
 }
 
-HWTEST_F(AvSyncUtilsTest, UnmarshalSharedMemory_002, TestSize.Level0)
+HWTEST_F(AvSyncUtilsTest, UnmarshalSharedMemory_002, TestSize.Level1)
 {
     cJSON *cJsonObj = cJSON_CreateObject();
     cJSON_AddStringToObject(cJsonObj, KEY_SHARED_MEM_FD.c_str(), "mem_fd_test");

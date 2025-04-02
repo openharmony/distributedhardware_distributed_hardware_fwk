@@ -207,7 +207,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_008, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_009, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_009, TestSize.Level1)
 {
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);
@@ -228,7 +228,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_009, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_010, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_010, TestSize.Level1)
 {
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);
@@ -248,7 +248,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_010, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_011, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_011, TestSize.Level1)
 {
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);
@@ -285,7 +285,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_012, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_013, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_013, TestSize.Level1)
 {
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);
@@ -318,7 +318,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_013, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_014, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_014, TestSize.Level1)
 {
     cJSON *jsonObject = nullptr;
     AudioEncoder audioEncoder;
@@ -353,7 +353,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_014, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_015, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_015, TestSize.Level1)
 {
     cJSON *jsonObject = nullptr;
     AudioDecoderIn audioDecoderIn;
@@ -380,7 +380,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_015, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_016, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_016, TestSize.Level1)
 {
     cJSON *jsonObject = nullptr;
     AudioDecoderOut audioDecoderOut;
@@ -407,7 +407,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_016, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_017, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_017, TestSize.Level1)
 {
     cJSON *jsonObject = nullptr;
     AudioDecoder audioDecoder;
@@ -446,7 +446,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_017, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_018, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_018, TestSize.Level1)
 {
     cJSON *jsonObject = nullptr;
     VideoEncoderIn videoEncoderIn;
@@ -494,7 +494,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_019, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_020, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_020, TestSize.Level1)
 {
     cJSON *jsonObject = nullptr;
     VideoEncoder videoEncoder;
@@ -558,7 +558,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_021, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_022, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_022, TestSize.Level1)
 {
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);
@@ -583,7 +583,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_022, Test
  * @tc.type: FUNC
  * @tc.require: issuelI7MJPJ
  */
-HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_023, TestSize.Level0)
+HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_023, TestSize.Level1)
 {
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);

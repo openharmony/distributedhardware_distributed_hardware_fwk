@@ -56,7 +56,7 @@ HWTEST_F(DscreenInputTest, GetParameter_001, TestSize.Level0)
     EXPECT_EQ(Status::ERROR_NOT_EXISTED, ret);
 }
 
-HWTEST_F(DscreenInputTest, PushData_001, TestSize.Level0)
+HWTEST_F(DscreenInputTest, PushData_001, TestSize.Level1)
 {
     auto plugin = std::make_shared<DscreenInputPlugin>(PLUGINNAME);
     std::shared_ptr<AVBuffer> buffer = nullptr;

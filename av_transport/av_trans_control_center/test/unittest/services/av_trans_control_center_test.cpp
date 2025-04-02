@@ -105,7 +105,7 @@ HWTEST_F(AVTransControlCenterTest, release_av_center_001, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVTransControlCenterTest, release_av_center_002, TestSize.Level0)
+HWTEST_F(AVTransControlCenterTest, release_av_center_002, TestSize.Level1)
 {
     center_ = std::make_shared<AVTransControlCenter>();
     int32_t engineId = BASE_ENGINE_ID;
@@ -353,7 +353,7 @@ HWTEST_F(AVTransControlCenterTest, on_channel_event_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVTransControlCenterTest, on_channel_event_003, TestSize.Level0)
+HWTEST_F(AVTransControlCenterTest, on_channel_event_003, TestSize.Level1)
 {
     center_ = std::make_shared<AVTransControlCenter>();
     AVTransEvent event;
@@ -372,7 +372,7 @@ HWTEST_F(AVTransControlCenterTest, on_channel_event_003, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVTransControlCenterTest, on_channel_event_004, TestSize.Level0)
+HWTEST_F(AVTransControlCenterTest, on_channel_event_004, TestSize.Level1)
 {
     center_ = std::make_shared<AVTransControlCenter>();
     AVTransEvent event;
@@ -423,7 +423,7 @@ HWTEST_F(AVTransControlCenterTest, send_message_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVTransControlCenterTest, set_param_2_engines_001, TestSize.Level0)
+HWTEST_F(AVTransControlCenterTest, set_param_2_engines_001, TestSize.Level1)
 {
     center_ = std::make_shared<AVTransControlCenter>();
     AVTransTag tag = AVTransTag::START_AV_SYNC;
@@ -460,7 +460,7 @@ HWTEST_F(AVTransControlCenterTest, set_param_2_engines_002, TestSize.Level0)
  * @tc.type: FUNC
  * @tc.require: AR000GHSK9
  */
-HWTEST_F(AVTransControlCenterTest, handle_channel_event_001, TestSize.Level0)
+HWTEST_F(AVTransControlCenterTest, handle_channel_event_001, TestSize.Level1)
 {
     center_ = std::make_shared<AVTransControlCenter>();
     AVTransEvent event;
