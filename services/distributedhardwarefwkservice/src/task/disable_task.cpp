@@ -148,31 +148,33 @@ int32_t DisableTask::GetCallingPid()
 
 int32_t DisableTask::DoAutoDisable()
 {
-    bool disableSink = false;
-    bool disableSource = false;
-    int32_t ret = ComponentManager::GetInstance().CheckDemandStart(GetUUID(), GetDhType(), disableSink, disableSource);
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("CheckDemandStart failed!");
-        return ret;
-    }
-    if (DHContext::GetInstance().GetRealTimeOnlineDeviceCount() == 0 &&
-        DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
-        DHDescriptor dhDescriptor {
-            .id = GetDhId(),
-            .dhType = GetDhType()
-        };
-        if (disableSink) {
+    std::string localUdid = GetLocalUdid();
+    if (localUdid == GetUDID()) {
+        auto ret = DH_FWK_SUCCESS;
+        if (DHContext::GetInstance().GetRealTimeOnlineDeviceCount() == 0 &&
+            DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
+            DHDescriptor dhDescriptor {
+                .id = GetDhId(),
+                .dhType = GetDhType()
+            };
+            DHLOGI("DisableSinkTask DhType = %{public}#X, id= %{public}s", GetDhType(),
+                GetAnonyString(GetDhId()).c_str());
             ret = ComponentManager::GetInstance().ForceDisableSink(dhDescriptor);
             if (ret != DH_FWK_SUCCESS) {
-                DHLOGE("DisableSink failed!");
+                DHLOGE("DisableTask DhType = %{public}#X, failed!", GetDhType());
             }
         }
-        if (disableSource) {
-            ret = ComponentManager::GetInstance().ForceDisableSource(GetNetworkId(), dhDescriptor);
-            if (ret != DH_FWK_SUCCESS) {
-                DHLOGE("DisableSource failed!");
-            }
-        }
+        return ret;
+    }
+
+    DHDescriptor dhDescriptor {
+        .id = GetDhId(),
+        .dhType = GetDhType()
+    };
+    DHLOGI("DisableSourceTask DhType = %{public}#X, id= %{public}s", GetDhType(), GetAnonyString(GetDhId()).c_str());
+    auto ret = ComponentManager::GetInstance().ForceDisableSource(GetNetworkId(), dhDescriptor);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("DisableSource failed!");
     }
     return ret;
 }

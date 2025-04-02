@@ -47,7 +47,6 @@ void ComponentManagerFuzzTest(const uint8_t* data, size_t size)
     std::string uuid(reinterpret_cast<const char*>(data), size);
     std::string dhId(reinterpret_cast<const char*>(data), size);
     DHType dhType = dhTypeFuzz[data[0] % DH_TYPE_SIZE];
-    bool enableSink = false;
     bool enableSource = false;
     sptr<IHDSinkStatusListener> sinkListener = nullptr;
     sptr<IHDSourceStatusListener> sourceListener = nullptr;
@@ -61,7 +60,7 @@ void ComponentManagerFuzzTest(const uint8_t* data, size_t size)
     ComponentManager::GetInstance().Init();
     ComponentManager::GetInstance().Enable(networkId, uuid, dhId, dhType);
     ComponentManager::GetInstance().Disable(networkId, uuid, dhId, dhType);
-    ComponentManager::GetInstance().CheckDemandStart(uuid, dhType, enableSink, enableSource);
+    ComponentManager::GetInstance().CheckDemandStart(uuid, dhType, enableSource);
     ComponentManager::GetInstance().RegisterDHStatusListener(sinkListener, callingUid, callingPid);
     ComponentManager::GetInstance().UnregisterDHStatusListener(sinkListener, callingUid, callingPid);
     ComponentManager::GetInstance().RegisterDHStatusListener(networkId, sourceListener, callingUid, callingPid);
