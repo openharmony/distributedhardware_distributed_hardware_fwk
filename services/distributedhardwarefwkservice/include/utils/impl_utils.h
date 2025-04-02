@@ -45,8 +45,8 @@ enum class TaskStep : int32_t {
     META_DISABLE_TASK = 9,
     DO_MODEM_META_ENABLE = 10,
     DO_MODEM_META_DISABLE = 11,
-    ENABLE_SINK,
-    DISABLE_SINK
+    ENABLE_SINK = 12,
+    DISABLE_SINK = 13
 };
 
 enum class TaskState : int32_t {
