@@ -58,6 +58,10 @@ MetaInfoManager::MetaInfoManagerEventHandler::MetaInfoManagerEventHandler(
 
 void MetaInfoManager::MetaInfoManagerEventHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    if (event == nullptr) {
+        DHLOGE("event is null.");
+        return;
+    }
     uint32_t eventId = event->GetInnerEventId();
     auto selfPtr = metaInfoMgrWPtr_.lock();
     if (!selfPtr) {

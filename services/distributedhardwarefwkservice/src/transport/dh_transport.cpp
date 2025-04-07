@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -159,6 +159,10 @@ void OnBind(int32_t socket, PeerSocketInfo info)
         DHLOGE("Can not get DHCommTool ptr");
         return;
     }
+    if (dhCommToolSPtr->GetDHTransportPtr() == nullptr) {
+        DHLOGE("Can not get Transport ptr");
+        return;
+    }
     dhCommToolSPtr->GetDHTransportPtr()->OnSocketOpened(socket, info);
 }
 
@@ -169,6 +173,10 @@ void OnShutdown(int32_t socket, ShutdownReason reason)
         DHLOGE("Can not get DHCommTool ptr");
         return;
     }
+    if (dhCommToolSPtr->GetDHTransportPtr() == nullptr) {
+        DHLOGE("Can not get Transport ptr");
+        return;
+    }
     dhCommToolSPtr->GetDHTransportPtr()->OnSocketClosed(socket, reason);
 }
 
@@ -177,6 +185,10 @@ void OnBytes(int32_t socket, const void *data, uint32_t dataLen)
     std::shared_ptr<DHCommTool> dhCommToolSPtr = GetDHCommToolPtr();
     if (dhCommToolSPtr == nullptr) {
         DHLOGE("Can not get DHCommTool ptr");
+        return;
+    }
+    if (dhCommToolSPtr->GetDHTransportPtr() == nullptr) {
+        DHLOGE("Can not get Transport ptr");
         return;
     }
     dhCommToolSPtr->GetDHTransportPtr()->OnBytesReceived(socket, data, dataLen);

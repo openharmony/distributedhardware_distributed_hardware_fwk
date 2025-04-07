@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -159,6 +159,10 @@ DHCommTool::DHCommToolEventHandler::DHCommToolEventHandler(const std::shared_ptr
 void DHCommTool::DHCommToolEventHandler::ProcessEvent(
     const AppExecFwk::InnerEvent::Pointer &event)
 {
+    if (event == nullptr) {
+        DHLOGE("event is null.");
+        return;
+    }
     uint32_t eventId = event->GetInnerEventId();
     std::shared_ptr<CommMsg> commMsg = event->GetSharedObject<CommMsg>();
     if (commMsg == nullptr) {
@@ -198,6 +202,14 @@ void DHCommTool::DHCommToolEventHandler::ProcessFullCapsRsp(const FullCapsRsp &c
 {
     if (capsRsp.networkId.empty() || capsRsp.caps.empty()) {
         DHLOGE("Receive remote caps info invalid!");
+        return;
+    }
+    if (dhCommToolPtr == nullptr) {
+        DHLOGE("dhCommToolPtr is null");
+        return;
+    }
+    if (dhCommToolPtr->GetDHTransportPtr() == nullptr) {
+        DHLOGE("Can not get Transport ptr");
         return;
     }
     // after receive rsp, close dsoftbus channel

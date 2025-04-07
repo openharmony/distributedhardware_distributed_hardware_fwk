@@ -843,6 +843,10 @@ int32_t ComponentManager::CheckDemandStart(const std::string &uuid, const DHType
     }
 
     auto iterLocal = dhVersion.compVersions.find(dhType);
+    if (iterLocal == dhVersion.compVersions.end()) {
+        DHLOGE("Not find dhType in local: %{public}#X!", dhType);
+        return ERR_DH_FWK_TYPE_NOT_EXIST;
+    }
     // Check local config
     if (!iterLocal->second.haveFeature) {
         enableSource = true;
