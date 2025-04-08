@@ -327,7 +327,7 @@ void AVSenderEngine::SetVideoWidth(const std::string &value)
         return;
     }
     int intValue = 0;
-    if (convertToInt(value, intValue)) {
+    if (ConvertToInt(value, intValue)) {
         avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_WIDTH), intValue);
         AVTRANS_LOGI("SetParameter VIDEO_WIDTH success, video width = %{public}s", value.c_str());
     } else {
@@ -342,7 +342,7 @@ void AVSenderEngine::SetVideoHeight(const std::string &value)
         return;
     }
     int intValue = 0;
-    if (convertToInt(value, intValue)) {
+    if (ConvertToInt(value, intValue)) {
         avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_HEIGHT), intValue);
         AVTRANS_LOGI("SetParameter VIDEO_HEIGHT success, video height = %{public}s", value.c_str());
     } else {
@@ -367,7 +367,7 @@ void AVSenderEngine::SetVideoFrameRate(const std::string &value)
         return;
     }
     int intValue = 0;
-    if (convertToInt(value, intValue)) {
+    if (ConvertToInt(value, intValue)) {
         avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_FRAME_RATE), intValue);
         avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::VIDEO_FRAME_RATE), intValue);
         AVTRANS_LOGI("SetParameter VIDEO_FRAME_RATE success, frame rate = %{public}s", value.c_str());
@@ -383,7 +383,7 @@ void AVSenderEngine::SetAudioBitRate(const std::string &value)
         return;
     }
     int intValue = 0;
-    if (convertToInt(value, intValue)) {
+    if (ConvertToInt(value, intValue)) {
         avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_BITRATE), intValue);
         AVTRANS_LOGI("SetParameter MEDIA_BITRATE success, bit rate = %{public}s", value.c_str());
     } else {
@@ -398,7 +398,7 @@ void AVSenderEngine::SetVideoBitRate(const std::string &value)
         return;
     }
     int intValue = 0;
-    if (convertToInt(value, intValue)) {
+    if (ConvertToInt(value, intValue)) {
         avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::MEDIA_BITRATE), intValue);
         AVTRANS_LOGI("SetParameter MEDIA_BITRATE success, bit rate = %{public}s", value.c_str());
     } else {
@@ -464,7 +464,7 @@ void AVSenderEngine::SetAudioChannelMask(const std::string &value)
         return;
     }
     int intValue = 0;
-    if (convertToInt(value, intValue)) {
+    if (ConvertToInt(value, intValue)) {
         avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNELS), intValue);
         avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNELS), intValue);
         AVTRANS_LOGI("SetParameter AUDIO_CHANNELS success, audio channels = %{public}s", value.c_str());
@@ -480,7 +480,7 @@ void AVSenderEngine::SetAudioSampleRate(const std::string &value)
         return;
     }
     int intValue = 0;
-    if (convertToInt(value, intValue)) {
+    if (ConvertToInt(value, intValue)) {
         avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_RATE), intValue);
         avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_RATE), intValue);
         AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_RATE success, audio sample rate = %{public}s", value.c_str());
@@ -496,7 +496,7 @@ void AVSenderEngine::SetAudioChannelLayout(const std::string &value)
         return;
     }
     int intValue = 0;
-    if (convertToInt(value, intValue)) {
+    if (ConvertToInt(value, intValue)) {
         avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNEL_LAYOUT), intValue);
         avOutput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_CHANNEL_LAYOUT), intValue);
         AVTRANS_LOGI("SetParameter AUDIO_CHANNEL_LAYOUT success, audio channel layout = %{public}s", value.c_str());
@@ -512,7 +512,7 @@ void AVSenderEngine::SetAudioSampleFormat(const std::string &value)
         return;
     }
     int intValue = 0;
-    if (convertToInt(value, intValue)) {
+    if (ConvertToInt(value, intValue)) {
         avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_FORMAT), intValue);
         AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_FORMAT success, audio sample format = %{public}s", value.c_str());
     } else {
@@ -527,7 +527,7 @@ void AVSenderEngine::SetAudioFrameSize(const std::string &value)
         return;
     }
     int intValue = 0;
-    if (convertToInt(value, intValue)) {
+    if (ConvertToInt(value, intValue)) {
         avInput_->SetParameter(static_cast<int32_t>(Plugin::Tag::AUDIO_SAMPLE_PER_FRAME), intValue);
         AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_PER_FRAME success, audio sample per frame = %{public}s", value.c_str());
     } else {
