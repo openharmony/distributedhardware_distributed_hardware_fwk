@@ -278,7 +278,7 @@ bool IsString(const cJSON *jsonObj, const std::string &key)
         strlen(cJSON_GetStringValue(keyObj)) <= MAX_MESSAGES_LEN;
 }
 
-bool convertToInt(const std::string& str, int& value)
+bool ConvertToInt(const std::string& str, int& value)
 {
     auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), value);
     return ec == std::errc{} && ptr == str.data() + str.size();
