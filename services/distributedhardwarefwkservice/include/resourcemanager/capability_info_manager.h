@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -56,11 +56,6 @@ public:
     int32_t RemoveCapabilityInfoByKey(const std::string &key);
     /* Delete data from memory cache */
     int32_t RemoveCapabilityInfoInMem(const std::string &deviceId);
-    /* Queries distributed hardware information based on filter criteria. */
-    std::map<std::string, std::shared_ptr<CapabilityInfo>> QueryCapabilityByFilters(
-        const std::map<CapabilityInfoFilter, std::string> &filters);
-    bool IsCapabilityMatchFilter(const std::shared_ptr<CapabilityInfo> cap, const CapabilityInfoFilter &filter,
-        const std::string &value);
     bool HasCapability(const std::string &deviceId, const std::string &dhId);
     void GetCapabilitiesByDeviceId(const std::string &deviceId,
         std::vector<std::shared_ptr<CapabilityInfo>> &resInfos);
