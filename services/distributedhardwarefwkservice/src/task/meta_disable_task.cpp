@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,8 @@
 
 #include "anonymous_string.h"
 #include "component_manager.h"
+#include "component_loader.h"
+#include "dh_context.h"
 #include "dh_modem_context_ext.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -69,6 +71,7 @@ void MetaDisableTask::DoTaskInner()
     std::string taskId = GetId();
     std::shared_ptr<Task> father = GetFatherTask().lock();
     TaskBoard::GetInstance().RemoveTask(taskId);
+    DHContext::GetInstance().DeleteOnlineDeviceType(GetNetworkId());
     /* if finish task, notify father finish */
     if (father != nullptr) {
         auto offLineTask = std::static_pointer_cast<OffLineTask>(father);
@@ -78,23 +81,32 @@ void MetaDisableTask::DoTaskInner()
 
 int32_t MetaDisableTask::Disable()
 {
-    IDistributedHardwareSource *sourcePtr = ComponentManager::GetInstance().GetDHSourceInstance(DHType::MODEM);
+    DHLOGI("MetaDisableTask enter.");
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    auto ret = ComponentLoader::GetInstance().GetSource(DHType::MODEM, sourcePtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Get Modem Source failed.");
+        return ret;
+    }
     if (sourcePtr == nullptr) {
         DHLOGW("GetDHSourceInstance is nullptr.");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-    std::shared_ptr<IDistributedModemExt> distributedModemExt_ =
-            DHModemContextExt::GetInstance().GetModemExtInstance();
-    if (distributedModemExt_ == nullptr) {
+    std::shared_ptr<IDistributedModemExt> dhModemExt = DHModemContextExt::GetInstance().GetModemExtInstance();
+    if (dhModemExt == nullptr) {
         DHLOGE("GetModemExtInstance is nullptr.");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-    DHLOGI("Meta disable, networkId = %{public}s", GetAnonyString(GetNetworkId()).c_str());
-    if (distributedModemExt_->Disable(GetNetworkId(), sourcePtr) != DH_FWK_SUCCESS) {
-        DHLOGW("Meta disable failed, dhId = %{public}s.", GetAnonyString(GetDhId()).c_str());
-        return ERR_DH_FWK_PARA_INVALID;
+
+    DHDescriptor dhDescriptor {
+        .id = GetDhId(),
+        .dhType = GetDhType()
+    };
+    ret = ComponentManager::GetInstance().DisableMetaSource(GetNetworkId(), dhDescriptor, dhModemExt, sourcePtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("DisableMetaSource DhType = %{public}#X, failed!", GetDhType());
     }
-    return DH_FWK_SUCCESS;
+    return ret;
 }
 
 } // namespace DistributedHardware

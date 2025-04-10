@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,7 @@
 #include <string>
 #include <unordered_set>
 #include <shared_mutex>
+#include <map>
 
 #include "device_type.h"
 #include "event_handler.h"
@@ -82,6 +83,9 @@ public:
     size_t GetRealTimeOnlineDeviceCount();
     void GetOnlineDeviceUdidHash(std::vector<std::string> &udidHashVec);
     void GetOnlineDeviceDeviceId(std::vector<std::string> &deviceIdVec);
+    void AddOnlineDeviceType(const std::string &networkId, uint16_t deviceType);
+    void DeleteOnlineDeviceType(const std::string &networkId);
+    uint16_t GetDeviceTypeByNetworkId(const std::string &networkId);
     /* DeviceId is which is hashed by sha256 */
     std::string GetUUIDByDeviceId(const std::string &deviceId);
     /**
@@ -129,6 +133,9 @@ private:
 
     std::unordered_set<std::string> connectedDevIds_;
     std::shared_mutex connectDevMutex_;
+
+    std::map<std::string, uint16_t> onlineDevTypeMap_;
+    std::shared_mutex onlineDevTypeMutex_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

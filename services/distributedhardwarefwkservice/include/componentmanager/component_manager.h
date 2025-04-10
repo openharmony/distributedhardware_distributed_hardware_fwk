@@ -28,6 +28,7 @@
 #include "capability_info.h"
 #include "device_type.h"
 #include "dh_comm_tool.h"
+#include "dh_modem_context_ext.h"
 #include "event_handler.h"
 #include "idistributed_hardware.h"
 #include "idistributed_hardware_sink.h"
@@ -96,7 +97,10 @@ public:
     int32_t ForceDisableSource(const std::string &networkId, const DHDescriptor &dhDescriptor);
     int32_t CheckIdenticalAccount(const std::string &networkId,
         const std::string &uuid, const DHDescriptor &dhDescriptor);
-
+    int32_t EnableMetaSource(const std::string &networkId, const DHDescriptor &dhDescriptor,
+        std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr);
+    int32_t DisableMetaSource(const std::string &networkId, const DHDescriptor &dhDescriptor,
+        std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr);
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
     public:
         ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner);
@@ -245,7 +249,12 @@ private:
         DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status, bool isActive);
     int32_t RealDisableSource(const std::string &networkId, const std::string &uuid, const DHDescriptor &dhDescriptor,
         DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status);
-
+    int32_t EnableMetaSourceInternal(const std::string &networkId, const DHDescriptor &dhDescriptor,
+        DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status,
+        std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr);
+    int32_t DisableMetaSourceInternal(const std::string &networkId, const DHDescriptor &dhDescriptor,
+        DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status,
+        std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr);
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::shared_mutex compSourceMutex_;

@@ -23,7 +23,6 @@
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
 #include "constants.h"
-#include "device_manager.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
@@ -36,6 +35,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    constexpr uint16_t PHONE_TYPE = 14;
+}
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "OffLineTask"
 
@@ -213,17 +215,16 @@ void OffLineTask::CreateMetaDisableTask()
 {
     DHLOGI("CreateMetaDisableTask, networkId = %{public}s, uuid = %{public}s", GetAnonyString(GetNetworkId()).c_str(),
         GetAnonyString(GetUUID()).c_str());
-    int32_t deviceType = DmDeviceType::DEVICE_TYPE_UNKNOWN;
-    DeviceManager::GetInstance().GetDeviceType(DH_FWK_PKG_NAME, GetNetworkId(), deviceType);
-    if (deviceType != DmDeviceType::DEVICE_TYPE_PHONE) {
-        DHLOGI("CreateMetaDisableTask, offline device not phone, deviceType = %{public}d", deviceType);
+    uint16_t deviceType = DHContext::GetInstance().GetDeviceTypeByNetworkId(GetNetworkId());
+    if (deviceType != PHONE_TYPE) {
+        DHLOGI("offline device not phone, deviceType = %{public}d", deviceType);
         return;
     }
     TaskParam taskParam = {
         .networkId = GetNetworkId(),
         .uuid = GetUUID(),
-        .dhId = GetDhId(),
-        .dhType = GetDhType()
+        .dhId = "Modem_1234",
+        .dhType = DHType::MODEM
     };
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::META_DISABLE, taskParam, shared_from_this());
     TaskExecutor::GetInstance().PushTask(task);
