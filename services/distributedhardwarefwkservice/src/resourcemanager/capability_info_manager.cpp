@@ -61,6 +61,10 @@ CapabilityInfoManager::CapabilityInfoManagerEventHandler::CapabilityInfoManagerE
 void CapabilityInfoManager::CapabilityInfoManagerEventHandler::ProcessEvent(
     const AppExecFwk::InnerEvent::Pointer &event)
 {
+    if (event == nullptr) {
+        DHLOGE("event is null.");
+        return;
+    }
     uint32_t eventId = event->GetInnerEventId();
     auto selfPtr = capabilityInfoMgrWPtr_.lock();
     if (!selfPtr) {
