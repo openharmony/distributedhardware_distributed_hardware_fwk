@@ -57,13 +57,7 @@ const string DH_SUBTYPE_2 = "gps";
 const string DH_SUBTYPE_3 = "screen";
 const string DH_SUBTYPE_4 = "input";
 constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
-constexpr uint32_t TEST_DH_TYPE_CAMERA = 0x01;
-constexpr uint32_t TEST_DH_TYPE_MIC = 0x02;
-constexpr uint32_t TEST_DH_TYPE_GPS = 0x10;
-constexpr uint32_t TEST_DH_TYPE_DISPLAY = 0x08;
-constexpr uint32_t TEST_DH_TYPE_BUTTON = 0x20;
 constexpr uint32_t TEST_SIZE_0 = 0;
-constexpr uint32_t TEST_SIZE_2 = 2;
 constexpr uint32_t TEST_SIZE_5 = 5;
 constexpr uint32_t TEST_SIZE_10 = 10;
 constexpr uint32_t MAX_DB_RECORD_LENGTH = 10005;
@@ -218,50 +212,6 @@ HWTEST_F(ResourceManagerTest, resource_manager_test_007, TestSize.Level1)
     EXPECT_EQ(CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(CAP_INFO_8->GetKey()), DH_FWK_SUCCESS);
     EXPECT_EQ(CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(CAP_INFO_9->GetKey()), DH_FWK_SUCCESS);
     EXPECT_EQ(CapabilityInfoManager::GetInstance()->globalCapInfoMap_.size(), TEST_SIZE_0);
-}
-
-/**
- * @tc.name: resource_manager_test_008
- * @tc.desc: Verify the CapabilityInfoManager QueryCapabilityByFilters function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSJE
- */
-HWTEST_F(ResourceManagerTest, resource_manager_test_008, TestSize.Level1)
-{
-    map<CapabilityInfoFilter, string> queryMap0 { { CapabilityInfoFilter::FILTER_DEVICE_ID, DEV_ID_0 } };
-    map<CapabilityInfoFilter, string> queryMap1 { { CapabilityInfoFilter::FILTER_DEVICE_ID, DEV_ID_1 } };
-    map<CapabilityInfoFilter, string> queryMap2 { { CapabilityInfoFilter::FILTER_DEVICE_NAME, TEST_DEV_NAME } };
-    map<CapabilityInfoFilter, string> queryMap3 { { CapabilityInfoFilter::FILTER_DH_ID, DH_ID_0 } };
-    map<CapabilityInfoFilter, string> queryMap4 { { CapabilityInfoFilter::FILTER_DH_ID, DH_ID_1 } };
-    map<CapabilityInfoFilter, string> queryMap5 { { CapabilityInfoFilter::FILTER_DH_ID, DH_ID_2 } };
-    map<CapabilityInfoFilter, string> queryMap6 { { CapabilityInfoFilter::FILTER_DH_ID, DH_ID_3 } };
-    map<CapabilityInfoFilter, string> queryMap7 { { CapabilityInfoFilter::FILTER_DH_ID, DH_ID_4 } };
-    map<CapabilityInfoFilter, string> queryMap8 { { CapabilityInfoFilter::FILTER_DEVICE_TYPE,
-        to_string(TEST_DEV_TYPE_PAD) } };
-    map<CapabilityInfoFilter, string> queryMap9 { { CapabilityInfoFilter::FILTER_DH_TYPE,
-        to_string(TEST_DH_TYPE_CAMERA) } };
-    map<CapabilityInfoFilter, string> queryMap10 { { CapabilityInfoFilter::FILTER_DH_TYPE,
-        to_string(TEST_DH_TYPE_MIC) } };
-    map<CapabilityInfoFilter, string> queryMap11 { { CapabilityInfoFilter::FILTER_DH_TYPE,
-        to_string(TEST_DH_TYPE_GPS) } };
-    map<CapabilityInfoFilter, string> queryMap12 { { CapabilityInfoFilter::FILTER_DH_TYPE,
-        to_string(TEST_DH_TYPE_DISPLAY) } };
-    map<CapabilityInfoFilter, string> queryMap13 { { CapabilityInfoFilter::FILTER_DH_TYPE,
-        to_string(TEST_DH_TYPE_BUTTON) } };
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap0).size(), TEST_SIZE_5);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap1).size(), TEST_SIZE_5);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap2).size(), TEST_SIZE_10);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap3).size(), TEST_SIZE_2);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap4).size(), TEST_SIZE_2);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap5).size(), TEST_SIZE_2);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap6).size(), TEST_SIZE_2);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap7).size(), TEST_SIZE_2);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap8).size(), TEST_SIZE_10);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap9).size(), TEST_SIZE_2);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap10).size(), TEST_SIZE_2);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap11).size(), TEST_SIZE_2);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap12).size(), TEST_SIZE_2);
-    EXPECT_EQ(CapabilityInfoManager::GetInstance()->QueryCapabilityByFilters(queryMap13).size(), TEST_SIZE_2);
 }
 
 /**
@@ -607,129 +557,6 @@ HWTEST_F(ResourceManagerTest, HandleCapabilityChange_003, TestSize.Level1)
     TaskBoard::GetInstance().RemoveEnabledDevice(enabledDeviceKey);
     cJSON_free(cjson);
     cJSON_Delete(jsonObj);
-}
-
-/**
- * @tc.name: IsCapabilityMatchFilter_001
- * @tc.desc: Verify the IsCapabilityMatchFilter function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_001, TestSize.Level1)
-{
-    std::shared_ptr<CapabilityInfo> cap = nullptr;
-    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_ID;
-    std::string value;
-    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
-    EXPECT_EQ(false, ret);
-}
-
-/**
- * @tc.name: IsCapabilityMatchFilter_002
- * @tc.desc: Verify the IsCapabilityMatchFilter function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_002, TestSize.Level1)
-{
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
-    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_ID;
-    std::string value;
-    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
-    EXPECT_EQ(true, ret);
-}
-
-/**
- * @tc.name: IsCapabilityMatchFilter_003
- * @tc.desc: Verify the IsCapabilityMatchFilter function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_003, TestSize.Level1)
-{
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
-    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DEVICE_ID;
-    std::string value;
-    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
-    EXPECT_EQ(true, ret);
-}
-
-/**
- * @tc.name: IsCapabilityMatchFilter_004
- * @tc.desc: Verify the IsCapabilityMatchFilter function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_004, TestSize.Level1)
-{
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
-    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DEVICE_NAME;
-    std::string value;
-    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
-    EXPECT_EQ(true, ret);
-}
-
-/**
- * @tc.name: IsCapabilityMatchFilter_005
- * @tc.desc: Verify the IsCapabilityMatchFilter function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_005, TestSize.Level1)
-{
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
-    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DEVICE_TYPE;
-    uint16_t devType = 123;
-    std::string value = std::to_string(devType);
-    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
-    EXPECT_EQ(false, ret);
-}
-
-/**
- * @tc.name: IsCapabilityMatchFilter_006
- * @tc.desc: Verify the IsCapabilityMatchFilter function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_006, TestSize.Level1)
-{
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
-    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_TYPE;
-    DHType dhType = DHType::AUDIO;
-    std::string value = std::to_string(static_cast<uint32_t>(dhType));
-    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
-    EXPECT_EQ(false, ret);
-}
-
-/**
- * @tc.name: IsCapabilityMatchFilter_007
- * @tc.desc: Verify the IsCapabilityMatchFilter function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_007, TestSize.Level1)
-{
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
-    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_ATTRS;
-    std::string value;
-    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
-    EXPECT_EQ(true, ret);
-}
-
-/**
- * @tc.name: IsCapabilityMatchFilter_008
- * @tc.desc: Verify the IsCapabilityMatchFilter function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ResourceManagerTest, IsCapabilityMatchFilter_008, TestSize.Level1)
-{
-    std::shared_ptr<CapabilityInfo> cap = std::make_shared<CapabilityInfo>("", "", "", 0, DHType::UNKNOWN, "", "");
-    uint32_t invalid = 6;
-    CapabilityInfoFilter filter = static_cast<CapabilityInfoFilter>(invalid);
-    std::string value;
-    bool ret = CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
-    EXPECT_EQ(false, ret);
 }
 
 /**

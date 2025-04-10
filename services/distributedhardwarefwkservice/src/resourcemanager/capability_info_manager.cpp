@@ -314,26 +314,6 @@ int32_t CapabilityInfoManager::RemoveCapabilityInfoInMem(const std::string &devi
     return DH_FWK_SUCCESS;
 }
 
-std::map<std::string, std::shared_ptr<CapabilityInfo>> CapabilityInfoManager::QueryCapabilityByFilters(
-    const std::map<CapabilityInfoFilter, std::string> &filters)
-{
-    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
-    std::map<std::string, std::shared_ptr<CapabilityInfo>> capMap;
-    for (auto &info : globalCapInfoMap_) {
-        bool isMatch = true;
-        for (auto &filter : filters) {
-            if (!IsCapabilityMatchFilter(info.second, filter.first, filter.second)) {
-                isMatch = false;
-                break;
-            }
-        }
-        if (isMatch) {
-            capMap.emplace(info.first, info.second);
-        }
-    }
-    return capMap;
-}
-
 void CapabilityInfoManager::OnChange(const DistributedKv::ChangeNotification &changeNotification)
 {
     DHLOGI("CapabilityInfoManager: DB data OnChange");
@@ -497,50 +477,6 @@ void CapabilityInfoManager::HandleCapabilityDeleteChange(const std::vector<Distr
         DHLOGI("Delete capability key: %{public}s", capPtr->GetAnonymousKey().c_str());
         globalCapInfoMap_.erase(keyString);
     }
-}
-
-bool CapabilityInfoManager::IsCapabilityMatchFilter(const std::shared_ptr<CapabilityInfo> cap,
-    const CapabilityInfoFilter &filter, const std::string &value)
-{
-    if (cap == nullptr) {
-        DHLOGE("cap is null");
-        return false;
-    }
-
-    bool isMatch = false;
-    switch (filter) {
-        case CapabilityInfoFilter::FILTER_DH_ID: {
-            isMatch = cap->GetDHId().compare(value) == 0;
-            break;
-        }
-        case CapabilityInfoFilter::FILTER_DEVICE_ID: {
-            isMatch = cap->GetDeviceId().compare(value) == 0;
-            break;
-        }
-        case CapabilityInfoFilter::FILTER_DEVICE_NAME: {
-            isMatch = cap->GetDeviceName().compare(value) == 0;
-            break;
-        }
-        case CapabilityInfoFilter::FILTER_DEVICE_TYPE: {
-            auto devType = static_cast<uint16_t>(std::stoi(value));
-            isMatch = cap->GetDeviceType() == devType;
-            break;
-        }
-        case CapabilityInfoFilter::FILTER_DH_TYPE: {
-            DHType dhType = (DHType)std::stoi(value);
-            isMatch = cap->GetDHType() == dhType;
-            break;
-        }
-        case CapabilityInfoFilter::FILTER_DH_ATTRS: {
-            isMatch = cap->GetDHAttrs().compare(value) == 0;
-            break;
-        }
-        default: {
-            isMatch = false;
-            break;
-        }
-    }
-    return isMatch;
 }
 
 void CapabilityInfoManager::GetCapabilitiesByDeviceId(const std::string &deviceId,

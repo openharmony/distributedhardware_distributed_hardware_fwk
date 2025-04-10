@@ -127,32 +127,6 @@ void AddCapabilityInMemFuzzTest(const uint8_t* data, size_t size)
     CapabilityInfoManager::GetInstance()->AddCapabilityInMem(resInfos1);
 }
 
-void IsCapabilityMatchFilterFuzzTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-    std::shared_ptr<CapabilityInfo> cap = nullptr;
-    CapabilityInfoFilter filter = CapabilityInfoFilter::FILTER_DH_ID;
-    std::string value(reinterpret_cast<const char*>(data), size);
-    CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(cap, filter, value);
-
-    std::string dhId(reinterpret_cast<const char*>(data), size);
-    std::string deviceId(reinterpret_cast<const char*>(data), size);
-    std::string deviceName(reinterpret_cast<const char*>(data), size);
-    std::string dhAttrs(reinterpret_cast<const char*>(data), size);
-    std::string dhSubtype(reinterpret_cast<const char*>(data), size);
-    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
-        dhId, deviceId, deviceName, TEST_DEV_TYPE_PAD, DHType::AUDIO, dhAttrs, dhSubtype);
-    CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(capInfo, filter, value);
-    filter = CapabilityInfoFilter::FILTER_DEVICE_ID;
-    CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(capInfo, filter, value);
-    filter = CapabilityInfoFilter::FILTER_DEVICE_NAME;
-    CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(capInfo, filter, value);
-    filter = CapabilityInfoFilter::FILTER_DH_ATTRS;
-    CapabilityInfoManager::GetInstance()->IsCapabilityMatchFilter(capInfo, filter, value);
-}
-
 void GetDataByKeyFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -311,7 +285,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::RemoveCapabilityInfoInDBFuzzTest(data, size);
     OHOS::DistributedHardware::SyncDeviceInfoFromDBFuzzTest(data, size);
     OHOS::DistributedHardware::AddCapabilityInMemFuzzTest(data, size);
-    OHOS::DistributedHardware::IsCapabilityMatchFilterFuzzTest(data, size);
     OHOS::DistributedHardware::GetDataByKeyFuzzTest(data, size);
     OHOS::DistributedHardware::CapabilityInfoManagerOnChangeInsertFuzzTest(data, size);
     OHOS::DistributedHardware::CapabilityInfoManagerOnChangeUpdateFuzzTest(data, size);
