@@ -64,6 +64,12 @@ public:
         int32_t EnableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors);
         int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors);
     };
+
+    class TestDistributedHardwareStub2 : public TestDistributedHardwareStub {
+    public:
+        int32_t OnRemoteRequest(uint32_t code,
+            MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
+    };
 };
 
 class MockIPublisherListener : public IPublisherListener {

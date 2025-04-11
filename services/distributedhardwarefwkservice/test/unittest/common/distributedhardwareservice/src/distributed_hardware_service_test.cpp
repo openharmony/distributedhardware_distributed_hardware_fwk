@@ -21,6 +21,7 @@
 
 #include "constants.h"
 #include "cJSON.h"
+#include "component_loader.h"
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -43,6 +44,10 @@ namespace {
     const std::u16string ARGS_E = u"-e";
     const std::u16string ARGS_T = u"-t";
     const std::u16string ARGS_C = u"-c";
+
+    constexpr int32_t TEST_COMP_SINK_SA_ID = 4804;
+    constexpr int32_t TEST_SINK_SA_ID = 12345;
+    constexpr int32_t TEST_SOURCE_SA_ID = 12345;
 }
 void DistributedHardwareServiceTest::SetUpTestCase(void) {}
 
@@ -51,6 +56,42 @@ void DistributedHardwareServiceTest::TearDownTestCase(void) {}
 void DistributedHardwareServiceTest::SetUp() {}
 
 void DistributedHardwareServiceTest::TearDown() {}
+
+void SetUpComponentLoaderConfig()
+{
+    if (ComponentLoader::GetInstance().compHandlerMap_.find(DHType::AUDIO)
+        == ComponentLoader::GetInstance().compHandlerMap_.end()) {
+        CompHandler handler;
+        handler.compConfig.name = "distributed_audio";
+        handler.compConfig.type = DHType::AUDIO;
+        handler.compConfig.compHandlerLoc = "libdistributed_camera_handler.z.so";
+        handler.compConfig.compHandlerVersion = "1.0";
+        handler.compConfig.compSourceLoc = "libdistributed_camera_source_sdk.z.so";
+        handler.compConfig.compSourceVersion = "1.0";
+        handler.compConfig.compSinkLoc = "libdistributed_camera_sink_sdk.z.so";
+        handler.compConfig.compSinkVersion = "2.0";
+        handler.compConfig.compSinkSaId = TEST_COMP_SINK_SA_ID;
+        handler.compConfig.haveFeature = false;
+        handler.hardwareHandler = nullptr;
+        handler.sourceHandler = nullptr;
+        handler.sinkHandler = nullptr;
+        handler.type = DHType::AUDIO;
+        handler.sinkSaId = TEST_SINK_SA_ID;
+        handler.sourceSaId = TEST_SOURCE_SA_ID;
+        ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = handler;
+    }
+}
+
+void SetDownComponentLoaderConfig()
+{
+    auto itHandler = ComponentLoader::GetInstance().compHandlerMap_.find(DHType::AUDIO);
+    if (itHandler != ComponentLoader::GetInstance().compHandlerMap_.end()) {
+        CompHandler &handler = itHandler->second;
+        if (handler.sinkSaId == TEST_SINK_SA_ID && handler.sourceSaId == TEST_SOURCE_SA_ID) {
+            ComponentLoader::GetInstance().compHandlerMap_.erase(itHandler);
+        }
+    }
+}
 
 /**
  * @tc.name: register_publisher_listener_001
@@ -262,6 +303,10 @@ HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Le
     networkId = "local";
     ret = service.GetDistributedHardware(networkId, descriptors);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    networkId = "";
+    ret = service.GetDistributedHardware(networkId, descriptors);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
 /**
@@ -275,8 +320,12 @@ HWTEST_F(DistributedHardwareServiceTest, RegisterDHStatusListener_001, TestSize.
     DistributedHardwareService service(ASID, true);
     sptr<IHDSinkStatusListener> listener = nullptr;
 
+    SetUpComponentLoaderConfig();
     auto ret = service.RegisterDHStatusListener(listener);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    ret = service.RegisterDHStatusListener(listener);
+    SetDownComponentLoaderConfig();
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
 /**
@@ -290,9 +339,17 @@ HWTEST_F(DistributedHardwareServiceTest, RegisterDHStatusListener_002, TestSize.
     DistributedHardwareService service(ASID, true);
     sptr<IHDSourceStatusListener> listener = nullptr;
 
+    SetUpComponentLoaderConfig();
     std::string networkId = "111";
     auto ret = service.RegisterDHStatusListener(networkId, listener);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    ret = service.RegisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
+    SetDownComponentLoaderConfig();
+
+    networkId = "";
+    ret = service.RegisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
 /**
@@ -306,8 +363,12 @@ HWTEST_F(DistributedHardwareServiceTest, UnregisterDHStatusListener_001, TestSiz
     DistributedHardwareService service(ASID, true);
     sptr<IHDSinkStatusListener> listener = nullptr;
 
+    SetUpComponentLoaderConfig();
     auto ret = service.UnregisterDHStatusListener(listener);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    ret = service.UnregisterDHStatusListener(listener);
+    SetDownComponentLoaderConfig();
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
 /**
@@ -321,9 +382,17 @@ HWTEST_F(DistributedHardwareServiceTest, UnregisterDHStatusListener_002, TestSiz
     DistributedHardwareService service(ASID, true);
     sptr<IHDSourceStatusListener> listener = nullptr;
 
+    SetUpComponentLoaderConfig();
     std::string networkId = "111";
     auto ret = service.UnregisterDHStatusListener(networkId, listener);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    ret = service.UnregisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
+    SetDownComponentLoaderConfig();
+
+    networkId = "";
+    ret = service.UnregisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
 /**
@@ -370,6 +439,10 @@ HWTEST_F(DistributedHardwareServiceTest, EnableSource_001, TestSize.Level1)
 
     auto ret = service.EnableSource(networkId, descriptors);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    networkId = "";
+    ret = service.EnableSource(networkId, descriptors);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
 /**
@@ -386,6 +459,10 @@ HWTEST_F(DistributedHardwareServiceTest, DisableSource_001, TestSize.Level1)
 
     auto ret = service.DisableSource(networkId, descriptors);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    networkId = "";
+    ret = service.DisableSource(networkId, descriptors);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
 HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_002, TestSize.Level1)
