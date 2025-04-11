@@ -428,6 +428,19 @@ HWTEST_F(AvAudioSenderEngineTest, SetParameter_014, testing::ext::TestSize.Level
     EXPECT_EQ(sender->meta_, nullptr);
 }
 
+HWTEST_F(AvAudioSenderEngineTest, SetParameterInner_001, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "ohos.dhardware.dscreen";
+    std::string peerDevId = "pEid";
+    std::string value = "500";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->meta_ = nullptr;
+    sender->SetParameterInner(AVTransTag::INVALID, "H264");
+    sender->SetVideoPixelFormat("10");
+    sender->SetVideoBitRate("11");
+    EXPECT_EQ(sender->meta_, nullptr);
+}
+
 HWTEST_F(AvAudioSenderEngineTest, PushData_001, testing::ext::TestSize.Level1)
 {
     std::string ownerName = "001";
@@ -702,6 +715,17 @@ HWTEST_F(AvAudioSenderEngineTest, SendMessage_005, testing::ext::TestSize.Level1
     EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
 }
 
+HWTEST_F(AvAudioSenderEngineTest, SendMessage_006, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    EventType type = EventType::EVENT_ADD_STREAM;
+    sender->NotifyStreamChange(type);
+    int32_t ret = sender->SendMessage(nullptr);
+    EXPECT_EQ(ERR_DH_AVT_INVALID_PARAM, ret);
+}
+
 HWTEST_F(AvAudioSenderEngineTest, RegisterSenderCallback_001, testing::ext::TestSize.Level1)
 {
     std::string ownerName = OWNER_NAME_D_SCREEN;
@@ -810,6 +834,69 @@ HWTEST_F(AvAudioSenderEngineTest, OnEvent_001, testing::ext::TestSize.Level1)
 
     sender->senderCallback_ = std::make_shared<SenderEngineCallback>();
     sender->OnEvent(event);
+    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+}
+
+HWTEST_F(AvAudioSenderEngineTest, OnCallback_001, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->currentState_ = StateId::INITIALIZED;
+
+    sender->OnCallback(nullptr, Pipeline::FilterCallBackCommand::FILTER_CALLBACK_COMMAND_MAX,
+        Pipeline::StreamType::STREAMTYPE_MAX);
+    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+}
+
+HWTEST_F(AvAudioSenderEngineTest, OnCallback_002, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->currentState_ = StateId::INITIALIZED;
+
+    sender->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
+        Pipeline::StreamType::STREAMTYPE_MAX);
+    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+}
+
+HWTEST_F(AvAudioSenderEngineTest, OnCallback_003, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->currentState_ = StateId::INITIALIZED;
+
+    sender->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
+        Pipeline::StreamType::STREAMTYPE_RAW_AUDIO);
+    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+}
+
+HWTEST_F(AvAudioSenderEngineTest, OnCallback_004, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->currentState_ = StateId::INITIALIZED;
+
+    sender->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
+        Pipeline::StreamType::STREAMTYPE_ENCODED_AUDIO);
+    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+}
+
+HWTEST_F(AvAudioSenderEngineTest, LinkAudioSinkFilter_001, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = OWNER_NAME_D_CAMERA;
+    std::string peerDevId = "pEid";
+    auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
+    sender->currentState_ = StateId::INITIALIZED;
+    sender->avOutput_ = nullptr;
+    sender->pipeline_ = nullptr;
+
+    sender->LinkAudioSinkFilter(nullptr, Pipeline::StreamType::STREAMTYPE_ENCODED_AUDIO);
+    sender->pipeline_ = std::make_shared<Pipeline::Pipeline>();
+    sender->LinkAudioSinkFilter(nullptr, Pipeline::StreamType::STREAMTYPE_ENCODED_AUDIO);
     EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
 }
 } // namespace DistributedHardware

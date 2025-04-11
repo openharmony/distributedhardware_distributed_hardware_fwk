@@ -28,7 +28,10 @@ ohos_unittest("AvSyncUtilsTest") {
     "${plugin_path}/interface",
   ]
 
-  sources = [ "av_sync_utils_test.cpp" ]
+  sources = [ 
+    "av_sync_utils_test.cpp",
+    "ashmem_mock.cpp",
+  ]
 
   deps = [
     "${dh_fwk_sdk_path}:libdhfwk_sdk",
@@ -49,6 +52,8 @@ ohos_unittest("AvSyncUtilsTest") {
     "cJSON:cjson",
     "c_utils:utils",
     "ipc:ipc_core",
+    "googletest:gmock",
+    "googletest:gmock_main",
   ]
 
   cflags = [
