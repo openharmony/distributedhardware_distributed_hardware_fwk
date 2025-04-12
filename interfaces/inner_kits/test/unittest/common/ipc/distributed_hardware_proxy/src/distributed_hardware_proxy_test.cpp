@@ -14,6 +14,7 @@
  */
 
 #include "distributed_hardware_proxy_test.h"
+#include "dhardware_ipc_interface_code.h"
 
 using namespace testing::ext;
 
@@ -30,6 +31,19 @@ void DistributedHardwareProxyTest::TearDownTestCase()
 void DistributedHardwareProxyTest::SetUp() {}
 
 void DistributedHardwareProxyTest::TearDown() {}
+
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub2::OnRemoteRequest(uint32_t code, MessageParcel &data,
+    MessageParcel &reply, MessageOption &option)
+{
+    if (code == static_cast<uint32_t>(DHMsgInterfaceCode::GET_DISTRIBUTED_HARDWARE)) {
+        std::vector<DHDescriptor> descriptors;
+        descriptors.emplace_back(DHDescriptor());
+        descriptors.emplace_back(DHDescriptor());
+        OHOS::DistributedHardware::DistributedHardwareStub::WriteDescriptors(reply, descriptors);
+        return DH_FWK_SUCCESS;
+    }
+    return OHOS::DistributedHardware::DistributedHardwareStub::OnRemoteRequest(code, data, reply, option);
+}
 
 int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::RegisterPublisherListener(const DHTopic topic,
     const sptr<IPublisherListener> listener)
@@ -529,6 +543,19 @@ HWTEST_F(DistributedHardwareProxyTest, GetDistributedHardware_001, TestSize.Leve
     std::vector<DHDescriptor> descriptors;
     auto ret = dhProxy.GetDistributedHardware(networkId, descriptors);
     EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+    ret = dhProxy.GetDistributedHardware(std::string(), descriptors);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, GetDistributedHardware_002, TestSize.Level1)
+{
+    std::string networkId = "123456";
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub2());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+    std::vector<DHDescriptor> descriptors;
+    auto ret = dhProxy.GetDistributedHardware(networkId, descriptors);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 HWTEST_F(DistributedHardwareProxyTest, RegisterDHStatusListener_Source_001, TestSize.Level1)
@@ -540,6 +567,8 @@ HWTEST_F(DistributedHardwareProxyTest, RegisterDHStatusListener_Source_001, Test
     sptr<IHDSourceStatusListener> listener(new MockHDSourceStatusListenerStub());
     auto ret = dhProxy.RegisterDHStatusListener(networkId, listener);
     EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+    ret = dhProxy.RegisterDHStatusListener(std::string(), listener);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 HWTEST_F(DistributedHardwareProxyTest, UnregisterDHStatusListener_Source_001, TestSize.Level1)
@@ -551,6 +580,8 @@ HWTEST_F(DistributedHardwareProxyTest, UnregisterDHStatusListener_Source_001, Te
     sptr<IHDSourceStatusListener> listener(new MockHDSourceStatusListenerStub());
     auto ret = dhProxy.UnregisterDHStatusListener(networkId, listener);
     EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+    ret = dhProxy.UnregisterDHStatusListener(std::string(), listener);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 HWTEST_F(DistributedHardwareProxyTest, RegisterDHStatusListener_Sink_001, TestSize.Level1)

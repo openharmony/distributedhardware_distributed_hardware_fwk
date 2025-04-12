@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,7 +32,23 @@ namespace {
     const std::string KEY_TYPE = "type";
     const std::string KEY_CONTENT = "content";
     const std::string PLUGINNAME = "daudio_input";
+    static const uint32_t BUFFER_MAX_CAPACITY = 104857600;
+    static const uint32_t NUM_16 = 16;
 }
+
+class ChannelListenerTest : public ISoftbusChannelListener {
+    public:
+        void OnChannelEvent(const AVTransEvent &event) override
+        {
+            event_ = event;
+        }
+        void OnStreamReceived(const StreamData *data, const StreamData *ext) override
+        {
+            event_.type = EventType::EVENT_DATA_RECEIVED;
+        }
+    public:
+        AVTransEvent event_;
+};
 
 void DaudioInputTest::SetUpTestCase() {}
 
@@ -409,6 +425,35 @@ HWTEST_F(DaudioInputTest, GetBufferData_001, TestSize.Level0)
     EXPECT_EQ(nullptr, ret);
 }
 
+HWTEST_F(DaudioInputTest, CreateBufferData_001, TestSize.Level0)
+{
+    std::shared_ptr<AVTransBuffer> transBuffer = std::make_shared<AVTransBuffer>();
+    auto ret = transBuffer->CreateBufferData(BUFFER_MAX_CAPACITY + 1);
+    EXPECT_EQ(nullptr, ret);
+
+    ret = transBuffer->WrapBufferData(nullptr, BUFFER_MAX_CAPACITY + 1, 0);
+    EXPECT_EQ(nullptr, ret);
+
+    ret = transBuffer->CreateBufferData(CAPACITY_MAX_LENGTH);
+    EXPECT_NE(nullptr, ret);
+
+    ret = transBuffer->GetBufferData(0);
+    EXPECT_NE(nullptr, ret);
+    uint8_t data[] = { 0, 0, 0, 0};
+    ret->Write(data, sizeof(data), 0);
+    uint8_t readData[NUM_16];
+    int32_t readed = ret->Read(readData, 1);
+    EXPECT_EQ(readed, 1);
+    readed = ret->Read(readData, NUM_16);
+    EXPECT_EQ(readed, sizeof(data));
+
+    transBuffer->Reset();
+    ret = transBuffer->GetBufferData(0);
+    EXPECT_NE(nullptr, ret);
+    EXPECT_EQ(transBuffer->GetDataCount(), 1);
+    EXPECT_EQ(ret->GetSize(), 0);
+}
+
 HWTEST_F(DaudioInputTest, MarshalMessage_001, TestSize.Level0)
 {
     auto avMessage = std::make_shared<AVTransMessage>((uint32_t)AVTransTag::START_AV_SYNC,
@@ -573,5 +618,64 @@ HWTEST_F(DaudioInputTest, GetPeerDevIdBySessId_001, TestSize.Level1)
     ret = SoftbusChannelAdapter::GetInstance().GetPeerDevIdBySessId(sessionId);
     EXPECT_EQ(EMPTY_STRING, ret);
 }
+
+HWTEST_F(DaudioInputTest, OnSoftbusTimeSyncResult_001, TestSize.Level1)
+{
+    ChannelListenerTest testListener;
+    SoftbusChannelAdapter::GetInstance().listenerMap_["sync1"] = &testListener;
+    TimeSyncResultInfo info;
+    SoftbusChannelAdapter::GetInstance().timeSyncSessNames_.emplace("sync1");
+    SoftbusChannelAdapter::GetInstance().OnSoftbusTimeSyncResult(&info, 1);
+    SoftbusChannelAdapter::GetInstance().timeSyncSessNames_.clear();
+    SoftbusChannelAdapter::GetInstance().listenerMap_.clear();
+    EXPECT_EQ(testListener.event_.type, EventType::EVENT_TIME_SYNC_RESULT);
+}
+
+HWTEST_F(DaudioInputTest, OnSoftbusStreamReceived_001, TestSize.Level1)
+{
+    ChannelListenerTest testListener;
+    SoftbusChannelAdapter::GetInstance().listenerMap_["sync1"] = &testListener;
+    StreamData data1 = {nullptr, 0};
+    StreamData data2 = {nullptr, 0};
+    int32_t sessionId = 1;
+    SoftbusChannelAdapter::GetInstance().devId2SessIdMap_.clear();
+    SoftbusChannelAdapter::GetInstance().devId2SessIdMap_.insert(std::make_pair("sync1", sessionId));
+    SoftbusChannelAdapter::GetInstance().OnSoftbusStreamReceived(sessionId, &data1, &data2, nullptr);
+    SoftbusChannelAdapter::GetInstance().listenerMap_.clear();
+    SoftbusChannelAdapter::GetInstance().devId2SessIdMap_.clear();
+    EXPECT_EQ(testListener.event_.type, EventType::EVENT_DATA_RECEIVED);
+}
+
+HWTEST_F(DaudioInputTest, OnSoftbusChannelOpened_001, TestSize.Level1)
+{
+    std::string peerSessionName = OWNER_NAME_D_SCREEN + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX;
+    std::string sessionName = OWNER_NAME_D_SCREEN + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
+    int32_t sessionId = 1;
+    SoftbusChannelAdapter::GetInstance().devId2SessIdMap_.insert(
+        std::make_pair(sessionName + std::string("devid"), sessionId));
+    int32_t ret = SoftbusChannelAdapter::GetInstance().OnSoftbusChannelOpened(peerSessionName, sessionId, "devid", 0);
+    EXPECT_EQ(ret, DH_AVT_SUCCESS);
+    SoftbusChannelAdapter::GetInstance().devId2SessIdMap_.clear();
+}
+
+HWTEST_F(DaudioInputTest, SendStreamData_001, TestSize.Level1)
+{
+    std::string sessionName = OWNER_NAME_D_SCREEN + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
+    char bytes[] = {0, 0, 0, 0};
+    StreamData data = {bytes, sizeof(bytes)};
+    StreamData extdata = {bytes, sizeof(bytes)};
+    int32_t ret = SoftbusChannelAdapter::GetInstance().SendStreamData(sessionName, "devid", &data, &extdata);
+    EXPECT_EQ(ret, ERR_DH_AVT_SEND_DATA_FAILED);
+}
+
+HWTEST_F(DaudioInputTest, FindSessionName_001, TestSize.Level1)
+{
+    std::string peerSessionName = OWNER_NAME_D_SCREEN + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX;
+    std::string ret = SoftbusChannelAdapter::GetInstance().FindSessNameByPeerSessName(peerSessionName);
+    EXPECT_NE(ret.size(), 0);
+    ret = SoftbusChannelAdapter::GetInstance().FindSessNameByPeerSessName("name");
+    EXPECT_EQ(ret.size(), 0);
+}
+
 } // namespace DistributedHardware
 } // namespace OHOS
