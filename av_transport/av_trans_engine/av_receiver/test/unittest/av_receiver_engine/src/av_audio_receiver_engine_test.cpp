@@ -229,6 +229,19 @@ HWTEST_F(AvAudioReceiverEngineTest, Release_003, testing::ext::TestSize.Level1)
     EXPECT_EQ(result, DH_AVT_SUCCESS);
 }
 
+HWTEST_F(AvAudioReceiverEngineTest, Release_005, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVAudioReceiverEngine>(ownerName, peerDevId);
+    receiver->isInitialized_ = true;
+    receiver->pipeline_ = nullptr;
+    receiver->dhFwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
+    receiver->SetCurrentState(StateId::INITIALIZED);
+    int32_t result = receiver->Release();
+    EXPECT_EQ(result, DH_AVT_SUCCESS);
+}
+
 HWTEST_F(AvAudioReceiverEngineTest, Stop_001, testing::ext::TestSize.Level1)
 {
     std::string ownerName = "001";
@@ -280,6 +293,16 @@ HWTEST_F(AvAudioReceiverEngineTest, SetParameterInner_002, testing::ext::TestSiz
     receiver->SetParameterInner(AVTransTag::STOP_AV_SYNC, "0");
     receiver->SetParameterInner(AVTransTag::SHARED_MEMORY_FD, "1");
     receiver->SetParameterInner(AVTransTag::ENGINE_READY, "2");
+    EXPECT_EQ(receiver->meta_, nullptr);
+}
+
+HWTEST_F(AvAudioReceiverEngineTest, SetParameterInner_003, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVAudioReceiverEngine>(ownerName, peerDevId);
+    receiver->meta_ = nullptr;
+    receiver->SetParameterInner(AVTransTag::INVALID, "1");
     EXPECT_EQ(receiver->meta_, nullptr);
 }
 
@@ -385,6 +408,7 @@ HWTEST_F(AvAudioReceiverEngineTest, SetParameter_006, testing::ext::TestSize.Lev
     receiver->SetParameter(AVTransTag::STOP_AV_SYNC, "14");
     receiver->SetParameter(AVTransTag::SHARED_MEMORY_FD, "15");
     receiver->SetParameter(AVTransTag::ENGINE_READY, "16");
+    receiver->SetParameter(AVTransTag::VIDEO_BIT_RATE, "17");
     EXPECT_NE(receiver->meta_, nullptr);
 }
 
@@ -728,5 +752,54 @@ HWTEST_F(AvAudioReceiverEngineTest, Prepare_001, testing::ext::TestSize.Level1)
     receiver->pipeline_->Prepare();
     EXPECT_EQ(receiver->Prepare(), Status::OK);
 }
+
+HWTEST_F(AvAudioReceiverEngineTest, OnCallback_001, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVAudioReceiverEngine>(ownerName, peerDevId);
+    receiver->currentState_ = StateId::INITIALIZED;
+
+    receiver->OnCallback(nullptr, Pipeline::FilterCallBackCommand::FILTER_CALLBACK_COMMAND_MAX,
+        Pipeline::StreamType::STREAMTYPE_MAX);
+    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+}
+
+HWTEST_F(AvAudioReceiverEngineTest, OnCallback_002, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVAudioReceiverEngine>(ownerName, peerDevId);
+    receiver->currentState_ = StateId::INITIALIZED;
+
+    receiver->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
+        Pipeline::StreamType::STREAMTYPE_MAX);
+    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+}
+
+HWTEST_F(AvAudioReceiverEngineTest, OnCallback_003, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVAudioReceiverEngine>(ownerName, peerDevId);
+    receiver->currentState_ = StateId::INITIALIZED;
+
+    receiver->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
+        Pipeline::StreamType::STREAMTYPE_RAW_AUDIO);
+    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+}
+
+HWTEST_F(AvAudioReceiverEngineTest, OnCallback_004, testing::ext::TestSize.Level1)
+{
+    std::string ownerName = "001";
+    std::string peerDevId = "pEid";
+    auto receiver = std::make_shared<AVAudioReceiverEngine>(ownerName, peerDevId);
+    receiver->currentState_ = StateId::INITIALIZED;
+
+    receiver->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
+        Pipeline::StreamType::STREAMTYPE_DECODED_AUDIO);
+    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+}
+
 } // namespace DistributedHardware
 } // namespace OHOS

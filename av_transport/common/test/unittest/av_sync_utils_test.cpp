@@ -19,7 +19,9 @@
 
 #include "av_trans_constants.h"
 #include "cJSON.h"
+#include "ashmem_mock.h"
 
+using namespace testing;
 using namespace testing::ext;
 namespace OHOS {
 namespace DistributedHardware {
@@ -30,6 +32,8 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+public:
+    std::shared_ptr<MockAshmem> ashmemMock_;
 };
 
 void AvSyncUtilsTest::SetUpTestCase()
@@ -42,10 +46,14 @@ void AvSyncUtilsTest::TearDownTestCase()
 
 void AvSyncUtilsTest::SetUp()
 {
+    auto ashmem_ = IAshmem::GetOrCreateInstance();
+    ashmemMock_ = std::static_pointer_cast<MockAshmem>(ashmem_);
 }
 
 void AvSyncUtilsTest::TearDown()
 {
+    IAshmem::ReleaseInstance();
+    ashmemMock_ = nullptr;
 }
 
 HWTEST_F(AvSyncUtilsTest, CreateAVTransSharedMemory_001, TestSize.Level0)
@@ -146,6 +154,22 @@ HWTEST_F(AvSyncUtilsTest, UnmarshalSharedMemory_002, TestSize.Level1)
     EXPECT_EQ("mem_name_test", ret.name);
     cJSON_free(cjson3);
     cJSON_Delete(cJsonObj3);
+}
+
+HWTEST_F(AvSyncUtilsTest, WriteClockUnitToMemory_001, TestSize.Level1)
+{
+    AVTransSharedMemory memory = {
+        .fd = 1,
+        .size = 100,
+        .name = "name_test",
+    };
+    AVSyncClockUnit unit = {
+        .index = 1,
+        .frameNum = 1,
+        .pts = 1,
+    };
+    auto ret = WriteClockUnitToMemory(memory, unit);
+    EXPECT_EQ(false, ret == 0);
 }
 }
 }
