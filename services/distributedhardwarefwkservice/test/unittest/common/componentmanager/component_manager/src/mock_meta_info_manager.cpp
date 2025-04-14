@@ -37,5 +37,11 @@ int32_t MetaInfoManager::GetMetaDataByDHType(const DHType dhType, MetaCapInfoMap
 {
     return IMetaInfoManager::GetOrCtreateInstance()->GetMetaDataByDHType(dhType, metaInfoMap);
 }
+
+int32_t MetaInfoManager::GetMetaCapInfo(const std::string &udidHash,
+    const std::string &dhId, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
+{
+    return IMetaInfoManager::GetOrCtreateInstance()->GetMetaCapInfo(udidHash, dhId, metaCapPtr);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

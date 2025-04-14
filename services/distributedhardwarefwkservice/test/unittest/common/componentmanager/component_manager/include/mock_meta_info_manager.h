@@ -27,6 +27,8 @@ public:
     virtual ~IMetaInfoManager() = default;
 
     virtual int32_t GetMetaDataByDHType(const DHType dhType, MetaCapInfoMap &metaInfoMap);
+    virtual int32_t GetMetaCapInfo(const std::string &udidHash,
+        const std::string &dhId, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
 
     static std::shared_ptr<IMetaInfoManager> GetOrCtreateInstance();
     static void ReleaseInstance();
@@ -37,6 +39,8 @@ private:
 class MockMetaInfoManager : public IMetaInfoManager {
 public:
     MOCK_METHOD(int32_t, GetMetaDataByDHType, (const DHType, MetaCapInfoMap &));
+    MOCK_METHOD(int32_t, GetMetaCapInfo,
+        (const std::string &, const std::string &, std::shared_ptr<MetaCapabilityInfo> &));
 };
 } // namespace DistributedHardware
 } // namespace OHOS
