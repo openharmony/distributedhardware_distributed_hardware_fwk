@@ -1660,5 +1660,164 @@ ActionResult ComponentManager::StopSink(DHType dhType)
     futures.emplace(dhType, f.share());
     return futures;
 }
+
+int32_t ComponentManager::DisableMetaSource(const std::string &networkId, const DHDescriptor &dhDescriptor,
+    std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr)
+{
+    std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
+    DHStatusSourceEnableInfoKey enableInfoKey {
+        .networkId = networkId,
+        .dhId = dhDescriptor.id
+    };
+    DHStatusCtrlKey ctrlKey {
+        .uid = 0,
+        .pid = 0
+    };
+
+    auto &status = dhSourceStatus_[dhDescriptor.dhType];
+    auto &enableInfo = status.enableInfos[enableInfoKey];
+
+    // Check if the business is being called repeatedly
+    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
+    if (statusCtrl.enableState == EnableState::DISABLED) {
+        DHLOGE("Repeat call DisableSource, DhType = %{public}#X.", dhDescriptor.dhType);
+        return ERR_DH_FWK_COMPONENT_REPEAT_CALL;
+    }
+
+    // Check enable reference count
+    if (enableInfo.refEnable > 1) {
+        // Change status, we won't call back directly here because there is a lock
+        statusCtrl.enableState = EnableState::DISABLED;
+        enableInfo.refEnable--;
+        status.refLoad--;
+        return DH_FWK_SUCCESS;
+    }
+
+    // Check load reference count
+    if (status.refLoad > 1) {
+        DHLOGI("Meta disable, networkId = %{public}s", GetAnonyString(networkId).c_str());
+        if (dhModemExt->Disable(networkId, sourcePtr) != DH_FWK_SUCCESS) {
+            DHLOGE("Meta disable failed, networkId = %{public}s.", GetAnonyString(networkId).c_str());
+        }
+        // Change status, we won't call back directly here because there is a lock
+        statusCtrl.enableState = EnableState::DISABLED;
+        enableInfo.refEnable--;
+        status.refLoad--;
+        return DH_FWK_SUCCESS;
+    }
+
+    auto ret = DisableMetaSourceInternal(networkId, dhDescriptor, statusCtrl, enableInfo, status,
+        dhModemExt, sourcePtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("DisableMetaSource failed, ret = %{public}d.", ret);
+        return ret;
+    }
+
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::DisableMetaSourceInternal(const std::string &networkId, const DHDescriptor &dhDescriptor,
+    DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status,
+    std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr)
+{
+    auto ret = dhModemExt->Disable(networkId, sourcePtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Meta disable source failed, ret = %{public}d.", ret);
+    }
+    auto sourceResult = StopSource(dhDescriptor.dhType);
+    if (!WaitForResult(Action::STOP_SOURCE, sourceResult)) {
+        DHLOGE("StopSource timeout!");
+        return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
+    }
+    ret = UninitCompSource(dhDescriptor.dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("UninitCompSource failed, ret = %{public}d.", ret);
+        return ret;
+    }
+    // Change status, we won't call back directly here because there is a lock
+    statusCtrl.enableState = EnableState::DISABLED;
+    enableInfo.refEnable = 0;
+    status.refLoad = 0;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::EnableMetaSource(const std::string &networkId, const DHDescriptor &dhDescriptor,
+    std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr)
+{
+    DHLOGI("EnableMetaSource enter");
+    std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
+    DHStatusSourceEnableInfoKey enableInfoKey { .networkId = networkId, .dhId = dhDescriptor.id };
+    DHStatusCtrlKey ctrlKey { .uid = 0, .pid = 0 };
+    auto &status = dhSourceStatus_[dhDescriptor.dhType];
+    auto &enableInfo = status.enableInfos[enableInfoKey];
+
+    // Check if the business is being called repeatedly
+    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
+    if (statusCtrl.enableState == EnableState::ENABLED) {
+        DHLOGE("Repeat call EnableMetaSource, DhType = %{public}#X.", dhDescriptor.dhType);
+        return ERR_DH_FWK_COMPONENT_REPEAT_CALL;
+    }
+
+    // Check enable reference count
+    if (enableInfo.refEnable > 0) {
+        // Change status, we won't call back directly here because there is a lock
+        statusCtrl.enableState = EnableState::ENABLED;
+        enableInfo.refEnable++;
+        status.refLoad++;
+        return DH_FWK_SUCCESS;
+    }
+
+    // Check load reference count
+    if (status.refLoad > 0) {
+        DHLOGI("Meta enable, networkId = %{public}s", GetAnonyString(networkId).c_str());
+        if (dhModemExt->Enable(networkId, sourcePtr) != DH_FWK_SUCCESS) {
+            DHLOGW("Meta enable failed, networkId = %{public}s.", GetAnonyString(networkId).c_str());
+            return ERR_DH_FWK_PARA_INVALID;
+        }
+        // Change status, we won't call back directly here because there is a lock
+        statusCtrl.enableState = EnableState::ENABLED;
+        enableInfo.refEnable++;
+        status.refLoad++;
+        return DH_FWK_SUCCESS;
+    }
+
+    auto ret = EnableMetaSourceInternal(networkId, dhDescriptor, statusCtrl, enableInfo, status, dhModemExt, sourcePtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("EnableMetaSource failed, ret = %{public}d.", ret);
+        return ret;
+    }
+
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::EnableMetaSourceInternal(const std::string &networkId, const DHDescriptor &dhDescriptor,
+    DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status,
+    std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr)
+{
+    auto ret = InitCompSource(dhDescriptor.dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("InitCompSource failed, ret = %{public}d.", ret);
+        return ret;
+    }
+    auto sourceResult = StartSource(dhDescriptor.dhType);
+    if (!WaitForResult(Action::START_SOURCE, sourceResult)) {
+        DHLOGE("StartSource failed, some virtual components maybe cannot work, but want to continue!");
+        HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            "dhfwk start source failed.");
+        UninitCompSource(dhDescriptor.dhType);
+        return ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT;
+    }
+    ret = dhModemExt->Enable(networkId, sourcePtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("EnableMeta failed, ret = %{public}d.", ret);
+        StopSource(dhDescriptor.dhType);
+        UninitCompSource(dhDescriptor.dhType);
+        return ret;
+    }
+    statusCtrl.enableState = EnableState::ENABLED;
+    enableInfo.refEnable = 1;
+    status.refLoad = 1;
+    return ret;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

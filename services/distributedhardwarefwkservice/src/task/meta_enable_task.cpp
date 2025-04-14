@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,7 @@
 
 #include "anonymous_string.h"
 #include "component_manager.h"
+#include "component_loader.h"
 #include "device_type.h"
 #include "dh_modem_context_ext.h"
 #include "distributed_hardware_errno.h"
@@ -70,27 +71,36 @@ void MetaEnableTask::DoTaskInner()
 
 int32_t MetaEnableTask::Enable()
 {
+    DHLOGI("MetaEnableTask enter.");
     if (DHModemContextExt::GetInstance().GetHandler() != DH_FWK_SUCCESS) {
         DHLOGE("load distributed modem_ext so failed");
     }
-    IDistributedHardwareSource *sourcePtr = ComponentManager::GetInstance().GetDHSourceInstance(DHType::MODEM);
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    auto ret = ComponentLoader::GetInstance().GetSource(DHType::MODEM, sourcePtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Get Modem Source failed.");
+        return ret;
+    }
     if (sourcePtr == nullptr) {
         DHLOGW("GetDHSourceInstance is nullptr.");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-    std::shared_ptr<IDistributedModemExt> distributedModemExt_ =
-            DHModemContextExt::GetInstance().GetModemExtInstance();
-    if (distributedModemExt_ == nullptr) {
+
+    std::shared_ptr<IDistributedModemExt> dhModemExt = DHModemContextExt::GetInstance().GetModemExtInstance();
+    if (dhModemExt == nullptr) {
         DHLOGE("GetModemExtInstance is nullptr.");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-    DHLOGI("Meta enable, networkId = %{public}s", GetAnonyString(GetNetworkId()).c_str());
-    if (distributedModemExt_->Enable(GetNetworkId(), sourcePtr) != DH_FWK_SUCCESS) {
-        DHLOGW("Meta enable failed, dhId = %{public}s udid = %{public}s.",
-            GetAnonyString(GetDhId()).c_str(), GetAnonyString(GetUDID()).c_str());
-        return ERR_DH_FWK_PARA_INVALID;
+
+    DHDescriptor dhDescriptor {
+        .id = GetDhId(),
+        .dhType = GetDhType()
+    };
+    ret = ComponentManager::GetInstance().EnableMetaSource(GetNetworkId(), dhDescriptor, dhModemExt, sourcePtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("EnableMetaSource DhType = %{public}#X, failed!", GetDhType());
     }
-    return DH_FWK_SUCCESS;
+    return ret;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

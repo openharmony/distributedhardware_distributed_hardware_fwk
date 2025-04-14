@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "device_manager.h"
 #include "publisher.h"
 
 namespace OHOS {
@@ -389,6 +390,35 @@ DHContext::DHFWKIsomerismListener::~DHFWKIsomerismListener()
 sptr<IRemoteObject> DHContext::DHFWKIsomerismListener::AsObject()
 {
     return nullptr;
+}
+
+void DHContext::AddOnlineDeviceType(const std::string &networkId, uint16_t deviceType)
+{
+    DHLOGI("Add DeviceType, networkId: %{public}s", GetAnonyString(networkId).c_str());
+    std::unique_lock<std::shared_mutex> lock(onlineDevTypeMutex_);
+    onlineDevTypeMap_.insert(std::make_pair(networkId, deviceType));
+}
+
+void DHContext::DeleteOnlineDeviceType(const std::string &networkId)
+{
+    DHLOGI("Delete DeviceType, networkId: %{public}s", GetAnonyString(networkId).c_str());
+    std::unique_lock<std::shared_mutex> lock(onlineDevTypeMutex_);
+    auto iter = onlineDevTypeMap_.find(networkId);
+    if (iter != onlineDevTypeMap_.end()) {
+        onlineDevTypeMap_.erase(networkId);
+    }
+}
+
+uint16_t DHContext::GetDeviceTypeByNetworkId(const std::string &networkId)
+{
+    DHLOGI("Get DeviceType networkId: %{public}s", GetAnonyString(networkId).c_str());
+    std::shared_lock<std::shared_mutex> lock(onlineDevTypeMutex_);
+    auto iter = onlineDevTypeMap_.find(networkId);
+    if (iter == onlineDevTypeMap_.end()) {
+        DHLOGE("NetworkId not exist.");
+        return static_cast<uint16_t>(DmDeviceType::DEVICE_TYPE_UNKNOWN);
+    }
+    return onlineDevTypeMap_[networkId];
 }
 } // namespace DistributedHardware
 } // namespace OHOS
