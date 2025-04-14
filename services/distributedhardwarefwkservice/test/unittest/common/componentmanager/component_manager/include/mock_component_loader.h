@@ -35,6 +35,7 @@ public:
     virtual int32_t GetSourceSaId(const DHType dhType) = 0;
     virtual int32_t ReleaseSource(const DHType dhType) = 0;
     virtual int32_t GetLocalDHVersion(DHVersion &dhVersion) = 0;
+    virtual std::map<std::string, bool> GetCompResourceDesc() = 0;
 
     static std::shared_ptr<IComponentLoader> GetOrCtreateInstance();
     static void ReleaseInstance();
@@ -53,6 +54,7 @@ public:
     MOCK_METHOD(int32_t, GetSourceSaId, (const DHType));
     MOCK_METHOD(int32_t, ReleaseSource, (const DHType));
     MOCK_METHOD(int32_t, GetLocalDHVersion, (DHVersion &));
+    MOCK_METHOD((std::map<std::string, bool>), GetCompResourceDesc, ());
 };
 } // namespace DistributedHardware
 } // namespace OHOS

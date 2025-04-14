@@ -77,5 +77,10 @@ int32_t ComponentLoader::GetLocalDHVersion(DHVersion &dhVersion)
 {
     return IComponentLoader::GetOrCtreateInstance()->GetLocalDHVersion(dhVersion);
 }
+
+std::map<std::string, bool> ComponentLoader::GetCompResourceDesc()
+{
+    return IComponentLoader::GetOrCtreateInstance()->GetCompResourceDesc();
+}
 } // namespace DistributedHardware
 } // namespace OHOS
