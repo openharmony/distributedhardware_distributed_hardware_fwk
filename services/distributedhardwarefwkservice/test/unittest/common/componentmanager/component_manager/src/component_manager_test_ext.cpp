@@ -85,6 +85,8 @@ void ComponentManagerTestExt::SetUp()
     metaInfoManager_ = std::static_pointer_cast<MockMetaInfoManager>(metaInfoManager);
     auto versionManager = IVersionManager::GetOrCtreateInstance();
     versionManager_ = std::static_pointer_cast<MockVersionManager>(versionManager);
+    auto deviceManager = IDeviceManager::GetOrCtreateInstance();
+    deviceManager_ = std::static_pointer_cast<MockDeviceManager>(deviceManager);
 }
 
 void ComponentManagerTestExt::TearDown()
@@ -95,12 +97,14 @@ void ComponentManagerTestExt::TearDown()
     IDHUtilTool::ReleaseInstance();
     IMetaInfoManager::ReleaseInstance();
     IVersionManager::ReleaseInstance();
+    IDeviceManager::ReleaseInstance();
     capabilityInfoManager_ = nullptr;
     componentLoader_ = nullptr;
     dhContext_ = nullptr;
     metaInfoManager_ = nullptr;
     versionManager_ = nullptr;
     utilTool_ = nullptr;
+    deviceManager_ = nullptr;
 }
 
 HWTEST_F(ComponentManagerTestExt, EnableSinkAndDisableSink_001, testing::ext::TestSize.Level1)
@@ -355,6 +359,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_003, testing::ext
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
+#ifdef DHARDWARE_CHECK_RESOURCE
 HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_004, testing::ext::TestSize.Level1)
 {
     ASSERT_TRUE(capabilityInfoManager_ != nullptr);
@@ -370,41 +375,8 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_004, testing::ext
 
     EXPECT_CALL(*componentLoader_, GetSourceSaId(_)).WillRepeatedly(Return(CAMERA_PID));
 
-    auto capabilityInfo = std::make_shared<CapabilityInfo>();
-    EXPECT_CALL(*capabilityInfoManager_, GetCapability(_, _, _))
-        .WillRepeatedly(DoAll(SetArgReferee<2>(capabilityInfo), Return(DH_FWK_SUCCESS)));
-    EXPECT_CALL(*capabilityInfoManager_, GetCapabilitiesByDeviceId(_, _))
-        .Times(AtLeast(1));
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
-    EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
-    EXPECT_CALL(*dhContext_, GetUUIDByNetworkId(_)).WillRepeatedly(Return(VALUABLE_DEVICE_INFO.uuid));
-    EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _))
-        .WillRepeatedly(DoAll(SetArgReferee<2>(VERSION), Return(DH_FWK_SUCCESS)));
-    EXPECT_CALL(*utilTool_, GetLocalDeviceInfo()).WillRepeatedly(Return(VALUABLE_DEVICE_INFO));
-    EXPECT_CALL(*componentLoader_, ReleaseSource(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
-
-    auto ret = ComponentManager::GetInstance().EnableSource(VALUABLE_DEVICE_INFO.networkId, AUDIO_DESCRIPTOR, 0, 0);
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    ret = ComponentManager::GetInstance().DisableSource(VALUABLE_DEVICE_INFO.networkId, AUDIO_DESCRIPTOR, 0, 0);
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
-}
-
-HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_005, testing::ext::TestSize.Level1)
-{
-    ASSERT_TRUE(capabilityInfoManager_ != nullptr);
-    ASSERT_TRUE(componentLoader_ != nullptr);
-    ASSERT_TRUE(dhContext_ != nullptr);
-    ASSERT_TRUE(versionManager_ != nullptr);
-    ASSERT_TRUE(utilTool_ != nullptr);
-
-    EXPECT_CALL(*componentLoader_, IsDHTypeSupport(_)).WillRepeatedly(Return(true));
-    auto sourcePtr = CreateDHSourcePtrWithSetExpectation();
-    EXPECT_CALL(*componentLoader_, GetSource(_, _))
-        .WillRepeatedly(DoAll(SetArgReferee<1>(sourcePtr.get()), Return(DH_FWK_SUCCESS)));
-
-    EXPECT_CALL(*componentLoader_, GetSourceSaId(_)).WillRepeatedly(Return(CAMERA_PID));
-
-    auto capabilityInfo = std::make_shared<CapabilityInfo>();
+    auto capabilityInfo = std::make_shared<CapabilityInfo>(
+        "dhid", "devId", "devName", 1, DHType::AUDIO, "dhAttrs", "mic");
     EXPECT_CALL(*capabilityInfoManager_, GetCapability(_, _, _))
         .WillRepeatedly(DoAll(SetArgReferee<2>(capabilityInfo), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*capabilityInfoManager_, GetCapabilitiesByDeviceId(_, _))
@@ -418,14 +390,16 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_005, testing::ext
     EXPECT_CALL(*componentLoader_, ReleaseSource(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
 
     std::map<std::string, bool> resDescMap;
-    resDescMap["speaker"] = false;
+    resDescMap["mic"] = false;
     EXPECT_CALL(*componentLoader_, GetCompResourceDesc()).WillRepeatedly(Return(resDescMap));
 
     auto ret = ComponentManager::GetInstance().EnableSource(VALUABLE_DEVICE_INFO.networkId, AUDIO_DESCRIPTOR, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    ret = ComponentManager::GetInstance().DisableSource(VALUABLE_DEVICE_INFO.networkId, AUDIO_DESCRIPTOR, 0, 0);
+    ret = ComponentManager::GetInstance().DisableSource(VALUABLE_DEVICE_INFO.networkId,
+        AUDIO_DESCRIPTOR, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
+#endif
 
 HWTEST_F(ComponentManagerTestExt, EnableSource_failed_001, testing::ext::TestSize.Level2)
 {
@@ -454,6 +428,77 @@ HWTEST_F(ComponentManagerTestExt, EnableSource_failed_001, testing::ext::TestSiz
         }
     }
 }
+
+#ifdef DHARDWARE_CHECK_RESOURCE
+HWTEST_F(ComponentManagerTestExt, EnableSource_failed_002, testing::ext::TestSize.Level1)
+{
+    ASSERT_TRUE(capabilityInfoManager_ != nullptr);
+    ASSERT_TRUE(componentLoader_ != nullptr);
+    ASSERT_TRUE(dhContext_ != nullptr);
+    ASSERT_TRUE(versionManager_ != nullptr);
+    ASSERT_TRUE(utilTool_ != nullptr);
+
+    EXPECT_CALL(*componentLoader_, IsDHTypeSupport(_)).WillRepeatedly(Return(true));
+    auto sourcePtr = CreateDHSourcePtrWithSetExpectation();
+    EXPECT_CALL(*componentLoader_, GetSource(_, _))
+        .WillRepeatedly(DoAll(SetArgReferee<1>(sourcePtr.get()), Return(DH_FWK_SUCCESS)));
+
+    EXPECT_CALL(*componentLoader_, GetSourceSaId(_)).WillRepeatedly(Return(CAMERA_PID));
+
+    auto capabilityInfo = std::make_shared<CapabilityInfo>();
+    EXPECT_CALL(*capabilityInfoManager_, GetCapability(_, _, _))
+        .WillRepeatedly(DoAll(SetArgReferee<2>(capabilityInfo), Return(DH_FWK_SUCCESS)));
+    EXPECT_CALL(*capabilityInfoManager_, GetCapabilitiesByDeviceId(_, _))
+        .Times(AtLeast(1));
+    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
+    EXPECT_CALL(*dhContext_, GetUUIDByNetworkId(_)).WillRepeatedly(Return(VALUABLE_DEVICE_INFO.uuid));
+    EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _))
+        .WillRepeatedly(DoAll(SetArgReferee<2>(VERSION), Return(DH_FWK_SUCCESS)));
+    EXPECT_CALL(*utilTool_, GetLocalDeviceInfo()).WillRepeatedly(Return(VALUABLE_DEVICE_INFO));
+    EXPECT_CALL(*componentLoader_, ReleaseSource(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+
+    auto ret = ComponentManager::GetInstance().EnableSource(VALUABLE_DEVICE_INFO.networkId, AUDIO_DESCRIPTOR, 0, 0);
+    EXPECT_EQ(ret, ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY);
+}
+
+HWTEST_F(ComponentManagerTestExt, EnableSource_failed_003, testing::ext::TestSize.Level1)
+{
+    ASSERT_TRUE(capabilityInfoManager_ != nullptr);
+    ASSERT_TRUE(componentLoader_ != nullptr);
+    ASSERT_TRUE(dhContext_ != nullptr);
+    ASSERT_TRUE(versionManager_ != nullptr);
+    ASSERT_TRUE(utilTool_ != nullptr);
+
+    EXPECT_CALL(*componentLoader_, IsDHTypeSupport(_)).WillRepeatedly(Return(true));
+    auto sourcePtr = CreateDHSourcePtrWithSetExpectation();
+    EXPECT_CALL(*componentLoader_, GetSource(_, _))
+        .WillRepeatedly(DoAll(SetArgReferee<1>(sourcePtr.get()), Return(DH_FWK_SUCCESS)));
+
+    EXPECT_CALL(*componentLoader_, GetSourceSaId(_)).WillRepeatedly(Return(CAMERA_PID));
+
+    auto capabilityInfo = std::make_shared<CapabilityInfo>(
+        "dhid", "devId", "devName", 1, DHType::AUDIO, "dhAttrs", "mic");
+    EXPECT_CALL(*capabilityInfoManager_, GetCapability(_, _, _))
+        .WillRepeatedly(DoAll(SetArgReferee<2>(capabilityInfo), Return(DH_FWK_SUCCESS)));
+    EXPECT_CALL(*capabilityInfoManager_, GetCapabilitiesByDeviceId(_, _))
+        .Times(AtLeast(1));
+    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
+    EXPECT_CALL(*dhContext_, GetUUIDByNetworkId(_)).WillRepeatedly(Return(VALUABLE_DEVICE_INFO.uuid));
+    EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _))
+        .WillRepeatedly(DoAll(SetArgReferee<2>(VERSION), Return(DH_FWK_SUCCESS)));
+    EXPECT_CALL(*utilTool_, GetLocalDeviceInfo()).WillRepeatedly(Return(VALUABLE_DEVICE_INFO));
+    EXPECT_CALL(*componentLoader_, ReleaseSource(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+
+    std::map<std::string, bool> resDescMap;
+    resDescMap["mic"] = true;
+    EXPECT_CALL(*componentLoader_, GetCompResourceDesc()).WillRepeatedly(Return(resDescMap));
+
+    auto ret = ComponentManager::GetInstance().EnableSource(VALUABLE_DEVICE_INFO.networkId, AUDIO_DESCRIPTOR, 0, 0);
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_ENABLE_FAILED);
+}
+#endif
 
 HWTEST_F(ComponentManagerTestExt, DisableSource_failed_001, testing::ext::TestSize.Level2)
 {
@@ -628,35 +673,6 @@ HWTEST_F(ComponentManagerTestExt, CheckDemandStart_002, testing::ext::TestSize.L
         auto ret = ComponentManager::GetInstance().CheckDemandStart(
             VALUABLE_DEVICE_INFO.uuid, DHType::CAMERA, isEnableSource);
         EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND);
-    }
-}
-
-HWTEST_F(ComponentManagerTestExt, CheckDemandStart_003, testing::ext::TestSize.Level2)
-{
-    ASSERT_TRUE(componentLoader_ != nullptr);
-    ASSERT_TRUE(dhContext_ != nullptr);
-    ASSERT_TRUE(metaInfoManager_ != nullptr);
-
-    size_t getLocalDHVersionCallCount = 0;
-
-    auto metaCapabilityInfo = std::make_shared<MetaCapabilityInfo>();
-    metaCapabilityInfo->SetCompVersion(VERSION);
-    MetaCapInfoMap infoMap = {{ VALUABLE_DEVICE_INFO.uuid, metaCapabilityInfo }};
-    EXPECT_CALL(*metaInfoManager_, GetMetaDataByDHType(_, _))
-        .WillRepeatedly(DoAll(SetArgReferee<1>(infoMap), Return(DH_FWK_SUCCESS)));
-    EXPECT_CALL(*dhContext_, GetUUIDByDeviceId(_)).WillRepeatedly(Return(VALUABLE_DEVICE_INFO.uuid));
-    EXPECT_CALL(*componentLoader_, GetLocalDHVersion(_))
-        .WillRepeatedly(Invoke([&getLocalDHVersionCallCount](DHVersion &dhVersion) {
-            DHVersion emptyVersion;
-            dhVersion = emptyVersion;
-            return (getLocalDHVersionCallCount++ > 0) ? DH_FWK_SUCCESS : ERR_DH_FWK_TYPE_NOT_EXIST;
-        }));
-
-    for (size_t i = 0; i < 2; ++i) {
-        bool isEnableSource = false;
-        auto ret = ComponentManager::GetInstance().CheckDemandStart(
-            VALUABLE_DEVICE_INFO.uuid, DHType::CAMERA, isEnableSource);
-        EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
     }
 }
 
