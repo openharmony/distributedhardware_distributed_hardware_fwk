@@ -20,6 +20,7 @@
 #include "component_manager.h"
 #include "mock_capability_info_manager.h"
 #include "mock_component_loader.h"
+#include "mock_device_manager.h"
 #include "mock_dh_context.h"
 #include "mock_dh_utils_tool.h"
 #include "mock_meta_info_manager.h"
@@ -40,6 +41,7 @@ private:
     std::shared_ptr<MockDHUtilTool> utilTool_;
     std::shared_ptr<MockMetaInfoManager> metaInfoManager_;
     std::shared_ptr<MockVersionManager> versionManager_;
+    std::shared_ptr<MockDeviceManager> deviceManager_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

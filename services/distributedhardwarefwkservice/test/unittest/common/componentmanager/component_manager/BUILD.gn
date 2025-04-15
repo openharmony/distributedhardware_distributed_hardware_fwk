@@ -81,6 +81,8 @@ ohos_unittest("ComponentManagerTest") {
 
   if (!distributed_hardware_fwk_low_latency) {
     defines += [ "DHARDWARE_CLOSE_UT" ]
+  } else {
+    defines += [ "DHARDWARE_CHECK_RESOURCE" ]
   }
 }
 
@@ -93,6 +95,7 @@ ohos_unittest("ComponentManagerTestExt") {
     "src/mock_component_disable.cpp",
     "src/mock_component_enable.cpp",
     "src/mock_component_loader.cpp",
+    "src/mock_device_manager.cpp",
     "src/mock_dh_context.cpp",
     "src/mock_dh_utils_tool.cpp",
     "src/mock_meta_info_manager.cpp",
@@ -119,6 +122,7 @@ ohos_unittest("ComponentManagerTestExt") {
     "access_token:libtoken_setproc",
     "cJSON:cjson",
     "c_utils:utils",
+    "device_manager:devicemanagersdk",
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "googletest:gmock",
@@ -128,6 +132,18 @@ ohos_unittest("ComponentManagerTestExt") {
     "kv_store:distributeddata_inner",
     "samgr:samgr_proxy",
   ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"ComponentManagerTestExt\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  if (!distributed_hardware_fwk_low_latency) {
+    defines += [ "DHARDWARE_CLOSE_UT" ]
+  } else {
+    defines += [ "DHARDWARE_CHECK_RESOURCE" ]
+  }
 }
 
 group("component_manager_test") {
