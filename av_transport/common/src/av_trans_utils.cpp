@@ -184,7 +184,7 @@ void Convert2HiSBufferMeta(std::shared_ptr<AVTransBuffer> transBuffer, std::shar
 
         TRUE_LOG_MSG(!transMeta->GetMetaItem(AVTransTag::PRE_TIMESTAMP, value), "get PRE_TIMESTAMP meta failed");
 
-        unsigned long num;
+        long num = 0;
         auto res = std::from_chars(value.data(), value.data() + value.size(), num);
         if (res.ec == std::errc()) {
             hisVMeta->pts_ = num;
