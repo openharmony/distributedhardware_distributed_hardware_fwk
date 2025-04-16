@@ -620,55 +620,16 @@ void ComponentManager::DoRecover(DHType dhType)
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DoRecover setname failed.");
     }
-    // step1: restart sa process
-    ReStartSA(dhType);
-    // step2: recover distributed hardware virtual driver
-    RecoverDistributedHardware(dhType);
-}
-
-void ComponentManager::ReStartSA(DHType dhType)
-{
-    DHLOGI("Restart SA for DHType %{public}" PRIu32, (uint32_t)dhType);
-    auto sourceResult = StartSource(dhType);
-    auto sinkResult = StartSink(dhType);
-
-    if (!WaitForResult(Action::START_SOURCE, sourceResult)) {
-        DHLOGE("ReStartSource failed, DHType: %{public}" PRIu32, (uint32_t)dhType);
-    }
-
-    if (!WaitForResult(Action::START_SINK, sinkResult)) {
-        DHLOGE("ReStartSink failed, DHType: %{public}" PRIu32, (uint32_t)dhType);
-    }
-    DHLOGI("Finish Restart");
-}
-
-void ComponentManager::RecoverDistributedHardware(DHType dhType)
-{
-    MetaCapInfoMap metaInfoMap;
-    MetaInfoManager::GetInstance()->GetMetaDataByDHType(dhType, metaInfoMap);
-    for (const auto &metaInfo : metaInfoMap) {
-        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(metaInfo.second->GetDeviceId());
-        if (uuid.empty()) {
-            DHLOGE("Can not find uuid by capability deviceId: %{public}s",
-                GetAnonyString(metaInfo.second->GetDeviceId()).c_str());
-            continue;
-        }
-
-        std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
-        if (networkId.empty()) {
-            DHLOGI("Can not find network id by uuid: %{public}s", GetAnonyString(uuid).c_str());
-            continue;
-        }
-
-        TaskParam taskParam = {
-            .networkId = networkId,
-            .uuid = uuid,
-            .dhId = metaInfo.second->GetDHId(),
-            .dhType = metaInfo.second->GetDHType()
-        };
-        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
-        TaskExecutor::GetInstance().PushTask(task);
-    }
+    // reset enable status
+    DHLOGI("Reset enable status for DHType %{public}" PRIu32, (uint32_t)dhType);
+    ResetSinkEnableStatus(dhType);
+    ResetSourceEnableStatus(dhType);
+    // recover distributed hardware virtual driver
+    DHLOGI("Recover distributed hardware virtual driver for DHType %{public}" PRIu32, (uint32_t)dhType);
+    RecoverAutoEnableSink(dhType);
+    RecoverAutoEnableSource(dhType);
+    RecoverActiveEnableSink(dhType);
+    RecoverActiveEnableSource(dhType);
 }
 
 std::map<DHType, IDistributedHardwareSink*> ComponentManager::GetDHSinkInstance()
@@ -1199,7 +1160,7 @@ int32_t ComponentManager::DisableSinkInternal(const DHDescriptor &dhDescriptor,
     // Start disabling hardware sink
     auto sinkResult = StopSink(dhDescriptor.dhType);
     if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
-        DHLOGE("StopSource failed, but want to continue!");
+        DHLOGE("StopSink failed, but want to continue!");
         return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
     }
     auto ret = UninitCompSink(dhDescriptor.dhType);
@@ -1387,7 +1348,7 @@ int32_t ComponentManager::ForceDisableSinkInternal(
     // Unload component
     auto sinkResult = StopSink(dhDescriptor.dhType);
     if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
-        DHLOGE("StopSource failed, but want to continue!");
+        DHLOGE("StopSink failed, but want to continue!");
         return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
     }
     auto ret = UninitCompSink(dhDescriptor.dhType);
@@ -1515,6 +1476,209 @@ int32_t ComponentManager::RealDisableSource(const std::string &networkId, const 
     enableInfo.refEnable = 0;
     status.refLoad = 0;
     return DH_FWK_SUCCESS;
+}
+
+void ComponentManager::ResetSinkEnableStatus(DHType dhType)
+{
+    DHLOGI("ResetSinkEnableStatus begin, dhType = %{public}#X.", dhType);
+    std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
+    auto ret = UninitCompSink(dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("UninitCompSink failed, ret = %{public}d, but want to continue!", ret);
+    }
+    auto itSinkStatus = dhSinkStatus_.find(dhType);
+    if (itSinkStatus == dhSinkStatus_.end()) {
+        DHLOGI("No need to reset the auto-enable-sink of this type, dhType: %{public}#X.", dhType);
+        return;
+    }
+    auto &sinkStatus = itSinkStatus->second;
+    sinkStatus.refLoad = 0;
+    for (auto &itEnableInfo : sinkStatus.enableInfos) {
+        auto &enableInfoKey = itEnableInfo.first;
+        auto &enableInfo = itEnableInfo.second;
+        enableInfo.refEnable = 0;
+        for (auto &itStatusCtrl : enableInfo.dhStatusCtrl) {
+            auto &statusCtrlKey = itStatusCtrl.first;
+            auto &statusCtrl = itStatusCtrl.second;
+            if (statusCtrlKey.uid == 0 && statusCtrlKey.pid == 0) {
+                statusCtrl.enableState = EnableState::DISABLED;
+                DHLOGI("reset the auto-enable-sink, dhId = %{public}s, dhType: %{public}#X.",
+                    GetAnonyString(enableInfoKey).c_str(), dhType);
+            }
+        }
+    }
+    DHLOGI("ResetSinkEnableStatus end, dhType = %{public}#X.", dhType);
+}
+
+void ComponentManager::ResetSourceEnableStatus(DHType dhType)
+{
+    DHLOGI("ResetSourceEnableStatus begin, dhType = %{public}#X.", dhType);
+    std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
+    auto ret = UninitCompSource(dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("UninitCompSource failed, ret = %{public}d, but want to continue!", ret);
+    }
+    auto itSourceStatus = dhSourceStatus_.find(dhType);
+    if (itSourceStatus == dhSourceStatus_.end()) {
+        DHLOGI("No need to reset the auto-enable-source of this type, dhType: %{public}#X.", dhType);
+        return;
+    }
+    auto &sourcekStatus = itSourceStatus->second;
+    sourcekStatus.refLoad = 0;
+    for (auto &itEnableInfo : sourcekStatus.enableInfos) {
+        auto &enableInfoKey = itEnableInfo.first;
+        auto &enableInfo = itEnableInfo.second;
+        enableInfo.refEnable = 0;
+        for (auto &itStatusCtrl : enableInfo.dhStatusCtrl) {
+            auto &statusCtrlKey = itStatusCtrl.first;
+            auto &statusCtrl = itStatusCtrl.second;
+            if (statusCtrlKey.uid == 0 && statusCtrlKey.pid == 0) {
+                statusCtrl.enableState = EnableState::DISABLED;
+                DHLOGI("reset the auto-enable-source, networkId = %{public}s, dhId = %{public}s, dhType: %{public}#X.",
+                    GetAnonyString(enableInfoKey.networkId).c_str(),
+                    GetAnonyString(enableInfoKey.dhId).c_str(), dhType);
+            }
+        }
+    }
+    DHLOGI("ResetSourceEnableStatus end, dhType = %{public}#X.", dhType);
+}
+
+void ComponentManager::RecoverAutoEnableSink(DHType dhType)
+{
+    DHLOGI("RecoverAutoEnableSink begin, dhType = %{public}#X.", dhType);
+    DeviceInfo localDeviceInfo = GetLocalDeviceInfo();
+    std::vector<std::pair<std::string, DHType>> localMetaInfos;
+    std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
+    MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(localDeviceInfo.udidHash, metaCapInfos);
+    std::for_each(metaCapInfos.begin(), metaCapInfos.end(), [&](std::shared_ptr<MetaCapabilityInfo> localMetaInfo) {
+        if (localMetaInfo->GetDHType() == dhType) {
+            localMetaInfos.push_back({localMetaInfo->GetDHId(), localMetaInfo->GetDHType()});
+        }
+    });
+    if (localMetaInfos.empty()) {
+        DHLOGE("No need to recover auto enable sink, dhType = %{public}#X.", dhType);
+        return;
+    }
+    for (const auto &localInfo : localMetaInfos) {
+        TaskParam taskParam = {
+            .networkId = localDeviceInfo.networkId,
+            .uuid = localDeviceInfo.uuid,
+            .udid = localDeviceInfo.udid,
+            .dhId = localInfo.first,
+            .dhType = localInfo.second
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
+        TaskExecutor::GetInstance().PushTask(task);
+    }
+    DHLOGI("RecoverAutoEnableSink end, dhType = %{public}#X.", dhType);
+}
+
+void ComponentManager::RecoverAutoEnableSource(DHType dhType)
+{
+    DHLOGI("RecoverAutoEnableSource begin, dhType = %{public}#X.", dhType);
+    MetaCapInfoMap metaInfoMap;
+    MetaInfoManager::GetInstance()->GetMetaDataByDHType(dhType, metaInfoMap);
+    for (const auto &metaInfo : metaInfoMap) {
+        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(metaInfo.second->GetDeviceId());
+        if (uuid.empty()) {
+            DHLOGE("Can not find uuid by capability deviceId: %{public}s",
+                GetAnonyString(metaInfo.second->GetDeviceId()).c_str());
+            continue;
+        }
+
+        std::string networkId = DHContext::GetInstance().GetNetworkIdByUUID(uuid);
+        if (networkId.empty()) {
+            DHLOGI("Can not find network id by uuid: %{public}s", GetAnonyString(uuid).c_str());
+            continue;
+        }
+
+        TaskParam taskParam = {
+            .networkId = networkId,
+            .uuid = uuid,
+            .dhId = metaInfo.second->GetDHId(),
+            .dhType = metaInfo.second->GetDHType()
+        };
+        auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
+        TaskExecutor::GetInstance().PushTask(task);
+    }
+    DHLOGI("RecoverAutoEnableSource end, dhType = %{public}#X.", dhType);
+}
+
+void ComponentManager::RecoverActiveEnableSink(DHType dhType)
+{
+    DHLOGI("RecoverActiveEnableSink begin, dhType = %{public}#X.", dhType);
+    std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
+    auto itSinkStatus = dhSinkStatus_.find(dhType);
+    if (itSinkStatus == dhSinkStatus_.end()) {
+        DHLOGE("No need to recover active enable sink, dhType = %{public}#X.", dhType);
+        return;
+    }
+    auto &sinkStatus = itSinkStatus->second;
+    for (auto &itEnableInfo : sinkStatus.enableInfos) {
+        auto &enableInfoKey = itEnableInfo.first;
+        auto &enableInfo = itEnableInfo.second;
+        for (auto &itStatusCtrl : enableInfo.dhStatusCtrl) {
+            auto &statusCtrlKey = itStatusCtrl.first;
+            auto &statusCtrl = itStatusCtrl.second;
+            if ((statusCtrlKey.uid != 0 || statusCtrlKey.pid != 0)
+                && statusCtrl.enableState == EnableState::ENABLED) {
+                statusCtrl.enableState = EnableState::DISABLED;
+                TaskParam taskParam = {
+                    .dhId = enableInfoKey,
+                    .dhType = dhType,
+                    .effectSink = true,
+                    .effectSource = false,
+                    .callingUid = statusCtrlKey.uid,
+                    .callingPid = statusCtrlKey.pid
+                };
+                auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
+                TaskExecutor::GetInstance().PushTask(task);
+                DHLOGI("Create enable task for recover active-enable-sink, dhId = %{public}s, dhType = %{public}#X.",
+                    GetAnonyString(enableInfoKey).c_str(), dhType);
+            }
+        }
+    }
+    DHLOGI("RecoverActiveEnableSink end, dhType = %{public}#X.", dhType);
+}
+
+void ComponentManager::RecoverActiveEnableSource(DHType dhType)
+{
+    DHLOGI("RecoverActiveEnableSource begin, dhType = %{public}#X.", dhType);
+    std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
+    auto itSourceStatus = dhSourceStatus_.find(dhType);
+    if (itSourceStatus == dhSourceStatus_.end()) {
+        DHLOGE("No need to recover active enable source, dhType = %{public}#X.", dhType);
+        return;
+    }
+    auto &sourcekStatus = itSourceStatus->second;
+    for (auto &itEnableInfo : sourcekStatus.enableInfos) {
+        auto &enableInfoKey = itEnableInfo.first;
+        auto &enableInfo = itEnableInfo.second;
+        for (auto &itStatusCtrl : enableInfo.dhStatusCtrl) {
+            auto &statusCtrlKey = itStatusCtrl.first;
+            auto &statusCtrl = itStatusCtrl.second;
+            if ((statusCtrlKey.uid != 0 || statusCtrlKey.pid != 0)
+                && statusCtrl.enableState == EnableState::ENABLED) {
+                statusCtrl.enableState = EnableState::DISABLED;
+                TaskParam taskParam = {
+                    .networkId = enableInfoKey.networkId,
+                    .dhId = enableInfoKey.dhId,
+                    .dhType = dhType,
+                    .effectSink = false,
+                    .effectSource = true,
+                    .callingUid = statusCtrlKey.uid,
+                    .callingPid = statusCtrlKey.pid
+                };
+                auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
+                TaskExecutor::GetInstance().PushTask(task);
+                DHLOGI("Create enable task for recover active-enable-sink, "
+                    "networkId = %{public}s, dhId = %{public}s, dhType = %{public}#X.",
+                    GetAnonyString(enableInfoKey.networkId).c_str(),
+                    GetAnonyString(enableInfoKey.dhId).c_str(), dhType);
+            }
+        }
+    }
+    DHLOGI("RecoverActiveEnableSource end, dhType = %{public}#X.", dhType);
 }
 
 int32_t ComponentManager::InitCompSource(DHType dhType)

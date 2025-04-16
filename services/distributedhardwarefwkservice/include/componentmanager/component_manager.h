@@ -215,8 +215,6 @@ private:
     void UpdateVersionCache(const std::string &uuid, const VersionInfo &versionInfo);
 
     void DoRecover(DHType dhType);
-    void ReStartSA(DHType dhType);
-    void RecoverDistributedHardware(DHType dhType);
     bool IsIdenticalAccount(const std::string &networkId);
     int32_t RetryGetEnableParam(const std::string &networkId, const std::string &uuid,
         const std::string &dhId, const DHType dhType, EnableParam &param);
@@ -255,6 +253,12 @@ private:
     int32_t DisableMetaSourceInternal(const std::string &networkId, const DHDescriptor &dhDescriptor,
         DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status,
         std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr);
+    void ResetSinkEnableStatus(DHType dhType);
+    void ResetSourceEnableStatus(DHType dhType);
+    void RecoverAutoEnableSink(DHType dhType);
+    void RecoverAutoEnableSource(DHType dhType);
+    void RecoverActiveEnableSink(DHType dhType);
+    void RecoverActiveEnableSource(DHType dhType);
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::shared_mutex compSourceMutex_;

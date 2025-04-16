@@ -926,25 +926,12 @@ HWTEST_F(ComponentManagerTest, DoRecover_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: ReStartSA_001
- * @tc.desc: Verify the ReStartSA function
+ * @tc.name: DoRecover_002
+ * @tc.desc: Verify the DoRecover function
  * @tc.type: FUNC
  * @tc.require: AR000GHSJM
  */
-HWTEST_F(ComponentManagerTest, ReStartSA_001, TestSize.Level1)
-{
-    DHType dhType = DHType::CAMERA;
-    ComponentManager::GetInstance().ReStartSA(dhType);
-    EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
-}
-
-/**
- * @tc.name: RecoverDistributedHardware_001
- * @tc.desc: Verify the RecoverDistributedHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(ComponentManagerTest, RecoverDistributedHardware_001, TestSize.Level1)
+HWTEST_F(ComponentManagerTest, DoRecover_002, TestSize.Level1)
 {
     CompVersion compVersion;
     compVersion.sinkVersion = "1.0";
@@ -954,15 +941,12 @@ HWTEST_F(ComponentManagerTest, RecoverDistributedHardware_001, TestSize.Level1)
     std::string udidHash = Sha256(UDID_TEST);
     std::string key = udidHash + "###" + DH_ID_TEST;
     MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = metaCapInfo;
-    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RecoverDistributedHardware(dhType));
-
-    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, "");
-    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = META_INFO_PTR_TEST;
-    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RecoverDistributedHardware(dhType));
-
-    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
-    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = META_INFO_PTR_TEST;
-    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RecoverDistributedHardware(dhType));
+    ComponentManager::DHSinkStatus sinkStatus;
+    ComponentManager::GetInstance().dhSinkStatus_[dhType] = sinkStatus;
+    ComponentManager::DHSourceStatus sourceStatus;
+    ComponentManager::GetInstance().dhSourceStatus_[dhType] = sourceStatus;
+    ComponentManager::GetInstance().DoRecover(dhType);
+    EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
 }
 
 /**
