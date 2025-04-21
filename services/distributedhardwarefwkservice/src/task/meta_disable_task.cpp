@@ -68,10 +68,10 @@ void MetaDisableTask::DoTaskInner()
     SetTaskState(state);
 
     DHLOGD("finish meta disable task, remove it, id = %{public}s", GetId().c_str());
+    DHContext::GetInstance().DeleteOnlineDeviceType(GetNetworkId());
     std::string taskId = GetId();
     std::shared_ptr<Task> father = GetFatherTask().lock();
     TaskBoard::GetInstance().RemoveTask(taskId);
-    DHContext::GetInstance().DeleteOnlineDeviceType(GetNetworkId());
     /* if finish task, notify father finish */
     if (father != nullptr) {
         auto offLineTask = std::static_pointer_cast<OffLineTask>(father);
