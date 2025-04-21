@@ -48,7 +48,7 @@ AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t si
  * @brief close shared memory space.
  * @param memory    shared memory.
  */
-void CloseAVTransSharedMemory(const AVTransSharedMemory &memory) noexcept;
+void CloseAVTransSharedMemory(AVTransSharedMemory &memory) noexcept;
 
 /**
  * @brief write the clock unit into the shared memory space.
