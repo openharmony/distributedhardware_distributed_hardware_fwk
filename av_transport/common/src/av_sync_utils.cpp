@@ -62,7 +62,7 @@ AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t si
     return AVTransSharedMemory{fd, size, name};
 }
 
-void CloseAVTransSharedMemory(const AVTransSharedMemory &memory) noexcept
+void CloseAVTransSharedMemory(AVTransSharedMemory &memory) noexcept
 {
     AVTRANS_LOGI("close shared memory, name=%{public}s, size=%{public}" PRId32 ", fd=%{public}" PRId32,
         memory.name.c_str(), memory.size, memory.fd);
@@ -72,6 +72,7 @@ void CloseAVTransSharedMemory(const AVTransSharedMemory &memory) noexcept
     }
     if (memory.fd > 0) {
         (void)::close(memory.fd);
+        memory.fd = 0;
     }
 }
 
