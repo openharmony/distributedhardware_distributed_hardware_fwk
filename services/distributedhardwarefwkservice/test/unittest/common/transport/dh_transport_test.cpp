@@ -226,7 +226,17 @@ HWTEST_F(DhTransportTest, GetRemoteNetworkIdBySocketId_001, TestSize.Level1)
     dhTransportTest_->HandleReceiveMessage(payload);
 
     payload = "payload_test";
-    dhTransportTest_->HandleReceiveMessage(payload);
+    cJSON *jsonObj = cJSON_CreateObject();
+    std::string networkIdKey = "networkId";
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddStringToObject(jsonObj, networkIdKey.c_str(), "111111");
+    char* cjson = cJSON_PrintUnformatted(jsonObj);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    std::string jsonStr(cjson);
+    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(jsonStr));
 }
 
 HWTEST_F(DhTransportTest, ToJson_FullCapsRsp_001, TestSize.Level1)
@@ -319,6 +329,13 @@ HWTEST_F(DhTransportTest, FromJson_CommMsg_002, TestSize.Level1)
     FromJson(jsonObject, commMsg);
     cJSON_Delete(jsonObject);
     EXPECT_TRUE(commMsg.msg.empty());
+}
+
+HWTEST_F(DhTransportTest, CreateClientSocket_001, TestSize.Level1)
+{
+    std::string remoteNetworkId = "";
+    auto ret = dhTransportTest_->CreateClientSocket(remoteNetworkId);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 }
 }

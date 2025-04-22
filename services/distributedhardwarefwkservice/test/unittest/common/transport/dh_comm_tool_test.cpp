@@ -18,6 +18,8 @@
 #include <gtest/gtest.h>
 #include <string>
 
+#include "capability_info.h"
+#include "capability_info_manager.h"
 #include "dh_context.h"
 #include "dh_transport_obj.h"
 #include "dh_utils_tool.h"
@@ -28,6 +30,7 @@ using namespace testing::ext;
 namespace OHOS {
 namespace DistributedHardware {
 using namespace std;
+constexpr uint16_t TEST_DEV_TYPE = 0x14;
 
 class DhCommToolTest : public testing::Test {
 public:
@@ -115,22 +118,72 @@ HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_002, TestSize.Level1)
 
 HWTEST_F(DhCommToolTest, ProcessEvent_001, TestSize.Level1)
 {
+    std::shared_ptr<DHCommTool> dhCommToolPtr = nullptr;
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    DHCommTool::DHCommToolEventHandler eventHandler(runner, dhCommToolPtr);
+    AppExecFwk::InnerEvent::Pointer event = AppExecFwk::InnerEvent::Get(DH_COMM_REQ_FULL_CAPS, commMsg);
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessEvent(event));
+}
+
+HWTEST_F(DhCommToolTest, ProcessEvent_002, TestSize.Level1)
+{
     std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
     DHCommTool::DHCommToolEventHandler eventHandler(runner, dhCommToolTest_);
-    AppExecFwk::InnerEvent::Pointer event = AppExecFwk::InnerEvent::Get(DH_COMM_REQ_FULL_CAPS, commMsg);
-    eventHandler.ProcessEvent(event);
+    AppExecFwk::InnerEvent::Pointer event1 = AppExecFwk::InnerEvent::Get(DH_COMM_REQ_FULL_CAPS, commMsg);
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessEvent(event1));
+
+    AppExecFwk::InnerEvent::Pointer event2 = AppExecFwk::InnerEvent::Get(DH_COMM_RSP_FULL_CAPS, commMsg);
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessEvent(event2));
+
+    AppExecFwk::InnerEvent::Pointer event3 = AppExecFwk::InnerEvent::Get(0, commMsg);
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessEvent(event3));
+}
+
+HWTEST_F(DhCommToolTest, ProcessFullCapsRsp_001, TestSize.Level1)
+{
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    DHCommTool::DHCommToolEventHandler eventHandler(runner, dhCommToolTest_);
 
     std::vector<std::shared_ptr<CapabilityInfo>> caps;
     std::string networkId = "";
     FullCapsRsp capsRsp(networkId, caps);
-    eventHandler.ProcessFullCapsRsp(capsRsp, dhCommToolTest_);
-    EXPECT_EQ("", capsRsp.networkId);
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp, dhCommToolTest_));
 
     networkId = "networkId_test";
     FullCapsRsp capsRsp1(networkId, caps);
-    eventHandler.ProcessFullCapsRsp(capsRsp1, dhCommToolTest_);
-    EXPECT_EQ("networkId_test", capsRsp1.networkId);
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp1, dhCommToolTest_));
+}
+
+HWTEST_F(DhCommToolTest, ProcessFullCapsRsp_002, TestSize.Level1)
+{
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    DHCommTool::DHCommToolEventHandler eventHandler(runner, dhCommToolTest_);
+
+    std::vector<std::shared_ptr<CapabilityInfo>> caps;
+    std::string networkId = "networkId_test";
+    std::string dhId = "Camera_0";
+    std::string devId = "123456789";
+    std::string devName = "dev_pad";
+    std::string dhAttrs = "attr";
+    std::string subType = "camera";
+    std::shared_ptr<CapabilityInfo> capInfoTest = make_shared<CapabilityInfo>(dhId, devId, devName, TEST_DEV_TYPE,
+        DHType::CAMERA, dhAttrs, subType);
+    caps.push_back(capInfoTest);
+    std::shared_ptr<DHCommTool> dhCommToolPtr = nullptr;
+    FullCapsRsp capsRsp1(networkId, caps);
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp1, dhCommToolPtr));
+
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp1, dhCommToolTest_));
+
+    networkId = "333333";
+    DHContext::GetInstance().AddOnlineDevice("111111", "222222", "333333");
+    FullCapsRsp capsRsp2(networkId, caps);
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp2, dhCommToolTest_));
+    DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
 }
 }
 }

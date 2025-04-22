@@ -34,6 +34,8 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "dh_data_sync_trigger_listener.h"
+#include "dh_state_listener.h"
 #include "local_capability_info_manager.h"
 #include "meta_capability_info.h"
 #include "meta_info_manager.h"
@@ -1224,6 +1226,28 @@ HWTEST_F(ComponentManagerTest, UninitCompSink_001, TestSize.Level1)
     auto ret = ComponentManager::GetInstance().UninitCompSink(DHType::AUDIO);
     SetDownComponentLoaderConfig();
     EXPECT_EQ(ret, ERR_DH_FWK_LOADER_SINK_UNLOAD);
+}
+
+HWTEST_F(ComponentManagerTest, OnDataSyncTrigger_001, testing::ext::TestSize.Level1)
+{
+    DHDataSyncTriggerListener dhDataSyncTrigger;
+    std::string networkId = "";
+    ASSERT_NO_FATAL_FAILURE(dhDataSyncTrigger.OnDataSyncTrigger(networkId));
+
+    networkId = "networkId_test";
+    ASSERT_NO_FATAL_FAILURE(dhDataSyncTrigger.OnDataSyncTrigger(networkId));
+}
+
+HWTEST_F(ComponentManagerTest, OnStateChanged_001, testing::ext::TestSize.Level1)
+{
+    DHStateListener dhStateListenenr;
+    std::string dhId = "dhId_test";
+    BusinessState state = BusinessState::UNKNOWN;
+    std::string networkId = "";
+    ASSERT_NO_FATAL_FAILURE(dhStateListenenr.OnStateChanged(networkId, dhId, state));
+
+    networkId = "networkId_test";
+    ASSERT_NO_FATAL_FAILURE(dhStateListenenr.OnStateChanged(networkId, dhId, state));
 }
 } // namespace DistributedHardware
 } // namespace OHOS
