@@ -45,7 +45,7 @@ ohos_unittest("DHDisableTaskTest") {
   sources = [
     "src/disable_task_test.cpp",
     "src/mock_component_manager.cpp",
-    "src/mock_dh_context.cpp",    
+    "src/mock_dh_context.cpp",
   ]
 
   configs = [ ":module_private_config" ]
@@ -63,13 +63,13 @@ ohos_unittest("DHDisableTaskTest") {
   ]
 
   external_deps = [
-    "googletest:gmock",
-    "googletest:gmock_main",
     "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "ffrt:libffrt",
+    "googletest:gmock",
+    "googletest:gmock_main",
     "hilog:libhilog",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
@@ -90,7 +90,7 @@ ohos_unittest("DHEnableTaskTest") {
   sources = [
     "src/enable_task_test.cpp",
     "src/mock_component_manager.cpp",
-    "src/mock_dh_context.cpp",    
+    "src/mock_dh_context.cpp",
   ]
 
   configs = [ ":module_private_config" ]
@@ -108,13 +108,13 @@ ohos_unittest("DHEnableTaskTest") {
   ]
 
   external_deps = [
-    "googletest:gmock",
-    "googletest:gmock_main",
     "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "ffrt:libffrt",
+    "googletest:gmock",
+    "googletest:gmock_main",
     "hilog:libhilog",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
@@ -172,9 +172,9 @@ ohos_unittest("DHTaskTest") {
 
 group("dh_task_test") {
   testonly = true
-  deps = [ 
-    ":DHDisableTaskTest" ,
-    ":DHEnableTaskTest" ,
-    ":DHTaskTest" ,
+  deps = [
+    ":DHDisableTaskTest",
+    ":DHEnableTaskTest",
+    ":DHTaskTest",
   ]
 }
