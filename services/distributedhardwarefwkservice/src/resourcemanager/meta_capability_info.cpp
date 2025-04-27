@@ -174,6 +174,7 @@ void ToJson(cJSON *jsonObject, const MetaCapabilityInfo &metaCapInfo)
     cJSON_AddStringToObject(jsonObject, DH_ATTRS.c_str(), metaCapInfo.GetDHAttrs().c_str());
     cJSON_AddStringToObject(jsonObject, DH_SUBTYPE.c_str(), metaCapInfo.GetDHSubtype().c_str());
     cJSON_AddStringToObject(jsonObject, DEV_UDID_HASH.c_str(), metaCapInfo.GetUdidHash().c_str());
+    cJSON_AddStringToObject(jsonObject, SINK_VER.c_str(), metaCapInfo.GetSinkVersion().c_str());
     cJSON *jsonObjCompVersion = cJSON_CreateObject();
     if (jsonObjCompVersion == NULL) {
         DHLOGE("Failed to create cJSON object.");
@@ -245,6 +246,13 @@ void FromJsonContinue(const cJSON *jsonObject, MetaCapabilityInfo &metaCapInfo)
         return;
     }
     metaCapInfo.SetUdidHash(udidHashJson->valuestring);
+
+    cJSON *sinkVerJson = cJSON_GetObjectItem(jsonObject, SINK_VER.c_str());
+    if (!IsString(sinkVerJson)) {
+        DHLOGE("SINK_VER is invalid!");
+        return;
+    }
+    metaCapInfo.SetSinkVersion(sinkVerJson->valuestring);
 
     cJSON *compVersionJson = cJSON_GetObjectItem(jsonObject, COMP_VER.c_str());
     if (compVersionJson == nullptr) {
