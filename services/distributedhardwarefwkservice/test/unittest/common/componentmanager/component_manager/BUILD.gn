@@ -71,6 +71,7 @@ ohos_unittest("ComponentManagerTest") {
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
     "samgr:samgr_proxy",
+    "selinux_adapter:librestorecon",
   ]
 
   defines = [
