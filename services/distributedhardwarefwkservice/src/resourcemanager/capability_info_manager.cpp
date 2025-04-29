@@ -33,7 +33,7 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "CapabilityInfoManager"
 
-constexpr int32_t SYNC_DATA_TIMEOUT_MS = 1000 * 3;
+constexpr int32_t SYNC_DATA_TIMEOUT_MS = 1000 * 10;
 
 CapabilityInfoManager::CapabilityInfoManager() : dbAdapterPtr_(nullptr)
 {
