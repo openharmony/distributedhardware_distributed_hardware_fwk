@@ -24,6 +24,7 @@
 
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_service.h"
+#include "get_dh_descriptors_callback_stub.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -46,6 +47,25 @@ public:
     void OnMessage(const DHTopic topic, const std::string& message) override
     {
         return;
+    }
+};
+
+class TestGetDistributedHardwareCallback : public GetDhDescriptorsCallbackStub {
+public:
+    TestGetDistributedHardwareCallback() = default;
+    virtual ~TestGetDistributedHardwareCallback() = default;
+protected:
+    void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
+        EnableStep enableStep) override
+    {
+        (void)networkId;
+        (void)descriptors;
+        (void)enableStep;
+    }
+    void OnError(const std::string &networkId, int32_t error) override
+    {
+        (void)networkId;
+        (void)error;
     }
 };
 
@@ -127,9 +147,9 @@ void FwkServicesGetDistributedHardwareFuzzTest(const uint8_t* data, size_t size)
     }
     DistributedHardwareService service(SAID, true);
     std::string networkId(reinterpret_cast<const char*>(data), size);
-    std::vector<DHDescriptor> descriptors;
-
-    service.GetDistributedHardware(networkId, descriptors);
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    service.GetDistributedHardware(networkId, enableStep, callback);
 }
 
 void FwkServicesRegisterDHStatusListenerFuzzTest(const uint8_t* data, size_t size)

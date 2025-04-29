@@ -47,7 +47,8 @@ public:
     int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId) override;
     int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId) override;
     int32_t StopDistributedHardware(DHType dhType, const std::string &networkId) override;
-    int32_t GetDistributedHardware(const std::string &networkId, std::vector<DHDescriptor> &descriptors) override;
+    int32_t GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+        const sptr<IGetDhDescriptorsCallback> callback) override;
     int32_t RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener) override;
     int32_t UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener) override;
     int32_t RegisterDHStatusListener(const std::string &networkId, sptr<IHDSourceStatusListener> listener) override;

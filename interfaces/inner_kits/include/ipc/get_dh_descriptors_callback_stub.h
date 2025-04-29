@@ -13,28 +13,25 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_DESCRIPTOR_H
-#define OHOS_DISTRIBUTED_HARDWARE_DESCRIPTOR_H
+#ifndef OHOS_GET_DH_DESCRIPTORS_CALLBACK_STUB_H
+#define OHOS_GET_DH_DESCRIPTORS_CALLBACK_STUB_H
 
-#include <string>
-#include <unordered_map>
+#include "iget_dh_descriptors_callback.h"
 
-#include "device_type.h"
+#include "iremote_stub.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-
-struct DHDescriptor {
-    std::string id;
-    DHType dhType;
-};
-
-enum class EnableStep : uint32_t {
-    ENABLE_SOURCE = 1,
-    DISABLE_SOURCE = 2,
-    ENABLE_SINK = 3,
-    DISABLE_SINK = 4
+class GetDhDescriptorsCallbackStub : public IRemoteStub<IGetDhDescriptorsCallback> {
+public:
+    GetDhDescriptorsCallbackStub();
+    virtual ~GetDhDescriptorsCallbackStub() override;
+    int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
+private:
+    int32_t ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors);
+private:
+    DISALLOW_COPY_AND_MOVE(GetDhDescriptorsCallbackStub);
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif // OHOS_DISTRIBUTED_HARDWARE_DESCRIPTOR_H
+#endif // OHOS_GET_DH_DESCRIPTORS_CALLBACK_STUB_H

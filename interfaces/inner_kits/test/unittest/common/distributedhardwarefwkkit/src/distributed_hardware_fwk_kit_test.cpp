@@ -20,6 +20,12 @@
 #include <cinttypes>
 #include <thread>
 
+#include "anonymous_string.h"
+#include "accesstoken_kit.h"
+#include "nativetoken_kit.h"
+#include "token_setproc.h"
+#include "softbus_common.h"
+
 #include "distributed_hardware_errno.h"
 #include "dhfwk_sa_manager.h"
 #include "distributed_hardware_fwk_kit.h"
@@ -95,6 +101,25 @@ void DistributedHardwareFwkKitTest::TestHDSourceStatusListener::OnDisable(
 {
     (void)networkId;
     (void)dhDescriptor;
+}
+
+void DistributedHardwareFwkKitTest::TestDmInitCallback::OnRemoteDied()
+{
+}
+
+void DistributedHardwareFwkKitTest::TestGetDistributedHardwareCallback::OnSuccess(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors, EnableStep enableStep)
+{
+    (void)networkId;
+    (void)descriptors;
+    (void)enableStep;
+}
+
+void DistributedHardwareFwkKitTest::TestGetDistributedHardwareCallback::OnError(
+    const std::string &networkId, int32_t error)
+{
+    (void)networkId;
+    (void)error;
 }
 
 /**
@@ -437,12 +462,13 @@ HWTEST_F(DistributedHardwareFwkKitTest, GetDistributedHardware_001, testing::ext
 {
     ASSERT_TRUE(dhfwkPtr_ != nullptr);
     std::string networkId = "";
-    std::vector<DHDescriptor> descriptors;
-    int32_t ret = dhfwkPtr_->GetDistributedHardware(networkId, descriptors);
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    int32_t ret = dhfwkPtr_->GetDistributedHardware(networkId, enableStep, callback);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 
     networkId = "networkId_test";
-    ret = dhfwkPtr_->GetDistributedHardware(networkId, descriptors);
+    ret = dhfwkPtr_->GetDistributedHardware(networkId, enableStep, callback);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
 

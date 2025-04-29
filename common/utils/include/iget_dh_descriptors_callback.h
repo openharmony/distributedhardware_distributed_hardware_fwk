@@ -13,28 +13,31 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_DESCRIPTOR_H
-#define OHOS_DISTRIBUTED_HARDWARE_DESCRIPTOR_H
+#ifndef OHOS_IGET_DH_DESCRIPTORS_CALLBACK_H
+#define OHOS_IGET_DH_DESCRIPTORS_CALLBACK_H
 
+#include <cstdint>
 #include <string>
-#include <unordered_map>
 
-#include "device_type.h"
+#include <iremote_broker.h>
+
+#include "dhardware_descriptor.h"
 
 namespace OHOS {
 namespace DistributedHardware {
+class IGetDhDescriptorsCallback : public IRemoteBroker {
+public:
+    virtual void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
+        EnableStep enableStep) = 0;
+    virtual void OnError(const std::string &networkId, int32_t error) = 0;
 
-struct DHDescriptor {
-    std::string id;
-    DHType dhType;
-};
+    enum class Message : uint32_t {
+        ON_SUCCESS,
+        ON_ERROR
+    };
 
-enum class EnableStep : uint32_t {
-    ENABLE_SOURCE = 1,
-    DISABLE_SOURCE = 2,
-    ENABLE_SINK = 3,
-    DISABLE_SINK = 4
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.DistributedHardware.DistributedHardwareFwk.IGetDhDescriptorsCallback");
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif // OHOS_DISTRIBUTED_HARDWARE_DESCRIPTOR_H
+#endif // OHOS_IGET_DH_DESCRIPTORS_CALLBACK_H

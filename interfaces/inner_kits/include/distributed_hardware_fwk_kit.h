@@ -27,6 +27,7 @@
 #include "dhardware_descriptor.h"
 #include "ipublisher_listener.h"
 #include "idistributed_hardware.h"
+#include "iget_dh_descriptors_callback.h"
 #include "ihardware_status_listener.h"
 
 #ifndef API_EXPORT
@@ -166,7 +167,8 @@ public:
      * @param descriptors distributed hardware descriptor list.
      * @return Returns 0 if success.
      */
-    API_EXPORT int32_t GetDistributedHardware(const std::string &networkId, std::vector<DHDescriptor> &descriptors);
+    API_EXPORT int32_t GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+        const sptr<IGetDhDescriptorsCallback> callback);
 
     /**
      * @brief Register distributed hardware status listener.

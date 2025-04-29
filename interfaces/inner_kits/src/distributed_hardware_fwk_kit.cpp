@@ -269,18 +269,18 @@ int32_t DistributedHardwareFwkKit::StopDistributedHardware(DHType dhType, const 
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->StopDistributedHardware(dhType, networkId);
 }
 
-int32_t DistributedHardwareFwkKit::GetDistributedHardware(
-    const std::string &networkId, std::vector<DHDescriptor> &descriptors)
+int32_t DistributedHardwareFwkKit::GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+    const sptr<IGetDhDescriptorsCallback> callback)
 {
     if (!IsIdLengthValid(networkId)) {
         return ERR_DH_FWK_PARA_INVALID;
     }
     DHLOGI("Get distributed hardware networkId %{public}s.", GetAnonyString(networkId).c_str());
     if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
-        DHLOGI("DHFWK not online or get proxy failed, can not register av control center callback.");
+        DHLOGI("DHFWK not online or get proxy failed, can not get distributed hardware.");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->GetDistributedHardware(networkId, descriptors);
+    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->GetDistributedHardware(networkId, enableStep, callback);
 }
 
 int32_t DistributedHardwareFwkKit::RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener)

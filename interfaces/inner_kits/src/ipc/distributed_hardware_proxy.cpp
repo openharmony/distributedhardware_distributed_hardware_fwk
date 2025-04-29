@@ -531,11 +531,15 @@ int32_t DistributedHardwareProxy::StopDistributedHardware(DHType dhType, const s
     return reply.ReadInt32();
 }
 
-int32_t DistributedHardwareProxy::GetDistributedHardware(
-    const std::string &networkId, std::vector<DHDescriptor> &descriptors)
+int32_t DistributedHardwareProxy::GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+    const sptr<IGetDhDescriptorsCallback> callback)
 {
     DHLOGI("DistributedHardwareProxy GetDistributedHardware.");
     if (!IsIdLengthValid(networkId)) {
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (callback == nullptr) {
+        DHLOGE("get distributed hardware callback is null");
         return ERR_DH_FWK_PARA_INVALID;
     }
     sptr<IRemoteObject> remote = Remote();
@@ -554,14 +558,20 @@ int32_t DistributedHardwareProxy::GetDistributedHardware(
         DHLOGE("Write networkId failed!");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
+    if (!data.WriteUint32(static_cast<uint32_t>(enableStep))) {
+        DHLOGE("Write enableStep failed!");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteRemoteObject(callback->AsObject())) {
+        DHLOGE("Write callback failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::GET_DISTRIBUTED_HARDWARE),
         data, reply, option);
     if (ret != NO_ERROR) {
         DHLOGE("Send Request failed, ret: %{public}d!", ret);
         return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
     }
-    descriptors.clear();
-    ReadDescriptors(reply, descriptors);
     return reply.ReadInt32();
 }
 
