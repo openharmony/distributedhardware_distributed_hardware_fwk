@@ -448,6 +448,8 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_028, TestSize.Level1)
     MessageOption option;
     data.WriteInterfaceToken(stubTest_->GetDescriptor());
     data.WriteString("netWorkId_test");
+    sptr<IRemoteObject> callback(new MockGetDhDescriptorsCallbackStub());
+    data.WriteRemoteObject(callback);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }

@@ -77,6 +77,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/distributed_hardware_stub.cpp",
     "src/hidumphelper/enabled_comps_dump.cpp",
     "src/hidumphelper/hidump_helper.cpp",
+    "src/ipc/get_dh_descriptors_callback_proxy.cpp",
     "src/ipc/hardware_status_listener_proxy.cpp",
     "src/ipc/publisher_listener_proxy.cpp",
     "src/localhardwaremanager/local_hardware_manager.cpp",

@@ -42,6 +42,7 @@
 #include "publisher.h"
 #include "task_executor.h"
 #include "task_factory.h"
+#include "version_info_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -363,41 +364,54 @@ int32_t DistributedHardwareService::StopDistributedHardware(DHType dhType, const
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareService::GetDistributedHardware(
-    const std::string &networkId, std::vector<DHDescriptor> &descriptors)
+int32_t DistributedHardwareService::GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+    const sptr<IGetDhDescriptorsCallback> callback)
 {
     if (!IsIdLengthValid(networkId)) {
         return ERR_DH_FWK_PARA_INVALID;
     }
     std::string deviceId;
+    std::string realNetworkId;
     if (networkId == LOCAL_NETWORKID_ALIAS) {
         deviceId = GetLocalDeviceInfo().deviceId;
+        realNetworkId = GetLocalDeviceInfo().networkId;
     } else {
         deviceId = GetDeviceIdByUUID(DHContext::GetInstance().GetUUIDByNetworkId(networkId));
+        realNetworkId = networkId;
     }
-    std::vector<std::shared_ptr<CapabilityInfo>> capabilities;
-    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, capabilities);
-    if (capabilities.empty()) {
-        CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
-        std::string udid = DHContext::GetInstance().GetUDIDByNetworkId(networkId);
-        std::string udidHash = Sha256(udid);
-        std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
-        MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(udidHash, metaCapInfos);
+    std::vector<DHDescriptor> descriptors;
+    std::string udid = DHContext::GetInstance().GetUDIDByNetworkId(realNetworkId);
+    std::string udidHash = Sha256(udid);
+    std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
+    MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(udidHash, metaCapInfos);
+    if (!metaCapInfos.empty()) {
         for (const auto &metaCapInfo : metaCapInfos) {
             DHDescriptor descriptor;
             descriptor.id = metaCapInfo->GetDHId();
             descriptor.dhType = metaCapInfo->GetDHType();
             descriptors.push_back(descriptor);
         }
-    } else {
+        DHLOGI("Get MetacapInfo Success, networkId: %{public}s.", realNetworkId.c_str());
+        callback->OnSuccess(realNetworkId, descriptors, enableStep);
+        return DH_FWK_SUCCESS;
+    }
+
+    std::vector<std::shared_ptr<CapabilityInfo>> capabilities;
+    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, capabilities);
+    if (!capabilities.empty()) {
         for (const auto &capabilitie : capabilities) {
             DHDescriptor descriptor;
             descriptor.id = capabilitie->GetDHId();
             descriptor.dhType = capabilitie->GetDHType();
             descriptors.push_back(descriptor);
         }
+        DHLOGI("Get CapabilitieInfo Success, deviceId: %{public}s.", deviceId.c_str());
+        callback->OnSuccess(realNetworkId, descriptors, enableStep);
+        return DH_FWK_SUCCESS;
     }
-
+    VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(deviceId);
+    CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
+    CapabilityInfoManager::GetInstance()->DoAsyncGetDistributedHardware(realNetworkId, enableStep, callback);
     return DH_FWK_SUCCESS;
 }
 

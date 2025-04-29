@@ -23,7 +23,11 @@
 #include <gtest/gtest.h>
 #include <refbase.h>
 
+#include "dm_device_info.h"
+#include "device_manager.h"
+
 #include "distributed_hardware_fwk_kit.h"
+#include "get_dh_descriptors_callback_stub.h"
 #include "hardware_status_listener_stub.h"
 #include "publisher_listener_stub.h"
 #include "system_ability_load_callback_stub.h"
@@ -67,6 +71,24 @@ public:
     protected:
         void OnEnable(const std::string &networkId, const DHDescriptor &dhDescriptor) override;
         void OnDisable(const std::string &networkId, const DHDescriptor &dhDescriptor) override;
+    };
+
+    class TestDmInitCallback : public DmInitCallback {
+    public:
+        TestDmInitCallback() = default;
+        virtual ~TestDmInitCallback() = default;
+    protected:
+        void OnRemoteDied() override;
+    };
+
+    class TestGetDistributedHardwareCallback : public GetDhDescriptorsCallbackStub {
+    public:
+        TestGetDistributedHardwareCallback() = default;
+        virtual ~TestGetDistributedHardwareCallback() = default;
+    protected:
+        void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
+            EnableStep enableStep) override;
+        void OnError(const std::string &networkId, int32_t error) override;
     };
 
 public:

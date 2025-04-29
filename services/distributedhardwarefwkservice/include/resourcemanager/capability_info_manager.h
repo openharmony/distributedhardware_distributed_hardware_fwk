@@ -26,6 +26,7 @@
 #include "capability_utils.h"
 #include "db_adapter.h"
 #include "event_handler.h"
+#include "iget_dh_descriptors_callback.h"
 
 class DBAdapter;
 namespace OHOS {
@@ -85,6 +86,10 @@ public:
     std::shared_ptr<CapabilityInfoManager::CapabilityInfoManagerEventHandler> GetEventHandler();
 
     void DumpCapabilityInfos(std::vector<CapabilityInfo> &capInfos);
+    void AsyncGetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+        const sptr<IGetDhDescriptorsCallback> callback);
+    void DoAsyncGetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+        const sptr<IGetDhDescriptorsCallback> callback);
 
 private:
     void HandleCapabilityAddChange(const std::vector<DistributedKv::Entry> &insertRecords);
@@ -98,6 +103,8 @@ private:
     CapabilityInfoMap globalCapInfoMap_;
 
     std::shared_ptr<CapabilityInfoManager::CapabilityInfoManagerEventHandler> eventHandler_;
+    std::mutex syncDataMutex_;
+    std::condition_variable syncDataCondVar_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

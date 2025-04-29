@@ -23,6 +23,7 @@
 #include "iremote_broker.h"
 #include "device_type.h"
 #include "dhardware_descriptor.h"
+#include "iget_dh_descriptors_callback.h"
 #include "ihardware_status_listener.h"
 
 #include "distributed_hardware_fwk_kit_paras.h"
@@ -51,7 +52,8 @@ public:
     virtual int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId) = 0;
     virtual int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId) = 0;
     virtual int32_t StopDistributedHardware(DHType dhType, const std::string &networkId) = 0;
-    virtual int32_t GetDistributedHardware(const std::string &networkId, std::vector<DHDescriptor> &descriptors) = 0;
+    virtual int32_t GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+        const sptr<IGetDhDescriptorsCallback> callback) = 0;
     virtual int32_t RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener) = 0;
     virtual int32_t UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener) = 0;
     virtual int32_t RegisterDHStatusListener(const std::string &networkId, sptr<IHDSourceStatusListener> listener) = 0;

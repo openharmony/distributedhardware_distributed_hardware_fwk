@@ -25,6 +25,7 @@
 #include "idistributed_hardware.h"
 #include "distributed_hardware_proxy.h"
 #include "distributed_hardware_stub.h"
+#include "get_dh_descriptors_callback_stub.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -54,7 +55,8 @@ public:
         int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId);
         int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId);
         int32_t StopDistributedHardware(DHType dhType, const std::string &networkId);
-        int32_t GetDistributedHardware(const std::string &networkId, std::vector<DHDescriptor> &descriptors);
+        int32_t GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+            const sptr<IGetDhDescriptorsCallback> callback);
         int32_t RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener);
         int32_t UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener);
         int32_t RegisterDHStatusListener(const std::string &networkId, sptr<IHDSourceStatusListener> listener);
@@ -69,6 +71,16 @@ public:
     public:
         int32_t OnRemoteRequest(uint32_t code,
             MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
+    };
+
+    class TestGetDistributedHardwareCallback : public GetDhDescriptorsCallbackStub {
+    public:
+        TestGetDistributedHardwareCallback() = default;
+        virtual ~TestGetDistributedHardwareCallback() = default;
+    protected:
+        void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
+            EnableStep enableStep) override;
+        void OnError(const std::string &networkId, int32_t error) override;
     };
 };
 

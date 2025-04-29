@@ -33,6 +33,8 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "CapabilityInfoManager"
 
+constexpr int32_t SYNC_DATA_TIMEOUT_MS = 1000 * 3;
+
 CapabilityInfoManager::CapabilityInfoManager() : dbAdapterPtr_(nullptr)
 {
     DHLOGI("CapabilityInfoManager construction!");
@@ -395,6 +397,9 @@ void CapabilityInfoManager::HandleCapabilityAddChange(const std::vector<Distribu
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
         TaskExecutor::GetInstance().PushTask(task);
     }
+    DHLOGI("HandleCapabilityAddChange success");
+    std::unique_lock<std::mutex> condition(syncDataMutex_);
+    syncDataCondVar_.notify_all();
 }
 
 void CapabilityInfoManager::HandleCapabilityUpdateChange(const std::vector<DistributedKv::Entry> &updateRecords)
@@ -439,6 +444,9 @@ void CapabilityInfoManager::HandleCapabilityUpdateChange(const std::vector<Distr
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
         TaskExecutor::GetInstance().PushTask(task);
     }
+    DHLOGI("HandleCapabilityUpdateChange success");
+    std::unique_lock<std::mutex> condition(syncDataMutex_);
+    syncDataCondVar_.notify_all();
 }
 
 void CapabilityInfoManager::HandleCapabilityDeleteChange(const std::vector<DistributedKv::Entry> &deleteRecords)
@@ -589,6 +597,51 @@ void CapabilityInfoManager::DumpCapabilityInfos(std::vector<CapabilityInfo> &cap
         CapabilityInfo capInfo = *(info.second);
         capInfos.emplace_back(capInfo);
     }
+}
+
+void CapabilityInfoManager::AsyncGetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+    const sptr<IGetDhDescriptorsCallback> callback)
+{
+    DHLOGI("AsyncGetDistributedHardware networkId: %{public}s.", GetAnonyString(networkId).c_str());
+    int32_t waitTimeMill = SYNC_DATA_TIMEOUT_MS;
+    while (waitTimeMill > 0) {
+        auto beginTime = std::chrono::steady_clock::now();
+        std::unique_lock<std::mutex> locker(syncDataMutex_);
+        syncDataCondVar_.wait_for(locker, std::chrono::milliseconds(waitTimeMill));
+
+        std::vector<DHDescriptor> descriptors;
+        std::vector<std::shared_ptr<CapabilityInfo>> capabilities;
+        std::string deviceId = GetDeviceIdByUUID(DHContext::GetInstance().GetUUIDByNetworkId(networkId));
+        CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, capabilities);
+        for (const auto &capabilitie : capabilities) {
+            DHDescriptor descriptor;
+            descriptor.id = capabilitie->GetDHId();
+            descriptor.dhType = capabilitie->GetDHType();
+            descriptors.push_back(descriptor);
+        }
+        if (descriptors.size()) {
+            DHLOGI("AsyncGetDistributedHardware call OnSuccess, networkId: %{public}s.",
+                GetAnonyString(networkId).c_str());
+            callback->OnSuccess(networkId, descriptors, enableStep);
+            return;
+        }
+
+        auto endTime = std::chrono::steady_clock::now();
+        auto costTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - beginTime);
+        waitTimeMill -= costTime.count();
+        DHLOGI("AsyncGetDistributedHardware do retry, networkId: %{public}s.", GetAnonyString(networkId).c_str());
+    }
+    callback->OnError(networkId, ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT);
+    DHLOGI("AsyncGetDistributedHardware call OnError, networkId: %{public}s.", GetAnonyString(networkId).c_str());
+}
+
+void CapabilityInfoManager::DoAsyncGetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+    const sptr<IGetDhDescriptorsCallback> callback)
+{
+    DHLOGI("DoAsyncGetDistributedHardware networkId: %{public}s.", GetAnonyString(networkId).c_str());
+    std::thread([this, networkId, enableStep, callback]() {
+        this->AsyncGetDistributedHardware(networkId, enableStep, callback);
+    }).detach();
 }
 
 std::vector<DistributedKv::Entry> CapabilityInfoManager::GetEntriesByKeys(const std::vector<std::string> &keys)

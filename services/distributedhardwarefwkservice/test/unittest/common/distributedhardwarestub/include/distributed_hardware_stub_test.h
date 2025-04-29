@@ -125,10 +125,12 @@ int32_t StopDistributedHardware(DHType dhType, const std::string &networkId)
     return DH_FWK_SUCCESS;
 }
 
-int32_t GetDistributedHardware(const std::string &networkId, std::vector<DHDescriptor> &descriptors)
+int32_t GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+    const sptr<IGetDhDescriptorsCallback> callback)
 {
     (void)networkId;
-    (void)descriptors;
+    (void)enableStep;
+    (void)callback;
     return DH_FWK_SUCCESS;
 }
 
@@ -219,6 +221,22 @@ public:
     {
         (void)networkId;
         (void)dhDescriptor;
+    }
+};
+
+class MockGetDhDescriptorsCallbackStub : public IRemoteStub<IGetDhDescriptorsCallback> {
+public:
+    void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
+        EnableStep enableStep) override
+    {
+        (void)networkId;
+        (void)descriptors;
+        (void)enableStep;
+    }
+    void OnError(const std::string &networkId, int32_t error) override
+    {
+        (void)networkId;
+        (void)error;
     }
 };
 } // namespace DistributedHardware

@@ -64,6 +64,20 @@ void TestHDSourceStatusListener::OnDisable(
     (void)dhDescriptor;
 }
 
+void TestGetDistributedHardwareCallback::OnSuccess(const std::string &networkId,
+    const std::vector<DHDescriptor> &descriptors, EnableStep enableStep)
+{
+    (void)networkId;
+    (void)descriptors;
+    (void)enableStep;
+}
+
+void TestGetDistributedHardwareCallback::OnError(const std::string &networkId, int32_t error)
+{
+    (void)networkId;
+    (void)error;
+}
+
 void RegisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
@@ -200,10 +214,11 @@ void GetDistributedHardwareFuzzTest(const uint8_t *data, size_t size)
         return;
     }
 
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
     DistributedHardwareFwkKit dhfwkKit;
-    std::vector<DHDescriptor> descriptors;
     std::string networkId(reinterpret_cast<const char*>(data), size);
-    dhfwkKit.GetDistributedHardware(networkId, descriptors);
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    dhfwkKit.GetDistributedHardware(networkId, enableStep, callback);
 }
 
 void RegisterDHStatusListenerFuzzTest(const uint8_t *data, size_t size)

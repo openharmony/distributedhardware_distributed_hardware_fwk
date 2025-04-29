@@ -395,13 +395,15 @@ int32_t DistributedHardwareStub::GetDistributedHardwareInner(MessageParcel &data
         DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
-    std::vector<DHDescriptor> descriptors;
     std::string networkId = data.ReadString();
-    int32_t ret = GetDistributedHardware(networkId, descriptors);
-    if (WriteDescriptors(reply, descriptors)) {
-        DHLOGE("WriteDescriptors failed!");
-        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    EnableStep enableStep = static_cast<EnableStep>(data.ReadUint32());
+    sptr<IGetDhDescriptorsCallback> callback =
+        iface_cast<IGetDhDescriptorsCallback>(data.ReadRemoteObject());
+    if (callback == nullptr) {
+        DHLOGE("Input get distributed hardware callback is null!");
+        return ERR_DH_FWK_PARA_INVALID;
     }
+    int32_t ret = GetDistributedHardware(networkId, enableStep, callback);
     if (!reply.WriteInt32(ret)) {
         DHLOGE("Write ret code failed!");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;

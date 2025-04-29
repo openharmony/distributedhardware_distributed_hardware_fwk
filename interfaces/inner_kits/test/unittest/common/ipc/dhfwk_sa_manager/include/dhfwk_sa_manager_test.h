@@ -131,10 +131,12 @@ int32_t StopDistributedHardware(DHType dhType, const std::string &networkId)
     return DH_FWK_SUCCESS;
 }
 
-int32_t GetDistributedHardware(const std::string &networkId, std::vector<DHDescriptor> &descriptors)
+int32_t GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+    const sptr<IGetDhDescriptorsCallback> callback)
 {
     (void)networkId;
-    (void)descriptors;
+    (void)enableStep;
+    (void)callback;
     return DH_FWK_SUCCESS;
 }
 

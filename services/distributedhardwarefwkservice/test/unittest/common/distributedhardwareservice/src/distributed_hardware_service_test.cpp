@@ -294,18 +294,18 @@ HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_001, TestSize.L
 HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
-    std::vector<DHDescriptor> descriptors;
 
     std::string networkId = "111";
-    auto ret = service.GetDistributedHardware(networkId, descriptors);
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    auto ret = service.GetDistributedHardware(networkId, enableStep, nullptr);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 
     networkId = "local";
-    ret = service.GetDistributedHardware(networkId, descriptors);
+    ret = service.GetDistributedHardware(networkId, enableStep, nullptr);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 
     networkId = "";
-    ret = service.GetDistributedHardware(networkId, descriptors);
+    ret = service.GetDistributedHardware(networkId, enableStep, nullptr);
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 

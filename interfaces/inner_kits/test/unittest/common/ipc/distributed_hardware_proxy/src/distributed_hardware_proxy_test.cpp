@@ -36,10 +36,6 @@ int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub2::OnRemoteRequ
     MessageParcel &reply, MessageOption &option)
 {
     if (code == static_cast<uint32_t>(DHMsgInterfaceCode::GET_DISTRIBUTED_HARDWARE)) {
-        std::vector<DHDescriptor> descriptors;
-        descriptors.emplace_back(DHDescriptor());
-        descriptors.emplace_back(DHDescriptor());
-        OHOS::DistributedHardware::DistributedHardwareStub::WriteDescriptors(reply, descriptors);
         return DH_FWK_SUCCESS;
     }
     return OHOS::DistributedHardware::DistributedHardwareStub::OnRemoteRequest(code, data, reply, option);
@@ -144,10 +140,11 @@ int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::StopDistribut
 }
 
 int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::GetDistributedHardware(
-    const std::string &networkId, std::vector<DHDescriptor> &descriptors)
+    const std::string &networkId, EnableStep enableStep, const sptr<IGetDhDescriptorsCallback> callback)
 {
     (void)networkId;
-    (void)descriptors;
+    (void)enableStep;
+    (void)callback;
     return DH_FWK_SUCCESS;
 }
 
@@ -209,6 +206,21 @@ int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::DisableSource
     (void)networkId;
     (void)descriptors;
     return DH_FWK_SUCCESS;
+}
+
+void DistributedHardwareProxyTest::TestGetDistributedHardwareCallback::OnSuccess(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors, EnableStep enableStep)
+{
+    (void)networkId;
+    (void)descriptors;
+    (void)enableStep;
+}
+
+void DistributedHardwareProxyTest::TestGetDistributedHardwareCallback::OnError(
+    const std::string &networkId, int32_t error)
+{
+    (void)networkId;
+    (void)error;
 }
 
 /**
@@ -539,11 +551,12 @@ HWTEST_F(DistributedHardwareProxyTest, GetDistributedHardware_001, TestSize.Leve
     sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
     ASSERT_TRUE(dhStubPtr != nullptr);
     DistributedHardwareProxy dhProxy(dhStubPtr);
-
-    std::vector<DHDescriptor> descriptors;
-    auto ret = dhProxy.GetDistributedHardware(networkId, descriptors);
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    ASSERT_TRUE(callback != nullptr);
+    auto ret = dhProxy.GetDistributedHardware(networkId, enableStep, callback);
     EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
-    ret = dhProxy.GetDistributedHardware(std::string(), descriptors);
+    ret = dhProxy.GetDistributedHardware(std::string(), enableStep, callback);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
@@ -552,9 +565,11 @@ HWTEST_F(DistributedHardwareProxyTest, GetDistributedHardware_002, TestSize.Leve
     std::string networkId = "123456";
     sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub2());
     ASSERT_TRUE(dhStubPtr != nullptr);
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    ASSERT_TRUE(callback != nullptr);
     DistributedHardwareProxy dhProxy(dhStubPtr);
-    std::vector<DHDescriptor> descriptors;
-    auto ret = dhProxy.GetDistributedHardware(networkId, descriptors);
+    auto ret = dhProxy.GetDistributedHardware(networkId, enableStep, callback);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
