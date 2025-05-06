@@ -133,7 +133,7 @@ private:
     std::atomic<bool> isStoped_ = false;
 
     OH_AVFormat outputFormat_ = {};
-    AEncInitParams initEncParams_;
+    AEncInitParams initEncParams_ = {};
     OH_AVCodec *audioEncoder_ = nullptr;
     std::queue<OH_AVBuffer *> codecBufQueue_;
     std::queue<uint32_t> codecIndexQueue_;

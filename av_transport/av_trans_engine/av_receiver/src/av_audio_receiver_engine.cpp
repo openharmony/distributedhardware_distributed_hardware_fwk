@@ -15,6 +15,8 @@
 
 #include "av_audio_receiver_engine.h"
 
+#include <charconv>
+
 namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
@@ -256,6 +258,12 @@ int32_t AVAudioReceiverEngine::Release()
     return DH_AVT_SUCCESS;
 }
 
+bool AVAudioReceiverEngine::ConvertToInt(const std::string& str, int& value)
+{
+    auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), value);
+    return ec == std::errc{} && ptr == str.data() + str.size();
+}
+
 void AVAudioReceiverEngine::SetParameterInner(AVTransTag tag, const std::string &value)
 {
     switch (tag) {
@@ -367,8 +375,13 @@ void AVAudioReceiverEngine::SetVideoWidth(const std::string &value)
         AVTRANS_LOGE("meta_ is nullptr.");
         return;
     }
-    meta_->SetData(Media::Tag::VIDEO_WIDTH, std::stoi(value));
-    AVTRANS_LOGI("SetParameter VIDEO_WIDTH success, video width = %{public}s", value.c_str());
+    int intValue = 0;
+    if (ConvertToInt(value, intValue)) {
+        meta_->SetData(Media::Tag::VIDEO_WIDTH, intValue);
+        AVTRANS_LOGI("SetParameter VIDEO_WIDTH success, video width = %{public}s", value.c_str());
+    } else {
+        AVTRANS_LOGI("SetParameter VIDEO_WIDTH failed, value conversion failed.");
+    }
 }
 
 void AVAudioReceiverEngine::SetVideoHeight(const std::string &value)
@@ -377,8 +390,13 @@ void AVAudioReceiverEngine::SetVideoHeight(const std::string &value)
         AVTRANS_LOGE("meta_ is nullptr.");
         return;
     }
-    meta_->SetData(Media::Tag::VIDEO_HEIGHT, std::stoi(value));
-    AVTRANS_LOGI("SetParameter VIDEO_HEIGHT success, video height = %{public}s", value.c_str());
+    int intValue = 0;
+    if (ConvertToInt(value, intValue)) {
+        meta_->SetData(Media::Tag::VIDEO_HEIGHT, intValue);
+        AVTRANS_LOGI("SetParameter VIDEO_HEIGHT success, video height = %{public}s", value.c_str());
+    } else {
+        AVTRANS_LOGI("SetParameter VIDEO_HEIGHT failed, value conversion failed.");
+    }
 }
 
 void AVAudioReceiverEngine::SetVideoFrameRate(const std::string &value)
@@ -387,8 +405,13 @@ void AVAudioReceiverEngine::SetVideoFrameRate(const std::string &value)
         AVTRANS_LOGE("meta_ is nullptr.");
         return;
     }
-    meta_->SetData(Media::Tag::VIDEO_FRAME_RATE, std::stoi(value));
-    AVTRANS_LOGI("SetParameter VIDEO_FRAME_RATE success, frame rate = %{public}s", value.c_str());
+    int intValue = 0;
+    if (ConvertToInt(value, intValue)) {
+        meta_->SetData(Media::Tag::VIDEO_FRAME_RATE, intValue);
+        AVTRANS_LOGI("SetParameter VIDEO_FRAME_RATE success, frame rate = %{public}s", value.c_str());
+    } else {
+        AVTRANS_LOGI("SetParameter VIDEO_FRAME_RATE failed, value conversion failed.");
+    }
 }
 
 void AVAudioReceiverEngine::SetAudioBitRate(const std::string &value)
@@ -397,8 +420,13 @@ void AVAudioReceiverEngine::SetAudioBitRate(const std::string &value)
         AVTRANS_LOGE("meta_ is nullptr.");
         return;
     }
-    meta_->SetData(Media::Tag::MEDIA_BITRATE, std::stoi(value));
-    AVTRANS_LOGI("SetParameter MEDIA_BITRATE success, bit rate = %{public}s", value.c_str());
+    int intValue = 0;
+    if (ConvertToInt(value, intValue)) {
+        meta_->SetData(Media::Tag::MEDIA_BITRATE, intValue);
+        AVTRANS_LOGI("SetParameter MEDIA_BITRATE success, bit rate = %{public}s", value.c_str());
+    } else {
+        AVTRANS_LOGI("SetParameter MEDIA_BITRATE failed, value conversion failed.");
+    }
 }
 
 void AVAudioReceiverEngine::SetVideoBitRate(const std::string &value)
@@ -407,8 +435,13 @@ void AVAudioReceiverEngine::SetVideoBitRate(const std::string &value)
         AVTRANS_LOGE("meta_ is nullptr.");
         return;
     }
-    meta_->SetData(Media::Tag::MEDIA_BITRATE, std::stoi(value));
-    AVTRANS_LOGI("SetParameter MEDIA_BITRATE success, bit rate = %{public}s", value.c_str());
+    int intValue = 0;
+    if (ConvertToInt(value, intValue)) {
+        meta_->SetData(Media::Tag::MEDIA_BITRATE, intValue);
+        AVTRANS_LOGI("SetParameter MEDIA_BITRATE success, bit rate = %{public}s", value.c_str());
+    } else {
+        AVTRANS_LOGI("SetParameter MEDIA_BITRATE failed, value conversion failed.");
+    }
 }
 
 void AVAudioReceiverEngine::SetVideoCodecType(const std::string &value)
@@ -426,7 +459,12 @@ void AVAudioReceiverEngine::SetAudioCodecType(const std::string &value)
         AVTRANS_LOGE("meta_ is nullptr.");
         return;
     }
-    meta_->SetData(Media::Tag::MIME_TYPE, std::stoi(value));
+    int intValue = 0;
+    if (ConvertToInt(value, intValue)) {
+        meta_->SetData(Media::Tag::MIME_TYPE, intValue);
+    } else {
+        AVTRANS_LOGI("SetParameter MIME_TYPE failed, value conversion failed.");
+    }
 }
 
 void AVAudioReceiverEngine::SetAudioChannelMask(const std::string &value)
@@ -435,8 +473,13 @@ void AVAudioReceiverEngine::SetAudioChannelMask(const std::string &value)
         AVTRANS_LOGE("meta_ is nullptr.");
         return;
     }
-    meta_->SetData(Media::Tag::AUDIO_CHANNEL_COUNT, std::stoi(value));
-    AVTRANS_LOGI("SetParameter AUDIO_CHANNELS success, audio channels = %{public}s", value.c_str());
+    int intValue = 0;
+    if (ConvertToInt(value, intValue)) {
+        meta_->SetData(Media::Tag::AUDIO_CHANNEL_COUNT, intValue);
+        AVTRANS_LOGI("SetParameter AUDIO_CHANNELS success, audio channels = %{public}s", value.c_str());
+    } else {
+        AVTRANS_LOGI("SetParameter AUDIO_CHANNEL_COUNT failed, value conversion failed.");
+    }
 }
 
 void AVAudioReceiverEngine::SetAudioSampleRate(const std::string &value)
@@ -445,8 +488,13 @@ void AVAudioReceiverEngine::SetAudioSampleRate(const std::string &value)
         AVTRANS_LOGE("meta_ is nullptr.");
         return;
     }
-    meta_->SetData(Media::Tag::AUDIO_SAMPLE_RATE, std::stoi(value));
-    AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_RATE success, audio sample rate = %{public}s", value.c_str());
+    int intValue = 0;
+    if (ConvertToInt(value, intValue)) {
+        meta_->SetData(Media::Tag::AUDIO_SAMPLE_RATE, intValue);
+        AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_RATE success, audio sample rate = %{public}s", value.c_str());
+    } else {
+        AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_RATE failed, value conversion failed.");
+    }
 }
 
 void AVAudioReceiverEngine::SetAudioChannelLayout(const std::string &value)
@@ -455,8 +503,13 @@ void AVAudioReceiverEngine::SetAudioChannelLayout(const std::string &value)
         AVTRANS_LOGE("avInput_ or avOutput_ is nullptr.");
         return;
     }
-    meta_->SetData(Media::Tag::AUDIO_CHANNEL_LAYOUT, std::stoi(value));
-    AVTRANS_LOGI("SetParameter AUDIO_CHANNEL_LAYOUT success, audio channel layout = %{public}s", value.c_str());
+    int intValue = 0;
+    if (ConvertToInt(value, intValue)) {
+        meta_->SetData(Media::Tag::AUDIO_CHANNEL_LAYOUT, intValue);
+        AVTRANS_LOGI("SetParameter AUDIO_CHANNEL_LAYOUT success, audio channel layout = %{public}s", value.c_str());
+    } else {
+        AVTRANS_LOGI("SetParameter AUDIO_CHANNEL_LAYOUT failed, value conversion failed.");
+    }
 }
 
 void AVAudioReceiverEngine::SetAudioSampleFormat(const std::string &value)
@@ -465,9 +518,14 @@ void AVAudioReceiverEngine::SetAudioSampleFormat(const std::string &value)
         AVTRANS_LOGE("meta_ is nullptr.");
         return;
     }
-    auto sampleFormat = static_cast<MediaAVCodec::AudioSampleFormat>(std::stoi(value));
-    meta_->SetData(Media::Tag::AUDIO_SAMPLE_FORMAT, sampleFormat);
-    AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_FORMAT success, audio sample format = %{public}s", value.c_str());
+    int intValue = 0;
+    if (ConvertToInt(value, intValue)) {
+        auto sampleFormat = static_cast<MediaAVCodec::AudioSampleFormat>(intValue);
+        meta_->SetData(Media::Tag::AUDIO_SAMPLE_FORMAT, sampleFormat);
+        AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_FORMAT success, audio sample format = %{public}s", value.c_str());
+    } else {
+        AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_FORMAT failed, value conversion failed.");
+    }
 }
 
 void AVAudioReceiverEngine::SetAudioFrameSize(const std::string &value)
@@ -476,8 +534,14 @@ void AVAudioReceiverEngine::SetAudioFrameSize(const std::string &value)
         AVTRANS_LOGE("meta_ is nullptr.");
         return;
     }
-    meta_->SetData(Media::Tag::AUDIO_SAMPLE_PER_FRAME, std::stoi(value));
-    AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_PER_FRAME success, audio sample per frame = %{public}s", value.c_str());
+    int intValue = 0;
+    if (ConvertToInt(value, intValue)) {
+        meta_->SetData(Media::Tag::AUDIO_SAMPLE_PER_FRAME, intValue);
+        AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_PER_FRAME success, audio sample per frame = %{public}s",
+            value.c_str());
+    } else {
+        AVTRANS_LOGI("SetParameter AUDIO_SAMPLE_PER_FRAME failed, value conversion failed.");
+    }
 }
 
 void AVAudioReceiverEngine::SetSyncResult(const std::string &value)

@@ -74,6 +74,7 @@ private:
     int32_t InitControlCenter();
     int32_t PreparePipeline(const std::string &configParam);
     int32_t HandleOutputBuffer(std::shared_ptr<Media::AVBuffer> &hisBuffer);
+    bool ConvertToInt(const std::string& str, int& value);
 
     void RegRespFunMap();
     void SetVideoWidth(const std::string &value);
