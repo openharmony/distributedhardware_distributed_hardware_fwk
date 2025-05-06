@@ -78,6 +78,7 @@ private:
     int32_t InitControlCenter();
     int32_t PreparePipeline(const std::string &configParam);
     void NotifyStreamChange(EventType type);
+    bool ConvertToInt(const std::string& str, int& value);
 
     void RegRespFunMap();
     void SetVideoWidth(const std::string &value);

@@ -28,7 +28,7 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace Pipeline {
 Filter::Filter(std::string name, FilterType type, bool isAsyncMode)
-    : name_(std::move(name)), filterType_(type), isAsyncMode_(isAsyncMode)
+    : name_(std::move(name)), filterType_(type), curState_(FilterState::ERROR), isAsyncMode_(isAsyncMode)
 {
 }
 
