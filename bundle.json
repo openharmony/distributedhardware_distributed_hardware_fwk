@@ -59,7 +59,8 @@
         "ffmpeg",
         "zlib",
         "ffrt",
-        "libevdev"
+        "libevdev",
+        "selinux_adapter"
       ]
     },
     "build": {
