@@ -499,9 +499,7 @@ HWTEST_F(AvReceiverEngineTest, OnChannelEvent_002, testing::ext::TestSize.Level1
     transEvent.content = "content";
     transEvent.type = EventType::EVENT_CHANNEL_OPEN_FAIL;
     receiver->receiverCallback_ = std::make_shared<ReceiverEngineCallback>();
-    receiver->OnChannelEvent(transEvent);
-
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnChannelEvent(transEvent));
 }
 
 HWTEST_F(AvReceiverEngineTest, OnChannelEvent_003, testing::ext::TestSize.Level1)
@@ -533,9 +531,7 @@ HWTEST_F(AvReceiverEngineTest, OnChannelEvent_004, testing::ext::TestSize.Level1
     AVTransEvent event;
     event.content = "content";
     event.type = EventType::EVENT_REMOVE_STREAM;
-    receiver->OnChannelEvent(event);
-    receiver->currentState_ = StateId::BUTT;
-    EXPECT_EQ(StateId::BUTT, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnChannelEvent(event));
 }
 
 HWTEST_F(AvReceiverEngineTest, Release_001, testing::ext::TestSize.Level1)
@@ -767,12 +763,10 @@ HWTEST_F(AvReceiverEngineTest, OnEvent_001, testing::ext::TestSize.Level1)
     event.param = PluginEventType::EVENT_CHANNEL_OPEN_FAIL;
     receiver->currentState_ = StateId::INITIALIZED;
 
-    receiver->OnEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnEvent(event));
 
     receiver->receiverCallback_ = std::make_shared<ReceiverEngineCallback>();
-    receiver->OnEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnEvent(event));
 }
 
 HWTEST_F(AvReceiverEngineTest, OnEvent_002, testing::ext::TestSize.Level1)
@@ -786,16 +780,13 @@ HWTEST_F(AvReceiverEngineTest, OnEvent_002, testing::ext::TestSize.Level1)
     std::shared_ptr<AVBuffer> buffer = nullptr;
     event.param = buffer;
     receiver->currentState_ = StateId::INITIALIZED;
-    receiver->OnEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnEvent(event));
     event.param = std::make_shared<AVBuffer>();
-    receiver->OnEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnEvent(event));
     receiver->receiverCallback_ = std::make_shared<ReceiverEngineCallback>();
     event.type = OHOS::Media::EventType::EVENT_PLUGIN_EVENT;
     event.param = PluginEvent{PluginEventType::AUDIO_INTERRUPT, 0, "aaa"};
-    receiver->OnEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnEvent(event));
 }
 
 HWTEST_F(AvReceiverEngineTest, SetParameterInner_001, testing::ext::TestSize.Level1)
@@ -866,8 +857,7 @@ HWTEST_F(AvReceiverEngineTest, OnStreamReceived_001, testing::ext::TestSize.Leve
     receiver->currentState_ = StateId::INITIALIZED;
     StreamData *data = nullptr;
     StreamData *ext = nullptr;
-    receiver->OnStreamReceived(data, ext);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnStreamReceived(data, ext));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

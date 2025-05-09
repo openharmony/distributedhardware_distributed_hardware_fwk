@@ -295,9 +295,7 @@ HWTEST_F(HistreamerAbilityQuerierTest, histreamer_ability_querier_test_013, Test
     EXPECT_TRUE(audioEncoderOut.mime.empty());
     cJSON_Delete(jsonObject);
     cJSON *jsonObject2 = cJSON_CreateObject();
-    if (jsonObject2 == nullptr) {
-        return;
-    }
+    ASSERT_NE(jsonObject2, nullptr);
 
     cJSON_AddStringToObject(jsonObject2, MIME.c_str(), AUDIO_ENCODEROUT_MIME.c_str());
     cJSON_AddNumberToObject(jsonObject2, AD_MPEG_VER.c_str(), AD_MPEG_VER_VALUE);

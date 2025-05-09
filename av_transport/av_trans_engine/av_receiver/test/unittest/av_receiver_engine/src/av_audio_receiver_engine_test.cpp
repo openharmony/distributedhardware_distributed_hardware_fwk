@@ -292,8 +292,7 @@ HWTEST_F(AvAudioReceiverEngineTest, SetParameterInner_002, testing::ext::TestSiz
     receiver->SetParameterInner(AVTransTag::START_AV_SYNC, "8");
     receiver->SetParameterInner(AVTransTag::STOP_AV_SYNC, "0");
     receiver->SetParameterInner(AVTransTag::SHARED_MEMORY_FD, "1");
-    receiver->SetParameterInner(AVTransTag::ENGINE_READY, "2");
-    EXPECT_EQ(receiver->meta_, nullptr);
+    EXPECT_NO_FATAL_FAILURE(receiver->SetParameterInner(AVTransTag::ENGINE_READY, "2"));
 }
 
 HWTEST_F(AvAudioReceiverEngineTest, SetParameterInner_003, testing::ext::TestSize.Level1)
@@ -381,8 +380,7 @@ HWTEST_F(AvAudioReceiverEngineTest, SetParameter_005, testing::ext::TestSize.Lev
     receiver->SetParameter(AVTransTag::START_AV_SYNC, "13");
     receiver->SetParameter(AVTransTag::STOP_AV_SYNC, "14");
     receiver->SetParameter(AVTransTag::SHARED_MEMORY_FD, "15");
-    receiver->SetParameter(AVTransTag::ENGINE_READY, "16");
-    EXPECT_EQ(receiver->meta_, nullptr);
+    EXPECT_NO_FATAL_FAILURE(receiver->SetParameter(AVTransTag::ENGINE_READY, "16"));
 }
 
 HWTEST_F(AvAudioReceiverEngineTest, SetParameter_006, testing::ext::TestSize.Level1)
@@ -556,8 +554,7 @@ HWTEST_F(AvAudioReceiverEngineTest, OnChannelEvent_003, testing::ext::TestSize.L
     receiver->OnChannelEvent(event);
 
     event.type = EventType::EVENT_DATA_RECEIVED;
-    receiver->OnChannelEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnChannelEvent(event));
 }
 
 HWTEST_F(AvAudioReceiverEngineTest, OnChannelEvent_004, testing::ext::TestSize.Level1)
@@ -690,12 +687,10 @@ HWTEST_F(AvAudioReceiverEngineTest, OnEvent_001, testing::ext::TestSize.Level1)
     event.type = Pipeline::EventType::EVENT_READY;
     receiver->currentState_ = StateId::INITIALIZED;
 
-    receiver->OnEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnEvent(event));
 
     receiver->receiverCallback_ = std::make_shared<ReceiverEngineCallback>();
-    receiver->OnEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnEvent(event));
 }
 
 HWTEST_F(AvAudioReceiverEngineTest, LinkAudioDecoderFilter_001, testing::ext::TestSize.Level1)

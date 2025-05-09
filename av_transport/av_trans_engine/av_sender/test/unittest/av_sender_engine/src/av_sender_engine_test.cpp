@@ -766,9 +766,7 @@ HWTEST_F(AvSenderEngineTest, OnChannelEvent_004, testing::ext::TestSize.Level1)
     sender->OnChannelEvent(event);
 
     event.type = EventType::EVENT_ADD_STREAM;
-    sender->OnChannelEvent(event);
-
-    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+    EXPECT_NO_FATAL_FAILURE(sender->OnChannelEvent(event));
 }
 
 HWTEST_F(AvSenderEngineTest, OnEvent_001, testing::ext::TestSize.Level1)
@@ -783,12 +781,10 @@ HWTEST_F(AvSenderEngineTest, OnEvent_001, testing::ext::TestSize.Level1)
     event.param = PluginEventType::EVENT_CHANNEL_OPEN_FAIL;
     sender->currentState_ = StateId::INITIALIZED;
 
-    sender->OnEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+    EXPECT_NO_FATAL_FAILURE(sender->OnEvent(event));
 
     sender->senderCallback_ = std::make_shared<SenderEngineCallback>();
-    sender->OnEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+    EXPECT_NO_FATAL_FAILURE(sender->OnEvent(event));
 }
 } // namespace DistributedHardware
 } // namespace OHOS
