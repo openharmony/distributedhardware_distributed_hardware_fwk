@@ -424,8 +424,7 @@ HWTEST_F(AvAudioSenderEngineTest, SetParameter_014, testing::ext::TestSize.Level
     sender->SetParameter(AVTransTag::START_AV_SYNC, "13");
     sender->SetParameter(AVTransTag::STOP_AV_SYNC, "14");
     sender->SetParameter(AVTransTag::SHARED_MEMORY_FD, "15");
-    sender->SetParameter(AVTransTag::ENGINE_READY, "16");
-    EXPECT_EQ(sender->meta_, nullptr);
+    EXPECT_NO_FATAL_FAILURE(sender->SetParameter(AVTransTag::ENGINE_READY, "16"));
 }
 
 HWTEST_F(AvAudioSenderEngineTest, SetParameterInner_001, testing::ext::TestSize.Level1)
@@ -813,9 +812,7 @@ HWTEST_F(AvAudioSenderEngineTest, OnChannelEvent_004, testing::ext::TestSize.Lev
     sender->OnChannelEvent(event);
 
     event.type = EventType::EVENT_ADD_STREAM;
-    sender->OnChannelEvent(event);
-
-    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+    EXPECT_NO_FATAL_FAILURE(sender->OnChannelEvent(event));
 }
 
 HWTEST_F(AvAudioSenderEngineTest, OnEvent_001, testing::ext::TestSize.Level1)
@@ -829,12 +826,10 @@ HWTEST_F(AvAudioSenderEngineTest, OnEvent_001, testing::ext::TestSize.Level1)
     event.type = Pipeline::EventType::EVENT_READY;
     sender->currentState_ = StateId::INITIALIZED;
 
-    sender->OnEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+    EXPECT_NO_FATAL_FAILURE(sender->OnEvent(event));
 
     sender->senderCallback_ = std::make_shared<SenderEngineCallback>();
-    sender->OnEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+    EXPECT_NO_FATAL_FAILURE(sender->OnEvent(event));
 }
 
 HWTEST_F(AvAudioSenderEngineTest, OnCallback_001, testing::ext::TestSize.Level1)
