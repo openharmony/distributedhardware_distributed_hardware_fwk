@@ -70,11 +70,11 @@ void ToJson(cJSON *jsonObject, const CompVersion &compVer)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    cJSON_AddStringToObject(jsonObject, NAME.c_str(), compVer.name.c_str());
-    cJSON_AddNumberToObject(jsonObject, TYPE.c_str(), (double)compVer.dhType);
-    cJSON_AddStringToObject(jsonObject, HANDLER.c_str(), compVer.handlerVersion.c_str());
-    cJSON_AddStringToObject(jsonObject, SOURCE_VER.c_str(), compVer.sourceVersion.c_str());
-    cJSON_AddStringToObject(jsonObject, SINK_VER.c_str(), compVer.sinkVersion.c_str());
+    cJSON_AddStringToObject(jsonObject, NAME, compVer.name.c_str());
+    cJSON_AddNumberToObject(jsonObject, TYPE, (double)compVer.dhType);
+    cJSON_AddStringToObject(jsonObject, HANDLER, compVer.handlerVersion.c_str());
+    cJSON_AddStringToObject(jsonObject, SOURCE_VER, compVer.sourceVersion.c_str());
+    cJSON_AddStringToObject(jsonObject, SINK_VER, compVer.sinkVersion.c_str());
     if (compVer.haveFeature) {
         cJSON *sourceFeatureFilters = cJSON_CreateArray();
         if (sourceFeatureFilters == NULL) {
@@ -90,11 +90,11 @@ void ToJson(cJSON *jsonObject, const CompVersion &compVer)
         for (const auto &filter : compVer.sourceFeatureFilters) {
             cJSON_AddItemToArray(sourceFeatureFilters, cJSON_CreateString(filter.c_str()));
         }
-        cJSON_AddItemToObject(jsonObject, SOURCE_FEATURE_FILTER.c_str(), sourceFeatureFilters);
+        cJSON_AddItemToObject(jsonObject, SOURCE_FEATURE_FILTER, sourceFeatureFilters);
         for (const auto &feature : compVer.sinkSupportedFeatures) {
             cJSON_AddItemToArray(sinkSupportedFeatures, cJSON_CreateString(feature.c_str()));
         }
-        cJSON_AddItemToObject(jsonObject, SINK_SUPPORTED_FEATURE.c_str(), sinkSupportedFeatures);
+        cJSON_AddItemToObject(jsonObject, SINK_SUPPORTED_FEATURE, sinkSupportedFeatures);
     }
 }
 
@@ -104,8 +104,8 @@ void ToJson(cJSON *jsonObject, const VersionInfo &versionInfo)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    cJSON_AddStringToObject(jsonObject, DEV_ID.c_str(), versionInfo.deviceId.c_str());
-    cJSON_AddStringToObject(jsonObject, DH_VER.c_str(), versionInfo.dhVersion.c_str());
+    cJSON_AddStringToObject(jsonObject, DEV_ID, versionInfo.deviceId.c_str());
+    cJSON_AddStringToObject(jsonObject, DH_VER, versionInfo.dhVersion.c_str());
 
     cJSON *compVers = cJSON_CreateArray();
     if (compVers == NULL) {
@@ -122,7 +122,7 @@ void ToJson(cJSON *jsonObject, const VersionInfo &versionInfo)
         ToJson(compVer, compVersion.second);
         cJSON_AddItemToArray(compVers, compVer);
     }
-    cJSON_AddItemToObject(jsonObject, COMP_VER.c_str(), compVers);
+    cJSON_AddItemToObject(jsonObject, COMP_VER, compVers);
 }
 
 void FromJson(const cJSON *jsonObject, CompVersion &compVer)
@@ -131,28 +131,28 @@ void FromJson(const cJSON *jsonObject, CompVersion &compVer)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    cJSON *nameJson = cJSON_GetObjectItem(jsonObject, NAME.c_str());
+    cJSON *nameJson = cJSON_GetObjectItem(jsonObject, NAME);
     if (IsString(nameJson)) {
         compVer.name = nameJson->valuestring;
     }
-    cJSON *typeJson = cJSON_GetObjectItem(jsonObject, TYPE.c_str());
+    cJSON *typeJson = cJSON_GetObjectItem(jsonObject, TYPE);
     if (IsUInt32(typeJson) && (DHType)typeJson->valueint <= DHType::MAX_DH) {
         compVer.dhType = (DHType)typeJson->valueint;
     }
-    cJSON *handlerJson = cJSON_GetObjectItem(jsonObject, HANDLER.c_str());
+    cJSON *handlerJson = cJSON_GetObjectItem(jsonObject, HANDLER);
     if (IsString(handlerJson)) {
         compVer.handlerVersion = handlerJson->valuestring;
     }
-    cJSON *sourceVerJson = cJSON_GetObjectItem(jsonObject, SOURCE_VER.c_str());
+    cJSON *sourceVerJson = cJSON_GetObjectItem(jsonObject, SOURCE_VER);
     if (IsString(sourceVerJson)) {
         compVer.sourceVersion = sourceVerJson->valuestring;
     }
-    cJSON *sinkVerJson = cJSON_GetObjectItem(jsonObject, SINK_VER.c_str());
+    cJSON *sinkVerJson = cJSON_GetObjectItem(jsonObject, SINK_VER);
     if (IsString(sinkVerJson)) {
         compVer.sinkVersion = sinkVerJson->valuestring;
     }
-    cJSON *sourceFeatureFilters = cJSON_GetObjectItem(jsonObject, SOURCE_FEATURE_FILTER.c_str());
-    cJSON *sinkSupportedFeatures = cJSON_GetObjectItem(jsonObject, SINK_SUPPORTED_FEATURE.c_str());
+    cJSON *sourceFeatureFilters = cJSON_GetObjectItem(jsonObject, SOURCE_FEATURE_FILTER);
+    cJSON *sinkSupportedFeatures = cJSON_GetObjectItem(jsonObject, SINK_SUPPORTED_FEATURE);
     if (sourceFeatureFilters || sinkSupportedFeatures) {
         compVer.haveFeature = true;
         if (sourceFeatureFilters) {
@@ -180,17 +180,17 @@ void FromJson(const cJSON *jsonObject, VersionInfo &versionInfo)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    cJSON *devIdJson = cJSON_GetObjectItem(jsonObject, DEV_ID.c_str());
+    cJSON *devIdJson = cJSON_GetObjectItem(jsonObject, DEV_ID);
     if (IsString(devIdJson)) {
         versionInfo.deviceId = devIdJson->valuestring;
     }
 
-    cJSON *dhVerJson = cJSON_GetObjectItem(jsonObject, DH_VER.c_str());
+    cJSON *dhVerJson = cJSON_GetObjectItem(jsonObject, DH_VER);
     if (IsString(dhVerJson)) {
         versionInfo.dhVersion = dhVerJson->valuestring;
     }
 
-    const cJSON *compVer = cJSON_GetObjectItem(jsonObject, COMP_VER.c_str());
+    const cJSON *compVer = cJSON_GetObjectItem(jsonObject, COMP_VER);
     if (compVer != NULL) {
         cJSON *compVerObj = nullptr;
         cJSON_ArrayForEach(compVerObj, compVer) {

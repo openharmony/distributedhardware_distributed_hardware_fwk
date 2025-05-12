@@ -24,7 +24,6 @@ ohos_fuzztest("UtilsFuzzTest") {
 
   include_dirs = [
     "${utils_path}/include",
-    "${utils_path}/include/log",
     "${common_path}/utils/include",
   ]
   cflags = [

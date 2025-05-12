@@ -95,11 +95,11 @@ HWTEST_F(VersionInfoTest, FromJson_CompVersion_002, TestSize.Level1)
     const uint32_t dhType = 1;
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, NAME.c_str(), "name_test");
-    cJSON_AddNumberToObject(jsonObj, TYPE.c_str(), dhType);
-    cJSON_AddStringToObject(jsonObj, HANDLER.c_str(), "handler_ver_1.0");
-    cJSON_AddStringToObject(jsonObj, SOURCE_VER.c_str(), "source_ver_1.0");
-    cJSON_AddStringToObject(jsonObj, SINK_VER.c_str(), "sink_ver_1.0");
+    cJSON_AddStringToObject(jsonObj, NAME, "name_test");
+    cJSON_AddNumberToObject(jsonObj, TYPE, dhType);
+    cJSON_AddStringToObject(jsonObj, HANDLER, "handler_ver_1.0");
+    cJSON_AddStringToObject(jsonObj, SOURCE_VER, "source_ver_1.0");
+    cJSON_AddStringToObject(jsonObj, SINK_VER, "sink_ver_1.0");
     CompVersion compVer;
     FromJson(jsonObj, compVer);
     cJSON_Delete(jsonObj);
@@ -110,11 +110,11 @@ HWTEST_F(VersionInfoTest, FromJson_CompVersion_003, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddNumberToObject(jsonObj, NAME.c_str(), 1);
-    cJSON_AddStringToObject(jsonObj, TYPE.c_str(), "dhType_audio");
-    cJSON_AddNumberToObject(jsonObj, HANDLER.c_str(), 1);
-    cJSON_AddNumberToObject(jsonObj, SOURCE_VER.c_str(), 1);
-    cJSON_AddNumberToObject(jsonObj, SINK_VER.c_str(), 1);
+    cJSON_AddNumberToObject(jsonObj, NAME, 1);
+    cJSON_AddStringToObject(jsonObj, TYPE, "dhType_audio");
+    cJSON_AddNumberToObject(jsonObj, HANDLER, 1);
+    cJSON_AddNumberToObject(jsonObj, SOURCE_VER, 1);
+    cJSON_AddNumberToObject(jsonObj, SINK_VER, 1);
     CompVersion compVer;
     FromJson(jsonObj, compVer);
     cJSON_Delete(jsonObj);
@@ -133,8 +133,8 @@ HWTEST_F(VersionInfoTest, FromJson_VersionInfo_002, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "devid_123");
-    cJSON_AddStringToObject(jsonObj, DH_VER.c_str(), "dhver_1.0");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "devid_123");
+    cJSON_AddStringToObject(jsonObj, DH_VER, "dhver_1.0");
 
     cJSON * jsonArr = cJSON_CreateArray();
     if (jsonArr == nullptr) {
@@ -142,7 +142,7 @@ HWTEST_F(VersionInfoTest, FromJson_VersionInfo_002, TestSize.Level1)
         return;
     }
     cJSON_AddItemToArray(jsonArr, cJSON_CreateString("com_ver_test"));
-    cJSON_AddItemToObject(jsonObj, COMP_VER.c_str(), jsonArr);
+    cJSON_AddItemToObject(jsonObj, COMP_VER, jsonArr);
     VersionInfo verInfo;
     FromJson(jsonObj, verInfo);
     cJSON_Delete(jsonObj);
@@ -153,8 +153,8 @@ HWTEST_F(VersionInfoTest, FromJson_VersionInfo_003, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddNumberToObject(jsonObj, DEV_ID.c_str(), 1);
-    cJSON_AddNumberToObject(jsonObj, DH_VER.c_str(), 1);
+    cJSON_AddNumberToObject(jsonObj, DEV_ID, 1);
+    cJSON_AddNumberToObject(jsonObj, DH_VER, 1);
     VersionInfo verInfo;
     FromJson(jsonObj, verInfo);
     cJSON_Delete(jsonObj);

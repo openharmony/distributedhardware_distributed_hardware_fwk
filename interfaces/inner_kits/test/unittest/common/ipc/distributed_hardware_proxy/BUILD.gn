@@ -23,7 +23,6 @@ config("module_private_config") {
     "${av_trans_path}/common/include",
     "include",
     "${utils_path}/include",
-    "${utils_path}/include/log",
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "${innerkits_path}/include",

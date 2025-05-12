@@ -62,7 +62,7 @@ HWTEST_F(CapabilityInfoTest, FromJson_002, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddNumberToObject(jsonObj, DH_ID.c_str(), 1);
+    cJSON_AddNumberToObject(jsonObj, DH_ID, 1);
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -80,8 +80,8 @@ HWTEST_F(CapabilityInfoTest, FromJson_003, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "dhid_test");
-    cJSON_AddNumberToObject(jsonObj, DEV_ID.c_str(), 1);
+    cJSON_AddStringToObject(jsonObj, DH_ID, "dhid_test");
+    cJSON_AddNumberToObject(jsonObj, DEV_ID, 1);
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -99,9 +99,9 @@ HWTEST_F(CapabilityInfoTest, FromJson_004, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "dhid_test");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "devid_test");
-    cJSON_AddNumberToObject(jsonObj, DEV_NAME.c_str(), 1);
+    cJSON_AddStringToObject(jsonObj, DH_ID, "dhid_test");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "devid_test");
+    cJSON_AddNumberToObject(jsonObj, DEV_NAME, 1);
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -119,10 +119,10 @@ HWTEST_F(CapabilityInfoTest, FromJson_005, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "dhid_test");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "devid_test");
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), "devname_test");
-    cJSON_AddStringToObject(jsonObj, DEV_TYPE.c_str(), "devtype_test");
+    cJSON_AddStringToObject(jsonObj, DH_ID, "dhid_test");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "devid_test");
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, "devname_test");
+    cJSON_AddStringToObject(jsonObj, DEV_TYPE, "devtype_test");
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -141,11 +141,11 @@ HWTEST_F(CapabilityInfoTest, FromJson_006, TestSize.Level1)
     const uint16_t devType = 1;
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "dhid_test");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "devid_test");
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), "devname_test");
-    cJSON_AddNumberToObject(jsonObj, DEV_TYPE.c_str(), devType);
-    cJSON_AddStringToObject(jsonObj, DH_TYPE.c_str(), "dhtype_test");
+    cJSON_AddStringToObject(jsonObj, DH_ID, "dhid_test");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "devid_test");
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, "devname_test");
+    cJSON_AddNumberToObject(jsonObj, DEV_TYPE, devType);
+    cJSON_AddStringToObject(jsonObj, DH_TYPE, "dhtype_test");
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -165,12 +165,12 @@ HWTEST_F(CapabilityInfoTest, FromJson_007, TestSize.Level1)
     const uint32_t dhType = 1;
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "dhid_test");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "devid_test");
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), "devname_test");
-    cJSON_AddNumberToObject(jsonObj, DEV_TYPE.c_str(), devType);
-    cJSON_AddNumberToObject(jsonObj, DH_TYPE.c_str(), dhType);
-    cJSON_AddNumberToObject(jsonObj, DH_ATTRS.c_str(), 1);
+    cJSON_AddStringToObject(jsonObj, DH_ID, "dhid_test");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "devid_test");
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, "devname_test");
+    cJSON_AddNumberToObject(jsonObj, DEV_TYPE, devType);
+    cJSON_AddNumberToObject(jsonObj, DH_TYPE, dhType);
+    cJSON_AddNumberToObject(jsonObj, DH_ATTRS, 1);
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -190,13 +190,13 @@ HWTEST_F(CapabilityInfoTest, FromJson_008, TestSize.Level1)
     const uint32_t dhType = 1;
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "dhid_test");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "devid_test");
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), "devname_test");
-    cJSON_AddNumberToObject(jsonObj, DEV_TYPE.c_str(), devType);
-    cJSON_AddNumberToObject(jsonObj, DH_TYPE.c_str(), dhType);
-    cJSON_AddStringToObject(jsonObj, DH_ATTRS.c_str(), "dhattrs_test");
-    cJSON_AddNumberToObject(jsonObj, DH_SUBTYPE.c_str(), 1);
+    cJSON_AddStringToObject(jsonObj, DH_ID, "dhid_test");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "devid_test");
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, "devname_test");
+    cJSON_AddNumberToObject(jsonObj, DEV_TYPE, devType);
+    cJSON_AddNumberToObject(jsonObj, DH_TYPE, dhType);
+    cJSON_AddStringToObject(jsonObj, DH_ATTRS, "dhattrs_test");
+    cJSON_AddNumberToObject(jsonObj, DH_SUBTYPE, 1);
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -216,13 +216,13 @@ HWTEST_F(CapabilityInfoTest, FromJson_009, TestSize.Level1)
     const uint32_t dhType = 1;
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "dhid_test");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "devid_test");
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), "devname_test");
-    cJSON_AddNumberToObject(jsonObj, DEV_TYPE.c_str(), devType);
-    cJSON_AddNumberToObject(jsonObj, DH_TYPE.c_str(), dhType);
-    cJSON_AddStringToObject(jsonObj, DH_ATTRS.c_str(), "dhattrs_test");
-    cJSON_AddStringToObject(jsonObj, DH_SUBTYPE.c_str(), "dhsubtype_test");
+    cJSON_AddStringToObject(jsonObj, DH_ID, "dhid_test");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "devid_test");
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, "devname_test");
+    cJSON_AddNumberToObject(jsonObj, DEV_TYPE, devType);
+    cJSON_AddNumberToObject(jsonObj, DH_TYPE, dhType);
+    cJSON_AddStringToObject(jsonObj, DH_ATTRS, "dhattrs_test");
+    cJSON_AddStringToObject(jsonObj, DH_SUBTYPE, "dhsubtype_test");
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);

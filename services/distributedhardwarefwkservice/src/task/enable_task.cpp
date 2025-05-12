@@ -22,7 +22,6 @@
 #include "anonymous_string.h"
 #include "capability_utils.h"
 #include "component_manager.h"
-#include "constants.h"
 #include "dh_utils_hitrace.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
@@ -31,6 +30,10 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    constexpr const char *ENABLE_TASK_INNER = "EnableTask";
+}
+
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "EnableTask"
 

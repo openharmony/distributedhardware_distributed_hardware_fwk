@@ -108,140 +108,6 @@ std::vector<DHType> ComponentLoader::GetAllCompTypes()
     return DHTypeALL;
 }
 
-int32_t ParseComponent(const cJSON *json, CompConfig &cfg)
-{
-    cJSON *nameJson = cJSON_GetObjectItem(json, COMP_NAME.c_str());
-    if (!IsString(nameJson)) {
-        DHLOGE("COMP_NAME is invalid!");
-        return ERR_DH_FWK_JSON_PARSE_FAILED;
-    }
-    cfg.name = nameJson->valuestring;
-
-    cJSON *typeJson = cJSON_GetObjectItem(json, COMP_TYPE.c_str());
-    if (!IsString(typeJson)) {
-        DHLOGE("COMP_TYPE is invalid!");
-        return ERR_DH_FWK_JSON_PARSE_FAILED;
-    }
-    cfg.type = g_mapDhTypeName[typeJson->valuestring];
-
-    cJSON *handlerLocJson = cJSON_GetObjectItem(json, COMP_HANDLER_LOC.c_str());
-    if (!IsString(handlerLocJson)) {
-        DHLOGE("COMP_HANDLER_LOC is invalid!");
-        return ERR_DH_FWK_JSON_PARSE_FAILED;
-    }
-    cfg.compHandlerLoc = handlerLocJson->valuestring;
-
-    cJSON *handlerVerJson = cJSON_GetObjectItem(json, COMP_HANDLER_VERSION.c_str());
-    if (!IsString(handlerVerJson)) {
-        DHLOGE("COMP_HANDLER_VERSION is invalid!");
-        return ERR_DH_FWK_JSON_PARSE_FAILED;
-    }
-    cfg.compHandlerVersion = handlerVerJson->valuestring;
-    return DH_FWK_SUCCESS;
-}
-
-int32_t ParseSource(const cJSON *json, CompConfig &cfg)
-{
-    cJSON *sourceLocJson = cJSON_GetObjectItem(json, COMP_SOURCE_LOC.c_str());
-    if (!IsString(sourceLocJson)) {
-        DHLOGE("COMP_SOURCE_LOC is invalid!");
-        return ERR_DH_FWK_JSON_PARSE_FAILED;
-    }
-    cfg.compSourceLoc = sourceLocJson->valuestring;
-
-    cJSON *sourceVerJson = cJSON_GetObjectItem(json, COMP_SOURCE_VERSION.c_str());
-    if (!IsString(sourceVerJson)) {
-        DHLOGE("COMP_SOURCE_VERSION is invalid!");
-        return ERR_DH_FWK_JSON_PARSE_FAILED;
-    }
-    cfg.compSourceVersion = sourceVerJson->valuestring;
-
-    cJSON *sourceSaIdJson = cJSON_GetObjectItem(json, COMP_SOURCE_SA_ID.c_str());
-    if (!IsInt32(sourceSaIdJson)) {
-        DHLOGE("COMP_SOURCE_SA_ID is invalid!");
-        return ERR_DH_FWK_JSON_PARSE_FAILED;
-    }
-    cfg.compSourceSaId = static_cast<int32_t>(sourceSaIdJson->valueint);
-    return DH_FWK_SUCCESS;
-}
-
-int32_t ParseSink(const cJSON *json, CompConfig &cfg)
-{
-    cJSON *sinkLocJson = cJSON_GetObjectItem(json, COMP_SINK_LOC.c_str());
-    if (!IsString(sinkLocJson)) {
-        DHLOGE("COMP_SINK_LOC is invalid!");
-        return ERR_DH_FWK_JSON_PARSE_FAILED;
-    }
-    cfg.compSinkLoc = sinkLocJson->valuestring;
-
-    cJSON *sinkVerJson = cJSON_GetObjectItem(json, COMP_SINK_VERSION.c_str());
-    if (!IsString(sinkVerJson)) {
-        DHLOGE("COMP_SINK_VERSION is invalid!");
-        return ERR_DH_FWK_JSON_PARSE_FAILED;
-    }
-    cfg.compSinkVersion = sinkVerJson->valuestring;
-
-    cJSON *sinkSaIdJson = cJSON_GetObjectItem(json, COMP_SINK_SA_ID.c_str());
-    if (!IsInt32(sinkSaIdJson)) {
-        DHLOGE("COMP_SINK_SA_ID is invalid!");
-        return ERR_DH_FWK_JSON_PARSE_FAILED;
-    }
-    cfg.compSinkSaId = static_cast<int32_t>(sinkSaIdJson->valueint);
-    return DH_FWK_SUCCESS;
-}
-
-int32_t ParseResourceDesc(const cJSON *json, CompConfig &cfg)
-{
-    cJSON *resouceDescJson = cJSON_GetObjectItem(json, COMP_RESOURCE_DESC.c_str());
-    if (!IsArray(resouceDescJson)) {
-        DHLOGE("COMP_RESOURCE_DESC is invalid!");
-        return ERR_DH_FWK_JSON_PARSE_FAILED;
-    }
-    cJSON *element = nullptr;
-    cJSON_ArrayForEach(element, resouceDescJson) {
-        ResourceDesc desc;
-        cJSON *subtypeJson = cJSON_GetObjectItem(element, COMP_SUBTYPE.c_str());
-        if (!IsString(subtypeJson)) {
-            DHLOGE("COMP_SUBTYPE is invalid!");
-            return ERR_DH_FWK_JSON_PARSE_FAILED;
-        }
-        desc.subtype = subtypeJson->valuestring;
-
-        cJSON *sensitive = cJSON_GetObjectItem(element, COMP_SENSITIVE.c_str());
-        if (!IsBool(sensitive)) {
-            DHLOGE("COMP_SENSITIVE is invalid!");
-            return ERR_DH_FWK_JSON_PARSE_FAILED;
-        }
-        if (cJSON_IsTrue(sensitive)) {
-            desc.sensitiveValue = true;
-        } else {
-            desc.sensitiveValue = false;
-        }
-        cfg.compResourceDesc.push_back(desc);
-    }
-    return DH_FWK_SUCCESS;
-}
-
-void from_json(const cJSON *json, CompConfig &cfg)
-{
-    if (ParseComponent(json, cfg) != DH_FWK_SUCCESS) {
-        DHLOGE("ParseComponent is failed");
-        return;
-    }
-    if (ParseSource(json, cfg) != DH_FWK_SUCCESS) {
-        DHLOGE("ParseSource is failed");
-        return;
-    }
-    if (ParseSink(json, cfg) != DH_FWK_SUCCESS) {
-        DHLOGE("ParseSink is failed");
-        return;
-    }
-    if (ParseResourceDesc(json, cfg) != DH_FWK_SUCCESS) {
-        DHLOGE("ParseResourceDesc is failed");
-        return;
-    }
-}
-
 CompVersion ComponentLoader::GetCompVersionFromComConfig(const CompConfig& cCfg)
 {
     CompVersion compVersions;
@@ -404,8 +270,8 @@ void ComponentLoader::ParseSinkSupportedFeaturesFromJson(cJSON *sinkSupportedFea
 
 void ComponentLoader::CheckAndParseFeatures(cJSON *component, CompConfig &config)
 {
-    cJSON *sourceFeatureFilters = cJSON_GetObjectItem(component, SOURCE_FEATURE_FILTER.c_str());
-    cJSON *sinkSupportedFeatures = cJSON_GetObjectItem(component, SINK_SUPPORTED_FEATURE.c_str());
+    cJSON *sourceFeatureFilters = cJSON_GetObjectItem(component, SOURCE_FEATURE_FILTER);
+    cJSON *sinkSupportedFeatures = cJSON_GetObjectItem(component, SINK_SUPPORTED_FEATURE);
     if (sourceFeatureFilters || sinkSupportedFeatures) {
         config.haveFeature = true;
         if (IsArray(sourceFeatureFilters)) {

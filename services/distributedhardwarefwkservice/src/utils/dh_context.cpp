@@ -29,6 +29,11 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    constexpr const char *ISOMERISM_EVENT_KEY = "isomerism_event";
+    const std::string ISOMERISM_EVENT_CONNECT_VAL = "isomerism_connect";
+    const std::string ISOMERISM_EVENT_DISCONNECT_VAL = "isomerism_disconnect";
+}
 IMPLEMENT_SINGLE_INSTANCE(DHContext);
 DHContext::DHContext()
 {
@@ -324,13 +329,13 @@ void DHContext::DHFWKIsomerismListener::OnMessage(const DHTopic topic, const std
         DHLOGE("OnMessage error, parse failed");
         return;
     }
-    cJSON *eventObj = cJSON_GetObjectItemCaseSensitive(messageJson, ISOMERISM_EVENT_KEY.c_str());
+    cJSON *eventObj = cJSON_GetObjectItemCaseSensitive(messageJson, ISOMERISM_EVENT_KEY);
     if (!IsString(eventObj)) {
         cJSON_Delete(messageJson);
         DHLOGE("OnMessage event invaild");
         return;
     }
-    cJSON *devObj = cJSON_GetObjectItemCaseSensitive(messageJson, DEV_ID.c_str());
+    cJSON *devObj = cJSON_GetObjectItemCaseSensitive(messageJson, DEV_ID);
     if (!IsString(devObj)) {
         cJSON_Delete(messageJson);
         DHLOGE("OnMessage deviceId invaild");

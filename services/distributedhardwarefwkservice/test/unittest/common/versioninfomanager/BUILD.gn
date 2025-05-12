@@ -22,8 +22,6 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "${utils_path}/include",
-    "${utils_path}/include/log",
-    "${utils_path}/include/eventbus",
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${services_path}/distributedhardwarefwkservice/include/utils",

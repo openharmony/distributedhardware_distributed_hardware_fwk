@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,6 @@
 
 #include "ffrt.h"
 
-#include "constants.h"
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -29,6 +28,7 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     const uint32_t MAX_TASK_QUEUE_LENGTH = 256;
+    constexpr const char *TRIGGER_TASK = "TriggerTask";
 }
 IMPLEMENT_SINGLE_INSTANCE(TaskExecutor);
 TaskExecutor::TaskExecutor() : taskThreadFlag_(true)

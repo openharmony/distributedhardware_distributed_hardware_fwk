@@ -25,8 +25,6 @@ ohos_fuzztest("ComponentLoaderFuzzTest") {
   include_dirs = [
     "include",
     "${utils_path}/include",
-    "${utils_path}/include/eventbus",
-    "${utils_path}/include/log",
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/versionmanager",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",

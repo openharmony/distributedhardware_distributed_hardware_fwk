@@ -23,8 +23,6 @@ ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
 
   include_dirs = [
     "${utils_path}/include",
-    "${utils_path}/include/eventbus",
-    "${utils_path}/include/log",
     "${common_path}/log/include",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",

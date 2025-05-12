@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,11 +15,14 @@
 
 #include "task.h"
 
-#include "constants.h"
 #include "dh_utils_tool.h"
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    const std::string DH_TASK_NAME_PREFIX = "Task_";
+}
+
 Task::Task(const std::string &networkId, const std::string &uuid, const std::string &udid, const std::string &dhId,
     const DHType dhType) : id_(DH_TASK_NAME_PREFIX + GetRandomID()), networkId_(networkId), uuid_(uuid), udid_(udid),
     dhId_(dhId), dhType_(dhType)

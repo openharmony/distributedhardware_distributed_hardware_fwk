@@ -22,7 +22,6 @@
 #include "anonymous_string.h"
 #include "capability_utils.h"
 #include "component_manager.h"
-#include "constants.h"
 #include "dh_context.h"
 #include "dh_utils_hitrace.h"
 #include "dh_utils_tool.h"
@@ -33,6 +32,10 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    constexpr const char *DISABLE_TASK_INNER = "DisableTask";
+}
+
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DisableTask"
 

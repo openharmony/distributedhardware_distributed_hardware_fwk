@@ -20,14 +20,12 @@ module_out_path = unittest_output_path
 config("module_private_config") {
   include_dirs = [
     "${utils_path}/include",
-    "${utils_path}/include/log",
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${services_path}/distributedhardwarefwkservice/include/accessmanager",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
-    "${utils_path}/include/eventbus",
   ]
 }
 

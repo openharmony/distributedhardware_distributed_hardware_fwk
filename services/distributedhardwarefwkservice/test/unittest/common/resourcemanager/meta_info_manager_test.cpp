@@ -175,26 +175,6 @@ HWTEST_F(MetaInfoMgrTest, GetDataByKeyPrefix_002, TestSize.Level1)
     MetaInfoManager::GetInstance()->UnInit();
 }
 
-HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoByKey_001, TestSize.Level1)
-{
-    std::string key = "";
-    auto ret = MetaInfoManager::GetInstance()->RemoveMetaInfoByKey(key);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
-
-    key = "key_test";
-    ret = MetaInfoManager::GetInstance()->RemoveMetaInfoByKey(key);
-    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
-}
-
-HWTEST_F(MetaInfoMgrTest, RemoveMetaInfoByKey_002, TestSize.Level1)
-{
-    std::string key = "key_test";
-    MetaInfoManager::GetInstance()->Init();
-    auto ret = MetaInfoManager::GetInstance()->RemoveMetaInfoByKey(key);
-    EXPECT_EQ(DH_FWK_SUCCESS, ret);
-    MetaInfoManager::GetInstance()->UnInit();
-}
-
 HWTEST_F(MetaInfoMgrTest, GetMetaCapInfo_001, TestSize.Level1)
 {
     std::string udidHash = "";
@@ -426,8 +406,8 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_001, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
+    cJSON_AddStringToObject(jsonObj, DH_ID, "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "222222");
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -456,8 +436,8 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_002, TestSize.Level1)
     DHContext::GetInstance().devIdEntrySet_.insert(idEntry);
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_ID, "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, deviceId.c_str());
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -481,8 +461,8 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityAddChange_003, TestSize.Level1)
     std::string deviceId = Sha256(uuid);
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_ID, "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, deviceId.c_str());
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -505,8 +485,8 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_001, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
+    cJSON_AddStringToObject(jsonObj, DH_ID, "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "222222");
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -534,8 +514,8 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_002, TestSize.Level1)
     };
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_ID, "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, deviceId.c_str());
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -559,8 +539,8 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityUpdateChange_003, TestSize.Level1)
     std::string deviceId = Sha256(uuid);
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_ID, "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, deviceId.c_str());
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -589,8 +569,8 @@ HWTEST_F(MetaInfoMgrTest, HandleMetaCapabilityDeleteChange_001, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
+    cJSON_AddStringToObject(jsonObj, DH_ID, "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "222222");
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);

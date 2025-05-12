@@ -254,26 +254,6 @@ int32_t MetaInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, MetaCa
     return DH_FWK_SUCCESS;
 }
 
-int32_t MetaInfoManager::RemoveMetaInfoByKey(const std::string &key)
-{
-    if (!IsKeySizeValid(key)) {
-        return ERR_DH_FWK_PARA_INVALID;
-    }
-    DHLOGI("Remove device metaInfo, key: %{public}s", GetAnonyString(key).c_str());
-    std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
-    if (dbAdapterPtr_ == nullptr) {
-        DHLOGE("dbAdapterPtr_ is null");
-        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
-    }
-
-    globalMetaInfoMap_.erase(key);
-    if (dbAdapterPtr_->RemoveDataByKey(key) != DH_FWK_SUCCESS) {
-        DHLOGE("Remove device metaData failed, key: %{public}s", GetAnonyString(key).c_str());
-        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
-    }
-    return DH_FWK_SUCCESS;
-}
-
 int32_t MetaInfoManager::GetMetaCapInfo(const std::string &udidHash,
     const std::string &dhId, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
 {

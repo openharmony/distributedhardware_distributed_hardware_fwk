@@ -16,8 +16,6 @@
 #include "task_board.h"
 
 #include "anonymous_string.h"
-#include "dh_context.h"
-#include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 
