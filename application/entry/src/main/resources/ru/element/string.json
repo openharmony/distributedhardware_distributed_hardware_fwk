@@ -1,0 +1,88 @@
+{
+    "string":[
+        {
+            "name":"DHTypeName_Camera",
+            "value":"камера",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"pause",
+            "value":"Приостановить",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_desc_text",
+            "value":"Начните просмотр или редактирование контента на одном устройстве и продолжите действие на другом устройстве под тем же аккаунтом HUAWEI. Когда передача задач доступна, в меню приложений появляется значок. %s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"connected_to",
+            "value":"Подключено к %1$s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"learn_more",
+            "value":"Подробнее",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue",
+            "value":"Возобновить",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"disconnect",
+            "value":"Отключить",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"update_version_prompt",
+            "value":"Оба устройства должны работать под управлением HarmonyOS NEXT",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stop_device",
+            "value":"Вы можете отключиться от этого устройства, чтобы прекратить использование его компонента (%1$s).",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"микрофон",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_title",
+            "value":"Передача задачи",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_privacy_text",
+            "value":"Эта служба использует Bluetooth и WLAN. Ей также требуется отправлять имя этого устройства устройствам, на которые вы передаете задачу. Включая эту опцию, вы принимаете эти положения.",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}
