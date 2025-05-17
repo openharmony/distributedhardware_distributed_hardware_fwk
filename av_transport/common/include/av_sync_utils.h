@@ -24,6 +24,9 @@ namespace DistributedHardware {
 constexpr uint8_t INVALID_VALUE_FALG = 0;
 constexpr uint32_t MAX_CLOCK_UNIT_COUNT = 50;
 constexpr uint32_t DEFAULT_INVALID_FRAME_NUM = 0;
+constexpr size_t NUM_ZERO = 0;
+constexpr size_t NUM_FOUR = 4;
+constexpr size_t NUM_EIGHT = 8;
 
 struct AVTransSharedMemory {
     int32_t fd;
@@ -97,10 +100,10 @@ bool IsInValidClockUnit(const AVSyncClockUnit &clockUnit);
 std::string MarshalSharedMemory(const AVTransSharedMemory &memory);
 AVTransSharedMemory UnmarshalSharedMemory(const std::string &jsonStr);
 
-uint32_t U8ToU32(const uint8_t *ptr);
-uint64_t U8ToU64(const uint8_t *ptr);
-void U32ToU8(uint8_t *ptr, uint32_t value);
-void U64ToU8(uint8_t *ptr, uint64_t value);
+uint32_t U8ToU32(const uint8_t *arrayPtr, size_t arraySize);
+uint64_t U8ToU64(const uint8_t *arrayPtr, size_t arraySize);
+void U32ToU8(uint8_t *arrayPtr, uint32_t value, size_t arraySize);
+void U64ToU8(uint8_t *arrayPtr, uint64_t value, size_t arraySize);
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_AV_TRANSPORT_SHARED_MEMORY_H

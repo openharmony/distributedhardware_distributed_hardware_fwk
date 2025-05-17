@@ -46,8 +46,8 @@ public:
     uint8_t *GetAddress() const;
     size_t Write(const uint8_t* in, size_t writeSize, size_t position = INVALID_POSITION);
     size_t Read(uint8_t* out, size_t readSize, size_t position = INVALID_POSITION);
-    void Reset();
-    void SetSize(size_t size);
+    void ResetPosition();
+    void SetPosition(size_t pos);
 
 private:
     size_t capacity_;

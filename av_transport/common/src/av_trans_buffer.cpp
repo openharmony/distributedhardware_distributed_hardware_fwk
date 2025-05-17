@@ -47,7 +47,7 @@ std::shared_ptr<BufferData> AVTransBuffer::WrapBufferData(const uint8_t* data, s
     }
     auto bufData = std::make_shared<BufferData>(capacity,
         std::shared_ptr<uint8_t>(const_cast<uint8_t *>(data), [](void* ptr) {}));
-    bufData->SetSize(size);
+    bufData->SetPosition(size);
     data_.push_back(bufData);
     return bufData;
 }
@@ -83,7 +83,7 @@ bool AVTransBuffer::IsEmpty()
 void AVTransBuffer::Reset()
 {
     if (data_[0]) {
-        data_[0]->Reset();
+        data_[0]->ResetPosition();
     }
     if (meta_ != nullptr) {
         MetaType type = meta_->GetMetaType();
@@ -153,14 +153,14 @@ size_t BufferData::Read(uint8_t* out, size_t readSize, size_t position)
     return length;
 }
 
-void BufferData::Reset()
+void BufferData::ResetPosition()
 {
     this->size_ = 0;
 }
 
-void BufferData::SetSize(size_t size)
+void BufferData::SetPosition(size_t pos)
 {
-    this->size_ = size;
+    this->size_ = pos;
 }
 
 BufferMeta::BufferMeta(MetaType type) : type_(type)
