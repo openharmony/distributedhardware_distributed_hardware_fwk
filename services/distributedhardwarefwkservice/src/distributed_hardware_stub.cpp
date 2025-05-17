@@ -41,6 +41,13 @@ int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &d
         DHLOGE("IPC Token valid fail!");
         return ERR_INVALID_DATA;
     }
+    if (code != static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED)) {
+        if (!IPCSkeleton::IsLocalCalling()) {
+            DHLOGE("Invalid request, only support local, code = %{public}u.", code);
+            return ERR_DH_FWK_IS_LOCAL_PROCESS_FAIL;
+        }
+    }
+
     switch (code) {
         case static_cast<uint32_t>(DHMsgInterfaceCode::REG_PUBLISHER_LISTNER): {
             return RegisterPublisherListenerInner(data, reply);
