@@ -1,0 +1,88 @@
+{
+    "string":[
+        {
+            "name":"DHTypeName_Camera",
+            "value":"máy ảnh",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"pause",
+            "value":"Tạm dừng",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_desc_text",
+            "value":"Bắt đầu xem hoặc sửa nội dung trên một thiết bị, sau đó ngay lập tức xem hoặc sửa nội dung đó trên một thiết bị ở gần đã đăng nhập vào cùng một ID HUAWEI. Khi tính năng Chuyển giao khả dụng, một biểu tượng sẽ xuất hiện trên thanh ứng dụng. %s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"connected_to",
+            "value":"Đã kết nối với %1$s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"learn_more",
+            "value":"Tìm hiểu thêm",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue",
+            "value":"Tiếp tục",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"disconnect",
+            "value":"Ngắt kết nối",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"update_version_prompt",
+            "value":"Cả hai thiết bị đều phải chạy HarmonyOS NEXT",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stop_device",
+            "value":"Ngắt kết nối để ngừng sử dụng %1$s của thiết bị này.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"micrô",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_title",
+            "value":"Chuyển giao",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_privacy_text",
+            "value":"Dịch vụ này sử dụng Bluetooth và WLAN, đồng thời cần gửi tên thiết bị này đến các thiết bị bạn chuyển giao. Bằng việc bật nút chuyển này, bạn đồng ý với các điều khoản này.",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}
