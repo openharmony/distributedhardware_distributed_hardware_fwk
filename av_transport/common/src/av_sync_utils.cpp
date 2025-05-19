@@ -107,8 +107,8 @@ int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUni
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
     size_t fOffset = (sizeof(uint32_t) + sizeof(int64_t)) * clockUnit.index;
     size_t tOffset = fOffset + sizeof(uint32_t);
-    U64ToU8(base + tOffset, clockUnit.pts);
-    U32ToU8(base + fOffset, clockUnit.frameNum);
+    U64ToU8(base + tOffset, clockUnit.pts, NUM_EIGHT);
+    U32ToU8(base + fOffset, clockUnit.frameNum, NUM_FOUR);
 
     clockUnit.index ++;
     if (clockUnit.index == MAX_CLOCK_UNIT_COUNT) {
@@ -148,15 +148,15 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
     }
 
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
-    uint32_t firstUnit = U8ToU32(base);
+    uint32_t firstUnit = U8ToU32(base, NUM_FOUR);
     TRUE_RETURN_V_MSG_E(firstUnit == 0, ERR_DH_AVT_MASTER_NOT_READY, "master queue not ready, clock is null.");
 
     uint32_t index = 0;
     int64_t latestPts = 0;
     size_t unitSize = sizeof(uint32_t) + sizeof(int64_t);
     while (index < MAX_CLOCK_UNIT_COUNT) {
-        uint32_t frameNum = U8ToU32(base + (index * unitSize));
-        int64_t pts = static_cast<int64_t>(U8ToU64(base + (index * unitSize) + sizeof(uint32_t)));
+        uint32_t frameNum = U8ToU32(base + (index * unitSize), NUM_FOUR);
+        int64_t pts = static_cast<int64_t>(U8ToU64(base + (index * unitSize) + sizeof(uint32_t), NUM_EIGHT));
         if (pts > latestPts) {
             latestPts = pts;
             clockUnit.pts = pts;
@@ -196,8 +196,8 @@ int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frame
     }
 
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
-    U32ToU8(base, frameNum);
-    U64ToU8(base + sizeof(uint32_t), timestamp);
+    U32ToU8(base, frameNum, NUM_FOUR);
+    U64ToU8(base + sizeof(uint32_t), timestamp, NUM_EIGHT);
 
     AVTRANS_LOGI("write frameNum=%{public}" PRId32 ", timestamp=%{public}lld to shared memory success",
         frameNum, (long long)timestamp);
@@ -229,8 +229,8 @@ int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &fra
     }
 
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
-    frameNum = U8ToU32(base);
-    timestamp = static_cast<int64_t>(U8ToU64(base + sizeof(uint32_t)));
+    frameNum = U8ToU32(base, NUM_FOUR);
+    timestamp = static_cast<int64_t>(U8ToU64(base + sizeof(uint32_t), NUM_EIGHT));
     TRUE_RETURN_V_MSG_E(frameNum <= 0, ERR_DH_AVT_MASTER_NOT_READY, "master queue not ready, frameNum is null.");
 
     AVTRANS_LOGI("read frameNum=%{public}" PRId32 ", timestamp=%{public}lld from shared memory success.", frameNum,
@@ -326,100 +326,48 @@ AVTransSharedMemory UnmarshalSharedMemory(const std::string &jsonStr)
     return AVTransSharedMemory{ fd, size, name };
 }
 
-void U32ToU8(uint8_t *ptr, uint32_t value)
+void U32ToU8(uint8_t *arrayPtr, uint32_t value, size_t arraySize)
 {
-    if (ptr == nullptr) {
+    if (arrayPtr == nullptr || arraySize < NUM_FOUR) {
         return;
     }
-    int8_t arrZero = 0;
-    int8_t arrOne = 1;
-    int8_t arrTwo = 2;
-    int8_t arrThree = 3;
-    uint8_t cal = 8;
-    uint8_t calTwo = 16;
-    uint8_t calThree = 24;
-    ptr[arrZero] = (uint8_t)((value) & 0xff);
-    ptr[arrOne] = (uint8_t)((value >> cal) & 0xff);
-    ptr[arrTwo] = (uint8_t)((value >> calTwo) & 0xff);
-    ptr[arrThree] = (uint8_t)((value >> calThree) & 0xff);
+    for (auto i = NUM_ZERO; i < NUM_FOUR; ++i) {
+        arrayPtr[i] = static_cast<uint8_t>((value >> (i * NUM_EIGHT)) & 0xff);
+    }
 }
 
-void U64ToU8(uint8_t *ptr, uint64_t value)
+void U64ToU8(uint8_t *arrayPtr, uint64_t value, size_t arraySize)
 {
-    if (ptr == nullptr) {
+    if (arrayPtr == nullptr || arraySize < NUM_EIGHT) {
         return;
     }
-    int8_t arrZero = 0;
-    int8_t arrOne = 1;
-    int8_t arrTwo = 2;
-    int8_t arrThree = 3;
-    int8_t arrFour = 4;
-    int8_t arrFive = 5;
-    int8_t arrSix = 6;
-    int8_t arrSeven = 7;
-    uint8_t calOne = 8;
-    uint8_t calTwo = 16;
-    uint8_t calThree = 24;
-    uint8_t calFour = 32;
-    uint8_t calFive = 40;
-    uint8_t calSix = 48;
-    uint8_t calSeven = 56;
-    ptr[arrZero] = (uint8_t)((value) & 0xff);
-    ptr[arrOne] = (uint8_t)((value >> calOne) & 0xff);
-    ptr[arrTwo] = (uint8_t)((value >> calTwo) & 0xff);
-    ptr[arrThree] = (uint8_t)((value >> calThree) & 0xff);
-    ptr[arrFour] = (uint8_t)((value >> calFour) & 0xff);
-    ptr[arrFive] = (uint8_t)((value >> calFive) & 0xff);
-    ptr[arrSix] = (uint8_t)((value >> calSix) & 0xff);
-    ptr[arrSeven] = (uint8_t)((value >> calSeven) & 0xff);
+    for (auto i = NUM_ZERO; i < NUM_EIGHT; ++i) {
+        arrayPtr[i] = static_cast<uint8_t>((value >> (i * NUM_EIGHT)) & 0xff);
+    }
 }
 
-uint32_t U8ToU32(const uint8_t *ptr)
+uint32_t U8ToU32(const uint8_t *arrayPtr, size_t arraySize)
 {
-    if (ptr == nullptr) {
+    if (arrayPtr == nullptr || arraySize < NUM_FOUR) {
         return -1;
     }
-    int8_t arrZero = 0;
-    int8_t arrOne = 1;
-    int8_t arrTwo = 2;
-    int8_t arrThree = 3;
-    uint8_t calOne = 8;
-    uint8_t calTwo = 16;
-    uint8_t calThree = 24;
-    return (((uint32_t)(ptr[arrZero] & 0xff)) |
-            ((uint32_t)(ptr[arrOne] & 0xff) << calOne) |
-            ((uint32_t)(ptr[arrTwo] & 0xff) << calTwo) |
-            ((uint32_t)(ptr[arrThree] & 0xff) << calThree));
+    uint32_t result = 0;
+    for (auto i = NUM_ZERO; i < NUM_FOUR; ++i) {
+        result |= static_cast<uint32_t>(arrayPtr[i] & 0xff) << (i * NUM_EIGHT);
+    }
+    return result;
 }
 
-uint64_t U8ToU64(const uint8_t *ptr)
+uint64_t U8ToU64(const uint8_t *arrayPtr, size_t arraySize)
 {
-    if (ptr == nullptr) {
+    if (arrayPtr == nullptr || arraySize < NUM_EIGHT) {
         return -1;
     }
-    int8_t arrZero = 0;
-    int8_t arrOne = 1;
-    int8_t arrTwo = 2;
-    int8_t arrThree = 3;
-    int8_t arrFour = 4;
-    int8_t arrFive = 5;
-    int8_t arrSix = 6;
-    int8_t arrSeven = 7;
-    uint8_t calOne = 8;
-    uint8_t calTwo = 16;
-    uint8_t calThree = 24;
-    uint8_t calFour = 32;
-    uint8_t calFive = 40;
-    uint8_t calSix = 48;
-    uint8_t calSeven = 56;
-    return (((uint64_t)(ptr[arrZero] & 0xff)) |
-            ((uint64_t)(ptr[arrOne] & 0xff) << calOne) |
-            ((uint64_t)(ptr[arrTwo] & 0xff) << calTwo) |
-            ((uint64_t)(ptr[arrThree] & 0xff) << calThree) |
-            ((uint64_t)(ptr[arrFour] & 0xff) << calFour) |
-            ((uint64_t)(ptr[arrFive] & 0xff) << calFive) |
-            ((uint64_t)(ptr[arrSix] & 0xff) << calSix) |
-            ((uint64_t)(ptr[arrSeven] & 0xff) << calSeven));
+    uint64_t result = 0;
+    for (auto i = NUM_ZERO; i < NUM_EIGHT; ++i) {
+        result |= static_cast<uint64_t>(arrayPtr[i] & 0xff) << (i * NUM_EIGHT);
+    }
+    return result;
 }
 } // namespace DistributedHardware
 } // namespace OHOS
