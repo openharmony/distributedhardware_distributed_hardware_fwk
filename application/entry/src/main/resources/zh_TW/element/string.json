@@ -1,88 +1,88 @@
 {
-  "string": [
-    {
-      "name": "DHTypeName_Camera",
-      "value": "相機",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "pause",
-      "value": "暫停",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "disconnect",
-      "value": "中斷連線",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "connected_to",
-      "value": "已連線至 %1$s",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "stop_device",
-      "value": "您可以中斷連線，以停止使用此裝置的%1$s",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "DHTypeName_Mic",
-      "value": "麥克風",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "continue",
-      "value": "繼續",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "continue_desc_text", 
-      "value": "在一部裝置上瀏覽或編輯內容，然後在附近登入相同華為 ID 的另一部裝置桌面工作列上輕觸接續圖示，即可繼續使用。%s",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "continue_title",
-      "value": "接續",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "continue_privacy_text",
-      "value": "本服務需要使用 WLAN 和藍牙功能，讀取本裝置名稱並將其傳輸至要接續的裝置。若開啟開關，即表示您同意上述內容。",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "learn_more",
-      "value": "瞭解詳細資料",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "update_version_prompt",
-      "value": "對方需要升級至 HarmonyOS NEXT 及以上版本",
-      "attr": {
-        "priority": "LT"
-      }
-    }
-  ]
+    "string":[
+        {
+            "name":"DHTypeName_Camera",
+            "value":"相機",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"pause",
+            "value":"暫停",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"disconnect",
+            "value":"中斷連線",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"connected_to",
+            "value":"已連線至 %1$s",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"stop_device",
+            "value":"您可以中斷連線，以停止使用此裝置的%1$s",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"麥克風",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"continue",
+            "value":"繼續",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"continue_desc_text",
+            "value":"在一部裝置上瀏覽或編輯內容，然後在附近登入相同華為 ID 的另一部裝置桌面工作列上輕觸接續圖示，即可繼續使用。%s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_title",
+            "value":"接續",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"continue_privacy_text",
+            "value":"本服務需要使用 WLAN 和藍牙功能，讀取本裝置名稱並將其傳輸至要接續的裝置。若開啟開關，即表示您同意上述內容。",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"learn_more",
+            "value":"瞭解詳細資料",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"update_version_prompt",
+            "value":"對方需要升級至 HarmonyOS NEXT 及以上版本",
+            "attr":{
+                "priority":"LT"
+            }
+        }
+    ]
 }

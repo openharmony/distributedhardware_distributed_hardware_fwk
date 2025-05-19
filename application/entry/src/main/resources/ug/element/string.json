@@ -1,88 +1,88 @@
 {
-  "string": [
-    {
-      "name": "DHTypeName_Camera",
-      "value": "كامېرا",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "pause",
-      "value": "تورمۇزلاش",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "disconnect",
-      "value": "ئۈزۈش",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "connected_to",
-      "value": "نۆۋەتتە %1$s ئۇلاق",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "stop_device",
-      "value": "ئۈزسىڭىز، بۇ ئۈسكۈنىدىن %1$s ئىشلىتىش توختايدۇ.",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "DHTypeName_Mic",
-      "value": "مىكروفون",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "continue",
-      "value": "داۋاملاشتۇرۇش",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "continue_desc_text",
-      "value": "بىر ئۈسكۈنىدە كۆرۈۋاتقان ياكى تەھرىرلەۋاتقان ئىشنى ئەتراپتىكى ئوخشاش خۇاۋېي ھېسابىغا تىزىملاپ كىرگەن يەنە بىر ئۈسكۈنىدە ۋەزىپە بالدىقىدىكى ئۆتكۈزۈش سىنبەلگىسىنى چېكىپ داۋاملاشتۇرۇشقا بولىدۇ. %s",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "continue_title",
-      "value": "ئۆتكۈزۈش",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "continue_privacy_text",
-      "value": "بۇ مۇلازىمەت WLAN ۋە كۆكچىش ئىشلىتىدۇ؛ بۇ ئۈسكۈنىنىڭ نامىنى ئوقۇپ، ئۆتكۈزىدىغان ئۈسكۈنىگە يوللايدۇ. بۇ مۇلازىمەتنى ئاچسىڭىز، يۇقىرىقىلارغا قوشۇلغان بولىسىز.",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "learn_more",
-      "value": "تەپسىلات",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "update_version_prompt",
-      "value": "قارشى ئۈسكۈنە نەشرى HarmonyOS NEXT ياكى يۇقىرى بولۇشى كېرەك.",
-      "attr": {
-        "priority": "LT"
-      }
-    }
-  ]
+    "string":[
+        {
+            "name":"DHTypeName_Camera",
+            "value":"كامېرا",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"pause",
+            "value":"تورمۇزلاش",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"disconnect",
+            "value":"ئۈزۈش",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"connected_to",
+            "value":"نۆۋەتتە %1$s ئۇلاق",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"stop_device",
+            "value":"ئۈزسىڭىز، بۇ ئۈسكۈنىدىن %1$s ئىشلىتىش توختايدۇ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"مىكروفون",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"continue",
+            "value":"داۋاملاشتۇرۇش",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"continue_desc_text",
+            "value":"بىر ئۈسكۈنىدە كۆرۈۋاتقان ياكى تەھرىرلەۋاتقان ئىشنى ئەتراپتىكى ئوخشاش خۇاۋېي ھېسابىغا تىزىملاپ كىرگەن يەنە بىر ئۈسكۈنىدە ۋەزىپە بالدىقىدىكى ئۆتكۈزۈش سىنبەلگىسىنى چېكىپ داۋاملاشتۇرۇشقا بولىدۇ. %s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_title",
+            "value":"ئۆتكۈزۈش",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"continue_privacy_text",
+            "value":"بۇ مۇلازىمەت WLAN ۋە كۆكچىش ئىشلىتىدۇ؛ بۇ ئۈسكۈنىنىڭ نامىنى ئوقۇپ، ئۆتكۈزىدىغان ئۈسكۈنىگە يوللايدۇ. بۇ مۇلازىمەتنى ئاچسىڭىز، يۇقىرىقىلارغا قوشۇلغان بولىسىز.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"learn_more",
+            "value":"تەپسىلات",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"update_version_prompt",
+            "value":"قارشى ئۈسكۈنە نەشرى HarmonyOS NEXT ياكى يۇقىرى بولۇشى كېرەك.",
+            "attr":{
+                "priority":"LT"
+            }
+        }
+    ]
 }

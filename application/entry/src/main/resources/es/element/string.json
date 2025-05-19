@@ -1,0 +1,88 @@
+{
+    "string":[
+        {
+            "name":"DHTypeName_Camera",
+            "value":"la cámara",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"pause",
+            "value":"Pausar",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_desc_text",
+            "value":"Comienza a ver o editar contenido en un dispositivo y continúa inmediatamente en otro dispositivo que haya iniciado sesión con el mismo ID de HUAWEI. Cuando Continuidad entre dispositivos esté disponible, aparecerá un icono en el panel de aplicaciones. %s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"connected_to",
+            "value":"Conectado a %1$s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"learn_more",
+            "value":"Conocer más",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue",
+            "value":"Reanudar",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"disconnect",
+            "value":"Desconectar",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"update_version_prompt",
+            "value":"Ambos dispositivos deben ejecutar HarmonyOS NEXT",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stop_device",
+            "value":"Desconecta para dejar de usar %1$s de este dispositivo.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"el micrófono",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_title",
+            "value":"Continuidad entre dispositivos",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_privacy_text",
+            "value":"Este servicio utiliza Bluetooth y WLAN y necesita enviar el nombre de este dispositivo a los dispositivos a los que realice la transferencia. Si activas este selector, aceptas estos términos.",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}

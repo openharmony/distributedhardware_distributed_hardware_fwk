@@ -1,0 +1,88 @@
+{
+    "string":[
+        {
+            "name":"DHTypeName_Camera",
+            "value":"الكاميرا",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"pause",
+            "value":"إيقاف مؤقت",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_desc_text",
+            "value":"يمكنك بدء عرض المحتوى أو تعديله على أحد الأجهزة، ثم متابعة العملية آنيًا على جهاز قريب تم تسجيل الدخول عليه بحساب هواوي نفسه. ستظهر أيقونة في شريط الإرساء عند توفر ميزة التسليم. %s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"connected_to",
+            "value":"متصل بجهاز %1$s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"learn_more",
+            "value":"معرفة المزيد",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue",
+            "value":"استئناف",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"disconnect",
+            "value":"قطع الاتصال",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"update_version_prompt",
+            "value":"يجب أن يعمل كلا الجهازين بنظام HarmonyOS NEXT",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stop_device",
+            "value":"اقطع الاتصال لإيقاف استخدام %1$s لهذا الجهاز.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"الميكروفون",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_title",
+            "value":"التسليم",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_privacy_text",
+            "value":"تستخدم هذه الخدمة البلوتوث والشبكة اللاسلكية، وتحتاج إلى إرسال اسم هذا الجهاز إلى الأجهزة التي تسلّم إليها. يعني تفعيل هذه الميزة أنك توافق على هذه الشروط.",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}
