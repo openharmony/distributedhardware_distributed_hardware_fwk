@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,6 +51,38 @@ void OnDeviceReadyFuzzTest(const uint8_t* data, size_t size)
 
     usleep(SLEEP_TIME_US);
 }
+
+void OnDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    AccessManager::GetInstance()->Init();
+    DmDeviceInfo deviceInfo;
+    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, (reinterpret_cast<const char *>(data)), size);
+    if (ret != EOK) {
+        return;
+    }
+    AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
+    usleep(SLEEP_TIME_US);
+}
+
+void OnDeviceChangedFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    AccessManager::GetInstance()->Init();
+    DmDeviceInfo deviceInfo;
+    int32_t ret = memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, (reinterpret_cast<const char *>(data)), size);
+    if (ret != EOK) {
+        return;
+    }
+    AccessManager::GetInstance()->OnDeviceChanged(deviceInfo);
+    usleep(SLEEP_TIME_US);
+}
 }
 }
 
@@ -59,6 +91,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     OHOS::DistributedHardware::OnDeviceReadyFuzzTest(data, size);
+    OHOS::DistributedHardware::OnDeviceOnlineFuzzTest(data, size);
+    OHOS::DistributedHardware::OnDeviceChangedFuzzTest(data, size);
     return 0;
 }
 
