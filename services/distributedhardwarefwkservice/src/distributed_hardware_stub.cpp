@@ -79,15 +79,6 @@ int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &d
         case static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED): {
             return HandleNotifySourceRemoteSinkStarted(data, reply);
         }
-        case static_cast<uint32_t>(DHMsgInterfaceCode::PAUSE_DISTRIBUTED_HARDWARE): {
-            return PauseDistributedHardwareInner(data, reply);
-        }
-        case static_cast<uint32_t>(DHMsgInterfaceCode::RESUME_DISTRIBUTED_HARDWARE): {
-            return ResumeDistributedHardwareInner(data, reply);
-        }
-        case static_cast<uint32_t>(DHMsgInterfaceCode::STOP_DISTRIBUTED_HARDWARE): {
-            return StopDistributedHardwareInner(data, reply);
-        }
         default:
             return OnRemoteRequestEx(code, data, reply, option);
     }
@@ -608,6 +599,15 @@ int32_t DistributedHardwareStub::OnRemoteRequestEx(uint32_t code, MessageParcel 
     MessageOption &option)
 {
     switch (code) {
+        case static_cast<uint32_t>(DHMsgInterfaceCode::PAUSE_DISTRIBUTED_HARDWARE): {
+            return PauseDistributedHardwareInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::RESUME_DISTRIBUTED_HARDWARE): {
+            return ResumeDistributedHardwareInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::STOP_DISTRIBUTED_HARDWARE): {
+            return StopDistributedHardwareInner(data, reply);
+        }
         case static_cast<uint32_t>(DHMsgInterfaceCode::GET_DISTRIBUTED_HARDWARE): {
             return GetDistributedHardwareInner(data, reply);
         }
