@@ -268,6 +268,42 @@ void DisableSourceFuzzTest(const uint8_t *data, size_t size)
     std::vector<DHDescriptor> descriptors;
     dhfwkKit.DisableSource(networkId, descriptors);
 }
+
+void EnableSinkFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    std::vector<DHDescriptor> descriptors;
+    std::string dhId(reinterpret_cast<const char*>(data), size);
+    DHType dhType = DHType::AUDIO;
+    DHDescriptor dhDescriptor {
+        .id = dhId,
+        .dhType = dhType
+    };
+    descriptors.push_back(dhDescriptor);
+    dhfwkKit.EnableSink(descriptors);
+}
+
+void DisableSinkFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    std::vector<DHDescriptor> descriptors;
+    std::string dhId(reinterpret_cast<const char*>(data), size);
+    DHType dhType = DHType::AUDIO;
+    DHDescriptor dhDescriptor {
+        .id = dhId,
+        .dhType = dhType
+    };
+    descriptors.push_back(dhDescriptor);
+    dhfwkKit.DisableSink(descriptors);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
 
@@ -285,5 +321,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     OHOS::DistributedHardware::PauseDistributedHardwareFuzzTest(data, size);
     OHOS::DistributedHardware::ResumeDistributedHardwareFuzzTest(data, size);
     OHOS::DistributedHardware::StopDistributedHardwareFuzzTest(data, size);
+    OHOS::DistributedHardware::GetDistributedHardwareFuzzTest(data, size);
+    OHOS::DistributedHardware::RegisterDHStatusListenerFuzzTest(data, size);
+    OHOS::DistributedHardware::UnregisterDHStatusListenerFuzzTest(data, size);
+    OHOS::DistributedHardware::EnableSourceFuzzTest(data, size);
+    OHOS::DistributedHardware::DisableSourceFuzzTest(data, size);
+    OHOS::DistributedHardware::EnableSinkFuzzTest(data, size);
+    OHOS::DistributedHardware::DisableSinkFuzzTest(data, size);
     return 0;
 }
