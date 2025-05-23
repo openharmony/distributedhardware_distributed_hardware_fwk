@@ -23,6 +23,7 @@
 #include "component_manager.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "enabled_comps_dump.h"
 #include "task_board.h"
 
 namespace OHOS {

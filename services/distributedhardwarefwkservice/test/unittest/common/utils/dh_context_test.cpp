@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -322,7 +322,7 @@ HWTEST_F(DhContextTest, OnMessage_004, TestSize.Level1)
     cJSON *json = cJSON_CreateObject();
     ASSERT_TRUE(json != nullptr);
     cJSON_AddStringToObject(json, eventKey.c_str(), "isomerism_event_test");
-    cJSON_AddStringToObject(json, DEV_ID.c_str(), "Dev_Id_test");
+    cJSON_AddStringToObject(json, DEV_ID, "Dev_Id_test");
 
     char* cjson = cJSON_PrintUnformatted(json);
     if (cjson == nullptr) {
@@ -346,7 +346,7 @@ HWTEST_F(DhContextTest, OnMessage_005, TestSize.Level1)
     cJSON *json = cJSON_CreateObject();
     ASSERT_TRUE(json != nullptr);
     cJSON_AddStringToObject(json, eventKey.c_str(), "isomerism_event_test");
-    cJSON_AddNumberToObject(json, DEV_ID.c_str(), 1);
+    cJSON_AddNumberToObject(json, DEV_ID, 1);
 
     char* cjson = cJSON_PrintUnformatted(json);
     if (cjson == nullptr) {
@@ -370,7 +370,7 @@ HWTEST_F(DhContextTest, OnMessage_006, TestSize.Level1)
     cJSON *json = cJSON_CreateObject();
     ASSERT_TRUE(json != nullptr);
     cJSON_AddStringToObject(json, eventKey.c_str(), "isomerism_event_test");
-    cJSON_AddStringToObject(json, DEV_ID.c_str(), "dev_id_test");
+    cJSON_AddStringToObject(json, DEV_ID, "dev_id_test");
 
     char* cjson = cJSON_PrintUnformatted(json);
     if (cjson == nullptr) {
@@ -394,7 +394,7 @@ HWTEST_F(DhContextTest, OnMessage_007, TestSize.Level1)
     cJSON *json = cJSON_CreateObject();
     ASSERT_TRUE(json != nullptr);
     cJSON_AddStringToObject(json, eventKey.c_str(), "isomerism_connect");
-    cJSON_AddStringToObject(json, DEV_ID.c_str(), "dev_id_test");
+    cJSON_AddStringToObject(json, DEV_ID, "dev_id_test");
 
     char* cjson = cJSON_PrintUnformatted(json);
     if (cjson == nullptr) {
@@ -418,7 +418,7 @@ HWTEST_F(DhContextTest, OnMessage_008, TestSize.Level1)
     cJSON *json = cJSON_CreateObject();
     ASSERT_TRUE(json != nullptr);
     cJSON_AddStringToObject(json, eventKey.c_str(), "isomerism_disconnect");
-    cJSON_AddStringToObject(json, DEV_ID.c_str(), "dev_id_test");
+    cJSON_AddStringToObject(json, DEV_ID, "dev_id_test");
 
     char* cjson = cJSON_PrintUnformatted(json);
     if (cjson == nullptr) {

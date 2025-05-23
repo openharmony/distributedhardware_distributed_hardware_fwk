@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -192,13 +192,13 @@ void ToJson(cJSON *jsonObject, const CapabilityInfo &capability)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    cJSON_AddStringToObject(jsonObject, DH_ID.c_str(), capability.GetDHId().c_str());
-    cJSON_AddStringToObject(jsonObject, DEV_ID.c_str(), capability.GetDeviceId().c_str());
-    cJSON_AddStringToObject(jsonObject, DEV_NAME.c_str(), capability.GetDeviceName().c_str());
-    cJSON_AddNumberToObject(jsonObject, DEV_TYPE.c_str(), (double)capability.GetDeviceType());
-    cJSON_AddNumberToObject(jsonObject, DH_TYPE.c_str(), (double)capability.GetDHType());
-    cJSON_AddStringToObject(jsonObject, DH_ATTRS.c_str(), capability.GetDHAttrs().c_str());
-    cJSON_AddStringToObject(jsonObject, DH_SUBTYPE.c_str(), capability.GetDHSubtype().c_str());
+    cJSON_AddStringToObject(jsonObject, DH_ID, capability.GetDHId().c_str());
+    cJSON_AddStringToObject(jsonObject, DEV_ID, capability.GetDeviceId().c_str());
+    cJSON_AddStringToObject(jsonObject, DEV_NAME, capability.GetDeviceName().c_str());
+    cJSON_AddNumberToObject(jsonObject, DEV_TYPE, static_cast<uint16_t>(capability.GetDeviceType()));
+    cJSON_AddNumberToObject(jsonObject, DH_TYPE, static_cast<uint32_t>(capability.GetDHType()));
+    cJSON_AddStringToObject(jsonObject, DH_ATTRS, capability.GetDHAttrs().c_str());
+    cJSON_AddStringToObject(jsonObject, DH_SUBTYPE, capability.GetDHSubtype().c_str());
 }
 
 void FromJson(const cJSON *jsonObject, CapabilityInfo &capability)
@@ -207,49 +207,49 @@ void FromJson(const cJSON *jsonObject, CapabilityInfo &capability)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    cJSON *dhIdJson = cJSON_GetObjectItem(jsonObject, DH_ID.c_str());
+    cJSON *dhIdJson = cJSON_GetObjectItem(jsonObject, DH_ID);
     if (!IsString(dhIdJson)) {
         DHLOGE("DH_ID is invalid!");
         return;
     }
     capability.SetDHId(dhIdJson->valuestring);
 
-    cJSON *devIdJson = cJSON_GetObjectItem(jsonObject, DEV_ID.c_str());
+    cJSON *devIdJson = cJSON_GetObjectItem(jsonObject, DEV_ID);
     if (!IsString(devIdJson)) {
         DHLOGE("DEV_ID is invalid!");
         return;
     }
     capability.SetDeviceId(devIdJson->valuestring);
 
-    cJSON *devNameJson = cJSON_GetObjectItem(jsonObject, DEV_NAME.c_str());
+    cJSON *devNameJson = cJSON_GetObjectItem(jsonObject, DEV_NAME);
     if (!IsString(devNameJson)) {
         DHLOGE("DEV_NAME is invalid!");
         return;
     }
     capability.SetDeviceName(devNameJson->valuestring);
 
-    cJSON *devTypeJson = cJSON_GetObjectItem(jsonObject, DEV_TYPE.c_str());
+    cJSON *devTypeJson = cJSON_GetObjectItem(jsonObject, DEV_TYPE);
     if (!IsUInt16(devTypeJson)) {
         DHLOGE("DEV_TYPE is invalid!");
         return;
     }
     capability.SetDeviceType(static_cast<uint16_t>(devTypeJson->valueint));
 
-    cJSON *dhTypeJson = cJSON_GetObjectItem(jsonObject, DH_TYPE.c_str());
+    cJSON *dhTypeJson = cJSON_GetObjectItem(jsonObject, DH_TYPE);
     if (!IsUInt32(dhTypeJson)) {
         DHLOGE("DH_TYPE is invalid!");
         return;
     }
     capability.SetDHType((DHType)dhTypeJson->valueint);
 
-    cJSON *dhAttrsJson = cJSON_GetObjectItem(jsonObject, DH_ATTRS.c_str());
+    cJSON *dhAttrsJson = cJSON_GetObjectItem(jsonObject, DH_ATTRS);
     if (!IsString(dhAttrsJson)) {
         DHLOGE("DH_ATTRS is invalid!");
         return;
     }
     capability.SetDHAttrs(dhAttrsJson->valuestring);
 
-    cJSON *dhSubtypeJson = cJSON_GetObjectItem(jsonObject, DH_SUBTYPE.c_str());
+    cJSON *dhSubtypeJson = cJSON_GetObjectItem(jsonObject, DH_SUBTYPE);
     if (!IsString(dhSubtypeJson)) {
         DHLOGE("DH_SUBTYPE is invalid!");
         return;

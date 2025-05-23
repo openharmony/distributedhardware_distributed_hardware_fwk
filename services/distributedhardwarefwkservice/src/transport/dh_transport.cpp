@@ -37,6 +37,7 @@ namespace {
 // Dsoftbus sendBytes max message length: 4MB
 const uint32_t MAX_SEND_MSG_LENGTH = 4 * 1024 * 1024;
 const uint32_t INTERCEPT_STRING_LENGTH = 20;
+const std::string DH_FWK_SESSION_NAME = "ohos.dhardware.session_";
 static QosTV g_qosInfo[] = {
     { .qos = QOS_TYPE_MIN_BW, .value = 256 * 1024},
     { .qos = QOS_TYPE_MAX_LATENCY, .value = 8000 },

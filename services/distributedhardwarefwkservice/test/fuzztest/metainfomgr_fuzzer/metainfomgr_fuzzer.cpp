@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,15 +45,6 @@ void GetDataByKeyPrefixFuzzTest(const uint8_t* data, size_t size)
     MetaInfoManager::GetInstance()->GetDataByKeyPrefix(keyPrefix, metaCapMap);
 }
 
-void RemoveMetaInfoByKeyFuzzTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-    std::string key(reinterpret_cast<const char*>(data), size);
-    MetaInfoManager::GetInstance()->RemoveMetaInfoByKey(key);
-}
-
 void GetMetaCapInfoFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -79,7 +70,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     /* Run your code on data */
     OHOS::DistributedHardware::SyncMetaInfoFromDBFuzzTest(data, size);
     OHOS::DistributedHardware::GetDataByKeyPrefixFuzzTest(data, size);
-    OHOS::DistributedHardware::RemoveMetaInfoByKeyFuzzTest(data, size);
     OHOS::DistributedHardware::GetMetaCapInfoFuzzTest(data, size);
     return 0;
 }

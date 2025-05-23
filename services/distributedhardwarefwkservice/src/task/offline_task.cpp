@@ -22,7 +22,6 @@
 
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
-#include "constants.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
@@ -37,6 +36,7 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     constexpr uint16_t PHONE_TYPE = 14;
+    constexpr const char *OFFLINE_TASK_INNER = "OffLineTask";
 }
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "OffLineTask"

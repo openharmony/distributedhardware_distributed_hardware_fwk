@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,6 @@
 #include "component_enable.h"
 
 #include "anonymous_string.h"
-#include "constants.h"
 #include "dh_utils_hisysevent.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
@@ -24,6 +23,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    constexpr int32_t ENABLE_TIMEOUT_MS = 1000;
+}
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "ComponentEnable"
 

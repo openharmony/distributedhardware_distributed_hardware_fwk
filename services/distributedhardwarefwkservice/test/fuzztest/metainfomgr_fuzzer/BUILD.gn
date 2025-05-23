@@ -23,10 +23,8 @@ ohos_fuzztest("MetaInfoMgrFuzzTest") {
 
   include_dirs = [
     "${utils_path}/include",
-    "${utils_path}/include/log",
     "${common_path}/utils/include",
     "${common_path}/log/include",
-    "${utils_path}/include/eventbus",
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/transport",
     "${services_path}/distributedhardwarefwkservice/include/componentmanager",

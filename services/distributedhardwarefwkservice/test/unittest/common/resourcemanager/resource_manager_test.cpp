@@ -436,8 +436,8 @@ HWTEST_F(ResourceManagerTest, HandleCapabilityChange_001, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
+    cJSON_AddStringToObject(jsonObj, DH_ID, "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "222222");
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -480,8 +480,8 @@ HWTEST_F(ResourceManagerTest, HandleCapabilityChange_002, TestSize.Level1)
     DHContext::GetInstance().devIdEntrySet_.insert(idEntry);
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_ID, "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, deviceId.c_str());
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -520,8 +520,8 @@ HWTEST_F(ResourceManagerTest, HandleCapabilityChange_003, TestSize.Level1)
     DHContext::GetInstance().AddOnlineDevice("111111", uuid, "222222");
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), "111111");
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), deviceId.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_ID, "111111");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, deviceId.c_str());
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);

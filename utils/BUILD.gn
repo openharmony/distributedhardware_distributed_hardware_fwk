@@ -38,7 +38,6 @@ ohos_shared_library("distributedhardwareutils") {
     "${common_path}/log/include",
     "${common_path}/utils/include",
     "include",
-    "include/log",
   ]
 
   sources = [
@@ -81,7 +80,6 @@ ohos_shared_library("distributedhardwareutils") {
     "hitrace:hitrace_meter",
     "init:libbegetutil",
     "openssl:libcrypto_shared",
-    "safwk:system_ability_fwk",
     "zlib:shared_libz",
   ]
 

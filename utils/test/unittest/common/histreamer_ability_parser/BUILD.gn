@@ -22,7 +22,6 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "${utils_path}/include",
-    "${utils_path}/include/log",
   ]
 }
 

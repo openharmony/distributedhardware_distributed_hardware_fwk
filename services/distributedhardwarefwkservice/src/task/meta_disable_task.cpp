@@ -31,6 +31,10 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    constexpr const char *META_DISABLE_TASK_INNER = "MetaDisableTask";
+}
+
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "MetaDisableTask"
 

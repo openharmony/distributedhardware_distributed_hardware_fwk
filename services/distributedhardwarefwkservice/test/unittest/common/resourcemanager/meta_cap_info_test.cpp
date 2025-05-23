@@ -76,7 +76,7 @@ HWTEST_F(MetaCapInfoTest, FromJsonString_002, TestSize.Level1)
             CompVersion{ .sinkVersion = "" });
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), DHID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_ID, DHID_TEST.c_str());
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -101,7 +101,7 @@ HWTEST_F(MetaCapInfoTest, FromJson_001, TestSize.Level1)
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddNumberToObject(jsonObj, DH_ID.c_str(), 1);
+    cJSON_AddNumberToObject(jsonObj, DH_ID, 1);
     EXPECT_NO_FATAL_FAILURE(FromJson(jsonObj, metaCapInfo));
     cJSON_Delete(jsonObj);
 }
@@ -111,8 +111,8 @@ HWTEST_F(MetaCapInfoTest, FromJson_002, TestSize.Level1)
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), DHID_TEST.c_str());
-    cJSON_AddNumberToObject(jsonObj, DEV_ID.c_str(), 1);
+    cJSON_AddStringToObject(jsonObj, DH_ID, DHID_TEST.c_str());
+    cJSON_AddNumberToObject(jsonObj, DEV_ID, 1);
     EXPECT_NO_FATAL_FAILURE(FromJson(jsonObj, metaCapInfo));
     cJSON_Delete(jsonObj);
 }
@@ -122,9 +122,9 @@ HWTEST_F(MetaCapInfoTest, FromJson_003, TestSize.Level1)
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), DHID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), DEVID_TEST.c_str());
-    cJSON_AddNumberToObject(jsonObj, DEV_NAME.c_str(), 1);
+    cJSON_AddStringToObject(jsonObj, DH_ID, DHID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_ID, DEVID_TEST.c_str());
+    cJSON_AddNumberToObject(jsonObj, DEV_NAME, 1);
     EXPECT_NO_FATAL_FAILURE(FromJson(jsonObj, metaCapInfo));
     cJSON_Delete(jsonObj);
 }
@@ -135,10 +135,10 @@ HWTEST_F(MetaCapInfoTest, FromJson_004, TestSize.Level1)
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
     std::string devTypeTest = "devTypeTest";
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), DHID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), DEVID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), DEVNAME_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_TYPE.c_str(), devTypeTest.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_ID, DHID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_ID, DEVID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, DEVNAME_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_TYPE, devTypeTest.c_str());
     EXPECT_NO_FATAL_FAILURE(FromJson(jsonObj, metaCapInfo));
     cJSON_Delete(jsonObj);
 }
@@ -149,11 +149,11 @@ HWTEST_F(MetaCapInfoTest, FromJson_005, TestSize.Level1)
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
     std::string dhTypeTest = "dhTypeTest";
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), DHID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), DEVID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), DEVNAME_TEST.c_str());
-    cJSON_AddNumberToObject(jsonObj, DEV_TYPE.c_str(), DEV_TYPE_TEST);
-    cJSON_AddStringToObject(jsonObj, DH_TYPE.c_str(), dhTypeTest.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_ID, DHID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_ID, DEVID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, DEVNAME_TEST.c_str());
+    cJSON_AddNumberToObject(jsonObj, DEV_TYPE, DEV_TYPE_TEST);
+    cJSON_AddStringToObject(jsonObj, DH_TYPE, dhTypeTest.c_str());
     EXPECT_NO_FATAL_FAILURE(FromJson(jsonObj, metaCapInfo));
     cJSON_Delete(jsonObj);
 }
@@ -164,12 +164,12 @@ HWTEST_F(MetaCapInfoTest, FromJson_006, TestSize.Level1)
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
     std::string dhTypeTest = "dhTypeTest";
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), DHID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), DEVID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), DEVNAME_TEST.c_str());
-    cJSON_AddNumberToObject(jsonObj, DEV_TYPE.c_str(), DEV_TYPE_TEST);
-    cJSON_AddNumberToObject(jsonObj, DH_TYPE.c_str(), DH_TYPE_TEST);
-    cJSON_AddNumberToObject(jsonObj, DH_ATTRS.c_str(), 1);
+    cJSON_AddStringToObject(jsonObj, DH_ID, DHID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_ID, DEVID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, DEVNAME_TEST.c_str());
+    cJSON_AddNumberToObject(jsonObj, DEV_TYPE, DEV_TYPE_TEST);
+    cJSON_AddNumberToObject(jsonObj, DH_TYPE, DH_TYPE_TEST);
+    cJSON_AddNumberToObject(jsonObj, DH_ATTRS, 1);
     EXPECT_NO_FATAL_FAILURE(FromJson(jsonObj, metaCapInfo));
     cJSON_Delete(jsonObj);
 }
@@ -180,13 +180,13 @@ HWTEST_F(MetaCapInfoTest, FromJson_007, TestSize.Level1)
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
     std::string dhTypeTest = "dhTypeTest";
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), DHID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), DEVID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), DEVNAME_TEST.c_str());
-    cJSON_AddNumberToObject(jsonObj, DEV_TYPE.c_str(), DEV_TYPE_TEST);
-    cJSON_AddNumberToObject(jsonObj, DH_TYPE.c_str(), DH_TYPE_TEST);
-    cJSON_AddStringToObject(jsonObj, DH_ATTRS.c_str(), DHATTRS_TEST.c_str());
-    cJSON_AddNumberToObject(jsonObj, DH_SUBTYPE.c_str(), 1);
+    cJSON_AddStringToObject(jsonObj, DH_ID, DHID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_ID, DEVID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, DEVNAME_TEST.c_str());
+    cJSON_AddNumberToObject(jsonObj, DEV_TYPE, DEV_TYPE_TEST);
+    cJSON_AddNumberToObject(jsonObj, DH_TYPE, DH_TYPE_TEST);
+    cJSON_AddStringToObject(jsonObj, DH_ATTRS, DHATTRS_TEST.c_str());
+    cJSON_AddNumberToObject(jsonObj, DH_SUBTYPE, 1);
     EXPECT_NO_FATAL_FAILURE(FromJson(jsonObj, metaCapInfo));
     cJSON_Delete(jsonObj);
 }
@@ -197,14 +197,14 @@ HWTEST_F(MetaCapInfoTest, FromJson_008, TestSize.Level1)
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
     std::string dhTypeTest = "dhTypeTest";
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), DHID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), DEVID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), DEVNAME_TEST.c_str());
-    cJSON_AddNumberToObject(jsonObj, DEV_TYPE.c_str(), DEV_TYPE_TEST);
-    cJSON_AddNumberToObject(jsonObj, DH_TYPE.c_str(), DH_TYPE_TEST);
-    cJSON_AddStringToObject(jsonObj, DH_ATTRS.c_str(), DHATTRS_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DH_SUBTYPE.c_str(), DHSUBTYPE_TEST.c_str());
-    cJSON_AddNumberToObject(jsonObj, DEV_UDID_HASH.c_str(), 1);
+    cJSON_AddStringToObject(jsonObj, DH_ID, DHID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_ID, DEVID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, DEVNAME_TEST.c_str());
+    cJSON_AddNumberToObject(jsonObj, DEV_TYPE, DEV_TYPE_TEST);
+    cJSON_AddNumberToObject(jsonObj, DH_TYPE, DH_TYPE_TEST);
+    cJSON_AddStringToObject(jsonObj, DH_ATTRS, DHATTRS_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_SUBTYPE, DHSUBTYPE_TEST.c_str());
+    cJSON_AddNumberToObject(jsonObj, DEV_UDID_HASH, 1);
     EXPECT_NO_FATAL_FAILURE(FromJson(jsonObj, metaCapInfo));
     cJSON_Delete(jsonObj);
 }
@@ -215,15 +215,15 @@ HWTEST_F(MetaCapInfoTest, FromJson_009, TestSize.Level1)
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
     std::string dhTypeTest = "dhTypeTest";
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), DHID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), DEVID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), DEVNAME_TEST.c_str());
-    cJSON_AddNumberToObject(jsonObj, DEV_TYPE.c_str(), DEV_TYPE_TEST);
-    cJSON_AddNumberToObject(jsonObj, DH_TYPE.c_str(), DH_TYPE_TEST);
-    cJSON_AddStringToObject(jsonObj, DH_ATTRS.c_str(), DHATTRS_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DH_SUBTYPE.c_str(), DHSUBTYPE_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_UDID_HASH.c_str(), UDIDHASH_TEST.c_str());
-    cJSON_AddNumberToObject(jsonObj, SINK_VER.c_str(), 1);
+    cJSON_AddStringToObject(jsonObj, DH_ID, DHID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_ID, DEVID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, DEVNAME_TEST.c_str());
+    cJSON_AddNumberToObject(jsonObj, DEV_TYPE, DEV_TYPE_TEST);
+    cJSON_AddNumberToObject(jsonObj, DH_TYPE, DH_TYPE_TEST);
+    cJSON_AddStringToObject(jsonObj, DH_ATTRS, DHATTRS_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_SUBTYPE, DHSUBTYPE_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_UDID_HASH, UDIDHASH_TEST.c_str());
+    cJSON_AddNumberToObject(jsonObj, SINK_VER, 1);
     EXPECT_NO_FATAL_FAILURE(FromJson(jsonObj, metaCapInfo));
     cJSON_Delete(jsonObj);
 }
@@ -233,15 +233,15 @@ HWTEST_F(MetaCapInfoTest, FromJson_010, TestSize.Level1)
     MetaCapabilityInfo metaCapInfo;
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DH_ID.c_str(), DHID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), DEVID_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_NAME.c_str(), DEVNAME_TEST.c_str());
-    cJSON_AddNumberToObject(jsonObj, DEV_TYPE.c_str(), DEV_TYPE_TEST);
-    cJSON_AddNumberToObject(jsonObj, DH_TYPE.c_str(), DH_TYPE_TEST);
-    cJSON_AddStringToObject(jsonObj, DH_ATTRS.c_str(), DHATTRS_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DH_SUBTYPE.c_str(), DHSUBTYPE_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, DEV_UDID_HASH.c_str(), UDIDHASH_TEST.c_str());
-    cJSON_AddStringToObject(jsonObj, SINK_VER.c_str(), SINKVER_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_ID, DHID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_ID, DEVID_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_NAME, DEVNAME_TEST.c_str());
+    cJSON_AddNumberToObject(jsonObj, DEV_TYPE, DEV_TYPE_TEST);
+    cJSON_AddNumberToObject(jsonObj, DH_TYPE, DH_TYPE_TEST);
+    cJSON_AddStringToObject(jsonObj, DH_ATTRS, DHATTRS_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DH_SUBTYPE, DHSUBTYPE_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, DEV_UDID_HASH, UDIDHASH_TEST.c_str());
+    cJSON_AddStringToObject(jsonObj, SINK_VER, SINKVER_TEST.c_str());
     EXPECT_NO_FATAL_FAILURE(FromJson(jsonObj, metaCapInfo));
     cJSON_Delete(jsonObj);
 }

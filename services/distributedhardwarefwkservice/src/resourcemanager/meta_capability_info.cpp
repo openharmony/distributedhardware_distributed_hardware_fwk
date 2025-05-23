@@ -166,62 +166,62 @@ void ToJson(cJSON *jsonObject, const MetaCapabilityInfo &metaCapInfo)
         DHLOGE("Json pointer is nullptr!");
         return;
     }
-    cJSON_AddStringToObject(jsonObject, DH_ID.c_str(), metaCapInfo.GetDHId().c_str());
-    cJSON_AddStringToObject(jsonObject, DEV_ID.c_str(), metaCapInfo.GetDeviceId().c_str());
-    cJSON_AddStringToObject(jsonObject, DEV_NAME.c_str(), metaCapInfo.GetDeviceName().c_str());
-    cJSON_AddNumberToObject(jsonObject, DEV_TYPE.c_str(), (double)metaCapInfo.GetDeviceType());
-    cJSON_AddNumberToObject(jsonObject, DH_TYPE.c_str(), (double)metaCapInfo.GetDHType());
-    cJSON_AddStringToObject(jsonObject, DH_ATTRS.c_str(), metaCapInfo.GetDHAttrs().c_str());
-    cJSON_AddStringToObject(jsonObject, DH_SUBTYPE.c_str(), metaCapInfo.GetDHSubtype().c_str());
-    cJSON_AddStringToObject(jsonObject, DEV_UDID_HASH.c_str(), metaCapInfo.GetUdidHash().c_str());
-    cJSON_AddStringToObject(jsonObject, SINK_VER.c_str(), metaCapInfo.GetSinkVersion().c_str());
+    cJSON_AddStringToObject(jsonObject, DH_ID, metaCapInfo.GetDHId().c_str());
+    cJSON_AddStringToObject(jsonObject, DEV_ID, metaCapInfo.GetDeviceId().c_str());
+    cJSON_AddStringToObject(jsonObject, DEV_NAME, metaCapInfo.GetDeviceName().c_str());
+    cJSON_AddNumberToObject(jsonObject, DEV_TYPE, static_cast<uint16_t>(metaCapInfo.GetDeviceType()));
+    cJSON_AddNumberToObject(jsonObject, DH_TYPE, static_cast<uint32_t>(metaCapInfo.GetDHType()));
+    cJSON_AddStringToObject(jsonObject, DH_ATTRS, metaCapInfo.GetDHAttrs().c_str());
+    cJSON_AddStringToObject(jsonObject, DH_SUBTYPE, metaCapInfo.GetDHSubtype().c_str());
+    cJSON_AddStringToObject(jsonObject, DEV_UDID_HASH, metaCapInfo.GetUdidHash().c_str());
+    cJSON_AddStringToObject(jsonObject, SINK_VER, metaCapInfo.GetSinkVersion().c_str());
     cJSON *jsonObjCompVersion = cJSON_CreateObject();
     if (jsonObjCompVersion == NULL) {
         DHLOGE("Failed to create cJSON object.");
         return;
     }
     ToJson(jsonObjCompVersion, metaCapInfo.GetCompVersion());
-    cJSON_AddItemToObject(jsonObject, COMP_VER.c_str(), jsonObjCompVersion);
+    cJSON_AddItemToObject(jsonObject, COMP_VER, jsonObjCompVersion);
 }
 
 void FromJson(const cJSON *jsonObject, MetaCapabilityInfo &metaCapInfo)
 {
-    cJSON *dhIdJson = cJSON_GetObjectItem(jsonObject, DH_ID.c_str());
+    cJSON *dhIdJson = cJSON_GetObjectItem(jsonObject, DH_ID);
     if (!IsString(dhIdJson)) {
         DHLOGE("DH_ID is invalid!");
         return;
     }
     metaCapInfo.SetDHId(dhIdJson->valuestring);
 
-    cJSON *devIdJson = cJSON_GetObjectItem(jsonObject, DEV_ID.c_str());
+    cJSON *devIdJson = cJSON_GetObjectItem(jsonObject, DEV_ID);
     if (!IsString(devIdJson)) {
         DHLOGE("DEV_ID is invalid!");
         return;
     }
     metaCapInfo.SetDeviceId(devIdJson->valuestring);
 
-    cJSON *devNameJson = cJSON_GetObjectItem(jsonObject, DEV_NAME.c_str());
+    cJSON *devNameJson = cJSON_GetObjectItem(jsonObject, DEV_NAME);
     if (!IsString(devNameJson)) {
         DHLOGE("DEV_NAME is invalid!");
         return;
     }
     metaCapInfo.SetDeviceName(devNameJson->valuestring);
 
-    cJSON *devTypeJson = cJSON_GetObjectItem(jsonObject, DEV_TYPE.c_str());
+    cJSON *devTypeJson = cJSON_GetObjectItem(jsonObject, DEV_TYPE);
     if (!IsUInt16(devTypeJson)) {
         DHLOGE("DEV_TYPE is invalid!");
         return;
     }
     metaCapInfo.SetDeviceType(static_cast<uint16_t>(devTypeJson->valueint));
 
-    cJSON *dhTypeJson = cJSON_GetObjectItem(jsonObject, DH_TYPE.c_str());
+    cJSON *dhTypeJson = cJSON_GetObjectItem(jsonObject, DH_TYPE);
     if (!IsUInt32(dhTypeJson)) {
         DHLOGE("DH_TYPE is invalid!");
         return;
     }
     metaCapInfo.SetDHType((DHType)dhTypeJson->valueint);
 
-    cJSON *dhAttrsObj = cJSON_GetObjectItem(jsonObject, DH_ATTRS.c_str());
+    cJSON *dhAttrsObj = cJSON_GetObjectItem(jsonObject, DH_ATTRS);
     if (!IsString(dhAttrsObj)) {
         DHLOGE("DH_ATTRS is invalid!");
         return;
@@ -233,28 +233,28 @@ void FromJson(const cJSON *jsonObject, MetaCapabilityInfo &metaCapInfo)
 
 void FromJsonContinue(const cJSON *jsonObject, MetaCapabilityInfo &metaCapInfo)
 {
-    cJSON *dhSubtypeJson = cJSON_GetObjectItem(jsonObject, DH_SUBTYPE.c_str());
+    cJSON *dhSubtypeJson = cJSON_GetObjectItem(jsonObject, DH_SUBTYPE);
     if (!IsString(dhSubtypeJson)) {
         DHLOGE("DH_SUBTYPE is invalid!");
         return;
     }
     metaCapInfo.SetDHSubtype(dhSubtypeJson->valuestring);
 
-    cJSON *udidHashJson = cJSON_GetObjectItem(jsonObject, DEV_UDID_HASH.c_str());
+    cJSON *udidHashJson = cJSON_GetObjectItem(jsonObject, DEV_UDID_HASH);
     if (!IsString(udidHashJson)) {
         DHLOGE("DEV_UDID_HASH is invalid!");
         return;
     }
     metaCapInfo.SetUdidHash(udidHashJson->valuestring);
 
-    cJSON *sinkVerJson = cJSON_GetObjectItem(jsonObject, SINK_VER.c_str());
+    cJSON *sinkVerJson = cJSON_GetObjectItem(jsonObject, SINK_VER);
     if (!IsString(sinkVerJson)) {
         DHLOGE("SINK_VER is invalid!");
         return;
     }
     metaCapInfo.SetSinkVersion(sinkVerJson->valuestring);
 
-    cJSON *compVersionJson = cJSON_GetObjectItem(jsonObject, COMP_VER.c_str());
+    cJSON *compVersionJson = cJSON_GetObjectItem(jsonObject, COMP_VER);
     if (compVersionJson == nullptr) {
         DHLOGE("CompVersion is invalid!");
         return;

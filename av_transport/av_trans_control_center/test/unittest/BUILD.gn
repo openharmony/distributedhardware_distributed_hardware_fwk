@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+# Copyright (c) 2023-2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -29,7 +29,6 @@ config("module_private_config") {
     "${engine_path}/av_receiver/include",
     "${engine_path}/av_sender/include",
     "${engine_path}/filters/av_transport_input",
-    "${distributedhardwarefwk_path}/utils/include/eventbus",
     "${control_center_path}/inner_kits/include",
     "${control_center_path}/services/include",
     "${control_center_path}/services/include/ipc",

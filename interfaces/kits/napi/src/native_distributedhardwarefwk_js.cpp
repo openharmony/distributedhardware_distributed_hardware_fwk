@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,11 +15,11 @@
 
 #include "native_distributedhardwarefwk_js.h"
 
-#include "device_type.h"
 #include "ipc_skeleton.h"
 #include "js_native_api.h"
 #include "tokenid_kit.h"
-#include "cJSON.h"
+
+#include "device_type.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_fwk_kit.h"
 

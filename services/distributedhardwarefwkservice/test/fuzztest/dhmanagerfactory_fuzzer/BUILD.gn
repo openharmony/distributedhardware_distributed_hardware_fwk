@@ -24,7 +24,6 @@ ohos_fuzztest("DhManagerFactoryFuzzTest") {
 
   include_dirs = [
     "${utils_path}/include",
-    "${utils_path}/include/log",
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "${services_path}/distributedhardwarefwkservice/include",

@@ -43,7 +43,6 @@ ohos_shared_library("libdhfwk_sdk") {
     "${common_path}/log/include",
     "${common_path}/utils/include",
     "${utils_path}/include",
-    "${utils_path}/include/log",
     "${services_path}/distributedhardwarefwkservice/include",
   ]
 

@@ -155,9 +155,9 @@ void CapabilityInfoManagerOnChangeInsertFuzzTest(const uint8_t* data, size_t siz
     std::string uuId(reinterpret_cast<const char*>(data), size);
     DHContext::GetInstance().AddOnlineDevice(udId, uuId, networkId);
     std::string deviceId = Sha256(uuId);
-    cJSON_AddStringToObject(insertJson, DH_ID.c_str(), "111111");
-    cJSON_AddStringToObject(insertJson, DEV_ID.c_str(), deviceId.c_str());
-    cJSON_AddStringToObject(insertJson, DEV_NAME.c_str(), "dev_name");
+    cJSON_AddStringToObject(insertJson, DH_ID, "111111");
+    cJSON_AddStringToObject(insertJson, DEV_ID, deviceId.c_str());
+    cJSON_AddStringToObject(insertJson, DEV_NAME, "dev_name");
     char* cjson = cJSON_PrintUnformatted(insertJson);
     if (cjson == nullptr) {
         cJSON_Delete(insertJson);
@@ -199,9 +199,9 @@ void CapabilityInfoManagerOnChangeUpdateFuzzTest(const uint8_t* data, size_t siz
     std::string uuId(reinterpret_cast<const char*>(data), size);
     DHContext::GetInstance().AddOnlineDevice(udId, uuId, networkId);
     std::string deviceId = Sha256(uuId);
-    cJSON_AddStringToObject(updateJson, DH_ID.c_str(), "222222");
-    cJSON_AddStringToObject(updateJson, DEV_ID.c_str(), deviceId.c_str());
-    cJSON_AddStringToObject(updateJson, DEV_NAME.c_str(), "dev_name");
+    cJSON_AddStringToObject(updateJson, DH_ID, "222222");
+    cJSON_AddStringToObject(updateJson, DEV_ID, deviceId.c_str());
+    cJSON_AddStringToObject(updateJson, DEV_NAME, "dev_name");
     char* cjson = cJSON_PrintUnformatted(updateJson);
     if (cjson == nullptr) {
         cJSON_Delete(updateJson);
@@ -243,9 +243,9 @@ void CapabilityInfoManagerOnChangeDeleteFuzzTest(const uint8_t* data, size_t siz
     std::string uuId(reinterpret_cast<const char*>(data), size);
     DHContext::GetInstance().AddOnlineDevice(udId, uuId, networkId);
     std::string deviceId = Sha256(uuId);
-    cJSON_AddStringToObject(deleteJson, DH_ID.c_str(), "333333");
-    cJSON_AddStringToObject(deleteJson, DEV_ID.c_str(), deviceId.c_str());
-    cJSON_AddStringToObject(deleteJson, DEV_NAME.c_str(), "dev_name");
+    cJSON_AddStringToObject(deleteJson, DH_ID, "333333");
+    cJSON_AddStringToObject(deleteJson, DEV_ID, deviceId.c_str());
+    cJSON_AddStringToObject(deleteJson, DEV_NAME, "dev_name");
     char* cjson = cJSON_PrintUnformatted(deleteJson);
     if (cjson == nullptr) {
         cJSON_Delete(deleteJson);

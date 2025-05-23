@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -53,14 +53,14 @@ void LowLatencyListener::OnMessage(const DHTopic topic, const std::string& messa
         DHLOGE("jsonStr parse failed");
         return;
     }
-    cJSON *dhTypeJson = cJSON_GetObjectItem(jsonObj, DH_TYPE.c_str());
+    cJSON *dhTypeJson = cJSON_GetObjectItem(jsonObj, DH_TYPE);
     if (!IsUInt32(dhTypeJson)) {
         DHLOGE("The DH_TYPE key is invalid!");
         cJSON_Delete(jsonObj);
         return;
     }
 
-    cJSON *enableJson = cJSON_GetObjectItem(jsonObj, LOW_LATENCY_ENABLE.c_str());
+    cJSON *enableJson = cJSON_GetObjectItem(jsonObj, LOW_LATENCY_ENABLE);
     if (!IsBool(enableJson)) {
         DHLOGE("The LOW_LATENCY_ENABLE key is invalid!");
         cJSON_Delete(jsonObj);

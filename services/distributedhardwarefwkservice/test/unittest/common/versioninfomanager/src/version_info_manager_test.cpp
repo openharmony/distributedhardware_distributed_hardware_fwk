@@ -411,8 +411,8 @@ HWTEST_F(VersionInfoManagerTest, HandleVersionChange_001, TestSize.Level1)
 {
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
-    cJSON_AddStringToObject(jsonObj, DH_VER.c_str(), "1.0");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "222222");
+    cJSON_AddStringToObject(jsonObj, DH_VER, "1.0");
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);
@@ -454,8 +454,8 @@ HWTEST_F(VersionInfoManagerTest, HandleVersionChange_002, TestSize.Level1)
     DHContext::GetInstance().AddOnlineDevice("111111", uuid, "222222");
     cJSON *jsonObj = cJSON_CreateObject();
     ASSERT_TRUE(jsonObj != nullptr);
-    cJSON_AddStringToObject(jsonObj, DEV_ID.c_str(), "222222");
-    cJSON_AddStringToObject(jsonObj, DH_VER.c_str(), "1.0");
+    cJSON_AddStringToObject(jsonObj, DEV_ID, "222222");
+    cJSON_AddStringToObject(jsonObj, DH_VER, "1.0");
     char* cjson = cJSON_PrintUnformatted(jsonObj);
     if (cjson == nullptr) {
         cJSON_Delete(jsonObj);

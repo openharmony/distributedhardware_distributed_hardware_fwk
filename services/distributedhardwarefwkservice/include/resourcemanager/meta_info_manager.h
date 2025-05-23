@@ -44,7 +44,6 @@ public:
     int32_t SyncMetaInfoFromDB(const std::string &udidHash);
     int32_t SyncRemoteMetaInfos();
     int32_t GetDataByKeyPrefix(const std::string &keyPrefix, MetaCapInfoMap &metaCapMap);
-    int32_t RemoveMetaInfoByKey(const std::string &key);
     int32_t RemoveMetaInfoInMemByUdid(const std::string &peerudid);
     int32_t GetMetaCapInfo(const std::string &udidHash, const std::string &dhId,
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);

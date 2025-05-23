@@ -25,7 +25,6 @@ ohos_fuzztest("DistributedFwkServicesFuzzTest") {
     "${av_trans_path}/common/include",
     "include",
     "${utils_path}/include",
-    "${utils_path}/include/log",
     "${common_path}/utils/include",
     "${common_path}/log/include",
     "${services_path}/distributedhardwarefwkservice/include",
