@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -52,22 +52,11 @@ const std::string VIDEO_FORMAT_JEPG = "jpeg";
 const std::string VIDEO_FORMAT_YUVI420 = "yuvi420";
 const std::string VIDEO_FORMAT_RGBA8888 = "rgba8888";
 
-enum struct TransRole : uint32_t {
-    AV_SENDER = 0,
-    AV_RECEIVER = 1,
-    UNKNOWN = 2
-};
+enum struct TransRole : uint32_t { AV_SENDER = 0, AV_RECEIVER = 1, UNKNOWN = 2 };
 
-enum struct AvSyncFlag : uint32_t {
-    MASTER = 0,
-    SLAVE = 1,
-    UNKNOWN = 2
-};
+enum struct AvSyncFlag : uint32_t { MASTER = 0, SLAVE = 1, UNKNOWN = 2 };
 
-enum struct TransStrategy : uint32_t {
-    LOW_LATANCY_STRATEGY,
-    LOW_JITTER_STRATEGY
-};
+enum struct TransStrategy : uint32_t { LOW_LATANCY_STRATEGY, LOW_JITTER_STRATEGY };
 
 struct ChannelAttribute {
     TransStrategy strategy;
@@ -90,12 +79,7 @@ enum struct StateId : uint32_t {
     BUTT,
 };
 
-enum struct TagSection : uint8_t {
-    REGULAR = 1,
-    D_AUDIO = 2,
-    D_VIDEO = 3,
-    MAX_SECTION = 64
-};
+enum struct TagSection : uint8_t { REGULAR = 1, D_AUDIO = 2, D_VIDEO = 3, MAX_SECTION = 64 };
 
 enum struct AVTransTag : uint32_t {
     INVALID = 0,
@@ -164,11 +148,11 @@ struct AVTransEventExt : public AVTransEvent, public Parcelable {
     using AVTransEvent::AVTransEvent;
     explicit AVTransEventExt() {}
     virtual ~AVTransEventExt() = default;
-    explicit AVTransEventExt(const AVTransEvent& AVTransEvent)
+    explicit AVTransEventExt(const AVTransEvent &AVTransEvent)
     {
-       type = AVTransEvent.type;
-       content = AVTransEvent.content;
-       peerDevId = AVTransEvent.peerDevId;
+        type = AVTransEvent.type;
+        content = AVTransEvent.content;
+        peerDevId = AVTransEvent.peerDevId;
     }
 
     virtual bool Marshalling(Parcel &parcel) const override
