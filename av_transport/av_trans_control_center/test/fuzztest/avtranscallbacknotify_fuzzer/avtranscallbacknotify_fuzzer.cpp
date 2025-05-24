@@ -30,11 +30,12 @@ void AVTransCallbackNotifyFuzzTest(const uint8_t *data, size_t size)
     std::string content(reinterpret_cast<const char*>(data), size);
     std::string peerDevId(reinterpret_cast<const char*>(data), size);
     AVTransEvent event = AVTransEvent{ type, content, peerDevId };
+    AVTransEventExt eventExt = AVTransEventExt(event);
     sptr<AVTransControlCenterCallback> controlCenterCallback(new (std::nothrow) AVTransControlCenterCallback());
     if (controlCenterCallback == nullptr) {
         return;
     }
-    controlCenterCallback->Notify(event);
+    controlCenterCallback->Notify(eventExt);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

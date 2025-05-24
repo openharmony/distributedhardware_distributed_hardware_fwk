@@ -31,11 +31,12 @@ void AVTransCallbackSetSharedMemoryFuzzTest(const uint8_t *data, size_t size)
     int32_t len = fdp.ConsumeIntegral<int32_t>();
     std::string name(reinterpret_cast<const char*>(data), size);
     AVTransSharedMemory memory = AVTransSharedMemory{ fd, len, name };
+    AVTransSharedMemoryExt memoryExt = AVTransSharedMemoryExt(memory);
     sptr<AVTransControlCenterCallback> controlCenterCallback(new (std::nothrow) AVTransControlCenterCallback());
     if (controlCenterCallback == nullptr) {
         return;
     }
-    controlCenterCallback->SetSharedMemory(memory);
+    controlCenterCallback->SetSharedMemory(memoryExt);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

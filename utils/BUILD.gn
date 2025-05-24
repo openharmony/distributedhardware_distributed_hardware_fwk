@@ -32,7 +32,10 @@ ohos_shared_library("distributedhardwareutils") {
     debug = false
   }
   branch_protector_ret = "pac_ret"
-  public_configs = [ ":utils_external_config" ]
+  public_configs = [
+    ":utils_external_config",
+    "${innerkits_path}:dhfwk_idl_hardware_config"
+  ]
 
   include_dirs = [
     "${common_path}/log/include",

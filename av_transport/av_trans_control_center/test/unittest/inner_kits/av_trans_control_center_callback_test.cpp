@@ -46,7 +46,7 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_parameter_001, TestSize.Level0)
     callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
     AVTransTag tag = AVTransTag::START_AV_SYNC;
     std::string value;
-    int32_t ret = callBack_->SetParameter(tag, value);
+    int32_t ret = callBack_->SetParameter((uint32_t)tag, value);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 
@@ -63,7 +63,7 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_parameter_002, TestSize.Level0)
     callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
     AVTransTag tag = AVTransTag::STOP_AV_SYNC;
     std::string value;
-    int32_t ret = callBack_->SetParameter(tag, value);
+    int32_t ret = callBack_->SetParameter((uint32_t)tag, value);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 
@@ -80,7 +80,7 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_parameter_003, TestSize.Level0)
     callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
     AVTransTag tag = AVTransTag::TIME_SYNC_RESULT;
     std::string value;
-    int32_t ret = callBack_->SetParameter(tag, value);
+    int32_t ret = callBack_->SetParameter((uint32_t)tag, value);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
     callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
@@ -97,7 +97,7 @@ HWTEST_F(AVTransControlCenterCallbackTest, set_shared_memory_001, TestSize.Level
     callBack_ = std::make_shared<AVTransControlCenterCallback>();
     callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();
     callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
-    AVTransSharedMemory memory;
+    AVTransSharedMemoryExt memory;
     int32_t ret = callBack_->SetSharedMemory(memory);
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
     callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
@@ -115,7 +115,7 @@ HWTEST_F(AVTransControlCenterCallbackTest, notify_001, TestSize.Level1)
     callBack_ = std::make_shared<AVTransControlCenterCallback>();
     callBack_->receiverEngine_ = std::shared_ptr<ReceiverEngineTest>();
     callBack_->senderEngine_ = std::shared_ptr<SenderEngineTest>();
-    AVTransEvent event;
+    AVTransEventExt event;
     event.type = EventType::EVENT_ADD_STREAM;
     int32_t ret = callBack_->Notify(event);
     std::shared_ptr<IAVSenderEngine> sender = std::shared_ptr<SenderEngineTest>();

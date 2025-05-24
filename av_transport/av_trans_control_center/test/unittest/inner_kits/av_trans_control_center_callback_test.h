@@ -29,6 +29,7 @@
 #include "i_av_sender_engine_callback.h"
 #include "av_trans_message.h"
 #include "av_trans_buffer.h"
+#include "av_trans_errno.h"
 namespace OHOS {
 namespace DistributedHardware {
 class AVTransControlCenterCallbackTest : public testing::Test {

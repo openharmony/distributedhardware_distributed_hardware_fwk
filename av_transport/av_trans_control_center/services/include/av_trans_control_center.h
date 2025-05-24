@@ -35,7 +35,7 @@ public:
     int32_t ReleaseAVCenter(int32_t engineId);
     int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId);
     int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event);
-    int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback);
+    int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAvTransControlCenterCallback> &callback);
 
     // interfaces from ISoftbusChannelListener
     void OnChannelEvent(const AVTransEvent &event) override;
@@ -64,7 +64,7 @@ private:
 
     std::vector<std::string> connectedDevIds_;
     std::map<int32_t, std::string> engine2DevIdMap_;
-    std::map<int32_t, sptr<IAVTransControlCenterCallback>> callbackMap_;
+    std::map<int32_t, sptr<IAvTransControlCenterCallback>> callbackMap_;
 };
 }
 }

@@ -18,6 +18,8 @@
 
 #include <memory>
 #include <string>
+#include "parcel.h"
+#include "message_parcel.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -32,6 +34,46 @@ struct AVTransSharedMemory {
     int32_t fd;
     int32_t size;
     std::string name;
+};
+
+struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {
+    using AVTransSharedMemory::AVTransSharedMemory;
+    explicit AVTransSharedMemoryExt() {}
+    virtual ~AVTransSharedMemoryExt() = default;
+    explicit AVTransSharedMemoryExt(const AVTransSharedMemory& avTransSharedMemory)
+    {
+       fd = avTransSharedMemory.fd;
+       size = avTransSharedMemory.size;
+       name = avTransSharedMemory.name;
+    }
+    virtual bool Marshalling(Parcel &parcel) const override
+    {
+        MessageParcel &messageParcel = static_cast<MessageParcel&>(parcel);
+        if (!messageParcel.WriteFileDescriptor(fd)) {
+            return false;
+        }
+        if (!parcel.WriteInt32(size)) {
+            return false;
+        }
+        if (!parcel.WriteString(name)) {
+            return false;
+        }
+        return true;
+    }
+
+    static AVTransSharedMemoryExt *Unmarshalling(Parcel &parcel)
+    {
+        MessageParcel &messageParcel = static_cast<MessageParcel&>(parcel);
+        AVTransSharedMemoryExt *avTransSharedMemory = new (std::nothrow) AVTransSharedMemoryExt();
+        if (avTransSharedMemory == nullptr) {
+            // AVTRANS_LOGE("Create avTransSharedMemory failed");
+            return nullptr;
+        }
+        avTransSharedMemory->fd = messageParcel.ReadFileDescriptor();
+        avTransSharedMemory->size = parcel.ReadInt32();
+        avTransSharedMemory->name = parcel.ReadString();
+        return avTransSharedMemory;
+    }
 };
 
 struct AVSyncClockUnit {

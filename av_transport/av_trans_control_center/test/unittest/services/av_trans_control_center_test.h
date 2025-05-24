@@ -24,6 +24,7 @@
 #include "av_trans_control_center_callback_stub.h"
 #include "av_trans_types.h"
 #include "av_sync_utils.h"
+#include "av_trans_errno.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -35,26 +36,26 @@ public:
     void TearDown();
     std::shared_ptr<AVTransControlCenter> center_ = nullptr;
 };
-class CenterCallback : public AVTransControlCenterCallbackStub {
+class CenterCallback : public AvTransControlCenterCallbackStub {
 public:
     CenterCallback() = default;
     ~CenterCallback() override = default;
-    int32_t SetParameter(AVTransTag tag, const std::string &value) override
+    int32_t SetParameter(uint32_t tag, const std::string &value) override
     {
         value_ = value;
         return DH_AVT_SUCCESS;
     }
-    int32_t SetSharedMemory(const AVTransSharedMemory &memory) override
+    int32_t SetSharedMemory(const AVTransSharedMemoryExt &memory) override
     {
         memory_ = memory;
         return DH_AVT_SUCCESS;
     }
-    int32_t Notify(const AVTransEvent &event) override
+    int32_t Notify(const AVTransEventExt &event) override
     {
         return DH_AVT_SUCCESS;
     }
     std::string value_;
-    AVTransSharedMemory memory_;
+    AVTransSharedMemoryExt memory_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

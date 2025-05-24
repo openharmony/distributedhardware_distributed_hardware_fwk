@@ -47,18 +47,18 @@ void AVTransStubOnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     MessageOption option;
     pdata.WriteInterfaceToken(AVTransControlCenterCallback::GetDescriptor());
     uint32_t code = *(reinterpret_cast<const uint32_t*>(data)) % DC_MESSAGE_SIZE;
-    if (code == (uint32_t)IAVTransControlCenterCallback::Message::SET_PARAMETER) {
+    if (code == (uint32_t)IAvTransControlCenterCallbackIpcCode::COMMAND_SET_PARAMETER) {
         uint32_t tag = *(reinterpret_cast<const uint32_t*>(data));
         std::string value(reinterpret_cast<const char*>(data), size);
         pdata.WriteUint32(tag);
         pdata.WriteString(value);
-    } else if (code == (uint32_t)IAVTransControlCenterCallback::Message::SET_SHARED_MEMORY) {
+    } else if (code == (uint32_t)IAvTransControlCenterCallbackIpcCode::COMMAND_SET_SHARED_MEMORY) {
         FuzzedDataProvider fdp(data, size);
         int32_t len = fdp.ConsumeIntegral<int32_t>();
         std::string name(reinterpret_cast<const char*>(data), size);
         pdata.WriteInt32(len);
         pdata.WriteString(name);
-    } else if (code == (uint32_t)IAVTransControlCenterCallback::Message::NOTIFY_AV_EVENT) {
+    } else if (code == (uint32_t)IAvTransControlCenterCallbackIpcCode::COMMAND_NOTIFY) {
         uint32_t type = *(reinterpret_cast<const uint32_t*>(data));
         std::string content(reinterpret_cast<const char*>(data), size);
         std::string devId(reinterpret_cast<const char*>(data), size);

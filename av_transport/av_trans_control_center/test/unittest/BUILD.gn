@@ -48,6 +48,7 @@ ohos_unittest("AvTransControlCenterTest") {
 
   configs = [ ":module_private_config" ]
   deps = [
+    "${dh_fwk_sdk_path}:dhfwk_idl_hardware_head",
     "${dh_fwk_sdk_path}:libdhfwk_sdk",
     "${dh_fwk_services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
   ]

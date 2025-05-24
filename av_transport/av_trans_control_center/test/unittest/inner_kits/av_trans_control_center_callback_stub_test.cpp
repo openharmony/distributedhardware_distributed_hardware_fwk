@@ -37,20 +37,20 @@ void AVTransControlCenterCallbackStubTest::TearDown()
 }
 
 int32_t AVTransControlCenterCallbackStubTest::TestControlCenterCallbackStub::SetParameter(
-    AVTransTag tag, const std::string &value)
+    uint32_t tag, const std::string &value)
 {
     (void) tag;
     (void) value;
     return DH_AVT_SUCCESS;
 }
 int32_t AVTransControlCenterCallbackStubTest::TestControlCenterCallbackStub::SetSharedMemory(
-    const AVTransSharedMemory &memory)
+    const AVTransSharedMemoryExt &memory)
 {
     (void) memory;
     return DH_AVT_SUCCESS;
 }
 int32_t AVTransControlCenterCallbackStubTest::TestControlCenterCallbackStub::Notify(
-    const AVTransEvent &event)
+    const AVTransEventExt &event)
 {
     (void) event;
     return DH_AVT_SUCCESS;
@@ -65,11 +65,11 @@ int32_t AVTransControlCenterCallbackStubTest::TestControlCenterCallbackStub::Not
 HWTEST_F(AVTransControlCenterCallbackStubTest, set_parameter_001, TestSize.Level0)
 {
     sptr<IRemoteObject> CallbackStubPtr(new TestControlCenterCallbackStub());
-    AVTransControlCenterCallbackProxy callbackProxy(CallbackStubPtr);
+    AvTransControlCenterCallbackProxy callbackProxy(CallbackStubPtr);
 
     AVTransTag tag = AVTransTag::STOP_AV_SYNC;
     std::string value = "value";
-    int32_t ret = callbackProxy.SetParameter(tag, value);
+    int32_t ret = callbackProxy.SetParameter((uint32_t)tag, value);
     EXPECT_EQ(NO_ERROR, ret);
 }
 
@@ -82,9 +82,9 @@ HWTEST_F(AVTransControlCenterCallbackStubTest, set_parameter_001, TestSize.Level
 HWTEST_F(AVTransControlCenterCallbackStubTest, set_shared_memory_001, TestSize.Level1)
 {
     sptr<IRemoteObject> CallbackStubPtr(new TestControlCenterCallbackStub());
-    AVTransControlCenterCallbackProxy callbackProxy(CallbackStubPtr);
+    AvTransControlCenterCallbackProxy callbackProxy(CallbackStubPtr);
 
-    AVTransSharedMemory memory;
+    AVTransSharedMemoryExt memory;
     memory.name = "AVTransSharedMemory";
     int32_t ret = callbackProxy.SetSharedMemory(memory);
     EXPECT_EQ(NO_ERROR, ret);
@@ -99,9 +99,9 @@ HWTEST_F(AVTransControlCenterCallbackStubTest, set_shared_memory_001, TestSize.L
 HWTEST_F(AVTransControlCenterCallbackStubTest, notify_001, TestSize.Level0)
 {
     sptr<IRemoteObject> CallbackStubPtr(new TestControlCenterCallbackStub());
-    AVTransControlCenterCallbackProxy callbackProxy(CallbackStubPtr);
+    AvTransControlCenterCallbackProxy callbackProxy(CallbackStubPtr);
 
-    AVTransEvent event;
+    AVTransEventExt event;
     event.content = "content";
     int32_t ret = callbackProxy.Notify(event);
     EXPECT_EQ(NO_ERROR, ret);

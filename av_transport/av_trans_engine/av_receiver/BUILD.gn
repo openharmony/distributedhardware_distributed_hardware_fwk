@@ -70,6 +70,7 @@ ohos_shared_library("distributed_av_receiver") {
   ]
 
   deps = [
+    "${dh_fwk_sdk_path}:dhfwk_idl_hardware_head",
     "${dh_fwk_sdk_path}:libdhfwk_sdk",
     "${distributed_av_transport_path}/framework:distributed_av_pipeline_fwk",
     "${filters_path}:avtrans_input_filter",

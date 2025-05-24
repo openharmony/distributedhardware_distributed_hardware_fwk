@@ -18,6 +18,8 @@
 
 #include <string>
 #include <unistd.h>
+#include "parcel.h"
+#include "message_parcel.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -156,6 +158,48 @@ struct AVTransEvent {
     EventType type;
     std::string content;
     std::string peerDevId;
+};
+
+struct AVTransEventExt : public AVTransEvent, public Parcelable {
+    using AVTransEvent::AVTransEvent;
+    explicit AVTransEventExt() {}
+    virtual ~AVTransEventExt() = default;
+    explicit AVTransEventExt(const AVTransEvent& AVTransEvent)
+    {
+       type = AVTransEvent.type;
+       content = AVTransEvent.content;
+       peerDevId = AVTransEvent.peerDevId;
+    }
+
+    virtual bool Marshalling(Parcel &parcel) const override
+    {
+        if (!parcel.WriteUint32((uint32_t)type)) {
+            return false;
+        }
+        if (!parcel.WriteString(content)) {
+            return false;
+        }
+        if (!parcel.WriteString(peerDevId)) {
+            return false;
+        }
+        return true;
+    }
+
+    static AVTransEventExt *Unmarshalling(Parcel &parcel)
+    {
+        AVTransEventExt *avTransEvent = new (std::nothrow) AVTransEventExt();
+        if (avTransEvent == nullptr) {
+            return nullptr;
+        }
+        uint32_t typeValue = parcel.ReadUint32();
+        std::string contentValue = parcel.ReadString();
+        std::string peerDevIdValue = parcel.ReadString();
+        avTransEvent->type = static_cast<EventType>(typeValue);
+        avTransEvent->content = contentValue;
+        avTransEvent->peerDevId = peerDevIdValue;
+
+        return avTransEvent;
+    }
 };
 
 struct AVStreamInfo {

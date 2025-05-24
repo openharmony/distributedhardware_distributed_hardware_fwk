@@ -32,7 +32,7 @@ void AVTransCallbackSetParameterFuzzTest(const uint8_t *data, size_t size)
     if (controlCenterCallback == nullptr) {
         return;
     }
-    controlCenterCallback->SetParameter(tag, value);
+    controlCenterCallback->SetParameter((uint32_t)tag, value);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

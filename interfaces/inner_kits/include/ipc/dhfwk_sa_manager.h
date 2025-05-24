@@ -42,7 +42,7 @@ public:
 
     int32_t AddPublisherListenerToCache(const DHTopic topic, sptr<IPublisherListener> listener);
     void RemovePublisherListenerFromCache(const DHTopic topic, sptr<IPublisherListener> listener);
-    void AddAVTransControlCenterCbToCache(int32_t engineId, const sptr<IAVTransControlCenterCallback> callback);
+    void AddAVTransControlCenterCbToCache(int32_t engineId, const sptr<IAvTransControlCenterCallback> callback);
     void RemoveAVTransControlCenterCbFromCache(int32_t engineId);
 
 public:
@@ -66,7 +66,7 @@ private:
     std::mutex publisherListenersMutex_;
     std::unordered_map<DHTopic, std::set<sptr<IPublisherListener>>> publisherListenersCache_;
     std::mutex avTransControlCenterCbMutex_;
-    std::unordered_map<int32_t, sptr<IAVTransControlCenterCallback>> avTransControlCenterCbCache_;
+    std::unordered_map<int32_t, sptr<IAvTransControlCenterCallback>> avTransControlCenterCbCache_;
 };
 } // DistributedHardware
 } // OHOS

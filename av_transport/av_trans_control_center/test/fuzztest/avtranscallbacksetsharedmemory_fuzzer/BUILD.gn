@@ -39,8 +39,10 @@ ohos_fuzztest("AVTransCallbackSetSharedMemoryFuzzTest") {
 
   sources = [ "avtranscallbacksetsharedmemory_fuzzer.cpp" ]
 
-  deps = [ "${dh_fwk_sdk_path}:libdhfwk_sdk" ]
-
+  deps = [
+    "${dh_fwk_sdk_path}:dhfwk_idl_hardware_head",
+    "${dh_fwk_sdk_path}:libdhfwk_sdk",
+  ]
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"AVTransCallbackSetSharedMemoryFuzzTest\"",
