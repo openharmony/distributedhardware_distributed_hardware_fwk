@@ -54,6 +54,8 @@ ohos_fuzztest("DistributedHardwareFwkStubFuzzTest") {
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
   ]
+
+  public_configs = [ "${innerkits_path}:dhfwk_idl_hardware_config" ]
 }
 
 ###############################################################################

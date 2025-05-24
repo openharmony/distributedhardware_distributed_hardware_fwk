@@ -33,7 +33,7 @@ int32_t AVTransControlCenterCallback::SetParameter(uint32_t tag, const std::stri
     return DH_AVT_SUCCESS;
 }
 
-int32_t AVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemoryExt &memory)
+int32_t AVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemoryExt& memory)
 {
     DHLOGW("AVTransControlCenterCallback::SetSharedMemory enter.");
 
@@ -55,7 +55,7 @@ int32_t AVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemoryE
     return DH_AVT_SUCCESS;
 }
 
-int32_t AVTransControlCenterCallback::Notify(const AVTransEventExt &event)
+int32_t AVTransControlCenterCallback::Notify(const AVTransEventExt& event)
 {
     DHLOGW("AVTransControlCenterCallback::Notify enter.");
     return DH_AVT_SUCCESS;

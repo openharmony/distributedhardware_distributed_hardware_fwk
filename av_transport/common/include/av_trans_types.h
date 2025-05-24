@@ -148,7 +148,7 @@ struct AVTransEventExt : public AVTransEvent, public Parcelable {
     using AVTransEvent::AVTransEvent;
     explicit AVTransEventExt() {}
     virtual ~AVTransEventExt() = default;
-    explicit AVTransEventExt(const AVTransEvent &AVTransEvent)
+    explicit AVTransEventExt(const AVTransEvent& AVTransEvent)
     {
         type = AVTransEvent.type;
         content = AVTransEvent.content;

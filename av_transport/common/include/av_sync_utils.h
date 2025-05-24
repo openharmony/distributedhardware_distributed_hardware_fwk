@@ -40,7 +40,7 @@ struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {
     using AVTransSharedMemory::AVTransSharedMemory;
     explicit AVTransSharedMemoryExt() {}
     virtual ~AVTransSharedMemoryExt() = default;
-    explicit AVTransSharedMemoryExt(const AVTransSharedMemory &avTransSharedMemory)
+    explicit AVTransSharedMemoryExt(const AVTransSharedMemory& avTransSharedMemory)
     {
         fd = avTransSharedMemory.fd;
         size = avTransSharedMemory.size;
@@ -48,7 +48,7 @@ struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {
     }
     virtual bool Marshalling(Parcel &parcel) const override
     {
-        MessageParcel &messageParcel = static_cast<MessageParcel &>(parcel);
+        MessageParcel &messageParcel = static_cast<MessageParcel&>(parcel);
         if (!messageParcel.WriteFileDescriptor(fd)) {
             return false;
         }
@@ -63,7 +63,7 @@ struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {
 
     static AVTransSharedMemoryExt *Unmarshalling(Parcel &parcel)
     {
-        MessageParcel &messageParcel = static_cast<MessageParcel &>(parcel);
+        MessageParcel &messageParcel = static_cast<MessageParcel&>(parcel);
         AVTransSharedMemoryExt *avTransSharedMemory = new (std::nothrow) AVTransSharedMemoryExt();
         if (avTransSharedMemory == nullptr) {
             return nullptr;
