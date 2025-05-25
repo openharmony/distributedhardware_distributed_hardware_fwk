@@ -68,6 +68,7 @@ ohos_unittest("AvTransControlCenterTest") {
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "ipc:ipc_core",
+    "hilog:libhilog",
   ]
 
   cflags = [

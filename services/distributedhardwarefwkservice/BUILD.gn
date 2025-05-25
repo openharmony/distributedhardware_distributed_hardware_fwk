@@ -111,7 +111,10 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/versionmanager/version_manager.cpp",
   ]
 
-  deps = [ "${utils_path}:distributedhardwareutils" ]
+  deps = [
+    "${utils_path}:distributedhardwareutils",
+    "${innerkits_path}:dhfwk_idl_hardware_source",
+  ]
 
   defines = [
     "HI_LOG_ENABLE",
