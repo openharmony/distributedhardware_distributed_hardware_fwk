@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,15 +41,18 @@ namespace {
     constexpr int32_t DIED_CHECK_MAX_TIMES = 300;
     constexpr int32_t DIED_CHECK_INTERVAL = 100 * 1000; // 100ms
     const std::string DATABASE_DIR = "/data/service/el1/public/database/";
+    constexpr const char *GLOBAL_META_INFO_KEY = "global_meta_info";
+    constexpr const char *GLOBAL_VERSION_INFO_KEY = "global_version_info";
+    constexpr const char *GLOBAL_CAPABILITY_INFO_KEY = "global_capability_info";
 }
 
-DBAdapter::DBAdapter(const std::string &appId, const std::string &storeId,
-                     const std::shared_ptr<DistributedKv::KvStoreObserver> changeListener)
+DBAdapter::DBAdapter(const char *appId, const char *storeId,
+    const std::shared_ptr<DistributedKv::KvStoreObserver> changeListener)
 {
-    this->appId_.appId = appId;
-    this->storeId_.storeId = storeId;
+    this->appId_.appId = std::string(appId);
+    this->storeId_.storeId = std::string(storeId);
     this->dataChangeListener_ = changeListener;
-    DHLOGI("DBAdapter Constructor Success, appId: %{public}s, storeId: %{public}s", appId.c_str(), storeId.c_str());
+    DHLOGI("DBAdapter Constructor Success, appId: %{public}s, storeId: %{public}s", appId, storeId);
 }
 
 DBAdapter::~DBAdapter()
@@ -257,7 +260,8 @@ int32_t DBAdapter::GetDataByKey(const std::string &key, std::string &data)
             SyncByNotFound(key);
         }
 #ifdef DHARDWARE_OPEN_SOURCE
-        if (this->dataType_ == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
+        if (this->dataType_ == DistributedKv::DataType::TYPE_STATICS &&
+            this->storeId_.storeId == std::string(GLOBAL_META_INFO_KEY)) {
             SyncByNotFound(key);
         }
 #endif
@@ -288,7 +292,8 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
             SyncByNotFound(keyPrefix);
         }
 #ifdef DHARDWARE_OPEN_SOURCE
-        if (this->dataType_ == DistributedKv::DataType::TYPE_STATICS && this->storeId_.storeId == GLOBAL_META_INFO) {
+        if (this->dataType_ == DistributedKv::DataType::TYPE_STATICS &&
+            this->storeId_.storeId == std::string(GLOBAL_META_INFO_KEY)) {
             SyncByNotFound(keyPrefix);
         }
 #endif
@@ -360,19 +365,19 @@ int32_t DBAdapter::PutDataBatch(const std::vector<std::string> &keys, const std:
 void DBAdapter::SyncDBForRecover()
 {
     DHLOGI("Sync store id: %{public}s after db recover", storeId_.storeId.c_str());
-    if (storeId_.storeId == GLOBAL_CAPABILITY_ID) {
+    if (storeId_.storeId == std::string(GLOBAL_CAPABILITY_INFO_KEY)) {
         AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_CAPABILITY_INFO_DB_RECOVER);
         CapabilityInfoManager::GetInstance()->GetEventHandler()->SendEvent(msgEvent,
             0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
     }
 
-    if (storeId_.storeId == GLOBAL_VERSION_ID) {
+    if (storeId_.storeId == std::string(GLOBAL_VERSION_INFO_KEY)) {
         AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_VERSION_INFO_DB_RECOVER);
         VersionInfoManager::GetInstance()->GetEventHandler()->SendEvent(msgEvent,
             0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
     }
 
-    if (storeId_.storeId == GLOBAL_META_INFO) {
+    if (storeId_.storeId == std::string(GLOBAL_META_INFO_KEY)) {
         AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_META_INFO_DB_RECOVER);
         MetaInfoManager::GetInstance()->GetEventHandler()->SendEvent(msgEvent,
             0, AppExecFwk::EventQueue::Priority::IMMEDIATE);

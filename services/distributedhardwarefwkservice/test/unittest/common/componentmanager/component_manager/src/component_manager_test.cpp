@@ -348,8 +348,9 @@ HWTEST_F(ComponentManagerTest, StartSource_001, TestSize.Level1)
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
     ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
-    auto ret = ComponentManager::GetInstance().StartSource(dhType);
-    EXPECT_EQ(true, ret.empty());
+    std::unordered_map<DHType, std::shared_future<int32_t>> sourceResult;
+    auto ret = ComponentManager::GetInstance().StartSource(dhType, sourceResult);
+    EXPECT_EQ(ERR_DH_FWK_SA_HANDLER_IS_NULL, ret);
     ComponentManager::GetInstance().compSource_.clear();
 }
 
@@ -364,11 +365,12 @@ HWTEST_F(ComponentManagerTest, StartSource_002, TestSize.Level1)
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
     ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
-    auto ret = ComponentManager::GetInstance().StartSource(DHType::AUDIO);
-    EXPECT_EQ(true, ret.empty());
+    std::unordered_map<DHType, std::shared_future<int32_t>> sourceResult;
+    auto ret = ComponentManager::GetInstance().StartSource(DHType::AUDIO, sourceResult);
+    EXPECT_EQ(ERR_DH_FWK_TYPE_NOT_EXIST, ret);
 
-    ret = ComponentManager::GetInstance().StartSource(dhType);
-    EXPECT_EQ(true, ret.empty());
+    ret = ComponentManager::GetInstance().StartSource(dhType, sourceResult);
+    EXPECT_EQ(ERR_DH_FWK_SA_HANDLER_IS_NULL, ret);
     ComponentManager::GetInstance().compSource_.clear();
 }
 
@@ -383,8 +385,9 @@ HWTEST_F(ComponentManagerTest, StartSink_001, TestSize.Level1)
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSink *sinkPtr = nullptr;
     ComponentManager::GetInstance().compSink_.insert(std::make_pair(dhType, sinkPtr));
-    auto ret = ComponentManager::GetInstance().StartSink(dhType);
-    EXPECT_EQ(true, ret.empty());
+    std::unordered_map<DHType, std::shared_future<int32_t>> sinkResult;
+    auto ret = ComponentManager::GetInstance().StartSink(dhType, sinkResult);
+    EXPECT_EQ(ERR_DH_FWK_SA_HANDLER_IS_NULL, ret);
     ComponentManager::GetInstance().compSink_.clear();
 }
 
@@ -399,11 +402,11 @@ HWTEST_F(ComponentManagerTest, StopSource_001, TestSize.Level1)
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSource *sourcePtr = nullptr;
     ComponentManager::GetInstance().compSource_.insert(std::make_pair(dhType, sourcePtr));
-    auto ret = ComponentManager::GetInstance().StopSource(dhType);
-    EXPECT_EQ(true, ret.empty());
+    std::unordered_map<DHType, std::shared_future<int32_t>> sourceResult;
+    auto ret = ComponentManager::GetInstance().StopSource(dhType, sourceResult);
+    EXPECT_EQ(ERR_DH_FWK_SA_HANDLER_IS_NULL, ret);
     ComponentManager::GetInstance().compSource_.clear();
 }
-
 /**
  * @tc.name: StopSink_001
  * @tc.desc: Verify the StopSink function
@@ -415,8 +418,9 @@ HWTEST_F(ComponentManagerTest, StopSink_001, TestSize.Level1)
     DHType dhType = DHType::CAMERA;
     IDistributedHardwareSink *sinkPtr = nullptr;
     ComponentManager::GetInstance().compSink_.insert(std::make_pair(dhType, sinkPtr));
-    auto ret = ComponentManager::GetInstance().StopSink(dhType);
-    EXPECT_EQ(true, ret.empty());
+    std::unordered_map<DHType, std::shared_future<int32_t>> sinkResult;
+    auto ret = ComponentManager::GetInstance().StopSink(dhType, sinkResult);
+    EXPECT_EQ(ERR_DH_FWK_SA_HANDLER_IS_NULL, ret);
     ComponentManager::GetInstance().compSink_.clear();
 }
 
@@ -1142,10 +1146,10 @@ HWTEST_F(ComponentManagerTest, DisableSink_001, TestSize.Level1)
         .dhType = DHType::AUDIO
     };
     auto ret = ComponentManager::GetInstance().DisableSink(dhDescriptor, 0, 0);
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
     ret = ComponentManager::GetInstance().DisableSink(dhDescriptor, 0, 0);
     SetDownComponentLoaderConfig();
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
+    EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
 }
 
 HWTEST_F(ComponentManagerTest, EnableSource_001, TestSize.Level1)
@@ -1181,7 +1185,7 @@ HWTEST_F(ComponentManagerTest, ForceDisableSink_001, TestSize.Level1)
     SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().ForceDisableSink(dhDescriptor);
     SetDownComponentLoaderConfig();
-    EXPECT_EQ(ret, ERR_DH_FWK_LOADER_SINK_UNLOAD);
+    EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
 }
 
 HWTEST_F(ComponentManagerTest, ForceDisableSource_001, TestSize.Level1)
@@ -1232,6 +1236,13 @@ HWTEST_F(ComponentManagerTest, OnStateChanged_001, testing::ext::TestSize.Level1
 
     networkId = "networkId_test";
     ASSERT_NO_FATAL_FAILURE(dhStateListenenr.OnStateChanged(networkId, dhId, state));
+}
+
+HWTEST_F(ComponentManagerTest, CheckSinkConfigStart_001, TestSize.Level1)
+{
+    bool enableSink = false;
+    auto ret = ComponentManager::GetInstance().CheckSinkConfigStart(DHType::GPS, enableSink);
+    EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

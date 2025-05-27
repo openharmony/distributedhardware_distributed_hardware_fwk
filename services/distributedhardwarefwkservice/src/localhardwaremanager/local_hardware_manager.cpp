@@ -49,7 +49,8 @@ void LocalHardwareManager::Init()
 {
     DHLOGI("start");
     std::lock_guard<std::mutex> lock(localHardwareMgrMutex_);
-    std::vector<DHType> allCompTypes = ComponentLoader::GetInstance().GetAllCompTypes();
+    std::vector<DHType> allCompTypes;
+    ComponentLoader::GetInstance().GetAllCompTypes(allCompTypes);
     int64_t allQueryStartTime = GetCurrentTime();
     for (auto dhType : allCompTypes) {
         int64_t singleQueryStartTime = GetCurrentTime();

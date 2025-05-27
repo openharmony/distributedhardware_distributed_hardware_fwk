@@ -31,6 +31,10 @@ namespace OHOS {
 namespace DistributedHardware {
 using namespace std;
 constexpr uint16_t TEST_DEV_TYPE = 0x14;
+// request remote dh send back full dh capabilities
+constexpr int32_t DH_COMM_REQ_FULL_CAPS = 1;
+// send back full dh attributes to the requester
+constexpr int32_t DH_COMM_RSP_FULL_CAPS = 2;
 
 class DhCommToolTest : public testing::Test {
 public:

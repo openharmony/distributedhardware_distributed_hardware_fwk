@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,10 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "LowLatencyTimer"
+
+constexpr int32_t MODE_ENABLE = 0;
+constexpr int32_t MODE_DISABLE = 1;
+const std::string LOW_LATENCY_KEY = "identity";
 
 LowLatencyTimer::LowLatencyTimer(std::string timerId, int32_t delayTimeMs) : DHTimer(timerId, delayTimeMs)
 {

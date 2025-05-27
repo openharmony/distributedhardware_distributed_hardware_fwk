@@ -80,6 +80,7 @@ public:
      */
     bool FetchNeedRefreshTask(const std::pair<std::string, std::string> &taskKey, TaskParam &taskParam);
 
+    int32_t CheckSinkConfigStart(const DHType dhType, bool &enableSink);
     int32_t CheckDemandStart(const std::string &uuid, const DHType dhType, bool &enableSource);
     int32_t RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener, int32_t callingUid, int32_t callingPid);
     int32_t UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener, int32_t callingUid, int32_t callingPid);
@@ -202,10 +203,10 @@ private:
     int32_t UninitCompSource(DHType dhType);
     int32_t InitCompSink(DHType dhType);
     int32_t UninitCompSink(DHType dhType);
-    ActionResult StartSource(DHType dhType);
-    ActionResult StopSource(DHType dhType);
-    ActionResult StartSink(DHType dhType);
-    ActionResult StopSink(DHType dhType);
+    int32_t StartSource(DHType dhType, ActionResult &sourceResult);
+    int32_t StopSource(DHType dhType, ActionResult &sourceResult);
+    int32_t StartSink(DHType dhType, ActionResult &sinkResult);
+    int32_t StopSink(DHType dhType, ActionResult &sinkResult);
     bool WaitForResult(const Action &action, ActionResult result);
     int32_t GetEnableParam(const std::string &networkId, const std::string &uuid, const std::string &dhId,
         DHType dhType, EnableParam &param);

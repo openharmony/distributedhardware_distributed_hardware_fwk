@@ -31,6 +31,8 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "LocalCapabilityInfoManager"
 
+constexpr const char *LOCAL_CAPABILITY_INFO_KEY = "local_capability_info";
+
 LocalCapabilityInfoManager::LocalCapabilityInfoManager() : dbAdapterPtr_(nullptr)
 {
     DHLOGI("LocalCapabilityInfoManager construction!");
@@ -51,7 +53,7 @@ int32_t LocalCapabilityInfoManager::Init()
 {
     DHLOGI("LocalCapabilityInfoManager instance init!");
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
-    dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, LOCAL_CAPABILITY_ID, shared_from_this());
+    dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, LOCAL_CAPABILITY_INFO_KEY, shared_from_this());
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;

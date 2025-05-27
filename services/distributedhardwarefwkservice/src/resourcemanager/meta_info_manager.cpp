@@ -33,6 +33,8 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "MetaInfoManager"
 
+constexpr const char *GLOBAL_META_INFO_KEY = "global_meta_info";
+
 MetaInfoManager::MetaInfoManager() : dbAdapterPtr_(nullptr)
 {
     DHLOGI("MetaInfoManager construction!");
@@ -87,7 +89,7 @@ int32_t MetaInfoManager::Init()
 {
     DHLOGI("MetaInfoManager instance init!");
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
-    dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, GLOBAL_META_INFO, shared_from_this());
+    dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, GLOBAL_META_INFO_KEY, shared_from_this());
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;

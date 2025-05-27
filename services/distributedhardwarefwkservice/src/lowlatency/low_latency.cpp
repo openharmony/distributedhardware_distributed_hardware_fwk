@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,7 +31,10 @@ namespace DistributedHardware {
 IMPLEMENT_SINGLE_INSTANCE(LowLatency);
 namespace {
     const std::string LOW_LATENCY_TIMER_ID = "low_latency_timer_id";
+    const std::string LOW_LATENCY_KEY = "identity";
     constexpr int32_t LOW_LATENCY_DELAY_MS = 50 * 1000;
+    constexpr int32_t MODE_DISABLE = 1;
+    constexpr uint32_t MAX_SWITCH_SIZE = 256;
 }
 
 LowLatency::LowLatency() : lowLatencyTimer_(std::make_shared<LowLatencyTimer>(LOW_LATENCY_TIMER_ID,

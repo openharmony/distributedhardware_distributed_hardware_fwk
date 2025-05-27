@@ -30,7 +30,7 @@ public:
     virtual int32_t GetSink(const DHType dhType, IDistributedHardwareSink *&sinkPtr) = 0;
     virtual int32_t GetHardwareHandler(const DHType dhType, IHardwareHandler *&hardwareHandlerPtr) = 0;
     virtual int32_t ReleaseSink(const DHType dhType) = 0;
-    virtual std::vector<DHType> GetAllCompTypes() = 0;
+    virtual void GetAllCompTypes(std::vector<DHType> &dhTypeVec) = 0;
     virtual int32_t GetSource(const DHType dhType, IDistributedHardwareSource *&sourcePtr) = 0;
     virtual int32_t GetSourceSaId(const DHType dhType) = 0;
     virtual int32_t ReleaseSource(const DHType dhType) = 0;
@@ -49,7 +49,7 @@ public:
     MOCK_METHOD(int32_t, GetSink, (const DHType, IDistributedHardwareSink *&));
     MOCK_METHOD(int32_t, GetHardwareHandler, (const DHType, IHardwareHandler *&));
     MOCK_METHOD(int32_t, ReleaseSink, (const DHType));
-    MOCK_METHOD((std::vector<DHType>), GetAllCompTypes, ());
+    MOCK_METHOD(void, GetAllCompTypes, (std::vector<DHType> &));
     MOCK_METHOD(int32_t, GetSource, (const DHType, IDistributedHardwareSource *&));
     MOCK_METHOD(int32_t, GetSourceSaId, (const DHType));
     MOCK_METHOD(int32_t, ReleaseSource, (const DHType));
