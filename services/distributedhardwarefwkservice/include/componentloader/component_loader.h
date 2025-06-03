@@ -79,7 +79,7 @@ public:
     int32_t GetSource(const DHType dhType, IDistributedHardwareSource *&sourcePtr);
     int32_t GetSink(const DHType dhType, IDistributedHardwareSink *&sinkPtr);
     int32_t UnInit();
-    std::vector<DHType> GetAllCompTypes();
+    void GetAllCompTypes(std::vector<DHType> &dhTypeVec);
     int32_t GetLocalDHVersion(DHVersion &dhVersion);
     int32_t GetSourceSaId(const DHType dhType);
     DHType GetDHTypeBySrcSaId(const int32_t saId);
@@ -98,7 +98,7 @@ private:
     void GetAllHandler(std::map<DHType, CompConfig> &dhtypeMap);
     int32_t ReleaseHandler(void *&handler);
     int32_t GetCompPathAndVersion(const std::string &jsonStr, std::map<DHType, CompConfig> &dhtypeMap);
-    CompVersion GetCompVersionFromComConfig(const CompConfig& cCfg);
+    void GetCompVersionFromComConfig(const CompConfig &comCfg, CompVersion &compVersion);
     int32_t ParseConfig();
     void StoreLocalDHVersionInDB();
     bool IsDHTypeExist(DHType dhType);

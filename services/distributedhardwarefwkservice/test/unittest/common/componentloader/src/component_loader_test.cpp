@@ -450,17 +450,17 @@ HWTEST_F(ComponentLoaderTest, ParseResourceDesc_001, TestSize.Level1)
     CompConfig config;
     cJSON *component = cJSON_CreateObject();
     ASSERT_TRUE(component != nullptr);
-    cJSON_AddNumberToObject(component, COMP_NAME.c_str(), 1);
-    cJSON_AddNumberToObject(component, COMP_TYPE.c_str(), 1);
-    cJSON_AddNumberToObject(component, COMP_HANDLER_LOC.c_str(), 1);
-    cJSON_AddNumberToObject(component, COMP_HANDLER_VERSION.c_str(), 1.0);
-    cJSON_AddNumberToObject(component, COMP_SOURCE_LOC.c_str(), 1);
-    cJSON_AddNumberToObject(component, COMP_SOURCE_VERSION.c_str(), 1.0);
-    cJSON_AddStringToObject(component, COMP_SOURCE_SA_ID.c_str(), "4801");
-    cJSON_AddNumberToObject(component, COMP_SINK_LOC.c_str(), 1);
-    cJSON_AddNumberToObject(component, COMP_SINK_VERSION.c_str(), 1.0);
-    cJSON_AddStringToObject(component, COMP_SINK_SA_ID.c_str(), "4802");
-    cJSON_AddStringToObject(component, COMP_RESOURCE_DESC.c_str(), "comp_resource_desc");
+    cJSON_AddNumberToObject(component, COMP_NAME, 1);
+    cJSON_AddNumberToObject(component, COMP_TYPE, 1);
+    cJSON_AddNumberToObject(component, COMP_HANDLER_LOC, 1);
+    cJSON_AddNumberToObject(component, COMP_HANDLER_VERSION, 1.0);
+    cJSON_AddNumberToObject(component, COMP_SOURCE_LOC, 1);
+    cJSON_AddNumberToObject(component, COMP_SOURCE_VERSION, 1.0);
+    cJSON_AddStringToObject(component, COMP_SOURCE_SA_ID, "4801");
+    cJSON_AddNumberToObject(component, COMP_SINK_LOC, 1);
+    cJSON_AddNumberToObject(component, COMP_SINK_VERSION, 1.0);
+    cJSON_AddStringToObject(component, COMP_SINK_SA_ID, "4802");
+    cJSON_AddStringToObject(component, COMP_RESOURCE_DESC, "comp_resource_desc");
     ComponentLoader::GetInstance().ParseCompConfigFromJson(component, config);
     cJSON_Delete(component);
 }
@@ -470,17 +470,17 @@ HWTEST_F(ComponentLoaderTest, ParseResourceDesc_002, TestSize.Level1)
     CompConfig config1;
     cJSON *component1 = cJSON_CreateObject();
     ASSERT_TRUE(component1 != nullptr);
-    cJSON_AddStringToObject(component1, COMP_NAME.c_str(), "comp_name_test");
-    cJSON_AddStringToObject(component1, COMP_TYPE.c_str(), "comp_type_test");
-    cJSON_AddStringToObject(component1, COMP_HANDLER_LOC.c_str(), "comp_handler_loc_test");
-    cJSON_AddStringToObject(component1, COMP_HANDLER_VERSION.c_str(), "comp_handler_version_test");
-    cJSON_AddStringToObject(component1, COMP_SOURCE_LOC.c_str(), "comp_source_loc_test");
-    cJSON_AddStringToObject(component1, COMP_SOURCE_VERSION.c_str(), "comp_source_verison_test");
-    cJSON_AddNumberToObject(component1, COMP_SOURCE_SA_ID.c_str(), 4801);
-    cJSON_AddStringToObject(component1, COMP_SINK_LOC.c_str(), "comp_sink_loc_test");
-    cJSON_AddStringToObject(component1, COMP_SINK_VERSION.c_str(), "com_sink_version_test");
-    cJSON_AddNumberToObject(component1, COMP_SINK_SA_ID.c_str(), 4802);
-    cJSON_AddStringToObject(component1, COMP_RESOURCE_DESC.c_str(), "comp_resource_desc");
+    cJSON_AddStringToObject(component1, COMP_NAME, "comp_name_test");
+    cJSON_AddStringToObject(component1, COMP_TYPE, "comp_type_test");
+    cJSON_AddStringToObject(component1, COMP_HANDLER_LOC, "comp_handler_loc_test");
+    cJSON_AddStringToObject(component1, COMP_HANDLER_VERSION, "comp_handler_version_test");
+    cJSON_AddStringToObject(component1, COMP_SOURCE_LOC, "comp_source_loc_test");
+    cJSON_AddStringToObject(component1, COMP_SOURCE_VERSION, "comp_source_verison_test");
+    cJSON_AddNumberToObject(component1, COMP_SOURCE_SA_ID, 4801);
+    cJSON_AddStringToObject(component1, COMP_SINK_LOC, "comp_sink_loc_test");
+    cJSON_AddStringToObject(component1, COMP_SINK_VERSION, "com_sink_version_test");
+    cJSON_AddNumberToObject(component1, COMP_SINK_SA_ID, 4802);
+    cJSON_AddStringToObject(component1, COMP_RESOURCE_DESC, "comp_resource_desc");
     ASSERT_NO_FATAL_FAILURE(ComponentLoader::GetInstance().ParseCompConfigFromJson(component1, config1));
     cJSON_Delete(component1);
 }
@@ -495,14 +495,14 @@ HWTEST_F(ComponentLoaderTest, ParseResourceDescFromJson_003, TestSize.Level1)
         cJSON_Delete(resourceDescs);
         return;
     }
-    cJSON_AddBoolToObject(sensitive, COMP_SENSITIVE.c_str(), true);
+    cJSON_AddBoolToObject(sensitive, COMP_SENSITIVE, true);
     cJSON_AddItemToArray(resourceDescs, sensitive);
     cJSON *subtype = cJSON_CreateObject();
     if (subtype == nullptr) {
         cJSON_Delete(resourceDescs);
         return;
     }
-    cJSON_AddBoolToObject(subtype, COMP_SUBTYPE.c_str(), true);
+    cJSON_AddBoolToObject(subtype, COMP_SUBTYPE, true);
     cJSON_AddItemToArray(resourceDescs, subtype);
     ComponentLoader::GetInstance().ParseResourceDescFromJson(resourceDescs, config);
     cJSON_Delete(resourceDescs);

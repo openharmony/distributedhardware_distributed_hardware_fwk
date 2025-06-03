@@ -259,7 +259,8 @@ HWTEST_F(VersionInfoManagerTest, RemoveVersionInfoByDeviceId_002, TestSize.Level
     std::string appId;
     std::string storeId;
     std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = nullptr;
-    VersionInfoManager::GetInstance()->dbAdapterPtr_ = std::make_shared<MockDBAdapter>(appId, storeId, changeListener);
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ =
+        std::make_shared<MockDBAdapter>(appId.c_str(), storeId.c_str(), changeListener);
     int32_t ret =  VersionInfoManager::GetInstance()->RemoveVersionInfoByDeviceId(deviceId);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
 }
@@ -295,7 +296,8 @@ HWTEST_F(VersionInfoManagerTest, SyncVersionInfoFromDB_002, TestSize.Level1)
     std::string appId;
     std::string storeId;
     std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = nullptr;
-    VersionInfoManager::GetInstance()->dbAdapterPtr_ = std::make_shared<MockDBAdapter>(appId, storeId, changeListener);
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ =
+        std::make_shared<MockDBAdapter>(appId.c_str(), storeId.c_str(), changeListener);
     int32_t ret =  VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(deviceId);
     EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL, ret);
 }
@@ -341,7 +343,8 @@ HWTEST_F(VersionInfoManagerTest, SyncRemoteVersionInfos_002, TestSize.Level1)
     std::string appId;
     std::string storeId;
     std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = nullptr;
-    VersionInfoManager::GetInstance()->dbAdapterPtr_ = std::make_shared<MockDBAdapter>(appId, storeId, changeListener);
+    VersionInfoManager::GetInstance()->dbAdapterPtr_ =
+        std::make_shared<MockDBAdapter>(appId.c_str(), storeId.c_str(), changeListener);
     int32_t ret = VersionInfoManager::GetInstance()->SyncRemoteVersionInfos();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }

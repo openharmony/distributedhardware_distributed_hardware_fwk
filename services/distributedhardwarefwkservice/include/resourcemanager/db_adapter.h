@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +33,7 @@ namespace DistributedHardware {
 class DBAdapter : public std::enable_shared_from_this<DBAdapter>,
     public DistributedKv::KvStoreDeathRecipient {
 public:
-    DBAdapter(const std::string &appId, const std::string &storeId,
+    DBAdapter(const char *appId, const char *storeId,
         const std::shared_ptr<DistributedKv::KvStoreObserver> changeListener);
 
     virtual ~DBAdapter();

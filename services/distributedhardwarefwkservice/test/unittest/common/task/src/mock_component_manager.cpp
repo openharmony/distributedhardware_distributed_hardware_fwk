@@ -74,5 +74,10 @@ int32_t ComponentManager::DisableSource(const std::string &networkId,
 {
     return IComponentManager::GetOrCtreateInstance()->DisableSource(networkId, dhDescriptor, callingUid, callingPid);
 }
+
+int32_t ComponentManager::CheckSinkConfigStart(const DHType dhType, bool &enableSink)
+{
+    return IComponentManager::GetOrCtreateInstance()->CheckSinkConfigStart(dhType, enableSink);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

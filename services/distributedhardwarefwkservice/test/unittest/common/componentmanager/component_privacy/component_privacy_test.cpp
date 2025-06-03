@@ -30,6 +30,10 @@ namespace {
     const std::string SUBTYPE_MIC = "mic";
     const std::string SUBTYPE_CAMERA = "camera";
     const std::string NETWORK_ID = "123456789";
+    constexpr const char *PRIVACY_SUBTYPE = "subtype";
+    constexpr const char *PRIVACY_NETWORKID = "networkId";
+    constexpr uint32_t COMP_START_PAGE = 1;
+    constexpr uint32_t COMP_STOP_PAGE = 2;
     constexpr uint16_t DEVICE_TYPE_WIFI_CAMERA = 0x08;
     constexpr uint16_t DEVICE_TYPE_AUDIO = 0x0A;
     constexpr uint16_t DEVICE_TYPE_PC = 0x0C;
@@ -163,8 +167,8 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_001, TestSize.Level1)
         cJSON_Delete(jsonArrayMsg);
         return;
     }
-    cJSON_AddNumberToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), 1);
-    cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID.c_str(), NETWORK_ID.c_str());
+    cJSON_AddNumberToObject(tmpJson, PRIVACY_SUBTYPE, 1);
+    cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID, NETWORK_ID.c_str());
     cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_START_PAGE,
         std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
@@ -182,8 +186,8 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_002, TestSize.Level1)
         cJSON_Delete(jsonArrayMsg);
         return;
     }
-    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), SUBTYPE_MIC.c_str());
-    cJSON_AddNumberToObject(tmpJson, PRIVACY_NETWORKID.c_str(), 1);
+    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE, SUBTYPE_MIC.c_str());
+    cJSON_AddNumberToObject(tmpJson, PRIVACY_NETWORKID, 1);
     cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_START_PAGE,
         std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
@@ -201,8 +205,8 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_003, TestSize.Level1)
         cJSON_Delete(jsonArrayMsg);
         return;
     }
-    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), SUBTYPE_MIC.c_str());
-    cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID.c_str(), NETWORK_ID.c_str());
+    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE, SUBTYPE_MIC.c_str());
+    cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID, NETWORK_ID.c_str());
     cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_START_PAGE,
         std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
@@ -220,8 +224,8 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_004, TestSize.Level1)
         cJSON_Delete(jsonArrayMsg);
         return;
     }
-    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), SUBTYPE_CAMERA.c_str());
-    cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID.c_str(), NETWORK_ID.c_str());
+    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE, SUBTYPE_CAMERA.c_str());
+    cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID, NETWORK_ID.c_str());
     cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_START_PAGE,
         std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
@@ -239,7 +243,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_005, TestSize.Level1)
         cJSON_Delete(jsonArrayMsg);
         return;
     }
-    cJSON_AddNumberToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), 1);
+    cJSON_AddNumberToObject(tmpJson, PRIVACY_SUBTYPE, 1);
     cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE,
         std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
@@ -257,7 +261,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_006, TestSize.Level1)
         cJSON_Delete(jsonArrayMsg);
         return;
     }
-    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), SUBTYPE_CAMERA.c_str());
+    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE, SUBTYPE_CAMERA.c_str());
     cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE,
         std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);
@@ -275,7 +279,7 @@ HWTEST_F(ComponentPrivacyTest, ProcessEvent_007, TestSize.Level1)
         cJSON_Delete(jsonArrayMsg);
         return;
     }
-    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), SUBTYPE_MIC.c_str());
+    cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE, SUBTYPE_MIC.c_str());
     cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE,
         std::shared_ptr<cJSON>(jsonArrayMsg, cJSON_Delete), 0);

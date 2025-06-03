@@ -159,8 +159,8 @@ void OnLineTask::CreateEnableTask()
 
 void OnLineTask::CreateEnableSinkTask()
 {
-    DHLOGI("CreateEnableSinkTask start");
     DeviceInfo localDeviceInfo = GetLocalDeviceInfo();
+    DHLOGI("CreateEnableSinkTask, uuid: %{public}s", GetAnonyString(localDeviceInfo.uuid).c_str());
     std::vector<std::pair<std::string, DHType>> localMetaInfos;
     std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
     MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(localDeviceInfo.udidHash, metaCapInfos);

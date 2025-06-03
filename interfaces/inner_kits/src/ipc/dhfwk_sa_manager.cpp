@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+constexpr uint32_t MAX_TOPIC_SIZE = 128;
+constexpr uint32_t MAX_LISTENER_SIZE = 256;
+
 IMPLEMENT_SINGLE_INSTANCE(DHFWKSAManager);
 DHFWKSAManager::DHFWKSAManager()
     : dhfwkOnLine_(false), isSubscribeDHFWKSAChangeListener_(false), dhfwkProxy_(nullptr),

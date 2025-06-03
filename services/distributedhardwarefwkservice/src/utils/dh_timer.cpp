@@ -120,8 +120,7 @@ void DHTimer::Execute()
         DHLOGE("eventHandler is nullptr!");
         return;
     }
-    ExecuteInner();
-    auto executeInnerFunc = [this] { Execute(); };
+    auto executeInnerFunc = [this] { ExecuteInner(); };
     eventHandler_->PostTask(executeInnerFunc, timerId_, delayTimeMs_);
 }
 } // namespace DistributedHardware

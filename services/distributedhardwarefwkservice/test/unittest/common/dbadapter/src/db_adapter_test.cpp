@@ -39,6 +39,7 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "DbAdapterTest"
 
 namespace {
+constexpr const char *GLOBAL_CAPABILITY_INFO_KEY = "global_capability_info";
 const string DATABASE_DIR = "/data/service/el1/public/database/dtbhardware_manager_service/";
 const std::string DEV_NETWORK_ID_1 = "nt36a637105409e904d4da83790a4a9";
 const string TEST_DEV_ID_0 = "bb536a637105409e904d4da83791aa11";
@@ -101,7 +102,7 @@ void DbAdapterTest::SetUpTestCase(void)
         DHLOGE("mkdir failed, path: %{public}s, errno : %{public}d", DATABASE_DIR.c_str(), errno);
     }
     std::shared_ptr<DistributedKv::KvStoreObserver> changeListener = std::make_shared<MockDBChangeListener>();
-    g_dbAdapterPtr = std::make_shared<DBAdapter>(APP_ID, GLOBAL_CAPABILITY_ID, changeListener);
+    g_dbAdapterPtr = std::make_shared<DBAdapter>(APP_ID, GLOBAL_CAPABILITY_INFO_KEY, changeListener);
     if (g_dbAdapterPtr != nullptr) {
         g_dbAdapterPtr->Init(true, DistributedKv::DataType::TYPE_DYNAMICAL);
     }

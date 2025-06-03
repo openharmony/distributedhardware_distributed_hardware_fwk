@@ -33,6 +33,11 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DHCommTool"
 
+// request remote dh send back full dh capabilities
+constexpr int32_t DH_COMM_REQ_FULL_CAPS = 1;
+// send back full dh attributes to the requester
+constexpr int32_t DH_COMM_RSP_FULL_CAPS = 2;
+
 DHCommTool::DHCommTool() : dhTransportPtr_(nullptr)
 {
     DHLOGI("Ctor DHCommTool");

@@ -71,7 +71,7 @@ HWTEST_F(EnableTaskTest, RegisterHardware_001, TestSize.Level0)
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
     EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(
         DoAll(SetArgReferee<2>(false), Return(0)));
-    ASSERT_EQ(enableTask->RegisterHardware(), ERR_DH_FWK_COMPONENT_LIMIT_DEMAND_START);
+    ASSERT_EQ(enableTask->RegisterHardware(), ERR_DH_FWK_COMPONENT_NO_NEED_ENABLE);
 }
 
 /**
@@ -130,8 +130,8 @@ HWTEST_F(EnableTaskTest, RegisterHardware_005, TestSize.Level0)
 {
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, GetLocalUdid(),
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    EXPECT_CALL(*componentManager_, EnableSink(_, _, _)).Times(1).WillRepeatedly(Return(0));
-    ASSERT_EQ(enableTask->RegisterHardware(), 0);
+    EXPECT_CALL(*componentManager_, CheckSinkConfigStart(_, _)).Times(1).WillRepeatedly(Return(0));
+    ASSERT_EQ(enableTask->RegisterHardware(), ERR_DH_FWK_COMPONENT_NO_NEED_ENABLE);
 }
 
 /**
@@ -144,6 +144,7 @@ HWTEST_F(EnableTaskTest, RegisterHardware_006, TestSize.Level0)
 {
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, GetLocalUdid(),
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    EXPECT_CALL(*componentManager_, CheckSinkConfigStart(_, _)).WillOnce(DoAll(SetArgReferee<1>(true), Return(0)));
     EXPECT_CALL(*componentManager_, EnableSink(_, _, _)).Times(1).WillRepeatedly(Return(1));
     ASSERT_EQ(enableTask->RegisterHardware(), 1);
 }

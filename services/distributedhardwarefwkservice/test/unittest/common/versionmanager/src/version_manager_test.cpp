@@ -54,6 +54,7 @@ const std::string TEST_DH_VERSION = "3.1";
 const std::string TEST_COMPONENT_NAME_1 = "distributed_camera";
 const std::string TEST_COMPONENT_NAME_2 = "distributed_audio";
 const std::string TEST_COMPONENT_NAME_3 = "distributed_mic";
+const std::string DH_LOCAL_VERSION = "1.0";
 }
 
 /**

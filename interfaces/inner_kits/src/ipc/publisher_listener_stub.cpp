@@ -21,6 +21,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+constexpr uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024;
+
 PublisherListenerStub::PublisherListenerStub()
 {
 }
