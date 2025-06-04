@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,6 +28,9 @@ const char* const CAPS_RSP_NETWORKID_KEY = "networkId";
 const char* const CAPS_RSP_CAPS_KEY = "caps";
 const char* const COMM_MSG_CODE_KEY = "code";
 const char* const COMM_MSG_MSG_KEY = "msg";
+const char* const COMM_MSG_USERID_KEY = "userId";
+const char* const COMM_MSG_TOKENID_KEY = "tokenId";
+const char* const COMM_MSG_ACCOUNTID_KEY = "accountId";
 
 struct FullCapsRsp {
     // the networkd id of rsp from which device
@@ -44,9 +47,13 @@ void FromJson(const cJSON *jsonObject, FullCapsRsp &capsRsp);
 
 struct CommMsg {
     int32_t code;
+    int32_t userId;
+    uint64_t tokenId;
     std::string msg;
-    CommMsg() : code(-1), msg("") {}
-    CommMsg(int32_t code, std::string msg) : code(code), msg(msg) {}
+    std::string accountId;
+    CommMsg() : code(-1), userId(-1), tokenId(0), msg(""), accountId("") {}
+    CommMsg(int32_t code, int32_t userId, uint64_t tokenId, std::string msg, std::string accountId) : code(code),
+        userId(userId), tokenId(tokenId), msg(msg), accountId(accountId) {}
 };
 
 void ToJson(cJSON *jsonObject, const CommMsg &commMsg);

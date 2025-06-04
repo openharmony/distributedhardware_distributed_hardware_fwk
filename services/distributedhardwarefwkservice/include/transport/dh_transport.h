@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,8 @@
 #include "socket.h"
 #include "softbus_bus_center.h"
 
+#include "dh_transport_obj.h"
+
 namespace OHOS {
 namespace DistributedHardware {
 class DHCommTool;
@@ -51,6 +53,7 @@ private:
     std::string GetRemoteNetworkIdBySocketId(int32_t socketId);
     void ClearDeviceSocketOpened(const std::string &remoteDevId);
     void HandleReceiveMessage(const std::string &payload);
+    bool CheckCalleeAclRight(const std::shared_ptr<CommMsg> commMsg);
 
 private:
     std::mutex rmtSocketIdMtx_;

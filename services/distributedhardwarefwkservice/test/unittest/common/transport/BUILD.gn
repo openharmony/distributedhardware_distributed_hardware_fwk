@@ -30,12 +30,12 @@ config("module_private_config") {
   ]
 }
 
-ohos_unittest("TransportTest") {
+ohos_unittest("DhCommToolTest") {
   module_out_path = module_out_path
 
   sources = [
     "dh_comm_tool_test.cpp",
-    "dh_transport_test.cpp",
+    "mock_other_method.cpp",
   ]
 
   configs = [ ":module_private_config" ]
@@ -55,16 +55,83 @@ ohos_unittest("TransportTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "device_manager:devicemanagersdk",
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
+    "googletest:gmock",
+    "googletest:gmock_main",
     "hilog:libhilog",
     "ipc:ipc_core",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
+
+  if (dhfwk_os_account) {
+    external_deps += [
+      "os_account:libaccountkits",
+      "os_account:os_account_innerkits",
+    ]
+  }
+
+  if (dhfwk_os_account) {
+    defines = [ "OS_ACCOUNT_PART" ]
+  }
+}
+
+ohos_unittest("DhTransportTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "dh_transport_test.cpp",
+    "mock_other_method.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "device_manager:devicemanagersdk",
+    "dsoftbus:softbus_client",
+    "eventhandler:libeventhandler",
+    "googletest:gmock",
+    "googletest:gmock_main",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+
+  if (dhfwk_os_account) {
+    external_deps += [
+      "os_account:libaccountkits",
+      "os_account:os_account_innerkits",
+    ]
+  }
+
+  if (dhfwk_os_account) {
+    defines = [ "OS_ACCOUNT_PART" ]
+  }
 }
 
 group("transport_test") {
   testonly = true
-  deps = [ ":TransportTest" ]
+  deps = [
+    ":DhCommToolTest",
+    ":DhTransportTest",
+  ]
 }

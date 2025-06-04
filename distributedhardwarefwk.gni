@@ -39,3 +39,10 @@ build_flags = [ "-Werror" ]
 declare_args() {
   distributed_hardware_fwk_low_latency = false
 }
+
+if (!defined(global_parts_info) ||
+      defined(global_parts_info.account_os_account)) {
+    dhfwk_os_account = true
+  } else {
+    dhfwk_os_account = false
+  }
