@@ -54,6 +54,7 @@ ohos_unittest("HistreamerAbilityQuerierTest") {
     "bounds_checking_function:libsec_shared",
     "cJSON:cjson",
     "c_utils:utils",
+    "hilog:libhilog",
   ]
 
   defines = [

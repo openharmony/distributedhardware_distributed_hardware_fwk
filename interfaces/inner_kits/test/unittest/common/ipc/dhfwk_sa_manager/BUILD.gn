@@ -55,6 +55,7 @@ ohos_unittest("DhfwkSaManagerTest") {
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "hilog:libhilog",
   ]
 
   cflags = [

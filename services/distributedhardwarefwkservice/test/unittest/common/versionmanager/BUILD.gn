@@ -55,6 +55,7 @@ ohos_unittest("VersionManagerTest") {
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "kv_store:distributeddata_inner",
+    "hilog:libhilog",
   ]
 
   defines = [

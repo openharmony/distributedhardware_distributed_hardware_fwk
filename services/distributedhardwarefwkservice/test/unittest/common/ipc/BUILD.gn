@@ -53,6 +53,7 @@ ohos_unittest("PublisherListenerProxyTest") {
   external_deps = [
     "c_utils:utils",
     "ipc:ipc_core",
+    "hilog:libhilog",
   ]
 }
 

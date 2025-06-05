@@ -51,6 +51,7 @@ ohos_unittest("ComponentPrivacyTest") {
     "ipc:ipc_core",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
+    "hilog:libhilog",
   ]
 
   cflags = [
