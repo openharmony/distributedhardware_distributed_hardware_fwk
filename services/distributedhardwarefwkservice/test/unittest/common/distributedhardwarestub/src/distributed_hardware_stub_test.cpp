@@ -690,5 +690,37 @@ HWTEST_F(DistributedHardwareStubTest, ValidQueryLocalSpec_002, TestSize.Level1)
     spec = 5;
     EXPECT_EQ(false, stubTest_->ValidQueryLocalSpec(spec));
 }
+
+/**
+ * @tc.name: LoadDistributedHDFInner_001
+ * @tc.desc: Verify the LoadDistributedHDFInner function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareStubTest, LoadDistributedHDFInner_001, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+    MessageParcel data;
+    MessageParcel reply;
+    EXPECT_EQ(DH_FWK_SUCCESS, stubTest_->LoadDistributedHDFInner(data, reply));
+}
+
+/**
+ * @tc.name: UnLoadDistributedHDFInner_001
+ * @tc.desc: Verify the UnLoadDistributedHDFInner function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareStubTest, UnLoadDistributedHDFInner_001, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+    MessageParcel data;
+    MessageParcel reply;
+    EXPECT_EQ(DH_FWK_SUCCESS, stubTest_->UnLoadDistributedHDFInner(data, reply));
+}
 } // namespace DistributedHardware
 } // namespace OHOS

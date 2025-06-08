@@ -550,5 +550,15 @@ int32_t DistributedHardwareService::DisableSource(
     }
     return DH_FWK_SUCCESS;
 }
+
+int32_t DistributedHardwareService::LoadDistributedHDF(const DHType dhType)
+{
+    return ERR_DH_FWK_NO_HDF_SUPPORT;
+}
+
+int32_t DistributedHardwareService::UnLoadDistributedHDF(const DHType dhType)
+{
+    return ERR_DH_FWK_NO_HDF_SUPPORT;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

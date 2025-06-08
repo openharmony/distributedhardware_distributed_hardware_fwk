@@ -95,6 +95,11 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_SERVICE_MSG_INVALID = -10809;
     constexpr int32_t ERR_DH_FWK_AVTRANS_CALLBACK_IS_NULL = -10810;
     constexpr int32_t ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT = -10811;
+    constexpr int32_t ERR_DH_FWK_STATUS_LISTENER_IS_NULL = -10812;
+    constexpr int32_t ERR_DH_FWK_REGISTER_HDF_LISTENER_FAIL = -10813;
+    constexpr int32_t ERR_DH_FWK_LOAD_HDF_FAIL = -10814;
+    constexpr int32_t ERR_DH_FWK_LOAD_HDF_TIMEOUT = -10815;
+    constexpr int32_t ERR_DH_FWK_NO_HDF_SUPPORT = -10816;
 
     /* AccessManager errno, range: [-10900, -10999] */
     constexpr int32_t ERR_DH_FWK_ACCESS_INIT_DM_FAILED = -10900;

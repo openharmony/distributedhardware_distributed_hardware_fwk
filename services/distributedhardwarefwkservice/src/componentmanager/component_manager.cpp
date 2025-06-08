@@ -91,15 +91,29 @@ int32_t ComponentManager::Init()
 #ifdef DHARDWARE_LOW_LATENCY
     Publisher::GetInstance().RegisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
 #endif
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    eventHandler_ = std::make_shared<ComponentManager::ComponentManagerEventHandler>(runner);
+    InitDHCommTool();
     DHLOGI("Init component success");
     DHTraceEnd();
     return DH_FWK_SUCCESS;
+}
+
+void ComponentManager::InitDHCommTool()
+{
+    if (dhCommToolPtr_ == nullptr) {
+        DHLOGE("DH communication tool ptr is null");
+        return;
+    }
+    DHLOGI("Init DH communication tool");
+    dhCommToolPtr_->Init();
 }
 
 int32_t ComponentManager::UnInit()
 {
     DHLOGI("start.");
     StopPrivacy();
+    UnInitDHCommTool();
 #ifdef DHARDWARE_LOW_LATENCY
     Publisher::GetInstance().UnregisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
     LowLatency::GetInstance().CloseLowLatency();
@@ -124,6 +138,16 @@ void ComponentManager::StopPrivacy()
         audioCompPrivacy_->StopPrivacePage("mic");
         audioCompPrivacy_->SetPageFlagFalse();
     }
+}
+
+void ComponentManager::UnInitDHCommTool()
+{
+    if (dhCommToolPtr_ == nullptr) {
+        DHLOGE("DH communication tool ptr is null");
+        return;
+    }
+    DHLOGI("UnInit DH communication tool");
+    dhCommToolPtr_->UnInit();
 }
 
 int32_t ComponentManager::StartSource(DHType dhType, ActionResult &sourceResult)
@@ -615,6 +639,9 @@ void ComponentManager::DoRecover(DHType dhType)
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DoRecover setname failed.");
     }
+    // reset hdf load status
+    DHLOGI("Reset HDF load ref for DHType %{public}" PRIu32, (uint32_t)dhType);
+    ResetHdfLoadRefCount(dhType);
     // reset enable status
     DHLOGI("Reset enable status for DHType %{public}" PRIu32, (uint32_t)dhType);
     ResetSinkEnableStatus(dhType);
@@ -1716,6 +1743,10 @@ void ComponentManager::RecoverActiveEnableSource(DHType dhType)
         }
     }
     DHLOGI("RecoverActiveEnableSource end, dhType = %{public}#X.", dhType);
+}
+
+void ComponentManager::ResetHdfLoadRefCount(DHType dhType)
+{
 }
 
 int32_t ComponentManager::InitCompSource(DHType dhType)

@@ -16,9 +16,14 @@
 #include "dh_transport.h"
 
 #include <cinttypes>
+#include <securec.h>
 
 #include "cJSON.h"
-#include <securec.h>
+#include "device_manager.h"
+#include "ipc_skeleton.h"
+#include "ohos_account_kits.h"
+#include "os_account_manager.h"
+#include "token_setproc.h"
 
 #include "anonymous_string.h"
 #include "constants.h"
@@ -38,6 +43,7 @@ namespace {
 constexpr uint32_t MAX_SEND_MSG_LENGTH = 4 * 1024 * 1024;
 constexpr uint32_t INTERCEPT_STRING_LENGTH = 20;
 constexpr uint32_t MAX_ROUND_SIZE = 1000;
+constexpr int32_t DH_COMM_RSP_FULL_CAPS = 2;
 const std::string DH_FWK_SESSION_NAME = "ohos.dhardware.session_";
 static QosTV g_qosInfo[] = {
     { .qos = QOS_TYPE_MIN_BW, .value = 256 * 1024},
@@ -108,6 +114,55 @@ void DHTransport::OnBytesReceived(int32_t socketId, const void *data, uint32_t d
     return;
 }
 
+bool DHTransport::CheckCalleeAclRight(const std::shared_ptr<CommMsg> commMsg)
+{
+    if (commMsg->userId == -1) {
+        DHLOGE("ACL not support");
+        return true;
+    }
+    std::string localNetworkId = GetLocalNetworkId();
+    if (localNetworkId.empty()) {
+        DHLOGE("Get local network id error");
+        return false;
+    }
+    uint64_t localTokenId = IPCSkeleton::GetCallingTokenID();
+#ifdef OS_ACCOUNT_PART
+    std::vector<int32_t> ids;
+    auto ret = AccountSA::OsAccountManager::QueryActiveOsAccountIds(ids);
+    if (ret != DH_FWK_SUCCESS || ids.empty()) {
+        DHLOGE("Get userId fail, ret: %{public}d", ret);
+        return false;
+    }
+    int32_t userId = ids[0];
+    AccountSA::OhosAccountInfo osAccountInfo;
+    ret = AccountSA::OhosAccountKits::GetInstance().GetOhosAccountInfo(osAccountInfo);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Get accountId fail, ret: %{public}d", ret);
+        return false;
+    }
+    std::string accountId = osAccountInfo.uid_;
+#endif
+
+    DmAccessCaller dmSrcCaller = {
+        .accountId = commMsg->accountId,
+        .pkgName = DH_FWK_PKG_NAME,
+        .networkId = commMsg->msg,
+        .userId = commMsg->userId,
+        .tokenId = commMsg->tokenId,
+    };
+    DmAccessCallee dmDstCallee = {
+        .networkId = localNetworkId,
+        .accountId = accountId,
+        .userId = userId,
+        .tokenId = localTokenId,
+        .pkgName = DH_FWK_PKG_NAME,
+    };
+    DHLOGI("CheckAclRight remotenetworkId: %{public}s, accountId: %{public}s, localNetworkId: %{public}s",
+        GetAnonyString(commMsg->msg).c_str(), GetAnonyString(accountId).c_str(),
+        GetAnonyString(localNetworkId).c_str());
+    return DeviceManager::GetInstance().CheckSinkAccessControl(dmSrcCaller, dmDstCallee);
+}
+
 void DHTransport::HandleReceiveMessage(const std::string &payload)
 {
     if (!IsMessageLengthValid(payload)) {
@@ -123,7 +178,12 @@ void DHTransport::HandleReceiveMessage(const std::string &payload)
     std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
     FromJson(root, *commMsg);
     cJSON_Delete(root);
-
+    if (commMsg->code != DH_COMM_RSP_FULL_CAPS) {
+        if (!CheckCalleeAclRight(commMsg)) {
+            DHLOGE("Callee ACL check failed.");
+            return;
+        }
+    }
     DHLOGI("Receive DH msg, code: %{public}d, msg: %{public}s", commMsg->code, GetAnonyString(commMsg->msg).c_str());
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(commMsg->code, commMsg);
     std::shared_ptr<DHCommTool> dhCommToolSPtr = dhCommToolWPtr_.lock();

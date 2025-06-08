@@ -50,6 +50,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "include/hidumphelper",
     "include/ipc",
     "include/lowlatency",
+    "include/hdfoperate",
   ]
 
   sources = [
@@ -151,13 +152,19 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "ability_runtime:ability_manager",
     "access_token:libaccesstoken_sdk",
     "access_token:libtokenid_sdk",
+    "access_token:libtokensetproc_shared",
     "cJSON:cjson",
     "c_utils:utils",
     "config_policy:configpolicy_util",
     "device_manager:devicemanagersdk",
+    "drivers_interface_distributed_audio:libdaudioext_proxy_2.0",
+    "drivers_interface_distributed_camera:libdistributed_camera_provider_proxy_1.1",
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "ffrt:libffrt",
+    "hdf_core:libhdf_ipc_adapter",
+    "hdf_core:libhdi",
+    "hdf_core:libpub_utils",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
@@ -168,6 +175,17 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
+
+  if (dhfwk_os_account) {
+    external_deps += [
+      "os_account:libaccountkits",
+      "os_account:os_account_innerkits",
+    ]
+  }
+
+  if (dhfwk_os_account) {
+    defines += [ "OS_ACCOUNT_PART" ]
+  }
 
   subsystem_name = "distributedhardware"
 

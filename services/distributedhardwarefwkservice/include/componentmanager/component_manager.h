@@ -203,6 +203,8 @@ private:
     int32_t UninitCompSource(DHType dhType);
     int32_t InitCompSink(DHType dhType);
     int32_t UninitCompSink(DHType dhType);
+    void InitDHCommTool();
+    void UnInitDHCommTool();
     int32_t StartSource(DHType dhType, ActionResult &sourceResult);
     int32_t StopSource(DHType dhType, ActionResult &sourceResult);
     int32_t StartSink(DHType dhType, ActionResult &sinkResult);
@@ -260,6 +262,7 @@ private:
     void RecoverAutoEnableSource(DHType dhType);
     void RecoverActiveEnableSink(DHType dhType);
     void RecoverActiveEnableSource(DHType dhType);
+    void ResetHdfLoadRefCount(DHType dhType);
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::shared_mutex compSourceMutex_;

@@ -553,6 +553,36 @@ int32_t DistributedHardwareStub::DisableSourceInner(MessageParcel &data, Message
     return DH_FWK_SUCCESS;
 }
 
+int32_t DistributedHardwareStub::LoadDistributedHDFInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    DHType dhType = static_cast<DHType>(data.ReadUint32());
+    int32_t ret = LoadDistributedHDF(dhType);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::UnLoadDistributedHDFInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    DHType dhType = static_cast<DHType>(data.ReadUint32());
+    int32_t ret = UnLoadDistributedHDF(dhType);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
 int32_t DistributedHardwareStub::ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors)
 {
     int32_t size = data.ReadInt32();
@@ -634,6 +664,12 @@ int32_t DistributedHardwareStub::OnRemoteRequestEx(uint32_t code, MessageParcel 
         }
         case static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SOURCE): {
             return DisableSourceInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::LOAD_HDF): {
+            return LoadDistributedHDFInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::UNLOAD_HDF): {
+            return UnLoadDistributedHDFInner(data, reply);
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);

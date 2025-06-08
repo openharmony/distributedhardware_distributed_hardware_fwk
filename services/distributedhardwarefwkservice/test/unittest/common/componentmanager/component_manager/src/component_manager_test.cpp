@@ -926,8 +926,9 @@ HWTEST_F(ComponentManagerTest, Recover_001, TestSize.Level1)
  */
 HWTEST_F(ComponentManagerTest, DoRecover_001, TestSize.Level1)
 {
-    DHType dhType = DHType::CAMERA;
-    ComponentManager::GetInstance().DoRecover(dhType);
+    ComponentManager::GetInstance().DoRecover(DHType::UNKNOWN);
+    ComponentManager::GetInstance().DoRecover(DHType::AUDIO);
+    ComponentManager::GetInstance().DoRecover(DHType::CAMERA);
     EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
 }
 
@@ -1243,6 +1244,17 @@ HWTEST_F(ComponentManagerTest, CheckSinkConfigStart_001, TestSize.Level1)
     bool enableSink = false;
     auto ret = ComponentManager::GetInstance().CheckSinkConfigStart(DHType::GPS, enableSink);
     EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
+}
+
+HWTEST_F(ComponentManagerTest, InitAndUnInit_DHCommTool_001, TestSize.Level0)
+{
+    ComponentManager::GetInstance().dhCommToolPtr_ = nullptr;
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().InitDHCommTool());
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnInitDHCommTool());
+
+    ComponentManager::GetInstance().dhCommToolPtr_ = std::make_shared<DHCommTool>();
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().InitDHCommTool());
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnInitDHCommTool());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

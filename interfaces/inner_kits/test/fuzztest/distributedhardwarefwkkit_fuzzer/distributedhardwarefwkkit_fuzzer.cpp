@@ -304,6 +304,30 @@ void DisableSinkFuzzTest(const uint8_t *data, size_t size)
     descriptors.push_back(dhDescriptor);
     dhfwkKit.DisableSink(descriptors);
 }
+
+void LoadDistributedHDFFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
+        return;
+    }
+
+    DHType dhType = static_cast<DHType>(*(reinterpret_cast<const uint32_t*>(data)));
+
+    DistributedHardwareFwkKit dhfwkKit;
+    dhfwkKit.LoadDistributedHDF(dhType);
+}
+
+void UnLoadDistributedHDFFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
+        return;
+    }
+
+    DHType dhType = static_cast<DHType>(*(reinterpret_cast<const uint32_t*>(data)));
+
+    DistributedHardwareFwkKit dhfwkKit;
+    dhfwkKit.UnLoadDistributedHDF(dhType);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
 
@@ -328,5 +352,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     OHOS::DistributedHardware::DisableSourceFuzzTest(data, size);
     OHOS::DistributedHardware::EnableSinkFuzzTest(data, size);
     OHOS::DistributedHardware::DisableSinkFuzzTest(data, size);
+    OHOS::DistributedHardware::LoadDistributedHDFFuzzTest(data, size);
+    OHOS::DistributedHardware::UnLoadDistributedHDFFuzzTest(data, size);
     return 0;
 }

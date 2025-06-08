@@ -13,20 +13,24 @@
  * limitations under the License.
  */
 
-#include "dh_comm_tool.h"
-
 #include <gtest/gtest.h>
 #include <string>
+
+#include "device_manager.h"
+#include "device_manager_impl.h"
 
 #include "capability_info.h"
 #include "capability_info_manager.h"
 #include "dh_context.h"
 #include "dh_transport_obj.h"
 #include "dh_utils_tool.h"
+#include "dh_comm_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "mock_other_method.h"
 
 using namespace testing::ext;
+using namespace testing;
 namespace OHOS {
 namespace DistributedHardware {
 using namespace std;
@@ -35,6 +39,22 @@ constexpr uint16_t TEST_DEV_TYPE = 0x14;
 constexpr int32_t DH_COMM_REQ_FULL_CAPS = 1;
 // send back full dh attributes to the requester
 constexpr int32_t DH_COMM_RSP_FULL_CAPS = 2;
+constexpr int32_t INVALID_USER_ID = -100;
+constexpr int32_t INVALID_ACCOUNT_INFO_VALUE = -101;
+
+
+static std::string g_mocklocalNetworkId = "123456789";
+static bool g_mockDMValue = false;
+
+std::string GetLocalNetworkId()
+{
+    return g_mocklocalNetworkId;
+}
+
+bool DeviceManagerImpl::CheckSrcAccessControl(const DmAccessCaller &caller, const DmAccessCallee &callee)
+{
+    return g_mockDMValue;
+}
 
 class DhCommToolTest : public testing::Test {
 public:
@@ -42,22 +62,30 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+
+    static inline shared_ptr<DeviceOtherMethodMock> otherMethodMock_ = nullptr;
 private:
     std::shared_ptr<DHCommTool> dhCommToolTest_;
 };
 
 void DhCommToolTest::SetUpTestCase()
 {
+    otherMethodMock_ = make_shared<DeviceOtherMethodMock>();
+    DeviceOtherMethodMock::otherMethod = otherMethodMock_;
 }
 
 void DhCommToolTest::TearDownTestCase()
 {
+    DeviceOtherMethodMock::otherMethod = nullptr;
+    otherMethodMock_ = nullptr;
 }
 
 void DhCommToolTest::SetUp()
 {
     dhCommToolTest_ = std::make_shared<DHCommTool>();
     dhCommToolTest_->Init();
+    g_mockDMValue = false;
+    g_mocklocalNetworkId = "123456789";
 }
 
 void DhCommToolTest::TearDown()
@@ -68,18 +96,44 @@ HWTEST_F(DhCommToolTest, TriggerReqFullDHCaps_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhCommToolTest_ != nullptr);
     std::string remoteNetworkId = "";
-    dhCommToolTest_->TriggerReqFullDHCaps(remoteNetworkId);
-
     dhCommToolTest_->dhTransportPtr_ = nullptr;
     dhCommToolTest_->TriggerReqFullDHCaps(remoteNetworkId);
 
-    remoteNetworkId = "remoteNetworkId_test";
+    remoteNetworkId = "123456789";
     dhCommToolTest_->TriggerReqFullDHCaps(remoteNetworkId);
+}
 
-    dhCommToolTest_->Init();
-    dhCommToolTest_->TriggerReqFullDHCaps(remoteNetworkId);
+HWTEST_F(DhCommToolTest, TriggerReqFullDHCaps_002, TestSize.Level1)
+{
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
+    std::string remoteNetworkId = "123456789";
+    g_mocklocalNetworkId = "";
+    ASSERT_NO_FATAL_FAILURE(dhCommToolTest_->TriggerReqFullDHCaps(remoteNetworkId));
     dhCommToolTest_->UnInit();
-    EXPECT_NE(nullptr, dhCommToolTest_->dhTransportPtr_);
+}
+
+HWTEST_F(DhCommToolTest, TriggerReqFullDHCaps_003, TestSize.Level1)
+{
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
+    std::string remoteNetworkId = "123456789";
+    std::vector<int32_t> userIds;
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(INVALID_USER_ID)));
+    ASSERT_NO_FATAL_FAILURE(dhCommToolTest_->TriggerReqFullDHCaps(remoteNetworkId));
+}
+
+HWTEST_F(DhCommToolTest, TriggerReqFullDHCaps_004, TestSize.Level1)
+{
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
+    std::string remoteNetworkId = "123456789";
+    std::vector<int32_t> userIds{100, 101};
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+
+    AccountSA::OhosAccountInfo osAccountInfo;
+    EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
+        .WillOnce(DoAll(SetArgReferee<0>(osAccountInfo), Return(DH_FWK_SUCCESS)));
+    ASSERT_NO_FATAL_FAILURE(dhCommToolTest_->TriggerReqFullDHCaps(remoteNetworkId));
 }
 
 HWTEST_F(DhCommToolTest, GetAndSendLocalFullCaps_001, TestSize.Level1)
@@ -90,8 +144,7 @@ HWTEST_F(DhCommToolTest, GetAndSendLocalFullCaps_001, TestSize.Level1)
     dhCommToolTest_->GetAndSendLocalFullCaps(reqNetworkId);
 
     dhCommToolTest_->Init();
-    dhCommToolTest_->GetAndSendLocalFullCaps(reqNetworkId);
-    EXPECT_NE(nullptr, dhCommToolTest_->dhTransportPtr_);
+    ASSERT_NO_FATAL_FAILURE(dhCommToolTest_->GetAndSendLocalFullCaps(reqNetworkId));
 }
 
 HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_001, TestSize.Level1)
@@ -188,6 +241,88 @@ HWTEST_F(DhCommToolTest, ProcessFullCapsRsp_002, TestSize.Level1)
     FullCapsRsp capsRsp2(networkId, caps);
     ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp2, dhCommToolTest_));
     DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
+}
+
+HWTEST_F(DhCommToolTest, CheckCallerAclRight_001, TestSize.Level1)
+{
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
+    std::string localNetworkId;
+    std::string remoteNetworkId;
+    std::vector<int32_t> userIds{100, 101};
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+
+    AccountSA::OhosAccountInfo osAccountInfo;
+    EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
+        .WillOnce(DoAll(SetArgReferee<0>(osAccountInfo), Return(DH_FWK_SUCCESS)));
+    g_mockDMValue = false;
+    auto ret = dhCommToolTest_->CheckCallerAclRight(localNetworkId, remoteNetworkId);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhCommToolTest, CheckCallerAclRight_002, TestSize.Level1)
+{
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
+    std::string localNetworkId;
+    std::string remoteNetworkId;
+    std::vector<int32_t> userIds{100, 101};
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+
+    AccountSA::OhosAccountInfo osAccountInfo;
+    EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
+        .WillOnce(DoAll(SetArgReferee<0>(osAccountInfo), Return(DH_FWK_SUCCESS)));
+    g_mockDMValue = true;
+    auto ret = dhCommToolTest_->CheckCallerAclRight(localNetworkId, remoteNetworkId);
+    EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(DhCommToolTest, GetOsAccountInfo_001, TestSize.Level1)
+{
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
+    std::vector<int32_t> userIds{100, 101};
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(INVALID_USER_ID)));
+    auto ret = dhCommToolTest_->GetOsAccountInfo();
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhCommToolTest, GetOsAccountInfo_002, TestSize.Level1)
+{
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
+    std::vector<int32_t> userIds;
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+    auto ret = dhCommToolTest_->GetOsAccountInfo();
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhCommToolTest, GetOsAccountInfo_003, TestSize.Level1)
+{
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
+    std::vector<int32_t> userIds{100, 101};
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+
+    AccountSA::OhosAccountInfo osAccountInfo;
+    EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
+        .WillOnce(DoAll(SetArgReferee<0>(osAccountInfo), Return(INVALID_ACCOUNT_INFO_VALUE)));
+    auto ret = dhCommToolTest_->GetOsAccountInfo();
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhCommToolTest, GetOsAccountInfo_004, TestSize.Level1)
+{
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
+    std::vector<int32_t> userIds{100, 101};
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+
+    AccountSA::OhosAccountInfo osAccountInfo;
+    EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
+        .WillOnce(DoAll(SetArgReferee<0>(osAccountInfo), Return(DH_FWK_SUCCESS)));
+    auto ret = dhCommToolTest_->GetOsAccountInfo();
+    EXPECT_EQ(true, ret);
 }
 }
 }

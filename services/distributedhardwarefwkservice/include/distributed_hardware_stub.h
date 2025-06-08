@@ -50,6 +50,8 @@ private:
     int32_t DisableSinkInner(MessageParcel &data, MessageParcel &reply);
     int32_t EnableSourceInner(MessageParcel &data, MessageParcel &reply);
     int32_t DisableSourceInner(MessageParcel &data, MessageParcel &reply);
+    int32_t LoadDistributedHDFInner(MessageParcel &data, MessageParcel &reply);
+    int32_t UnLoadDistributedHDFInner(MessageParcel &data, MessageParcel &reply);
 
     int32_t ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors);
     int32_t WriteDescriptors(MessageParcel &data, const std::vector<DHDescriptor> &descriptors);
