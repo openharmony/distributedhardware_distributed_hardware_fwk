@@ -60,8 +60,15 @@ public:
     const std::shared_ptr<DHTransport> GetDHTransportPtr();
 
 private:
+    bool CheckCallerAclRight(const std::string &localNetworkId, const std::string &remoteNetworkId);
+    bool GetOsAccountInfo();
+
+private:
     std::shared_ptr<DHTransport> dhTransportPtr_;
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> eventHandler_;
+    std::string accountId_;
+    int32_t userId_ = -1;
+    uint64_t tokenId_ = 0;
 };
 } // DistributedHardware
 } // OHOS

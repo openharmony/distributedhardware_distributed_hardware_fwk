@@ -58,7 +58,8 @@
         "zlib",
         "ffrt",
         "libevdev",
-        "selinux_adapter"
+        "selinux_adapter",
+        "os_account"
       ]
     },
     "build": {
