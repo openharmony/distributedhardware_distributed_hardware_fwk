@@ -281,33 +281,25 @@ int32_t DistributedHardwareStub::RegisterControlCenterCallbackInner(MessageParce
 int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRemoteSinkStarted(MessageParcel &data,
     MessageParcel &reply)
 {
-    Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetCallingTokenID();
+    DHLOGI("HandleNotifySourceRemoteSinkStarted Start.");
     std::string udid = data.ReadString();
     if (!IsIdLengthValid(udid)) {
-        DHLOGE("the udid is invalid, %{public}s", GetAnonyString(udid).c_str());
-        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+        DHLOGE("the udid: %{public}s is invalid.", GetAnonyString(udid).c_str());
+        return ERR_DH_FWK_PARA_INVALID;
     }
     std::string networkId = "";
     DeviceManager::GetInstance().GetNetworkIdByUdid(DH_FWK_PKG_NAME, udid, networkId);
     if (!IsIdLengthValid(networkId)) {
-        DHLOGE("the networkId is invalid, %{public}s", GetAnonyString(networkId).c_str());
-        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
-    }
-    uint32_t dAccessToken = Security::AccessToken::AccessTokenKit::AllocLocalTokenID(networkId, callerToken);
-    const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
-    int32_t result = Security::AccessToken::AccessTokenKit::VerifyAccessToken(dAccessToken, permissionName);
-    if (result != Security::AccessToken::PERMISSION_GRANTED) {
-        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
-        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+        DHLOGE("the networkId: %{public}s is invalid, not a trusted device.", GetAnonyString(networkId).c_str());
+        return ERR_DH_FWK_PARA_INVALID;
     }
 
-    DHLOGI("DistributedHardwareStub HandleNotifySourceRemoteSinkStarted Start.");
     int32_t ret = NotifySourceRemoteSinkStarted(udid);
     if (!reply.WriteInt32(ret)) {
         DHLOGE("write ret failed.");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
     }
-    DHLOGI("DistributedHardwareStub HandleNotifySourceRemoteSinkStarted End.");
+    DHLOGI("HandleNotifySourceRemoteSinkStarted End.");
     return DH_FWK_SUCCESS;
 }
 
