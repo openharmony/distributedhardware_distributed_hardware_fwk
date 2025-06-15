@@ -32,6 +32,8 @@
 #include "component_enable.h"
 #include "component_loader.h"
 #include "constants.h"
+#include "daudio_hdf_operate.h"
+#include "dcamera_hdf_operate.h"
 #include "device_manager.h"
 #include "dh_context.h"
 #include "dh_data_sync_trigger_listener.h"
@@ -1747,6 +1749,16 @@ void ComponentManager::RecoverActiveEnableSource(DHType dhType)
 
 void ComponentManager::ResetHdfLoadRefCount(DHType dhType)
 {
+    switch (dhType) {
+        case DHType::AUDIO:
+            DaudioHdfOperate::GetInstance().ResetRefCount();
+            break;
+        case DHType::CAMERA:
+            DCameraHdfOperate::GetInstance().ResetRefCount();
+            break;
+        default:
+            break;
+    }
 }
 
 int32_t ComponentManager::InitCompSource(DHType dhType)
