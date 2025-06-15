@@ -926,8 +926,9 @@ HWTEST_F(ComponentManagerTest, Recover_001, TestSize.Level1)
  */
 HWTEST_F(ComponentManagerTest, DoRecover_001, TestSize.Level1)
 {
-    DHType dhType = DHType::CAMERA;
-    ComponentManager::GetInstance().DoRecover(dhType);
+    ComponentManager::GetInstance().DoRecover(DHType::UNKNOWN);
+    ComponentManager::GetInstance().DoRecover(DHType::AUDIO);
+    ComponentManager::GetInstance().DoRecover(DHType::CAMERA);
     EXPECT_EQ(true, ComponentManager::GetInstance().compSource_.empty());
 }
 

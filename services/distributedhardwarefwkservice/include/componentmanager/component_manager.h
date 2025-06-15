@@ -262,6 +262,7 @@ private:
     void RecoverAutoEnableSource(DHType dhType);
     void RecoverActiveEnableSink(DHType dhType);
     void RecoverActiveEnableSource(DHType dhType);
+    void ResetHdfLoadRefCount(DHType dhType);
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::shared_mutex compSourceMutex_;

@@ -639,6 +639,9 @@ void ComponentManager::DoRecover(DHType dhType)
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DoRecover setname failed.");
     }
+    // reset hdf load status
+    DHLOGI("Reset HDF load ref for DHType %{public}" PRIu32, (uint32_t)dhType);
+    ResetHdfLoadRefCount(dhType);
     // reset enable status
     DHLOGI("Reset enable status for DHType %{public}" PRIu32, (uint32_t)dhType);
     ResetSinkEnableStatus(dhType);
@@ -1740,6 +1743,10 @@ void ComponentManager::RecoverActiveEnableSource(DHType dhType)
         }
     }
     DHLOGI("RecoverActiveEnableSource end, dhType = %{public}#X.", dhType);
+}
+
+void ComponentManager::ResetHdfLoadRefCount(DHType dhType)
+{
 }
 
 int32_t ComponentManager::InitCompSource(DHType dhType)
