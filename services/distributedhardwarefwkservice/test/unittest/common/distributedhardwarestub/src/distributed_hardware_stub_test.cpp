@@ -195,7 +195,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_010, TestSize.Level1)
     std::string deviceId = "deviceId_test";
     data.WriteString(deviceId);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_011, TestSize.Level1)
