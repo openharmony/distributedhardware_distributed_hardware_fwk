@@ -52,10 +52,9 @@ void HDSinkStatusOnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     }
 
     FuzzHDSinkStatusListenerStub stub;
-
     stub.OnRemoteRequest(code, parcel, reply, option);
-
 }
+
 void HDSourceStatusOnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
@@ -76,7 +75,6 @@ void HDSourceStatusOnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
         code = *(reinterpret_cast<const uint32_t*>(data));
     }
     FuzzHDSourceStatusListenerStub stub;
-
     stub.OnRemoteRequest(code, parcel, reply, option);
 }
 } // namespace DistributedHardware
