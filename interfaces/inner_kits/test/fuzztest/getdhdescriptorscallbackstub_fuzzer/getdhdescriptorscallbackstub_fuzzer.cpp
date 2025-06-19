@@ -26,7 +26,6 @@
 #include "constants.h"
 #include "dhardware_descriptor.h"
 #include "distributed_hardware_errno.h"
-#include "distributed_hardware_log.h"
 #include "get_dh_descriptors_callback_stub.h"
 #include "publisher_listener_stub.h"
 
