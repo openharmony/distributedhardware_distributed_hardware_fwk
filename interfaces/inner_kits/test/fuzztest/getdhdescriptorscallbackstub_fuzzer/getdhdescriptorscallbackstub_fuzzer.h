@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,28 +13,24 @@
  * limitations under the License.
  */
 
-#ifndef TEST_CAPABILITYINFOMANAGER_FUZZER_H
-#define TEST_CAPABILITYINFOMANAGER_FUZZER_H
+#ifndef TEST_GET_DH_DESCRIPTORS_CALLBACK_STUB_FUZZER_H
+#define TEST_GET_DH_DESCRIPTORS_CALLBACK_STUB_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "capabilityinfomanager_fuzzer"
+#define FUZZ_PROJECT_NAME "getdhdescriptorscallbackstub_fuzzer.cpp"
 
 #include <string>
 #include "get_dh_descriptors_callback_stub.h"
+#include "dhardware_descriptor.h"
+#include "constants.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 
-class TestGetDistributedHardwareCallback : public GetDhDescriptorsCallbackStub {
+class FuzzGetDhDescriptorsCallbackStub : public GetDhDescriptorsCallbackStub {
 public:
-    TestGetDistributedHardwareCallback() = default;
-    virtual ~TestGetDistributedHardwareCallback() = default;
-protected:
-    void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
-        EnableStep enableStep) override;
-    void OnError(const std::string &networkId, int32_t error) override;
+    void OnSuccess(const std::string &, const std::vector<DHDescriptor> &, EnableStep) override;
+    void OnError(const std::string &, int32_t) override;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-
 #endif
-

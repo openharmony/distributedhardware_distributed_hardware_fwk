@@ -21,6 +21,57 @@
 namespace OHOS {
 namespace DistributedHardware {
 
+int32_t FuzzDistributedHardwareSource::InitSource(const std::string& networkId)
+{
+    (void)networkId;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t FuzzDistributedHardwareSource::ReleaseSource()
+{
+    return DH_FWK_SUCCESS;
+}
+
+int32_t FuzzDistributedHardwareSource::RegisterDistributedHardware(
+    const std::string& networkId, const std::string& dhId, const EnableParam& param,
+    std::shared_ptr<RegisterCallback> callback)
+{
+    (void)networkId;
+    (void)dhId;
+    (void)param;
+    (void)callback;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t FuzzDistributedHardwareSource::UnregisterDistributedHardware(
+    const std::string& networkId, const std::string& dhId, std::shared_ptr<UnregisterCallback> callback)
+{
+    (void)networkId;
+    (void)dhId;
+    (void)callback;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t FuzzDistributedHardwareSource::ConfigDistributedHardware(
+    const std::string& networkId, const std::string& dhId, const std::string& key, const std::string& value)
+{
+    (void)networkId;
+    (void)dhId;
+    (void)key;
+    (void)value;
+    return DH_FWK_SUCCESS;
+}
+
+void FuzzDistributedHardwareSource::RegisterDistributedHardwareStateListener(
+    std::shared_ptr<DistributedHardwareStateListener> listener)
+{
+    (void)listener;
+}
+
+void FuzzDistributedHardwareSource::RegisterDataSyncTriggerListener(std::shared_ptr<DataSyncTriggerListener> listener)
+{
+    (void)listener;
+}
 void ComponentDisableFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -34,6 +85,20 @@ void ComponentDisableFuzzTest(const uint8_t* data, size_t size)
     std::string disableData(reinterpret_cast<const char*>(data), size);
     compDisable->OnUnregisterResult(uuid, dhId, status, disableData);
 }
+
+void DisableFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    auto compDisable = std::make_shared<ComponentDisable>();
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    std::string dhId(reinterpret_cast<const char*>(data), size);
+    auto handler = std::make_shared<FuzzDistributedHardwareSource>();
+    std::string disableData(reinterpret_cast<const char*>(data), size);
+    compDisable->Disable(networkId, dhId, handler.get());
+}
 }
 }
 
@@ -42,6 +107,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     OHOS::DistributedHardware::ComponentDisableFuzzTest(data, size);
+    OHOS::DistributedHardware::DisableFuzzTest(data, size);
     return 0;
 }
 

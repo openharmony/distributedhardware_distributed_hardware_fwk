@@ -52,7 +52,7 @@ void OnDeviceReadyFuzzTest(const uint8_t* data, size_t size)
     usleep(SLEEP_TIME_US);
 }
 
-void OnDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
+void OnDeviceOfflineFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
         return;
@@ -83,6 +83,84 @@ void OnDeviceChangedFuzzTest(const uint8_t* data, size_t size)
     AccessManager::GetInstance()->OnDeviceChanged(deviceInfo);
     usleep(SLEEP_TIME_US);
 }
+
+void UnInitFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    AccessManager::GetInstance()->UnInit();
+    usleep(SLEEP_TIME_US);
+}
+
+void UnInitDeviceManagerFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    AccessManager::GetInstance()->UnInitDeviceManager();
+    usleep(SLEEP_TIME_US);
+}
+
+void UnRegisterDevStateCallbackFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    AccessManager::GetInstance()->UnRegisterDevStateCallback();
+    usleep(SLEEP_TIME_US);
+}
+
+void OnRemoteDiedFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    AccessManager::GetInstance()->OnRemoteDied();
+    usleep(SLEEP_TIME_US);
+}
+
+void CheckTrustedDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    AccessManager::GetInstance()->CheckTrustedDeviceOnline();
+    usleep(SLEEP_TIME_US);
+}
+
+void DumpFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    std::vector<std::string> argsStr = {reinterpret_cast<const char *>(data)};
+    std::string result = {reinterpret_cast<const char *>(data)};
+    AccessManager::GetInstance()->Dump(argsStr, result);
+    usleep(SLEEP_TIME_US);
+}
+
+void OnDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    AccessManager::GetInstance()->Init();
+    DmDeviceInfo deviceInfo;
+    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, (reinterpret_cast<const char *>(data)), size);
+    if (ret != EOK) {
+        return;
+    }
+    AccessManager::GetInstance()->OnDeviceOnline(deviceInfo);
+    usleep(SLEEP_TIME_US);
+}
 }
 }
 
@@ -93,6 +171,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::OnDeviceReadyFuzzTest(data, size);
     OHOS::DistributedHardware::OnDeviceOnlineFuzzTest(data, size);
     OHOS::DistributedHardware::OnDeviceChangedFuzzTest(data, size);
+    OHOS::DistributedHardware::UnInitFuzzTest(data, size);
+    OHOS::DistributedHardware::OnRemoteDiedFuzzTest(data, size);
+    OHOS::DistributedHardware::CheckTrustedDeviceOnlineFuzzTest(data, size);
+    OHOS::DistributedHardware::DumpFuzzTest(data, size);
+    OHOS::DistributedHardware::OnDeviceOfflineFuzzTest(data, size);
     return 0;
 }
 

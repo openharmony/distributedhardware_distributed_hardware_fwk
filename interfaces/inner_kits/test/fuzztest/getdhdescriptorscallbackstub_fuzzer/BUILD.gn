@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -17,17 +17,21 @@ import("//build/test.gni")
 import("../../../../../distributedhardwarefwk.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
+ohos_fuzztest("GetDhDescriptorsCallbackStubFuzzTest") {
   module_out_path = fuzz_test_output_path
-  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanager_fuzzer"
+  fuzz_config_file =
+      "${innerkits_path}/test/fuzztest/getdhdescriptorscallbackstub_fuzzer"
 
   include_dirs = [
+    "${av_trans_path}/common/include",
+    "include",
     "${utils_path}/include",
-    "${common_path}/log/include",
     "${common_path}/utils/include",
+    "${common_path}/log/include",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/accessmanager",
+    "${innerkits_path}/include",
     "${innerkits_path}/include/ipc",
-    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
-    "${services_path}/distributedhardwarefwkservice/include/utils",
   ]
   cflags = [
     "-g",
@@ -36,33 +40,20 @@ ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
     "-fno-omit-frame-pointer",
     "-Dprivate=public",
   ]
-  sources = [
-    "capabilityinfomanager_fuzzer.cpp",
-    "${innerkits_path}/src/ipc/get_dh_descriptors_callback_stub.cpp",
-  ]
+  sources = [ "getdhdescriptorscallbackstub_fuzzer.cpp" ]
 
-  deps = [
-    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "${utils_path}:distributedhardwareutils",
-  ]
+  deps = [ "${innerkits_path}:libdhfwk_sdk" ]
 
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"CapabilityInfoManagerFuzzTest\"",
+    "DH_LOG_TAG=\"GetDhDescriptorsCallbackStubFuzzTest\"",
     "LOG_DOMAIN=0xD004100",
   ]
 
   external_deps = [
-    "cJSON:cjson",
     "c_utils:utils",
-    "device_manager:devicemanagersdk",
-    "eventhandler:libeventhandler",
-    "hilog:libhilog",
-    "init:libbegetutil",
     "ipc:ipc_core",
-    "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
   ]
 }
 
@@ -70,6 +61,6 @@ ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
 group("fuzztest") {
   testonly = true
 
-  deps = [ ":CapabilityInfoManagerFuzzTest" ]
+  deps = [ ":GetDhDescriptorsCallbackStubFuzzTest" ]
 }
 ###############################################################################

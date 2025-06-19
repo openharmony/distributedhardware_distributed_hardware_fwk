@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,21 +14,20 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import("../../../../../distributedhardwarefwk.gni")
+import("../../../../../distributed_av_transport.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
-  module_out_path = fuzz_test_output_path
-  fuzz_config_file = "${services_path}/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanager_fuzzer"
+ohos_fuzztest("FilterFactoryFuzzTest") {
+  module_out_path = "distributed_hardware_fwk/av_transport/filter"
+  fuzz_config_file =
+      "${filter_path}/test/fuzztest/filterfactory_fuzzer"
 
   include_dirs = [
-    "${utils_path}/include",
-    "${common_path}/log/include",
-    "${common_path}/utils/include",
-    "${innerkits_path}/include/ipc",
-    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
-    "${services_path}/distributedhardwarefwkservice/include/utils",
+    "${common_path}/include",
+    "${filter_path}/include",
+    "${filter_path}/test/fuzztest",
   ]
+
   cflags = [
     "-g",
     "-O0",
@@ -36,31 +35,30 @@ ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
     "-fno-omit-frame-pointer",
     "-Dprivate=public",
   ]
-  sources = [
-    "capabilityinfomanager_fuzzer.cpp",
-    "${innerkits_path}/src/ipc/get_dh_descriptors_callback_stub.cpp",
-  ]
+
+  sources = [ "filterfactory_fuzzer.cpp" ]
 
   deps = [
-    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "${utils_path}:distributedhardwareutils",
+    "${distributed_av_transport_path}/framework:distributed_av_pipeline_fwk"
   ]
-
+  if (histreamer_compile_part) {
+    external_deps = [
+      "media_foundation:histreamer_base",
+      "media_foundation:histreamer_codec_filters",
+      "media_foundation:histreamer_ffmpeg_convert",
+      "media_foundation:histreamer_plugin_base",
+    ]
+  }
   defines = [
     "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"CapabilityInfoManagerFuzzTest\"",
-    "LOG_DOMAIN=0xD004100",
+    "DH_LOG_TAG=\"FilterFactoryFuzzTest\"",
+    "LOG_DOMAIN=0xD004101",
   ]
 
-  external_deps = [
+  external_deps += [
     "cJSON:cjson",
     "c_utils:utils",
-    "device_manager:devicemanagersdk",
-    "eventhandler:libeventhandler",
-    "hilog:libhilog",
-    "init:libbegetutil",
     "ipc:ipc_core",
-    "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
@@ -69,7 +67,6 @@ ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-
-  deps = [ ":CapabilityInfoManagerFuzzTest" ]
+  deps = [ ":FilterFactoryFuzzTest" ]
 }
 ###############################################################################

@@ -18,5 +18,30 @@
 
 #define FUZZ_PROJECT_NAME "componentdisable_fuzzer"
 
-#endif
+#include <string>
+#include "idistributed_hardware_source.h"
 
+namespace OHOS {
+namespace DistributedHardware {
+
+class FuzzDistributedHardwareSource : public IDistributedHardwareSource {
+public:
+    FuzzDistributedHardwareSource() = default;
+    virtual ~FuzzDistributedHardwareSource() = default;
+
+    int32_t InitSource(const std::string&) override;
+    int32_t ReleaseSource() override;
+    int32_t RegisterDistributedHardware(const std::string&, const std::string&,
+        const EnableParam&, std::shared_ptr<RegisterCallback>) override;
+    int32_t UnregisterDistributedHardware(const std::string&, const std::string&,
+        std::shared_ptr<UnregisterCallback> callback) override;
+    int32_t ConfigDistributedHardware(const std::string&, const std::string&, const std::string&,
+        const std::string&) override;
+    void RegisterDistributedHardwareStateListener(std::shared_ptr<DistributedHardwareStateListener>) override;
+    void UnregisterDistributedHardwareStateListener() override{}
+    void RegisterDataSyncTriggerListener(std::shared_ptr<DataSyncTriggerListener>) override;
+    void UnregisterDataSyncTriggerListener() override{}
+};
+} // namespace DistributedHardware
+} // namespace OHOS
+#endif
