@@ -172,6 +172,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::OnDeviceOnlineFuzzTest(data, size);
     OHOS::DistributedHardware::OnDeviceChangedFuzzTest(data, size);
     OHOS::DistributedHardware::UnInitFuzzTest(data, size);
+    OHOS::DistributedHardware::UnInitDeviceManagerFuzzTest(data, size);
+    OHOS::DistributedHardware::UnRegisterDevStateCallbackFuzzTest(data, size);
     OHOS::DistributedHardware::OnRemoteDiedFuzzTest(data, size);
     OHOS::DistributedHardware::CheckTrustedDeviceOnlineFuzzTest(data, size);
     OHOS::DistributedHardware::DumpFuzzTest(data, size);
