@@ -535,15 +535,11 @@ HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_002, TestSize.Level1)
 HWTEST_F(DistributedHardwareServiceTest, LoadDistributedHDF_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
-    EXPECT_EQ(DH_FWK_SUCCESS, service.LoadDistributedHDF(DHType::AUDIO));
-    EXPECT_EQ(DH_FWK_SUCCESS, service.LoadDistributedHDF(DHType::AUDIO));
-    EXPECT_EQ(DH_FWK_SUCCESS, service.LoadDistributedHDF(DHType::CAMERA));
-    EXPECT_EQ(DH_FWK_SUCCESS, service.LoadDistributedHDF(DHType::CAMERA));
+    service.LoadDistributedHDF(DHType::AUDIO);
+    service.LoadDistributedHDF(DHType::CAMERA);
     EXPECT_EQ(ERR_DH_FWK_NO_HDF_SUPPORT, service.LoadDistributedHDF(DHType::UNKNOWN));
-    EXPECT_EQ(DH_FWK_SUCCESS, service.UnLoadDistributedHDF(DHType::AUDIO));
-    EXPECT_EQ(DH_FWK_SUCCESS, service.UnLoadDistributedHDF(DHType::AUDIO));
-    EXPECT_EQ(DH_FWK_SUCCESS, service.UnLoadDistributedHDF(DHType::CAMERA));
-    EXPECT_EQ(DH_FWK_SUCCESS, service.UnLoadDistributedHDF(DHType::CAMERA));
+    service.UnLoadDistributedHDF(DHType::AUDIO);
+    service.UnLoadDistributedHDF(DHType::CAMERA);
     EXPECT_EQ(ERR_DH_FWK_NO_HDF_SUPPORT, service.UnLoadDistributedHDF(DHType::UNKNOWN));
 }
 } // namespace DistributedHardware

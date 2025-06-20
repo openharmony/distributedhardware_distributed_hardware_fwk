@@ -28,6 +28,7 @@ config("module_private_config") {
     "${innerkits_path}/include",
     "${innerkits_path}/include/ipc",
     "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/hdfoperate",
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${services_path}/distributedhardwarefwkservice/include/ipc",
   ]

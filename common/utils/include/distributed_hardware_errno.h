@@ -100,6 +100,8 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_LOAD_HDF_FAIL = -10814;
     constexpr int32_t ERR_DH_FWK_LOAD_HDF_TIMEOUT = -10815;
     constexpr int32_t ERR_DH_FWK_NO_HDF_SUPPORT = -10816;
+    constexpr int32_t ERR_DH_FWK_ADD_DEATH_FAIL = -10817;
+    constexpr int32_t ERR_DH_FWK_REMOVE_DEATH_FAIL = -10818;
 
     /* AccessManager errno, range: [-10900, -10999] */
     constexpr int32_t ERR_DH_FWK_ACCESS_INIT_DM_FAILED = -10900;

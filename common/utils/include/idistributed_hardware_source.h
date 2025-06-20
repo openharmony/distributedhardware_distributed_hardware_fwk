@@ -72,6 +72,16 @@ public:
     virtual void OnDataSyncTrigger(const std::string &networkId) = 0;
 };
 
+class HdfDeathCallback {
+public:
+    /**
+     * @brief Trigger callback when HDF driver exits abnormally
+     *
+     */
+    virtual void OnHdfHostDied() = 0;
+};
+
+
 class IDistributedHardwareSource {
 public:
     virtual int32_t InitSource(const std::string &params) = 0;
@@ -87,6 +97,15 @@ public:
     virtual void UnregisterDistributedHardwareStateListener() = 0;
     virtual void RegisterDataSyncTriggerListener(std::shared_ptr<DataSyncTriggerListener> listener) = 0;
     virtual void UnregisterDataSyncTriggerListener() = 0;
+    virtual int32_t LoadDistributedHDF(std::shared_ptr<HdfDeathCallback> callback)
+    {
+        (void)callback;
+        return 0;
+    }
+    virtual int32_t UnLoadDistributedHDF()
+    {
+        return 0;
+    }
 };
 extern "C" __attribute__((visibility("default"))) IDistributedHardwareSource* GetSourceHardwareHandler();
 } // namespace DistributedHardware

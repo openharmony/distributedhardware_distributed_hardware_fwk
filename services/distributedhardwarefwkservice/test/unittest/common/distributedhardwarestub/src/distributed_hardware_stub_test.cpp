@@ -708,6 +708,44 @@ HWTEST_F(DistributedHardwareStubTest, LoadDistributedHDFInner_001, TestSize.Leve
 }
 
 /**
+ * @tc.name: LoadDistributedHDFInner_002
+ * @tc.desc: Verify the LoadDistributedHDFInner function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareStubTest, LoadDistributedHDFInner_002, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+    MessageParcel data;
+    MessageParcel reply;
+    auto listener = sptr<MockIPublisherListener>(new MockIPublisherListener());
+    data.WriteUint32(static_cast<uint32_t>(DHType::AUDIO));
+    data.WriteRemoteObject(listener->AsObject());
+    EXPECT_EQ(DH_FWK_SUCCESS, stubTest_->LoadDistributedHDFInner(data, reply));
+}
+
+/**
+ * @tc.name: LoadDistributedHDFInner_003
+ * @tc.desc: Verify the LoadDistributedHDFInner function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareStubTest, LoadDistributedHDFInner_003, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+    MessageParcel data;
+    MessageParcel reply;
+    auto listener = sptr<MockIPublisherListener>(new MockIPublisherListener());
+    data.WriteUint32(static_cast<uint32_t>(DHType::CAMERA));
+    data.WriteRemoteObject(listener->AsObject());
+    EXPECT_EQ(DH_FWK_SUCCESS, stubTest_->LoadDistributedHDFInner(data, reply));
+}
+
+/**
  * @tc.name: UnLoadDistributedHDFInner_001
  * @tc.desc: Verify the UnLoadDistributedHDFInner function
  * @tc.type: FUNC
@@ -720,6 +758,44 @@ HWTEST_F(DistributedHardwareStubTest, UnLoadDistributedHDFInner_001, TestSize.Le
     EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
     MessageParcel data;
     MessageParcel reply;
+    EXPECT_EQ(DH_FWK_SUCCESS, stubTest_->UnLoadDistributedHDFInner(data, reply));
+}
+
+/**
+ * @tc.name: UnLoadDistributedHDFInner_002
+ * @tc.desc: Verify the UnLoadDistributedHDFInner function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareStubTest, UnLoadDistributedHDFInner_002, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+    MessageParcel data;
+    MessageParcel reply;
+    auto listener = sptr<MockIPublisherListener>(new MockIPublisherListener());
+    data.WriteUint32(static_cast<uint32_t>(DHType::AUDIO));
+    data.WriteRemoteObject(listener->AsObject());
+    EXPECT_EQ(DH_FWK_SUCCESS, stubTest_->UnLoadDistributedHDFInner(data, reply));
+}
+
+/**
+ * @tc.name: UnLoadDistributedHDFInner_003
+ * @tc.desc: Verify the UnLoadDistributedHDFInner function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareStubTest, UnLoadDistributedHDFInner_003, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    ASSERT_TRUE(token_ != nullptr);
+    EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_GRANTED));
+    MessageParcel data;
+    MessageParcel reply;
+    auto listener = sptr<MockIPublisherListener>(new MockIPublisherListener());
+    data.WriteUint32(static_cast<uint32_t>(DHType::CAMERA));
+    data.WriteRemoteObject(listener->AsObject());
     EXPECT_EQ(DH_FWK_SUCCESS, stubTest_->UnLoadDistributedHDFInner(data, reply));
 }
 } // namespace DistributedHardware

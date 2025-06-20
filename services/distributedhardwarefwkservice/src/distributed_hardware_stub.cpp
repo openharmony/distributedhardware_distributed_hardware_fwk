@@ -30,6 +30,7 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "hdf_operate.h"
 #include "publisher_listener_proxy.h"
 
 namespace OHOS {
@@ -553,6 +554,16 @@ int32_t DistributedHardwareStub::LoadDistributedHDFInner(MessageParcel &data, Me
     }
     DHType dhType = static_cast<DHType>(data.ReadUint32());
     int32_t ret = LoadDistributedHDF(dhType);
+    if (ret == DH_FWK_SUCCESS) {
+        sptr<IRemoteObject> remoteObj = data.ReadRemoteObject();
+        if (remoteObj != nullptr) {
+            ret = HdfOperateManager::GetInstance().AddDeathRecipient(dhType, remoteObj);
+            if (ret != DH_FWK_SUCCESS) {
+                DHLOGE("AddDeathRecipient failed!");
+                UnLoadDistributedHDF(dhType);
+            }
+        }
+    }
     if (!reply.WriteInt32(ret)) {
         DHLOGE("Write ret code failed!");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
@@ -568,6 +579,15 @@ int32_t DistributedHardwareStub::UnLoadDistributedHDFInner(MessageParcel &data, 
     }
     DHType dhType = static_cast<DHType>(data.ReadUint32());
     int32_t ret = UnLoadDistributedHDF(dhType);
+    if (ret == DH_FWK_SUCCESS) {
+        sptr<IRemoteObject> remoteObj = data.ReadRemoteObject();
+        if (remoteObj != nullptr) {
+            ret = HdfOperateManager::GetInstance().RemoveDeathRecipient(dhType, remoteObj);
+            if (ret != DH_FWK_SUCCESS) {
+                DHLOGE("RemoveDeathRecipient failed!");
+            }
+        }
+    }
     if (!reply.WriteInt32(ret)) {
         DHLOGE("Write ret code failed!");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
