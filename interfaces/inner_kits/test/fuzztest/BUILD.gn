@@ -18,5 +18,6 @@ group("fuzztest") {
     "distributedhardwarefwkkit_fuzzer:fuzztest",
     "distributedhardwarefwkstub_fuzzer:fuzztest",
     "getdhdescriptorscallbackstub_fuzzer:fuzztest",
+    "hardwarestatuslistenerstub_fuzzer:fuzztest",
   ]
 }
