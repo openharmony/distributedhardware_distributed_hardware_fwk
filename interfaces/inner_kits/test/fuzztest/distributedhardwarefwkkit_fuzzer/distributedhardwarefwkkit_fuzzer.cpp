@@ -403,7 +403,7 @@ void IsQueryLocalSysSpecTypeValidFuzzTest(const uint8_t *data, size_t size)
     dhfwkKit.IsQueryLocalSysSpecTypeValid(specType);
 }
 
-void RegisterCtlCenterCallback(const uint8_t *data, size_t size)
+void RegisterCtlCenterCallbackFuzzTest(const uint8_t *data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
         return;
@@ -445,6 +445,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     OHOS::DistributedHardware::RegisterDHStatusListenerOneParamFuzzTest(data, size);
     OHOS::DistributedHardware::UnregisterDHStatusListenerOneParamFuzzTest(data, size);
     OHOS::DistributedHardware::IsQueryLocalSysSpecTypeValidFuzzTest(data, size);
-    OHOS::DistributedHardware::RegisterCtlCenterCallback(data, size);
+    OHOS::DistributedHardware::RegisterCtlCenterCallbackFuzzTest(data, size);
     return 0;
 }
