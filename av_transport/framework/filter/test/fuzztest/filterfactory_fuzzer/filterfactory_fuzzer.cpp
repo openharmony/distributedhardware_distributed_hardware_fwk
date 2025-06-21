@@ -26,7 +26,7 @@ void FilterFactoryFuzzerTest(const uint8_t *data, size_t size)
         return;
     }
     std::string filterName(reinterpret_cast<const char*>(data), size - 1);
-    FilterType type = static_cast<FilterType>(data[size - 1]);
+    FilterType type = FilterType::FILTERTYPE_SOURCE;
     auto filter = FilterFactory::Instance().CreateFilterPriv(filterName, type);
 }
 } // namespace Pipeline

@@ -213,7 +213,7 @@ void DhTransportInitFuzzTest(const uint8_t* data, size_t size)
 
 void DhTransportOnBytesFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size < sizeof(int32_t))) {
+    if ((data == nullptr) || (size < sizeof(int32_t) + sizeof(uint32_t))) {
         return;
     }
     int32_t socketId = *(reinterpret_cast<const int32_t*>(data));
