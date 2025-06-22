@@ -862,6 +862,10 @@ int32_t DistributedHardwareProxy::LoadDistributedHDF(const DHType dhType)
         DHLOGE("Write type failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
+    if (!data.WriteRemoteObject(hdfDeathListenerStub_->AsObject())) {
+        DHLOGE("Write publisher listener failed");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::LOAD_HDF),
         data, reply, option);
     if (ret != NO_ERROR) {
@@ -888,6 +892,10 @@ int32_t DistributedHardwareProxy::UnLoadDistributedHDF(const DHType dhType)
     uint32_t type = static_cast<uint32_t>(dhType);
     if (!data.WriteUint32(type)) {
         DHLOGE("Write type failed");
+        return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteRemoteObject(hdfDeathListenerStub_->AsObject())) {
+        DHLOGE("Write publisher listener failed");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(DHMsgInterfaceCode::UNLOAD_HDF),

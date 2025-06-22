@@ -22,14 +22,23 @@
 #include "iremote_proxy.h"
 #include "refbase.h"
 #include "idistributed_hardware.h"
+#include "publisher_listener_stub.h"
 
 namespace OHOS {
 namespace DistributedHardware {
+class IHdfDeathListener : public IRemoteBroker {
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.DistributedHardware.DistributedHardwareFwk.IHdfDeathListener");
+};
+class HdfDeathListenerStub : public IRemoteStub<IHdfDeathListener> {
+public:
+};
 class DistributedHardwareProxy : public IRemoteProxy<IDistributedHardware> {
 public:
     explicit DistributedHardwareProxy(const sptr<IRemoteObject> impl)
         : IRemoteProxy<IDistributedHardware>(impl)
     {
+        hdfDeathListenerStub_ = sptr<HdfDeathListenerStub>(new HdfDeathListenerStub());
     }
 
     virtual ~DistributedHardwareProxy() {}
@@ -66,6 +75,7 @@ private:
 
 private:
     static inline BrokerDelegator<DistributedHardwareProxy> delegator_;
+    sptr<HdfDeathListenerStub> hdfDeathListenerStub_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

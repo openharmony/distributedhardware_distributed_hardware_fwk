@@ -32,8 +32,7 @@
 #include "component_enable.h"
 #include "component_loader.h"
 #include "constants.h"
-#include "daudio_hdf_operate.h"
-#include "dcamera_hdf_operate.h"
+#include "hdf_operate.h"
 #include "device_manager.h"
 #include "dh_context.h"
 #include "dh_data_sync_trigger_listener.h"
@@ -641,9 +640,6 @@ void ComponentManager::DoRecover(DHType dhType)
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DoRecover setname failed.");
     }
-    // reset hdf load status
-    DHLOGI("Reset HDF load ref for DHType %{public}" PRIu32, (uint32_t)dhType);
-    ResetHdfLoadRefCount(dhType);
     // reset enable status
     DHLOGI("Reset enable status for DHType %{public}" PRIu32, (uint32_t)dhType);
     ResetSinkEnableStatus(dhType);
@@ -1745,20 +1741,6 @@ void ComponentManager::RecoverActiveEnableSource(DHType dhType)
         }
     }
     DHLOGI("RecoverActiveEnableSource end, dhType = %{public}#X.", dhType);
-}
-
-void ComponentManager::ResetHdfLoadRefCount(DHType dhType)
-{
-    switch (dhType) {
-        case DHType::AUDIO:
-            DaudioHdfOperate::GetInstance().ResetRefCount();
-            break;
-        case DHType::CAMERA:
-            DCameraHdfOperate::GetInstance().ResetRefCount();
-            break;
-        default:
-            break;
-    }
 }
 
 int32_t ComponentManager::InitCompSource(DHType dhType)

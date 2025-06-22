@@ -32,8 +32,7 @@
 #include "capability_info_manager.h"
 #include "meta_info_manager.h"
 #include "component_manager.h"
-#include "daudio_hdf_operate.h"
-#include "dcamera_hdf_operate.h"
+#include "hdf_operate.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "dh_utils_hisysevent.h"
@@ -557,9 +556,8 @@ int32_t DistributedHardwareService::LoadDistributedHDF(const DHType dhType)
 {
     switch (dhType) {
         case DHType::AUDIO:
-            return DaudioHdfOperate::GetInstance().LoadDaudioHDFImpl();
         case DHType::CAMERA:
-            return DCameraHdfOperate::GetInstance().LoadDcameraHDFImpl();
+            return HdfOperateManager::GetInstance().LoadDistributedHDF(dhType);
         default:
             break;
     }
@@ -570,9 +568,8 @@ int32_t DistributedHardwareService::UnLoadDistributedHDF(const DHType dhType)
 {
     switch (dhType) {
         case DHType::AUDIO:
-            return DaudioHdfOperate::GetInstance().UnLoadDaudioHDFImpl();
         case DHType::CAMERA:
-            return DCameraHdfOperate::GetInstance().UnLoadDcameraHDFImpl();
+            return HdfOperateManager::GetInstance().UnLoadDistributedHDF(dhType);
         default:
             break;
     }
