@@ -39,6 +39,7 @@ ohos_fuzztest("DistributedHardwareFwkKitFuzzTest") {
     "-O0",
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
+    "-Dprivate=public",
   ]
   sources = [ "distributedhardwarefwkkit_fuzzer.cpp" ]
 

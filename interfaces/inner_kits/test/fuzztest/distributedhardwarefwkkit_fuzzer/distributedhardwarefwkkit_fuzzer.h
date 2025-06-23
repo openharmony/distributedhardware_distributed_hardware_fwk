@@ -21,6 +21,7 @@
 #include <string>
 #include "get_dh_descriptors_callback_stub.h"
 #include "hardware_status_listener_stub.h"
+#include "iav_trans_control_center_callback.h"
 #include "publisher_listener_stub.h"
 
 namespace OHOS {
@@ -58,6 +59,19 @@ protected:
     void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
         EnableStep enableStep) override;
     void OnError(const std::string &networkId, int32_t error) override;
+};
+class TestAVTransControlCenterCallback : public IAVTransControlCenterCallback {
+public:
+    TestAVTransControlCenterCallback() = default;
+    virtual ~TestAVTransControlCenterCallback() = default;
+protected:
+    int32_t SetParameter(AVTransTag tag, const std::string &value) override;
+    int32_t SetSharedMemory(const AVTransSharedMemory &memory) override;
+    int32_t Notify(const AVTransEvent &event) override;
+    sptr<IRemoteObject> AsObject() override
+    {
+    return nullptr;
+    }
 };
 } // namespace DistributedHardware
 } // namespace OHOS

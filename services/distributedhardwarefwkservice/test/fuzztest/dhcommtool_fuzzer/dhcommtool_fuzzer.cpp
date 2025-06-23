@@ -68,6 +68,77 @@ void DhTransportParseAndSaveRemoteDHCapsFuzzTest(const uint8_t* data, size_t siz
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     dhCommTool->ParseAndSaveRemoteDHCaps(remoteCaps);
 }
+
+void DhTransportInitFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
+    dhCommTool->Init();
+}
+
+void DhTransportUnInitFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
+    dhCommTool->UnInit();
+}
+
+void DHCommToolEventHandlerCtorFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    auto runner = AppExecFwk::EventRunner::Create(true);
+    std::shared_ptr<DHCommTool> commToolPtr;
+    DHCommTool::DHCommToolEventHandler handler(runner, commToolPtr);
+}
+
+void DHCommToolEventHandlerProcessEventFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    auto runner = AppExecFwk::EventRunner::Create(true);
+    auto commTool = std::make_shared<DHCommTool>();
+    auto handler = std::make_shared<DHCommTool::DHCommToolEventHandler>(runner, commTool);
+
+    uint32_t eventId = (size > 0) ? data[0] % 4 : 0;
+
+    auto event = AppExecFwk::InnerEvent::Get(eventId);
+    handler->ProcessEvent(event);
+    auto eventNoMsg = AppExecFwk::InnerEvent::Get(eventId);
+    handler->ProcessEvent(eventNoMsg);
+}
+
+void DHCommToolEventHandlerProcessFullCapsRspFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    auto runner = AppExecFwk::EventRunner::Create(true);
+    auto commTool = std::make_shared<DHCommTool>();
+    DHCommTool::DHCommToolEventHandler handler(runner, commTool);
+
+    FullCapsRsp capsRsp;
+    handler.ProcessFullCapsRsp(capsRsp, commTool);
+
+    capsRsp.networkId = "fuzz_network";
+    handler.ProcessFullCapsRsp(capsRsp, commTool);
+
+    auto capInfo = std::make_shared<CapabilityInfo>();
+    capsRsp.caps.push_back(capInfo);
+    handler.ProcessFullCapsRsp(capsRsp, nullptr);
+
+    auto commToolNoTrans = std::make_shared<DHCommTool>();
+    handler.ProcessFullCapsRsp(capsRsp, commToolNoTrans);
+
+    commTool->Init();
+    handler.ProcessFullCapsRsp(capsRsp, commTool);
+}
 }
 }
 
@@ -79,6 +150,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::DhTransportTriggerReqFullDHCapsFuzzTest(data, size);
     OHOS::DistributedHardware::DhTransportGetAndSendLocalFullCapsFuzzTest(data, size);
     OHOS::DistributedHardware::DhTransportParseAndSaveRemoteDHCapsFuzzTest(data, size);
+    OHOS::DistributedHardware::DhTransportInitFuzzTest(data, size);
+    OHOS::DistributedHardware::DhTransportUnInitFuzzTest(data, size);
+    OHOS::DistributedHardware::DHCommToolEventHandlerCtorFuzzTest(data, size);
+    OHOS::DistributedHardware::DHCommToolEventHandlerProcessEventFuzzTest(data, size);
+    OHOS::DistributedHardware::DHCommToolEventHandlerProcessFullCapsRspFuzzTest(data, size);
     return 0;
 }
 

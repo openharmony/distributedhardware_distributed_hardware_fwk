@@ -78,6 +78,24 @@ void TestGetDistributedHardwareCallback::OnError(const std::string &networkId, i
     (void)error;
 }
 
+int32_t TestAVTransControlCenterCallback::SetParameter(AVTransTag tag, const std::string &value)
+{
+    (void)tag;
+    (void)value;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t TestAVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemory &memory)
+{
+    (void)memory;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t TestAVTransControlCenterCallback::Notify(const AVTransEvent &event)
+{
+    (void)event;
+    return DH_FWK_SUCCESS;
+}
 void RegisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
@@ -328,6 +346,74 @@ void UnLoadDistributedHDFFuzzTest(const uint8_t *data, size_t size)
     DistributedHardwareFwkKit dhfwkKit;
     dhfwkKit.UnLoadDistributedHDF(dhType);
 }
+
+void OnDHFWKOnLineFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    bool isOnLine = *(reinterpret_cast<const bool*>(data));
+    dhfwkKit.OnDHFWKOnLine(isOnLine);
+}
+
+void QueryLocalSysSpecFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    enum QueryLocalSysSpecType specType =
+            static_cast<QueryLocalSysSpecType>(*(reinterpret_cast<const uint32_t*>(data)));
+    dhfwkKit.QueryLocalSysSpec(specType);
+}
+
+void RegisterDHStatusListenerOneParamFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    sptr<IHDSinkStatusListener> listener(new TestHDSinkStatusListener());
+    dhfwkKit.RegisterDHStatusListener(listener);
+}
+
+void UnregisterDHStatusListenerOneParamFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    sptr<IHDSinkStatusListener> listener(new TestHDSinkStatusListener());
+    dhfwkKit.UnregisterDHStatusListener(listener);
+}
+
+void IsQueryLocalSysSpecTypeValidFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    QueryLocalSysSpecType specType = static_cast<QueryLocalSysSpecType>(*(reinterpret_cast<const uint32_t*>(data)));
+    dhfwkKit.IsQueryLocalSysSpecTypeValid(specType);
+}
+
+void RegisterCtlCenterCallbackFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    int32_t engineId = *(reinterpret_cast<const int32_t*>(data));
+    sptr<IAVTransControlCenterCallback> listener(new TestAVTransControlCenterCallback());
+    dhfwkKit.RegisterCtlCenterCallback(engineId, listener);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
 
@@ -354,5 +440,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     OHOS::DistributedHardware::DisableSinkFuzzTest(data, size);
     OHOS::DistributedHardware::LoadDistributedHDFFuzzTest(data, size);
     OHOS::DistributedHardware::UnLoadDistributedHDFFuzzTest(data, size);
+    OHOS::DistributedHardware::OnDHFWKOnLineFuzzTest(data, size);
+    OHOS::DistributedHardware::QueryLocalSysSpecFuzzTest(data, size);
+    OHOS::DistributedHardware::RegisterDHStatusListenerOneParamFuzzTest(data, size);
+    OHOS::DistributedHardware::UnregisterDHStatusListenerOneParamFuzzTest(data, size);
+    OHOS::DistributedHardware::IsQueryLocalSysSpecTypeValidFuzzTest(data, size);
+    OHOS::DistributedHardware::RegisterCtlCenterCallbackFuzzTest(data, size);
     return 0;
 }
