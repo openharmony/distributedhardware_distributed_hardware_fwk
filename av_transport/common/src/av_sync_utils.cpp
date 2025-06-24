@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Huawei Device Co., Ltd.
+ * Copyright (C) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,7 +32,7 @@ AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t si
     int32_t fd = AshmemCreate(name.c_str(), size);
     if (fd <= 0) {
         AVTRANS_LOGE("create av trans shared memory failed, name=%{public}s, fd=%{public}" PRId32, name.c_str(), fd);
-        return AVTransSharedMemory{0, 0, name};
+        return AVTransSharedMemory{0, 0, name, nullptr};
     }
 
     unsigned int prot = PROT_READ | PROT_WRITE;
@@ -40,26 +40,27 @@ AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t si
     if (result < 0) {
         AVTRANS_LOGE("AshmemSetProt failed, name=%{public}s, fd=%{public}" PRId32, name.c_str(), fd);
         (void)::close(fd);
-        return AVTransSharedMemory{0, 0, name};
+        return AVTransSharedMemory{0, 0, name, nullptr};
     }
 
     void *addr = ::mmap(nullptr, size, static_cast<int>(prot), MAP_SHARED, fd, 0);
     if (addr == MAP_FAILED) {
         AVTRANS_LOGE("shared memory mmap failed, name=%{public}s, fd=%{public}" PRId32, name.c_str(), fd);
         (void)::close(fd);
-        return AVTransSharedMemory{0, 0, name};
+        return AVTransSharedMemory{0, 0, name, nullptr};
     }
 
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
     if (memset_s(base, size, INVALID_VALUE_FALG, size) != EOK) {
         AVTRANS_LOGE("memset_s failed.");
         (void)::close(fd);
-        return AVTransSharedMemory{0, 0, name};
+        (void)::munmap(addr, size);
+        return AVTransSharedMemory{0, 0, name, nullptr};
     }
     uint64_t tmpsize = static_cast<uint64_t>(size);
     AVTRANS_LOGI("create av trans shared memory success, name=%{public}s, size=%{public}" PRIu64 ", fd=%{public}"
         PRId32, name.c_str(), tmpsize, fd);
-    return AVTransSharedMemory{fd, size, name};
+    return AVTransSharedMemory{fd, size, name, addr};
 }
 
 void CloseAVTransSharedMemory(AVTransSharedMemory &memory) noexcept
@@ -73,6 +74,10 @@ void CloseAVTransSharedMemory(AVTransSharedMemory &memory) noexcept
     if (memory.fd > 0) {
         (void)::close(memory.fd);
         memory.fd = 0;
+    }
+    if (memory.addr != nullptr) {
+        (void)::munmap(memory.addr, memory.size);
+        memory.addr = nullptr;
     }
 }
 
@@ -97,14 +102,7 @@ int32_t WriteClockUnitToMemory(const AVTransSharedMemory &memory, AVSyncClockUni
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
 
-    void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
-    if (addr == MAP_FAILED) {
-        addr = nullptr;
-        AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
-        return ERR_DH_AVT_SHARED_MEMORY_FAILED;
-    }
-
-    uint8_t *base = reinterpret_cast<uint8_t*>(addr);
+    uint8_t *base = reinterpret_cast<uint8_t*>(memory.addr);
     size_t fOffset = (sizeof(uint32_t) + sizeof(int64_t)) * clockUnit.index;
     size_t tOffset = fOffset + sizeof(uint32_t);
     U64ToU8(base + tOffset, clockUnit.pts, NUM_EIGHT);
@@ -139,15 +137,7 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
     unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
-
-    void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
-    if (addr == MAP_FAILED) {
-        addr = nullptr;
-        AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
-        return ERR_DH_AVT_SHARED_MEMORY_FAILED;
-    }
-
-    uint8_t *base = reinterpret_cast<uint8_t*>(addr);
+    uint8_t *base = reinterpret_cast<uint8_t*>(memory.addr);
     uint32_t firstUnit = U8ToU32(base, NUM_FOUR);
     TRUE_RETURN_V_MSG_E(firstUnit == 0, ERR_DH_AVT_MASTER_NOT_READY, "master queue not ready, clock is null.");
 
@@ -187,15 +177,7 @@ int32_t WriteFrameInfoToMemory(const AVTransSharedMemory &memory, uint32_t frame
     unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
-
-    void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
-    if (addr == MAP_FAILED) {
-        addr = nullptr;
-        AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
-        return ERR_DH_AVT_SHARED_MEMORY_FAILED;
-    }
-
-    uint8_t *base = reinterpret_cast<uint8_t*>(addr);
+    uint8_t *base = reinterpret_cast<uint8_t*>(memory.addr);
     U32ToU8(base, frameNum, NUM_FOUR);
     U64ToU8(base + sizeof(uint32_t), timestamp, NUM_EIGHT);
 
@@ -220,15 +202,7 @@ int32_t ReadFrameInfoFromMemory(const AVTransSharedMemory &memory, uint32_t &fra
     unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
-
-    void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
-    if (addr == MAP_FAILED) {
-        addr = nullptr;
-        AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
-        return ERR_DH_AVT_SHARED_MEMORY_FAILED;
-    }
-
-    uint8_t *base = reinterpret_cast<uint8_t*>(addr);
+    uint8_t *base = reinterpret_cast<uint8_t*>(memory.addr);
     frameNum = U8ToU32(base, NUM_FOUR);
     timestamp = static_cast<int64_t>(U8ToU64(base + sizeof(uint32_t), NUM_EIGHT));
     TRUE_RETURN_V_MSG_E(frameNum <= 0, ERR_DH_AVT_MASTER_NOT_READY, "master queue not ready, frameNum is null.");
@@ -251,14 +225,7 @@ int32_t ResetSharedMemory(const AVTransSharedMemory &memory)
     unsigned int prot = PROT_WRITE;
     int result = AshmemSetProt(memory.fd, static_cast<int>(prot));
     TRUE_RETURN_V_MSG_E(result < 0, ERR_DH_AVT_SHARED_MEMORY_FAILED, "AshmemSetProt failed");
-
-    void *addr = ::mmap(nullptr, static_cast<size_t>(memory.size), static_cast<int>(prot), MAP_SHARED, memory.fd, 0);
-    if (addr == MAP_FAILED) {
-        addr = nullptr;
-        AVTRANS_LOGE("shared memory mmap failed, mmap address is invalid.");
-        return ERR_DH_AVT_SHARED_MEMORY_FAILED;
-    }
-    if (memset_s(reinterpret_cast<uint8_t*>(addr), size, INVALID_VALUE_FALG, size) != EOK) {
+    if (memset_s(reinterpret_cast<uint8_t*>(memory.addr), size, INVALID_VALUE_FALG, size) != EOK) {
         AVTRANS_LOGE("memset_s failed.");
         return ERR_DH_AVT_SHARED_MEMORY_FAILED;
     }
@@ -268,7 +235,7 @@ int32_t ResetSharedMemory(const AVTransSharedMemory &memory)
 
 bool IsInValidSharedMemory(const AVTransSharedMemory &memory)
 {
-    return (memory.fd <= 0) || (memory.size <= 0) || memory.name.empty();
+    return (memory.fd <= 0) || (memory.size <= 0) || memory.name.empty() || (memory.addr == nullptr);
 }
 
 bool IsInValidClockUnit(const AVSyncClockUnit &clockUnit)
