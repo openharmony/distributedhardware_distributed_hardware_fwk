@@ -1211,6 +1211,7 @@ HWTEST_F(ComponentManagerTest, UninitCompSource_001, TestSize.Level1)
 
 HWTEST_F(ComponentManagerTest, UninitCompSink_001, TestSize.Level1)
 {
+    ComponentLoader::GetInstance().compHandlerMap_.clear();
     SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().UninitCompSink(DHType::AUDIO);
     SetDownComponentLoaderConfig();

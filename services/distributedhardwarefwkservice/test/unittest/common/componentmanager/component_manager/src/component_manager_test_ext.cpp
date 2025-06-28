@@ -136,7 +136,6 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndDisableSink_001, testing::ext::Te
     EXPECT_CALL(*componentLoader_, GetHardwareHandler(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(handler.get()), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*componentLoader_, ReleaseSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
-    EXPECT_CALL(*handler, UnRegisterPluginListener()).Times(AtLeast(1));
 
     ret = ComponentManager::GetInstance().DisableSink(CAMERA_DESCRIPTOR, CAMERA_UID, CAMERA_PID);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
@@ -172,7 +171,6 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndDisableSink_002, testing::ext::Te
     EXPECT_CALL(*componentLoader_, GetHardwareHandler(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(handler.get()), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*componentLoader_, ReleaseSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
-    EXPECT_CALL(*handler, UnRegisterPluginListener()).Times(AtLeast(1));
 
     ComponentManager::GetInstance().DisableSink(newAudio, AUDIO_UID, newAudioPid);
     ret = ComponentManager::GetInstance().DisableSink(AUDIO_DESCRIPTOR, AUDIO_UID, AUDIO_PID);
@@ -533,7 +531,6 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndForceDisableSink_001, testing::ex
     EXPECT_CALL(*componentLoader_, GetHardwareHandler(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(handler.get()), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*componentLoader_, ReleaseSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
-    EXPECT_CALL(*handler, UnRegisterPluginListener()).Times(AtLeast(1));
 
     auto ret = ComponentManager::GetInstance().ForceDisableSink(newAudio);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);

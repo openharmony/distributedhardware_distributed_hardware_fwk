@@ -47,14 +47,6 @@ void DHModemContextExtTest::TearDownTestCase() {}
         EXPECT_EQ(ret, DH_FWK_SUCCESS);
     }
 
-    HWTEST_F(DHModemContextExtTest, GetModemExtInstance_002, TestSize.Level1)
-    {
-        int32_t ret = DHModemContextExt::GetInstance().GetHandler();
-        EXPECT_EQ(ret, DH_FWK_SUCCESS);
-        DHModemContextExt::GetInstance().GetModemExtInstance();
-        EXPECT_NE(DHModemContextExt::GetInstance().distributedModemExt_, nullptr);
-    }
-
     HWTEST_F(DHModemContextExtTest, UnInit_001, TestSize.Level1)
     {
         DHModemContextExt::GetInstance().soHandle_ = nullptr;

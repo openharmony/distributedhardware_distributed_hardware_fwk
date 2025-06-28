@@ -33,6 +33,9 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${services_path}/distributedhardwarefwkservice/include/task",
     "${services_path}/distributedhardwarefwkservice/include/transport",
+    "${services_path}/distributedhardwarefwkservice/include/publisher",
+    "${services_path}/distributedhardwarefwkservice/include/hidumphelper",
+    "${services_path}/distributedhardwarefwkservice/include/hdfoperate",
     "${common_path}/utils/include",
     "${common_path}/log/include",
   ]
@@ -99,6 +102,7 @@ ohos_unittest("ComponentManagerTestExt") {
     "src/mock_dh_utils_tool.cpp",
     "src/mock_meta_info_manager.cpp",
     "src/mock_version_manager.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
   ]
 
   cflags = [
@@ -124,9 +128,12 @@ ohos_unittest("ComponentManagerTestExt") {
     "device_manager:devicemanagersdk",
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
+    "ffrt:libffrt",
     "googletest:gmock",
     "googletest:gmock_main",
     "hilog:libhilog",
+    "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
     "samgr:samgr_proxy",
