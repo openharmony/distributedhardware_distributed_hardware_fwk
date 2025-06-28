@@ -206,6 +206,8 @@ void DhTransportInitFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size < sizeof(int32_t))) {
         return;
     }
+    (void)data;
+    (void)size;
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     std::shared_ptr<DHTransport> dhTransportTest = std::make_shared<DHTransport>(dhCommTool);
     dhTransportTest->Init();
@@ -226,6 +228,8 @@ void DhTransportGetDHCommToolPtrFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size < sizeof(int32_t))) {
         return;
     }
+    (void)data;
+    (void)size;
     auto ptr = GetDHCommToolPtr();
 }
 }

@@ -74,6 +74,8 @@ void DhTransportInitFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
+    (void)data;
+    (void)size;
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     dhCommTool->Init();
 }
@@ -83,6 +85,8 @@ void DhTransportUnInitFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
+    (void)data;
+    (void)size;
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     dhCommTool->UnInit();
 }
@@ -92,6 +96,8 @@ void DHCommToolEventHandlerCtorFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
+    (void)data;
+    (void)size;
     auto runner = AppExecFwk::EventRunner::Create(true);
     std::shared_ptr<DHCommTool> commToolPtr;
     DHCommTool::DHCommToolEventHandler handler(runner, commToolPtr);
@@ -119,6 +125,8 @@ void DHCommToolEventHandlerProcessFullCapsRspFuzzTest(const uint8_t* data, size_
     if ((data == nullptr) || (size == 0)) {
         return;
     }
+    (void)data;
+    (void)size;
     auto runner = AppExecFwk::EventRunner::Create(true);
     auto commTool = std::make_shared<DHCommTool>();
     DHCommTool::DHCommToolEventHandler handler(runner, commTool);

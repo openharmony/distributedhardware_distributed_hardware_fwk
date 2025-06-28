@@ -48,7 +48,7 @@ void FuzzGetDhDescriptorsCallbackStub::OnError(const std::string &networkId, int
 
 void OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size < sizeof(uint32_t))) {
+    if ((data == nullptr) || (size < sizeof(uint32_t) + sizeof(uint32_t) + 1)) {
         return;
     }
     MessageParcel parcel;
