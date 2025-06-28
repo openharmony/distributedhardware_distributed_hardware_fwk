@@ -372,10 +372,6 @@ void QueryLocalSysSpecFuzzTest(const uint8_t *data, size_t size)
 
 void RegisterDHStatusListenerOneParamFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-
     (void)data;
     (void)size;
     DistributedHardwareFwkKit dhfwkKit;
@@ -385,10 +381,6 @@ void RegisterDHStatusListenerOneParamFuzzTest(const uint8_t *data, size_t size)
 
 void UnregisterDHStatusListenerOneParamFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-
     (void)data;
     (void)size;
     DistributedHardwareFwkKit dhfwkKit;
@@ -409,7 +401,7 @@ void IsQueryLocalSysSpecTypeValidFuzzTest(const uint8_t *data, size_t size)
 
 void RegisterCtlCenterCallbackFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size < sizeof(uint32_t))) {
+    if ((data == nullptr) || (size < sizeof(int32_t))) {
         return;
     }
 

@@ -333,10 +333,6 @@ void CapabilityInfoManagerEventHandlerCtorFuzzTest(const uint8_t* data, size_t s
 
 void GetEventHandlerFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-
     (void)data;
     (void)size;
     CapabilityInfoManager::GetInstance()->GetEventHandler();
@@ -367,10 +363,6 @@ void OnChangeFuzzTest(const uint8_t* data, size_t size)
 
 void GetDataByDHTypeFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-
     (void)data;
     (void)size;
     DHType dhType = DHType::AUDIO;

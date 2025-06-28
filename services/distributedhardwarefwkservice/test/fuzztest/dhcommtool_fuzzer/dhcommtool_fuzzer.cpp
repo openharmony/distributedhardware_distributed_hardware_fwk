@@ -71,9 +71,6 @@ void DhTransportParseAndSaveRemoteDHCapsFuzzTest(const uint8_t* data, size_t siz
 
 void DhTransportInitFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
     (void)data;
     (void)size;
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
@@ -82,9 +79,6 @@ void DhTransportInitFuzzTest(const uint8_t* data, size_t size)
 
 void DhTransportUnInitFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
     (void)data;
     (void)size;
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
@@ -93,9 +87,6 @@ void DhTransportUnInitFuzzTest(const uint8_t* data, size_t size)
 
 void DHCommToolEventHandlerCtorFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
     (void)data;
     (void)size;
     auto runner = AppExecFwk::EventRunner::Create(true);
@@ -122,9 +113,6 @@ void DHCommToolEventHandlerProcessEventFuzzTest(const uint8_t* data, size_t size
 
 void DHCommToolEventHandlerProcessFullCapsRspFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
     (void)data;
     (void)size;
     auto runner = AppExecFwk::EventRunner::Create(true);

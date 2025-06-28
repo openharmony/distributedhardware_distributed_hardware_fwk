@@ -86,10 +86,6 @@ void OnDeviceChangedFuzzTest(const uint8_t* data, size_t size)
 
 void UnInitFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
     (void)data;
     (void)size;
     AccessManager::GetInstance()->UnInit();
@@ -98,10 +94,6 @@ void UnInitFuzzTest(const uint8_t* data, size_t size)
 
 void UnInitDeviceManagerFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
     (void)data;
     (void)size;
     AccessManager::GetInstance()->UnInitDeviceManager();
@@ -110,10 +102,6 @@ void UnInitDeviceManagerFuzzTest(const uint8_t* data, size_t size)
 
 void UnRegisterDevStateCallbackFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
     (void)data;
     (void)size;
     AccessManager::GetInstance()->UnRegisterDevStateCallback();
@@ -122,10 +110,6 @@ void UnRegisterDevStateCallbackFuzzTest(const uint8_t* data, size_t size)
 
 void OnRemoteDiedFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
     (void)data;
     (void)size;
     AccessManager::GetInstance()->OnRemoteDied();
@@ -134,10 +118,6 @@ void OnRemoteDiedFuzzTest(const uint8_t* data, size_t size)
 
 void CheckTrustedDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
     (void)data;
     (void)size;
     AccessManager::GetInstance()->CheckTrustedDeviceOnline();
@@ -146,11 +126,11 @@ void CheckTrustedDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
 
 void DumpFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN) || (size == 0)) {
         return;
     }
 
-    std::vector<std::string> argsStr = {reinterpret_cast<const char *>(data)};
+    std::vector<std::string> argsStr;
     std::string result = {reinterpret_cast<const char *>(data)};
     AccessManager::GetInstance()->Dump(argsStr, result);
     usleep(SLEEP_TIME_US);
