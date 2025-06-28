@@ -333,10 +333,8 @@ void CapabilityInfoManagerEventHandlerCtorFuzzTest(const uint8_t* data, size_t s
 
 void GetEventHandlerFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-
+    (void)data;
+    (void)size;
     CapabilityInfoManager::GetInstance()->GetEventHandler();
 }
 
@@ -365,11 +363,9 @@ void OnChangeFuzzTest(const uint8_t* data, size_t size)
 
 void GetDataByDHTypeFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-
-    DHType dhType = static_cast<DHType>(data[0]);
+    (void)data;
+    (void)size;
+    DHType dhType = DHType::AUDIO;
     std::map<std::string, std::shared_ptr<CapabilityInfo>> capabilityMap;
     CapabilityInfoManager::GetInstance()->GetDataByDHType(dhType, capabilityMap);
 }

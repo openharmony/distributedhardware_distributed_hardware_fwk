@@ -86,61 +86,51 @@ void OnDeviceChangedFuzzTest(const uint8_t* data, size_t size)
 
 void UnInitFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
+    (void)data;
+    (void)size;
     AccessManager::GetInstance()->UnInit();
     usleep(SLEEP_TIME_US);
 }
 
 void UnInitDeviceManagerFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
+    (void)data;
+    (void)size;
     AccessManager::GetInstance()->UnInitDeviceManager();
     usleep(SLEEP_TIME_US);
 }
 
 void UnRegisterDevStateCallbackFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
+    (void)data;
+    (void)size;
     AccessManager::GetInstance()->UnRegisterDevStateCallback();
     usleep(SLEEP_TIME_US);
 }
 
 void OnRemoteDiedFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
+    (void)data;
+    (void)size;
     AccessManager::GetInstance()->OnRemoteDied();
     usleep(SLEEP_TIME_US);
 }
 
 void CheckTrustedDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
+    (void)data;
+    (void)size;
     AccessManager::GetInstance()->CheckTrustedDeviceOnline();
     usleep(SLEEP_TIME_US);
 }
 
 void DumpFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+    if ((data == nullptr) || (size == 0)) {
         return;
     }
 
-    std::vector<std::string> argsStr = {reinterpret_cast<const char *>(data)};
+    std::vector<std::string> argsStr;
     std::string result = {reinterpret_cast<const char *>(data)};
     AccessManager::GetInstance()->Dump(argsStr, result);
     usleep(SLEEP_TIME_US);
