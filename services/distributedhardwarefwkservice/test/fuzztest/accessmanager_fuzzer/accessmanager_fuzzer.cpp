@@ -126,7 +126,7 @@ void CheckTrustedDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
 
 void DumpFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN) || (size == 0)) {
+    if ((data == nullptr) || (size == 0)) {
         return;
     }
 
