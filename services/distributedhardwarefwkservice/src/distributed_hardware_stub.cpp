@@ -283,6 +283,7 @@ int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRe
     MessageParcel &reply)
 {
     DHLOGI("HandleNotifySourceRemoteSinkStarted Start.");
+    Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetDCallingTokenID();
     std::string udid = data.ReadString();
     if (!IsIdLengthValid(udid)) {
         DHLOGE("the udid: %{public}s is invalid.", GetAnonyString(udid).c_str());
@@ -293,6 +294,13 @@ int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRe
     if (!IsIdLengthValid(networkId)) {
         DHLOGE("the networkId: %{public}s is invalid, not a trusted device.", GetAnonyString(networkId).c_str());
         return ERR_DH_FWK_PARA_INVALID;
+    }
+    uint32_t dAccessToken = Security::AccessToken::AccessTokenKit::AllocLocalTokenID(networkId, callerToken);
+    const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
+    int32_t result = Security::AccessToken::AccessTokenKit::VerifyAccessToken(dAccessToken, permissionName);
+    if (result != Security::AccessToken::PERMISSION_GRANTED) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
 
     int32_t ret = NotifySourceRemoteSinkStarted(udid);
