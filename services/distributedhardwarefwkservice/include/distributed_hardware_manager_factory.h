@@ -42,6 +42,8 @@ public:
     int Dump(const std::vector<std::string> &argsStr, std::string &result);
     void UnInit();
     bool GetUnInitFlag();
+    void SetSAProcessState(bool saState);
+    bool GetSAProcessState();
 private:
     bool Init();
     void CheckExitSAOrNot();
@@ -52,6 +54,7 @@ private:
     std::atomic<bool> flagUnInit_ = false;
     std::atomic<bool> releaseStatus_ = false;
     std::mutex releaseProcessMutex_;
+    std::atomic<bool> isIdle_ = false;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
