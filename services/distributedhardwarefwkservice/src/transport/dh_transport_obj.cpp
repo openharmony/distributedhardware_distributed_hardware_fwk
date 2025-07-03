@@ -97,7 +97,7 @@ void FromJson(const cJSON *jsonObject, CommMsg &commMsg)
     }
     cJSON *commMsgTokenIdJson = cJSON_GetObjectItem(jsonObject, COMM_MSG_TOKENID_KEY);
     if (commMsgTokenIdJson != NULL && cJSON_IsNumber(commMsgTokenIdJson)) {
-        commMsg.tokenId = commMsgTokenIdJson->valueint;
+        commMsg.tokenId = static_cast<uint64_t>(commMsgTokenIdJson->valueint);
     }
     cJSON *commMsgeJson = cJSON_GetObjectItem(jsonObject, COMM_MSG_MSG_KEY);
     if (commMsgeJson != NULL && cJSON_IsString(commMsgeJson)) {

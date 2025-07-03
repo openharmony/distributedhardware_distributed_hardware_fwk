@@ -29,17 +29,17 @@ public:
     FuzzDistributedHardwareSource() = default;
     virtual ~FuzzDistributedHardwareSource() = default;
 
-    int32_t InitSource(const std::string&) override;
+    int32_t InitSource(const std::string& networkId) override;
     int32_t ReleaseSource() override;
-    int32_t RegisterDistributedHardware(const std::string&, const std::string&,
-        const EnableParam&, std::shared_ptr<RegisterCallback>) override;
-    int32_t UnregisterDistributedHardware(const std::string&, const std::string&,
+    int32_t RegisterDistributedHardware(const std::string& networkId, const std::string& dhId, const EnableParam& param,
+        std::shared_ptr<RegisterCallback> callback) override;
+    int32_t UnregisterDistributedHardware(const std::string& networkId, const std::string& dhId,
         std::shared_ptr<UnregisterCallback> callback) override;
-    int32_t ConfigDistributedHardware(const std::string&, const std::string&, const std::string&,
-        const std::string&) override;
-    void RegisterDistributedHardwareStateListener(std::shared_ptr<DistributedHardwareStateListener>) override;
+    int32_t ConfigDistributedHardware(const std::string& networkId, const std::string& dhId, const std::string& key,
+        const std::string& value) override;
+    void RegisterDistributedHardwareStateListener(std::shared_ptr<DistributedHardwareStateListener> listener) override;
     void UnregisterDistributedHardwareStateListener() override{}
-    void RegisterDataSyncTriggerListener(std::shared_ptr<DataSyncTriggerListener>) override;
+    void RegisterDataSyncTriggerListener(std::shared_ptr<DataSyncTriggerListener> listener) override;
     void UnregisterDataSyncTriggerListener() override{}
 };
 } // namespace DistributedHardware
