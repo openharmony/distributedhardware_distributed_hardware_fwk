@@ -171,8 +171,8 @@ struct ContinueSwitch {
 
   getGapLength(): void {
     logger.info(`${TAG} getGapLength in, deviceInfo.deviceType : ${deviceInfo.deviceType}`);
-      this.gapLength =
-        DeviceUtil.isPhone() ? CommonConstants.GENERAL_PHONE_GAP_LENGTH : CommonConstants.PC_PAD_GAP_LENGTH;
+    this.gapLength =
+      DeviceUtil.isPhone() ? CommonConstants.GENERAL_PHONE_GAP_LENGTH : CommonConstants.PC_PAD_GAP_LENGTH;
     logger.info(`${TAG} this.gapLength : ${this.gapLength}`);
   }
 
@@ -234,7 +234,7 @@ struct ContinueSwitch {
   }
 
   @Builder
-  PageMap(name:string) {
+  PageMap(name: string) {
     if (name === CommonConstants.SETTING_PAGE_NAME) {
       this.NormalDestination();
     }
@@ -242,13 +242,13 @@ struct ContinueSwitch {
 
   @Builder
   NormalRootContent() {
-    NavDestination() {
+    Navigation(this.pageInfos) {
     }
     .mode(NavigationMode.Stack)
-    .onApear(()=>{
+    .onAppear(()=>{
       this.pageInfos.pushPathByName(CommonConstants.SETTING_PAGE_NAME, undefined);
     })
-    .NavDestination(this.PageMap)
+    .navDestination(this.PageMap)
   }
 
   @Builder
@@ -266,9 +266,9 @@ struct ContinueSwitch {
     })
     .systemTransition(this.transitionType)
     .onBackPressed(()=>{
-      logger.info(`${TAG} onCancel in.`);
+      logger.info(`${TAG} onBackPressed in.`);
       if (this.isBacked) {
-        logger.info(`${TAG} onCancel: The back button has been clicked.`);
+        logger.info(`${TAG} onBackPressed: The back button has been clicked.`);
         return true;
       }
       this.transitionType = NavigationSystemTransitionType.TITLE;
@@ -285,7 +285,7 @@ struct ContinueSwitch {
         let message: string = (error as BusinessError).message;
         logger.error(`${TAG} continueSession sendData failed. error.code: ${code}, message: ${message}`);
       }
-      return flase;
+      return false;
     })
   }
 
@@ -499,7 +499,7 @@ struct ContinueSwitch {
     })
   }
 
-  private getImageAnimatorSize(compArea:Area): Area {
+  private getImageAnimatorSize(compArea:Area) {
     logger.info(`${TAG} getImageAnimatorSize in.`);
     if (typeof compArea.width === 'number' && typeof compArea.height === 'number') {
       let width = compArea.width as number;
