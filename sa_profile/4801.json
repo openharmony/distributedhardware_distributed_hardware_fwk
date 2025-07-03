@@ -13,6 +13,14 @@
                     "name":"usual.event.BOOT_COMPLETED"
                   }
                 ]
+            },
+            "stop-on-demand": {
+                "param": [
+                  {
+                    "name": "resourceschedule.memmgr.low.memory.prepare",
+                    "value": "true"
+                  }
+                ]
             }
         }
     ]

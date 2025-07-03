@@ -68,6 +68,7 @@ public:
 protected:
     void OnStart() override;
     void OnStop() override;
+    int32_t OnIdle(const SystemAbilityOnDemandReason& idleReason) override;
 
 private:
     bool Init();
