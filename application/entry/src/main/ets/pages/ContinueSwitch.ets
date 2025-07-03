@@ -18,7 +18,6 @@ import settings from '@ohos.settings';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import deviceInfo from '@ohos.deviceInfo';
 import { BusinessError } from '@ohos.base';
-import { EditableLeftIconType, EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
 import mediaQuery from '@ohos.mediaquery';
 import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 import CommonConstants, { FontSizeScale } from '../common/constants/CommonConstants';
@@ -57,7 +56,7 @@ struct ContinueSwitch {
   @State textWidth: number = 0;
   @State gapLength: number = 0;
   @State isShow: boolean = false;
-  @State is2in1: boolean = false;
+  @State isPC: boolean = DeviceUtil.isPC();
   @State portraitFunc: mediaQuery.MediaQueryResult | void | null = null;
   @State isVideoVisible: Visibility = Visibility.Hidden;
   @State contentHeight: number = 0;
@@ -67,7 +66,6 @@ struct ContinueSwitch {
   @State iterations: number = -1;
   @State isEnabled: boolean = true;
   @State isShowBack: boolean = true;
-  @State isAnimatorDone: boolean = false;
   @StorageProp('currentFontSizeScale') @Watch('onFontSizeScaleChange') fontSizeScale: number = 1;
   @State phoneSwitchTextTopMargin: string = '17vp';
   @State phoneSwitchTextBottomMargin: string = '18vp';
@@ -87,6 +85,8 @@ struct ContinueSwitch {
   private continueDesc: ResourceStr = $r('app.string.continue_desc_text', '');
   private startReason?: string = '';
   private isSmallFoldProduct: boolean = DeviceUtil.isSmallFoldProduct();
+  private pageInfos: NavPathStack = new NavPathStack();
+  private transitionType: NavigationSystemTransitionType = NavigationSystemTransitionType.TITLE;
 
   onPortrait(mediaQueryResult: mediaQuery.MediaQueryResult): void {
     logger.info(`${TAG} 'onPortrait in`);
@@ -171,11 +171,8 @@ struct ContinueSwitch {
 
   getGapLength(): void {
     logger.info(`${TAG} getGapLength in, deviceInfo.deviceType : ${deviceInfo.deviceType}`);
-    if (deviceInfo.deviceType == 'phone') {
-      this.gapLength = CommonConstants.GENERAL_PHONE_GAP_LENGTH;
-    } else if (deviceInfo.deviceType == '2in1' || deviceInfo.deviceType == 'tablet') {
-      this.gapLength = CommonConstants.PC_PAD_GAP_LENGTH;
-    }
+      this.gapLength =
+        DeviceUtil.isPhone() ? CommonConstants.GENERAL_PHONE_GAP_LENGTH : CommonConstants.PC_PAD_GAP_LENGTH;
     logger.info(`${TAG} this.gapLength : ${this.gapLength}`);
   }
 
@@ -209,7 +206,6 @@ struct ContinueSwitch {
       this.contentHeight = this.screenHeight;
       logger.info(`${TAG} screenWidth = ${this.screenWidth}; screenHeight = ${this.screenHeight}`);
     })
-    this.is2in1 = deviceInfo.deviceType === '2in1' ? true : false;
   }
 
   aboutToAppear() {
@@ -226,9 +222,6 @@ struct ContinueSwitch {
     this.isShowBack = AppStorage.get<boolean>('isShowBack') ?? true;
     logger.info(`${TAG} aboutToAppear: startReason is ${this.startReason}, isShowBack: ${this.isShowBack}`);
     this.phoneSwitchTextMarginInit();
-    setTimeout(() => {
-      this.isAnimatorDone = true;
-    }, 20)
   }
 
   aboutToDisappear() {
@@ -241,9 +234,59 @@ struct ContinueSwitch {
   }
 
   @Builder
+  PageMap(name:string) {
+    if (name === CommonConstants.SETTING_PAGE_NAME) {
+      this.NormalDestination();
+    }
+  }
+
+  @Builder
   NormalRootContent() {
-    this.titleBar();
-    this.ContentBuilder();
+    NavDestination() {
+    }
+    .mode(NavigationMode.Stack)
+    .onApear(()=>{
+      this.pageInfos.pushPathByName(CommonConstants.SETTING_PAGE_NAME, undefined);
+    })
+    .NavDestination(this.PageMap)
+  }
+
+  @Builder
+  NormalDestination() {
+    NavDestination() {
+      this.ContentBuilder();
+    }
+    .hideTitleBar(false)
+    .title(this.title, {
+      paddingStart: this.isPC ? this.paddingStartPc : this.paddingStartNormal,
+    })
+    .backgroundColor($r('sys.color.ohos_id_color_titlebar_sub_bg'))
+    .onShown(()=>{
+      this.transitionType = NavigationSystemTransitionType.DEFAULT;
+    })
+    .systemTransition(this.transitionType)
+    .onBackPressed(()=>{
+      logger.info(`${TAG} onCancel in.`);
+      if (this.isBacked) {
+        logger.info(`${TAG} onCancel: The back button has been clicked.`);
+        return true;
+      }
+      this.transitionType = NavigationSystemTransitionType.TITLE;
+      this.pageInfos.pop(true);
+      try {
+        if (this.continueSession) {
+          this.continueSession.sendData({ 'action': 'pop' });
+          this.isBacked = true;
+        } else {
+          logger.error(`${TAG} continueSession is undefined`);
+        }
+      } catch (error) {
+        let code: number = (error as BusinessError).code;
+        let message: string = (error as BusinessError).message;
+        logger.error(`${TAG} continueSession sendData failed. error.code: ${code}, message: ${message}`);
+      }
+      return flase;
+    })
   }
 
   @Builder
@@ -253,38 +296,9 @@ struct ContinueSwitch {
     }
     .hideTitleBar(false)
     .title(this.title, {
-      paddingStart: this.is2in1 ? this.paddingStartPc : this.paddingStartNormal,
+      paddingStart: this.isPC ? this.paddingStartPc : this.paddingStartNormal,
     })
     .backgroundColor($r('sys.color.ohos_id_color_titlebar_sub_bg'))
-  }
-
-  @Builder
-  titleBar() {
-    Column() {
-      EditableTitleBar({
-        leftIconStyle: EditableLeftIconType.Back,
-        title: $r('app.string.continue_title'),
-        isSaveIconRequired: false,
-        contentMargin: this.is2in1 ? this.titleBarMarginPc : this.titleBarMargin,
-        onCancel: () => {
-          logger.info(`${TAG} onCancel in.`);
-          if (this.isBacked) {
-            logger.info(`${TAG} onCancel: The back button has been clicked.`);
-            return;
-          }
-          try {
-            if (this.continueSession) {
-              this.continueSession.sendData({ 'action': 'pop' });
-              this.isBacked = true;
-            } else {
-              logger.error(`${TAG} continueSession is undefined`);
-            }
-          } catch (error) {
-            logger.error(`${TAG} continueSession sendData failed. error.message: ${error.message}`);
-          }
-        }
-      })
-    }
   }
 
   @Builder
@@ -318,6 +332,7 @@ struct ContinueSwitch {
             .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .fontWeight(FontWeight.Medium)
             .onClick(() => {
+              logger.info(`${TAG} onClick learnMore`);
               TipsJumpUtils.jumpTips(getContext(this) as common.UIAbilityContext, CommonConstants.FUN_NUM,
                 CommonConstants.TIPS_TYPE);
             })
@@ -325,8 +340,10 @@ struct ContinueSwitch {
         .margin({
           bottom: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_BOTTOM,
           top: CommonConstants.CONTINUE_DESC_TEXT_MARGIN_TOP,
-          left: $r('app.float.margin_8'),
-          right: $r('app.float.margin_8')
+        })
+        .padding({
+          left: DeviceUtil.isPhone() ? $r('app.float.margin_8') : 0,
+          right: DeviceUtil.isPhone() ? $r('app.float.margin_8') : 0
         })
         .textAlign(TextAlign.Center)
         .width('100%')
@@ -343,8 +360,8 @@ struct ContinueSwitch {
               .fontColor($r('sys.color.ohos_id_color_text_primary'))
               .accessibilityLevel('no')
               .padding({
-                top: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_TOP_PC : this.phoneSwitchTextTopMargin,
-                bottom: this.is2in1 ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC : this.phoneSwitchTextBottomMargin
+                top: this.isPC ? CommonConstants.ITEM_LIST_PADDING_TOP_PC : this.phoneSwitchTextTopMargin,
+                bottom: this.isPC ? CommonConstants.ITEM_LIST_PADDING_BOTTOM_PC : this.phoneSwitchTextBottomMargin
               })
 
             Toggle({ type: ToggleType.Switch, isOn: this.isSwitchOn })
@@ -377,7 +394,7 @@ struct ContinueSwitch {
             right: CommonConstants.TEXT_LIST_ALIGN_DISTANCE
           })
           .backgroundColor($r('sys.color.ohos_id_color_list_card_bg'))
-          .borderRadius(this.is2in1 ? CommonConstants.PC_BORDER_RADIUS : CommonConstants.NON_PC_BORDER_RADIUS)
+          .borderRadius(this.isPC ? CommonConstants.PC_BORDER_RADIUS : CommonConstants.NON_PC_BORDER_RADIUS)
           .accessibilityText(this.title)
         }
         .width('100%')
@@ -435,12 +452,11 @@ struct ContinueSwitch {
       }
       .width('100%')
       .padding({ left: this.gapLength, right: this.gapLength })
-      .margin({ bottom: this.contentHeight * 0.09 })
+      .margin({ bottom: '44vp' })
       .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
-      .visibility(this.getContentVisibility())
     }
     .width('100%')
-    .height(this.screenHeight)
+    .height('100%')
     .scrollable(ScrollDirection.Vertical)
     .scrollBar(BarState.Off)
     .align(Alignment.TopStart)
@@ -456,8 +472,13 @@ struct ContinueSwitch {
       logger.info(`${TAG} Scroll, oldArea.height = ${oldArea.height}, newArea.height = ${newArea.height}`);
     })
 
-    ScrollBar({ scroller: this.scroller, direction: ScrollBarDirection.Vertical, state: BarState.Auto })
-      .position({ right: 0, bottom: 16 })
+    ScrollBar({
+      scroller: this.scroller,
+      direction: ScrollBarDirection.Vertical,
+      state: BarState.Auto
+    })
+      .position({ end: LengthMetrics.vp(0) })
+      .margin({bottom: 28})
   }
 
   build() {
@@ -471,36 +492,36 @@ struct ContinueSwitch {
     .width('100%')
     .height('100%')
     .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
+    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
     .onAreaChange((oldArea: Area, newArea: Area) => {
       logger.info(`${TAG} onAreaChange: newArea.width = ${newArea.width}, newArea.height = ${newArea.height}`);
-      if (typeof newArea.width === 'number' && typeof newArea.height === 'number') {
-        let width = newArea.width as number;
-        let halfHeight = (newArea.height as number) / 2;
-        try {
-          let displayInfo: display.Display | undefined = display.getDefaultDisplaySync();
-          if (displayInfo) {
-            halfHeight = !this.is2in1 && displayInfo.height > 0 ? px2vp(displayInfo.height / 2) : (newArea.height / 2);
-            logger.info(`${TAG} display: halfHeight = ${halfHeight}`);
-          }
-        } catch (error) {
-          logger.error(`${TAG} getDefaultDisplaySync failed. error.message: ${error.message}`);
-        }
-        if (width > halfHeight) {
-          this.imageAnimatorWidth = halfHeight * 0.8;
-          this.imageAnimatorHeight = this.imageAnimatorWidth * 2 / 3;
-        } else {
-          this.imageAnimatorWidth = width * 0.8;
-          this.imageAnimatorHeight = this.imageAnimatorWidth * 2 / 3;
-        }
-      }
-      logger.info(`${TAG} this.imageAnimatorWidth = ${this.imageAnimatorWidth}, this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
+      this.getImageAnimatorSize(newArea);
     })
-    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
-    .padding({ bottom: $r('app.float.margin_16') })
   }
 
-  private getContentVisibility(): Visibility {
-    return (this.imageAnimatorWidth !== 0 && this.isAnimatorDone) ? Visibility.Visible : Visibility.Hidden;
+  private getImageAnimatorSize(compArea:Area): Area {
+    logger.info(`${TAG} getImageAnimatorSize in.`);
+    if (typeof compArea.width === 'number' && typeof compArea.height === 'number') {
+      let width = compArea.width as number;
+      let halfHeight = (compArea.height as number) / 2;
+      try {
+        let displayInfo: display.Display | undefined = display.getDefaultDisplaySync();
+        if (displayInfo) {
+          halfHeight = !this.isPC && displayInfo.height > 0 ? px2vp(displayInfo.height / 2) : (compArea.height / 2);
+          logger.info(`${TAG} display: halfHeight = ${halfHeight}`);
+        }
+      } catch (error) {
+        logger.error(`${TAG} getDefaultDisplaySync failed. error.message: ${error.message}`);
+      }
+      if (width > halfHeight) {
+        this.imageAnimatorWidth = halfHeight * 0.8;
+        this.imageAnimatorHeight = this.imageAnimatorWidth * 2 / 3;
+      } else {
+        this.imageAnimatorWidth = width * 0.8;
+        this.imageAnimatorHeight = this.imageAnimatorWidth * 2 / 3;
+      }
+    }
+    logger.info(`${TAG} this.imageAnimatorWidth = ${this.imageAnimatorWidth}, this.imageAnimatorHeight = ${this.imageAnimatorHeight}`);
   }
 
   private getImageAnimatorHeight(): number {
@@ -523,11 +544,6 @@ struct ContinueSwitch {
       return CommonConstants.ANIMATOR_WIDTH_PAD;
     }
     return CommonConstants.ANIMATOR_WIDTH_PHONE;
-  }
-
-  private isPhone(): boolean {
-    logger.info(`${TAG} isPhone in`);
-    return (deviceInfo.deviceType === 'phone' || deviceInfo.deviceType === 'default');
   }
 
   /**

@@ -45,22 +45,22 @@ export class DeviceUtil {
   public static readonly IS_PC: boolean = deviceInfo.deviceType === TYPE_PC;
   public static foldProductTypeValue: FoldPhoneTypeValue = FoldPhoneTypeValue.INVALID_VALUE;
 
-  private static isPhone(): boolean {
+  public static isPhone(): boolean {
     logger.info(`${TAG} isPhone in`);
     return (deviceInfo.deviceType === TYPE_PHONE || deviceInfo.deviceType === TYPE_DEFAULT);
   }
 
-  private static isPC(): boolean {
+  public static isPC(): boolean {
     logger.info(`${TAG} isPC in`);
     return deviceInfo.deviceType === TYPE_PC;
   }
 
-  private static isDeviceTablet(deviceType: number): boolean {
+  public static isDeviceTablet(deviceType: number): boolean {
     logger.info(`${TAG} isDeviceTablet in. deviceType: ${deviceType}`);
     return deviceType === DeviceType.TYPE_TABLET;
   }
 
-  private static isExpandingNewForms(deviceType: number): boolean {
+  public static isExpandingNewForms(deviceType: number): boolean {
     logger.info(`${TAG} isExpandingNewForms in. deviceType: ${deviceType}`);
     return FoldPhoneTypeValue.EXPANDING_NEW_FORMS === DeviceUtil.getFoldProductType();
   }

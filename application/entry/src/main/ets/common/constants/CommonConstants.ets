@@ -44,6 +44,7 @@ export default class CommonConstants {
   public static readonly ANIMATOR_WIDTH_PHONE: number = 290;
   public static readonly ANIMATOR_WIDTH_PC: number = 312;
   public static readonly ANIMATOR_WIDTH_PAD: number = 320;
+  public static readonly SETTING_PAGE_NAME: string = 'continue_setting_page';
   // Tips
   public static readonly TIPS_TYPE: string = '105';
   public static readonly FUN_NUM = 'SF-20005815_f101';
