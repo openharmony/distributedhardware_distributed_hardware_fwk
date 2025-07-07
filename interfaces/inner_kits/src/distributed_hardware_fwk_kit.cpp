@@ -25,9 +25,56 @@
 #include "distributed_hardware_log.h"
 #include "dh_utils_hisysevent.h"
 #include "idistributed_hardware.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
+#include "system_ability_load_callback_stub.h"
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+constexpr int32_t WAIT_TIME_MILL = 3000;
+}
+
+class DFWKLoadCallback : public SystemAbilityLoadCallbackStub {
+public:
+    void OnLoadSystemAbilitySuccess(int32_t systemAbilityId, const sptr<IRemoteObject> &remoteObject);
+    void OnLoadSystemAbilityFail(int32_t systemAbilityId);
+    bool WaitLoadComplete();
+private:
+    bool isNotified_ = false;
+    bool isLoadSuccess_ = false;
+    std::mutex waitLoadCompleteMutex_;
+    std::condition_variable waitLoadCompleteCondVar_;
+};
+
+void DFWKLoadCallback::OnLoadSystemAbilitySuccess(
+    int32_t systemAbilityId, const sptr<IRemoteObject> &remoteObject)
+{
+    std::unique_lock<std::mutex> locker(waitLoadCompleteMutex_);
+    isNotified_ = true;
+    isLoadSuccess_ = true;
+    waitLoadCompleteCondVar_.notify_all();
+}
+
+void DFWKLoadCallback::OnLoadSystemAbilityFail(int32_t systemAbilityId)
+{
+    std::unique_lock<std::mutex> locker(waitLoadCompleteMutex_);
+    isNotified_ = true;
+    isLoadSuccess_ = false;
+    waitLoadCompleteCondVar_.notify_all();
+}
+
+bool DFWKLoadCallback::WaitLoadComplete()
+{
+    std::unique_lock<std::mutex> locker(waitLoadCompleteMutex_);
+    auto waitStatus = waitLoadCompleteCondVar_.wait_for(locker, std::chrono::milliseconds(WAIT_TIME_MILL),
+        [this]() { return isNotified_; });
+    if (!waitStatus) {
+        DHLOGE("Load distributed hardware SA timeout.");
+        return false;
+    }
+    return isLoadSuccess_;
+}
 
 std::string DumpDescriptors(const std::vector<DHDescriptor> &descriptors)
 {
@@ -136,6 +183,38 @@ void DistributedHardwareFwkKit::OnDHFWKOnLine(bool isOnLine)
 bool DistributedHardwareFwkKit::IsQueryLocalSysSpecTypeValid(QueryLocalSysSpecType spec)
 {
     return spec > QueryLocalSysSpecType::MIN && spec < QueryLocalSysSpecType::MAX;
+}
+
+int32_t DistributedHardwareFwkKit::LoadDistributedHardwareSA()
+{
+    DHLOGI("Load distributed hardware SA begin!");
+    std::unique_lock<std::mutex> locker(dfwkLoadServiceMutex_);
+    sptr<ISystemAbilityManager> saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (saMgr == nullptr) {
+        DHLOGE("Failed to get system ability mgr.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    sptr<IRemoteObject> remote = saMgr->CheckSystemAbility(DISTRIBUTED_HARDWARE_SA_ID);
+    if (remote != nullptr) {
+        DHLOGI("DHFWK service has already been loaded!");
+        return DH_FWK_SUCCESS;
+    }
+    sptr<DFWKLoadCallback> dfwkLoadCallback(new DFWKLoadCallback);
+    if (dfwkLoadCallback == nullptr) {
+        DHLOGE("Failed to create DFWK load callback.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    int32_t ret = saMgr->LoadSystemAbility(DISTRIBUTED_HARDWARE_SA_ID, dfwkLoadCallback);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Failed to load DFWK service, ret: %{public}d", ret);
+        return ret;
+    }
+    if (!dfwkLoadCallback->WaitLoadComplete()) {
+        DHLOGE("Load DFWK service callback failed");
+        return ERR_DH_FWK_LOAD_CALLBACK_FAIL;
+    }
+    DHLOGI("Load distributed hardware SA end!");
+    return DH_FWK_SUCCESS;
 }
 
 std::string DistributedHardwareFwkKit::QueryLocalSysSpec(enum QueryLocalSysSpecType spec)
@@ -385,8 +464,15 @@ int32_t DistributedHardwareFwkKit::LoadDistributedHDF(const DHType dhType)
 {
     DHLOGI("Load distributed HDF, dhType: %{public}u.", dhType);
     if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
-        DHLOGI("DHFWK not online or get proxy failed, can not load distributed HDF.");
-        return ERR_DH_FWK_POINTER_IS_NULL;
+        DHLOGE("DHFWK not online or get proxy failed, try to load DFWK service.");
+        if (LoadDistributedHardwareSA() != DH_FWK_SUCCESS) {
+            DHLOGE("Load distributed hardware SA failed, can not load distributed HDF.");
+            return ERR_DH_FWK_POINTER_IS_NULL;
+        }
+        if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
+            DHLOGE("DHFWK already not online or get proxy failed yet, can not load distributed HDF.");
+            return ERR_DH_FWK_POINTER_IS_NULL;
+        }
     }
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->LoadDistributedHDF(dhType);
 }

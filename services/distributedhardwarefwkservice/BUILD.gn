@@ -97,6 +97,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/resourcemanager/version_info_manager.cpp",
     "src/task/disable_task.cpp",
     "src/task/enable_task.cpp",
+    "src/task/exit_dfwk_task.cpp",
     "src/task/meta_disable_task.cpp",
     "src/task/meta_enable_task.cpp",
     "src/task/offline_task.cpp",

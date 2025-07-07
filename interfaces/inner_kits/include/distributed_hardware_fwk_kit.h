@@ -269,8 +269,16 @@ private:
      */
     bool IsQueryLocalSysSpecTypeValid(QueryLocalSysSpecType spec);
 
+    /**
+     * @brief Load distributed hardware SA.
+     *
+     * @return Returns 0 if success.
+     */
+    int32_t LoadDistributedHardwareSA();
+
 private:
     std::atomic<bool> isDHFWKOnLine_;
+    std::mutex dfwkLoadServiceMutex_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

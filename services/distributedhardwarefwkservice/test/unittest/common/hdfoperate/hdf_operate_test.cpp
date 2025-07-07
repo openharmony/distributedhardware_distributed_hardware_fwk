@@ -110,6 +110,36 @@ HWTEST_F(HdfOperateTest, LoadDistributedHDF_001, TestSize.Level1)
     SetDownComponentLoaderConfig();
 }
 
+#ifndef DHARDWARE_CLOSE_UT
+/**
+ * @tc.name: LoadDistributedHDF_002
+ * @tc.desc: Verify LoadDistributedHDF func
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(HdfOperateTest, LoadDistributedHDF_002, TestSize.Level1)
+{
+    DHLOGI("HdfOperateTest::LoadDistributedHDF_002");
+    EXPECT_EQ(DH_FWK_SUCCESS, HdfOperateManager::GetInstance().LoadDistributedHDF(DHType::AUDIO));
+    EXPECT_EQ(DH_FWK_SUCCESS, HdfOperateManager::GetInstance().UnLoadDistributedHDF(DHType::AUDIO));
+}
+#endif
+
+/**
+ * @tc.name: LoadDistributedHDF_003
+ * @tc.desc: Verify LoadDistributedHDF func
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(HdfOperateTest, LoadDistributedHDF_003, TestSize.Level1)
+{
+    DHLOGI("HdfOperateTest::LoadDistributedHDF_003");
+    HdfOperateManager::GetInstance().hdfOperateMap_[DHType::AUDIO] = nullptr;
+    int32_t ret = HdfOperateManager::GetInstance().LoadDistributedHDF(DHType::AUDIO);
+    HdfOperateManager::GetInstance().hdfOperateMap_.clear();
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
 /**
  * @tc.name: UnLoadDistributedHDF_001
  * @tc.desc: Verify UnLoadDistributedHDF func
@@ -122,6 +152,21 @@ HWTEST_F(HdfOperateTest, UnLoadDistributedHDF_001, TestSize.Level1)
     HdfOperateManager::GetInstance().ResetRefCount(DHType::AUDIO);
     int32_t ret = HdfOperateManager::GetInstance().UnLoadDistributedHDF(DHType::AUDIO);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: UnLoadDistributedHDF_002
+ * @tc.desc: Verify UnLoadDistributedHDF func
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(HdfOperateTest, UnLoadDistributedHDF_002, TestSize.Level1)
+{
+    DHLOGI("HdfOperateTest::UnLoadDistributedHDF_002");
+    HdfOperateManager::GetInstance().hdfOperateMap_[DHType::AUDIO] = nullptr;
+    int32_t ret = HdfOperateManager::GetInstance().UnLoadDistributedHDF(DHType::AUDIO);
+    HdfOperateManager::GetInstance().hdfOperateMap_.clear();
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
 
 /**
@@ -144,6 +189,46 @@ HWTEST_F(HdfOperateTest, ResetRefCount_001, TestSize.Level1)
     ret = HdfOperateManager::GetInstance().UnLoadDistributedHDF(DHType::AUDIO);
     SetDownComponentLoaderConfig();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: RigidGetSourcePtr_001
+ * @tc.desc: Verify RigidGetSourcePtr func
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(HdfOperateTest, RigidGetSourcePtr_001, TestSize.Level1)
+{
+    DHLOGI("HdfOperateTest::RigidGetSourcePtr_001");
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    EXPECT_EQ(DH_FWK_SUCCESS, HdfOperateManager::GetInstance().RigidGetSourcePtr(DHType::AUDIO, sourcePtr));
+    EXPECT_EQ(DH_FWK_SUCCESS, HdfOperateManager::GetInstance().RigidGetSourcePtr(DHType::AUDIO, sourcePtr));
+    EXPECT_EQ(DH_FWK_SUCCESS, HdfOperateManager::GetInstance().RigidReleaseSourcePtr(DHType::AUDIO));
+    EXPECT_EQ(DH_FWK_SUCCESS, HdfOperateManager::GetInstance().RigidReleaseSourcePtr(DHType::AUDIO));
+    EXPECT_EQ(DH_FWK_SUCCESS, HdfOperateManager::GetInstance().RigidGetSourcePtr(DHType::CAMERA, sourcePtr));
+    EXPECT_EQ(DH_FWK_SUCCESS, HdfOperateManager::GetInstance().RigidGetSourcePtr(DHType::CAMERA, sourcePtr));
+    EXPECT_EQ(DH_FWK_SUCCESS, HdfOperateManager::GetInstance().RigidReleaseSourcePtr(DHType::CAMERA));
+    EXPECT_EQ(DH_FWK_SUCCESS, HdfOperateManager::GetInstance().RigidReleaseSourcePtr(DHType::CAMERA));
+    EXPECT_EQ(ERR_DH_FWK_NO_HDF_SUPPORT,
+        HdfOperateManager::GetInstance().RigidGetSourcePtr(DHType::UNKNOWN, sourcePtr));
+}
+
+/**
+ * @tc.name: RigidReleaseSourcePtr_001
+ * @tc.desc: Verify RigidReleaseSourcePtr func
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(HdfOperateTest, RigidReleaseSourcePtr_001, TestSize.Level1)
+{
+    DHLOGI("HdfOperateTest::RigidReleaseSourcePtr_001");
+    EXPECT_EQ(DH_FWK_SUCCESS, HdfOperateManager::GetInstance().RigidReleaseSourcePtr(DHType::AUDIO));
+    HdfOperateManager::GetInstance().sourceHandlerDataMap_[DHType::AUDIO] = HdfOperateManager::SourceHandlerData {
+        .refCount = 1, .sourceHandler = nullptr, .sourcePtr = nullptr
+    };
+    auto ret = HdfOperateManager::GetInstance().RigidReleaseSourcePtr(DHType::AUDIO);
+    HdfOperateManager::GetInstance().sourceHandlerDataMap_.erase(DHType::AUDIO);
+    EXPECT_EQ(ERR_DH_FWK_LOADER_DLCLOSE_FAIL, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
