@@ -581,7 +581,7 @@ HWTEST_F(AvTransportAudioDecoderFilterTest, OnDecOutputFormatChanged, testing::e
     filter->OnDecOutputFormatChanged(nullFormat);
     OH_AVFormat *validFormat = new (std::nothrow) OH_AVFormat();
     filter->OnDecOutputFormatChanged(validFormat);
-}
+    delete validFormat;
 
 HWTEST_F(AvTransportAudioDecoderFilterTest, OnDecInputBufferAvailable_002, testing::ext::TestSize.Level1)
 {
@@ -599,6 +599,8 @@ HWTEST_F(AvTransportAudioDecoderFilterTest, OnDecInputBufferAvailable_002, testi
     }
     OH_AVBuffer *normalBuffer = new OH_AVBuffer(audioData);
     filter->OnDecInputBufferAvailable(10, normalBuffer);
+    delete buffer;
+    delete normalBuffer;
 }
 } // namespace DistributedHardware
 } // namespace OHOS
