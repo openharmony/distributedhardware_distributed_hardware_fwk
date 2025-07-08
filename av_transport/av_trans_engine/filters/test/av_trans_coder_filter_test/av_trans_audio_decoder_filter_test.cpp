@@ -597,10 +597,10 @@ HWTEST_F(AvTransportAudioDecoderFilterTest, OnDecInputBufferAvailable_002, testi
     {
         OH_AVBuffer *buffer = new OH_AVBuffer(audioData);
         filter->OnDecInputBufferAvailable(i, buffer);
+        delete buffer;
     }
     OH_AVBuffer *normalBuffer = new OH_AVBuffer(audioData);
     filter->OnDecInputBufferAvailable(10, normalBuffer);
-    delete buffer;
     delete normalBuffer;
 }
 } // namespace DistributedHardware
