@@ -16,12 +16,13 @@ import UIExtensionAbility from '@ohos.app.ability.UIExtensionAbility';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Want from '@ohos.app.ability.Want';
 import { Configuration } from '@ohos.app.ability.Configuration';
+import { logger } from '../utils/Logger';
 
-const TAG: string = '[ContinueSwitchAbility]'
+const TAG: string = '[ContinueSwitchAbility]';
 
 export default class ContinueSwitchAbility extends UIExtensionAbility {
   onCreate() {
-    console.log(TAG, `UIExtAbility onCreate`);
+    logger.info(`${TAG} UIExtAbility onCreate`);
     AppStorage.setOrCreate('currentColorMode', this.context.config.colorMode);
     AppStorage.setOrCreate('currentFontSizeScale', this.context.config.fontSizeScale);
   }
@@ -32,27 +33,36 @@ export default class ContinueSwitchAbility extends UIExtensionAbility {
   }
 
   onForeground() {
-    console.log(TAG, `UIExtAbility onForeground`);
+    logger.info(`${TAG} UIExtAbility onForeground`);
   }
 
   onBackground() {
-    console.log(TAG, `UIExtAbility onBackground`);
+    logger.info(`${TAG} UIExtAbility onBackground`);
   }
 
   onDestroy() {
-    console.log(TAG, `UIExtAbility onDestroy`);
+    logger.info(`${TAG} UIExtAbility onDestroy`);
   }
 
   onSessionCreate(want: Want, session: UIExtensionContentSession) {
-    console.log(TAG, `UIExtAbility onSessionCreate.`);
+    logger.info(`${TAG} UIExtAbility onSessionCreate.`);
     let parameters = want.parameters;
     let pushParams = want.parameters?.pushParams as string | undefined;
     let startReason = '';
     let isShowBack =
       pushParams?.includes('isShowBack') ? (pushParams.includes('isShowBack:false') ? false : true) : true;
+    let navigationMode = NavigationMode.Auto;
+
     if (parameters) {
-      startReason = parameters['startReason'] as string;
+      startReason = parameters.startReason as string;
+      navigationMode = parameters.navigationMode as NavigationMode;
     }
+
+    if (startReason === 'from_search' && navigationMode === NavigationMode.Split) {
+      logger.info(`${TAG} navigationMode: ${navigationMode}`);
+      isShowBack = false;
+    }
+
     AppStorage.setOrCreate('continueSession', session);
     AppStorage.setOrCreate('startReason', startReason);
     AppStorage.setOrCreate('isShowBack', isShowBack);
@@ -61,10 +71,10 @@ export default class ContinueSwitchAbility extends UIExtensionAbility {
     };
     let storage: LocalStorage = new LocalStorage(param);
     session.loadContent('pages/ContinueSwitch', storage);
-    console.log(TAG, `onSessionCreate end. startReason: ${startReason},isShowBack: ${isShowBack}`);
+    logger.info(`${TAG} onSessionCreate end. startReason: ${startReason}, isShowBack: ${isShowBack}`);
   }
 
   onSessionDestroy(session: UIExtensionContentSession) {
-    console.log(TAG, `UIExtAbility onSessionDestroy`);
+    logger.info(`${TAG} UIExtAbility onSessionDestroy`);
   }
 }
