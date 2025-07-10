@@ -124,18 +124,6 @@ void CheckTrustedDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
     usleep(SLEEP_TIME_US);
 }
 
-void DumpFuzzTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-
-    std::vector<std::string> argsStr;
-    std::string result = {reinterpret_cast<const char *>(data)};
-    AccessManager::GetInstance()->Dump(argsStr, result);
-    usleep(SLEEP_TIME_US);
-}
-
 void OnDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
@@ -166,7 +154,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::UnRegisterDevStateCallbackFuzzTest(data, size);
     OHOS::DistributedHardware::OnRemoteDiedFuzzTest(data, size);
     OHOS::DistributedHardware::CheckTrustedDeviceOnlineFuzzTest(data, size);
-    OHOS::DistributedHardware::DumpFuzzTest(data, size);
     OHOS::DistributedHardware::OnDeviceOfflineFuzzTest(data, size);
     return 0;
 }
