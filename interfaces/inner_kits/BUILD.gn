@@ -20,6 +20,7 @@ config("innerkits_external_config") {
   include_dirs = [
     "${innerkits_path}/include",
     "${innerkits_path}/include/ipc",
+    "${target_gen_dir}",
   ]
 }
 

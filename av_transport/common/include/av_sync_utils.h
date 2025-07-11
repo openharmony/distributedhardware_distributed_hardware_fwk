@@ -18,6 +18,7 @@
 
 #include <memory>
 #include <string>
+#include <securec.h>
 #include "parcel.h"
 #include "message_parcel.h"
 
@@ -40,12 +41,26 @@ struct AVTransSharedMemory {
 struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {
     using AVTransSharedMemory::AVTransSharedMemory;
     explicit AVTransSharedMemoryExt() {}
-    virtual ~AVTransSharedMemoryExt() = default;
+    virtual ~AVTransSharedMemoryExt() {
+        if (addr != nullptr) {
+            free(addr);
+            addr = nullptr;
+        }
+    }
     explicit AVTransSharedMemoryExt(const AVTransSharedMemory& avTransSharedMemory)
     {
         fd = avTransSharedMemory.fd;
         size = avTransSharedMemory.size;
         name = avTransSharedMemory.name;
+        addr = (char*)malloc(size);
+        if (addr) {
+            auto ret = memcpy_s(addr, size, avTransSharedMemory.addr, size);
+            if (ret != EOK) {
+                addr = nullptr;
+            }
+        } else {
+            addr = nullptr;
+        }
     }
     virtual bool Marshalling(Parcel &parcel) const override
     {
@@ -53,10 +68,10 @@ struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {
         if (!messageParcel.WriteFileDescriptor(fd)) {
             return false;
         }
-        if (!parcel.WriteInt32(size)) {
+        if (!messageParcel.WriteInt32(size)) {
             return false;
         }
-        if (!parcel.WriteString(name)) {
+        if (!messageParcel.WriteString(name)) {
             return false;
         }
         return true;
@@ -70,8 +85,8 @@ struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {
             return nullptr;
         }
         avTransSharedMemory->fd = messageParcel.ReadFileDescriptor();
-        avTransSharedMemory->size = parcel.ReadInt32();
-        avTransSharedMemory->name = parcel.ReadString();
+        avTransSharedMemory->size = messageParcel.ReadInt32();
+        avTransSharedMemory->name = messageParcel.ReadString();
         return avTransSharedMemory;
     }
 };

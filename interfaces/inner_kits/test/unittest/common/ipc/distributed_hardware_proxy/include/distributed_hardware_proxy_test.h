@@ -20,6 +20,7 @@
 #include <gtest/gtest.h>
 #include <mutex>
 
+#include "av_trans_errno.h"
 #include "device_type.h"
 #include "distributed_hardware_errno.h"
 #include "idistributed_hardware.h"
