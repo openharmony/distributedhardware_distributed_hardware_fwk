@@ -65,6 +65,8 @@ public:
         int32_t DisableSink(const std::vector<DHDescriptor> &descriptors);
         int32_t EnableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors);
         int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors);
+        int32_t LoadDistributedHDF(const DHType dhType);
+        int32_t UnLoadDistributedHDF(const DHType dhType);
     };
 
     class TestDistributedHardwareStub2 : public TestDistributedHardwareStub {

@@ -62,10 +62,13 @@ public:
     int32_t DisableSink(const std::vector<DHDescriptor> &descriptors) override;
     int32_t EnableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors) override;
     int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors) override;
+    int32_t LoadDistributedHDF(const DHType dhType) override;
+    int32_t UnLoadDistributedHDF(const DHType dhType) override;
 
 protected:
     void OnStart() override;
     void OnStop() override;
+    int32_t OnIdle(const SystemAbilityOnDemandReason& idleReason) override;
 
 private:
     bool Init();

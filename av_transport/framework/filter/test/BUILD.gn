@@ -14,5 +14,8 @@
 group("framework_filter_test") {
   testonly = true
 
-  deps = [ "unittest:framework_filter_unittest" ]
+  deps = [
+    "unittest:framework_filter_unittest",
+    "fuzztest:fuzztest",
+    ]
 }

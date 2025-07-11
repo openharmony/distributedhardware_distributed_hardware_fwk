@@ -32,6 +32,7 @@
 #include "capability_info_manager.h"
 #include "meta_info_manager.h"
 #include "component_manager.h"
+#include "hdf_operate.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "dh_utils_hisysevent.h"
@@ -50,6 +51,8 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "DistributedHardwareService"
 REGISTER_SYSTEM_ABILITY_BY_ID(DistributedHardwareService, DISTRIBUTED_HARDWARE_SA_ID, true);
 namespace {
+    constexpr int32_t SA_READY_TO_UNLOAD = 0;
+    constexpr int32_t SA_REFUSE_TO_UNLOAD = -1;
     constexpr int32_t INIT_BUSINESS_DELAY_TIME_MS = 5 * 100;
     const std::string INIT_TASK_ID = "CheckAndInitDH";
     const std::string LOCAL_NETWORKID_ALIAS = "local";
@@ -75,6 +78,7 @@ void DistributedHardwareService::OnStart()
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
+    DistributedHardwareManagerFactory::GetInstance().SetSAProcessState(false);
     DHLOGI("DistributedHardwareService::OnStart start service success.");
 }
 
@@ -161,6 +165,14 @@ void DistributedHardwareService::OnStop()
     DHLOGI("DistributedHardwareService::OnStop ready to stop service.");
     state_ = ServiceRunningState::STATE_NOT_START;
     registerToService_ = false;
+}
+
+int32_t DistributedHardwareService::OnIdle(const SystemAbilityOnDemandReason& idleReason)
+{
+    bool saState = DistributedHardwareManagerFactory::GetInstance().GetSAProcessState();
+    DHLOGI("OnIdle, idleReason name: %{public}s, id: %{public}d, value: %{public}s, sa process state: %{public}d",
+        idleReason.GetName().c_str(), idleReason.GetId(), idleReason.GetValue().c_str(), saState);
+    return saState ? SA_READY_TO_UNLOAD : SA_REFUSE_TO_UNLOAD;
 }
 
 int32_t DistributedHardwareService::RegisterPublisherListener(const DHTopic topic,
@@ -549,6 +561,30 @@ int32_t DistributedHardwareService::DisableSource(
         TaskExecutor::GetInstance().PushTask(task);
     }
     return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::LoadDistributedHDF(const DHType dhType)
+{
+    switch (dhType) {
+        case DHType::AUDIO:
+        case DHType::CAMERA:
+            return HdfOperateManager::GetInstance().LoadDistributedHDF(dhType);
+        default:
+            break;
+    }
+    return ERR_DH_FWK_NO_HDF_SUPPORT;
+}
+
+int32_t DistributedHardwareService::UnLoadDistributedHDF(const DHType dhType)
+{
+    switch (dhType) {
+        case DHType::AUDIO:
+        case DHType::CAMERA:
+            return HdfOperateManager::GetInstance().UnLoadDistributedHDF(dhType);
+        default:
+            break;
+    }
+    return ERR_DH_FWK_NO_HDF_SUPPORT;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

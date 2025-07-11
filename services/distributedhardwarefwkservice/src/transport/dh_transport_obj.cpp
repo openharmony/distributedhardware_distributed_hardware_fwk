@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -74,8 +74,11 @@ void ToJson(cJSON *jsonObject, const CommMsg &commMsg)
         return;
     }
     cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, commMsg.code);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_USERID_KEY, commMsg.userId);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_TOKENID_KEY, commMsg.tokenId);
     const char *msg = commMsg.msg.c_str();
     cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY, msg);
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_ACCOUNTID_KEY, commMsg.accountId.c_str());
 }
 
 void FromJson(const cJSON *jsonObject, CommMsg &commMsg)
@@ -88,9 +91,21 @@ void FromJson(const cJSON *jsonObject, CommMsg &commMsg)
     if (IsInt32(commMsgCodeJson)) {
         commMsg.code = commMsgCodeJson->valueint;
     }
+    cJSON *commMsgUserIdJson = cJSON_GetObjectItem(jsonObject, COMM_MSG_USERID_KEY);
+    if (commMsgUserIdJson != NULL && cJSON_IsNumber(commMsgUserIdJson)) {
+        commMsg.userId = commMsgUserIdJson->valueint;
+    }
+    cJSON *commMsgTokenIdJson = cJSON_GetObjectItem(jsonObject, COMM_MSG_TOKENID_KEY);
+    if (commMsgTokenIdJson != NULL && cJSON_IsNumber(commMsgTokenIdJson)) {
+        commMsg.tokenId = static_cast<uint64_t>(commMsgTokenIdJson->valueint);
+    }
     cJSON *commMsgeJson = cJSON_GetObjectItem(jsonObject, COMM_MSG_MSG_KEY);
-    if (IsString(commMsgeJson)) {
+    if (commMsgeJson != NULL && cJSON_IsString(commMsgeJson)) {
         commMsg.msg = commMsgeJson->valuestring;
+    }
+    cJSON *commMsgeAccountIdJson = cJSON_GetObjectItem(jsonObject, COMM_MSG_ACCOUNTID_KEY);
+    if (commMsgeAccountIdJson != NULL && cJSON_IsString(commMsgeAccountIdJson)) {
+        commMsg.accountId = commMsgeAccountIdJson->valuestring;
     }
 }
 

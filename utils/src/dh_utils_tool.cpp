@@ -38,6 +38,13 @@
 namespace OHOS {
 namespace DistributedHardware {
 namespace {
+    constexpr uint32_t MAX_MESSAGE_LEN = 40 * 1024 * 1024;
+    constexpr uint32_t MIN_MESSAGE_LEN = 0;
+    constexpr uint32_t MAX_ID_LEN = 256;
+    constexpr uint32_t MAX_ARR_SIZE = 10000;
+    constexpr uint32_t MAX_JSON_SIZE = 40 * 1024 * 1024;
+    constexpr uint32_t MAX_HASH_SIZE = 64;
+    constexpr uint32_t MAX_KEY_SIZE = 256;
     constexpr int32_t MS_ONE_SECOND = 1000;
     constexpr int32_t WORD_WIDTH_8 = 8;
     constexpr int32_t WORD_WIDTH_4 = 4;
@@ -45,7 +52,7 @@ namespace {
     constexpr unsigned char MASK = 0x0F;
     constexpr int32_t DOUBLE_TIMES = 2;
     constexpr int32_t COMPRESS_SLICE_SIZE = 1024;
-    const std::string PARAM_KEY_OS_TYPE = "OS_TYPE";
+    constexpr const char *PARAM_KEY_OS_TYPE = "OS_TYPE";
 }
 
 int64_t GetCurrentTime()
@@ -357,7 +364,7 @@ int32_t GetDeviceSystemType(const std::string &extraData)
         DHLOGE("jsonStr parse failed");
         return ERR_DH_FWK_INVALID_OSTYPE;
     }
-    cJSON *paramKey = cJSON_GetObjectItem(jsonObj, PARAM_KEY_OS_TYPE.c_str());
+    cJSON *paramKey = cJSON_GetObjectItem(jsonObj, PARAM_KEY_OS_TYPE);
     if (paramKey == NULL || !cJSON_IsNumber(paramKey)) {
         DHLOGE("paramKey is null or paramKey is invaild type!");
         cJSON_Delete(jsonObj);

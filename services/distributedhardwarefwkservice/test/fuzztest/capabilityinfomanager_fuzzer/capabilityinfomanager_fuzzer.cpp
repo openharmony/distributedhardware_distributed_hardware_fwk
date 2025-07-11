@@ -27,6 +27,21 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
+    constexpr int32_t EVEN_CHECK = 2;
+}
+
+void TestGetDistributedHardwareCallback::OnSuccess(const std::string &networkId,
+    const std::vector<DHDescriptor> &descriptors, EnableStep enableStep)
+{
+    (void)networkId;
+    (void)descriptors;
+    (void)enableStep;
+}
+
+void TestGetDistributedHardwareCallback::OnError(const std::string &networkId, int32_t error)
+{
+    (void)networkId;
+    (void)error;
 }
 
 void CapabilityInfoManagerFuzzTest(const uint8_t* data, size_t size)
@@ -272,6 +287,122 @@ void CapabilityInfoManagerOnChangeDeleteFuzzTest(const uint8_t* data, size_t siz
     cJSON_free(cjson);
     cJSON_Delete(deleteJson);
 }
+
+void HasCapabilityFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    std::string dhId(reinterpret_cast<const char*>(data), size);
+    std::string deviceId(reinterpret_cast<const char*>(data), size);
+
+    CapabilityInfoManager::GetInstance()->HasCapability(deviceId, dhId);
+}
+
+void DumpCapabilityInfosFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    std::vector<CapabilityInfo> capInfos;
+
+    CapabilityInfoManager::GetInstance()->DumpCapabilityInfos(capInfos);
+}
+
+void CapabilityInfoManagerEventHandlerCtorFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    auto runner = AppExecFwk::EventRunner::Create(true);
+    std::shared_ptr<CapabilityInfoManager> mgrPtr;
+    if (data[0] % EVEN_CHECK == 0) {
+        mgrPtr = nullptr;
+    } else {
+        mgrPtr = std::make_shared<CapabilityInfoManager>();
+    }
+
+    CapabilityInfoManager::CapabilityInfoManagerEventHandler handler(runner, mgrPtr);
+    CapabilityInfoManager::GetInstance()->Init();
+    CapabilityInfoManager::CapabilityInfoManagerEventHandler handler2(runner, mgrPtr);
+    CapabilityInfoManager::GetInstance()->UnInit();
+}
+
+void GetEventHandlerFuzzTest(const uint8_t* data, size_t size)
+{
+    (void)data;
+    (void)size;
+    CapabilityInfoManager::GetInstance()->GetEventHandler();
+}
+
+void OnChangeFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    std::string uuId(reinterpret_cast<const char*>(data), size);
+    std::string deviceId = Sha256(uuId);
+    DistributedKv::Entry insert;
+    DistributedKv::Entry update;
+    DistributedKv::Entry del;
+    std::vector<DistributedKv::Entry> inserts;
+    std::vector<DistributedKv::Entry> updates;
+    std::vector<DistributedKv::Entry> deleteds;
+    inserts.push_back(insert);
+    updates.push_back(update);
+    deleteds.push_back(del);
+
+    DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds),
+        deviceId, true);
+    CapabilityInfoManager::GetInstance()->OnChange(changeIn);
+}
+
+void GetDataByDHTypeFuzzTest(const uint8_t* data, size_t size)
+{
+    (void)data;
+    (void)size;
+    DHType dhType = DHType::AUDIO;
+    std::map<std::string, std::shared_ptr<CapabilityInfo>> capabilityMap;
+    CapabilityInfoManager::GetInstance()->GetDataByDHType(dhType, capabilityMap);
+}
+
+void AsyncGetDistributedHardwareFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    EnableStep enableStep = static_cast<EnableStep>(data[0] % 4);
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    CapabilityInfoManager::GetInstance()->AsyncGetDistributedHardware(networkId, enableStep, callback);
+}
+
+void DoAsyncGetDistributedHardwareFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    EnableStep enableStep = static_cast<EnableStep>(data[0] % 4);
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    CapabilityInfoManager::GetInstance()->DoAsyncGetDistributedHardware(networkId, enableStep, callback);
+}
+
+void GetEntriesByKeysFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    std::vector<std::string> keys = {std::string(reinterpret_cast<const char*>(data), size)};
+    CapabilityInfoManager::GetInstance()->GetEntriesByKeys(keys);
+}
 }
 }
 
@@ -289,6 +420,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::CapabilityInfoManagerOnChangeInsertFuzzTest(data, size);
     OHOS::DistributedHardware::CapabilityInfoManagerOnChangeUpdateFuzzTest(data, size);
     OHOS::DistributedHardware::CapabilityInfoManagerOnChangeDeleteFuzzTest(data, size);
+    OHOS::DistributedHardware::HasCapabilityFuzzTest(data, size);
+    OHOS::DistributedHardware::DumpCapabilityInfosFuzzTest(data, size);
+    OHOS::DistributedHardware::CapabilityInfoManagerEventHandlerCtorFuzzTest(data, size);
+    OHOS::DistributedHardware::GetEventHandlerFuzzTest(data, size);
+    OHOS::DistributedHardware::OnChangeFuzzTest(data, size);
+    OHOS::DistributedHardware::GetDataByDHTypeFuzzTest(data, size);
+    OHOS::DistributedHardware::AsyncGetDistributedHardwareFuzzTest(data, size);
+    OHOS::DistributedHardware::DoAsyncGetDistributedHardwareFuzzTest(data, size);
+    OHOS::DistributedHardware::GetEntriesByKeysFuzzTest(data, size);
     return 0;
 }
 

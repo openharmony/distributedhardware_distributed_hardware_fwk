@@ -50,6 +50,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "include/hidumphelper",
     "include/ipc",
     "include/lowlatency",
+    "include/hdfoperate",
   ]
 
   sources = [
@@ -71,6 +72,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "src/distributed_hardware_manager_factory.cpp",
     "src/distributed_hardware_service.cpp",
     "src/distributed_hardware_stub.cpp",
+    "src/hdfoperate/hdf_operate.cpp",
     "src/hidumphelper/enabled_comps_dump.cpp",
     "src/hidumphelper/hidump_helper.cpp",
     "src/ipc/get_dh_descriptors_callback_proxy.cpp",
@@ -153,6 +155,7 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "ability_runtime:ability_manager",
     "access_token:libaccesstoken_sdk",
     "access_token:libtokenid_sdk",
+    "access_token:libtokensetproc_shared",
     "cJSON:cjson",
     "c_utils:utils",
     "config_policy:configpolicy_util",
@@ -170,6 +173,17 @@ ohos_shared_library("distributedhardwarefwksvr") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
+
+  if (dhfwk_os_account) {
+    external_deps += [
+      "os_account:libaccountkits",
+      "os_account:os_account_innerkits",
+    ]
+  }
+
+  if (dhfwk_os_account) {
+    defines += [ "OS_ACCOUNT_PART" ]
+  }
 
   subsystem_name = "distributedhardware"
 

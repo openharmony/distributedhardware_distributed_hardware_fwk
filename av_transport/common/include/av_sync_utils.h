@@ -34,6 +34,7 @@ struct AVTransSharedMemory {
     int32_t fd;
     int32_t size;
     std::string name;
+    void* addr;
 };
 
 struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {

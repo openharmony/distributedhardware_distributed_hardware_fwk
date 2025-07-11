@@ -616,9 +616,11 @@ HWTEST_F(AvTransportAudioEncoderFilterTest, OnEncInputBufferAvailable_002, testi
     {
         OH_AVBuffer *buffer = new OH_AVBuffer(audioData);
         filter->OnEncInputBufferAvailable(i, buffer);
+        delete buffer;
     }
     OH_AVBuffer *normalBuffer = new OH_AVBuffer(audioData);
     filter->OnEncInputBufferAvailable(10, normalBuffer);
+    delete normalBuffer;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

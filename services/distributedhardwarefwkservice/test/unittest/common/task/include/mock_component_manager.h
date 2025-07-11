@@ -34,6 +34,7 @@ public:
     virtual int32_t DisableSink(const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid) = 0;
     virtual int32_t DisableSource(const std::string &networkId,
         const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid) = 0;
+    virtual int32_t CheckSinkConfigStart(const DHType dhType, bool &enableSink) = 0;
 
     static std::shared_ptr<IComponentManager> GetOrCtreateInstance();
     static void ReleaseInstance();
@@ -51,6 +52,7 @@ public:
     MOCK_METHOD(int32_t, EnableSource, (const std::string&, const DHDescriptor&, int32_t, int32_t));
     MOCK_METHOD(int32_t, DisableSink, (const DHDescriptor&, int32_t, int32_t));
     MOCK_METHOD(int32_t, DisableSource, (const std::string&, const DHDescriptor&, int32_t, int32_t));
+    MOCK_METHOD(int32_t, CheckSinkConfigStart, (const DHType, bool&));
 };
 } // namespace DistributedHardware
 } // namespace OHOS

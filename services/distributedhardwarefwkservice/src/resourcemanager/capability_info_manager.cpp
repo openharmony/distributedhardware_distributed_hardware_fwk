@@ -34,6 +34,7 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "CapabilityInfoManager"
 
 constexpr int32_t SYNC_DATA_TIMEOUT_MS = 1000 * 10;
+constexpr const char *GLOBAL_CAPABILITY_INFO_KEY = "global_capability_info";
 
 CapabilityInfoManager::CapabilityInfoManager() : dbAdapterPtr_(nullptr)
 {
@@ -92,7 +93,7 @@ int32_t CapabilityInfoManager::Init()
 {
     DHLOGI("CapabilityInfoManager instance init!");
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
-    dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, GLOBAL_CAPABILITY_ID, shared_from_this());
+    dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, GLOBAL_CAPABILITY_INFO_KEY, shared_from_this());
     if (dbAdapterPtr_ == nullptr) {
         DHLOGE("dbAdapterPtr_ is null");
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;

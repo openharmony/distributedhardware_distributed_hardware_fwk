@@ -18,5 +18,23 @@
 
 #define FUZZ_PROJECT_NAME "capabilityinfomanager_fuzzer"
 
+#include <string>
+#include "get_dh_descriptors_callback_stub.h"
+
+namespace OHOS {
+namespace DistributedHardware {
+
+class TestGetDistributedHardwareCallback : public GetDhDescriptorsCallbackStub {
+public:
+    TestGetDistributedHardwareCallback() = default;
+    virtual ~TestGetDistributedHardwareCallback() = default;
+protected:
+    void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
+        EnableStep enableStep) override;
+    void OnError(const std::string &networkId, int32_t error) override;
+};
+} // namespace DistributedHardware
+} // namespace OHOS
+
 #endif
 

@@ -43,6 +43,8 @@ enum class DHMsgInterfaceCode : uint32_t {
     DISABLE_SINK = 480019,
     ENABLE_SOURCE = 480020,
     DISABLE_SOURCE = 480021,
+    LOAD_HDF = 480022,
+    UNLOAD_HDF = 480023,
     NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED = 1,
 };
 } // namespace DistributedHardware

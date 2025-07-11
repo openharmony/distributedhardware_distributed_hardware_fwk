@@ -58,7 +58,8 @@
         "zlib",
         "ffrt",
         "libevdev",
-        "selinux_adapter"
+        "selinux_adapter",
+        "os_account"
       ]
     },
     "build": {
@@ -135,6 +136,7 @@
             "header_files": [
               "constants.h",
               "device_type.h",
+              "dhardware_descriptor.h",
               "dhardware_ipc_interface_code.h",
               "distributed_hardware_errno.h",
               "idistributed_hardware_manager.h",
@@ -142,6 +144,7 @@
               "idistributed_hardware_source.h",
               "idistributed_hardware.h",
               "ihardware_handler.h",
+              "ihardware_status_listener.h",
               "ipublisher_listener.h",
               "single_instance.h"
             ],

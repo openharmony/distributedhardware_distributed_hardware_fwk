@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,21 +45,6 @@ void DHModemContextExtTest::TearDownTestCase() {}
     {
         int32_t ret = DHModemContextExt::GetInstance().GetHandler();
         EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    }
-
-    HWTEST_F(DHModemContextExtTest, GetModemExtInstance_001, TestSize.Level1)
-    {
-        DHModemContextExt::GetInstance().soHandle_ = nullptr;
-        DHModemContextExt::GetInstance().GetModemExtInstance();
-        EXPECT_NE(DHModemContextExt::GetInstance().distributedModemExt_, nullptr);
-    }
-
-    HWTEST_F(DHModemContextExtTest, GetModemExtInstance_002, TestSize.Level1)
-    {
-        int32_t ret = DHModemContextExt::GetInstance().GetHandler();
-        EXPECT_EQ(ret, DH_FWK_SUCCESS);
-        DHModemContextExt::GetInstance().GetModemExtInstance();
-        EXPECT_NE(DHModemContextExt::GetInstance().distributedModemExt_, nullptr);
     }
 
     HWTEST_F(DHModemContextExtTest, UnInit_001, TestSize.Level1)

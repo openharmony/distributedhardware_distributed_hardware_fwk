@@ -53,9 +53,9 @@ int32_t ComponentLoader::ReleaseSink(const DHType dhType)
     return IComponentLoader::GetOrCtreateInstance()->ReleaseSink(dhType);
 }
 
-std::vector<DHType> ComponentLoader::GetAllCompTypes()
+void GetAllCompTypes(std::vector<DHType> &dhTypeVec)
 {
-    return IComponentLoader::GetOrCtreateInstance()->GetAllCompTypes();
+    IComponentLoader::GetOrCtreateInstance()->GetAllCompTypes(dhTypeVec);
 }
 
 int32_t ComponentLoader::GetSource(const DHType dhType, IDistributedHardwareSource *&sourcePtr)

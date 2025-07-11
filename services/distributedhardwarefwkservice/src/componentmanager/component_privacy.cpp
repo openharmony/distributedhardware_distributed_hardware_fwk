@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,6 +31,14 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "ComponentPrivacy"
+
+namespace {
+    constexpr const char *PRIVACY_SUBTYPE = "subtype";
+    constexpr const char *PRIVACY_NETWORKID = "networkId";
+    constexpr uint32_t COMP_START_PAGE = 1;
+    constexpr uint32_t COMP_STOP_PAGE = 2;
+    constexpr uint32_t COMP_PRIVACY_DELAY_TIME = 1000; // million seconds
+}
 
 ComponentPrivacy::ComponentPrivacy()
 {
@@ -78,8 +86,8 @@ void ComponentPrivacy::HandlePullUpPage(const std::string &subtype, const std::s
     }
     if (eventHandler_ != nullptr) {
         DHLOGI("SendEvent COMP_START_PAGE");
-        cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), subtype.c_str());
-        cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID.c_str(), networkId.c_str());
+        cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE, subtype.c_str());
+        cJSON_AddStringToObject(tmpJson, PRIVACY_NETWORKID, networkId.c_str());
         cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
 
         AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_START_PAGE,
@@ -107,7 +115,7 @@ void ComponentPrivacy::HandleClosePage(const std::string &subtype)
     }
     if (eventHandler_ != nullptr) {
         DHLOGI("SendEvent COMP_STOP_PAGE");
-        cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE.c_str(), subtype.c_str());
+        cJSON_AddStringToObject(tmpJson, PRIVACY_SUBTYPE, subtype.c_str());
         cJSON_AddItemToArray(jsonArrayMsg, tmpJson);
 
         AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(COMP_STOP_PAGE,
@@ -297,13 +305,13 @@ void ComponentPrivacy::ComponentEventHandler::ProcessStartPage(const AppExecFwk:
     DHLOGI("ProcessStartPage enter.");
     std::shared_ptr<cJSON> dataMsg = event->GetSharedObject<cJSON>();
     cJSON *innerMsg = cJSON_GetArrayItem(dataMsg.get(), 0);
-    cJSON *subtypeJson = cJSON_GetObjectItem(innerMsg, PRIVACY_SUBTYPE.c_str());
+    cJSON *subtypeJson = cJSON_GetObjectItem(innerMsg, PRIVACY_SUBTYPE);
     if (!IsString(subtypeJson)) {
         DHLOGE("PRIVACY_SUBTYPE is invalid!");
         return;
     }
     std::string subtype = subtypeJson->valuestring;
-    cJSON *networkIdJson = cJSON_GetObjectItem(innerMsg, PRIVACY_NETWORKID.c_str());
+    cJSON *networkIdJson = cJSON_GetObjectItem(innerMsg, PRIVACY_NETWORKID);
     if (!IsString(networkIdJson)) {
         DHLOGE("PRIVACY_NETWORKID is invalid!");
         return;
@@ -325,7 +333,7 @@ void ComponentPrivacy::ComponentEventHandler::ProcessStopPage(const AppExecFwk::
         DHLOGE("innerMsg is nullptr");
         return;
     }
-    cJSON *subtypeJson = cJSON_GetObjectItem(innerMsg, PRIVACY_SUBTYPE.c_str());
+    cJSON *subtypeJson = cJSON_GetObjectItem(innerMsg, PRIVACY_SUBTYPE);
     if (!IsString(subtypeJson)) {
         DHLOGE("PRIVACY_SUBTYPE is invalid!");
         return;

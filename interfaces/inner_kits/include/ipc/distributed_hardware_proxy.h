@@ -22,14 +22,23 @@
 #include "iremote_proxy.h"
 #include "refbase.h"
 #include "idistributed_hardware.h"
+#include "publisher_listener_stub.h"
 
 namespace OHOS {
 namespace DistributedHardware {
+class IHdfDeathListener : public IRemoteBroker {
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.DistributedHardware.DistributedHardwareFwk.IHdfDeathListener");
+};
+class HdfDeathListenerStub : public IRemoteStub<IHdfDeathListener> {
+public:
+};
 class DistributedHardwareProxy : public IRemoteProxy<IDistributedHardware> {
 public:
     explicit DistributedHardwareProxy(const sptr<IRemoteObject> impl)
         : IRemoteProxy<IDistributedHardware>(impl)
     {
+        hdfDeathListenerStub_ = sptr<HdfDeathListenerStub>(new HdfDeathListenerStub());
     }
 
     virtual ~DistributedHardwareProxy() {}
@@ -57,6 +66,8 @@ public:
     int32_t DisableSink(const std::vector<DHDescriptor> &descriptors) override;
     int32_t EnableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors) override;
     int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors) override;
+    int32_t LoadDistributedHDF(const DHType dhType) override;
+    int32_t UnLoadDistributedHDF(const DHType dhType) override;
 
 private:
     int32_t ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors);
@@ -64,6 +75,7 @@ private:
 
 private:
     static inline BrokerDelegator<DistributedHardwareProxy> delegator_;
+    sptr<HdfDeathListenerStub> hdfDeathListenerStub_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

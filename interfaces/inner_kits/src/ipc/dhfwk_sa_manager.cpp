@@ -27,6 +27,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+constexpr uint32_t MAX_TOPIC_SIZE = 128;
+constexpr uint32_t MAX_LISTENER_SIZE = 256;
+
 IMPLEMENT_SINGLE_INSTANCE(DHFWKSAManager);
 DHFWKSAManager::DHFWKSAManager()
     : dhfwkOnLine_(false), isSubscribeDHFWKSAChangeListener_(false), dhfwkProxy_(nullptr),

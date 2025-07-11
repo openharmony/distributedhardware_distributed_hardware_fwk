@@ -14,17 +14,22 @@
  */
 
 #include <gtest/gtest.h>
-
-#include "dh_transport.h"
 #include <string>
 
+#include "device_manager.h"
+#include "device_manager_impl.h"
+
+#include "dh_transport.h"
 #include "dh_comm_tool.h"
 #include "dh_transport_obj.h"
+#include "dh_utils_tool.h"
 #include "capability_info_manager.h"
 #include "distributed_hardware_errno.h"
+#include "mock_other_method.h"
 
 
 using namespace testing::ext;
+using namespace testing;
 namespace OHOS {
 namespace DistributedHardware {
 using namespace std;
@@ -33,29 +38,55 @@ namespace {
     int32_t g_socketid = 1;
     std::string g_networkid = "networkId_test";
     constexpr int32_t SOCKETID = 10;
+    constexpr int32_t INVALID_USER_ID = -100;
+    constexpr int32_t INVALID_ACCOUNT_INFO_VALUE = -101;
+    constexpr int32_t DH_COMM_REQ_FULL_CAPS = 1;
+    constexpr int32_t DH_COMM_RSP_FULL_CAPS = 2;
 }
+
+static std::string g_mocklocalNetworkId = "123456789";
+static bool g_mockDMValue = false;
+
+std::string GetLocalNetworkId()
+{
+    return g_mocklocalNetworkId;
+}
+
+bool DeviceManagerImpl::CheckSinkAccessControl(const DmAccessCaller &caller, const DmAccessCallee &callee)
+{
+    return g_mockDMValue;
+}
+
 class DhTransportTest : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+
+    static inline shared_ptr<DeviceOtherMethodMock> otherMethodMock_ = nullptr;
 private:
     std::shared_ptr<DHTransport> dhTransportTest_;
 };
 
 void DhTransportTest::SetUpTestCase()
 {
+    otherMethodMock_ = make_shared<DeviceOtherMethodMock>();
+    DeviceOtherMethodMock::otherMethod = otherMethodMock_;
 }
 
 void DhTransportTest::TearDownTestCase()
 {
+    DeviceOtherMethodMock::otherMethod = nullptr;
+    otherMethodMock_ = nullptr;
 }
 
 void DhTransportTest::SetUp()
 {
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     dhTransportTest_ = std::make_shared<DHTransport>(dhCommTool);
+    g_mocklocalNetworkId = "123456789";
+    g_mockDMValue = false;
 }
 
 void DhTransportTest::TearDown()
@@ -312,11 +343,12 @@ HWTEST_F(DhTransportTest, FromJson_CommMsg_001, TestSize.Level1)
 
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);
+    EXPECT_TRUE(commMsg.msg.empty());
+
     cJSON_AddStringToObject(jsonObject, COMM_MSG_CODE_KEY, "comm_msg_code_test");
-    cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY, "comm_msg_msg_test");
     FromJson(jsonObject, commMsg);
     cJSON_Delete(jsonObject);
-    EXPECT_FALSE(commMsg.msg.empty());
+    EXPECT_TRUE(commMsg.msg.empty());
 }
 
 HWTEST_F(DhTransportTest, FromJson_CommMsg_002, TestSize.Level1)
@@ -324,6 +356,33 @@ HWTEST_F(DhTransportTest, FromJson_CommMsg_002, TestSize.Level1)
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);
     cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, 1);
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_USERID_KEY, "userId_test");
+    CommMsg commMsg;
+    FromJson(jsonObject, commMsg);
+    cJSON_Delete(jsonObject);
+    EXPECT_TRUE(commMsg.msg.empty());
+}
+
+HWTEST_F(DhTransportTest, FromJson_CommMsg_003, TestSize.Level1)
+{
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_USERID_KEY, 1);
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_TOKENID_KEY, "userId_test");
+    CommMsg commMsg;
+    FromJson(jsonObject, commMsg);
+    cJSON_Delete(jsonObject);
+    EXPECT_TRUE(commMsg.msg.empty());
+}
+
+HWTEST_F(DhTransportTest, FromJson_CommMsg_004, TestSize.Level1)
+{
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_USERID_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_TOKENID_KEY, 1);
     cJSON_AddNumberToObject(jsonObject, COMM_MSG_MSG_KEY, 1);
     CommMsg commMsg;
     FromJson(jsonObject, commMsg);
@@ -331,11 +390,204 @@ HWTEST_F(DhTransportTest, FromJson_CommMsg_002, TestSize.Level1)
     EXPECT_TRUE(commMsg.msg.empty());
 }
 
+HWTEST_F(DhTransportTest, FromJson_CommMsg_005, TestSize.Level1)
+{
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_USERID_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_TOKENID_KEY, 1);
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY, "comm_msg_msg_test");
+    CommMsg commMsg;
+    FromJson(jsonObject, commMsg);
+    cJSON_Delete(jsonObject);
+    EXPECT_FALSE(commMsg.msg.empty());
+}
+
+HWTEST_F(DhTransportTest, FromJson_CommMsg_006, TestSize.Level1)
+{
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_USERID_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_TOKENID_KEY, 1);
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY, "comm_msg_msg_test");
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_ACCOUNTID_KEY, 1);
+    CommMsg commMsg;
+    FromJson(jsonObject, commMsg);
+    cJSON_Delete(jsonObject);
+    EXPECT_FALSE(commMsg.msg.empty());
+}
+
+HWTEST_F(DhTransportTest, FromJson_CommMsg_007, TestSize.Level1)
+{
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_USERID_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_TOKENID_KEY, 1);
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY, "comm_msg_msg_test");
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_ACCOUNTID_KEY, "account_test");
+    CommMsg commMsg;
+    FromJson(jsonObject, commMsg);
+    cJSON_Delete(jsonObject);
+    EXPECT_FALSE(commMsg.msg.empty());
+}
+
 HWTEST_F(DhTransportTest, CreateClientSocket_001, TestSize.Level1)
 {
     std::string remoteNetworkId = "";
     auto ret = dhTransportTest_->CreateClientSocket(remoteNetworkId);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+HWTEST_F(DhTransportTest, CheckCalleeAclRight_001, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    commMsg->userId = -1;
+    auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
+    EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(DhTransportTest, CheckCalleeAclRight_002, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    commMsg->userId = 1;
+    g_mocklocalNetworkId = "";
+    auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhTransportTest, CheckCalleeAclRight_003, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    commMsg->userId = 1;
+    std::vector<int32_t> userIds;
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(INVALID_USER_ID)));
+    auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhTransportTest, CheckCalleeAclRight_004, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    commMsg->userId = 1;
+    std::vector<int32_t> userIds{100, 101};
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(INVALID_USER_ID)));
+    auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhTransportTest, CheckCalleeAclRight_005, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    commMsg->userId = 1;
+    std::vector<int32_t> userIds;
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+    auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhTransportTest, CheckCalleeAclRight_006, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    commMsg->userId = 1;
+    std::vector<int32_t> userIds{100, 101};
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+
+    AccountSA::OhosAccountInfo osAccountInfo;
+    EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
+        .WillOnce(DoAll(SetArgReferee<0>(osAccountInfo), Return(INVALID_ACCOUNT_INFO_VALUE)));
+    auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhTransportTest, CheckCalleeAclRight_007, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    commMsg->userId = 1;
+    std::vector<int32_t> userIds{100, 101};
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+
+    AccountSA::OhosAccountInfo osAccountInfo;
+    EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
+        .WillOnce(DoAll(SetArgReferee<0>(osAccountInfo), Return(DH_FWK_SUCCESS)));
+    g_mockDMValue = true;
+    auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
+    EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(DhTransportTest, HandleReceiveMessage_001, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    int32_t userId = 1;
+    uint64_t tokenId = 1;
+    std::string networkId = "123456";
+    std::string accountId = "111";
+    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId, tokenId, networkId, accountId);
+    std::string payload = GetCommMsgString(commMsg);
+    std::string compressedPayLoad = Compress(payload);
+    std::vector<int32_t> userIds;
+    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(INVALID_USER_ID)));
+    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad));
+}
+
+HWTEST_F(DhTransportTest, HandleReceiveMessage_002, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    int32_t userId = -1;
+    uint64_t tokenId = 1;
+    std::string networkId = "123456";
+    std::string accountId = "111";
+    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId, tokenId, networkId, accountId);
+    std::string payload = GetCommMsgString(commMsg);
+    std::string compressedPayLoad = Compress(payload);
+    std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
+    dhTransportTest_->dhCommToolWPtr_ = dhCommTool;
+    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad));
+}
+
+HWTEST_F(DhTransportTest, HandleReceiveMessage_003, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    int32_t userId = 1;
+    uint64_t tokenId = 1;
+    std::string networkId = "123456";
+    std::string accountId = "111";
+    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, userId, tokenId, networkId, accountId);
+    std::string payload = GetCommMsgString(commMsg);
+    std::string compressedPayLoad = Compress(payload);
+    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad));
+}
+
+HWTEST_F(DhTransportTest, HandleReceiveMessage_004, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    int32_t userId = 1;
+    uint64_t tokenId = 1;
+    std::string networkId = "123456";
+    std::string accountId = "111";
+    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, userId, tokenId, networkId, accountId);
+    std::string payload = GetCommMsgString(commMsg);
+    std::string compressedPayLoad = Compress(payload);
+    std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
+    dhTransportTest_->dhCommToolWPtr_ = dhCommTool;
+    dhCommTool->Init();
+    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad));
+    dhCommTool->UnInit();
 }
 }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,11 +27,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-// request remote dh send back full dh capabilities
-constexpr int32_t DH_COMM_REQ_FULL_CAPS = 1;
-// send back full dh attributes to the requester
-constexpr int32_t DH_COMM_RSP_FULL_CAPS = 2;
-
 class DHCommTool : public std::enable_shared_from_this<DHCommTool> {
 public:
     DHCommTool();
@@ -65,8 +60,15 @@ public:
     const std::shared_ptr<DHTransport> GetDHTransportPtr();
 
 private:
+    bool CheckCallerAclRight(const std::string &localNetworkId, const std::string &remoteNetworkId);
+    bool GetOsAccountInfo();
+
+private:
     std::shared_ptr<DHTransport> dhTransportPtr_;
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> eventHandler_;
+    std::string accountId_;
+    int32_t userId_ = -1;
+    uint64_t tokenId_ = 0;
 };
 } // DistributedHardware
 } // OHOS

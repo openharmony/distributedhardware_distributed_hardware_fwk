@@ -115,6 +115,7 @@ void DistributedHardwareManagerFactory::UnInit()
 void DistributedHardwareManagerFactory::ExitDHFWK()
 {
     DHLOGI("No device online or deviceList is over size, exit sa process");
+    SetSAProcessState(true);
     HiSysEventWriteMsg(DHFWK_EXIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "dhfwk sa exit end.");
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -266,6 +267,17 @@ void DistributedHardwareManagerFactory::ClearRemoteDeviceMetaInfoData(const std:
 void DistributedHardwareManagerFactory::ClearRemoteDeviceLocalInfoData(const std::string &peeruuid)
 {
     LocalCapabilityInfoManager::GetInstance()->ClearRemoteDeviceLocalInfoData(peeruuid);
+}
+
+void DistributedHardwareManagerFactory::SetSAProcessState(bool saState)
+{
+    DHLOGI("Set SA process state: %{public}d", saState);
+    isIdle_.store(saState);
+}
+ 
+bool DistributedHardwareManagerFactory::GetSAProcessState()
+{
+    return isIdle_.load();
 }
 } // namespace DistributedHardware
 } // namespace OHOS

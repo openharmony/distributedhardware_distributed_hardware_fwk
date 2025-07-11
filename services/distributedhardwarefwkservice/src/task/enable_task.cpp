@@ -148,12 +148,21 @@ int32_t EnableTask::DoAutoEnable()
 {
     std::string localUdid = GetLocalUdid();
     if (localUdid == GetUDID()) {
+        bool enableSink = false;
+        auto ret = ComponentManager::GetInstance().CheckSinkConfigStart(GetDhType(), enableSink);
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("CheckSinkConfigStart failed!");
+            return ret;
+        }
+        if (!enableSink) {
+            DHLOGE("No need Enablesink.");
+            return ERR_DH_FWK_COMPONENT_NO_NEED_ENABLE;
+        }
         DHDescriptor dhDescriptor {
             .id = GetDhId(),
             .dhType = GetDhType()
         };
-        DHLOGI("EnableSink DhType = %{public}#X", GetDhType());
-        auto ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, GetCallingUid(), GetCallingPid());
+        ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, GetCallingUid(), GetCallingPid());
         if (ret != DH_FWK_SUCCESS) {
             DHLOGE("EnableSink DhType = %{public}#X, failed!", GetDhType());
         }
@@ -168,7 +177,7 @@ int32_t EnableTask::DoAutoEnable()
     }
     if (!enableSource) {
         DHLOGE("No need Enablesource.");
-        return ERR_DH_FWK_COMPONENT_LIMIT_DEMAND_START;
+        return ERR_DH_FWK_COMPONENT_NO_NEED_ENABLE;
     }
     DHDescriptor dhDescriptor {
         .id = GetDhId(),

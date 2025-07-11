@@ -603,5 +603,31 @@ HWTEST_F(DistributedHardwareFwkKitTest, DisableSource_001, testing::ext::TestSiz
     ret = dhfwkPtr_->DisableSource(networkId, descriptors);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
+
+/**
+ * @tc.name: LoadDistributedHDF_001
+ * @tc.desc: Verify the LoadDistributedHDF function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, LoadDistributedHDF_001, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    int32_t ret = dhfwkPtr_->LoadDistributedHDF(DHType::CAMERA);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+/**
+ * @tc.name: UnLoadDistributedHDF_001
+ * @tc.desc: Verify the UnLoadDistributedHDF function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, UnLoadDistributedHDF_001, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    int32_t ret = dhfwkPtr_->UnLoadDistributedHDF(DHType::CAMERA);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

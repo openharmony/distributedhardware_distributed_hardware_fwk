@@ -16,6 +16,11 @@
 #include "dh_comm_tool.h"
 
 #include "cJSON.h"
+#include "device_manager.h"
+#include "ipc_skeleton.h"
+#include "ohos_account_kits.h"
+#include "os_account_manager.h"
+#include "token_setproc.h"
 
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
@@ -32,6 +37,11 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DHCommTool"
+
+// request remote dh send back full dh capabilities
+constexpr int32_t DH_COMM_REQ_FULL_CAPS = 1;
+// send back full dh attributes to the requester
+constexpr int32_t DH_COMM_RSP_FULL_CAPS = 2;
 
 DHCommTool::DHCommTool() : dhTransportPtr_(nullptr)
 {
@@ -63,6 +73,56 @@ std::shared_ptr<DHCommTool> DHCommTool::GetInstance()
     return instance;
 }
 
+bool DHCommTool::CheckCallerAclRight(const std::string &localNetworkId, const std::string &remoteNetworkId)
+{
+    if (!GetOsAccountInfo()) {
+        DHLOGE("GetOsAccountInfo failed.");
+        return false;
+    }
+    tokenId_ = IPCSkeleton::GetCallingTokenID();
+    DmAccessCaller dmSrcCaller = {
+        .accountId = accountId_,
+        .pkgName = DH_FWK_PKG_NAME,
+        .networkId = localNetworkId,
+        .userId = userId_,
+        .tokenId = tokenId_,
+    };
+    DmAccessCallee dmDstCallee = {
+        .networkId = remoteNetworkId,
+    };
+    DHLOGI("CheckAclRight dmSrcCaller localNetworkId: %{public}s, accountId: %{public}s, remoteNetworkId: %{public}s",
+        GetAnonyString(localNetworkId).c_str(), GetAnonyString(accountId_).c_str(),
+        GetAnonyString(remoteNetworkId).c_str());
+    if (!DeviceManager::GetInstance().CheckSrcAccessControl(dmSrcCaller, dmDstCallee)) {
+        DHLOGE("Caller ACL check failed.");
+        return false;
+    }
+    return true;
+}
+
+bool DHCommTool::GetOsAccountInfo()
+{
+    DHLOGI("GetOsAccountInfo start.");
+#ifdef OS_ACCOUNT_PART
+    std::vector<int32_t> ids;
+    int32_t ret = AccountSA::OsAccountManager::QueryActiveOsAccountIds(ids);
+    if (ret != DH_FWK_SUCCESS || ids.empty()) {
+        DHLOGE("Get userId from active os accountIds fail, ret: %{public}d", ret);
+        return false;
+    }
+    userId_ = ids[0];
+
+    AccountSA::OhosAccountInfo osAccountInfo;
+    ret = AccountSA::OhosAccountKits::GetInstance().GetOhosAccountInfo(osAccountInfo);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Get accountId from ohos account info fail, ret: %{public}d", ret);
+        return false;
+    }
+    accountId_ = osAccountInfo.uid_;
+#endif
+    return true;
+}
+
 void DHCommTool::TriggerReqFullDHCaps(const std::string &remoteNetworkId)
 {
     DHLOGI("TriggerReqFullDHCaps, remote networkId: %{public}s", GetAnonyString(remoteNetworkId).c_str());
@@ -75,11 +135,15 @@ void DHCommTool::TriggerReqFullDHCaps(const std::string &remoteNetworkId)
         DHLOGE("Get local network id error");
         return;
     }
+    if (!CheckCallerAclRight(localNetworkId, remoteNetworkId)) {
+        DHLOGE("ACL check failed.");
+        return;
+    }
     if (dhTransportPtr_->StartSocket(remoteNetworkId) != DH_FWK_SUCCESS) {
         DHLOGE("Start socket error");
         return;
     }
-    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, localNetworkId);
+    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId_, tokenId_, localNetworkId, accountId_);
     std::string payload = GetCommMsgString(commMsg);
 
     int32_t ret = dhTransportPtr_->Send(remoteNetworkId, payload);
@@ -118,7 +182,9 @@ void DHCommTool::GetAndSendLocalFullCaps(const std::string &reqNetworkId)
     cJSON_free(msg);
     cJSON_Delete(root);
 
-    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, fullCapsMsg);
+    CommMsg commMsg;
+    commMsg.code = DH_COMM_RSP_FULL_CAPS;
+    commMsg.msg = fullCapsMsg;
     std::string payload = GetCommMsgString(commMsg);
 
     int32_t ret = dhTransportPtr_->Send(reqNetworkId, payload);

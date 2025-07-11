@@ -31,6 +31,8 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "VersionInfoManager"
 
+constexpr const char *GLOBAL_VERSION_INFO_KEY = "global_version_info";
+
 VersionInfoManager::VersionInfoManager() : dbAdapterPtr_(nullptr)
 {}
 
@@ -84,7 +86,7 @@ int32_t VersionInfoManager::Init()
 {
     DHLOGI("VersionInfoManager instance init!");
     std::lock_guard<std::mutex> lock(verInfoMgrMutex_);
-    dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, GLOBAL_VERSION_ID, shared_from_this());
+    dbAdapterPtr_ = std::make_shared<DBAdapter>(APP_ID, GLOBAL_VERSION_INFO_KEY, shared_from_this());
     if (dbAdapterPtr_->Init(false, DistributedKv::DataType::TYPE_DYNAMICAL) != DH_FWK_SUCCESS) {
         DHLOGE("Init dbAdapterPtr_ failed");
         return ERR_DH_FWK_RESOURCE_INIT_DB_FAILED;

@@ -34,6 +34,7 @@ ohos_fuzztest("AccessManagerFuzzTest") {
     "-O0",
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
+    "-Dprivate=public",
   ]
   sources = [ "accessmanager_fuzzer.cpp" ]
 

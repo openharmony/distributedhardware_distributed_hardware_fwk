@@ -32,6 +32,7 @@
 #include "component_enable.h"
 #include "component_loader.h"
 #include "constants.h"
+#include "hdf_operate.h"
 #include "device_manager.h"
 #include "dh_context.h"
 #include "dh_data_sync_trigger_listener.h"
@@ -64,9 +65,6 @@ namespace {
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
     constexpr int32_t INVALID_SA_ID = -1;
     constexpr int32_t UNINIT_COMPONENT_TIMEOUT_SECONDS = 2;
-    constexpr int32_t SYNC_DEVICE_INFO_TIMEOUT_MILLISECONDS = 2000;
-    constexpr int32_t SYNC_DEVICE_INFO_INTERVAL_MILLISECONDS = 200;
-    const std::string MONITOR_TASK_TIMER_ID = "monitor_task_timer_id";
 }
 
 ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
@@ -94,15 +92,29 @@ int32_t ComponentManager::Init()
 #ifdef DHARDWARE_LOW_LATENCY
     Publisher::GetInstance().RegisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
 #endif
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(true);
+    eventHandler_ = std::make_shared<ComponentManager::ComponentManagerEventHandler>(runner);
+    InitDHCommTool();
     DHLOGI("Init component success");
     DHTraceEnd();
     return DH_FWK_SUCCESS;
+}
+
+void ComponentManager::InitDHCommTool()
+{
+    if (dhCommToolPtr_ == nullptr) {
+        DHLOGE("DH communication tool ptr is null");
+        return;
+    }
+    DHLOGI("Init DH communication tool");
+    dhCommToolPtr_->Init();
 }
 
 int32_t ComponentManager::UnInit()
 {
     DHLOGI("start.");
     StopPrivacy();
+    UnInitDHCommTool();
 #ifdef DHARDWARE_LOW_LATENCY
     Publisher::GetInstance().UnregisterListener(DHTopic::TOPIC_LOW_LATENCY, lowLatencyListener_);
     LowLatency::GetInstance().CloseLowLatency();
@@ -129,18 +141,27 @@ void ComponentManager::StopPrivacy()
     }
 }
 
-ActionResult ComponentManager::StartSource(DHType dhType)
+void ComponentManager::UnInitDHCommTool()
+{
+    if (dhCommToolPtr_ == nullptr) {
+        DHLOGE("DH communication tool ptr is null");
+        return;
+    }
+    DHLOGI("UnInit DH communication tool");
+    dhCommToolPtr_->UnInit();
+}
+
+int32_t ComponentManager::StartSource(DHType dhType, ActionResult &sourceResult)
 {
     DHLOGI("Start Source, dhType: %{public}" PRIu32, (uint32_t)dhType);
     std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
-    std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     if (compSource_.find(dhType) == compSource_.end()) {
         DHLOGE("Component for DHType: %{public}" PRIu32 " not init source handler", (uint32_t)dhType);
-        return futures;
+        return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
     if (compSource_[dhType] == nullptr) {
         DHLOGE("comp source ptr is null");
-        return futures;
+        return ERR_DH_FWK_SA_HANDLER_IS_NULL;
     }
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     CompVersion compVersion;
@@ -151,23 +172,23 @@ ActionResult ComponentManager::StartSource(DHType dhType)
     std::thread([p = std::move(p), this, dhType, params] () mutable {
         p.set_value(compSource_[dhType]->InitSource(params));
     }).detach();
-    futures.emplace(dhType, f.share());
+    sourceResult.emplace(dhType, f.share());
 
-    return futures;
+    return DH_FWK_SUCCESS;
 }
 
-ActionResult ComponentManager::StartSink(DHType dhType)
+int32_t ComponentManager::StartSink(DHType dhType, ActionResult &sinkResult)
 {
     DHLOGI("Start Sink, dhType: %{public}" PRIu32, (uint32_t)dhType);
     std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
     std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     if (compSink_.find(dhType) == compSink_.end()) {
         DHLOGE("Component for DHType: %{public}" PRIu32 " not init sink handler", (uint32_t)dhType);
-        return futures;
+        return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
     if (compSink_[dhType] == nullptr) {
         DHLOGE("comp sink ptr is null");
-        return futures;
+        return ERR_DH_FWK_SA_HANDLER_IS_NULL;
     }
     std::string uuid = DHContext::GetInstance().GetDeviceInfo().uuid;
     CompVersion compVersion;
@@ -178,7 +199,7 @@ ActionResult ComponentManager::StartSink(DHType dhType)
     std::thread([p = std::move(p), this, dhType, params] () mutable {
         p.set_value(compSink_[dhType]->InitSink(params));
     }).detach();
-    futures.emplace(dhType, f.share());
+    sinkResult.emplace(dhType, f.share());
     if (cameraCompPrivacy_ == nullptr && dhType == DHType::CAMERA) {
         cameraCompPrivacy_ = std::make_shared<ComponentPrivacy>();
         compSink_[dhType]->RegisterPrivacyResources(cameraCompPrivacy_);
@@ -187,8 +208,7 @@ ActionResult ComponentManager::StartSink(DHType dhType)
         audioCompPrivacy_ = std::make_shared<ComponentPrivacy>();
         compSink_[dhType]->RegisterPrivacyResources(audioCompPrivacy_);
     }
-
-    return futures;
+    return DH_FWK_SUCCESS;
 }
 
 bool ComponentManager::WaitForResult(const Action &action, ActionResult actionsResult)
@@ -782,24 +802,48 @@ std::shared_ptr<ComponentManager::ComponentManagerEventHandler> ComponentManager
     return this->eventHandler_;
 }
 
+int32_t ComponentManager::CheckSinkConfigStart(const DHType dhType, bool &enableSink)
+{
+    DHLOGI("CheckSinkConfigStart the dhType: %{public}#X configuration start.", dhType);
+    DHVersion localDhVersion;
+    auto ret = ComponentLoader::GetInstance().GetLocalDHVersion(localDhVersion);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("GetLocalDHVersion fail.");
+        return ret;
+    }
+    auto iterLocal = localDhVersion.compVersions.find(dhType);
+    if (iterLocal == localDhVersion.compVersions.end()) {
+        DHLOGE("Not find dhType: %{public}#X in local!", dhType);
+        return ERR_DH_FWK_TYPE_NOT_EXIST;
+    }
+    if (!iterLocal->second.haveFeature) {
+        enableSink = true;
+        DHLOGI("Local DhType: %{public}#X is old configuration, need enable sink.", dhType);
+        return DH_FWK_SUCCESS;
+    }
+
+    if (iterLocal->second.sinkSupportedFeatures.size() > 0) {
+        enableSink = true;
+    }
+    return DH_FWK_SUCCESS;
+}
+
 int32_t ComponentManager::CheckDemandStart(const std::string &uuid, const DHType dhType, bool &enableSource)
 {
-    // Initialize output parameters
+    DHLOGI("CheckDemandStart the dhType: %{public}#X configuration start.", dhType);
     enableSource = false;
 
-    // Get remote config
     CompVersion compVersion;
     auto ret = GetRemoteVerInfo(compVersion, uuid, dhType);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetRemoteVerInfo fail, errCode = %{public}d!", ret);
+        DHLOGE("GetRemoteVerInfo fail.");
         return ret;
     }
 
-    // Get local config
     DHVersion dhVersion;
     ret = ComponentLoader::GetInstance().GetLocalDHVersion(dhVersion);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetLocalDHVersion fail, errCode = %{public}d!", ret);
+        DHLOGE("GetLocalDHVersion fail.");
         return ret;
     }
 
@@ -808,19 +852,17 @@ int32_t ComponentManager::CheckDemandStart(const std::string &uuid, const DHType
         DHLOGE("Not find dhType in local: %{public}#X!", dhType);
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
-    // Check local config
+
     if (!iterLocal->second.haveFeature) {
+        DHLOGI("Local dhType: %{public}#X is old configuration, need enable source", dhType);
         enableSource = true;
         return DH_FWK_SUCCESS;
     }
-
     if (iterLocal->second.sourceFeatureFilters.size() == 0) {
         return DH_FWK_SUCCESS;
     }
 
-    // Check if the configurations on both ends match
     enableSource = IsFeatureMatched(iterLocal->second.sourceFeatureFilters, compVersion.sinkSupportedFeatures);
-
     return DH_FWK_SUCCESS;
 }
 
@@ -828,8 +870,8 @@ int32_t ComponentManager::RegisterDHStatusListener(
     sptr<IHDSinkStatusListener> listener, int32_t callingUid, int32_t callingPid)
 {
     std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
-
-    auto compTypes = ComponentLoader::GetInstance().GetAllCompTypes();
+    std::vector<DHType> compTypes;
+    ComponentLoader::GetInstance().GetAllCompTypes(compTypes);
     for (const auto &type : compTypes) {
         auto &status = dhSinkStatus_[type];
         DHStatusCtrlKey ctrlKey {
@@ -852,8 +894,8 @@ int32_t ComponentManager::UnregisterDHStatusListener(
     sptr<IHDSinkStatusListener> listener, int32_t callingUid, int32_t callingPid)
 {
     std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
-
-    auto compTypes = ComponentLoader::GetInstance().GetAllCompTypes();
+    std::vector<DHType> compTypes;
+    ComponentLoader::GetInstance().GetAllCompTypes(compTypes);
     for (const auto &type : compTypes) {
         auto &status = dhSinkStatus_[type];
         DHStatusCtrlKey ctrlKey {
@@ -877,8 +919,8 @@ int32_t ComponentManager::RegisterDHStatusListener(
     const std::string &networkId, sptr<IHDSourceStatusListener> listener, int32_t callingUid, int32_t callingPid)
 {
     std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
-
-    auto compTypes = ComponentLoader::GetInstance().GetAllCompTypes();
+    std::vector<DHType> compTypes;
+    ComponentLoader::GetInstance().GetAllCompTypes(compTypes);
     for (const auto &type : compTypes) {
         auto &status = dhSourceStatus_[type];
         DHStatusCtrlKey ctrlKey {
@@ -901,8 +943,8 @@ int32_t ComponentManager::UnregisterDHStatusListener(
     const std::string &networkId, sptr<IHDSourceStatusListener> listener, int32_t callingUid, int32_t callingPid)
 {
     std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
-
-    auto compTypes = ComponentLoader::GetInstance().GetAllCompTypes();
+    std::vector<DHType> compTypes;
+    ComponentLoader::GetInstance().GetAllCompTypes(compTypes);
     for (const auto &type : compTypes) {
         auto &status = dhSourceStatus_[type];
         DHStatusCtrlKey ctrlKey {
@@ -991,6 +1033,10 @@ int32_t ComponentManager::ForceDisableSink(const DHDescriptor &dhDescriptor)
 
 int32_t ComponentManager::ForceDisableSource(const std::string &networkId, const DHDescriptor &dhDescriptor)
 {
+    if (!ComponentLoader::GetInstance().IsDHTypeSupport(dhDescriptor.dhType)) {
+        DHLOGE("Not support dhType: %{public}#X!", dhDescriptor.dhType);
+        return ERR_DH_FWK_TYPE_NOT_EXIST;
+    }
     std::vector<sptr<IHDSourceStatusListener>> listeners;
     int32_t ret = ForceDisableSourceInternal(networkId, dhDescriptor, listeners);
     if (ret == DH_FWK_SUCCESS) {
@@ -1026,12 +1072,7 @@ int32_t ComponentManager::CheckIdenticalAccount(const std::string &networkId,
 int32_t ComponentManager::GetRemoteVerInfo(CompVersion &compVersion, const std::string &uuid, DHType dhType)
 {
     MetaCapInfoMap metaInfoMap;
-    auto ret = MetaInfoManager::GetInstance()->GetMetaDataByDHType(dhType, metaInfoMap);
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetMetaDataByDHType failed, uuid =%{public}s, dhType = %{public}#X, errCode = %{public}d.",
-            GetAnonyString(uuid).c_str(), dhType, ret);
-        return ret;
-    }
+    MetaInfoManager::GetInstance()->GetMetaDataByDHType(dhType, metaInfoMap);
     for (const auto &metaInfo : metaInfoMap) {
         if (DHContext::GetInstance().GetUUIDByDeviceId(metaInfo.second->GetDeviceId()) == uuid) {
             compVersion = metaInfo.second->GetCompVersion();
@@ -1053,6 +1094,7 @@ bool ComponentManager::IsFeatureMatched(const std::vector<std::string> &sourceFe
             }
         }
     }
+    DHLOGE("The sourcefeature and the sinkfeature do not match.");
     return false;
 }
 
@@ -1102,7 +1144,12 @@ int32_t ComponentManager::EnableSinkInternal(const DHDescriptor &dhDescriptor,
         DHLOGE("InitCompSink failed, ret = %{public}d.", ret);
         return ret;
     }
-    auto sinkResult = StartSink(dhDescriptor.dhType);
+    std::unordered_map<DHType, std::shared_future<int32_t>> sinkResult;
+    ret = StartSink(dhDescriptor.dhType, sinkResult);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("StartSink failed");
+        return ret;
+    }
     if (!WaitForResult(Action::START_SINK, sinkResult)) {
         DHLOGE("StartSink failed, some virtual components maybe cannot work, but want to continue!");
         HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
@@ -1158,12 +1205,17 @@ int32_t ComponentManager::DisableSinkInternal(const DHDescriptor &dhDescriptor,
     }
 
     // Start disabling hardware sink
-    auto sinkResult = StopSink(dhDescriptor.dhType);
+    std::unordered_map<DHType, std::shared_future<int32_t>> sinkResult;
+    auto ret = StopSink(dhDescriptor.dhType, sinkResult);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("StopSink failed!");
+        return ret;
+    }
     if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
         DHLOGE("StopSink failed, but want to continue!");
         return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
     }
-    auto ret = UninitCompSink(dhDescriptor.dhType);
+    ret = UninitCompSink(dhDescriptor.dhType);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("UninitCompSink failed, ret = %{public}d.", ret);
         return ret;
@@ -1346,12 +1398,17 @@ int32_t ComponentManager::ForceDisableSinkInternal(
     }
 
     // Unload component
-    auto sinkResult = StopSink(dhDescriptor.dhType);
+    std::unordered_map<DHType, std::shared_future<int32_t>> sinkResult;
+    auto ret = StopSink(dhDescriptor.dhType, sinkResult);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("StopSink failed!");
+        return ret;
+    }
     if (!WaitForResult(Action::STOP_SINK, sinkResult)) {
         DHLOGE("StopSink failed, but want to continue!");
         return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
     }
-    auto ret = UninitCompSink(dhDescriptor.dhType);
+    ret = UninitCompSink(dhDescriptor.dhType);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("UninitCompSink failed, ret = %{public}d.", ret);
         return ret;
@@ -1363,17 +1420,7 @@ int32_t ComponentManager::ForceDisableSourceInternal(const std::string &networkI
     const DHDescriptor &dhDescriptor, std::vector<sptr<IHDSourceStatusListener>> &listeners)
 {
     std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
-
-    // Check if the input parameters and device type support it
-    if (!ComponentLoader::GetInstance().IsDHTypeSupport(dhDescriptor.dhType)) {
-        DHLOGE("Not support dhType: %{public}#X!", dhDescriptor.dhType);
-        return ERR_DH_FWK_TYPE_NOT_EXIST;
-    }
-
-    DHStatusSourceEnableInfoKey enableInfoKey {
-        .networkId = networkId,
-        .dhId = dhDescriptor.id
-    };
+    DHStatusSourceEnableInfoKey enableInfoKey { networkId, dhDescriptor.id };
     auto &status = dhSourceStatus_[dhDescriptor.dhType];
     auto itEnableInfo = status.enableInfos.find(enableInfoKey);
     if (itEnableInfo == status.enableInfos.end()) {
@@ -1396,8 +1443,7 @@ int32_t ComponentManager::ForceDisableSourceInternal(const std::string &networkI
         if (item.second.enableState != EnableState::DISABLED) {
             auto it = status.listeners.find(item.first);
             if (it != status.listeners.end()) {
-                auto listener = it->second;
-                listeners.push_back(listener);
+                listeners.push_back(it->second);
             }
         }
     }
@@ -1408,7 +1454,12 @@ int32_t ComponentManager::ForceDisableSourceInternal(const std::string &networkI
     }
 
     // Unload component
-    auto sourceResult = StopSource(dhDescriptor.dhType);
+    std::unordered_map<DHType, std::shared_future<int32_t>> sourceResult;
+    ret = StopSource(dhDescriptor.dhType, sourceResult);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("StopSource failed");
+        return ret;
+    }
     if (!WaitForResult(Action::STOP_SOURCE, sourceResult)) {
         DHLOGE("StopSource timeout!");
         return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
@@ -1430,7 +1481,12 @@ int32_t ComponentManager::RealEnableSource(const std::string &networkId, const s
         DHLOGE("InitCompSource failed, ret = %{public}d.", ret);
         return ret;
     }
-    auto sourceResult = StartSource(dhDescriptor.dhType);
+    std::unordered_map<DHType, std::shared_future<int32_t>> sourceResult;
+    ret = StartSource(dhDescriptor.dhType, sourceResult);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("StartSource failed");
+        return ret;
+    }
     if (!WaitForResult(Action::START_SOURCE, sourceResult)) {
         DHLOGE("StartSource failed, some virtual components maybe cannot work, but want to continue!");
         HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
@@ -1441,7 +1497,8 @@ int32_t ComponentManager::RealEnableSource(const std::string &networkId, const s
     ret = Enable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType, isActive);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Enable failed, ret = %{public}d.", ret);
-        StopSource(dhDescriptor.dhType);
+        std::unordered_map<DHType, std::shared_future<int32_t>> futureResult;
+        StopSource(dhDescriptor.dhType, futureResult);
         UninitCompSource(dhDescriptor.dhType);
         return ret;
     }
@@ -1461,7 +1518,12 @@ int32_t ComponentManager::RealDisableSource(const std::string &networkId, const 
         DHLOGE("Disable failed, ret = %{public}d.", ret);
         return ret;
     }
-    auto sourceResult = StopSource(dhDescriptor.dhType);
+    std::unordered_map<DHType, std::shared_future<int32_t>> sourceResult;
+    ret = StopSource(dhDescriptor.dhType, sourceResult);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("StopSource failed");
+        return ret;
+    }
     if (!WaitForResult(Action::STOP_SOURCE, sourceResult)) {
         DHLOGE("StopSource timeout!");
         return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
@@ -1773,40 +1835,40 @@ int32_t ComponentManager::UninitCompSink(DHType dhType)
     return DH_FWK_SUCCESS;
 }
 
-ActionResult ComponentManager::StopSource(DHType dhType)
+int32_t ComponentManager::StopSource(DHType dhType, ActionResult &sourceResult)
 {
+    DHLOGI("StopSource, dhType: %{public}#X", dhType);
     std::shared_lock<std::shared_mutex> lock(compSourceMutex_);
-    std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     if (compSource_.find(dhType) == compSource_.end()) {
         DHLOGE("Component for DHType: %{public}" PRIu32 " not init source handler.", (uint32_t)dhType);
-        return futures;
+        return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
     auto sourcePtr = compSource_[dhType];
     if (sourcePtr == nullptr) {
         DHLOGE("comp source ptr is null.");
-        return futures;
+        return ERR_DH_FWK_SA_HANDLER_IS_NULL;
     }
     std::promise<int32_t> p;
     std::future<int32_t> f = p.get_future();
     std::thread([p = std::move(p), sourcePtr] () mutable {
         p.set_value(sourcePtr->ReleaseSource());
     }).detach();
-    futures.emplace(dhType, f.share());
-    return futures;
+    sourceResult.emplace(dhType, f.share());
+    return DH_FWK_SUCCESS;
 }
 
-ActionResult ComponentManager::StopSink(DHType dhType)
+int32_t ComponentManager::StopSink(DHType dhType, ActionResult &sinkResult)
 {
+    DHLOGI("StopSink, dhType: %{public}#X", dhType);
     std::shared_lock<std::shared_mutex> lock(compSinkMutex_);
-    std::unordered_map<DHType, std::shared_future<int32_t>> futures;
     if (compSink_.find(dhType) == compSink_.end()) {
         DHLOGE("Component for DHType: %{public}" PRIu32 " not init sink handler.", (uint32_t)dhType);
-        return futures;
+        return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
     auto sinkPtr = compSink_[dhType];
     if (sinkPtr == nullptr) {
         DHLOGE("comp sink ptr is null.");
-        return futures;
+        return ERR_DH_FWK_SA_HANDLER_IS_NULL;
     }
     std::promise<int32_t> p;
     std::future<int32_t> f = p.get_future();
@@ -1821,8 +1883,8 @@ ActionResult ComponentManager::StopSink(DHType dhType)
         hardwareHandler->UnRegisterPluginListener();
         return status;
     }).detach();
-    futures.emplace(dhType, f.share());
-    return futures;
+    sinkResult.emplace(dhType, f.share());
+    return DH_FWK_SUCCESS;
 }
 
 int32_t ComponentManager::DisableMetaSource(const std::string &networkId, const DHDescriptor &dhDescriptor,
@@ -1888,7 +1950,12 @@ int32_t ComponentManager::DisableMetaSourceInternal(const std::string &networkId
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Meta disable source failed, ret = %{public}d.", ret);
     }
-    auto sourceResult = StopSource(dhDescriptor.dhType);
+    std::unordered_map<DHType, std::shared_future<int32_t>> sourceResult;
+    ret = StopSource(dhDescriptor.dhType, sourceResult);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("StopSource failed");
+        return ret;
+    }
     if (!WaitForResult(Action::STOP_SOURCE, sourceResult)) {
         DHLOGE("StopSource timeout!");
         return ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT;
@@ -1963,7 +2030,12 @@ int32_t ComponentManager::EnableMetaSourceInternal(const std::string &networkId,
         DHLOGE("InitCompSource failed, ret = %{public}d.", ret);
         return ret;
     }
-    auto sourceResult = StartSource(dhDescriptor.dhType);
+    std::unordered_map<DHType, std::shared_future<int32_t>> sourceResult;
+    ret = StartSource(dhDescriptor.dhType, sourceResult);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("StartSource failed");
+        return ret;
+    }
     if (!WaitForResult(Action::START_SOURCE, sourceResult)) {
         DHLOGE("StartSource failed, some virtual components maybe cannot work, but want to continue!");
         HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
@@ -1974,7 +2046,8 @@ int32_t ComponentManager::EnableMetaSourceInternal(const std::string &networkId,
     ret = dhModemExt->Enable(networkId, sourcePtr);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("EnableMeta failed, ret = %{public}d.", ret);
-        StopSource(dhDescriptor.dhType);
+        std::unordered_map<DHType, std::shared_future<int32_t>> futureResult;
+        StopSource(dhDescriptor.dhType, futureResult);
         UninitCompSource(dhDescriptor.dhType);
         return ret;
     }

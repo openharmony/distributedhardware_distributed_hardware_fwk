@@ -25,6 +25,9 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "VersionManager"
+
+const std::string DH_LOCAL_VERSION = "1.0";
+
 IMPLEMENT_SINGLE_INSTANCE(VersionManager);
 
 int32_t VersionManager::Init()

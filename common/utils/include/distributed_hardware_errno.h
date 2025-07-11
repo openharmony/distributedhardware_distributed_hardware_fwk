@@ -26,8 +26,6 @@ namespace DistributedHardware {
      */
     constexpr int32_t DH_FWK_SUCCESS = 0;
     constexpr int32_t ERR_DH_FWK_PARA_INVALID = -10000;
-    constexpr int32_t ERR_DH_FWK_REMOTE_NETWORK_ID_IS_EMPTY = -10001;
-    constexpr int32_t ERR_DH_FWK_REMOTE_DEVICE_ID_IS_EMPTY = -10002;
     constexpr int32_t ERR_DH_FWK_TYPE_NOT_EXIST = -10003;
     constexpr int32_t ERR_DH_FWK_JSON_PARSE_FAILED = -10004;
     constexpr int32_t ERR_DH_FWK_POINTER_IS_NULL = -10005;
@@ -43,15 +41,15 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT = -10305;
     constexpr int32_t ERR_DH_FWK_COMPONENT_REGISTER_FAILED = -10306;
     constexpr int32_t ERR_DH_FWK_COMPONENT_UNREGISTER_FAILED = -10007;
-    constexpr int32_t ERR_DH_FWK_COMPONENT_GET_REMOTE_SA_FAILED = -10008;
     constexpr int32_t ERR_DH_FWK_COMPONENT_GET_SINK_VERSION_FAILED = -10009;
     constexpr int32_t ERR_DH_FWK_COMPONENT_DHTYPE_NOT_FOUND = -10010;
     constexpr int32_t ERR_DH_FWK_COMPONENT_MONITOR_NULL = -10011;
     constexpr int32_t ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED = -10012;
     constexpr int32_t ERR_DH_FWK_COMPONENT_GET_ENABLE_PARAM_FAILED = -10013;
-    constexpr int32_t ERR_DH_FWK_COMPONENT_LIMIT_DEMAND_START = -10014;
+    constexpr int32_t ERR_DH_FWK_COMPONENT_NO_NEED_ENABLE = -10014;
     constexpr int32_t ERR_DH_FWK_COMPONENT_REPEAT_CALL = -10015;
     constexpr int32_t ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND = -10016;
+    constexpr int32_t ERR_DH_FWK_SA_HANDLER_IS_NULL = -10017;
 
     /* ResourceManager errno, range: [-10400, -10499] */
     constexpr int32_t ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL = -10400;
@@ -59,16 +57,12 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL = -10402;
     constexpr int32_t ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL = -10403;
     constexpr int32_t ERR_DH_FWK_RESOURCE_CAPABILITY_MAP_NOT_FOUND = -10404;
-    constexpr int32_t ERR_DH_FWK_RESOURCE_DB_MANUAL_SYNC_FAIL = -10405;
     constexpr int32_t ERR_DH_FWK_RESOURCE_INIT_DB_FAILED = -10406;
     constexpr int32_t ERR_DH_FWK_RESOURCE_UNINIT_DB_FAILED = -10407;
     constexpr int32_t ERR_DH_FWK_RESOURCE_REGISTER_DB_FAILED = -10408;
     constexpr int32_t ERR_DH_FWK_RESOURCE_UNREGISTER_DB_FAILED = -10409;
     constexpr int32_t ERR_DH_FWK_RESOURCE_KEY_IS_EMPTY = -10410;
-    constexpr int32_t ERR_DH_FWK_RESOURCE_SYNC_VERSIONINFO_FAIL = -10411;
-    constexpr int32_t ERR_DH_FWK_RESOURCE_DEVICE_ID_NOT_EXIST = -10412;
     constexpr int32_t ERR_DH_FWK_RESOURCE_UUID_NOT_FOUND = -10413;
-    constexpr int32_t ERR_DH_FWK_RESOURCE_CAPINFO_POINTER_NULL = -10414;
     constexpr int32_t ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID = -10415;
 
     /* DistributedHardwareManager errno, range: [-10500, -10599] */
@@ -93,11 +87,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_TASK_TIMEOUT = -10700;
 
     /* DistributedHardwareService errno, range: [-10800, -10899] */
-    constexpr int32_t ERR_DH_FWK_SERVICE_IPC_WRITE_PARA_FAIL = -10800;
     constexpr int32_t ERR_DH_FWK_SERVICE_IPC_SEND_REQUEST_FAIL = -10801;
-    constexpr int32_t ERR_DH_FWK_SERVICE_IPC_READ_PARA_FAIL = -10802;
-    constexpr int32_t ERR_DH_FWK_SERVICE_STRING_IS_EMPTY = -10803;
-    constexpr int32_t ERR_DH_FWK_SERVICE_LOCAL_VERSION_NOT_EXIST = -10804;
     constexpr int32_t ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL = -10805;
     constexpr int32_t ERR_DH_FWK_SERVICE_REMOTE_IS_NULL = -10806;
     constexpr int32_t ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL = -10807;
@@ -105,6 +95,13 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_SERVICE_MSG_INVALID = -10809;
     constexpr int32_t ERR_DH_FWK_AVTRANS_CALLBACK_IS_NULL = -10810;
     constexpr int32_t ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT = -10811;
+    constexpr int32_t ERR_DH_FWK_STATUS_LISTENER_IS_NULL = -10812;
+    constexpr int32_t ERR_DH_FWK_REGISTER_HDF_LISTENER_FAIL = -10813;
+    constexpr int32_t ERR_DH_FWK_LOAD_HDF_FAIL = -10814;
+    constexpr int32_t ERR_DH_FWK_LOAD_HDF_TIMEOUT = -10815;
+    constexpr int32_t ERR_DH_FWK_NO_HDF_SUPPORT = -10816;
+    constexpr int32_t ERR_DH_FWK_ADD_DEATH_FAIL = -10817;
+    constexpr int32_t ERR_DH_FWK_REMOVE_DEATH_FAIL = -10818;
 
     /* AccessManager errno, range: [-10900, -10999] */
     constexpr int32_t ERR_DH_FWK_ACCESS_INIT_DM_FAILED = -10900;

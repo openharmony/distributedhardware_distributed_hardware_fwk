@@ -241,6 +241,22 @@ public:
      */
     API_EXPORT int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors);
 
+    /**
+     * @brief Load distributed HDF.
+     *
+     * @param dhType distributed hardware type.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t LoadDistributedHDF(const DHType dhType);
+
+    /**
+     * @brief Unload distributed HDF.
+     *
+     * @param dhType distributed hardware type.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t UnLoadDistributedHDF(const DHType dhType);
+
 private:
     /**
      * @brief Determine whether the topic is valid.

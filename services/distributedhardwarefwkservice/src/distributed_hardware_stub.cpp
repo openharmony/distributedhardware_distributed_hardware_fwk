@@ -30,6 +30,7 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "hdf_operate.h"
 #include "publisher_listener_proxy.h"
 #include "av_trans_errno.h"
 
@@ -282,17 +283,18 @@ int32_t DistributedHardwareStub::RegisterControlCenterCallbackInner(MessageParce
 int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRemoteSinkStarted(MessageParcel &data,
     MessageParcel &reply)
 {
-    Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetCallingTokenID();
+    DHLOGI("HandleNotifySourceRemoteSinkStarted Start.");
+    Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetDCallingTokenID();
     std::string udid = data.ReadString();
     if (!IsIdLengthValid(udid)) {
-        DHLOGE("the udid is invalid, %{public}s", GetAnonyString(udid).c_str());
-        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+        DHLOGE("the udid: %{public}s is invalid.", GetAnonyString(udid).c_str());
+        return ERR_DH_FWK_PARA_INVALID;
     }
     std::string networkId = "";
     DeviceManager::GetInstance().GetNetworkIdByUdid(DH_FWK_PKG_NAME, udid, networkId);
     if (!IsIdLengthValid(networkId)) {
-        DHLOGE("the networkId is invalid, %{public}s", GetAnonyString(networkId).c_str());
-        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+        DHLOGE("the networkId: %{public}s is invalid, not a trusted device.", GetAnonyString(networkId).c_str());
+        return ERR_DH_FWK_PARA_INVALID;
     }
     uint32_t dAccessToken = Security::AccessToken::AccessTokenKit::AllocLocalTokenID(networkId, callerToken);
     const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
@@ -302,13 +304,12 @@ int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRe
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
 
-    DHLOGI("DistributedHardwareStub HandleNotifySourceRemoteSinkStarted Start.");
     int32_t ret = NotifySourceRemoteSinkStarted(udid);
     if (!reply.WriteInt32(ret)) {
         DHLOGE("write ret failed.");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
     }
-    DHLOGI("DistributedHardwareStub HandleNotifySourceRemoteSinkStarted End.");
+    DHLOGI("HandleNotifySourceRemoteSinkStarted End.");
     return DH_FWK_SUCCESS;
 }
 
@@ -554,6 +555,55 @@ int32_t DistributedHardwareStub::DisableSourceInner(MessageParcel &data, Message
     return DH_FWK_SUCCESS;
 }
 
+int32_t DistributedHardwareStub::LoadDistributedHDFInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    DHType dhType = static_cast<DHType>(data.ReadUint32());
+    int32_t ret = LoadDistributedHDF(dhType);
+    if (ret == DH_FWK_SUCCESS) {
+        sptr<IRemoteObject> remoteObj = data.ReadRemoteObject();
+        if (remoteObj != nullptr) {
+            ret = HdfOperateManager::GetInstance().AddDeathRecipient(dhType, remoteObj);
+            if (ret != DH_FWK_SUCCESS) {
+                DHLOGE("AddDeathRecipient failed!");
+                UnLoadDistributedHDF(dhType);
+            }
+        }
+    }
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::UnLoadDistributedHDFInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    DHType dhType = static_cast<DHType>(data.ReadUint32());
+    int32_t ret = UnLoadDistributedHDF(dhType);
+    if (ret == DH_FWK_SUCCESS) {
+        sptr<IRemoteObject> remoteObj = data.ReadRemoteObject();
+        if (remoteObj != nullptr) {
+            ret = HdfOperateManager::GetInstance().RemoveDeathRecipient(dhType, remoteObj);
+            if (ret != DH_FWK_SUCCESS) {
+                DHLOGE("RemoveDeathRecipient failed!");
+            }
+        }
+    }
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
 int32_t DistributedHardwareStub::ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors)
 {
     int32_t size = data.ReadInt32();
@@ -635,6 +685,12 @@ int32_t DistributedHardwareStub::OnRemoteRequestEx(uint32_t code, MessageParcel 
         }
         case static_cast<uint32_t>(DHMsgInterfaceCode::DISABLE_SOURCE): {
             return DisableSourceInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::LOAD_HDF): {
+            return LoadDistributedHDFInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::UNLOAD_HDF): {
+            return UnLoadDistributedHDFInner(data, reply);
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);

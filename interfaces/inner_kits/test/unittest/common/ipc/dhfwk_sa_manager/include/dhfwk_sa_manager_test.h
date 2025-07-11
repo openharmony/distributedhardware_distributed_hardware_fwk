@@ -191,6 +191,18 @@ int32_t DisableSource(const std::string &networkId, const std::vector<DHDescript
     (void)descriptors;
     return DH_FWK_SUCCESS;
 }
+
+int32_t LoadDistributedHDF(const DHType dhType)
+{
+    (void)dhType;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t UnLoadDistributedHDF(const DHType dhType)
+{
+    (void)dhType;
+    return DH_FWK_SUCCESS;
+}
 };
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -25,6 +25,7 @@ ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
     "${utils_path}/include",
     "${common_path}/log/include",
     "${common_path}/utils/include",
+    "${innerkits_path}/include/ipc",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${services_path}/distributedhardwarefwkservice/include/utils",
   ]
@@ -33,8 +34,12 @@ ohos_fuzztest("CapabilityInfoManagerFuzzTest") {
     "-O0",
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
+    "-Dprivate=public",
   ]
-  sources = [ "capabilityinfomanager_fuzzer.cpp" ]
+  sources = [
+    "capabilityinfomanager_fuzzer.cpp",
+    "${innerkits_path}/src/ipc/get_dh_descriptors_callback_stub.cpp",
+  ]
 
   deps = [
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",

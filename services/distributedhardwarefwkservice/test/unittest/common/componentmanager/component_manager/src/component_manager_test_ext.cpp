@@ -122,12 +122,9 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndDisableSink_001, testing::ext::Te
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _)).Times(AtLeast(1));
 
-    std::vector<DHType> types = { DHType::CAMERA };
     auto sinkListener = sptr<MockHDSinkStatusListenerStub>(new (std::nothrow) MockHDSinkStatusListenerStub());
-    EXPECT_CALL(*sinkListener, OnEnable(_)).Times(AtLeast(1));
-    EXPECT_CALL(*sinkListener, OnDisable(_)).Times(AtLeast(1));
-
-    EXPECT_CALL(*componentLoader_, GetAllCompTypes()).WillRepeatedly(Return(types));
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
     ComponentManager::GetInstance().RegisterDHStatusListener(sinkListener, CAMERA_UID, CAMERA_PID);
 
     auto ret = ComponentManager::GetInstance().EnableSink(CAMERA_DESCRIPTOR, CAMERA_UID, CAMERA_PID);
@@ -139,7 +136,6 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndDisableSink_001, testing::ext::Te
     EXPECT_CALL(*componentLoader_, GetHardwareHandler(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(handler.get()), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*componentLoader_, ReleaseSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
-    EXPECT_CALL(*handler, UnRegisterPluginListener()).Times(AtLeast(1));
 
     ret = ComponentManager::GetInstance().DisableSink(CAMERA_DESCRIPTOR, CAMERA_UID, CAMERA_PID);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
@@ -175,7 +171,6 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndDisableSink_002, testing::ext::Te
     EXPECT_CALL(*componentLoader_, GetHardwareHandler(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(handler.get()), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*componentLoader_, ReleaseSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
-    EXPECT_CALL(*handler, UnRegisterPluginListener()).Times(AtLeast(1));
 
     ComponentManager::GetInstance().DisableSink(newAudio, AUDIO_UID, newAudioPid);
     ret = ComponentManager::GetInstance().DisableSink(AUDIO_DESCRIPTOR, AUDIO_UID, AUDIO_PID);
@@ -222,11 +217,9 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_001, testing::ext
     ASSERT_TRUE(versionManager_ != nullptr);
     ASSERT_TRUE(utilTool_ != nullptr);
 
-    std::vector<DHType> types = { DHType::CAMERA };
     auto sourceListener = sptr<MockHDSourceStatusListenerStub>(new (std::nothrow) MockHDSourceStatusListenerStub());
-    EXPECT_CALL(*sourceListener, OnEnable(_, _)).Times(AtLeast(1));
-    EXPECT_CALL(*sourceListener, OnDisable(_, _)).Times(AtLeast(1));
-    EXPECT_CALL(*componentLoader_, GetAllCompTypes()).WillRepeatedly(Return(types));
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
     ComponentManager::GetInstance().RegisterDHStatusListener(VALUABLE_DEVICE_INFO.networkId,
         sourceListener, CAMERA_UID, CAMERA_PID);
 
@@ -524,12 +517,9 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndForceDisableSink_001, testing::ex
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _)).Times(AtLeast(1));
 
-    std::vector<DHType> types = { DHType::AUDIO };
     auto sinkListener = sptr<MockHDSinkStatusListenerStub>(new (std::nothrow) MockHDSinkStatusListenerStub());
-    EXPECT_CALL(*sinkListener, OnEnable(_)).Times(AtLeast(1));
-    EXPECT_CALL(*sinkListener, OnDisable(_)).Times(AtLeast(1));
-
-    EXPECT_CALL(*componentLoader_, GetAllCompTypes()).WillRepeatedly(Return(types));
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
     ComponentManager::GetInstance().RegisterDHStatusListener(sinkListener, AUDIO_UID, AUDIO_PID);
 
     ComponentManager::GetInstance().EnableSink(AUDIO_DESCRIPTOR, AUDIO_UID, AUDIO_PID);
@@ -541,7 +531,6 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndForceDisableSink_001, testing::ex
     EXPECT_CALL(*componentLoader_, GetHardwareHandler(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(handler.get()), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*componentLoader_, ReleaseSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
-    EXPECT_CALL(*handler, UnRegisterPluginListener()).Times(AtLeast(1));
 
     auto ret = ComponentManager::GetInstance().ForceDisableSink(newAudio);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
@@ -567,11 +556,9 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndForceDisableSource_001, testing
     ASSERT_TRUE(versionManager_ != nullptr);
     ASSERT_TRUE(utilTool_ != nullptr);
 
-    std::vector<DHType> types = { DHType::AUDIO };
     auto sourceListener = sptr<MockHDSourceStatusListenerStub>(new (std::nothrow) MockHDSourceStatusListenerStub());
-    EXPECT_CALL(*sourceListener, OnEnable(_, _)).Times(AtLeast(1));
-    EXPECT_CALL(*sourceListener, OnDisable(_, _)).Times(AtLeast(1));
-    EXPECT_CALL(*componentLoader_, GetAllCompTypes()).WillRepeatedly(Return(types));
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
     ComponentManager::GetInstance().RegisterDHStatusListener(VALUABLE_DEVICE_INFO.networkId,
         sourceListener, AUDIO_UID, AUDIO_PID);
 
@@ -810,48 +797,40 @@ HWTEST_F(ComponentManagerTestExt, CheckDemandStart_007, testing::ext::TestSize.L
 
 HWTEST_F(ComponentManagerTestExt, RegisterDHStatusListener_001, testing::ext::TestSize.Level1)
 {
-    std::vector<DHType> types = { DHType::CAMERA };
     sptr<IHDSinkStatusListener> listener = nullptr;
-    EXPECT_CALL(*componentLoader_, GetAllCompTypes()).WillRepeatedly(Return(types));
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
     auto ret = ComponentManager::GetInstance().RegisterDHStatusListener(listener, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    ret = ComponentManager::GetInstance().RegisterDHStatusListener(listener, 0, 0);
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
 HWTEST_F(ComponentManagerTestExt, RegisterDHStatusListener_002, testing::ext::TestSize.Level1)
 {
-    std::vector<DHType> types = { DHType::CAMERA };
     sptr<IHDSourceStatusListener> listener = nullptr;
-    EXPECT_CALL(*componentLoader_, GetAllCompTypes()).WillRepeatedly(Return(types));
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
     auto ret = ComponentManager::GetInstance().RegisterDHStatusListener(
         VALUABLE_DEVICE_INFO.networkId, listener, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    ret = ComponentManager::GetInstance().RegisterDHStatusListener(VALUABLE_DEVICE_INFO.networkId, listener, 0, 0);
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
 HWTEST_F(ComponentManagerTestExt, UnregisterDHStatusListener_001, testing::ext::TestSize.Level1)
 {
-    std::vector<DHType> types = { DHType::CAMERA };
     sptr<IHDSinkStatusListener> listener = nullptr;
-    EXPECT_CALL(*componentLoader_, GetAllCompTypes()).WillRepeatedly(Return(types));
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
     auto ret = ComponentManager::GetInstance().UnregisterDHStatusListener(listener, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    ret = ComponentManager::GetInstance().UnregisterDHStatusListener(listener, 0, 0);
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
 HWTEST_F(ComponentManagerTestExt, UnregisterDHStatusListener_002, testing::ext::TestSize.Level1)
 {
-    std::vector<DHType> types = { DHType::CAMERA };
     sptr<IHDSourceStatusListener> listener = nullptr;
-    EXPECT_CALL(*componentLoader_, GetAllCompTypes()).WillRepeatedly(Return(types));
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
     auto ret = ComponentManager::GetInstance().UnregisterDHStatusListener(
         VALUABLE_DEVICE_INFO.networkId, listener, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    ret = ComponentManager::GetInstance().UnregisterDHStatusListener(VALUABLE_DEVICE_INFO.networkId, listener, 0, 0);
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
 HWTEST_F(ComponentManagerTestExt, RealEnableSource_001, testing::ext::TestSize.Level1)

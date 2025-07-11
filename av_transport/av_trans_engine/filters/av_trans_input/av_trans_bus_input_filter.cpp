@@ -177,7 +177,6 @@ Status AVTransBusInputFilter::DoPrepare()
     }
     peerDevId_ = std::string(peerDevId->valuestring);
     cJSON_Delete(jParam);
-    AVTRANS_LOGD("ownerName = %{public}s, peerDevId = %{public}s.", ownerName_.c_str(), peerDevId_.c_str());
     sessionName_ = ownerName_ + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX;
     SoftbusChannelAdapter::GetInstance().RegisterChannelListener(sessionName_, peerDevId_, this);
     int32_t ret = SoftbusChannelAdapter::GetInstance().CreateChannelServer(TransName2PkgName(ownerName_), sessionName_);

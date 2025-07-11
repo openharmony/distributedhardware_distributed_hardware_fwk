@@ -30,7 +30,7 @@ Task::Task(const std::string &networkId, const std::string &uuid, const std::str
 
 Task::~Task()
 {
-    this->childrenTasks_.clear();
+    std::vector<std::shared_ptr<Task>>().swap(this->childrenTasks_);
 }
 
 std::string Task::GetId()

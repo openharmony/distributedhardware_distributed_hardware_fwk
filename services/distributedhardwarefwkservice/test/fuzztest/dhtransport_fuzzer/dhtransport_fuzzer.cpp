@@ -35,6 +35,13 @@ namespace DistributedHardware {
 namespace {
     const int32_t SOCKETID = 1;
 }
+
+void OnBind(int32_t socket, PeerSocketInfo info);
+void OnShutdown(int32_t socket, ShutdownReason reason);
+void OnBind(int32_t socket, PeerSocketInfo info);
+void OnBytes(int32_t socket, const void *data, uint32_t dataLen);
+std::shared_ptr<DHCommTool> GetDHCommToolPtr();
+
 void DhTransportOnBytesReceivedFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(int32_t))) {
@@ -160,6 +167,65 @@ void DhTransportOnSocketClosedFuzzTest(const uint8_t* data, size_t size)
     dhTransportTest->OnSocketClosed(socketId, reason);
     dhTransportTest->UnInit();
 }
+
+void DhTransportOnBindFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(int32_t))) {
+        return;
+    }
+    FuzzedDataProvider fdp(data, size);
+    int32_t socketId = fdp.ConsumeIntegral<int32_t>();
+    std::string peerSocketName = fdp.ConsumeRandomLengthString();
+    std::string remoteNetworkId = fdp.ConsumeRandomLengthString();
+    PeerSocketInfo info = {
+        .name = const_cast<char*>(peerSocketName.c_str()),
+        .networkId = const_cast<char*>(remoteNetworkId.c_str()),
+        .pkgName = const_cast<char*>(DH_FWK_PKG_NAME.c_str()),
+        .dataType = DATA_TYPE_BYTES
+    };
+    std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
+    std::shared_ptr<DHTransport> dhTransportTest = std::make_shared<DHTransport>(dhCommTool);
+    OnBind(socketId, info);
+}
+
+void DhTransportOnShutdownFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(int32_t))) {
+        return;
+    }
+    int32_t socketId = *(reinterpret_cast<const int32_t*>(data));
+    ShutdownReason reason = ShutdownReason::SHUTDOWN_REASON_UNKNOWN;
+    std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
+    std::shared_ptr<DHTransport> dhTransportTest = std::make_shared<DHTransport>(dhCommTool);
+    OnShutdown(socketId, reason);
+    dhTransportTest->UnInit();
+}
+
+void DhTransportInitFuzzTest(const uint8_t* data, size_t size)
+{
+    (void)data;
+    (void)size;
+    std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
+    std::shared_ptr<DHTransport> dhTransportTest = std::make_shared<DHTransport>(dhCommTool);
+    dhTransportTest->Init();
+}
+
+void DhTransportOnBytesFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(int32_t) + sizeof(uint32_t))) {
+        return;
+    }
+    int32_t socketId = *(reinterpret_cast<const int32_t*>(data));
+    uint32_t dataLen = *(reinterpret_cast<const uint32_t*>(data + sizeof(int32_t)));
+    OnBytes(socketId, data, dataLen);
+}
+
+void DhTransportGetDHCommToolPtrFuzzTest(const uint8_t* data, size_t size)
+{
+    (void)data;
+    (void)size;
+    auto ptr = GetDHCommToolPtr();
+}
 }
 }
 
@@ -176,6 +242,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::DhTransportSendFuzzTest(data, size);
     OHOS::DistributedHardware::DhTransportOnSocketOpenedFuzzTest(data, size);
     OHOS::DistributedHardware::DhTransportOnSocketClosedFuzzTest(data, size);
+    OHOS::DistributedHardware::DhTransportOnBindFuzzTest(data, size);
+    OHOS::DistributedHardware::DhTransportOnShutdownFuzzTest(data, size);
+    OHOS::DistributedHardware::DhTransportInitFuzzTest(data, size);
+    OHOS::DistributedHardware::DhTransportOnBytesFuzzTest(data, size);
+    OHOS::DistributedHardware::DhTransportGetDHCommToolPtrFuzzTest(data, size);
     return 0;
 }
 

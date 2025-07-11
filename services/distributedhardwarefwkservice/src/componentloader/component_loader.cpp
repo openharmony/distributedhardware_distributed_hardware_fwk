@@ -44,27 +44,23 @@ using GetHardwareClass = IHardwareHandler *(*)();
 using GetSourceHardwareClass = IDistributedHardwareSource *(*)();
 using GetSinkHardwareClass = IDistributedHardwareSink *(*)();
 namespace {
-const std::string COMP_NAME = "name";
-const std::string COMP_TYPE = "type";
-const std::string COMP_HANDLER_LOC = "comp_handler_loc";
-const std::string COMP_HANDLER_VERSION = "comp_handler_version";
-const std::string COMP_SOURCE_LOC = "comp_source_loc";
-const std::string COMP_SOURCE_VERSION = "comp_source_version";
-const std::string COMP_SOURCE_SA_ID = "comp_source_sa_id";
-const std::string COMP_SINK_LOC = "comp_sink_loc";
-const std::string COMP_SINK_VERSION = "comp_sink_version";
-const std::string COMP_SINK_SA_ID = "comp_sink_sa_id";
-const std::string COMP_RESOURCE_DESC = "comp_resource_desc";
-const std::string COMP_SUBTYPE = "subtype";
-const std::string COMP_SENSITIVE = "sensitive";
+constexpr const char *COMP_NAME = "name";
+constexpr const char *COMP_TYPE = "type";
+constexpr const char *COMP_HANDLER_LOC = "comp_handler_loc";
+constexpr const char *COMP_HANDLER_VERSION = "comp_handler_version";
+constexpr const char *COMP_SOURCE_LOC = "comp_source_loc";
+constexpr const char *COMP_SOURCE_VERSION = "comp_source_version";
+constexpr const char *COMP_SOURCE_SA_ID = "comp_source_sa_id";
+constexpr const char *COMP_SINK_LOC = "comp_sink_loc";
+constexpr const char *COMP_SINK_VERSION = "comp_sink_version";
+constexpr const char *COMP_SINK_SA_ID = "comp_sink_sa_id";
+constexpr const char *COMP_RESOURCE_DESC = "comp_resource_desc";
+constexpr const char *COMP_SUBTYPE = "subtype";
+constexpr const char *COMP_SENSITIVE = "sensitive";
+constexpr const char *COMPONENTSLOAD_DISTRIBUTED_COMPONENTS = "distributed_components";
 
-const std::string COMPONENTSLOAD_DISTRIBUTED_COMPONENTS = "distributed_components";
-
-const std::string DEFAULT_NAME = "";
-const std::string DEFAULT_TYPE = "UNKNOWN";
-const std::string DEFAULT_LOC = "";
-const int32_t DEFAULT_SA_ID = -1;
-const std::string DEFAULT_VERSION = "1.0";
+constexpr int32_t DEFAULT_SA_ID = -1;
+constexpr uint32_t MAX_COMP_SIZE = 128;
 
 std::map<std::string, DHType> g_mapDhTypeName = {
     { "UNKNOWN", DHType::UNKNOWN },
@@ -98,28 +94,24 @@ int32_t ComponentLoader::Init()
     return ret;
 }
 
-std::vector<DHType> ComponentLoader::GetAllCompTypes()
+void ComponentLoader::GetAllCompTypes(std::vector<DHType> &dhTypeVec)
 {
     std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
-    std::vector<DHType> DHTypeALL;
     for (std::map<DHType, CompHandler>::iterator it = compHandlerMap_.begin(); it != compHandlerMap_.end(); ++it) {
-        DHTypeALL.push_back(it->first);
+        dhTypeVec.push_back(it->first);
     }
-    return DHTypeALL;
 }
 
-CompVersion ComponentLoader::GetCompVersionFromComConfig(const CompConfig& cCfg)
+void ComponentLoader::GetCompVersionFromComConfig(const CompConfig &comCfg, CompVersion &compVersion)
 {
-    CompVersion compVersions;
-    compVersions.dhType = cCfg.type;
-    compVersions.name = cCfg.name;
-    compVersions.handlerVersion = cCfg.compHandlerVersion;
-    compVersions.sinkVersion = cCfg.compSinkVersion;
-    compVersions.sourceVersion = cCfg.compSourceVersion;
-    compVersions.haveFeature = cCfg.haveFeature;
-    compVersions.sourceFeatureFilters = cCfg.sourceFeatureFilters;
-    compVersions.sinkSupportedFeatures = cCfg.sinkSupportedFeatures;
-    return compVersions;
+    compVersion.dhType = comCfg.type;
+    compVersion.name = comCfg.name;
+    compVersion.handlerVersion = comCfg.compHandlerVersion;
+    compVersion.sinkVersion = comCfg.compSinkVersion;
+    compVersion.sourceVersion = comCfg.compSourceVersion;
+    compVersion.haveFeature = comCfg.haveFeature;
+    compVersion.sourceFeatureFilters = comCfg.sourceFeatureFilters;
+    compVersion.sinkSupportedFeatures = comCfg.sinkSupportedFeatures;
 }
 
 bool ComponentLoader::CheckComponentEnable(const CompConfig &config)
@@ -148,7 +140,7 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
         DHLOGE("jsonStr parse failed");
         return ERR_DH_FWK_JSON_PARSE_FAILED;
     }
-    cJSON *components = cJSON_GetObjectItem(root, COMPONENTSLOAD_DISTRIBUTED_COMPONENTS.c_str());
+    cJSON *components = cJSON_GetObjectItem(root, COMPONENTSLOAD_DISTRIBUTED_COMPONENTS);
     if (!IsArray(components)) {
         DHLOGE("distributed_components is not an array");
         cJSON_Delete(root);
@@ -166,8 +158,9 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
         CompConfig config;
         ParseCompConfigFromJson(component, config);
         dhtypeMap.insert(std::pair<DHType, CompConfig>(config.type, config));
-        localDHVersion_.compVersions.insert(
-            std::pair<DHType, CompVersion>(config.type, GetCompVersionFromComConfig(config)));
+        CompVersion compVersion;
+        GetCompVersionFromComConfig(config, compVersion);
+        localDHVersion_.compVersions.insert(std::pair<DHType, CompVersion>(config.type, compVersion));
     }
     cJSON_Delete(root);
     isLocalVersionInit_.store(true);
@@ -176,47 +169,47 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
 
 void ComponentLoader::ParseCompConfigFromJson(cJSON *component, CompConfig &config)
 {
-    cJSON *nameJson = cJSON_GetObjectItem(component, COMP_NAME.c_str());
+    cJSON *nameJson = cJSON_GetObjectItem(component, COMP_NAME);
     if (IsString(nameJson)) {
         config.name = nameJson->valuestring;
     }
-    cJSON *typeJson = cJSON_GetObjectItem(component, COMP_TYPE.c_str());
+    cJSON *typeJson = cJSON_GetObjectItem(component, COMP_TYPE);
     if (IsString(typeJson)) {
         config.type = g_mapDhTypeName[typeJson->valuestring];
     }
-    cJSON *handlerLocJson = cJSON_GetObjectItem(component, COMP_HANDLER_LOC.c_str());
+    cJSON *handlerLocJson = cJSON_GetObjectItem(component, COMP_HANDLER_LOC);
     if (IsString(handlerLocJson)) {
         config.compHandlerLoc = handlerLocJson->valuestring;
     }
-    cJSON *handlerVerJson = cJSON_GetObjectItem(component, COMP_HANDLER_VERSION.c_str());
+    cJSON *handlerVerJson = cJSON_GetObjectItem(component, COMP_HANDLER_VERSION);
     if (IsString(handlerVerJson)) {
         config.compHandlerVersion = handlerVerJson->valuestring;
     }
-    cJSON *sourceLocJson = cJSON_GetObjectItem(component, COMP_SOURCE_LOC.c_str());
+    cJSON *sourceLocJson = cJSON_GetObjectItem(component, COMP_SOURCE_LOC);
     if (IsString(sourceLocJson)) {
         config.compSourceLoc = sourceLocJson->valuestring;
     }
-    cJSON *sourceVerJson = cJSON_GetObjectItem(component, COMP_SOURCE_VERSION.c_str());
+    cJSON *sourceVerJson = cJSON_GetObjectItem(component, COMP_SOURCE_VERSION);
     if (IsString(sourceVerJson)) {
         config.compSourceVersion = sourceVerJson->valuestring;
     }
-    cJSON *sourceSaIdJson = cJSON_GetObjectItem(component, COMP_SOURCE_SA_ID.c_str());
+    cJSON *sourceSaIdJson = cJSON_GetObjectItem(component, COMP_SOURCE_SA_ID);
     if (IsInt32(sourceSaIdJson)) {
         config.compSourceSaId = static_cast<int32_t>(sourceSaIdJson->valueint);
     }
-    cJSON *sinkLocJson = cJSON_GetObjectItem(component, COMP_SINK_LOC.c_str());
+    cJSON *sinkLocJson = cJSON_GetObjectItem(component, COMP_SINK_LOC);
     if (IsString(sinkLocJson)) {
         config.compSinkLoc = sinkLocJson->valuestring;
     }
-    cJSON *sinkVerJson = cJSON_GetObjectItem(component, COMP_SINK_VERSION.c_str());
+    cJSON *sinkVerJson = cJSON_GetObjectItem(component, COMP_SINK_VERSION);
     if (IsString(sinkVerJson)) {
         config.compSinkVersion = sinkVerJson->valuestring;
     }
-    cJSON *sinkSaIdJson = cJSON_GetObjectItem(component, COMP_SINK_SA_ID.c_str());
+    cJSON *sinkSaIdJson = cJSON_GetObjectItem(component, COMP_SINK_SA_ID);
     if (IsInt32(sinkSaIdJson)) {
         config.compSinkSaId = static_cast<int32_t>(sinkSaIdJson->valueint);
     }
-    cJSON *resourceDescs = cJSON_GetObjectItem(component, COMP_RESOURCE_DESC.c_str());
+    cJSON *resourceDescs = cJSON_GetObjectItem(component, COMP_RESOURCE_DESC);
     if (IsArray(resourceDescs)) {
         ParseResourceDescFromJson(resourceDescs, config);
     }
@@ -228,7 +221,7 @@ void ComponentLoader::ParseResourceDescFromJson(cJSON *resourceDescs, CompConfig
     cJSON *resourceDesc = nullptr;
     cJSON_ArrayForEach(resourceDesc, resourceDescs) {
         bool sensitiveValue;
-        cJSON *sensitive = cJSON_GetObjectItem(resourceDesc, COMP_SENSITIVE.c_str());
+        cJSON *sensitive = cJSON_GetObjectItem(resourceDesc, COMP_SENSITIVE);
         if (!IsBool(sensitive)) {
             DHLOGE("COMP_SUBTYPE is invalid!");
             return;
@@ -239,7 +232,7 @@ void ComponentLoader::ParseResourceDescFromJson(cJSON *resourceDescs, CompConfig
             sensitiveValue = false;
         }
         ResourceDesc resource;
-        cJSON *subtypeJson = cJSON_GetObjectItem(resourceDesc, COMP_SUBTYPE.c_str());
+        cJSON *subtypeJson = cJSON_GetObjectItem(resourceDesc, COMP_SUBTYPE);
         if (!IsString(subtypeJson)) {
             DHLOGE("COMP_SUBTYPE is invalid!");
             return;
