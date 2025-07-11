@@ -41,7 +41,8 @@ struct AVTransSharedMemory {
 struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {
     using AVTransSharedMemory::AVTransSharedMemory;
     explicit AVTransSharedMemoryExt() {}
-    virtual ~AVTransSharedMemoryExt() {
+    virtual ~AVTransSharedMemoryExt()
+    {
         if (addr != nullptr) {
             free(addr);
             addr = nullptr;
