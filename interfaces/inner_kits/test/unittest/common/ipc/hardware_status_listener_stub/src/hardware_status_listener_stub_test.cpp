@@ -19,6 +19,9 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace DistributedHardware {
+constexpr uint32_t MAX_DH_DESCRIPTOR_ARRAY_SIZE = 4100;
+constexpr uint32_t INVALID_CODE = 100;
+
 void HardwareStatusListenerStubTest::SetUpTestCase()
 {
 }
@@ -31,12 +34,14 @@ void HardwareStatusListenerStubTest::SetUp()
 {
     sinkListenerStub_ = std::make_shared<MockHDSinkStatusListenerStub>();
     sourceListenerStub_ = std::make_shared<MockHDSourceStatusListenerStub>();
+    getDHCallbackStub_ = std::make_shared<TestGetDhDescriptorsCallbackStub>();
 }
 
 void HardwareStatusListenerStubTest::TearDown()
 {
     sinkListenerStub_ = nullptr;
     sourceListenerStub_ = nullptr;
+    getDHCallbackStub_ = nullptr;
 }
 
 /**
@@ -151,6 +156,63 @@ HWTEST_F(HardwareStatusListenerStubTest, OnRemoteRequest_103, TestSize.Level0)
     data.WriteInt32(static_cast<int32_t>(DHType::AUDIO));
     data.WriteString("id_test");
     EXPECT_EQ(DH_FWK_SUCCESS, sourceListenerStub_->OnRemoteRequest(code, data, reply, option));
+}
+
+HWTEST_F(HardwareStatusListenerStubTest, OnRemoteRequest_104, TestSize.Level0)
+{
+    ASSERT_TRUE(getDHCallbackStub_ != nullptr);
+    std::vector<DHDescriptor> dhDescriptors;
+    uint32_t code = static_cast<uint32_t>(IGetDhDescriptorsCallback::Message::ON_SUCCESS);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(getDHCallbackStub_->GetDescriptor());
+    data.WriteString("netWorkId_test");
+    data.WriteUint32(MAX_DH_DESCRIPTOR_ARRAY_SIZE);
+    auto ret = getDHCallbackStub_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(HardwareStatusListenerStubTest, OnRemoteRequest_105, TestSize.Level0)
+{
+    ASSERT_TRUE(getDHCallbackStub_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(IGetDhDescriptorsCallback::Message::ON_SUCCESS);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(getDHCallbackStub_->GetDescriptor());
+    data.WriteString("netWorkId_test");
+    data.WriteUint32(1);
+    data.WriteUint32(static_cast<uint32_t>(DHType::CAMERA));
+    data.WriteString("camera_1");
+    auto ret = getDHCallbackStub_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(HardwareStatusListenerStubTest, OnRemoteRequest_106, TestSize.Level0)
+{
+    ASSERT_TRUE(getDHCallbackStub_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(IGetDhDescriptorsCallback::Message::ON_ERROR);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(getDHCallbackStub_->GetDescriptor());
+    data.WriteString("netWorkId_test");
+    data.WriteInt32(1);
+    auto ret = getDHCallbackStub_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(HardwareStatusListenerStubTest, OnRemoteRequest_107, TestSize.Level0)
+{
+    ASSERT_TRUE(getDHCallbackStub_ != nullptr);
+    uint32_t code = INVALID_CODE;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInterfaceToken(getDHCallbackStub_->GetDescriptor());
+    auto ret = getDHCallbackStub_->OnRemoteRequest(code, data, reply, option);
+    EXPECT_NE(DH_FWK_SUCCESS, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

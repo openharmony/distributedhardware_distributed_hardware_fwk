@@ -70,8 +70,11 @@ bool TaskBoard::IsAllDisableTaskFinish()
     std::lock_guard<std::mutex> lock(tasksMtx_);
     int32_t disableCount = 0;
     for (auto iter = tasks_.begin(); iter != tasks_.end(); iter++) {
-        if (iter->second->GetTaskType() == TaskType::DISABLE || iter->second->GetTaskType() == TaskType::META_DISABLE) {
-            disableCount++;
+        if (iter->second != nullptr) {
+            if (iter->second->GetTaskType() == TaskType::DISABLE ||
+                iter->second->GetTaskType() == TaskType::META_DISABLE) {
+                disableCount++;
+            }
         }
     }
     DHLOGI("DisableTask count: %{public}d", disableCount);
@@ -105,18 +108,20 @@ void TaskBoard::DumpAllTasks(std::vector<TaskDump> &taskInfos)
 {
     std::lock_guard<std::mutex> lock(tasksMtx_);
     for (auto t : tasks_) {
-        TaskDump taskInfo = {
-            .id = t.second->GetId(),
-            .taskType = t.second->GetTaskType(),
-            .taskParm = {
-                .networkId = t.second->GetNetworkId(),
-                .uuid = t.second->GetUUID(),
-                .dhId = t.second->GetDhId(),
-                .dhType = t.second->GetDhType(),
-            },
-            .taskSteps = t.second->GetTaskSteps()
-        };
-        taskInfos.emplace_back(taskInfo);
+        if (t.second != nullptr) {
+            TaskDump taskInfo = {
+                .id = t.second->GetId(),
+                .taskType = t.second->GetTaskType(),
+                .taskParm = {
+                    .networkId = t.second->GetNetworkId(),
+                    .uuid = t.second->GetUUID(),
+                    .dhId = t.second->GetDhId(),
+                    .dhType = t.second->GetDhType(),
+                },
+                .taskSteps = t.second->GetTaskSteps()
+            };
+            taskInfos.emplace_back(taskInfo);
+        }
     }
 }
 

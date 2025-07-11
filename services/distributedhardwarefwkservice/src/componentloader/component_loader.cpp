@@ -248,7 +248,9 @@ void ComponentLoader::ParseSourceFeatureFiltersFromJson(cJSON *sourceFeatureFilt
     cJSON *filter = nullptr;
     config.sourceFeatureFilters.clear();
     cJSON_ArrayForEach(filter, sourceFeatureFilters) {
-        config.sourceFeatureFilters.push_back(filter->valuestring);
+        if (filter != nullptr && filter->type == cJSON_String) {
+            config.sourceFeatureFilters.push_back(std::string(filter->valuestring));
+        }
     }
 }
 
@@ -257,7 +259,9 @@ void ComponentLoader::ParseSinkSupportedFeaturesFromJson(cJSON *sinkSupportedFea
     cJSON *feature = nullptr;
     config.sinkSupportedFeatures.clear();
     cJSON_ArrayForEach(feature, sinkSupportedFeatures) {
-        config.sinkSupportedFeatures.push_back(feature->valuestring);
+        if (feature != nullptr && feature->type == cJSON_String) {
+            config.sinkSupportedFeatures.push_back(std::string(feature->valuestring));
+        }
     }
 }
 

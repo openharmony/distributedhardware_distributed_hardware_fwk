@@ -75,7 +75,6 @@ std::shared_ptr<Task> TaskExecutor::PopTask()
     if (!taskQueue_.empty()) {
         task = taskQueue_.front();
         taskQueue_.pop();
-        DHLOGI("Pop task: %{public}s", task->GetId().c_str());
     }
 
     return task;
@@ -99,6 +98,10 @@ void TaskExecutor::TriggerTask()
         };
 
         DHLOGI("Post task to EventBus: %{public}s", task->GetId().c_str());
+        if (DHContext::GetInstance().GetEventHandler() == nullptr) {
+            DHLOGE("eventHandler is nullptr");
+            continue;
+        }
         DHContext::GetInstance().GetEventHandler()->PostTask(taskFunc, task->GetId());
     }
 }

@@ -39,6 +39,7 @@ constexpr int32_t CAMERA_UID = CURRENT_DEVICE_UID;
 constexpr int32_t CAMERA_PID = 4083;
 constexpr int32_t AUDIO_UID = CURRENT_DEVICE_UID;
 constexpr int32_t AUDIO_PID = 4085;
+constexpr uint16_t DEV_TYPE_TEST = 14;
 const CompVersion VERSION = { .sinkVersion = "1.0", .sourceVersion = "1.0" };
 const DHDescriptor CAMERA_DESCRIPTOR = { .id = "camera_1", .dhType = DHType::CAMERA };
 const DHDescriptor AUDIO_DESCRIPTOR = { .id = "audio_1", .dhType = DHType::AUDIO };
@@ -914,6 +915,50 @@ HWTEST_F(ComponentManagerTestExt, WaitForResult_001, testing::ext::TestSize.Leve
     actionsResult.emplace(DHType::CAMERA, f.share());
     auto ret = ComponentManager::GetInstance().WaitForResult(ComponentManager::Action::START_SOURCE, actionsResult);
     EXPECT_EQ(ret, true);
+}
+
+HWTEST_F(ComponentManagerTestExt, RecoverAutoEnableSink_001, testing::ext::TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    std::string udidHash = "udidHash-1";
+    std::string dhId = "dhId_1";
+    std::string deviceId = "deviceId-1";
+    CompVersion compVersion{ .sinkVersion = "1.0" };
+    std::shared_ptr<MetaCapabilityInfo> dhMetaCapInfo = std::make_shared<MetaCapabilityInfo>(
+        dhId, deviceId, "devName_test", DEV_TYPE_TEST, dhType, "attrs_test", "subtype", udidHash, compVersion);
+    std::string key = udidHash + "###" + dhId;
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = dhMetaCapInfo;
+    EXPECT_CALL(*utilTool_, GetLocalDeviceInfo()).WillRepeatedly(Return(VALUABLE_DEVICE_INFO));
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RecoverAutoEnableSink(dhType));
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
+}
+
+HWTEST_F(ComponentManagerTestExt, RecoverAutoEnableSink_002, testing::ext::TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    std::string udidHash = "udidHash-1";
+    std::string dhId = "dhId_1";
+    std::string deviceId = "deviceId-1";
+    CompVersion compVersion{ .sinkVersion = "1.0" };
+    std::shared_ptr<MetaCapabilityInfo> dhMetaCapInfo = std::make_shared<MetaCapabilityInfo>(
+        dhId, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs_test", "subtype", udidHash, compVersion);
+    std::string key = udidHash + "###" + dhId;
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = dhMetaCapInfo;
+    EXPECT_CALL(*utilTool_, GetLocalDeviceInfo()).WillRepeatedly(Return(VALUABLE_DEVICE_INFO));
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RecoverAutoEnableSink(dhType));
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_.clear();
+}
+
+HWTEST_F(ComponentManagerTestExt, RecoverAutoEnableSink_003, testing::ext::TestSize.Level0)
+{
+    DHType dhType = DHType::CAMERA;
+    std::string udidHash = "udidHash-1";
+    std::string dhId = "dhId_test";
+    std::shared_ptr<MetaCapabilityInfo> dhMetaCapInfo = nullptr;
+    std::string key = udidHash + "###" + dhId;
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = dhMetaCapInfo;
+    EXPECT_CALL(*utilTool_, GetLocalDeviceInfo()).WillRepeatedly(Return(VALUABLE_DEVICE_INFO));
+    EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().RecoverAutoEnableSink(dhType));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -32,6 +32,7 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${services_path}/distributedhardwarefwkservice/include/task",
     "${services_path}/distributedhardwarefwkservice/include/transport",
+    "${services_path}/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/include",
     "${common_path}/utils/include",
     "${common_path}/log/include",
   ]
@@ -127,6 +128,47 @@ ohos_unittest("DHEnableTaskTest") {
   ]
 }
 
+ohos_unittest("OnlineTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/online_task_test.cpp",
+    "${services_path}/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/src/mock_dh_utils_tool.cpp",
+    ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "device_manager:devicemanagersdk",
+    "eventhandler:libeventhandler",
+    "googletest:gmock",
+    "googletest:gmock_main",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "kv_store:distributeddata_inner",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"OnlineTaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
 ## UnitTest dh_task_test
 ohos_unittest("DHTaskTest") {
   module_out_path = module_out_path
@@ -174,6 +216,7 @@ group("dh_task_test") {
   deps = [
     ":DHDisableTaskTest",
     ":DHEnableTaskTest",
+    ":OnlineTaskTest",
     ":DHTaskTest",
   ]
 }

@@ -56,7 +56,8 @@ HWTEST_F(PublisherItemTest, AddListener_001, TestSize.Level1)
 HWTEST_F(PublisherItemTest, AddListener_002, TestSize.Level1)
 {
     PublisherItem item(DHTopic::TOPIC_MIN);
-    sptr<IPublisherListener> listener(new MockIPublisherListener());
+    sptr<IPublisherListener> listener(new (std::nothrow) MockIPublisherListener());
+    ASSERT_TRUE(listener != nullptr);
     item.AddListener(listener);
     EXPECT_EQ(false, item.listeners_.empty());
 }
@@ -74,7 +75,8 @@ HWTEST_F(PublisherItemTest, RemoveListener_001, TestSize.Level1)
     item.RemoveListener(listener);
     EXPECT_EQ(true, item.listeners_.empty());
 
-    sptr<IPublisherListener> listener1(new MockIPublisherListener());
+    sptr<IPublisherListener> listener1(new (std::nothrow) MockIPublisherListener());
+    ASSERT_TRUE(listener1 != nullptr);
     item.AddListener(listener1);
     item.RemoveListener(listener1);
     EXPECT_EQ(true, item.listeners_.empty());
@@ -108,7 +110,8 @@ HWTEST_F(PublisherItemTest, PublishMessage_002, TestSize.Level1)
 {
     PublisherItem item(DHTopic::TOPIC_MIN);
     std::string message = "message";
-    sptr<IPublisherListener> listener(new MockIPublisherListener());
+    sptr<IPublisherListener> listener(new (std::nothrow) MockIPublisherListener());
+    ASSERT_TRUE(listener != nullptr);
     item.AddListener(listener);
     item.PublishMessage(message);
     EXPECT_EQ(false, item.listeners_.empty());
@@ -117,28 +120,32 @@ HWTEST_F(PublisherItemTest, PublishMessage_002, TestSize.Level1)
 HWTEST_F(PublisherItemTest, RegisterListener_001, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_MIN;
-    sptr<IPublisherListener> listener(new MockIPublisherListener());
+    sptr<IPublisherListener> listener(new (std::nothrow) MockIPublisherListener());
+    ASSERT_TRUE(listener != nullptr);
     EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().RegisterListener(topic, listener));
 }
 
 HWTEST_F(PublisherItemTest, RegisterListener_002, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
-    sptr<IPublisherListener> listener(new MockIPublisherListener());
+    sptr<IPublisherListener> listener(new (std::nothrow) MockIPublisherListener());
+    ASSERT_TRUE(listener != nullptr);
     EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().RegisterListener(topic, listener));
 }
 
 HWTEST_F(PublisherItemTest, UnregisterListener_001, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_MIN;
-    sptr<IPublisherListener> listener(new MockIPublisherListener());
+    sptr<IPublisherListener> listener(new (std::nothrow) MockIPublisherListener());
+    ASSERT_TRUE(listener != nullptr);
     EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().UnregisterListener(topic, listener));
 }
 
 HWTEST_F(PublisherItemTest, UnregisterListener_002, TestSize.Level1)
 {
     DHTopic topic = DHTopic::TOPIC_LOW_LATENCY;
-    sptr<IPublisherListener> listener(new MockIPublisherListener());
+    sptr<IPublisherListener> listener(new (std::nothrow) MockIPublisherListener());
+    ASSERT_TRUE(listener != nullptr);
     EXPECT_NO_FATAL_FAILURE(Publisher::GetInstance().UnregisterListener(topic, listener));
 }
 

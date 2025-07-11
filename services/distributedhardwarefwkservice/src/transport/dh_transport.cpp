@@ -104,6 +104,7 @@ void DHTransport::OnBytesReceived(int32_t socketId, const void *data, uint32_t d
     if (memcpy_s(buf, dataLen + 1,  reinterpret_cast<const uint8_t *>(data), dataLen) != EOK) {
         DHLOGE("OnBytesReceived: memcpy memory failed");
         free(buf);
+        buf = nullptr;
         return;
     }
 
@@ -111,6 +112,7 @@ void DHTransport::OnBytesReceived(int32_t socketId, const void *data, uint32_t d
     DHLOGI("Receive message size: %{public}" PRIu32, dataLen);
     HandleReceiveMessage(message);
     free(buf);
+    buf = nullptr;
     return;
 }
 
@@ -151,11 +153,11 @@ bool DHTransport::CheckCalleeAclRight(const std::shared_ptr<CommMsg> commMsg)
         .tokenId = commMsg->tokenId,
     };
     DmAccessCallee dmDstCallee = {
-        .networkId = localNetworkId,
         .accountId = accountId,
+        .networkId = localNetworkId,
+        .pkgName = DH_FWK_PKG_NAME,
         .userId = userId,
         .tokenId = localTokenId,
-        .pkgName = DH_FWK_PKG_NAME,
     };
     DHLOGI("CheckAclRight remotenetworkId: %{public}s, accountId: %{public}s, localNetworkId: %{public}s",
         GetAnonyString(commMsg->msg).c_str(), GetAnonyString(accountId).c_str(),
@@ -510,16 +512,20 @@ int32_t DHTransport::Send(const std::string &remoteNetworkId, const std::string 
                  compressedPayLoadSize) != EOK) {
         DHLOGE("Send: memcpy memory failed");
         free(buf);
+        buf = nullptr;
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
 
     int32_t ret = SendBytes(socketId, buf, compressedPayLoadSize);
-    free(buf);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("dsoftbus send error, ret: %{public}d", ret);
+        free(buf);
+        buf = nullptr;
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
     DHLOGI("Send payload success");
+    free(buf);
+    buf = nullptr;
     return DH_FWK_SUCCESS;
 }
 } // DistributedHardware

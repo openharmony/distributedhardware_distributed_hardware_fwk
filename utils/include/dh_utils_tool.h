@@ -27,7 +27,7 @@ namespace DistributedHardware {
 /**
  * return current time in millisecond.
  */
-int64_t GetCurrentTime();
+uint64_t GetCurrentTime();
 
 /**
  * return a random string id.

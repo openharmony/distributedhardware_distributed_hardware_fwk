@@ -34,6 +34,7 @@ struct VersionInfo {
 void ToJson(cJSON *jsonObject, const CompVersion &compVer);
 void ToJson(cJSON *jsonObject, const VersionInfo &versionInfo);
 void FromJson(const cJSON *jsonObject, CompVersion &compVer);
+void FromJsoncompVerContinue(const cJSON *jsonObject, CompVersion &compVer);
 void FromJson(const cJSON *jsonObject, VersionInfo &versionInfo);
 } // namespace DistributedHardware
 } // namespace OHOS

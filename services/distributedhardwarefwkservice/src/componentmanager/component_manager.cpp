@@ -1376,7 +1376,7 @@ int32_t ComponentManager::ForceDisableSinkInternal(
     auto itEnableInfo = status.enableInfos.find(dhDescriptor.id);
     if (itEnableInfo == status.enableInfos.end()) {
         DHLOGE("Repeat call ForceDisableSink, dhType = %{public}u, id = %{public}s.",
-            dhDescriptor.dhType, dhDescriptor.id.c_str());
+            dhDescriptor.dhType, GetAnonyString(dhDescriptor.id).c_str());
         return ERR_DH_FWK_COMPONENT_REPEAT_CALL;
     }
     auto &enableInfo = itEnableInfo->second;
@@ -1425,7 +1425,7 @@ int32_t ComponentManager::ForceDisableSourceInternal(const std::string &networkI
     auto itEnableInfo = status.enableInfos.find(enableInfoKey);
     if (itEnableInfo == status.enableInfos.end()) {
         DHLOGE("Repeat call ForceDisableSource, networkId = %{public}s, dhType = %{public}u, id = %{public}s.",
-            GetAnonyString(networkId).c_str(), dhDescriptor.dhType, dhDescriptor.id.c_str());
+            GetAnonyString(networkId).c_str(), dhDescriptor.dhType, GetAnonyString(dhDescriptor.id).c_str());
         return ERR_DH_FWK_COMPONENT_REPEAT_CALL;
     }
     auto &enableInfo = itEnableInfo->second;
@@ -1613,7 +1613,7 @@ void ComponentManager::RecoverAutoEnableSink(DHType dhType)
     std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
     MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(localDeviceInfo.udidHash, metaCapInfos);
     std::for_each(metaCapInfos.begin(), metaCapInfos.end(), [&](std::shared_ptr<MetaCapabilityInfo> localMetaInfo) {
-        if (localMetaInfo->GetDHType() == dhType) {
+        if (localMetaInfo != nullptr && localMetaInfo->GetDHType() == dhType) {
             localMetaInfos.push_back({localMetaInfo->GetDHId(), localMetaInfo->GetDHType()});
         }
     });

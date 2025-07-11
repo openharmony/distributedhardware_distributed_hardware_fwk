@@ -584,5 +584,41 @@ HWTEST_F(ComponentLoaderTest, IsDHTypeSupport_001, TestSize.Level1)
     auto ret = ComponentLoader::GetInstance().IsDHTypeSupport(DHType::AUDIO);
     EXPECT_EQ(ret, false);
 }
+
+HWTEST_F(ComponentLoaderTest, ParseSourceFeatureFiltersFromJson_001, TestSize.Level1)
+{
+    CompConfig config;
+    cJSON *srcFilters = cJSON_CreateArray();
+    ASSERT_TRUE(srcFilters != nullptr);
+    ComponentLoader::GetInstance().ParseSourceFeatureFiltersFromJson(srcFilters, config);
+    EXPECT_TRUE(config.sourceFeatureFilters.empty());
+    cJSON_Delete(srcFilters);
+
+    cJSON *srcFilters1 = cJSON_CreateArray();
+    ASSERT_TRUE(srcFilters1 != nullptr);
+    cJSON_AddItemToArray(srcFilters1, cJSON_CreateString("dcamera_1"));
+    cJSON_AddItemToArray(srcFilters1, cJSON_CreateNumber(1));
+    ComponentLoader::GetInstance().ParseSourceFeatureFiltersFromJson(srcFilters1, config);
+    EXPECT_FALSE(config.sourceFeatureFilters.empty());
+    cJSON_Delete(srcFilters1);
+}
+
+HWTEST_F(ComponentLoaderTest, ParseSinkSupportedFeaturesFromJson_001, TestSize.Level1)
+{
+    CompConfig config;
+    cJSON *sinkFilters = cJSON_CreateArray();
+    ASSERT_TRUE(sinkFilters != nullptr);
+    ComponentLoader::GetInstance().ParseSinkSupportedFeaturesFromJson(sinkFilters, config);
+    EXPECT_TRUE(config.sinkSupportedFeatures.empty());
+    cJSON_Delete(sinkFilters);
+
+    cJSON *sinkFilters1 = cJSON_CreateArray();
+    ASSERT_TRUE(sinkFilters1 != nullptr);
+    cJSON_AddItemToArray(sinkFilters1, cJSON_CreateString("dcamera_1"));
+    cJSON_AddItemToArray(sinkFilters1, cJSON_CreateNumber(1));
+    ComponentLoader::GetInstance().ParseSinkSupportedFeaturesFromJson(sinkFilters1, config);
+    EXPECT_FALSE(config.sinkSupportedFeatures.empty());
+    cJSON_Delete(sinkFilters1);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -604,6 +604,10 @@ void CapabilityInfoManager::AsyncGetDistributedHardware(const std::string &netwo
     const sptr<IGetDhDescriptorsCallback> callback)
 {
     DHLOGI("AsyncGetDistributedHardware networkId: %{public}s.", GetAnonyString(networkId).c_str());
+    if (callback == nullptr) {
+        DHLOGE("callback ptr is null");
+        return;
+    }
     int32_t waitTimeMill = SYNC_DATA_TIMEOUT_MS;
     while (waitTimeMill > 0) {
         auto beginTime = std::chrono::steady_clock::now();

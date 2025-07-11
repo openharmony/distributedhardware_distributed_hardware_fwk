@@ -51,9 +51,9 @@ void LocalHardwareManager::Init()
     std::lock_guard<std::mutex> lock(localHardwareMgrMutex_);
     std::vector<DHType> allCompTypes;
     ComponentLoader::GetInstance().GetAllCompTypes(allCompTypes);
-    int64_t allQueryStartTime = GetCurrentTime();
+    uint64_t allQueryStartTime = GetCurrentTime();
     for (auto dhType : allCompTypes) {
-        int64_t singleQueryStartTime = GetCurrentTime();
+        uint64_t singleQueryStartTime = GetCurrentTime();
         IHardwareHandler *hardwareHandler = nullptr;
         int32_t status = ComponentLoader::GetInstance().GetHardwareHandler(dhType, hardwareHandler);
         if (status != DH_FWK_SUCCESS || hardwareHandler == nullptr) {
@@ -78,11 +78,11 @@ void LocalHardwareManager::Init()
             pluginListenerMap_[dhType] = listener;
             hardwareHandler->RegisterPluginListener(listener);
         }
-        int64_t singleQueryEndTime = GetCurrentTime();
+        uint64_t singleQueryEndTime = GetCurrentTime();
         DHLOGI("query %{public}#X hardware cost time: %{public}" PRIu64 " ms",
             dhType, singleQueryEndTime - singleQueryStartTime);
     }
-    int64_t allQueryEndTime = GetCurrentTime();
+    uint64_t allQueryEndTime = GetCurrentTime();
     DHLOGI("query all local hardware cost time: %{public}" PRIu64 " ms", allQueryEndTime - allQueryStartTime);
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;

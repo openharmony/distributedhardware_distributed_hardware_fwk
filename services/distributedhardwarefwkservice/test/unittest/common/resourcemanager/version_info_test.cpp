@@ -160,5 +160,104 @@ HWTEST_F(VersionInfoTest, FromJson_VersionInfo_003, TestSize.Level1)
     cJSON_Delete(jsonObj);
     EXPECT_TRUE(verInfo.deviceId.empty());
 }
+
+HWTEST_F(VersionInfoTest, FromJsoncompVerContinue_001, TestSize.Level1)
+{
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON_AddItemToObject(jsonObj, "test", cJSON_CreateArray());
+    CompVersion compVer;
+    FromJsoncompVerContinue(jsonObj, compVer);
+    EXPECT_EQ(false, compVer.haveFeature);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(VersionInfoTest, FromJsoncompVerContinue_002, TestSize.Level1)
+{
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON *srcJsonArr = cJSON_CreateArray();
+    if (srcJsonArr == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    cJSON_AddItemToArray(srcJsonArr, cJSON_CreateString("src_feature"));
+    cJSON_AddItemToArray(srcJsonArr, cJSON_CreateNumber(1));
+    cJSON_AddItemToObject(jsonObj, SOURCE_FEATURE_FILTER, srcJsonArr);
+    cJSON_AddStringToObject(jsonObj, SINK_SUPPORTED_FEATURE, "sink_filter");
+    CompVersion compVer;
+    FromJsoncompVerContinue(jsonObj, compVer);
+    EXPECT_EQ(true, compVer.haveFeature);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(VersionInfoTest, FromJsoncompVerContinue_003, TestSize.Level1)
+{
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON *sinkJsonArr = cJSON_CreateArray();
+    if (sinkJsonArr == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    cJSON_AddItemToArray(sinkJsonArr, cJSON_CreateString("sink_feature"));
+    cJSON_AddItemToArray(sinkJsonArr, cJSON_CreateNumber(1));
+    cJSON_AddItemToObject(jsonObj, SOURCE_FEATURE_FILTER, sinkJsonArr);
+    cJSON_AddStringToObject(jsonObj, SINK_SUPPORTED_FEATURE, "src_filter");
+    CompVersion compVer;
+    FromJsoncompVerContinue(jsonObj, compVer);
+    EXPECT_EQ(true, compVer.haveFeature);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(VersionInfoTest, FromJsoncompVerContinue_004, TestSize.Level1)
+{
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON *srcJsonArr = cJSON_CreateArray();
+    if (srcJsonArr == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    cJSON_AddItemToArray(srcJsonArr, cJSON_CreateString("src_feature"));
+    cJSON_AddItemToArray(srcJsonArr, cJSON_CreateNumber(1));
+    cJSON_AddItemToObject(jsonObj, SOURCE_FEATURE_FILTER, srcJsonArr);
+
+    cJSON *sinkJsonArr = cJSON_CreateArray();
+    if (sinkJsonArr == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    cJSON_AddItemToArray(sinkJsonArr, cJSON_CreateString("sink_feature"));
+    cJSON_AddItemToArray(sinkJsonArr, cJSON_CreateNumber(1));
+    cJSON_AddItemToObject(jsonObj, SINK_SUPPORTED_FEATURE, sinkJsonArr);
+    CompVersion compVer;
+    FromJsoncompVerContinue(jsonObj, compVer);
+    EXPECT_EQ(true, compVer.haveFeature);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(VersionInfoTest, FromJsoncompVerContinue_005, TestSize.Level1)
+{
+    cJSON *jsonObj = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObj != nullptr);
+    cJSON *srcJsonArr = cJSON_CreateArray();
+    if (srcJsonArr == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    cJSON_AddItemToObject(jsonObj, SOURCE_FEATURE_FILTER, srcJsonArr);
+
+    cJSON *sinkJsonArr = cJSON_CreateArray();
+    if (sinkJsonArr == nullptr) {
+        cJSON_Delete(jsonObj);
+        return;
+    }
+    cJSON_AddItemToObject(jsonObj, SINK_SUPPORTED_FEATURE, sinkJsonArr);
+    CompVersion compVer;
+    FromJsoncompVerContinue(jsonObj, compVer);
+    EXPECT_EQ(true, compVer.haveFeature);
+    cJSON_Delete(jsonObj);
+}
 }
 }
