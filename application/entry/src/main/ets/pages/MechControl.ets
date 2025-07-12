@@ -43,19 +43,22 @@ struct MechControl {
       .height('40vp')
       .backgroundColor(this.isTrackingEnabled ? $r('app.color.color_0A59F7_blue') : $r('sys.color.ohos_id_color_component_normal'))
       .onClick(() => {
-        this.isTrackingEnabled = !this.isTrackingEnabled;
+       const originalState = this.isTrackingEnabled;
         try {
-          if (this.isTrackingEnabled) {
+          if (!this.isTrackingEnabled) {
             logger.info(`${TAG} enable camera tracking`);
             mechanicManager.setCameraTrackingEnabled(true);
+            this.isTrackingEnabled = true;
           } else {
             logger.info(`${TAG} disable camera tracking`);
             mechanicManager.setCameraTrackingEnabled(false);
+            this.isTrackingEnabled = false;
           }
         } catch (error) {
           let code: number = (error as BusinessError).code;
           let message: string = (error as BusinessError).message;
           logger.error(`${TAG} setCameraTrackingEnabled failed. error.code: ${code}, message: ${message}`);
+          this.isTrackingEnabled = originalState;
         }
         logger.info(`${TAG} onClick end, isTrackingEnabled = ${this.isTrackingEnabled}`);
       })
@@ -90,25 +93,7 @@ struct MechControl {
       .height('40vp')
       .backgroundColor($r('app.color.color_0A59F7_blue'))
       .onClick(() => {
-        this.isTrackingEnabled = !this.isTrackingEnabled;
-        try {
-          if (this.isTrackingEnabled) {
-            logger.info(`${TAG} enable camera tracking`);
-            mechanicManager.setCameraTrackingEnabled(true);
-
-            this.currentTrackingLayoutImage = $r('app.media.track_layout_center');
-          } else {
-            logger.info(`${TAG} disable camera tracking`);
-            mechanicManager.setCameraTrackingEnabled(false);
-
-            this.currentTrackingLayoutImage = $r('app.media.track_layout_center_dark');
-          }
-        } catch (error) {
-          let code: number = (error as BusinessError).code;
-          let message: string = (error as BusinessError).message;
-          logger.error(`${TAG} setCameraTrackingEnabled failed. error.code: ${code}, message: ${message}`);
-        }
-        logger.info(`${TAG} onClick end, isTrackingEnabled = ${this.isTrackingEnabled}`);
+        logger.info(`${TAG} onClick TrackingLayout in`);
       })
 
       Text($r('app.string.mech_tracking_layout'))

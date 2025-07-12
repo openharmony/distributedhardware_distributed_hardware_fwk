@@ -22,8 +22,6 @@ const TAG: string = '[MechExtAbility]';
 export default class MechExtAbility extends UIExtensionAbility {
   onCreate() {
     logger.info(`${TAG} UIExtAbility onCreate`);
-    AppStorage.setOrCreate('currentColorMode', this.context.config.colorMode);
-    AppStorage.setOrCreate('currentFontSizeScale', this.context.config.fontSizeScale);
   }
 
   onForeground() {
