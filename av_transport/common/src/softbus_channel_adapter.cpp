@@ -196,7 +196,10 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
         {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
-
+    if (sizeof(qos[0]) == 0) {
+        AVTRANS_LOGE("qos[0] siez of zero");
+        return ERR_DH_AVT_SESSION_ERROR;
+    }
     int32_t ret = Listen(socketId, qos, sizeof(qos) / sizeof(qos[0]), &sessListener_);
     if (ret != 0) {
         AVTRANS_LOGE("Listen socket error for sessionName:%{public}s", sessName.c_str());
@@ -299,6 +302,10 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
     int32_t socketId = Socket(clientInfo);
     if (socketId <0) {
         AVTRANS_LOGE("Create OpenSoftbusChannel Socket error");
+        return ERR_DH_AVT_SESSION_ERROR;
+    }
+    if (sizeof(qos[0]) == 0) {
+        AVTRANS_LOGE("qos[0] siez of zero");
         return ERR_DH_AVT_SESSION_ERROR;
     }
     int32_t ret = Bind(socketId, qos, sizeof(qos) / sizeof(qos[0]), &sessListener_);
