@@ -1,6 +1,7 @@
 {
   "src": [
     "pages/DHardwareUI",
-    "pages/ContinueSwitch"
+    "pages/ContinueSwitch",
+    "pages/MechControl"
   ]
 }

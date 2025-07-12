@@ -107,6 +107,42 @@
       "attr": {
         "priority": "LT"
       }
+    },
+    {
+      "name": "MechExtAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "MechExtAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "Intelligent Tracking"
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "Tracking Layout"
+    },
+    {
+      "name": "mech_enable",
+      "value": "enable"
+    },
+    {
+      "name": "mech_close",
+      "value": "close"
+    },
+    {
+      "name": "mech_left",
+      "value": "left"
+    },
+    {
+      "name": "mech_center",
+      "value": "center"
+    },
+    {
+      "name": "mech_right",
+      "value": "right"
     }
   ]
 }
