@@ -14,7 +14,7 @@
  */
 import { logger } from '../utils/Logger';
 import mechanicManager from '@ohos.distributedHardware.mechanicManager';
-import { BusinessError } from '@kit.BasicServicesKit';
+import { BusinessError } from '@ohos.base';
 
 const TAG = '[MechControl_Page] : ';
 
