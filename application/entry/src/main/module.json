@@ -62,6 +62,14 @@
         "label": "$string:ContinueSwitchAbility_label",
         "type": "sys/commonUI",
         "exported": true
+      },
+      {
+        "name": "MechExtAbility",
+        "srcEntry": "./ets/mechextability/MechExtAbility.ets",
+        "description": "$string:MechExtAbility_desc",
+        "label": "$string:MechExtAbility_label",
+        "type": "sys/commonUI",
+        "exported": true
       }
     ],
     "metadata": [

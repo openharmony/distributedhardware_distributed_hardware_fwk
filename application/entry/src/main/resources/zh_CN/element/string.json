@@ -107,6 +107,42 @@
       "attr": {
         "priority": "translate"
       }
+    },
+    {
+      "name": "MechExtAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "MechExtAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "智能跟踪"
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "跟踪布局"
+    },
+    {
+      "name": "mech_enable",
+      "value": "开启"
+    },
+    {
+      "name": "mech_close",
+      "value": "关闭"
+    },
+    {
+      "name": "mech_left",
+      "value": "居左"
+    },
+    {
+      "name": "mech_center",
+      "value": "居中"
+    },
+    {
+      "name": "mech_right",
+      "value": "居右"
     }
   ]
 }
