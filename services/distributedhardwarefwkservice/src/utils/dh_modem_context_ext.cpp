@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,16 +50,15 @@ std::shared_ptr<IDistributedModemExt> DHModemContextExt::GetModemExtInstance()
 {
     if (soHandle_ == nullptr && GetHandler() != DH_FWK_SUCCESS) {
         DHLOGE("load modem_ext so failed.");
-        return distributedModemExt_;
+        return nullptr;
     }
     auto func = (CreateDistributedModemExtImplFuncPtr)dlsym(soHandle_, "CreateDistributedModemExtImplObject");
     if (dlerror() != nullptr || func == nullptr) {
         dlclose(soHandle_);
         DHLOGE("Create object function is not exist.");
-        return distributedModemExt_;
+        return nullptr;
     }
-    distributedModemExt_ = std::shared_ptr<IDistributedModemExt>(func());
-    return distributedModemExt_;
+    return std::shared_ptr<IDistributedModemExt>(func());
 }
 
 int32_t DHModemContextExt::UnInit()
