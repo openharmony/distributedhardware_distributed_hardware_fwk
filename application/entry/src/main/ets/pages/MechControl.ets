@@ -34,7 +34,7 @@ struct MechControl {
   IntelligentTracking(){
     Column(){
       Button() {
-        Image(this.isTrackingEnabled ? $r("app.media.intelligent_tracking") :$r("app.media.intelligent_tracking_dark"))
+        Image(this.isTrackingEnabled ? $r('app.media.intelligent_tracking') :$r('app.media.intelligent_tracking_dark'))
           .width(20)
           .height(20)
           .margin({left: 3, top: 3})
