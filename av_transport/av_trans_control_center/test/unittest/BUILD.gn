@@ -40,7 +40,6 @@ ohos_unittest("AvTransControlCenterTest") {
   module_out_path = module_out_path
 
   sources = [
-    "${control_center_path}/test/unittest/inner_kits/av_trans_control_center_callback_stub_test.cpp",
     "${control_center_path}/test/unittest/inner_kits/av_trans_control_center_callback_test.cpp",
     "${control_center_path}/test/unittest/services/av_sync_manager_test.cpp",
     "${control_center_path}/test/unittest/services/av_trans_control_center_test.cpp",
