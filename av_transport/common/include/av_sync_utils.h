@@ -57,6 +57,7 @@ struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {
         if (addr) {
             auto ret = memcpy_s(addr, size, avTransSharedMemory.addr, size);
             if (ret != EOK) {
+                free(addr);
                 addr = nullptr;
             }
         } else {
