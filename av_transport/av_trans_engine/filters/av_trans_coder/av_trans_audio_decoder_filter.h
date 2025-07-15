@@ -138,7 +138,7 @@ private:
     ADecInitParams initDecParams_ = {
     .codecType = AudioCodecType::AUDIO_CODEC_AAC,
     .channel = 2,
-    .sampleRate = 44100，
+    .sampleRate = 44100,
     .bitRate = 12800,
     .sampleDepth = MediaAVCodec::SAMPLE_S16LE
 };
