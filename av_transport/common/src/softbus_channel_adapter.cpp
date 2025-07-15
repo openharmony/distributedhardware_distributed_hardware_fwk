@@ -297,11 +297,9 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
     };
     int32_t socketId = Socket(clientInfo);
     if (socketId <0) {
-        AVTRANS_LOGE("Create OpenSoftbusChannel Socket error");
         return ERR_DH_AVT_SESSION_ERROR;
     }
     if (sizeof(qos[0]) == 0) {
-        AVTRANS_LOGE("qos[0] siez of zero");
         return ERR_DH_AVT_SESSION_ERROR;
     }
     int32_t ret = Bind(socketId, qos, sizeof(qos) / sizeof(qos[0]), &sessListener_);
