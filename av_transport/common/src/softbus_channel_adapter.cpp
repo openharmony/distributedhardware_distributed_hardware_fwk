@@ -279,18 +279,15 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
         AVTRANS_LOGI("Softbus channel already opened, sessionId:%{public}" PRId32, existSessId);
         return ERR_DH_AVT_SESSION_HAS_OPENED;
     }
-
     QosTV qos[] = {
         {.qos = QOS_TYPE_MIN_BW,        .value = 40 * 1024 * 1024},
         {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
-    
     TransDataType dataType = TransDataType::DATA_TYPE_BYTES;
     if (mySessName.find("avtrans.data") != std::string::npos) {
         dataType = TransDataType::DATA_TYPE_VIDEO_STREAM;
     }
-
     SocketInfo clientInfo = {
         .name = const_cast<char*>((mySessName.c_str())),
         .peerName = const_cast<char*>(peerSessName.c_str()),
@@ -298,7 +295,6 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
         .pkgName = const_cast<char*>(PkgName.c_str()),
         .dataType = dataType,
     };
-
     int32_t socketId = Socket(clientInfo);
     if (socketId <0) {
         AVTRANS_LOGE("Create OpenSoftbusChannel Socket error");

@@ -57,7 +57,7 @@ AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t si
         (void)::munmap(addr, size);
         return AVTransSharedMemory{0, 0, name, nullptr};
     }
-    AVTRANS_LOGI("create av trans shared memory success, name=%{public}s, size=%{public}zu, fd=%{public}"
+    AVTRANS_LOGI("create av trans shared memory success, name=%{public}s, size=%{public}zu, fd=%{public}d"
         PRId32, name.c_str(), size, fd);
     return AVTransSharedMemory{fd, size, name, addr};
 }
@@ -72,7 +72,7 @@ void CloseAVTransSharedMemory(AVTransSharedMemory &memory) noexcept
     }
     if (memory.fd > 0) {
         (void)::close(memory.fd);
-        memory.fd = 0;
+        memory.fd = -1;
     }
     if (memory.addr != nullptr) {
         (void)::munmap(memory.addr, memory.size);
