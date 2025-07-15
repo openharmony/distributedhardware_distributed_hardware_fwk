@@ -54,6 +54,7 @@ public:
     int32_t LoadDistributedHDF();
     int32_t UnLoadDistributedHDF();
     void ResetRefCount();
+    bool IsNeedErase();
 private:
     DHType dhType_ = DHType::UNKNOWN;
     int32_t hdfLoadRef_ = 0;
@@ -70,12 +71,25 @@ public:
     int32_t AddDeathRecipient(DHType dhType, sptr<IRemoteObject> &remote);
     int32_t RemoveDeathRecipient(DHType dhType, sptr<IRemoteObject> &remote);
     void ResetRefCount(DHType dhType);
+    int32_t RigidGetSourcePtr(DHType dhType, IDistributedHardwareSource *&sourcePtr);
+    int32_t RigidReleaseSourcePtr(DHType dhType);
+    bool IsAnyHdfInuse();
+
+private:
+    struct SourceHandlerData {
+        int32_t refCount;
+        void *sourceHandler;
+        IDistributedHardwareSource *sourcePtr;
+    };
 
 private:
     std::mutex hdfOperateMapMutex_;
     std::map<DHType, std::shared_ptr<HdfOperator>> hdfOperateMap_;
     sptr<HdfLoadRefRecipient> audioHdfLoadRefRecipient_ = sptr(new HdfLoadRefRecipient(DHType::AUDIO));
     sptr<HdfLoadRefRecipient> cameraHdfLoadRefRecipient_ = sptr(new HdfLoadRefRecipient(DHType::CAMERA));
+    std::mutex sourceHandlerDataMapMutex_;
+    std::map<DHType, SourceHandlerData> sourceHandlerDataMap_;
+    int32_t hdfInuseRefCount_ = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

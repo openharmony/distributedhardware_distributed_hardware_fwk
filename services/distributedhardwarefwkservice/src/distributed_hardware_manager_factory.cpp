@@ -38,8 +38,12 @@
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager.h"
 #include "device_param_mgr.h"
+#include "hdf_operate.h"
 #include "local_capability_info_manager.h"
 #include "meta_info_manager.h"
+#include "task_board.h"
+#include "task_executor.h"
+#include "task_factory.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -65,15 +69,10 @@ bool DistributedHardwareManagerFactory::InitLocalDevInfo()
         DHLOGE("InitLocalDevInfo failed, errCode = %{public}d", initResult);
         return false;
     }
-    DHLOGI("InitLocalDevInfo success, check is need exit");
-
-    deviceList.clear();
-    DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
-    if ((deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) &&
-        DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
-        DHLOGI("After InitLocalDevInfo, no device online, exit dhfwk");
-        ExitDHFWK();
-    }
+    DHLOGI("init local dev info, create exit dfwk task!");
+    TaskParam taskParam;
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::EXIT_DFWK, taskParam, nullptr);
+    TaskExecutor::GetInstance().PushTask(task);
     return true;
 }
 
@@ -136,7 +135,8 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
     std::vector<DmDeviceInfo> deviceList;
     DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
     if ((deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) &&
-        DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
+        DHContext::GetInstance().GetIsomerismConnectCount() == 0 &&
+        HdfOperateManager::GetInstance().IsAnyHdfInuse() == false) {
         ExitDHFWK();
         return;
     }

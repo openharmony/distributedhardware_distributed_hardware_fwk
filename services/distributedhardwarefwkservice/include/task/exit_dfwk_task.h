@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,25 +13,23 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_TASK_FACTORY_H
-#define OHOS_DISTRIBUTED_HARDWARE_TASK_FACTORY_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_EXIT_DFWK_TASK_H
+#define OHOS_DISTRIBUTED_HARDWARE_EXIT_DFWK_TASK_H
 
-#include <memory>
-
-#include "single_instance.h"
 #include "task.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class TaskFactory {
-DECLARE_SINGLE_INSTANCE(TaskFactory);
+class ExitDfwkTask : public Task {
 public:
-    std::shared_ptr<Task> CreateTask(TaskType taskType, TaskParam taskParam, std::shared_ptr<Task> fatherTask);
+    ExitDfwkTask() = delete;
+    ExitDfwkTask(const std::string &networkId, const std::string &uuid, const std::string &udid,
+        const std::string &dhId, const DHType dhType);
+    virtual ~ExitDfwkTask();
+    virtual void DoTask();
+
 private:
-    std::shared_ptr<Task> CreateEnableTask(const TaskParam &taskParam);
-    std::shared_ptr<Task> CreateDisableTask(const TaskParam &taskParam);
-    std::shared_ptr<Task> CreateTaskEx(TaskType taskType,
-        const TaskParam &taskParam, std::shared_ptr<Task> fatherTask);
+    void DoTaskInner();
 };
 } // namespace DistributedHardware
 } // namespace OHOS

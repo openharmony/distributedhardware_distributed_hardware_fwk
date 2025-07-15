@@ -19,6 +19,7 @@
 #include "disable_task.h"
 #include "distributed_hardware_log.h"
 #include "enable_task.h"
+#include "exit_dfwk_task.h"
 #include "meta_disable_task.h"
 #include "meta_enable_task.h"
 #include "offline_task.h"
@@ -56,28 +57,20 @@ std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskP
                 taskParam.dhId, taskParam.dhType);
             break;
         }
-        case TaskType::META_ENABLE: {
-            task = std::make_shared<MetaEnableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
-                taskParam.dhId, taskParam.dhType);
-            break;
-        }
-        case TaskType::META_DISABLE: {
-            task = std::make_shared<MetaDisableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
-                taskParam.dhId, taskParam.dhType);
-            break;
-        }
         default: {
-            DHLOGE("CreateTask type invalid, type: %{public}d", taskType);
-            return nullptr;
+            task = CreateTaskEx(taskType, taskParam, fatherTask);
+            break;
         }
     }
-
+    if (task == nullptr) {
+        DHLOGE("Create task failed, task is nullptr, type: %{public}d", taskType);
+        return task;
+    }
     if (fatherTask != nullptr) {
         task->SetFatherTask(fatherTask);
         fatherTask->AddChildrenTask(task);
     }
     TaskBoard::GetInstance().AddTask(task);
-
     return task;
 }
 
@@ -105,6 +98,34 @@ std::shared_ptr<Task> TaskFactory::CreateDisableTask(const TaskParam &taskParam)
         disableTask->SetCallingPid(taskParam.callingPid);
     }
     return disableTask;
+}
+
+std::shared_ptr<Task> TaskFactory::CreateTaskEx(TaskType taskType,
+    const TaskParam &taskParam, std::shared_ptr<Task> fatherTask)
+{
+    std::shared_ptr<Task> task = nullptr;
+    switch (taskType) {
+        case TaskType::META_ENABLE: {
+            task = std::make_shared<MetaEnableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
+            break;
+        }
+        case TaskType::META_DISABLE: {
+            task = std::make_shared<MetaDisableTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
+            break;
+        }
+        case TaskType::EXIT_DFWK: {
+            task = std::make_shared<ExitDfwkTask>(taskParam.networkId, taskParam.uuid, taskParam.udid,
+                taskParam.dhId, taskParam.dhType);
+            break;
+        }
+        default: {
+            DHLOGE("CreateTask type invalid, type: %{public}d", taskType);
+            return nullptr;
+        }
+    }
+    return task;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

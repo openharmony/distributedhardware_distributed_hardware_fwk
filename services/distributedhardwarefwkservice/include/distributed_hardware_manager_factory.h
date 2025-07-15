@@ -44,9 +44,9 @@ public:
     bool GetUnInitFlag();
     void SetSAProcessState(bool saState);
     bool GetSAProcessState();
+    void CheckExitSAOrNot();
 private:
     bool Init();
-    void CheckExitSAOrNot();
     void ExitDHFWK();
 
 private:

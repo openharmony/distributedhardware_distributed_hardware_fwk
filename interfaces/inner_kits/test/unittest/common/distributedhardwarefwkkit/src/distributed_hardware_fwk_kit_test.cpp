@@ -614,7 +614,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, LoadDistributedHDF_001, testing::ext::Te
 {
     ASSERT_TRUE(dhfwkPtr_ != nullptr);
     int32_t ret = dhfwkPtr_->LoadDistributedHDF(DHType::CAMERA);
-    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
 }
 
 /**
@@ -627,7 +627,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, UnLoadDistributedHDF_001, testing::ext::
 {
     ASSERT_TRUE(dhfwkPtr_ != nullptr);
     int32_t ret = dhfwkPtr_->UnLoadDistributedHDF(DHType::CAMERA);
-    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

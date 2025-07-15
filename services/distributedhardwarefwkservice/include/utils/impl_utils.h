@@ -30,7 +30,8 @@ enum class TaskType : int32_t {
     ON_LINE = 3,
     OFF_LINE = 4,
     META_ENABLE = 5,
-    META_DISABLE = 6
+    META_DISABLE = 6,
+    EXIT_DFWK = 7
 };
 
 enum class TaskStep : int32_t {
