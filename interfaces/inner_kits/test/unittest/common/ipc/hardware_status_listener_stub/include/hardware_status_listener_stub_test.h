@@ -16,16 +16,14 @@
 #ifndef OHOS_HARDWARE_STATUS_LISTENER_STUB_TEST_H
 #define OHOS_HARDWARE_STATUS_LISTENER_STUB_TEST_H
 
-#include <atomic>
-#include <functional>
-#include <mutex>
-
 #include <gtest/gtest.h>
 
-#include "distributed_hardware_errno.h"
 #include "iremote_stub.h"
-#include "idistributed_hardware.h"
+
+#include "distributed_hardware_errno.h"
+#include "get_dh_descriptors_callback_stub.h"
 #include "hardware_status_listener_stub.h"
+#include "idistributed_hardware.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -38,6 +36,7 @@ public:
 
     std::shared_ptr<HDSinkStatusListenerStub> sinkListenerStub_ = nullptr;
     std::shared_ptr<HDSourceStatusListenerStub> sourceListenerStub_ = nullptr;
+    std::shared_ptr<GetDhDescriptorsCallbackStub> getDHCallbackStub_ = nullptr;
 };
 
 class MockHDSinkStatusListenerStub : public HDSinkStatusListenerStub {
@@ -54,16 +53,31 @@ public:
 
 class MockHDSourceStatusListenerStub : public HDSourceStatusListenerStub {
 public:
-void OnEnable(const std::string &networkId, const DHDescriptor &dhDescriptor)
-{
-    (void)networkId;
-    (void)dhDescriptor;
-}
-void OnDisable(const std::string &networkId, const DHDescriptor &dhDescriptor)
-{
-    (void)networkId;
-    (void)dhDescriptor;
-}
+    void OnEnable(const std::string &networkId, const DHDescriptor &dhDescriptor)
+    {
+        (void)networkId;
+        (void)dhDescriptor;
+    }
+    void OnDisable(const std::string &networkId, const DHDescriptor &dhDescriptor)
+    {
+        (void)networkId;
+        (void)dhDescriptor;
+    }
+};
+
+class TestGetDhDescriptorsCallbackStub : public GetDhDescriptorsCallbackStub {
+public:
+    void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors, EnableStep enableStep)
+    {
+        (void)networkId;
+        (void)descriptors;
+        (void)enableStep;
+    }
+    void OnError(const std::string &networkId, int32_t error)
+    {
+        (void)networkId;
+        (void)error;
+    }
 };
 } // namespace DistributedHardware
 } // namespace OHOS

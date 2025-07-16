@@ -28,6 +28,7 @@
 #include "system_ability_definition.h"
 
 #include "access_manager.h"
+#include "anonymous_string.h"
 #include "av_trans_control_center.h"
 #include "capability_info_manager.h"
 #include "meta_info_manager.h"
@@ -332,6 +333,10 @@ int32_t DistributedHardwareService::PauseDistributedHardware(DHType dhType, cons
         DHLOGE("PauseDistributedHardware for DHType: %{public}u not init sink handler", (uint32_t)dhType);
         return ERR_DH_FWK_PARA_INVALID;
     }
+    if (sinkMap[dhType] == nullptr) {
+        DHLOGE("Sinkhandler ptr is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     int32_t ret = sinkMap[dhType]->PauseDistributedHardware(networkId);
     if (ret != 0) {
         DHLOGE("PauseDistributedHardware for DHType: %{public}u failed, ret: %{public}d", (uint32_t)dhType, ret);
@@ -348,6 +353,10 @@ int32_t DistributedHardwareService::ResumeDistributedHardware(DHType dhType, con
     std::map<DHType, IDistributedHardwareSink*> sinkMap = ComponentManager::GetInstance().GetDHSinkInstance();
     if (sinkMap.find(dhType) == sinkMap.end()) {
         DHLOGE("ResumeDistributedHardware for DHType: %{public}u not init sink handler", (uint32_t)dhType);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (sinkMap[dhType] == nullptr) {
+        DHLOGE("Sinkhandler ptr is null");
         return ERR_DH_FWK_PARA_INVALID;
     }
     int32_t ret = sinkMap[dhType]->ResumeDistributedHardware(networkId);
@@ -368,6 +377,10 @@ int32_t DistributedHardwareService::StopDistributedHardware(DHType dhType, const
         DHLOGE("StopDistributedHardware for DHType: %{public}u not init sink handler", (uint32_t)dhType);
         return ERR_DH_FWK_PARA_INVALID;
     }
+    if (sinkMap[dhType] == nullptr) {
+        DHLOGE("Sinkhandler ptr is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
     int32_t ret = sinkMap[dhType]->StopDistributedHardware(networkId);
     if (ret != 0) {
         DHLOGE("StopDistributedHardware for DHType: %{public}u failed, ret: %{public}d", (uint32_t)dhType, ret);
@@ -379,7 +392,8 @@ int32_t DistributedHardwareService::StopDistributedHardware(DHType dhType, const
 int32_t DistributedHardwareService::GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
     const sptr<IGetDhDescriptorsCallback> callback)
 {
-    if (!IsIdLengthValid(networkId)) {
+    if (!IsIdLengthValid(networkId) || callback == nullptr) {
+        DHLOGE("networkId size is invalid or callback ptr is null");
         return ERR_DH_FWK_PARA_INVALID;
     }
     std::string deviceId;
@@ -403,7 +417,7 @@ int32_t DistributedHardwareService::GetDistributedHardware(const std::string &ne
             descriptor.dhType = metaCapInfo->GetDHType();
             descriptors.push_back(descriptor);
         }
-        DHLOGI("Get MetacapInfo Success, networkId: %{public}s.", realNetworkId.c_str());
+        DHLOGI("Get MetacapInfo Success, networkId: %{public}s.", GetAnonyString(realNetworkId).c_str());
         callback->OnSuccess(realNetworkId, descriptors, enableStep);
         return DH_FWK_SUCCESS;
     }
@@ -417,7 +431,7 @@ int32_t DistributedHardwareService::GetDistributedHardware(const std::string &ne
             descriptor.dhType = capabilitie->GetDHType();
             descriptors.push_back(descriptor);
         }
-        DHLOGI("Get CapabilitieInfo Success, deviceId: %{public}s.", deviceId.c_str());
+        DHLOGI("Get CapabilitieInfo Success, deviceId: %{public}s.", GetAnonyString(deviceId).c_str());
         callback->OnSuccess(realNetworkId, descriptors, enableStep);
         return DH_FWK_SUCCESS;
     }

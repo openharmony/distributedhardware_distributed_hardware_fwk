@@ -21,6 +21,7 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "${common_path}/utils/include",
+    "${innerkits_path}/include/ipc",
     "${services_path}/distributedhardwarefwkservice/include/ipc",
   ]
 }

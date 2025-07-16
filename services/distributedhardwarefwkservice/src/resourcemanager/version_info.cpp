@@ -151,26 +151,35 @@ void FromJson(const cJSON *jsonObject, CompVersion &compVer)
     if (IsString(sinkVerJson)) {
         compVer.sinkVersion = sinkVerJson->valuestring;
     }
+    FromJsoncompVerContinue(jsonObject, compVer);
+}
+
+void FromJsoncompVerContinue(const cJSON *jsonObject, CompVersion &compVer)
+{
     cJSON *sourceFeatureFilters = cJSON_GetObjectItem(jsonObject, SOURCE_FEATURE_FILTER);
     cJSON *sinkSupportedFeatures = cJSON_GetObjectItem(jsonObject, SINK_SUPPORTED_FEATURE);
-    if (sourceFeatureFilters || sinkSupportedFeatures) {
-        compVer.haveFeature = true;
-        if (sourceFeatureFilters) {
-            cJSON *filterObj = nullptr;
-            compVer.sourceFeatureFilters.clear();
-            cJSON_ArrayForEach(filterObj, sourceFeatureFilters) {
+    if (!IsArray(sourceFeatureFilters) && !IsArray(sinkSupportedFeatures)) {
+        compVer.haveFeature = false;
+        return;
+    }
+    compVer.haveFeature = true;
+    if (IsArray(sourceFeatureFilters)) {
+        cJSON *filterObj = nullptr;
+        compVer.sourceFeatureFilters.clear();
+        cJSON_ArrayForEach(filterObj, sourceFeatureFilters) {
+            if (filterObj != nullptr && filterObj->type == cJSON_String) {
                 compVer.sourceFeatureFilters.push_back(filterObj->valuestring);
             }
         }
-        if (sinkSupportedFeatures) {
-            cJSON *featureObj = nullptr;
-            compVer.sinkSupportedFeatures.clear();
-            cJSON_ArrayForEach(featureObj, sinkSupportedFeatures) {
+    }
+    if (IsArray(sinkSupportedFeatures)) {
+        cJSON *featureObj = nullptr;
+        compVer.sinkSupportedFeatures.clear();
+        cJSON_ArrayForEach(featureObj, sinkSupportedFeatures) {
+            if (featureObj != nullptr && featureObj->type == cJSON_String) {
                 compVer.sinkSupportedFeatures.push_back(featureObj->valuestring);
             }
         }
-    } else {
-        compVer.haveFeature = false;
     }
 }
 
@@ -191,7 +200,7 @@ void FromJson(const cJSON *jsonObject, VersionInfo &versionInfo)
     }
 
     const cJSON *compVer = cJSON_GetObjectItem(jsonObject, COMP_VER);
-    if (compVer != NULL) {
+    if (IsArray(compVer)) {
         cJSON *compVerObj = nullptr;
         cJSON_ArrayForEach(compVerObj, compVer) {
             CompVersion compVerValue;

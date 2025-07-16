@@ -22,6 +22,7 @@
 #include "constants.h"
 #include "cJSON.h"
 #include "component_loader.h"
+#include "component_manager.h"
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -64,11 +65,11 @@ void SetUpComponentLoaderConfig()
         CompHandler handler;
         handler.compConfig.name = "distributed_audio";
         handler.compConfig.type = DHType::AUDIO;
-        handler.compConfig.compHandlerLoc = "libdistributed_camera_handler.z.so";
+        handler.compConfig.compHandlerLoc = "libdistributed_audio_handler.z.so";
         handler.compConfig.compHandlerVersion = "1.0";
-        handler.compConfig.compSourceLoc = "libdistributed_camera_source_sdk.z.so";
+        handler.compConfig.compSourceLoc = "libdistributed_audio_source_sdk.z.so";
         handler.compConfig.compSourceVersion = "1.0";
-        handler.compConfig.compSinkLoc = "libdistributed_camera_sink_sdk.z.so";
+        handler.compConfig.compSinkLoc = "libdistributed_audio_sink_sdk.z.so";
         handler.compConfig.compSinkVersion = "2.0";
         handler.compConfig.compSinkSaId = TEST_COMP_SINK_SA_ID;
         handler.compConfig.haveFeature = false;
@@ -91,6 +92,21 @@ void SetDownComponentLoaderConfig()
             ComponentLoader::GetInstance().compHandlerMap_.erase(itHandler);
         }
     }
+}
+
+void DistributedHardwareServiceTest::TestGetDistributedHardwareCallback::OnSuccess(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors, EnableStep enableStep)
+{
+    (void)networkId;
+    (void)descriptors;
+    (void)enableStep;
+}
+
+void DistributedHardwareServiceTest::TestGetDistributedHardwareCallback::OnError(const std::string &networkId,
+    int32_t error)
+{
+    (void)networkId;
+    (void)error;
 }
 
 /**
@@ -294,19 +310,22 @@ HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_001, TestSize.L
 HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
-
-    std::string networkId = "111";
+    std::string networkId = "";
     EnableStep enableStep = EnableStep::ENABLE_SOURCE;
     auto ret = service.GetDistributedHardware(networkId, enableStep, nullptr);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+
+    networkId = "111";
+    ret = service.GetDistributedHardware(networkId, enableStep, nullptr);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    ret = service.GetDistributedHardware(networkId, enableStep, callback);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 
     networkId = "local";
-    ret = service.GetDistributedHardware(networkId, enableStep, nullptr);
+    ret = service.GetDistributedHardware(networkId, enableStep, callback);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
-
-    networkId = "";
-    ret = service.GetDistributedHardware(networkId, enableStep, nullptr);
-    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
 /**
@@ -465,6 +484,31 @@ HWTEST_F(DistributedHardwareServiceTest, DisableSource_001, TestSize.Level1)
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
+HWTEST_F(DistributedHardwareServiceTest, PauseDistributedHardware_003, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    DHType dhType = DHType::AUDIO;
+    IDistributedHardwareSink *sinkPtr = nullptr;
+    ComponentManager::GetInstance().compSink_.insert(std::make_pair(dhType, sinkPtr));
+    auto ret = service.PauseDistributedHardware(dhType, networkId);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+    ComponentManager::GetInstance().compSink_.clear();
+}
+
+HWTEST_F(DistributedHardwareServiceTest, PauseDistributedHardware_004, TestSize.Level1)
+{
+    SetUpComponentLoaderConfig();
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    DHType dhType = DHType::AUDIO;
+    ComponentManager::GetInstance().InitCompSink(dhType);
+    auto ret = service.PauseDistributedHardware(dhType, networkId);
+    EXPECT_NE(ret, DH_FWK_SUCCESS);
+    SetDownComponentLoaderConfig();
+    ComponentManager::GetInstance().compSink_.clear();
+}
+
 HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_002, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
@@ -473,12 +517,62 @@ HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_002, TestSize
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 }
 
+HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_003, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    DHType dhType = DHType::AUDIO;
+    IDistributedHardwareSink *sinkPtr = nullptr;
+    ComponentManager::GetInstance().compSink_.insert(std::make_pair(dhType, sinkPtr));
+    auto ret = service.ResumeDistributedHardware(dhType, networkId);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+    ComponentManager::GetInstance().compSink_.clear();
+}
+
+HWTEST_F(DistributedHardwareServiceTest, ResumeDistributedHardware_004, TestSize.Level1)
+{
+    SetUpComponentLoaderConfig();
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    DHType dhType = DHType::AUDIO;
+    ComponentManager::GetInstance().InitCompSink(dhType);
+    auto ret = service.ResumeDistributedHardware(dhType, networkId);
+    EXPECT_NE(ret, DH_FWK_SUCCESS);
+    SetDownComponentLoaderConfig();
+    ComponentManager::GetInstance().compSink_.clear();
+}
+
 HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_002, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string networkId = "111";
     auto ret = service.StopDistributedHardware(DHType::UNKNOWN, networkId);
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+}
+
+HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_003, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    DHType dhType = DHType::AUDIO;
+    IDistributedHardwareSink *sinkPtr = nullptr;
+    ComponentManager::GetInstance().compSink_.insert(std::make_pair(dhType, sinkPtr));
+    auto ret = service.StopDistributedHardware(dhType, networkId);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+    ComponentManager::GetInstance().compSink_.clear();
+}
+
+HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_004, TestSize.Level1)
+{
+    SetUpComponentLoaderConfig();
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "111";
+    DHType dhType = DHType::AUDIO;
+    ComponentManager::GetInstance().InitCompSink(dhType);
+    auto ret = service.StopDistributedHardware(dhType, networkId);
+    EXPECT_NE(ret, DH_FWK_SUCCESS);
+    SetDownComponentLoaderConfig();
+    ComponentManager::GetInstance().compSink_.clear();
 }
 
 HWTEST_F(DistributedHardwareServiceTest, DoBusinessInit_001, TestSize.Level1)

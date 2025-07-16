@@ -23,13 +23,18 @@ config("module_private_config") {
     "${av_trans_path}/common/include",
     "include",
     "${innerkits_path}/include",
+    "${innerkits_path}/include/ipc",
     "${utils_path}/include",
     "${common_path}/log/include",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/componentloader",
+    "${services_path}/distributedhardwarefwkservice/include/componentmanager",
+    "${services_path}/distributedhardwarefwkservice/include/transport",
+    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${services_path}/distributedhardwarefwkservice/include/task",
     "${services_path}/distributedhardwarefwkservice/include/utils",
+    "${services_path}/distributedhardwarefwkservice/include/lowlatency",
   ]
 }
 
@@ -41,6 +46,7 @@ ohos_unittest("DistributedHardwareServiceTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
+    "${innerkits_path}:libdhfwk_sdk",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
   ]
 
@@ -61,10 +67,12 @@ ohos_unittest("DistributedHardwareServiceTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
 }
 

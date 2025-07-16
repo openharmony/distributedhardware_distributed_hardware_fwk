@@ -119,7 +119,9 @@ void OffLineTask::CreateDisableTask()
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, capabilityInfos);
     std::for_each(capabilityInfos.begin(), capabilityInfos.end(), [&](std::shared_ptr<CapabilityInfo> cap) {
-        devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
+        if (cap != nullptr) {
+            devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
+        }
     });
 
     if (devDhInfos.empty()) {
@@ -128,7 +130,9 @@ void OffLineTask::CreateDisableTask()
         std::string udidHash = DHContext::GetInstance().GetUdidHashIdByUUID(GetUUID());
         MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(udidHash, metaCapInfos);
         std::for_each(metaCapInfos.begin(), metaCapInfos.end(), [&](std::shared_ptr<MetaCapabilityInfo> cap) {
-            devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
+            if (cap != nullptr) {
+                devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
+            }
         });
     }
 
@@ -158,7 +162,9 @@ void OffLineTask::CreateDisableSinkTask()
     std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
     MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(localDeviceInfo.udidHash, metaCapInfos);
     std::for_each(metaCapInfos.begin(), metaCapInfos.end(), [&](std::shared_ptr<MetaCapabilityInfo> localMetaInfo) {
+        if (localMetaInfo != nullptr) {
             localMetaInfos.push_back({localMetaInfo->GetDHId(), localMetaInfo->GetDHType()});
+        }
     });
     if (localMetaInfos.empty()) {
         DHLOGE("Can not get localMetainfo.");

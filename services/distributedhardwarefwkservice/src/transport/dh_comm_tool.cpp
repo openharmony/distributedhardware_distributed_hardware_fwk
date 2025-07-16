@@ -291,6 +291,9 @@ void DHCommTool::DHCommToolEventHandler::ProcessFullCapsRsp(const FullCapsRsp &c
     }
 
     for (auto const &cap : capsRsp.caps) {
+        if (cap == nullptr) {
+            continue;
+        }
         BusinessState curState = ComponentManager::GetInstance().QueryBusinessState(capsRsp.networkId, cap->GetDHId());
         DHLOGI("DH state: %{public}" PRIu32 ", networkId: %{public}s, dhId: %{public}s",
             (uint32_t)curState, GetAnonyString(capsRsp.networkId).c_str(), GetAnonyString(cap->GetDHId()).c_str());

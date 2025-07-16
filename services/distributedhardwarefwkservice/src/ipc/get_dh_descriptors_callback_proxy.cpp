@@ -102,16 +102,16 @@ void GetDhDescriptorsCallbackProxy::OnError(const std::string &networkId, int32_
 int32_t GetDhDescriptorsCallbackProxy::WriteDescriptors(MessageParcel &data,
     const std::vector<DHDescriptor> &descriptors)
 {
-    int32_t size = (int32_t)descriptors.size();
-    if (size > int32_t(MAX_DH_DESCRIPTOR_ARRAY_SIZE)) {
-        DHLOGE("The array descriptors are too large, size: %{public}d!", size);
+    uint32_t size = static_cast<uint32_t>(descriptors.size());
+    if (size > MAX_DH_DESCRIPTOR_ARRAY_SIZE) {
+        DHLOGE("The array descriptors are too large, size: %{public}u!", size);
         return ERR_DH_FWK_PARA_INVALID;
     }
-    if (!data.WriteInt32(size)) {
+    if (!data.WriteUint32(size)) {
         DHLOGE("Write descriptors size failed!");
         return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
     }
-    for (int32_t i = 0; i < size; ++i) {
+    for (uint32_t i = 0; i < size; ++i) {
         const DHDescriptor &descriptor = descriptors.at(i);
         DHType type = static_cast<DHType>(descriptor.dhType);
         if (!data.WriteUint32(static_cast<uint32_t>(type))) {

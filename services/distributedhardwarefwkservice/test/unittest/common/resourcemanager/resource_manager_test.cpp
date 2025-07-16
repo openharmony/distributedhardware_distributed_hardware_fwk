@@ -28,6 +28,7 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "dh_utils_tool.h"
+#include "get_dh_descriptors_callback_stub.h"
 #include "task_board.h"
 #include "impl_utils.h"
 
@@ -102,6 +103,17 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
+
+public:
+    class TestGetDistributedHardwareCallback : public GetDhDescriptorsCallbackStub {
+    public:
+        TestGetDistributedHardwareCallback() = default;
+        virtual ~TestGetDistributedHardwareCallback() = default;
+    protected:
+        void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
+            EnableStep enableStep) override;
+        void OnError(const std::string &networkId, int32_t error) override;
+    };
 };
 
 void ResourceManagerTest::SetUpTestCase(void)
@@ -139,6 +151,20 @@ void ResourceManagerTest::TearDown()
     CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(CAP_INFO_7->GetKey());
     CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(CAP_INFO_8->GetKey());
     CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(CAP_INFO_9->GetKey());
+}
+
+void ResourceManagerTest::TestGetDistributedHardwareCallback::OnSuccess(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors, EnableStep enableStep)
+{
+    (void)networkId;
+    (void)descriptors;
+    (void)enableStep;
+}
+
+void ResourceManagerTest::TestGetDistributedHardwareCallback::OnError(const std::string &networkId, int32_t error)
+{
+    (void)networkId;
+    (void)error;
 }
 
 /**
@@ -898,6 +924,19 @@ HWTEST_F(ResourceManagerTest, GetDataByDHType_001, TestSize.Level1)
     ret = CapabilityInfoManager::GetInstance()->GetDataByDHType(DHType::CAMERA, capabilityMap);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
     CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+}
+
+HWTEST_F(ResourceManagerTest, AsyncGetDistributedHardware_001, TestSize.Level1)
+{
+    std::string networkId = "networkId_test";
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    sptr<IGetDhDescriptorsCallback> callback = nullptr;
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->AsyncGetDistributedHardware(networkId,
+        enableStep, callback));
+
+    sptr<IGetDhDescriptorsCallback> callback1(new (std::nothrow) TestGetDistributedHardwareCallback());
+    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->AsyncGetDistributedHardware(networkId,
+        enableStep, callback1));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -21,6 +21,8 @@
 #include <gtest/gtest.h>
 
 #include "distributed_hardware_errno.h"
+#include "get_dh_descriptors_callback_proxy.h"
+#include "get_dh_descriptors_callback_stub.h"
 #include "hardware_status_listener_proxy.h"
 #include "hardware_status_listener_stub.h"
 
@@ -36,7 +38,7 @@ public:
     class TestHDSinkStatusListenerStub : public
         OHOS::DistributedHardware::HDSinkStatusListenerStub {
     public:
-    TestHDSinkStatusListenerStub() = default;
+        TestHDSinkStatusListenerStub() = default;
         virtual ~TestHDSinkStatusListenerStub() = default;
         void OnEnable(const DHDescriptor &dhDescriptor) override;
         void OnDisable(const DHDescriptor &dhDescriptor) override;
@@ -45,10 +47,20 @@ public:
     class TestHDSourceStatusListenerStub : public
         OHOS::DistributedHardware::HDSourceStatusListenerStub {
     public:
-    TestHDSourceStatusListenerStub() = default;
+        TestHDSourceStatusListenerStub() = default;
         virtual ~TestHDSourceStatusListenerStub() = default;
         void OnEnable(const std::string &networkId, const DHDescriptor &dhDescriptor) override;
         void OnDisable(const std::string &networkId, const DHDescriptor &dhDescriptor) override;
+    };
+
+    class TestGetDhDescriptorsCallbackStub : public
+        OHOS::DistributedHardware::GetDhDescriptorsCallbackStub {
+    public:
+        TestGetDhDescriptorsCallbackStub() = default;
+        virtual ~TestGetDhDescriptorsCallbackStub() = default;
+        void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
+            EnableStep enableStep) override;
+        void OnError(const std::string &networkId, int32_t error) override;
     };
 };
 } // namespace DistributedHardware

@@ -60,12 +60,12 @@ int32_t GetDhDescriptorsCallbackStub::OnRemoteRequest(
 
 int32_t GetDhDescriptorsCallbackStub::ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors)
 {
-    int32_t size = data.ReadInt32();
-    if (size > int32_t(MAX_DH_DESCRIPTOR_ARRAY_SIZE)) {
-        DHLOGE("The array descriptors are too large, size: %{public}d!", size);
+    uint32_t size = data.ReadUint32();
+    if (size > MAX_DH_DESCRIPTOR_ARRAY_SIZE) {
+        DHLOGE("The array descriptors size is invalid, size: %{public}u!", size);
         return ERR_DH_FWK_PARA_INVALID;
     }
-    for (int32_t i = 0; i < size; ++i) {
+    for (uint32_t i = 0; i < size; ++i) {
         DHDescriptor descriptor;
         descriptor.dhType = static_cast<DHType>(data.ReadUint32());
         descriptor.id = data.ReadString();
