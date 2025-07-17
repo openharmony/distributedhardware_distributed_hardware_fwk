@@ -287,7 +287,7 @@ int32_t DistributedHardwareService::NotifyAVCenter(int32_t engineId, const AVTra
 }
 
 int32_t DistributedHardwareService::RegisterCtlCenterCallback(int32_t engineId,
-    const sptr<IAVTransControlCenterCallback> callback)
+    const sptr<IAvTransControlCenterCallback> callback)
 {
     return AVTransControlCenter::GetInstance().RegisterCtlCenterCallback(engineId, callback);
 }

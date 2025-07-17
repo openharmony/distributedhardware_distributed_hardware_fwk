@@ -53,6 +53,7 @@ ohos_unittest("AvSenderEngineTest") {
   cflags_cc = cflags
 
   deps = [
+    "${dh_fwk_sdk_path}:dhfwk_idl_hardware_head",
     "${dh_fwk_sdk_path}:libdhfwk_sdk",
     "${engine_path}/av_sender:distributed_av_sender",
     "${filters_path}:avtrans_input_filter",
@@ -133,6 +134,7 @@ ohos_unittest("AvAudioSenderEngineTest") {
   cflags_cc = cflags
 
   deps = [
+    "${dh_fwk_sdk_path}:dhfwk_idl_hardware_head",
     "${dh_fwk_sdk_path}:libdhfwk_sdk",
     "${distributed_av_transport_path}/framework:distributed_av_pipeline_fwk",
     "${engine_path}/av_sender:distributed_av_sender",

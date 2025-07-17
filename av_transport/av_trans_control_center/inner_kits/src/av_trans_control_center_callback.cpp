@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,36 +20,42 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-int32_t AVTransControlCenterCallback::SetParameter(AVTransTag tag, const std::string &value)
+int32_t AVTransControlCenterCallback::SetParameter(uint32_t tag, const std::string &value)
 {
-    if ((tag == AVTransTag::START_AV_SYNC) || (tag == AVTransTag::STOP_AV_SYNC) ||
-        (tag == AVTransTag::TIME_SYNC_RESULT)) {
+    if ((static_cast<AVTransTag>(tag) == AVTransTag::START_AV_SYNC) ||
+        (static_cast<AVTransTag>(tag) == AVTransTag::STOP_AV_SYNC) ||
+        (static_cast<AVTransTag>(tag) == AVTransTag::TIME_SYNC_RESULT)) {
         std::shared_ptr<IAVReceiverEngine> rcvEngine = receiverEngine_.lock();
         if (rcvEngine != nullptr) {
-            rcvEngine->SetParameter(tag, value);
+            rcvEngine->SetParameter(static_cast<AVTransTag>(tag), value);
         }
     }
     return DH_AVT_SUCCESS;
 }
 
-int32_t AVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemory &memory)
+int32_t AVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemoryExt &memory)
 {
     DHLOGW("AVTransControlCenterCallback::SetSharedMemory enter.");
 
+    AVTransSharedMemory memoryTrans;
+    memoryTrans.size = memory.size;
+    memoryTrans.fd = memory.fd;
+    memoryTrans.name = memory.name;
+
     std::shared_ptr<IAVSenderEngine> sendEngine = senderEngine_.lock();
     if (sendEngine != nullptr) {
-        sendEngine->SetParameter(AVTransTag::SHARED_MEMORY_FD, MarshalSharedMemory(memory));
+        sendEngine->SetParameter(AVTransTag::SHARED_MEMORY_FD, MarshalSharedMemory(memoryTrans));
     }
 
     std::shared_ptr<IAVReceiverEngine> rcvEngine = receiverEngine_.lock();
     if (rcvEngine != nullptr) {
-        rcvEngine->SetParameter(AVTransTag::SHARED_MEMORY_FD, MarshalSharedMemory(memory));
+        rcvEngine->SetParameter(AVTransTag::SHARED_MEMORY_FD, MarshalSharedMemory(memoryTrans));
     }
 
     return DH_AVT_SUCCESS;
 }
 
-int32_t AVTransControlCenterCallback::Notify(const AVTransEvent& event)
+int32_t AVTransControlCenterCallback::Notify(const AVTransEventExt& event)
 {
     DHLOGW("AVTransControlCenterCallback::Notify enter.");
     return DH_AVT_SUCCESS;

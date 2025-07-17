@@ -58,6 +58,8 @@ ohos_unittest("DistributedHardwareFwkKitTest") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
+
+  public_configs = [ "${innerkits_path}:dhfwk_idl_hardware_config" ]
 }
 
 group("distributed_hardware_fwk_kit_test") {

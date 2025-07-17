@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,11 +31,12 @@ void AVTransCallbackSetSharedMemoryFuzzTest(const uint8_t *data, size_t size)
     int32_t len = fdp.ConsumeIntegral<int32_t>();
     std::string name(reinterpret_cast<const char*>(data), size);
     AVTransSharedMemory memory = AVTransSharedMemory{ fd, len, name };
+    AVTransSharedMemoryExt memoryExt = AVTransSharedMemoryExt(memory);
     sptr<AVTransControlCenterCallback> controlCenterCallback(new (std::nothrow) AVTransControlCenterCallback());
     if (controlCenterCallback == nullptr) {
         return;
     }
-    controlCenterCallback->SetSharedMemory(memory);
+    controlCenterCallback->SetSharedMemory(memoryExt);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

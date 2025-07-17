@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//build/config/components/idl_tool/idl.gni")
 import("//build/ohos.gni")
 import(
     "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
@@ -19,7 +20,75 @@ config("innerkits_external_config") {
   include_dirs = [
     "${innerkits_path}/include",
     "${innerkits_path}/include/ipc",
+    "${target_gen_dir}",
   ]
+}
+
+idl_gen_interface("dhfwk_idl_hardware") {
+  sources = [
+    "IAvTransControlCenterCallback.idl",
+  ]
+  log_domainid = "0xD004100"
+  log_tag = "distributedhardware"
+}
+
+config("dhfwk_idl_hardware_config") {
+  include_dirs = [
+    "include",
+    "${av_trans_path}/common/include",
+    "${innerkits_path}/include",
+    ".",
+    "${target_gen_dir}",
+    "${common_path}/utils/include",
+  ]
+}
+
+ohos_source_set("dhfwk_idl_hardware_source") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  public_configs = [ ":dhfwk_idl_hardware_config" ]
+  output_values = get_target_outputs(":dhfwk_idl_hardware")
+  sources = filter_include(output_values, [ "*.cpp" ])
+  deps = [ ":dhfwk_idl_hardware" ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "hitrace:hitrace_meter",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+
+  subsystem_name = "distributedhardware"
+
+  part_name = "distributed_hardware_fwk"
+}
+
+ohos_source_set("dhfwk_idl_hardware_head") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  public_configs = [ ":dhfwk_idl_hardware_config" ]
+  deps = [ ":dhfwk_idl_hardware" ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "hitrace:hitrace_meter",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+
+  subsystem_name = "distributedhardware"
+
+  part_name = "distributed_hardware_fwk"
 }
 
 ohos_shared_library("libdhfwk_sdk") {
@@ -48,7 +117,6 @@ ohos_shared_library("libdhfwk_sdk") {
 
   sources = [
     "${av_center_kits_path}/src/av_trans_control_center_callback.cpp",
-    "${av_center_kits_path}/src/av_trans_control_center_callback_stub.cpp",
     "${innerkits_path}/src/distributed_hardware_fwk_kit.cpp",
     "${innerkits_path}/src/ipc/dhfwk_sa_manager.cpp",
     "${innerkits_path}/src/ipc/distributed_hardware_proxy.cpp",
@@ -58,6 +126,7 @@ ohos_shared_library("libdhfwk_sdk") {
   ]
 
   deps = [
+    ":dhfwk_idl_hardware_source",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
   ]
@@ -79,6 +148,7 @@ ohos_shared_library("libdhfwk_sdk") {
     "c_utils:utils",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",

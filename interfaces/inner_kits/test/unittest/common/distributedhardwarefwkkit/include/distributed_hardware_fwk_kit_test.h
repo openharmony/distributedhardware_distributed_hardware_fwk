@@ -26,6 +26,7 @@
 #include "dm_device_info.h"
 #include "device_manager.h"
 
+#include "av_trans_errno.h"
 #include "distributed_hardware_fwk_kit.h"
 #include "get_dh_descriptors_callback_stub.h"
 #include "hardware_status_listener_stub.h"

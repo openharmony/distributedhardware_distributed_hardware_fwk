@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@
 
 #include "anonymous_string.h"
 #include "av_trans_log.h"
+#include "av_trans_errno.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -202,7 +203,7 @@ int32_t AVTransControlCenter::NotifyAVCenter(int32_t engineId, const AVTransEven
 }
 
 int32_t AVTransControlCenter::RegisterCtlCenterCallback(int32_t engineId,
-    const sptr<IAVTransControlCenterCallback> &callback)
+    const sptr<IAvTransControlCenterCallback> &callback)
 {
     TRUE_RETURN_V_MSG_E(IsInvalidEngineId(engineId), ERR_DH_AVT_INVALID_PARAM_VALUE,
         "Invalid input engine id = %{public}d", engineId);
@@ -232,7 +233,7 @@ void AVTransControlCenter::SetParam2Engines(AVTransTag tag, const std::string &v
     std::lock_guard<std::mutex> lock(callbackMutex_);
     for (auto iter = callbackMap_.begin(); iter != callbackMap_.end(); iter++) {
         if (iter->second != nullptr) {
-            iter->second->SetParameter(tag, value);
+            iter->second->SetParameter(static_cast<uint32_t>(tag), value);
         }
     }
 }
@@ -242,7 +243,7 @@ void AVTransControlCenter::SetParam2Engines(const AVTransSharedMemory &memory)
     std::lock_guard<std::mutex> lock(callbackMutex_);
     for (auto iter = callbackMap_.begin(); iter != callbackMap_.end(); iter++) {
         if (iter->second != nullptr) {
-            iter->second->SetSharedMemory(memory);
+            iter->second->SetSharedMemory(AVTransSharedMemoryExt(memory));
         }
     }
 }

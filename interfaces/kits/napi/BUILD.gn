@@ -68,4 +68,6 @@ ohos_shared_library("hardwaremanager") {
   subsystem_name = "distributedhardware"
   relative_install_dir = "module/distributedhardware"
   part_name = "distributed_hardware_fwk"
+
+  public_configs = [ "${innerkits_path}:dhfwk_idl_hardware_config" ]
 }

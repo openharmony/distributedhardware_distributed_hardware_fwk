@@ -15,6 +15,7 @@
 
 #include "distributed_hardware_proxy_test.h"
 #include "dhardware_ipc_interface_code.h"
+#include "av_trans_errno.h"
 
 using namespace testing::ext;
 
@@ -102,7 +103,7 @@ int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::NotifyAVCente
 }
 
 int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::RegisterCtlCenterCallback(int32_t engineId,
-    const sptr<IAVTransControlCenterCallback> callback)
+    const sptr<IAvTransControlCenterCallback> callback)
 {
     (void)engineId;
     (void)callback;
@@ -470,7 +471,7 @@ HWTEST_F(DistributedHardwareProxyTest, NotifyAVCenter_001, TestSize.Level1)
 HWTEST_F(DistributedHardwareProxyTest, RegisterCtlCenterCallback_001, TestSize.Level1)
 {
     int32_t engineId = 0;
-    sptr<IAVTransControlCenterCallback> callback = nullptr;
+    sptr<IAvTransControlCenterCallback> callback = nullptr;
     sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
     ASSERT_TRUE(dhStubPtr != nullptr);
     DistributedHardwareProxy dhProxy(dhStubPtr);

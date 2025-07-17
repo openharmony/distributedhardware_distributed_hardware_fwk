@@ -32,6 +32,7 @@
 #include "distributed_hardware_log.h"
 #include "hdf_operate.h"
 #include "publisher_listener_proxy.h"
+#include "av_trans_errno.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -265,7 +266,7 @@ int32_t DistributedHardwareStub::RegisterControlCenterCallbackInner(MessageParce
     }
 
     int32_t engineId = data.ReadInt32();
-    sptr<IAVTransControlCenterCallback> callback = iface_cast<IAVTransControlCenterCallback>(data.ReadRemoteObject());
+    sptr<IAvTransControlCenterCallback> callback = iface_cast<IAvTransControlCenterCallback>(data.ReadRemoteObject());
     if (callback == nullptr) {
         DHLOGE("Input av control center callback is null");
         return ERR_DH_FWK_PARA_INVALID;
