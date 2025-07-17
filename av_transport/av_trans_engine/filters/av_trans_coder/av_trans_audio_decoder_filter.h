@@ -136,12 +136,12 @@ private:
 
     OH_AVFormat outputFormat_ = {};
     ADecInitParams initDecParams_ = {
-    .codecType = AudioCodecType::AUDIO_CODEC_AAC,
-    .channel = 2,
-    .sampleRate = 44100,
-    .bitRate = 12800,
-    .sampleDepth = MediaAVCodec::SAMPLE_S16LE
-};
+        initDecParams_.codecType = AudioCodecType::AUDIO_CODEC_AAC,
+        initDecParams_.channel = 2,
+        initDecParams_.sampleRate = 44100,
+        initDecParams_.bitRate = 12800,
+        initDecParams_.sampleDepth = MediaAVCodec::SAMPLE_S16LE
+    };
     OH_AVCodec *audioDecoder_ = nullptr;
     std::queue<OH_AVBuffer *> codecBufQueue_;
     std::queue<uint32_t> codecIndexQueue_;
