@@ -139,6 +139,7 @@
               "dhardware_descriptor.h",
               "dhardware_ipc_interface_code.h",
               "distributed_hardware_errno.h",
+              "iav_trans_control_center_callback.h",
               "idistributed_hardware_manager.h",
               "idistributed_hardware_sink.h",
               "idistributed_hardware_source.h",

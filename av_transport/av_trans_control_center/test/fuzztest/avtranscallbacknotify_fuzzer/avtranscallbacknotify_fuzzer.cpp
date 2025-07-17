@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,12 +30,11 @@ void AVTransCallbackNotifyFuzzTest(const uint8_t *data, size_t size)
     std::string content(reinterpret_cast<const char*>(data), size);
     std::string peerDevId(reinterpret_cast<const char*>(data), size);
     AVTransEvent event = AVTransEvent{ type, content, peerDevId };
-    AVTransEventExt eventExt = AVTransEventExt(event);
     sptr<AVTransControlCenterCallback> controlCenterCallback(new (std::nothrow) AVTransControlCenterCallback());
     if (controlCenterCallback == nullptr) {
         return;
     }
-    controlCenterCallback->Notify(eventExt);
+    controlCenterCallback->Notify(event);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

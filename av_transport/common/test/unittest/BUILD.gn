@@ -54,7 +54,6 @@ ohos_unittest("AvSyncUtilsTest") {
     "googletest:gmock",
     "googletest:gmock_main",
     "ipc:ipc_core",
-    "hilog:libhilog",
   ]
 
   cflags = [

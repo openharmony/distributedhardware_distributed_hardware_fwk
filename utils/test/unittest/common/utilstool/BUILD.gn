@@ -41,7 +41,6 @@ ohos_unittest("UtilsToolTest") {
     "cJSON:cjson",
     "c_utils:utils",
     "hitrace:hitrace_meter",
-    "hilog:libhilog",
   ]
 }
 

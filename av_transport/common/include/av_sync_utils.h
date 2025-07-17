@@ -18,9 +18,6 @@
 
 #include <memory>
 #include <string>
-#include <securec.h>
-#include "parcel.h"
-#include "message_parcel.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -36,61 +33,6 @@ struct AVTransSharedMemory {
     int32_t size;
     std::string name;
     void* addr;
-};
-
-struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {
-    using AVTransSharedMemory::AVTransSharedMemory;
-    explicit AVTransSharedMemoryExt() {}
-    virtual ~AVTransSharedMemoryExt()
-    {
-        if (addr != nullptr) {
-            free(addr);
-            addr = nullptr;
-        }
-    }
-    explicit AVTransSharedMemoryExt(const AVTransSharedMemory& avTransSharedMemory)
-    {
-        fd = avTransSharedMemory.fd;
-        size = avTransSharedMemory.size;
-        name = avTransSharedMemory.name;
-        addr = (char*)malloc(size);
-        if (addr) {
-            auto ret = memcpy_s(addr, size, avTransSharedMemory.addr, size);
-            if (ret != EOK) {
-                free(addr);
-                addr = nullptr;
-            }
-        } else {
-            addr = nullptr;
-        }
-    }
-    virtual bool Marshalling(Parcel &parcel) const override
-    {
-        MessageParcel &messageParcel = static_cast<MessageParcel&>(parcel);
-        if (!messageParcel.WriteFileDescriptor(fd)) {
-            return false;
-        }
-        if (!messageParcel.WriteInt32(size)) {
-            return false;
-        }
-        if (!messageParcel.WriteString(name)) {
-            return false;
-        }
-        return true;
-    }
-
-    static AVTransSharedMemoryExt *Unmarshalling(Parcel &parcel)
-    {
-        MessageParcel &messageParcel = static_cast<MessageParcel&>(parcel);
-        AVTransSharedMemoryExt *avTransSharedMemory = new (std::nothrow) AVTransSharedMemoryExt();
-        if (avTransSharedMemory == nullptr) {
-            return nullptr;
-        }
-        avTransSharedMemory->fd = messageParcel.ReadFileDescriptor();
-        avTransSharedMemory->size = messageParcel.ReadInt32();
-        avTransSharedMemory->name = messageParcel.ReadString();
-        return avTransSharedMemory;
-    }
 };
 
 struct AVSyncClockUnit {

@@ -91,7 +91,7 @@ int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event)
     return DH_FWK_SUCCESS;
 }
 
-int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAvTransControlCenterCallback> callback)
+int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> callback)
 {
     (void)engineId;
     (void)callback;

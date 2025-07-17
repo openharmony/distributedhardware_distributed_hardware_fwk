@@ -29,9 +29,6 @@
 #include "idistributed_hardware.h"
 #include "iget_dh_descriptors_callback.h"
 #include "ihardware_status_listener.h"
-#include "device_type.h"
-#include "av_trans_types.h"
-#include "iav_trans_control_center_callback.h"
 
 #ifndef API_EXPORT
 #define API_EXPORT __attribute__((visibility("default")))
@@ -134,7 +131,7 @@ public:
      * @param callback av control center callback.
      * @return Returns 0 if success.
      */
-    API_EXPORT int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAvTransControlCenterCallback> callback);
+    API_EXPORT int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> callback);
 
     /**
      * @brief Pause distributed hardware.

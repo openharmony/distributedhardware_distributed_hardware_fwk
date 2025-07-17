@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,14 +23,14 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-class AVTransControlCenterCallback : public AvTransControlCenterCallbackStub {
+class AVTransControlCenterCallback : public AVTransControlCenterCallbackStub {
 public:
     AVTransControlCenterCallback() = default;
     ~AVTransControlCenterCallback() override = default;
 
-    int32_t SetParameter(uint32_t tag, const std::string &value) override;
-    int32_t SetSharedMemory(const AVTransSharedMemoryExt& memory) override;
-    int32_t Notify(const AVTransEventExt& event) override;
+    int32_t SetParameter(AVTransTag tag, const std::string &value) override;
+    int32_t SetSharedMemory(const AVTransSharedMemory &memory) override;
+    int32_t Notify(const AVTransEvent &event) override;
 
     void SetSenderEngine(const std::shared_ptr<IAVSenderEngine> &sender);
     void SetReceiverEngine(const std::shared_ptr<IAVReceiverEngine> &receiver);

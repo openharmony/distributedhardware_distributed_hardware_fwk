@@ -78,20 +78,20 @@ void TestGetDistributedHardwareCallback::OnError(const std::string &networkId, i
     (void)error;
 }
 
-int32_t TestAVTransControlCenterCallback::SetParameter(uint32_t tag, const std::string &value)
+int32_t TestAVTransControlCenterCallback::SetParameter(AVTransTag tag, const std::string &value)
 {
     (void)tag;
     (void)value;
     return DH_FWK_SUCCESS;
 }
 
-int32_t TestAVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemoryExt &memory)
+int32_t TestAVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemory &memory)
 {
     (void)memory;
     return DH_FWK_SUCCESS;
 }
 
-int32_t TestAVTransControlCenterCallback::Notify(const AVTransEventExt &event)
+int32_t TestAVTransControlCenterCallback::Notify(const AVTransEvent &event)
 {
     (void)event;
     return DH_FWK_SUCCESS;
@@ -407,7 +407,7 @@ void RegisterCtlCenterCallbackFuzzTest(const uint8_t *data, size_t size)
 
     DistributedHardwareFwkKit dhfwkKit;
     int32_t engineId = *(reinterpret_cast<const int32_t*>(data));
-    sptr<IAvTransControlCenterCallback> listener(new TestAVTransControlCenterCallback());
+    sptr<IAVTransControlCenterCallback> listener(new TestAVTransControlCenterCallback());
     dhfwkKit.RegisterCtlCenterCallback(engineId, listener);
 }
 } // namespace DistributedHardware

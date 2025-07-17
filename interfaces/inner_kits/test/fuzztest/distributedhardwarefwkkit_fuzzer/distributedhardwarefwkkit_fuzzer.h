@@ -60,14 +60,14 @@ protected:
         EnableStep enableStep) override;
     void OnError(const std::string &networkId, int32_t error) override;
 };
-class TestAVTransControlCenterCallback : public IAvTransControlCenterCallback {
+class TestAVTransControlCenterCallback : public IAVTransControlCenterCallback {
 public:
     TestAVTransControlCenterCallback() = default;
     virtual ~TestAVTransControlCenterCallback() = default;
 protected:
-    int32_t SetParameter(uint32_t tag, const std::string &value) override;
-    int32_t SetSharedMemory(const AVTransSharedMemoryExt& memory) override;
-    int32_t Notify(const AVTransEventExt& event) override;
+    int32_t SetParameter(AVTransTag tag, const std::string &value) override;
+    int32_t SetSharedMemory(const AVTransSharedMemory &memory) override;
+    int32_t Notify(const AVTransEvent &event) override;
     sptr<IRemoteObject> AsObject() override
     {
     return nullptr;

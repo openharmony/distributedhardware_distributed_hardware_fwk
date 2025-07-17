@@ -40,6 +40,7 @@ ohos_unittest("AvTransControlCenterTest") {
   module_out_path = module_out_path
 
   sources = [
+    "${control_center_path}/test/unittest/inner_kits/av_trans_control_center_callback_stub_test.cpp",
     "${control_center_path}/test/unittest/inner_kits/av_trans_control_center_callback_test.cpp",
     "${control_center_path}/test/unittest/services/av_sync_manager_test.cpp",
     "${control_center_path}/test/unittest/services/av_trans_control_center_test.cpp",
@@ -47,7 +48,6 @@ ohos_unittest("AvTransControlCenterTest") {
 
   configs = [ ":module_private_config" ]
   deps = [
-    "${dh_fwk_sdk_path}:dhfwk_idl_hardware_head",
     "${dh_fwk_sdk_path}:libdhfwk_sdk",
     "${dh_fwk_services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
   ]
@@ -67,7 +67,6 @@ ohos_unittest("AvTransControlCenterTest") {
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "ipc:ipc_core",
-    "hilog:libhilog",
   ]
 
   cflags = [

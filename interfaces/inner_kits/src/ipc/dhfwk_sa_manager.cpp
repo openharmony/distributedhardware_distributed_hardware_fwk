@@ -203,7 +203,7 @@ void DHFWKSAManager::RemovePublisherListenerFromCache(const DHTopic topic, sptr<
 }
 
 void DHFWKSAManager::AddAVTransControlCenterCbToCache(int32_t engineId,
-    const sptr<IAvTransControlCenterCallback> callback)
+    const sptr<IAVTransControlCenterCallback> callback)
 {
     std::lock_guard<std::mutex> avTransControlCenterCbLock(avTransControlCenterCbMutex_);
     avTransControlCenterCbCache_[engineId] = callback;

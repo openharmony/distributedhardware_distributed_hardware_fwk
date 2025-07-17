@@ -352,7 +352,7 @@ int32_t DistributedHardwareProxy::NotifyAVCenter(int32_t engineId, const AVTrans
 }
 
 int32_t DistributedHardwareProxy::RegisterCtlCenterCallback(int32_t engineId,
-    const sptr<IAvTransControlCenterCallback> callback)
+    const sptr<IAVTransControlCenterCallback> callback)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {

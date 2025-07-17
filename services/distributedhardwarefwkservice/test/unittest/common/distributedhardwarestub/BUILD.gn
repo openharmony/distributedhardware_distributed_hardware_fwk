@@ -70,7 +70,6 @@ ohos_unittest("DistributedHardwareStubTest") {
     "googletest:gmock_main",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
-    "hilog:libhilog",
   ]
 }
 

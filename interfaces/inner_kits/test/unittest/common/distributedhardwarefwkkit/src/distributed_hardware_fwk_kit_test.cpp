@@ -390,7 +390,7 @@ HWTEST_F(DistributedHardwareFwkKitTest, RegisterCtlCenterCallback_001, testing::
 {
     ASSERT_TRUE(dhfwkPtr_ != nullptr);
     int32_t engineId = 0;
-    sptr<IAvTransControlCenterCallback> callback = nullptr;
+    sptr<IAVTransControlCenterCallback> callback = nullptr;
     int32_t ret = dhfwkPtr_->RegisterCtlCenterCallback(engineId, callback);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }

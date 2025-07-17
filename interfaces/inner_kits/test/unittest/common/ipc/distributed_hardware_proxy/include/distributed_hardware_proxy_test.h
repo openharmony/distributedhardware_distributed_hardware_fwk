@@ -20,7 +20,6 @@
 #include <gtest/gtest.h>
 #include <mutex>
 
-#include "av_trans_errno.h"
 #include "device_type.h"
 #include "distributed_hardware_errno.h"
 #include "idistributed_hardware.h"
@@ -51,7 +50,7 @@ public:
         int32_t ReleaseAVCenter(int32_t engineId);
         int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId);
         int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event);
-        int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAvTransControlCenterCallback> callback);
+        int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> callback);
         int32_t NotifySourceRemoteSinkStarted(std::string &deviceId);
         int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId);
         int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId);

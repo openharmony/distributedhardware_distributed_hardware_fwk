@@ -47,7 +47,7 @@ public:
     virtual int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId) = 0;
     virtual int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event) = 0;
     virtual int32_t RegisterCtlCenterCallback(int32_t engineId,
-        const sptr<IAvTransControlCenterCallback> callback) = 0;
+        const sptr<IAVTransControlCenterCallback> callback) = 0;
     virtual int32_t NotifySourceRemoteSinkStarted(std::string &deviceId) = 0;
     virtual int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId) = 0;
     virtual int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId) = 0;

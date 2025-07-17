@@ -49,7 +49,6 @@ ohos_unittest("EnabledCompsDumpTest") {
     "eventhandler:libeventhandler",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
-    "hilog:libhilog",
   ]
 
   cflags = [

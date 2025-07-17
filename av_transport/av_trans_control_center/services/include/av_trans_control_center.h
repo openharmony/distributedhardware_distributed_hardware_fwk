@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,7 @@ public:
     int32_t ReleaseAVCenter(int32_t engineId);
     int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId);
     int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event);
-    int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAvTransControlCenterCallback> &callback);
+    int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAVTransControlCenterCallback> &callback);
 
     // interfaces from ISoftbusChannelListener
     void OnChannelEvent(const AVTransEvent &event) override;
@@ -64,7 +64,7 @@ private:
 
     std::vector<std::string> connectedDevIds_;
     std::map<int32_t, std::string> engine2DevIdMap_;
-    std::map<int32_t, sptr<IAvTransControlCenterCallback>> callbackMap_;
+    std::map<int32_t, sptr<IAVTransControlCenterCallback>> callbackMap_;
 };
 }
 }

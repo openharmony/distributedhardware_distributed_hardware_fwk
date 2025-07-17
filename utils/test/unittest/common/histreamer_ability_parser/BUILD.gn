@@ -38,7 +38,6 @@ ohos_unittest("HistreamerAbilityParserTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
-    "hilog:libhilog",
   ]
 }
 

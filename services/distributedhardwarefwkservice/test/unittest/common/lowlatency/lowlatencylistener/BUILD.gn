@@ -58,7 +58,6 @@ ohos_unittest("LowLatencyListenerTest") {
     "eventhandler:libeventhandler",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
-    "hilog:libhilog",
   ]
 }
 
