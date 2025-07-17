@@ -196,7 +196,10 @@ int32_t SoftbusChannelAdapter::CreateChannelServer(const std::string& pkgName, c
         {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
-
+    if (sizeof(qos[0]) == 0) {
+        AVTRANS_LOGE("qos[0] siez of zero");
+        return ERR_DH_AVT_SESSION_ERROR;
+    }
     int32_t ret = Listen(socketId, qos, sizeof(qos) / sizeof(qos[0]), &sessListener_);
     if (ret != 0) {
         AVTRANS_LOGE("Listen socket error for sessionName:%{public}s", sessName.c_str());
@@ -276,18 +279,15 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
         AVTRANS_LOGI("Softbus channel already opened, sessionId:%{public}" PRId32, existSessId);
         return ERR_DH_AVT_SESSION_HAS_OPENED;
     }
-
     QosTV qos[] = {
         {.qos = QOS_TYPE_MIN_BW,        .value = 40 * 1024 * 1024},
         {.qos = QOS_TYPE_MAX_LATENCY,       .value = 4000},
         {.qos = QOS_TYPE_MIN_LATENCY,       .value = 2000},
     };
-    
     TransDataType dataType = TransDataType::DATA_TYPE_BYTES;
     if (mySessName.find("avtrans.data") != std::string::npos) {
         dataType = TransDataType::DATA_TYPE_VIDEO_STREAM;
     }
-
     SocketInfo clientInfo = {
         .name = const_cast<char*>((mySessName.c_str())),
         .peerName = const_cast<char*>(peerSessName.c_str()),
@@ -295,10 +295,11 @@ int32_t SoftbusChannelAdapter::OpenSoftbusChannel(const std::string &mySessName,
         .pkgName = const_cast<char*>(PkgName.c_str()),
         .dataType = dataType,
     };
-
     int32_t socketId = Socket(clientInfo);
     if (socketId <0) {
-        AVTRANS_LOGE("Create OpenSoftbusChannel Socket error");
+        return ERR_DH_AVT_SESSION_ERROR;
+    }
+    if (sizeof(qos[0]) == 0) {
         return ERR_DH_AVT_SESSION_ERROR;
     }
     int32_t ret = Bind(socketId, qos, sizeof(qos) / sizeof(qos[0]), &sessListener_);
