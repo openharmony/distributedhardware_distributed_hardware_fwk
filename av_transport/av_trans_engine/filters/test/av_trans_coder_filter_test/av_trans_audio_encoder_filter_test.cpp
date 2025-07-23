@@ -601,6 +601,7 @@ HWTEST_F(AvTransportAudioEncoderFilterTest, OnEncOutputFormatChanged, testing::e
     filter->OnEncOutputFormatChanged(nullFormat);
     OH_AVFormat *validFormat = new (std::nothrow) OH_AVFormat();
     filter->OnEncOutputFormatChanged(validFormat);
+    delete validFormat;
 }
 
 HWTEST_F(AvTransportAudioEncoderFilterTest, OnEncInputBufferAvailable_002, testing::ext::TestSize.Level1)
