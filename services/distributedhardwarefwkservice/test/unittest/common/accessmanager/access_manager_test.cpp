@@ -22,6 +22,8 @@
 #include "dh_context.h"
 #include "distributed_hardware_manager_factory.h"
 #include "distributed_hardware_errno.h"
+#include "device_param_mgr.h"
+
 using namespace testing::ext;
 
 namespace OHOS {
@@ -34,6 +36,8 @@ enum class Status : uint32_t {
 
 constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
 constexpr int32_t INVALID_OSTYPE = 10;
+constexpr int32_t OLD_HO_DEVICE_TYPE = -1;
+constexpr int32_t NEW_HO_DEVICE_TYPE = 11;
 const std::string TEST_NETWORKID = "111111";
 const std::string TEST_UUID = "222222";
 const std::string TEST_UDID = "333333";
@@ -237,6 +241,51 @@ HWTEST_F(AccessManagerTest, CheckExitSAOrNot_001, TestSize.Level1)
 HWTEST_F(AccessManagerTest, InitLocalDevInfo_001, TestSize.Level1)
 {
     ASSERT_TRUE(DistributedHardwareManagerFactory::GetInstance().InitLocalDevInfo());
+}
+
+HWTEST_F(AccessManagerTest, SendOnLineEvent_002, TestSize.Level1)
+{
+    std::string networkId = "networkId_1";
+    std::string uuid = "uuid_1";
+    std::string udid = "udid_1";
+    uint16_t deviceType = TEST_DEV_TYPE_PAD;
+    int32_t osType = OLD_HO_DEVICE_TYPE;
+    DistributedHardwareManagerFactory::GetInstance().flagUnInit_.store(false);
+    DistributedHardwareManagerFactory::GetInstance().isInit_.store(true);
+    DeviceParamMgr::GetInstance().isDeviceE2ESync_.store(true);
+    int32_t ret =
+        DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid, deviceType, osType);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+HWTEST_F(AccessManagerTest, SendOnLineEvent_003, TestSize.Level1)
+{
+    std::string networkId = "networkId_2";
+    std::string uuid = "uuid_2";
+    std::string udid = "udid_2";
+    uint16_t deviceType = TEST_DEV_TYPE_PAD;
+    int32_t osType = NEW_HO_DEVICE_TYPE;
+    DistributedHardwareManagerFactory::GetInstance().flagUnInit_.store(false);
+    DistributedHardwareManagerFactory::GetInstance().isInit_.store(true);
+    DeviceParamMgr::GetInstance().isDeviceE2ESync_.store(true);
+    int32_t ret =
+        DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid, deviceType, osType);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+HWTEST_F(AccessManagerTest, SendOnLineEvent_004, TestSize.Level1)
+{
+    std::string networkId = "networkId_3";
+    std::string uuid = "uuid_3";
+    std::string udid = "udid_3";
+    uint16_t deviceType = TEST_DEV_TYPE_PAD;
+    int32_t osType = INVALID_OSTYPE;
+    DistributedHardwareManagerFactory::GetInstance().flagUnInit_.store(false);
+    DistributedHardwareManagerFactory::GetInstance().isInit_.store(true);
+    DeviceParamMgr::GetInstance().isDeviceE2ESync_.store(true);
+    int32_t ret =
+        DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid, deviceType, osType);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
