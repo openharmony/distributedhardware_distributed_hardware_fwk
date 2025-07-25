@@ -18,11 +18,15 @@
 #include "gtest/gtest.h"
 
 #include "dm_device_info.h"
+#include "device_manager.h"
+#include "device_manager_impl.h"
 
 #include "dh_context.h"
 #include "distributed_hardware_manager_factory.h"
 #include "distributed_hardware_errno.h"
+
 using namespace testing::ext;
+using namespace testing;
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -39,6 +43,33 @@ const std::string TEST_UUID = "222222";
 const std::string TEST_UDID = "333333";
 }
 
+static int32_t g_InitDMValue = 0;
+static int32_t g_UnInitDMValue = 0;
+static int32_t g_RegisterDMValue = 0;
+static int32_t g_UnRegisterDMValue = 0;
+
+int32_t DeviceManagerImpl::InitDeviceManager(const std::string &pkgName,
+    std::shared_ptr<DmInitCallback> dmInitCallback)
+{
+    return g_InitDMValue;
+}
+
+int32_t DeviceManagerImpl::UnInitDeviceManager(const std::string &pkgName)
+{
+    return g_UnInitDMValue;
+}
+
+int32_t DeviceManagerImpl::RegisterDevStateCallback(const std::string &pkgName,
+    const std::string &extra, std::shared_ptr<DeviceStateCallback> callback)
+{
+    return g_RegisterDMValue;
+}
+
+int32_t DeviceManagerImpl::RegisterDevStateCallback(const std::string &pkgName)
+{
+    return g_UnRegisterDMValue;
+}
+
 class AccessManagerTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -50,6 +81,10 @@ public:
 void AccessManagerTest::SetUp()
 {
     DistributedHardwareManagerFactory::GetInstance().isInit_.store(true);
+    g_InitDMValue = 0;
+    g_UnInitDMValue = 0;
+    g_RegisterDMValue = 0;
+    g_UnRegisterDMValue = 0;
 }
 
 void AccessManagerTest::TearDown() {}
@@ -117,7 +152,50 @@ HWTEST_F(AccessManagerTest, SendOffLineEvent_001, TestSize.Level1)
  */
 HWTEST_F(AccessManagerTest, Init_001, TestSize.Level1)
 {
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    g_InitDMValue = -1;
+    auto ret = AccessManager::GetInstance()->Init();
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_INIT_DM_FAILED, ret);
+}
+
+HWTEST_F(AccessManagerTest, Init_002, TestSize.Level1)
+{
+    g_RegisterDMValue = -1;
+    auto ret = AccessManager::GetInstance()->Init();
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_REGISTER_DM_FAILED, ret);
+}
+
+HWTEST_F(AccessManagerTest, Init_003, TestSize.Level1)
+{
+    g_RegisterDMValue = 0;
+    auto ret = AccessManager::GetInstance()->Init();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+/**
+ * @tc.name: UnInit_001
+ * @tc.desc: Verify the UnInit function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(AccessManagerTest, UnInit_001, TestSize.Level1)
+{
+    g_UnInitDMValue = -1;
+    auto ret = AccessManager::GetInstance()->UnInit();
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_INIT_DM_FAILED, ret);
+}
+
+HWTEST_F(AccessManagerTest, UnInit_002, TestSize.Level1)
+{
+    g_UnRegisterDMValue = -1;
+    auto ret = AccessManager::GetInstance()->UnInit();
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_REGISTER_DM_FAILED, ret);
+}
+
+HWTEST_F(AccessManagerTest, UnInit_003, TestSize.Level1)
+{
+    g_UnRegisterDMValue = 0;
+    auto ret = AccessManager::GetInstance()->UnInit();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 /**
@@ -128,8 +206,11 @@ HWTEST_F(AccessManagerTest, Init_001, TestSize.Level1)
  */
 HWTEST_F(AccessManagerTest, OnRemoteDied_001, TestSize.Level1)
 {
-    AccessManager::GetInstance()->OnRemoteDied();
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    g_InitDMValue = -1;
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnRemoteDied());
+
+    g_InitDMValue = 0;
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnRemoteDied());
 }
 
 /**
@@ -146,8 +227,7 @@ HWTEST_F(AccessManagerTest, OnDeviceOnline_001, TestSize.Level1)
         .deviceTypeId = 1,
         .networkId = ""
     };
-    AccessManager::GetInstance()->OnDeviceOnline(deviceInfo);
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceOnline(deviceInfo));
 }
 
 HWTEST_F(AccessManagerTest, OnDeviceOnline_002, TestSize.Level1)
@@ -158,8 +238,7 @@ HWTEST_F(AccessManagerTest, OnDeviceOnline_002, TestSize.Level1)
         .deviceTypeId = 1,
         .networkId = "123456789"
     };
-    AccessManager::GetInstance()->OnDeviceOnline(deviceInfo);
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->Init());
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceOnline(deviceInfo));
 }
 
 /**
@@ -204,17 +283,6 @@ HWTEST_F(AccessManagerTest, OnDeviceOffline_003, TestSize.Level1)
     DHContext::GetInstance().AddOnlineDevice(TEST_UDID, TEST_UUID, TEST_NETWORKID);
     ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceOffline(deviceInfo));
     DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(TEST_NETWORKID);
-}
-
-/**
- * @tc.name: UnInit_001
- * @tc.desc: Verify the UnInit function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(AccessManagerTest, UnInit_001, TestSize.Level1)
-{
-    EXPECT_EQ(DH_FWK_SUCCESS, AccessManager::GetInstance()->UnInit());
 }
 
 /**
