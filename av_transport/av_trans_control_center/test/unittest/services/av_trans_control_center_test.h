@@ -45,11 +45,6 @@ public:
         value_ = value;
         return DH_AVT_SUCCESS;
     }
-    int32_t SetSharedMemory(const AVTransSharedMemoryExt &memory) override
-    {
-        memory_ = memory;
-        return DH_AVT_SUCCESS;
-    }
     int32_t Notify(const AVTransEventExt &event) override
     {
         return DH_AVT_SUCCESS;

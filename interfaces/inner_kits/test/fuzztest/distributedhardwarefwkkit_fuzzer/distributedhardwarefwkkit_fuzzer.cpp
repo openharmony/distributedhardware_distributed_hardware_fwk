@@ -85,12 +85,6 @@ int32_t TestAVTransControlCenterCallback::SetParameter(uint32_t tag, const std::
     return DH_FWK_SUCCESS;
 }
 
-int32_t TestAVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemoryExt &memory)
-{
-    (void)memory;
-    return DH_FWK_SUCCESS;
-}
-
 int32_t TestAVTransControlCenterCallback::Notify(const AVTransEventExt &event)
 {
     (void)event;

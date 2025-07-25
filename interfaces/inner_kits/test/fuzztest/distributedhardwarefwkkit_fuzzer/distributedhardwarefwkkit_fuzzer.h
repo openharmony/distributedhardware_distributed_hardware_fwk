@@ -66,7 +66,6 @@ public:
     virtual ~TestAVTransControlCenterCallback() = default;
 protected:
     int32_t SetParameter(uint32_t tag, const std::string &value) override;
-    int32_t SetSharedMemory(const AVTransSharedMemoryExt& memory) override;
     int32_t Notify(const AVTransEventExt& event) override;
     sptr<IRemoteObject> AsObject() override
     {

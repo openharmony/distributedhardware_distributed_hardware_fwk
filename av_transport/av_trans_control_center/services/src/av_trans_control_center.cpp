@@ -240,12 +240,7 @@ void AVTransControlCenter::SetParam2Engines(AVTransTag tag, const std::string &v
 
 void AVTransControlCenter::SetParam2Engines(const AVTransSharedMemory &memory)
 {
-    std::lock_guard<std::mutex> lock(callbackMutex_);
-    for (auto iter = callbackMap_.begin(); iter != callbackMap_.end(); iter++) {
-        if (iter->second != nullptr) {
-            iter->second->SetSharedMemory(AVTransSharedMemoryExt(memory));
-        }
-    }
+    (void)memory;
 }
 
 void AVTransControlCenter::OnChannelEvent(const AVTransEvent &event)
