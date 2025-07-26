@@ -181,14 +181,14 @@ HWTEST_F(AccessManagerTest, UnInit_001, TestSize.Level1)
 {
     g_UnInitDMValue = -1;
     auto ret = AccessManager::GetInstance()->UnInit();
-    EXPECT_EQ(ERR_DH_FWK_ACCESS_INIT_DM_FAILED, ret);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_UNINIT_DM_FAILED, ret);
 }
 
 HWTEST_F(AccessManagerTest, UnInit_002, TestSize.Level1)
 {
     g_UnRegisterDMValue = -1;
     auto ret = AccessManager::GetInstance()->UnInit();
-    EXPECT_EQ(ERR_DH_FWK_ACCESS_REGISTER_DM_FAILED, ret);
+    EXPECT_EQ(ERR_DH_FWK_ACCESS_UNREGISTER_DM_FAILED, ret);
 }
 
 HWTEST_F(AccessManagerTest, UnInit_003, TestSize.Level1)
