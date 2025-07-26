@@ -65,7 +65,7 @@ int32_t DeviceManagerImpl::RegisterDevStateCallback(const std::string &pkgName,
     return g_RegisterDMValue;
 }
 
-int32_t DeviceManagerImpl::RegisterDevStateCallback(const std::string &pkgName)
+int32_t DeviceManagerImpl::UnRegisterDevStateCallback(const std::string &pkgName)
 {
     return g_UnRegisterDMValue;
 }
