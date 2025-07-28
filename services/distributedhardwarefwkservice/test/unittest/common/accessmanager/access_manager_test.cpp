@@ -19,10 +19,10 @@
 
 #include "dm_device_info.h"
 
+#include "device_param_mgr.h"
 #include "dh_context.h"
 #include "distributed_hardware_manager_factory.h"
 #include "distributed_hardware_errno.h"
-#include "device_param_mgr.h"
 
 using namespace testing::ext;
 
