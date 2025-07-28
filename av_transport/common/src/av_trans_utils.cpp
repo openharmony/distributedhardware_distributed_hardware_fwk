@@ -260,6 +260,7 @@ bool IsUInt32(const cJSON *jsonObj, const std::string &key)
 {
     cJSON *keyObj = cJSON_GetObjectItemCaseSensitive(jsonObj, key.c_str());
     return (keyObj != nullptr) && cJSON_IsNumber(keyObj) &&
+        (keyObj->valueint >= 0) &&
         static_cast<uint32_t>(keyObj->valueint) <= UINT32_MAX;
 }
 
@@ -267,8 +268,8 @@ bool IsInt64(const cJSON *jsonObj, const std::string &key)
 {
     cJSON *keyObj = cJSON_GetObjectItemCaseSensitive(jsonObj, key.c_str());
     return (keyObj != nullptr) && cJSON_IsNumber(keyObj) &&
-        static_cast<int64_t>(keyObj->valueint) <= INT64_MAX &&
-        static_cast<int64_t>(keyObj->valueint) >= INT64_MIN;
+        static_cast<int64_t>(keyObj->valuedouble) <= INT64_MAX &&
+        static_cast<int64_t>(keyObj->valuedouble) >= INT64_MIN;
 }
 
 bool IsString(const cJSON *jsonObj, const std::string &key)
