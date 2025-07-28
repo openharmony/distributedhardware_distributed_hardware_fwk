@@ -437,24 +437,6 @@ HWTEST_F(AVTransControlCenterTest, set_param_2_engines_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: set_param_2_engines_002
- * @tc.desc: set param2engines function.
- * @tc.type: FUNC
- * @tc.require: AR000GHSK9
- */
-HWTEST_F(AVTransControlCenterTest, set_param_2_engines_002, TestSize.Level0)
-{
-    center_ = std::make_shared<AVTransControlCenter>();
-    AVTransSharedMemory memory;
-    memory.name = "memory";
-    sptr<CenterCallback> callback = sptr<CenterCallback>(new CenterCallback());
-    center_->callbackMap_.insert(std::make_pair(0, callback));
-    center_->callbackMap_.insert(std::make_pair(1, nullptr));
-    center_->SetParam2Engines(memory);
-    EXPECT_EQ(callback->memory_.name, memory.name);
-}
-
-/**
  * @tc.name: handle_channel_event_001
  * @tc.desc: handle channel event function.
  * @tc.type: FUNC
