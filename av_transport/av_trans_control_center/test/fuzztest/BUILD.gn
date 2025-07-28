@@ -17,7 +17,6 @@ group("fuzztest") {
   deps = [
     "avtranscallbacknotify_fuzzer:fuzztest",
     "avtranscallbacksetparameter_fuzzer:fuzztest",
-    "avtranscallbacksetsharedmemory_fuzzer:fuzztest",
     "avtransonsessionclosed_fuzzer:fuzztest",
     "onbytesreceived_fuzzer:fuzztest",
     "onsoftbustimesyncresult_fuzzer:fuzztest",

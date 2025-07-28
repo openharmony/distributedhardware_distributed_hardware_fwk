@@ -33,28 +33,6 @@ int32_t AVTransControlCenterCallback::SetParameter(uint32_t tag, const std::stri
     return DH_AVT_SUCCESS;
 }
 
-int32_t AVTransControlCenterCallback::SetSharedMemory(const AVTransSharedMemoryExt &memory)
-{
-    DHLOGW("AVTransControlCenterCallback::SetSharedMemory enter.");
-
-    AVTransSharedMemory memoryTrans;
-    memoryTrans.size = memory.size;
-    memoryTrans.fd = memory.fd;
-    memoryTrans.name = memory.name;
-
-    std::shared_ptr<IAVSenderEngine> sendEngine = senderEngine_.lock();
-    if (sendEngine != nullptr) {
-        sendEngine->SetParameter(AVTransTag::SHARED_MEMORY_FD, MarshalSharedMemory(memoryTrans));
-    }
-
-    std::shared_ptr<IAVReceiverEngine> rcvEngine = receiverEngine_.lock();
-    if (rcvEngine != nullptr) {
-        rcvEngine->SetParameter(AVTransTag::SHARED_MEMORY_FD, MarshalSharedMemory(memoryTrans));
-    }
-
-    return DH_AVT_SUCCESS;
-}
-
 int32_t AVTransControlCenterCallback::Notify(const AVTransEventExt& event)
 {
     DHLOGW("AVTransControlCenterCallback::Notify enter.");
