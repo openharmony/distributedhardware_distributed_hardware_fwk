@@ -193,8 +193,10 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
     }
 
     if (DeviceParamMgr::GetInstance().IsDeviceE2ESync()) {
-        DHLOGI("e2e device, need initiative sync data.");
-        MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
+        if (osType != OLD_HO_DEVICE_TYPE && osType != NEW_HO_DEVICE_TYPE) {
+            DHLOGI("local device is e2e device and remote is single frame device, need initiative sync data.");
+            MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
+        }
     }
 
     if (osType == OLD_HO_DEVICE_TYPE || osType == NEW_HO_DEVICE_TYPE) {
