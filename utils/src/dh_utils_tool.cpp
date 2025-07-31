@@ -55,7 +55,7 @@ namespace {
     constexpr const char *PARAM_KEY_OS_TYPE = "OS_TYPE";
 }
 
-uint64_t GetCurrentTime()
+int64_t GetCurrentTime()
 {
     struct timeval tv {
         0
