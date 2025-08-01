@@ -70,7 +70,7 @@
     },
     {
       "name": "update_version_prompt",
-      "value": "[TS_961710]_Both devices must be running NEXT"
+      "value": "[TS_961710]_Both devices must be running OpenHarmony NEXT"
     }
   ]
 }
