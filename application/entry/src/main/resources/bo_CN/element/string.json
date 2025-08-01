@@ -79,7 +79,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"ཕ་རོལ་པོས་ NEXT དང་དེ་ཡན་གྱི་པར་གཞིར་རིམ་པ་སྤོར་དགོས།",
+            "value":"ཕ་རོལ་པོས་ OpenHarmony NEXT དང་དེ་ཡན་གྱི་པར་གཞིར་རིམ་པ་སྤོར་དགོས།",
             "attr":{
                 "priority":"LT"
             }
