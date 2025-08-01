@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Les deux appareils doivent fonctionner sous HarmonyOS NEXT",
+            "value":"Les deux appareils doivent fonctionner sous OpenHarmony NEXT",
             "attr":{
                 "priority":"translate"
             }
