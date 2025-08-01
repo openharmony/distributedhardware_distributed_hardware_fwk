@@ -96,7 +96,7 @@
     },
     {
       "name": "update_version_prompt",
-      "value": "对方需升级至 NEXT 及以上版本",
+      "value": "对方需升级至 OpenHarmony NEXT 及以上版本",
       "attr": {
         "priority": "translate"
       }
