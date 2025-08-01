@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Ambos dispositivos deben ejecutar NEXT",
+            "value":"Ambos dispositivos deben ejecutar OpenHarmony NEXT",
             "attr":{
                 "priority":"translate"
             }
