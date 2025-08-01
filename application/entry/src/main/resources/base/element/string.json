@@ -96,7 +96,7 @@
     },
     {
       "name": "update_version_prompt",
-      "value": "Both devices must be running NEXT",
+      "value": "Both devices must be running OpenHarmony NEXT",
       "attr": {
         "priority": "LT"
       }
