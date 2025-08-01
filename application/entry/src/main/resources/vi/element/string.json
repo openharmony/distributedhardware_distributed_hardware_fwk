@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Cả hai thiết bị đều phải chạy NEXT",
+            "value":"Cả hai thiết bị đều phải chạy OpenHarmony NEXT",
             "attr":{
                 "priority":"translate"
             }
