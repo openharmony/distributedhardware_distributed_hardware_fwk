@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Оба устройства должны работать под управлением NEXT",
+            "value":"Оба устройства должны работать под управлением OpenHarmony NEXT",
             "attr":{
                 "priority":"translate"
             }
