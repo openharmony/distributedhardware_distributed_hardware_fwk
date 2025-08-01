@@ -21,14 +21,13 @@ import util from '@ohos.util';
 
 const DOMAIN_ID = 0x3F3F;
 const TAG = 'TipsJump';
-const APP_BUNDLE_NAME = 'com.huawei.hmos.tips';
-const TIPS_APP_ID =
-  'com.huawei.hmos.tips_BB4oLXt8JLOw5djd42S0oLOGzO6kOnT8hZfFRAAel2gbcQBG5jIsO4genni5cn2SQpKpKvkwOA7Ajsc7qf+MZgM=';
+const APP_BUNDLE_NAME = '';
+const TIPS_APP_ID = '';
 const MODULE_NAME_PHONE = 'phone_widget';
 const MODULE_NAME_PC = 'pc_widget';
-const URI_FORMATTER = 'hwtips://com.huawei.hmos.tips.app?funNum=%s&type=%s';
-const MODULE_NAME_APPGALLERY = 'com.huawei.hmsapp.appgallery';
-const URI_APPGALLERY = 'store://appgallery.huawei.com/app/detail?id=com.huawei.hmos.tips';
+const URI_FORMATTER = '';
+const MODULE_NAME_APPGALLERY = '';
+const URI_APPGALLERY = '';
 const CODE_BUNDLE_NAME_NOT_FOUND = 17700001;
 const CODE_SUCCESS_ERROR = 0;
 const FUN_NUM_HOME = 'SF-20005815_f101';
@@ -64,7 +63,7 @@ export class TipsJumpUtils {
    * Jump to the specified page of Tips by uri
    *
    * @param startAbleContext:common.UIAbilityContext | common.ServiceExtensionContext
-   * @param uri: uri format:hwtips://com.huawei.hmos.tips.app?funNum=xxx&type=xxx
+   * @param uri: uri format:hwtips://?funNum=xxx&type=xxx
    * @param moduleName: phone_widget: jump phone, pc_widget: jump pc
    */
   public static jumpTipsByUri(context: startAbleContext, uri: string, moduleName: string = MODULE_NAME_PHONE) {
@@ -85,7 +84,7 @@ export class TipsJumpUtils {
    * Jump to Tips APP by uri
    *
    * @param startAbleContext:common.UIAbilityContext | common.ServiceExtensionContext
-   * @param uri: uri format:hwtips://com.huawei.hmos.tips.app?funNum=xxx&type=xxx
+   * @param uri: uri format:hwtips://?funNum=xxx&type=xxx
    */
   private static jumpAppByUri(context: startAbleContext, uri: string) {
     hilog.info(DOMAIN_ID, TAG, 'try jump to tips app');

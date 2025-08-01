@@ -16,7 +16,7 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"Comienza a ver o editar contenido en un dispositivo y continúa inmediatamente en otro dispositivo que haya iniciado sesión con el mismo ID de HUAWEI. Cuando Continuidad entre dispositivos esté disponible, aparecerá un icono en el panel de aplicaciones. %s",
+            "value":"Comienza a ver o editar contenido en un dispositivo y continúa inmediatamente en otro dispositivo que haya iniciado sesión con el mismo ID de. Cuando Continuidad entre dispositivos esté disponible, aparecerá un icono en el panel de aplicaciones. %s",
             "attr":{
                 "priority":"translate"
             }
@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Ambos dispositivos deben ejecutar HarmonyOS NEXT",
+            "value":"Ambos dispositivos deben ejecutar OpenHarmony NEXT",
             "attr":{
                 "priority":"translate"
             }

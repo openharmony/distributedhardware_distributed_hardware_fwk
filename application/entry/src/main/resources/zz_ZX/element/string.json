@@ -42,7 +42,7 @@
     },
     {
       "name": "continue_desc_text",
-      "value": "[TS_962336]_Start viewing or editing content on one device, and then instantly pick it up on a nearby device logged in to the same HUAWEI ID. When Handover is available, an icon will appear in the app dock. %s"
+      "value": "[TS_962336]_Start viewing or editing content on one device, and then instantly pick it up on a nearby device logged in to the same ID. When Handover is available, an icon will appear in the app dock. %s"
     },
     {
       "name": "ContinueSwitchAbility_label",
@@ -70,7 +70,7 @@
     },
     {
       "name": "update_version_prompt",
-      "value": "[TS_961710]_Both devices must be running HarmonyOS NEXT"
+      "value": "[TS_961710]_Both devices must be running OpenHarmony NEXT"
     }
   ]
 }

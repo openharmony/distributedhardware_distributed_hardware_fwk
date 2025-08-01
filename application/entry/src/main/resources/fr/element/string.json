@@ -16,7 +16,7 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"Commencez à afficher ou à modifier du contenu sur un appareil, puis reprenez-le instantanément sur un appareil à proximité enregistré dans le même Compte HUAWEI. Lorsque le Transfert est disponible, une icône apparaît dans le dock des applications. %s",
+            "value":"Commencez à afficher ou à modifier du contenu sur un appareil, puis reprenez-le instantanément sur un appareil à proximité enregistré dans le même Compte. Lorsque le Transfert est disponible, une icône apparaît dans le dock des applications. %s",
             "attr":{
                 "priority":"translate"
             }
@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Les deux appareils doivent fonctionner sous HarmonyOS NEXT",
+            "value":"Les deux appareils doivent fonctionner sous OpenHarmony NEXT",
             "attr":{
                 "priority":"translate"
             }

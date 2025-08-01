@@ -79,7 +79,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"قارشى ئۈسكۈنە نەشرى HarmonyOS NEXT ياكى يۇقىرى بولۇشى كېرەك.",
+            "value":"قارشى ئۈسكۈنە نەشرى OpenHarmony NEXT ياكى يۇقىرى بولۇشى كېرەك.",
             "attr":{
                 "priority":"LT"
             }

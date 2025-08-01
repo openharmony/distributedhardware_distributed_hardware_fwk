@@ -16,7 +16,7 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"一台のデバイスでコンテンツの表示や編集を開始した後、同じHUAWEI IDにログインしている近くのデバイスでコンテンツを直ちに引き継げます。引き継ぎが利用可能になると、アプリドックにアイコンが表示されます。%s",
+            "value":"一台のデバイスでコンテンツの表示や編集を開始した後、同じ IDにログインしている近くのデバイスでコンテンツを直ちに引き継げます。引き継ぎが利用可能になると、アプリドックにアイコンが表示されます。%s",
             "attr":{
                 "priority":"translate"
             }
@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"両方のデバイスでHarmonyOS NEXTが実行されている必要があります",
+            "value":"両方のデバイスで OpenHarmony NEXTが実行されている必要があります",
             "attr":{
                 "priority":"translate"
             }
