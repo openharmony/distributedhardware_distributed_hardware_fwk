@@ -79,7 +79,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"對方需要升級至 NEXT 及以上版本",
+            "value":"對方需要升級至 OpenHarmony NEXT 及以上版本",
             "attr":{
                 "priority":"LT"
             }
