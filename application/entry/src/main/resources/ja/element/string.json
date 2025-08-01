@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"両方のデバイスで NEXTが実行されている必要があります",
+            "value":"両方のデバイスで OpenHarmony NEXTが実行されている必要があります",
             "attr":{
                 "priority":"translate"
             }
