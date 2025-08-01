@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"두 장치 모두에서 NEXT가 실행 중이어야 합니다",
+            "value":"두 장치 모두에서 OpenHarmony NEXT가 실행 중이어야 합니다",
             "attr":{
                 "priority":"translate"
             }
