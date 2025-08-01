@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"يجب أن يعمل كلا الجهازين بنظام HarmonyOS NEXT",
+            "value":"يجب أن يعمل كلا الجهازين بنظام NEXT",
             "attr":{
                 "priority":"translate"
             }

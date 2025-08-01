@@ -16,7 +16,7 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"Bắt đầu xem hoặc sửa nội dung trên một thiết bị, sau đó ngay lập tức xem hoặc sửa nội dung đó trên một thiết bị ở gần đã đăng nhập vào cùng một ID HUAWEI. Khi tính năng Chuyển giao khả dụng, một biểu tượng sẽ xuất hiện trên thanh ứng dụng. %s",
+            "value":"Bắt đầu xem hoặc sửa nội dung trên một thiết bị, sau đó ngay lập tức xem hoặc sửa nội dung đó trên một thiết bị ở gần đã đăng nhập vào cùng một ID. Khi tính năng Chuyển giao khả dụng, một biểu tượng sẽ xuất hiện trên thanh ứng dụng. %s",
             "attr":{
                 "priority":"translate"
             }
@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Cả hai thiết bị đều phải chạy HarmonyOS NEXT",
+            "value":"Cả hai thiết bị đều phải chạy NEXT",
             "attr":{
                 "priority":"translate"
             }

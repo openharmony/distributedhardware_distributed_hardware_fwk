@@ -78,7 +78,7 @@
     },
     {
       "name": "continue_desc_text",
-      "value": "在一台设备上浏览或编辑内容，然后在附近另一台登录相同华为账号的设备的桌面任务栏上点击接续图标，即可继续使用。%s",
+      "value": "在一台设备上浏览或编辑内容，然后在附近另一台登录相同账号的设备的桌面任务栏上点击接续图标，即可继续使用。%s",
       "attr": {
         "priority": "translate"
       }
@@ -96,7 +96,7 @@
     },
     {
       "name": "update_version_prompt",
-      "value": "对方需升级至 HarmonyOS NEXT 及以上版本",
+      "value": "对方需升级至 NEXT 及以上版本",
       "attr": {
         "priority": "translate"
       }
