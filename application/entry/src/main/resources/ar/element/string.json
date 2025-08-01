@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"يجب أن يعمل كلا الجهازين بنظام NEXT",
+            "value":"يجب أن يعمل كلا الجهازين بنظام OpenHarmony NEXT",
             "attr":{
                 "priority":"translate"
             }
