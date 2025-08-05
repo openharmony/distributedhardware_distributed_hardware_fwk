@@ -53,7 +53,7 @@
             "name":"continue_desc_text",
             "value":"在一部裝置上瀏覽或編輯內容，然後在附近登入相同華為 ID 的另一部裝置桌面工作列上輕觸接續圖示，即可繼續使用。%s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

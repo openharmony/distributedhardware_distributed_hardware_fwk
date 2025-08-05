@@ -16,9 +16,9 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"Commencez à afficher ou à modifier du contenu sur un appareil, puis reprenez-le instantanément sur un appareil à proximité enregistré dans le même Compte. Lorsque le Transfert est disponible, une icône apparaît dans le dock des applications. %s",
+            "value":"Vous pouvez commencer à afficher ou à modifier du contenu sur un appareil, puis reprenez instantanément sur un appareil à proximité connecté au même Compte HUAWEI. Lorsque Transfert est disponible, une icône apparaît dans le dock des applications. %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -32,7 +32,7 @@
             "name":"learn_more",
             "value":"En savoir plus",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -51,14 +51,14 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Les deux appareils doivent fonctionner sous OpenHarmony NEXT",
+            "value":"Les deux appareils doivent fonctionner sous HarmonyOS NEXT",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"stop_device",
-            "value":"Déconnectez pour interrompre l'utilisation du %1$s de cet appareil.",
+            "value":"Veuillez déconnecter pour interrompre l'utilisation du %1$s de cet appareil.",
             "attr":{
                 "priority":"translate"
             }
@@ -74,14 +74,14 @@
             "name":"continue_title",
             "value":"Transfert",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_privacy_text",
-            "value":"Ce service utilise le Bluetooth et le WLAN et doit envoyer le nom de cet appareil aux appareils sur lesquels vous effectuez un transfert. En activant ce service, vous acceptez ces conditions.",
+            "value":"Ce service utilise le Bluetooth et le WLAN et doit envoyer le nom de cet appareil aux appareils vers lesquels vous effectuez un transfert. En activant ce service, vous acceptez ces conditions.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

@@ -18,7 +18,7 @@
             "name":"continue_desc_text",
             "value":"Начните просмотр или редактирование контента на одном устройстве и продолжите действие на другом устройстве под тем же аккаунтом. Когда передача задач доступна, в меню приложений появляется значок. %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -32,7 +32,7 @@
             "name":"learn_more",
             "value":"Подробнее",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"update_version_prompt",
             "value":"Оба устройства должны работать под управлением OpenHarmony NEXT",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -74,14 +74,14 @@
             "name":"continue_title",
             "value":"Передача задачи",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_privacy_text",
             "value":"Эта служба использует Bluetooth и WLAN. Ей также требуется отправлять имя этого устройства устройствам, на которые вы передаете задачу. Включая эту опцию, вы принимаете эти положения.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
