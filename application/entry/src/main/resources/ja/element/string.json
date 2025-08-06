@@ -18,7 +18,7 @@
             "name":"continue_desc_text",
             "value":"一台のデバイスでコンテンツの表示や編集を開始した後、同じ IDにログインしている近くのデバイスでコンテンツを直ちに引き継げます。引き継ぎが利用可能になると、アプリドックにアイコンが表示されます。%s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -32,7 +32,7 @@
             "name":"learn_more",
             "value":"詳細",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"update_version_prompt",
             "value":"両方のデバイスで OpenHarmony NEXTが実行されている必要があります",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -74,14 +74,14 @@
             "name":"continue_title",
             "value":"引き継ぎ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_privacy_text",
             "value":"このサービスはBluetoothとWLANを使用し、引き継ぎデバイスにこのデバイスの名前を送信する必要があります。オンにすることで、ユーザーはこれらの条件に同意したものとみなされます。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

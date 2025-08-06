@@ -42,7 +42,7 @@
     },
     {
       "name": "continue_desc_text",
-      "value": "[TS_962336]_Start viewing or editing content on one device, and then instantly pick it up on a nearby device logged in to the same ID. When Handover is available, an icon will appear in the app dock. %s"
+      "value": "[TS_962336]_Start viewing or editing content on one device, and then seamlessly continue on a nearby device logged in to the same ID. When Handover is available, an icon will appear in the app dock. %s"
     },
     {
       "name": "ContinueSwitchAbility_label",
@@ -71,6 +71,42 @@
     {
       "name": "update_version_prompt",
       "value": "[TS_961710]_Both devices must be running OpenHarmony NEXT"
+    },
+    {
+      "name": "mech_close",
+      "value": "[TS_1101060]_close"
+    },
+    {
+      "name": "MechExtAbility_label",
+      "value": "[TS_1101056]_label"
+    },
+    {
+      "name": "mech_enable",
+      "value": "[TS_1101061]_enable"
+    },
+    {
+      "name": "mech_left",
+      "value": "[TS_1101053]_left"
+    },
+    {
+      "name": "mech_right",
+      "value": "[TS_1101054]_right"
+    },
+    {
+      "name": "MechExtAbility_desc",
+      "value": "[TS_1101057]_description"
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "[TS_1101058]_Intelligent Tracking"
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "[TS_1101055]_Tracking Layout"
+    },
+    {
+      "name": "mech_center",
+      "value": "[TS_1101059]_center"
     }
   ]
 }

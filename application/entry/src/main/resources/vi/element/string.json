@@ -18,7 +18,7 @@
             "name":"continue_desc_text",
             "value":"Bắt đầu xem hoặc sửa nội dung trên một thiết bị, sau đó ngay lập tức xem hoặc sửa nội dung đó trên một thiết bị ở gần đã đăng nhập vào cùng một ID. Khi tính năng Chuyển giao khả dụng, một biểu tượng sẽ xuất hiện trên thanh ứng dụng. %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -32,7 +32,7 @@
             "name":"learn_more",
             "value":"Tìm hiểu thêm",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"update_version_prompt",
             "value":"Cả hai thiết bị đều phải chạy OpenHarmony NEXT",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -74,14 +74,14 @@
             "name":"continue_title",
             "value":"Chuyển giao",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_privacy_text",
             "value":"Dịch vụ này sử dụng Bluetooth và WLAN, đồng thời cần gửi tên thiết bị này đến các thiết bị bạn chuyển giao. Bằng việc bật nút chuyển này, bạn đồng ý với các điều khoản này.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
