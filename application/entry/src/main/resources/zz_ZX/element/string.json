@@ -42,7 +42,7 @@
     },
     {
       "name": "continue_desc_text",
-      "value": "[TS_962336]_Start viewing or editing content on one device, and then seamlessly continue on a nearby device logged in to the same HUAWEI ID. When Handover is available, an icon will appear in the app dock. %s"
+      "value": "[TS_962336]_Start viewing or editing content on one device, and then seamlessly continue on a nearby device logged in to the same ID. When Handover is available, an icon will appear in the app dock. %s"
     },
     {
       "name": "ContinueSwitchAbility_label",
