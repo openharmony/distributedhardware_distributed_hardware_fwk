@@ -51,7 +51,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Ambos dispositivos deben tener HarmonyOS NEXT instalado",
+            "value":"Ambos dispositivos deben tener OpenHarmony NEXT instalado",
             "attr":{
                 "priority":"LT"
             }
