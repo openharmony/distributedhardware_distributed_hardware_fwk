@@ -27,7 +27,7 @@ public:
     virtual ~IDeviceManager() = default;
     virtual int32_t GetTrustedDeviceList(const std::string &pkgName, const std::string &extra,
     std::vector<DmDeviceInfo> &deviceList) = 0;
-    static std::shared_ptr<IDeviceManager> GetOrCtreateInstance();
+    static std::shared_ptr<IDeviceManager> GetOrCreateInstance();
     static void ReleaseInstance();
 private:
     static std::shared_ptr<IDeviceManager> deviceManagerInstance_;

@@ -27,7 +27,7 @@ public:
     virtual ~IVersionManager() = default;
     virtual int32_t GetCompVersion(const std::string &uuid, const DHType dhType, CompVersion &compVersion) = 0;
 
-    static std::shared_ptr<IVersionManager> GetOrCtreateInstance();
+    static std::shared_ptr<IVersionManager> GetOrCreateInstance();
     static void ReleaseInstance();
 private:
     static std::shared_ptr<IVersionManager> versionManagerInstance_;

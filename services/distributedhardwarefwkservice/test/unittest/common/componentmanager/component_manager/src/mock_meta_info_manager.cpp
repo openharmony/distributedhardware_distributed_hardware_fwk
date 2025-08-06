@@ -19,7 +19,7 @@ namespace OHOS {
 namespace DistributedHardware {
 std::shared_ptr<IMetaInfoManager> IMetaInfoManager::metaInfoManagerInstance_;
 
-std::shared_ptr<IMetaInfoManager> IMetaInfoManager::GetOrCtreateInstance()
+std::shared_ptr<IMetaInfoManager> IMetaInfoManager::GetOrCreateInstance()
 {
     if (!metaInfoManagerInstance_) {
         metaInfoManagerInstance_ = std::make_shared<MockMetaInfoManager>();
@@ -35,13 +35,13 @@ void IMetaInfoManager::ReleaseInstance()
 
 int32_t MetaInfoManager::GetMetaDataByDHType(const DHType dhType, MetaCapInfoMap &metaInfoMap)
 {
-    return IMetaInfoManager::GetOrCtreateInstance()->GetMetaDataByDHType(dhType, metaInfoMap);
+    return IMetaInfoManager::GetOrCreateInstance()->GetMetaDataByDHType(dhType, metaInfoMap);
 }
 
 int32_t MetaInfoManager::GetMetaCapInfo(const std::string &udidHash,
     const std::string &dhId, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr)
 {
-    return IMetaInfoManager::GetOrCtreateInstance()->GetMetaCapInfo(udidHash, dhId, metaCapPtr);
+    return IMetaInfoManager::GetOrCreateInstance()->GetMetaCapInfo(udidHash, dhId, metaCapPtr);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -19,7 +19,7 @@ namespace OHOS {
 namespace DistributedHardware {
 std::shared_ptr<IComponentLoader> IComponentLoader::componentLoaderInstance_;
 
-std::shared_ptr<IComponentLoader> IComponentLoader::GetOrCtreateInstance()
+std::shared_ptr<IComponentLoader> IComponentLoader::GetOrCreateInstance()
 {
     if (!componentLoaderInstance_) {
         componentLoaderInstance_ = std::make_shared<MockComponentLoader>();
@@ -35,52 +35,52 @@ void IComponentLoader::ReleaseInstance()
 
 bool ComponentLoader::IsDHTypeSupport(DHType dhType)
 {
-    return IComponentLoader::GetOrCtreateInstance()->IsDHTypeSupport(dhType);
+    return IComponentLoader::GetOrCreateInstance()->IsDHTypeSupport(dhType);
 }
 
 int32_t ComponentLoader::GetSink(const DHType dhType, IDistributedHardwareSink *&sinkPtr)
 {
-    return IComponentLoader::GetOrCtreateInstance()->GetSink(dhType, sinkPtr);
+    return IComponentLoader::GetOrCreateInstance()->GetSink(dhType, sinkPtr);
 }
 
 int32_t ComponentLoader::GetHardwareHandler(const DHType dhType, IHardwareHandler *&hardwareHandlerPtr)
 {
-    return IComponentLoader::GetOrCtreateInstance()->GetHardwareHandler(dhType, hardwareHandlerPtr);
+    return IComponentLoader::GetOrCreateInstance()->GetHardwareHandler(dhType, hardwareHandlerPtr);
 }
 
 int32_t ComponentLoader::ReleaseSink(const DHType dhType)
 {
-    return IComponentLoader::GetOrCtreateInstance()->ReleaseSink(dhType);
+    return IComponentLoader::GetOrCreateInstance()->ReleaseSink(dhType);
 }
 
 void GetAllCompTypes(std::vector<DHType> &dhTypeVec)
 {
-    IComponentLoader::GetOrCtreateInstance()->GetAllCompTypes(dhTypeVec);
+    IComponentLoader::GetOrCreateInstance()->GetAllCompTypes(dhTypeVec);
 }
 
 int32_t ComponentLoader::GetSource(const DHType dhType, IDistributedHardwareSource *&sourcePtr)
 {
-    return IComponentLoader::GetOrCtreateInstance()->GetSource(dhType, sourcePtr);
+    return IComponentLoader::GetOrCreateInstance()->GetSource(dhType, sourcePtr);
 }
 
 int32_t ComponentLoader::GetSourceSaId(const DHType dhType)
 {
-    return IComponentLoader::GetOrCtreateInstance()->GetSourceSaId(dhType);
+    return IComponentLoader::GetOrCreateInstance()->GetSourceSaId(dhType);
 }
 
 int32_t ComponentLoader::ReleaseSource(const DHType dhType)
 {
-    return IComponentLoader::GetOrCtreateInstance()->ReleaseSource(dhType);
+    return IComponentLoader::GetOrCreateInstance()->ReleaseSource(dhType);
 }
 
 int32_t ComponentLoader::GetLocalDHVersion(DHVersion &dhVersion)
 {
-    return IComponentLoader::GetOrCtreateInstance()->GetLocalDHVersion(dhVersion);
+    return IComponentLoader::GetOrCreateInstance()->GetLocalDHVersion(dhVersion);
 }
 
 std::map<std::string, bool> ComponentLoader::GetCompResourceDesc()
 {
-    return IComponentLoader::GetOrCtreateInstance()->GetCompResourceDesc();
+    return IComponentLoader::GetOrCreateInstance()->GetCompResourceDesc();
 }
 } // namespace DistributedHardware
 } // namespace OHOS

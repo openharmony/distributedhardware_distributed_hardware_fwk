@@ -22,7 +22,7 @@ namespace OHOS {
 namespace DistributedHardware {
 std::shared_ptr<IComponentManager> IComponentManager::componentManager_;
 
-std::shared_ptr<IComponentManager> IComponentManager::GetOrCtreateInstance()
+std::shared_ptr<IComponentManager> IComponentManager::GetOrCreateInstance()
 {
     if (!componentManager_) {
         componentManager_ = std::make_shared<MockComponentManager>();
@@ -40,44 +40,44 @@ void IComponentManager::ReleaseInstance()
 int32_t ComponentManager::CheckDemandStart(const std::string &uuid, const DHType dhType, bool &enableSource)
 {
     enableSource = true;
-    return IComponentManager::GetOrCtreateInstance()->CheckDemandStart(uuid, dhType, enableSource);
+    return IComponentManager::GetOrCreateInstance()->CheckDemandStart(uuid, dhType, enableSource);
 }
 
 int32_t ComponentManager::ForceDisableSink(const DHDescriptor &dhDescriptor)
 {
-    return IComponentManager::GetOrCtreateInstance()->ForceDisableSink(dhDescriptor);
+    return IComponentManager::GetOrCreateInstance()->ForceDisableSink(dhDescriptor);
 }
 
 int32_t ComponentManager::ForceDisableSource(const std::string &networkId, const DHDescriptor &dhDescriptor)
 {
-    return IComponentManager::GetOrCtreateInstance()->ForceDisableSource(networkId, dhDescriptor);
+    return IComponentManager::GetOrCreateInstance()->ForceDisableSource(networkId, dhDescriptor);
 }
 
 int32_t ComponentManager::EnableSink(const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid)
 {
-    return IComponentManager::GetOrCtreateInstance()->EnableSink(dhDescriptor, callingUid, callingPid);
+    return IComponentManager::GetOrCreateInstance()->EnableSink(dhDescriptor, callingUid, callingPid);
 }
 
 int32_t ComponentManager::EnableSource(const std::string &networkId,
     const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid)
 {
-    return IComponentManager::GetOrCtreateInstance()->EnableSource(networkId, dhDescriptor, callingUid, callingPid);
+    return IComponentManager::GetOrCreateInstance()->EnableSource(networkId, dhDescriptor, callingUid, callingPid);
 }
 
 int32_t ComponentManager::DisableSink(const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid)
 {
-    return IComponentManager::GetOrCtreateInstance()->DisableSink(dhDescriptor, callingUid, callingPid);
+    return IComponentManager::GetOrCreateInstance()->DisableSink(dhDescriptor, callingUid, callingPid);
 }
 
 int32_t ComponentManager::DisableSource(const std::string &networkId,
     const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid)
 {
-    return IComponentManager::GetOrCtreateInstance()->DisableSource(networkId, dhDescriptor, callingUid, callingPid);
+    return IComponentManager::GetOrCreateInstance()->DisableSource(networkId, dhDescriptor, callingUid, callingPid);
 }
 
 int32_t ComponentManager::CheckSinkConfigStart(const DHType dhType, bool &enableSink)
 {
-    return IComponentManager::GetOrCtreateInstance()->CheckSinkConfigStart(dhType, enableSink);
+    return IComponentManager::GetOrCreateInstance()->CheckSinkConfigStart(dhType, enableSink);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

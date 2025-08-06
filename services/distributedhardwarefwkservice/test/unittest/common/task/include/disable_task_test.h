@@ -22,6 +22,7 @@
 
 #include "mock_component_manager.h"
 #include "mock_dh_context.h"
+#include "mock_dh_utils_tool.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -34,6 +35,7 @@ public:
 
     std::shared_ptr<MockComponentManager> componentManager_;
     std::shared_ptr<MockDHContext> dhContext_;
+    std::shared_ptr<MockDhUtilTool> utilTool_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

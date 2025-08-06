@@ -13,30 +13,34 @@
  * limitations under the License.
  */
 
-#include "mock_device_manager.h"
+#include "mock_dh_utils_tool.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-std::shared_ptr<IDeviceManager> IDeviceManager::deviceManagerInstance_;
+std::shared_ptr<IDhUtilTool> IDhUtilTool::UtilToolInstance_;
 
-std::shared_ptr<IDeviceManager> IDeviceManager::GetOrCreateInstance()
+std::shared_ptr<IDhUtilTool> IDhUtilTool::GetOrCreateInstance()
 {
-    if (!deviceManagerInstance_) {
-        deviceManagerInstance_ = std::make_shared<MockDeviceManager>();
+    if (!UtilToolInstance_) {
+        UtilToolInstance_ = std::make_shared<MockDhUtilTool>();
     }
-    return deviceManagerInstance_;
+    return UtilToolInstance_;
 }
 
-void IDeviceManager::ReleaseInstance()
+void IDhUtilTool::ReleaseInstance()
 {
-    deviceManagerInstance_.reset();
-    deviceManagerInstance_ = nullptr;
+    UtilToolInstance_.reset();
+    UtilToolInstance_ = nullptr;
 }
- 
-int32_t DeviceManager::GetTrustedDeviceList(const std::string &pkgName, const std::string &extra,
-    std::vector<DmDeviceInfo> &deviceList)
+
+std::string GetLocalUdid()
 {
-    return IDeviceManager::GetOrCreateInstance()->GetTrustedDeviceList(pkgName, extra, deviceList);
+    return IDhUtilTool::GetOrCreateInstance()->GetLocalUdid();
+}
+
+DeviceInfo GetLocalDeviceInfo()
+{
+    return IDhUtilTool::GetOrCreateInstance()->GetLocalDeviceInfo();
 }
 } // namespace DistributedHardware
 } // namespace OHOS

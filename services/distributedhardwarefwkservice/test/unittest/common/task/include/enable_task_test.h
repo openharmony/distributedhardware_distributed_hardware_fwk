@@ -20,6 +20,7 @@
 #include "enable_task.h"
 
 #include "mock_component_manager.h"
+#include "mock_dh_utils_tool.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -31,6 +32,7 @@ public:
     void TearDown();
 
     std::shared_ptr<MockComponentManager> componentManager_;
+    std::shared_ptr<MockDhUtilTool> utilTool_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

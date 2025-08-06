@@ -19,7 +19,7 @@ namespace OHOS {
 namespace DistributedHardware {
 std::shared_ptr<IDHContext> IDHContext::dHContextInstance_;
 
-std::shared_ptr<IDHContext> IDHContext::GetOrCtreateInstance()
+std::shared_ptr<IDHContext> IDHContext::GetOrCreateInstance()
 {
     if (!dHContextInstance_) {
         dHContextInstance_ = std::make_shared<MockDHContext>();
@@ -35,17 +35,17 @@ void IDHContext::ReleaseInstance()
 
 const DeviceInfo& DHContext::GetDeviceInfo()
 {
-    return IDHContext::GetOrCtreateInstance()->GetDeviceInfo();
+    return IDHContext::GetOrCreateInstance()->GetDeviceInfo();
 }
 
 std::string DHContext::GetUUIDByNetworkId(const std::string &networkId)
 {
-    return IDHContext::GetOrCtreateInstance()->GetUUIDByNetworkId(networkId);
+    return IDHContext::GetOrCreateInstance()->GetUUIDByNetworkId(networkId);
 }
 
 std::string DHContext::GetUUIDByDeviceId(const std::string &deviceId)
 {
-    return IDHContext::GetOrCtreateInstance()->GetUUIDByDeviceId(deviceId);
+    return IDHContext::GetOrCreateInstance()->GetUUIDByDeviceId(deviceId);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

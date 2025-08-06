@@ -46,6 +46,8 @@ ohos_unittest("DHDisableTaskTest") {
     "src/disable_task_test.cpp",
     "src/mock_component_manager.cpp",
     "src/mock_dh_context.cpp",
+    "src/mock_dh_utils_tool.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/disable_task.cpp",
   ]
 
   configs = [ ":module_private_config" ]
@@ -71,6 +73,7 @@ ohos_unittest("DHDisableTaskTest") {
     "googletest:gmock",
     "googletest:gmock_main",
     "hilog:libhilog",
+    "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
     "samgr:samgr_proxy",
@@ -91,6 +94,8 @@ ohos_unittest("DHEnableTaskTest") {
     "src/enable_task_test.cpp",
     "src/mock_component_manager.cpp",
     "src/mock_dh_context.cpp",
+    "src/mock_dh_utils_tool.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/enable_task.cpp",
   ]
 
   configs = [ ":module_private_config" ]
@@ -116,6 +121,7 @@ ohos_unittest("DHEnableTaskTest") {
     "googletest:gmock",
     "googletest:gmock_main",
     "hilog:libhilog",
+    "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
     "samgr:samgr_proxy",
@@ -133,7 +139,7 @@ ohos_unittest("OnlineTaskTest") {
 
   sources = [
     "src/online_task_test.cpp",
-    "${services_path}/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/src/mock_dh_utils_tool.cpp",
+    "src/mock_dh_utils_tool.cpp",
     ]
 
   configs = [ ":module_private_config" ]

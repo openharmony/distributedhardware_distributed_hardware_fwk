@@ -30,7 +30,7 @@ public:
         std::shared_ptr<CapabilityInfo> &capPtr) = 0;
     virtual void GetCapabilitiesByDeviceId(const std::string &deviceId,
         std::vector<std::shared_ptr<CapabilityInfo>> &resInfos);
-    static std::shared_ptr<ICapabilityInfoManager> GetOrCtreateInstance();
+    static std::shared_ptr<ICapabilityInfoManager> GetOrCreateInstance();
     static void ReleaseInstance();
 
 private:

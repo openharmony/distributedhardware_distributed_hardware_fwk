@@ -30,7 +30,7 @@ public:
     virtual int32_t GetMetaCapInfo(const std::string &udidHash,
         const std::string &dhId, std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
 
-    static std::shared_ptr<IMetaInfoManager> GetOrCtreateInstance();
+    static std::shared_ptr<IMetaInfoManager> GetOrCreateInstance();
     static void ReleaseInstance();
 private:
     static std::shared_ptr<IMetaInfoManager> metaInfoManagerInstance_;

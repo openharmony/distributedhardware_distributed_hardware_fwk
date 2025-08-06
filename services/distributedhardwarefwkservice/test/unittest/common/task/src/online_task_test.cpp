@@ -58,7 +58,7 @@ public:
     void TearDown();
 
 private:
-    std::shared_ptr<MockDHUtilTool> utilTool_;
+    std::shared_ptr<MockDhUtilTool> utilTool_;
 };
 
 void OnlineTaskTest::SetUpTestCase()
@@ -71,13 +71,13 @@ void OnlineTaskTest::TearDownTestCase()
 
 void OnlineTaskTest::SetUp()
 {
-    auto utilTool = IDHUtilTool::GetOrCtreateInstance();
-    utilTool_ = std::static_pointer_cast<MockDHUtilTool>(utilTool);
+    auto utilTool = IDhUtilTool::GetOrCreateInstance();
+    utilTool_ = std::static_pointer_cast<MockDhUtilTool>(utilTool);
 }
 
 void OnlineTaskTest::TearDown()
 {
-    IDHUtilTool::ReleaseInstance();
+    IDhUtilTool::ReleaseInstance();
     utilTool_ = nullptr;
 }
 
