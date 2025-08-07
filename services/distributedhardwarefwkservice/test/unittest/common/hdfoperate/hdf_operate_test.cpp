@@ -13,12 +13,15 @@
  * limitations under the License.
  */
 
+#include "hdf_operate.h"
+
 #include <gtest/gtest.h>
+#include "iremote_stub.h"
 
 #include "component_loader.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
-#include "hdf_operate.h"
+#include "publisher_listener_stub.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -31,6 +34,17 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
+
+    class TestPublisherListenerStub : public OHOS::DistributedHardware::PublisherListenerStub {
+    public:
+        TestPublisherListenerStub() = default;
+        virtual ~TestPublisherListenerStub() = default;
+        void OnMessage(const DHTopic topic, const std::string& message)
+        {
+            (void)topic;
+            (void)message;
+        }
+    };
 };
 
 constexpr int32_t TEST_COMP_SINK_SA_ID = 4804;
@@ -229,6 +243,34 @@ HWTEST_F(HdfOperateTest, RigidReleaseSourcePtr_001, TestSize.Level1)
     auto ret = HdfOperateManager::GetInstance().RigidReleaseSourcePtr(DHType::AUDIO);
     HdfOperateManager::GetInstance().sourceHandlerDataMap_.erase(DHType::AUDIO);
     EXPECT_EQ(ERR_DH_FWK_LOADER_DLCLOSE_FAIL, ret);
+}
+
+HWTEST_F(HdfOperateTest, AddDeathRecipient_001, TestSize.Level1)
+{
+    sptr<IRemoteObject> remote = nullptr;
+    auto ret = HdfOperateManager::GetInstance().AddDeathRecipient(DHType::UNKNOWN, remote);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+HWTEST_F(HdfOperateTest, AddDeathRecipient_002, TestSize.Level1)
+{
+    sptr<IRemoteObject> remote(new TestPublisherListenerStub());
+    auto ret = HdfOperateManager::GetInstance().AddDeathRecipient(DHType::UNKNOWN, remote);
+    EXPECT_EQ(ERR_DH_FWK_NO_HDF_SUPPORT, ret);
+}
+
+HWTEST_F(HdfOperateTest, RemoveDeathRecipient_001, TestSize.Level1)
+{
+    sptr<IRemoteObject> remote = nullptr;
+    auto ret = HdfOperateManager::GetInstance().RemoveDeathRecipient(DHType::UNKNOWN, remote);
+    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
+}
+
+HWTEST_F(HdfOperateTest, RemoveDeathRecipient_002, TestSize.Level1)
+{
+    sptr<IRemoteObject> remote(new TestPublisherListenerStub());
+    auto ret = HdfOperateManager::GetInstance().RemoveDeathRecipient(DHType::UNKNOWN, remote);
+    EXPECT_EQ(ERR_DH_FWK_NO_HDF_SUPPORT, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

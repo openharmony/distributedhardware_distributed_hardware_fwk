@@ -156,6 +156,10 @@ int32_t HdfOperateManager::UnLoadDistributedHDF(DHType dhType)
 
 int32_t HdfOperateManager::AddDeathRecipient(DHType dhType, sptr<IRemoteObject> &remote)
 {
+    if (remote == nullptr) {
+        DHLOGE("remote ptr is null.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
     DHLOGI("Add death recipient begin, dhType = %{public}#X!", dhType);
     bool ret = false;
     switch (dhType) {
@@ -179,6 +183,10 @@ int32_t HdfOperateManager::AddDeathRecipient(DHType dhType, sptr<IRemoteObject> 
 
 int32_t HdfOperateManager::RemoveDeathRecipient(DHType dhType, sptr<IRemoteObject> &remote)
 {
+    if (remote == nullptr) {
+        DHLOGE("remote ptr is null.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
     DHLOGI("Remove death recipient begin, dhType = %{public}#X!", dhType);
     bool ret = false;
     switch (dhType) {
