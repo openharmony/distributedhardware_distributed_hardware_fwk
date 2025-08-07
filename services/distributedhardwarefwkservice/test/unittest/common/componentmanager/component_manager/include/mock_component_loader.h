@@ -37,7 +37,7 @@ public:
     virtual int32_t GetLocalDHVersion(DHVersion &dhVersion) = 0;
     virtual std::map<std::string, bool> GetCompResourceDesc() = 0;
 
-    static std::shared_ptr<IComponentLoader> GetOrCtreateInstance();
+    static std::shared_ptr<IComponentLoader> GetOrCreateInstance();
     static void ReleaseInstance();
 private:
     static std::shared_ptr<IComponentLoader> componentLoaderInstance_;

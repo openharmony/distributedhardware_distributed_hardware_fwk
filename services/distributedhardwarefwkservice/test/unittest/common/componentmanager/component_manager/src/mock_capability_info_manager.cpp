@@ -19,7 +19,7 @@ namespace OHOS {
 namespace DistributedHardware {
 std::shared_ptr<ICapabilityInfoManager> ICapabilityInfoManager::CapabilityInfoManagerInstance_;
 
-std::shared_ptr<ICapabilityInfoManager> ICapabilityInfoManager::GetOrCtreateInstance()
+std::shared_ptr<ICapabilityInfoManager> ICapabilityInfoManager::GetOrCreateInstance()
 {
     if (!CapabilityInfoManagerInstance_) {
         CapabilityInfoManagerInstance_ = std::make_shared<MockCapabilityInfoManager>();
@@ -36,13 +36,13 @@ void ICapabilityInfoManager::ReleaseInstance()
 int32_t CapabilityInfoManager::GetCapability(const std::string &deviceId, const std::string &dhId,
     std::shared_ptr<CapabilityInfo> &capPtr)
 {
-    return ICapabilityInfoManager::GetOrCtreateInstance()->GetCapability(deviceId, dhId, capPtr);
+    return ICapabilityInfoManager::GetOrCreateInstance()->GetCapability(deviceId, dhId, capPtr);
 }
 
 void CapabilityInfoManager::GetCapabilitiesByDeviceId(const std::string &deviceId,
     std::vector<std::shared_ptr<CapabilityInfo>> &resInfos)
 {
-    ICapabilityInfoManager::GetOrCtreateInstance()->GetCapabilitiesByDeviceId(deviceId, resInfos);
+    ICapabilityInfoManager::GetOrCreateInstance()->GetCapabilitiesByDeviceId(deviceId, resInfos);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

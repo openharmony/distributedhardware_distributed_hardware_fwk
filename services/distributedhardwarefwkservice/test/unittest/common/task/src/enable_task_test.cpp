@@ -49,157 +49,176 @@ void EnableTaskTest::TearDownTestCase()
 
 void EnableTaskTest::SetUp()
 {
-    auto componentManager = IComponentManager::GetOrCtreateInstance();
+    auto componentManager = IComponentManager::GetOrCreateInstance();
     componentManager_ = std::static_pointer_cast<MockComponentManager>(componentManager);
+    auto utilTool = IDhUtilTool::GetOrCreateInstance();
+    utilTool_ = std::static_pointer_cast<MockDhUtilTool>(utilTool);
 }
 
 void EnableTaskTest::TearDown()
 {
     IComponentManager::ReleaseInstance();
     componentManager_ = nullptr;
+    IDhUtilTool::ReleaseInstance();
+    utilTool_ = nullptr;
 }
 
-/**
- * @tc.name: RegisterHardware_001
- * @tc.desc: Verify the RegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
 HWTEST_F(EnableTaskTest, RegisterHardware_001, TestSize.Level0)
 {
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(
-        DoAll(SetArgReferee<2>(false), Return(0)));
-    ASSERT_EQ(enableTask->RegisterHardware(), ERR_DH_FWK_COMPONENT_NO_NEED_ENABLE);
+    enableTask->SetCallingUid(1);
+    auto ret = enableTask->RegisterHardware();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-/**
- * @tc.name: RegisterHardware_002
- * @tc.desc: Verify the RegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
 HWTEST_F(EnableTaskTest, RegisterHardware_002, TestSize.Level0)
 {
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(
-        DoAll(SetArgReferee<2>(true), Return(0)));
-    EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(0));
-    ASSERT_EQ(enableTask->RegisterHardware(), DH_FWK_SUCCESS);
+    enableTask->SetCallingPid(1);
+    auto ret = enableTask->RegisterHardware();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-/**
- * @tc.name: RegisterHardware_003
- * @tc.desc: Verify the RegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
 HWTEST_F(EnableTaskTest, RegisterHardware_003, TestSize.Level0)
 {
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(
-        DoAll(SetArgReferee<2>(true), Return(0)));
-    EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(1));
-    ASSERT_EQ(enableTask->RegisterHardware(), 1);
+    enableTask->SetCallingUid(1);
+    enableTask->SetCallingPid(1);
+    auto ret = enableTask->RegisterHardware();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-/**
- * @tc.name: RegisterHardware_004
- * @tc.desc: Verify the RegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
 HWTEST_F(EnableTaskTest, RegisterHardware_004, TestSize.Level0)
 {
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(Return(1));
-    ASSERT_EQ(enableTask->RegisterHardware(), 1);
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return("udid_test"));
+    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(Return(-1));
+    auto ret = enableTask->RegisterHardware();
+    EXPECT_EQ(-1, ret);
 }
 
-/**
- * @tc.name: RegisterHardware_005
- * @tc.desc: Verify the RegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(EnableTaskTest, RegisterHardware_005, TestSize.Level0)
-{
-    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, GetLocalUdid(),
-        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    EXPECT_CALL(*componentManager_, CheckSinkConfigStart(_, _)).Times(1).WillRepeatedly(Return(0));
-    ASSERT_EQ(enableTask->RegisterHardware(), ERR_DH_FWK_COMPONENT_NO_NEED_ENABLE);
-}
-
-/**
- * @tc.name: RegisterHardware_006
- * @tc.desc: Verify the RegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(EnableTaskTest, RegisterHardware_006, TestSize.Level0)
-{
-    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, GetLocalUdid(),
-        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    EXPECT_CALL(*componentManager_, CheckSinkConfigStart(_, _)).WillOnce(DoAll(SetArgReferee<1>(true), Return(0)));
-    EXPECT_CALL(*componentManager_, EnableSink(_, _, _)).Times(1).WillRepeatedly(Return(1));
-    ASSERT_EQ(enableTask->RegisterHardware(), 1);
-}
-
-/**
- * @tc.name: RegisterHardware_007
- * @tc.desc: Verify the RegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(EnableTaskTest, RegisterHardware_007, TestSize.Level0)
+HWTEST_F(EnableTaskTest, DoAutoEnable_001, TestSize.Level0)
 {
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    enableTask->callingUid_ = 1;
-    enableTask->callingPid_ = 1;
-    enableTask->effectSink_ = true;
-    enableTask->effectSource_ = true;
-    EXPECT_CALL(*componentManager_, EnableSink(_, _, _)).Times(1).WillRepeatedly(Return(0));
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return("udid_test"));
+    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(
+        DoAll(SetArgReferee<2>(false), Return(0)));
+    auto ret = enableTask->DoAutoEnable();
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_NO_NEED_ENABLE, ret);
+}
+
+HWTEST_F(EnableTaskTest, DoAutoEnable_002, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return("udid_test"));
+    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(
+        DoAll(SetArgReferee<2>(true), Return(0)));
+    EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(-1));
+    auto ret = enableTask->DoAutoEnable();
+    EXPECT_EQ(-1, ret);
+}
+
+HWTEST_F(EnableTaskTest, DoAutoEnable_003, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return("udid_test"));
+    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(
+        DoAll(SetArgReferee<2>(true), Return(0)));
     EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(0));
-    ASSERT_EQ(enableTask->RegisterHardware(), 0);
+    auto ret = enableTask->DoAutoEnable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-/**
- * @tc.name: RegisterHardware_008
- * @tc.desc: Verify the RegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(EnableTaskTest, RegisterHardware_008, TestSize.Level0)
+HWTEST_F(EnableTaskTest, DoAutoEnable_005, TestSize.Level0)
 {
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    enableTask->callingUid_ = 1;
-    enableTask->callingPid_ = 1;
-    enableTask->effectSink_ = true;
-    enableTask->effectSource_ = true;
-    EXPECT_CALL(*componentManager_, EnableSink(_, _, _)).Times(1).WillRepeatedly(Return(1));
-    EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(1));
-    ASSERT_EQ(enableTask->RegisterHardware(), 1);
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return(DEV_DID_1));
+    EXPECT_CALL(*componentManager_, CheckSinkConfigStart(_, _)).Times(1).WillRepeatedly(Return(-1));
+    auto ret = enableTask->DoAutoEnable();
+    EXPECT_EQ(-1, ret);
 }
 
-/**
- * @tc.name: RegisterHardware_009
- * @tc.desc: Verify the RegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(EnableTaskTest, RegisterHardware_009, TestSize.Level0)
+HWTEST_F(EnableTaskTest, DoAutoEnable_006, TestSize.Level0)
 {
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    enableTask->callingUid_ = 1;
-    enableTask->callingPid_ = 1;
-    ASSERT_EQ(enableTask->RegisterHardware(), DH_FWK_SUCCESS);
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return(DEV_DID_1));
+    EXPECT_CALL(*componentManager_, CheckSinkConfigStart(_, _)).Times(1).WillRepeatedly(
+        DoAll(SetArgReferee<1>(false), Return(0)));
+    auto ret = enableTask->DoAutoEnable();
+    EXPECT_EQ(ERR_DH_FWK_COMPONENT_NO_NEED_ENABLE, ret);
+}
+
+HWTEST_F(EnableTaskTest, DoAutoEnable_007, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return(DEV_DID_1));
+    EXPECT_CALL(*componentManager_, CheckSinkConfigStart(_, _)).Times(1).WillRepeatedly(
+        DoAll(SetArgReferee<1>(true), Return(0)));
+    EXPECT_CALL(*componentManager_, EnableSink(_, _, _)).Times(1).WillRepeatedly(Return(-1));
+    auto ret = enableTask->DoAutoEnable();
+    EXPECT_EQ(-1, ret);
+}
+
+HWTEST_F(EnableTaskTest, DoAutoEnable_008, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return(DEV_DID_1));
+    EXPECT_CALL(*componentManager_, CheckSinkConfigStart(_, _)).Times(1).WillRepeatedly(
+        DoAll(SetArgReferee<1>(true), Return(0)));
+    EXPECT_CALL(*componentManager_, EnableSink(_, _, _)).Times(1).WillRepeatedly(Return(0));
+    auto ret = enableTask->DoAutoEnable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(EnableTaskTest, DoActiveEnable_001, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    enableTask->SetEffectSink(true);
+    EXPECT_CALL(*componentManager_, EnableSink(_, _, _)).Times(1).WillRepeatedly(Return(0));
+    auto ret = enableTask->DoActiveEnable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(EnableTaskTest, DoActiveEnable_002, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    enableTask->SetEffectSink(true);
+    EXPECT_CALL(*componentManager_, EnableSink(_, _, _)).Times(1).WillRepeatedly(Return(-1));
+    auto ret = enableTask->DoActiveEnable();
+    EXPECT_EQ(-1, ret);
+}
+
+HWTEST_F(EnableTaskTest, DoActiveEnable_003, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    enableTask->SetEffectSource(true);
+    EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(0));
+    auto ret = enableTask->DoActiveEnable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(EnableTaskTest, DoActiveEnable_004, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    enableTask->SetEffectSource(true);
+    EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(-1));
+    auto ret = enableTask->DoActiveEnable();
+    EXPECT_EQ(-1, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

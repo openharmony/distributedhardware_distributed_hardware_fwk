@@ -27,7 +27,7 @@ public:
     virtual ~IDHUtilTool() = default;
 
     virtual DeviceInfo GetLocalDeviceInfo() = 0;
-    static std::shared_ptr<IDHUtilTool> GetOrCtreateInstance();
+    static std::shared_ptr<IDHUtilTool> GetOrCreateInstance();
     static void ReleaseInstance();
 private:
     static std::shared_ptr<IDHUtilTool> UtilToolInstance_;

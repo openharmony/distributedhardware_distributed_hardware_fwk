@@ -74,19 +74,19 @@ void ComponentManagerTestExt::TearDownTestCase(void)
 
 void ComponentManagerTestExt::SetUp()
 {
-    auto capabilityInfoManager = ICapabilityInfoManager::GetOrCtreateInstance();
+    auto capabilityInfoManager = ICapabilityInfoManager::GetOrCreateInstance();
     capabilityInfoManager_ = std::static_pointer_cast<MockCapabilityInfoManager>(capabilityInfoManager);
-    auto componentLoader = IComponentLoader::GetOrCtreateInstance();
+    auto componentLoader = IComponentLoader::GetOrCreateInstance();
     componentLoader_ = std::static_pointer_cast<MockComponentLoader>(componentLoader);
-    auto dhContext = IDHContext::GetOrCtreateInstance();
+    auto dhContext = IDHContext::GetOrCreateInstance();
     dhContext_ = std::static_pointer_cast<MockDHContext>(dhContext);
-    auto utilTool = IDHUtilTool::GetOrCtreateInstance();
+    auto utilTool = IDHUtilTool::GetOrCreateInstance();
     utilTool_ = std::static_pointer_cast<MockDHUtilTool>(utilTool);
-    auto metaInfoManager = IMetaInfoManager::GetOrCtreateInstance();
+    auto metaInfoManager = IMetaInfoManager::GetOrCreateInstance();
     metaInfoManager_ = std::static_pointer_cast<MockMetaInfoManager>(metaInfoManager);
-    auto versionManager = IVersionManager::GetOrCtreateInstance();
+    auto versionManager = IVersionManager::GetOrCreateInstance();
     versionManager_ = std::static_pointer_cast<MockVersionManager>(versionManager);
-    auto deviceManager = IDeviceManager::GetOrCtreateInstance();
+    auto deviceManager = IDeviceManager::GetOrCreateInstance();
     deviceManager_ = std::static_pointer_cast<MockDeviceManager>(deviceManager);
 }
 

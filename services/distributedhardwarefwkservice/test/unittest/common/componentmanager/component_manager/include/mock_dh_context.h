@@ -29,7 +29,7 @@ public:
     virtual const DeviceInfo& GetDeviceInfo() = 0;
     virtual std::string GetUUIDByNetworkId(const std::string &networkId) = 0;
     virtual std::string GetUUIDByDeviceId(const std::string &deviceId) = 0;
-    static std::shared_ptr<IDHContext> GetOrCtreateInstance();
+    static std::shared_ptr<IDHContext> GetOrCreateInstance();
     static void ReleaseInstance();
 private:
     static std::shared_ptr<IDHContext> dHContextInstance_;

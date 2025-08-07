@@ -49,10 +49,12 @@ void DisableTaskTest::TearDownTestCase()
 
 void DisableTaskTest::SetUp()
 {
-    auto componentManager = IComponentManager::GetOrCtreateInstance();
+    auto componentManager = IComponentManager::GetOrCreateInstance();
     componentManager_ = std::static_pointer_cast<MockComponentManager>(componentManager);
     auto dhContext = IDHContext::GetOrCreateInstance();
     dhContext_ = std::static_pointer_cast<MockDHContext>(dhContext);
+    auto utilTool = IDhUtilTool::GetOrCreateInstance();
+    utilTool_ = std::static_pointer_cast<MockDhUtilTool>(utilTool);
 }
 
 void DisableTaskTest::TearDown()
@@ -61,148 +63,120 @@ void DisableTaskTest::TearDown()
     componentManager_ = nullptr;
     IDHContext::ReleaseInstance();
     dhContext_ = nullptr;
+    IDhUtilTool::ReleaseInstance();
+    utilTool_ = nullptr;
 }
 
-/**
- * @tc.name: UnRegisterHardware_001
- * @tc.desc: Verify the UnRegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
 HWTEST_F(DisableTaskTest, UnRegisterHardware_001, TestSize.Level0)
 {
     auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    EXPECT_CALL(*componentManager_, ForceDisableSource(_, _)).Times(1).WillRepeatedly(Return(0));
-    ASSERT_EQ(disableTask->UnRegisterHardware(), DH_FWK_SUCCESS);
+    disableTask->SetCallingUid(1);
+    auto ret = disableTask->UnRegisterHardware();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-/**
- * @tc.name: UnRegisterHardware_002
- * @tc.desc: Verify the UnRegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
 HWTEST_F(DisableTaskTest, UnRegisterHardware_002, TestSize.Level0)
 {
     auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    EXPECT_CALL(*componentManager_, ForceDisableSource(_, _)).Times(1).WillRepeatedly(Return(1));
-    ASSERT_EQ(disableTask->UnRegisterHardware(), 1);
+    disableTask->SetCallingPid(1);
+    auto ret = disableTask->UnRegisterHardware();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-/**
- * @tc.name: UnRegisterHardware_003
- * @tc.desc: Verify the UnRegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
 HWTEST_F(DisableTaskTest, UnRegisterHardware_003, TestSize.Level0)
 {
-    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, GetLocalUdid(),
+    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    disableTask->SetCallingUid(1);
+    disableTask->SetCallingPid(1);
+    auto ret = disableTask->UnRegisterHardware();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DisableTaskTest, UnRegisterHardware_004, TestSize.Level0)
+{
+    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return("udid_test"));
+    EXPECT_CALL(*componentManager_, ForceDisableSource(_, _)).Times(1).WillRepeatedly(Return(0));
+    auto ret = disableTask->UnRegisterHardware();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DisableTaskTest, UnRegisterHardware_005, TestSize.Level0)
+{
+    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return("udid_test"));
+    EXPECT_CALL(*componentManager_, ForceDisableSource(_, _)).Times(1).WillRepeatedly(Return(-1));
+    auto ret = disableTask->UnRegisterHardware();
+    EXPECT_EQ(-1, ret);
+}
+
+HWTEST_F(DisableTaskTest, DoAutoDisable_001, TestSize.Level0)
+{
+    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return(DEV_DID_1));
     EXPECT_CALL(*dhContext_, GetRealTimeOnlineDeviceCount()).Times(1).WillRepeatedly(Return(0));
     EXPECT_CALL(*dhContext_, GetIsomerismConnectCount()).Times(1).WillRepeatedly(Return(0));
     EXPECT_CALL(*componentManager_, ForceDisableSink(_)).Times(1).WillRepeatedly(Return(0));
-    ASSERT_EQ(disableTask->UnRegisterHardware(), DH_FWK_SUCCESS);
+    auto ret = disableTask->DoAutoDisable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-/**
- * @tc.name: UnRegisterHardware_004
- * @tc.desc: Verify the UnRegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DisableTaskTest, UnRegisterHardware_004, TestSize.Level0)
+HWTEST_F(DisableTaskTest, DoAutoDisable_002, TestSize.Level0)
 {
-    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, GetLocalUdid(),
+    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return(DEV_DID_1));
     EXPECT_CALL(*dhContext_, GetRealTimeOnlineDeviceCount()).Times(1).WillRepeatedly(Return(0));
     EXPECT_CALL(*dhContext_, GetIsomerismConnectCount()).Times(1).WillRepeatedly(Return(0));
-    EXPECT_CALL(*componentManager_, ForceDisableSink(_)).Times(1).WillRepeatedly(Return(1));
-    ASSERT_EQ(disableTask->UnRegisterHardware(), 1);
+    EXPECT_CALL(*componentManager_, ForceDisableSink(_)).Times(1).WillRepeatedly(Return(-1));
+    auto ret = disableTask->DoAutoDisable();
+    EXPECT_EQ(-1, ret);
 }
 
-/**
- * @tc.name: UnRegisterHardware_005
- * @tc.desc: Verify the UnRegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DisableTaskTest, UnRegisterHardware_005, TestSize.Level0)
-{
-    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, GetLocalUdid(),
-        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    EXPECT_CALL(*dhContext_, GetRealTimeOnlineDeviceCount()).Times(1).WillRepeatedly(Return(1));
-    ASSERT_EQ(disableTask->UnRegisterHardware(), DH_FWK_SUCCESS);
-}
-
-/**
- * @tc.name: UnRegisterHardware_006
- * @tc.desc: Verify the UnRegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DisableTaskTest, UnRegisterHardware_006, TestSize.Level0)
-{
-    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, GetLocalUdid(),
-        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    EXPECT_CALL(*dhContext_, GetRealTimeOnlineDeviceCount()).Times(1).WillRepeatedly(Return(0));
-    EXPECT_CALL(*dhContext_, GetIsomerismConnectCount()).Times(1).WillRepeatedly(Return(1));
-    ASSERT_EQ(disableTask->UnRegisterHardware(), DH_FWK_SUCCESS);
-}
-
-/**
- * @tc.name: UnRegisterHardware_007
- * @tc.desc: Verify the UnRegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DisableTaskTest, UnRegisterHardware_007, TestSize.Level0)
+HWTEST_F(DisableTaskTest, DoActiveDisable_001, TestSize.Level0)
 {
     auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    disableTask->callingUid_ = 1;
-    disableTask->callingPid_ = 1;
-    disableTask->effectSink_ = true;
-    disableTask->effectSource_ = true;
-    EXPECT_CALL(*componentManager_, DisableSink(_, _, _)).Times(1).WillRepeatedly(Return(1));
-    EXPECT_CALL(*componentManager_, DisableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(1));
-    ASSERT_EQ(disableTask->UnRegisterHardware(), 1);
-}
-
-/**
- * @tc.name: UnRegisterHardware_008
- * @tc.desc: Verify the UnRegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DisableTaskTest, UnRegisterHardware_008, TestSize.Level0)
-{
-    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
-        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    disableTask->callingUid_ = 1;
-    disableTask->callingPid_ = 1;
-    disableTask->effectSink_ = true;
-    disableTask->effectSource_ = true;
+    disableTask->SetEffectSink(true);
     EXPECT_CALL(*componentManager_, DisableSink(_, _, _)).Times(1).WillRepeatedly(Return(0));
-    EXPECT_CALL(*componentManager_, DisableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(0));
-    ASSERT_EQ(disableTask->UnRegisterHardware(), DH_FWK_SUCCESS);
+    auto ret = disableTask->DoActiveDisable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-/**
- * @tc.name: UnRegisterHardware_009
- * @tc.desc: Verify the UnRegisterHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DisableTaskTest, UnRegisterHardware_009, TestSize.Level0)
+HWTEST_F(DisableTaskTest, DoActiveDisable_002, TestSize.Level0)
 {
     auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
-    disableTask->callingUid_ = 1;
-    disableTask->callingPid_ = 1;
-    ASSERT_EQ(disableTask->UnRegisterHardware(), DH_FWK_SUCCESS);
+    disableTask->SetEffectSink(true);
+    EXPECT_CALL(*componentManager_, DisableSink(_, _, _)).Times(1).WillRepeatedly(Return(-1));
+    auto ret = disableTask->DoActiveDisable();
+    EXPECT_EQ(-1, ret);
+}
+
+HWTEST_F(DisableTaskTest, DoActiveDisable_003, TestSize.Level0)
+{
+    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    disableTask->SetEffectSource(true);
+    EXPECT_CALL(*componentManager_, DisableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(0));
+    auto ret = disableTask->DoActiveDisable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DisableTaskTest, DoActiveDisable_004, TestSize.Level0)
+{
+    auto disableTask = std::make_shared<DisableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
+        TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
+    disableTask->SetEffectSource(true);
+    EXPECT_CALL(*componentManager_, DisableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(-1));
+    auto ret = disableTask->DoActiveDisable();
+    EXPECT_EQ(-1, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

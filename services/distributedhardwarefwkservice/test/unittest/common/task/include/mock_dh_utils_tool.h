@@ -13,29 +13,32 @@
  * limitations under the License.
  */
 
-#include "mock_dh_utils_tool.h"
+#ifndef OHOS_DISTRIBUTED_HARDWARE_MOCK_DH_UTILS_TOOL_H
+#define OHOS_DISTRIBUTED_HARDWARE_MOCK_DH_UTILS_TOOL_H
+
+#include <gmock/gmock.h>
+
+#include "dh_utils_tool.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-std::shared_ptr<IDHUtilTool> IDHUtilTool::UtilToolInstance_;
+class IDhUtilTool {
+public:
+    virtual ~IDhUtilTool() = default;
 
-std::shared_ptr<IDHUtilTool> IDHUtilTool::GetOrCreateInstance()
-{
-    if (!UtilToolInstance_) {
-        UtilToolInstance_ = std::make_shared<MockDHUtilTool>();
-    }
-    return UtilToolInstance_;
-}
+    virtual std::string GetLocalUdid() = 0;
+    virtual DeviceInfo GetLocalDeviceInfo() = 0;
+    static std::shared_ptr<IDhUtilTool> GetOrCreateInstance();
+    static void ReleaseInstance();
+private:
+    static std::shared_ptr<IDhUtilTool> UtilToolInstance_;
+};
 
-void IDHUtilTool::ReleaseInstance()
-{
-    UtilToolInstance_.reset();
-    UtilToolInstance_ = nullptr;
-}
-
-DeviceInfo GetLocalDeviceInfo()
-{
-    return IDHUtilTool::GetOrCreateInstance()->GetLocalDeviceInfo();
-}
+class MockDhUtilTool : public IDhUtilTool {
+public:
+    MOCK_METHOD(std::string, GetLocalUdid, ());
+    MOCK_METHOD(DeviceInfo, GetLocalDeviceInfo, ());
+};
 } // namespace DistributedHardware
 } // namespace OHOS
+#endif // OHOS_DISTRIBUTED_HARDWARE_MOCK_DH_UTILS_TOOL_H

@@ -19,7 +19,7 @@ namespace OHOS {
 namespace DistributedHardware {
 std::shared_ptr<IVersionManager> IVersionManager::versionManagerInstance_;
 
-std::shared_ptr<IVersionManager> IVersionManager::GetOrCtreateInstance()
+std::shared_ptr<IVersionManager> IVersionManager::GetOrCreateInstance()
 {
     if (!versionManagerInstance_) {
         versionManagerInstance_ = std::make_shared<MockVersionManager>();
@@ -35,7 +35,7 @@ void IVersionManager::ReleaseInstance()
 
 int32_t VersionManager::GetCompVersion(const std::string &uuid, const DHType dhType, CompVersion &compVersion)
 {
-    return IVersionManager::GetOrCtreateInstance()->GetCompVersion(uuid, dhType, compVersion);
+    return IVersionManager::GetOrCreateInstance()->GetCompVersion(uuid, dhType, compVersion);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

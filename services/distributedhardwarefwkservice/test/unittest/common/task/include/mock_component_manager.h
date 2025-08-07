@@ -36,7 +36,7 @@ public:
         const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid) = 0;
     virtual int32_t CheckSinkConfigStart(const DHType dhType, bool &enableSink) = 0;
 
-    static std::shared_ptr<IComponentManager> GetOrCtreateInstance();
+    static std::shared_ptr<IComponentManager> GetOrCreateInstance();
     static void ReleaseInstance();
 public:
     static std::shared_ptr<IComponentManager> componentManager_;
