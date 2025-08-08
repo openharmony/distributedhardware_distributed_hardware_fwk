@@ -199,6 +199,22 @@ int32_t UnLoadDistributedHDF(const DHType dhType)
 }
 };
 
+class MockGetDhDescriptorsCallbackStub : public IRemoteStub<IGetDhDescriptorsCallback> {
+public:
+    void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
+        EnableStep enableStep) override
+    {
+        (void)networkId;
+        (void)descriptors;
+        (void)enableStep;
+    }
+    void OnError(const std::string &networkId, int32_t error) override
+    {
+        (void)networkId;
+        (void)error;
+    }
+};
+
 class MockIPublisherListener : public IRemoteStub<IPublisherListener> {
 public:
     void OnMessage(const DHTopic topic, const std::string& message)
@@ -233,22 +249,6 @@ public:
     {
         (void)networkId;
         (void)dhDescriptor;
-    }
-};
-
-class MockGetDhDescriptorsCallbackStub : public IRemoteStub<IGetDhDescriptorsCallback> {
-public:
-    void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
-        EnableStep enableStep) override
-    {
-        (void)networkId;
-        (void)descriptors;
-        (void)enableStep;
-    }
-    void OnError(const std::string &networkId, int32_t error) override
-    {
-        (void)networkId;
-        (void)error;
     }
 };
 } // namespace DistributedHardware

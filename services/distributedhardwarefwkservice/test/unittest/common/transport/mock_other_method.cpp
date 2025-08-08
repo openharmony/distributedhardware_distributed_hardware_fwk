@@ -12,9 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "os_account_manager.h"
 
 #include "mock_other_method.h"
+
+#include "os_account_manager.h"
 
 namespace OHOS {
 namespace AccountSA {

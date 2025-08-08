@@ -14,6 +14,7 @@
  */
 
 #include "distributed_hardware_proxy_test.h"
+
 #include "dhardware_ipc_interface_code.h"
 #include "av_trans_errno.h"
 
