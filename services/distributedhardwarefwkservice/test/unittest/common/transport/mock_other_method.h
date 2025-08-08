@@ -12,8 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef DISRIBUTED_HARDWARE_MOCK_OTHER_METHOD_H
-#define DISRIBUTED_HARDWARE_MOCK_OTHER_METHOD_H
+
+#ifndef DISTRIBUTED_HARDWARE_MOCK_OTHER_METHOD_H
+#define DISTRIBUTED_HARDWARE_MOCK_OTHER_METHOD_H
 
 #include <gmock/gmock.h>
 
