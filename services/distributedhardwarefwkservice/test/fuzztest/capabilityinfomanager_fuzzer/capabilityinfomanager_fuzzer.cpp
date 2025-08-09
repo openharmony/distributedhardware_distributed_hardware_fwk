@@ -15,6 +15,8 @@
 
 #include "capabilityinfomanager_fuzzer.h"
 
+#include <fuzzer/FuzzedDataProvider.h>
+
 #include "constants.h"
 #include "capability_info.h"
 #include "capability_utils.h"
@@ -305,9 +307,15 @@ void DumpCapabilityInfosFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
-
+    FuzzedDataProvider fdp(data, size);
     std::vector<CapabilityInfo> capInfos;
-
+    std::string dhId = fdp.ConsumeRandomLengthString();
+    std::string deviceId = fdp.ConsumeRandomLengthString();
+    std::string deviceName = fdp.ConsumeRandomLengthString();
+    std::string dhAttrs = fdp.ConsumeRandomLengthString();
+    std::string dhSubtype = fdp.ConsumeRandomLengthString();
+    CapabilityInfo capInfo(dhId, deviceId, deviceName, TEST_DEV_TYPE_PAD, DHType::CAMERA, dhAttrs, dhSubtype);
+    capInfos.push_back(capInfo);
     CapabilityInfoManager::GetInstance()->DumpCapabilityInfos(capInfos);
 }
 
@@ -382,18 +390,6 @@ void AsyncGetDistributedHardwareFuzzTest(const uint8_t* data, size_t size)
     CapabilityInfoManager::GetInstance()->AsyncGetDistributedHardware(networkId, enableStep, callback);
 }
 
-void DoAsyncGetDistributedHardwareFuzzTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    EnableStep enableStep = static_cast<EnableStep>(data[0] % 4);
-    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
-    CapabilityInfoManager::GetInstance()->DoAsyncGetDistributedHardware(networkId, enableStep, callback);
-}
-
 void GetEntriesByKeysFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -427,7 +423,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::OnChangeFuzzTest(data, size);
     OHOS::DistributedHardware::GetDataByDHTypeFuzzTest(data, size);
     OHOS::DistributedHardware::AsyncGetDistributedHardwareFuzzTest(data, size);
-    OHOS::DistributedHardware::DoAsyncGetDistributedHardwareFuzzTest(data, size);
     OHOS::DistributedHardware::GetEntriesByKeysFuzzTest(data, size);
     return 0;
 }
