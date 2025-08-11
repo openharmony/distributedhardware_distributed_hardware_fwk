@@ -83,6 +83,34 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+          "name": "mech_intelligent_tracking",
+          "value": "Suivi intelligent"
+        },
+        {
+          "name": "mech_tracking_layout",
+          "value": "Mode suivi"
+        },
+        {
+          "name": "mech_enable",
+          "value": "Activé"
+        },
+        {
+          "name": "mech_close",
+          "value": "Désactivé"
+        },
+        {
+          "name": "mech_left",
+          "value": "Gauche"
+        },
+        {
+          "name": "mech_center",
+          "value": "Centre"
+        },
+        {
+          "name": "mech_right",
+          "value": "Droite"
         }
     ]
 }

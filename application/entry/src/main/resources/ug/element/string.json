@@ -83,6 +83,34 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+          "name": "mech_intelligent_tracking",
+          "value": "ئاڭلىق ئىزلاش"
+        },
+        {
+          "name": "mech_tracking_layout",
+          "value": "ئىزلاش لايىھەسى"
+        },
+        {
+          "name": "mech_enable",
+          "value": "ئوچۇق"
+        },
+        {
+          "name": "mech_close",
+          "value": "ئېتىك"
+        },
+        {
+          "name": "mech_left",
+          "value": "سول"
+        },
+        {
+          "name": "mech_center",
+          "value": "مەركەز"
+        },
+        {
+          "name": "mech_right",
+          "value": "ئوڭ"
         }
     ]
 }

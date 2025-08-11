@@ -118,31 +118,31 @@
     },
     {
       "name": "mech_intelligent_tracking",
-      "value": "Intelligent Tracking"
+      "value": "Smart tracking"
     },
     {
       "name": "mech_tracking_layout",
-      "value": "Tracking Layout"
+      "value": "Tracking mode"
     },
     {
       "name": "mech_enable",
-      "value": "enable"
+      "value": "On"
     },
     {
       "name": "mech_close",
-      "value": "close"
+      "value": "Off"
     },
     {
       "name": "mech_left",
-      "value": "left"
+      "value": "Left"
     },
     {
       "name": "mech_center",
-      "value": "center"
+      "value": "Center"
     },
     {
       "name": "mech_right",
-      "value": "right"
+      "value": "Right"
     }
   ]
 }

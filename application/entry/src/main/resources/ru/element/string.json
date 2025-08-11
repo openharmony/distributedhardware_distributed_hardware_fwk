@@ -83,6 +83,34 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+          "name": "mech_intelligent_tracking",
+          "value": "Умное отслеживание"
+        },
+        {
+          "name": "mech_tracking_layout",
+          "value": "Режим отслеживания"
+        },
+        {
+          "name": "mech_enable",
+          "value": "Включено"
+        },
+        {
+          "name": "mech_close",
+          "value": "Выключено"
+        },
+        {
+          "name": "mech_left",
+          "value": "Слева"
+        },
+        {
+          "name": "mech_center",
+          "value": "По центру"
+        },
+        {
+          "name": "mech_right",
+          "value": "Справа"
         }
     ]
 }

@@ -83,6 +83,34 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+          "name": "mech_intelligent_tracking",
+          "value": "스마트 추적"
+        },
+        {
+          "name": "mech_tracking_layout",
+          "value": "추적 모드"
+        },
+        {
+          "name": "mech_enable",
+          "value": "켬"
+        },
+        {
+          "name": "mech_close",
+          "value": "끔"
+        },
+        {
+          "name": "mech_left",
+          "value": "왼쪽"
+        },
+        {
+          "name": "mech_center",
+          "value": "중앙"
+        },
+        {
+          "name": "mech_right",
+          "value": "오른쪽"
         }
     ]
 }

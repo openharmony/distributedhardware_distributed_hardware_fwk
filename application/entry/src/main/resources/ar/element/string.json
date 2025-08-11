@@ -83,6 +83,34 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+          "name": "mech_intelligent_tracking",
+          "value": "التتبع الذكي"
+        },
+        {
+          "name": "mech_tracking_layout",
+          "value": "وضع التتبع"
+        },
+        {
+          "name": "mech_enable",
+          "value": "تشغيل"
+        },
+        {
+          "name": "mech_close",
+          "value": "إيقاف"
+        },
+        {
+          "name": "mech_left",
+          "value": "على اليسار"
+        },
+        {
+          "name": "mech_center",
+          "value": "في الوسط"
+        },
+        {
+          "name": "mech_right",
+          "value": "على اليمين"
         }
     ]
 }

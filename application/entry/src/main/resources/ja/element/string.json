@@ -83,6 +83,34 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+          "name": "mech_intelligent_tracking",
+          "value": "スマート追跡"
+        },
+        {
+          "name": "mech_tracking_layout",
+          "value": "追跡モード"
+        },
+        {
+          "name": "mech_enable",
+          "value": "オン"
+        },
+        {
+          "name": "mech_close",
+          "value": "オフ"
+        },
+        {
+          "name": "mech_left",
+          "value": "左"
+        },
+        {
+          "name": "mech_center",
+          "value": "中央"
+        },
+        {
+          "name": "mech_right",
+          "value": "右"
         }
     ]
 }
