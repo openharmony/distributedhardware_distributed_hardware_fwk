@@ -19,6 +19,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <fuzzer/FuzzedDataProvider.h>
 #include <string>
 #include <thread>
 #include <unistd.h>
@@ -51,19 +52,16 @@ void OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     if ((data == nullptr) || (size < sizeof(uint32_t) + sizeof(uint32_t) + 1)) {
         return;
     }
+    FuzzedDataProvider fdp(data, size);
+    uint32_t code = fdp.ConsumeIntegral<uint32_t>();
     MessageParcel parcel;
     parcel.WriteInterfaceToken(FuzzGetDhDescriptorsCallbackStub().GetDescriptor());
-    uint32_t dhType = *(reinterpret_cast<const uint32_t*>(data));
+    uint32_t dhType = fdp.ConsumeIntegral<uint32_t>();
     parcel.WriteUint32(dhType);
-    std::string id(reinterpret_cast<const char*>(data + 4), size - 4);
+    std::string id = fdp.ConsumeRandomLengthString();
     parcel.WriteString(id);
     MessageParcel reply;
     MessageOption option;
-
-    uint32_t code = 0;
-    if (size >= sizeof(uint32_t)) {
-        code = *(reinterpret_cast<const uint32_t*>(data));
-    }
 
     FuzzGetDhDescriptorsCallbackStub stub;
     stub.OnRemoteRequest(code, parcel, reply, option);
