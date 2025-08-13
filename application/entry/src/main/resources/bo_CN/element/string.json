@@ -83,6 +83,34 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+          "name": "mech_intelligent_tracking",
+          "value": "རིག་ལྡན་རྗེས་འདེད།"
+        },
+        {
+          "name": "mech_tracking_layout",
+          "value": "འགྲེམ་ཚུལ་རྗེས་འདེད།"
+        },
+        {
+          "name": "mech_enable",
+          "value": "ཁ་འབྱེད།"
+        },
+        {
+          "name": "mech_close",
+          "value": "ཁ་རྒྱག"
+        },
+        {
+          "name": "mech_left",
+          "value": "གཡོན་སྒྲིག"
+        },
+        {
+          "name": "mech_center",
+          "value": "དཀྱིལ་དུ་འཇོག་པ།"
+        },
+        {
+          "name": "mech_right",
+          "value": "གཡས་སྒྲིག"
         }
     ]
 }

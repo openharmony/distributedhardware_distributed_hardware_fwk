@@ -83,6 +83,34 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+          "name": "mech_intelligent_tracking",
+          "value": "Theo dõi thông minh"
+        },
+        {
+          "name": "mech_tracking_layout",
+          "value": "Chế độ theo dõi"
+        },
+        {
+          "name": "mech_enable",
+          "value": "Bật"
+        },
+        {
+          "name": "mech_close",
+          "value": "Tắt"
+        },
+        {
+          "name": "mech_left",
+          "value": "Trái"
+        },
+        {
+          "name": "mech_center",
+          "value": "Giữa"
+        },
+        {
+          "name": "mech_right",
+          "value": "Phải"
         }
     ]
 }
