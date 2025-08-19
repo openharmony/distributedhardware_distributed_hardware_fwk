@@ -223,7 +223,7 @@ void OffLineTask::CreateMetaDisableTask()
         GetAnonyString(GetUUID()).c_str());
     uint16_t deviceType = DHContext::GetInstance().GetDeviceTypeByNetworkId(GetNetworkId());
     if (deviceType != PHONE_TYPE) {
-        DHLOGI("offline device not phone, deviceType = %{public}d", deviceType);
+        DHLOGE("offline device not phone, deviceType = %{public}d", deviceType);
         return;
     }
     TaskParam taskParam = {
