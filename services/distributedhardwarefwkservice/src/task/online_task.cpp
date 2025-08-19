@@ -198,7 +198,7 @@ void OnLineTask::CreateMetaEnableTask()
         GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetUDID()).c_str());
     uint16_t deviceType = DHContext::GetInstance().GetDeviceTypeByNetworkId(GetNetworkId());
     if (deviceType != PHONE_TYPE) {
-        DHLOGI("offline device not phone, deviceType = %{public}d", deviceType);
+        DHLOGE("online device not phone, deviceType = %{public}d", deviceType);
         return;
     }
     TaskParam taskParam = {

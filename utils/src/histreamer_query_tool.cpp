@@ -55,7 +55,7 @@ void HiStreamerQueryTool::Init()
     
     queryAudioEncoderFunc = (QueryAudioEncoderFunc)dlsym(pHandler, QUERY_AUDIO_ENCODER_FUNC_NAME);
     if (queryAudioEncoderFunc == nullptr) {
-        DHLOGE("get QueryAudioEncoderAbilityStr is nullptr, failed reason : %{public}s", dlerror());
+        DHLOGE("get QueryAudioEncoderAbilityStr is null, failed reason : %{public}s", dlerror());
         dlclose(pHandler);
         pHandler = nullptr;
         return;
