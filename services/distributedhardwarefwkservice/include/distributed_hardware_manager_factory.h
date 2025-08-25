@@ -45,6 +45,7 @@ public:
     void SetSAProcessState(bool saState);
     bool GetSAProcessState();
     void CheckExitSAOrNot();
+    bool GetDHardwareInitState();
 private:
     bool Init();
     void ExitDHFWK();

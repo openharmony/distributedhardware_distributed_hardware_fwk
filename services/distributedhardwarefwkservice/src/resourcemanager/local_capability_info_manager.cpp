@@ -18,6 +18,7 @@
 #include "anonymous_string.h"
 #include "capability_utils.h"
 #include "constants.h"
+#include "capability_info.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
@@ -286,6 +287,24 @@ int32_t LocalCapabilityInfoManager::ClearRemoteDeviceLocalInfoData(const std::st
     dbAdapterPtr_->ClearDataByPrefix(peeruuid);
     RemoveLocalInfoInMemByUuid(peeruuid);
     return DH_FWK_SUCCESS;
+}
+
+std::string LocalCapabilityInfoManager::GetDhSubtype(const std::string &deviceId, const std::string &dhId)
+{
+    if (!IsIdLengthValid(deviceId) || !IsIdLengthValid(dhId)) {
+        return "";
+    }
+    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
+    std::string key = GetCapabilityKey(deviceId, dhId);
+    if (globalCapInfoMap_.find(key) == globalCapInfoMap_.end()) {
+        DHLOGE("Can not find capability In globalCapInfoMap_: %{public}s", GetAnonyString(deviceId).c_str());
+        return "";
+    }
+    if (globalCapInfoMap_[key] == nullptr) {
+        DHLOGE("Pointer is null");
+        return "";
+    }
+    return globalCapInfoMap_[key]->GetDHSubtype();
 }
 } // namespace DistributedHardware
 } // namespace OHOS

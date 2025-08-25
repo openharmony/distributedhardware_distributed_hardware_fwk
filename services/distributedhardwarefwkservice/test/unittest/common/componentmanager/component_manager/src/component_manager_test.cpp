@@ -164,6 +164,21 @@ void SetDownComponentLoaderConfig()
     }
 }
 
+void ComponentManagerTest::TestGetDistributedHardwareCallback::OnSuccess(
+    const std::string &networkId, const std::vector<DHDescriptor> &descriptors, EnableStep enableStep)
+{
+    (void)networkId;
+    (void)descriptors;
+    (void)enableStep;
+}
+
+void ComponentManagerTest::TestGetDistributedHardwareCallback::OnError(
+    const std::string &networkId, int32_t error)
+{
+    (void)networkId;
+    (void)error;
+}
+
 /**
  * @tc.name: init_test_001
  * @tc.desc: Verify the Init function
@@ -1256,6 +1271,96 @@ HWTEST_F(ComponentManagerTest, InitAndUnInit_DHCommTool_001, TestSize.Level0)
     ComponentManager::GetInstance().dhCommToolPtr_ = std::make_shared<DHCommTool>();
     EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().InitDHCommTool());
     EXPECT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UnInitDHCommTool());
+}
+
+HWTEST_F(ComponentManagerTest, SyncRemoteDeviceInfoBySoftbus_001, TestSize.Level0)
+{
+    std::string realNetworkId = "realNetworkId_1";
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    sptr<IGetDhDescriptorsCallback> callback = nullptr;
+    EXPECT_NO_FATAL_FAILURE(
+        ComponentManager::GetInstance().SyncRemoteDeviceInfoBySoftbus(realNetworkId, enableStep, callback));
+}
+
+HWTEST_F(ComponentManagerTest, OnGetDescriptors_001, TestSize.Level0)
+{
+    std::string realNetworkId = "realNetworkId_1";
+    std::vector<DHDescriptor> descriptors;
+    ComponentManager::GetInstance().OnGetDescriptors(realNetworkId, descriptors);
+    EXPECT_TRUE(ComponentManager::GetInstance().syncDeviceInfoMap_.empty());
+}
+
+HWTEST_F(ComponentManagerTest, OnGetDescriptors_002, TestSize.Level0)
+{
+    std::string realNetworkId = "realNetworkId_1";
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    std::vector<DHDescriptor> descriptors;
+    DHDescriptor descriptor;
+    descriptor.id = "camera_1";
+    descriptor.dhType = DHType::CAMERA;
+    descriptors.push_back(descriptor);
+    ComponentManager::GetInstance().syncDeviceInfoMap_[realNetworkId] = {enableStep, nullptr};
+    ComponentManager::GetInstance().OnGetDescriptors("realNetworkId_test", descriptors);
+    EXPECT_FALSE(ComponentManager::GetInstance().syncDeviceInfoMap_.empty());
+}
+
+HWTEST_F(ComponentManagerTest, OnGetDescriptorsError_001, TestSize.Level0)
+{
+    std::string realNetworkId = "realNetworkId_1";
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    ComponentManager::GetInstance().syncDeviceInfoMap_[realNetworkId] = {enableStep, nullptr};
+    ComponentManager::GetInstance().OnGetDescriptorsError();
+    EXPECT_FALSE(ComponentManager::GetInstance().syncDeviceInfoMap_.empty());
+}
+
+HWTEST_F(ComponentManagerTest, OnStateChanged_Sink_001, testing::ext::TestSize.Level1)
+{
+    DHSinkStateListener sinkStateListenenr;
+    std::string dhId = "";
+    std::string networkId = "";
+    BusinessSinkState state = BusinessSinkState::UNKNOWN;
+    ASSERT_NO_FATAL_FAILURE(sinkStateListenenr.OnStateChanged(networkId, dhId, state));
+
+    networkId = "networkId_1";
+    ASSERT_NO_FATAL_FAILURE(sinkStateListenenr.OnStateChanged(networkId, dhId, state));
+
+    networkId = "";
+    dhId = "dhId_1";
+    ASSERT_NO_FATAL_FAILURE(sinkStateListenenr.OnStateChanged(networkId, dhId, state));
+
+    networkId = "networkId_1";
+    dhId = "dhId_1";
+    ASSERT_NO_FATAL_FAILURE(sinkStateListenenr.OnStateChanged(networkId, dhId, state));
+}
+
+HWTEST_F(ComponentManagerTest, SetAVSyncScene_001, testing::ext::TestSize.Level1)
+{
+    DHTopic topic = DHTopic::TOPIC_AV_LOW_LATENCY;
+    ASSERT_NO_FATAL_FAILURE(ComponentManager::GetInstance().SetAVSyncScene(topic));
+
+    topic = DHTopic::TOPIC_AV_FLUENCY;
+    ASSERT_NO_FATAL_FAILURE(ComponentManager::GetInstance().SetAVSyncScene(topic));
+
+    topic = DHTopic::TOPIC_MAX;
+    ASSERT_NO_FATAL_FAILURE(ComponentManager::GetInstance().SetAVSyncScene(topic));
+}
+
+HWTEST_F(ComponentManagerTest, UpdateSinkBusinessState_001, testing::ext::TestSize.Level1)
+{
+    std::string networkId = "";
+    std::string dhId = "";
+    BusinessSinkState state = BusinessSinkState::UNKNOWN;
+    ASSERT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateSinkBusinessState(networkId, dhId, state));
+
+    networkId = "networkId_1";
+    ASSERT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateSinkBusinessState(networkId, dhId, state));
+
+    networkId = "";
+    dhId = "dhId_1";
+    ASSERT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateSinkBusinessState(networkId, dhId, state));
+
+    networkId = "networkId_1";
+    ASSERT_NO_FATAL_FAILURE(ComponentManager::GetInstance().UpdateSinkBusinessState(networkId, dhId, state));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

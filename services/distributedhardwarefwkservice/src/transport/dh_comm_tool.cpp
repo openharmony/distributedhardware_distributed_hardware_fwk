@@ -290,28 +290,17 @@ void DHCommTool::DHCommToolEventHandler::ProcessFullCapsRsp(const FullCapsRsp &c
         return;
     }
 
+    std::vector<DHDescriptor> descriptors;
     for (auto const &cap : capsRsp.caps) {
         if (cap == nullptr) {
             continue;
         }
-        BusinessState curState = ComponentManager::GetInstance().QueryBusinessState(capsRsp.networkId, cap->GetDHId());
-        DHLOGI("DH state: %{public}" PRIu32 ", networkId: %{public}s, dhId: %{public}s",
-            (uint32_t)curState, GetAnonyString(capsRsp.networkId).c_str(), GetAnonyString(cap->GetDHId()).c_str());
-        TaskParam taskParam = {
-            .networkId = capsRsp.networkId,
-            .uuid = uuid,
-            .dhId = cap->GetDHId(),
-            .dhType = cap->GetDHType()
-        };
-        if (curState != BusinessState::RUNNING && curState != BusinessState::PAUSING) {
-            DHLOGI("The dh not busy, refresh it");
-            auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
-            TaskExecutor::GetInstance().PushTask(task);
-        } else {
-            DHLOGI("The dh busy, save and refresh after idle");
-            ComponentManager::GetInstance().SaveNeedRefreshTask(taskParam);
-        }
+        DHDescriptor descriptor;
+        descriptor.id = cap->GetDHId();
+        descriptor.dhType = cap->GetDHType();
+        descriptors.push_back(descriptor);
     }
+    ComponentManager::GetInstance().OnGetDescriptors(capsRsp.networkId, descriptors);
 }
 
 std::shared_ptr<DHCommTool::DHCommToolEventHandler> DHCommTool::GetEventHandler()

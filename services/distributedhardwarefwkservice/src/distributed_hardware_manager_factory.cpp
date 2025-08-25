@@ -281,5 +281,10 @@ bool DistributedHardwareManagerFactory::GetSAProcessState()
 {
     return isIdle_.load();
 }
+
+bool DistributedHardwareManagerFactory::GetDHardwareInitState()
+{
+    return DistributedHardwareManager::GetInstance().GetDHardwareInitState();
+}
 } // namespace DistributedHardware
 } // namespace OHOS

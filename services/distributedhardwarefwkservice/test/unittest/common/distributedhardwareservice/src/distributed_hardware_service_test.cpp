@@ -28,6 +28,7 @@
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_service.h"
 #include "distributed_hardware_manager.h"
+#include "local_capability_info_manager.h"
 #include "task_board.h"
 #include "mock_publisher_listener.h"
 
@@ -49,6 +50,7 @@ namespace {
     constexpr int32_t TEST_COMP_SINK_SA_ID = 4804;
     constexpr int32_t TEST_SINK_SA_ID = 12345;
     constexpr int32_t TEST_SOURCE_SA_ID = 12345;
+    constexpr uint16_t DEV_TYPE_TEST = 14;
 }
 void DistributedHardwareServiceTest::SetUpTestCase(void) {}
 
@@ -312,6 +314,7 @@ HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Le
     DistributedHardwareService service(ASID, true);
     std::string networkId = "";
     EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    DistributedHardwareManager::GetInstance().isAllInit_.store(true);
     auto ret = service.GetDistributedHardware(networkId, enableStep, nullptr);
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 
@@ -324,6 +327,21 @@ HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Le
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 
     networkId = "local";
+    ret = service.GetDistributedHardware(networkId, enableStep, callback);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_002, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "networkId_1";
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    DistributedHardwareManager::GetInstance().isAllInit_.store(false);
+    auto ret = service.GetDistributedHardware(networkId, enableStep, callback);
+    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
+
+    DistributedHardwareManager::GetInstance().isAllInit_.store(true);
     ret = service.GetDistributedHardware(networkId, enableStep, callback);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
@@ -635,6 +653,56 @@ HWTEST_F(DistributedHardwareServiceTest, LoadDistributedHDF_001, TestSize.Level1
     service.UnLoadDistributedHDF(DHType::AUDIO);
     service.UnLoadDistributedHDF(DHType::CAMERA);
     EXPECT_EQ(ERR_DH_FWK_NO_HDF_SUPPORT, service.UnLoadDistributedHDF(DHType::UNKNOWN));
+}
+
+HWTEST_F(DistributedHardwareServiceTest, GetDeviceDhInfo_001, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string realNetworkId = "";
+    std::string udidHash = "";
+    std::string deviceId = "";
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    sptr<IGetDhDescriptorsCallback> callback = nullptr;
+    auto ret = service.GetDeviceDhInfo(realNetworkId, udidHash, deviceId, enableStep, callback);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    realNetworkId = "networkId_1";
+    ret = service.GetDeviceDhInfo(realNetworkId, udidHash, deviceId, enableStep, callback);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    udidHash = "udidHash_1";
+    ret = service.GetDeviceDhInfo(realNetworkId, udidHash, deviceId, enableStep, callback);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    deviceId = "deviceId_1";
+    realNetworkId = "";
+    ret = service.GetDeviceDhInfo(realNetworkId, udidHash, deviceId, enableStep, callback);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    realNetworkId = "networkId_1";
+    udidHash = "";
+    ret = service.GetDeviceDhInfo(realNetworkId, udidHash, deviceId, enableStep, callback);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    udidHash = "udidHash_1";
+    ret = service.GetDeviceDhInfo(realNetworkId, udidHash, deviceId, enableStep, callback);
+    EXPECT_EQ(ERR_DH_FWK_HARDWARE_MANAGER_GET_DHINFO_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareServiceTest, GetDeviceDhInfo_002, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string realNetworkId = "networkId_1";
+    std::string udidHash = "udidHash_1";
+    std::string deviceId = "deviceId_1";
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        "dhId_1", deviceId, "devName_1", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "subtype");
+    std::string key = deviceId + "###" + "dhId_1";
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    auto ret = service.GetDeviceDhInfo(realNetworkId, udidHash, deviceId, enableStep, callback);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

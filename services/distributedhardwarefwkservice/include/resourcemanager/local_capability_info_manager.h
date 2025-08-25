@@ -59,6 +59,7 @@ public:
     int32_t GetDataByKeyPrefix(const std::string &keyPrefix, CapabilityInfoMap &capabilityMap);
     int32_t RemoveLocalInfoInMemByUuid(const std::string &peeruuid);
     int32_t ClearRemoteDeviceLocalInfoData(const std::string &peeruuid);
+    std::string GetDhSubtype(const std::string &deviceId, const std::string &dhId);
 
 private:
     mutable std::mutex capInfoMgrMutex_;

@@ -24,6 +24,7 @@ config("module_private_config") {
     "include",
     "${innerkits_path}/include",
     "${utils_path}/include",
+    "${innerkits_path}/include/ipc",
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/componentloader",
     "${services_path}/distributedhardwarefwkservice/include/componentmanager",
@@ -56,6 +57,7 @@ ohos_unittest("ComponentManagerTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
+    "${innerkits_path}:libdhfwk_sdk",
     "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
     "${utils_path}:distributedhardwareutils",
   ]

@@ -17,7 +17,6 @@
 
 #include <cinttypes>
 
-#include "constants.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "ipc_types.h"
@@ -30,10 +29,9 @@
 #include "access_manager.h"
 #include "anonymous_string.h"
 #include "av_trans_control_center.h"
+#include "constants.h"
 #include "capability_info_manager.h"
-#include "meta_info_manager.h"
 #include "component_manager.h"
-#include "hdf_operate.h"
 #include "dh_context.h"
 #include "dh_utils_tool.h"
 #include "dh_utils_hisysevent.h"
@@ -41,6 +39,9 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager_factory.h"
+#include "hdf_operate.h"
+#include "local_capability_info_manager.h"
+#include "meta_info_manager.h"
 #include "publisher.h"
 #include "task_executor.h"
 #include "task_factory.h"
@@ -389,25 +390,15 @@ int32_t DistributedHardwareService::StopDistributedHardware(DHType dhType, const
     return DH_FWK_SUCCESS;
 }
 
-int32_t DistributedHardwareService::GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
-    const sptr<IGetDhDescriptorsCallback> callback)
+int32_t DistributedHardwareService::GetDeviceDhInfo(const std::string &realNetworkId, const std::string &udidHash,
+    const std::string &deviceId, EnableStep enableStep, const sptr<IGetDhDescriptorsCallback> callback)
 {
-    if (!IsIdLengthValid(networkId) || callback == nullptr) {
-        DHLOGE("networkId size is invalid or callback ptr is null");
+    if (!IsIdLengthValid(realNetworkId) || !IsIdLengthValid(udidHash) || !IsIdLengthValid(deviceId)) {
+        DHLOGE("Param is Invalid");
         return ERR_DH_FWK_PARA_INVALID;
     }
-    std::string deviceId;
-    std::string realNetworkId;
-    if (networkId == LOCAL_NETWORKID_ALIAS) {
-        deviceId = GetLocalDeviceInfo().deviceId;
-        realNetworkId = GetLocalDeviceInfo().networkId;
-    } else {
-        deviceId = GetDeviceIdByUUID(DHContext::GetInstance().GetUUIDByNetworkId(networkId));
-        realNetworkId = networkId;
-    }
+    DHLOGI("Get device hardware info start.");
     std::vector<DHDescriptor> descriptors;
-    std::string udid = DHContext::GetInstance().GetUDIDByNetworkId(realNetworkId);
-    std::string udidHash = Sha256(udid);
     std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
     MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(udidHash, metaCapInfos);
     if (!metaCapInfos.empty()) {
@@ -422,22 +413,57 @@ int32_t DistributedHardwareService::GetDistributedHardware(const std::string &ne
         return DH_FWK_SUCCESS;
     }
 
-    std::vector<std::shared_ptr<CapabilityInfo>> capabilities;
-    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, capabilities);
-    if (!capabilities.empty()) {
-        for (const auto &capabilitie : capabilities) {
+    std::vector<std::shared_ptr<CapabilityInfo>> capaInfos;
+    LocalCapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, capaInfos);
+    if (!capaInfos.empty()) {
+        for (const auto &capsInfo : capaInfos) {
             DHDescriptor descriptor;
-            descriptor.id = capabilitie->GetDHId();
-            descriptor.dhType = capabilitie->GetDHType();
+            descriptor.id = capsInfo->GetDHId();
+            descriptor.dhType = capsInfo->GetDHType();
             descriptors.push_back(descriptor);
         }
         DHLOGI("Get CapabilitieInfo Success, deviceId: %{public}s.", GetAnonyString(deviceId).c_str());
         callback->OnSuccess(realNetworkId, descriptors, enableStep);
         return DH_FWK_SUCCESS;
     }
-    VersionInfoManager::GetInstance()->SyncVersionInfoFromDB(deviceId);
-    CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
-    CapabilityInfoManager::GetInstance()->DoAsyncGetDistributedHardware(realNetworkId, enableStep, callback);
+    return ERR_DH_FWK_HARDWARE_MANAGER_GET_DHINFO_FAIL;
+}
+
+int32_t DistributedHardwareService::GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+    const sptr<IGetDhDescriptorsCallback> callback)
+{
+    if (!IsIdLengthValid(networkId) || callback == nullptr) {
+        DHLOGE("networkId size is invalid or callback ptr is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
+    if (!isInit) {
+        DHLOGW("DHManager is not init");
+        return ERR_DH_FWK_HARDWARE_MANAGER_BUSY;
+    }
+    DHLOGI("GetDistributedHardware start");
+    std::string deviceId;
+    std::string realNetworkId;
+    std::string udid;
+    std::string udidHash;
+    if (networkId == LOCAL_NETWORKID_ALIAS || networkId == GetLocalDeviceInfo().networkId) {
+        deviceId = GetLocalDeviceInfo().deviceId;
+        realNetworkId = GetLocalDeviceInfo().networkId;
+        udid = GetLocalDeviceInfo().udid;
+        udidHash = GetLocalDeviceInfo().udidHash;
+    } else {
+        deviceId = DHContext::GetInstance().GetDeviceIdByNetworkId(networkId);
+        realNetworkId = networkId;
+        udid = DHContext::GetInstance().GetUDIDByNetworkId(networkId);
+        udidHash = Sha256(udid);
+    }
+    auto ret = GetDeviceDhInfo(realNetworkId, udidHash, deviceId, enableStep, callback);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGI("Need active sync deviceInfo by softbus.");
+        ComponentManager::GetInstance().SyncRemoteDeviceInfoBySoftbus(realNetworkId, enableStep, callback);
+    }
+    DHLOGI("GetDistributedHardware end");
     return DH_FWK_SUCCESS;
 }
 

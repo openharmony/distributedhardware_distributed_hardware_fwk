@@ -76,6 +76,8 @@ private:
     void InitLocalDevInfo();
     bool DoBusinessInit();
     bool IsDepSAStart();
+    int32_t GetDeviceDhInfo(const std::string &realNetworkId, const std::string &udidHash, const std::string &deviceId,
+        EnableStep enableStep, const sptr<IGetDhDescriptorsCallback> callback);
 
 private:
     bool registerToService_ = false;

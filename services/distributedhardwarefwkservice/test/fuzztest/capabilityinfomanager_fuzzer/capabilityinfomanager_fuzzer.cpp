@@ -378,18 +378,6 @@ void GetDataByDHTypeFuzzTest(const uint8_t* data, size_t size)
     CapabilityInfoManager::GetInstance()->GetDataByDHType(dhType, capabilityMap);
 }
 
-void AsyncGetDistributedHardwareFuzzTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    EnableStep enableStep = static_cast<EnableStep>(data[0] % 4);
-    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
-    CapabilityInfoManager::GetInstance()->AsyncGetDistributedHardware(networkId, enableStep, callback);
-}
-
 void GetEntriesByKeysFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -422,7 +410,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::GetEventHandlerFuzzTest(data, size);
     OHOS::DistributedHardware::OnChangeFuzzTest(data, size);
     OHOS::DistributedHardware::GetDataByDHTypeFuzzTest(data, size);
-    OHOS::DistributedHardware::AsyncGetDistributedHardwareFuzzTest(data, size);
     OHOS::DistributedHardware::GetEntriesByKeysFuzzTest(data, size);
     return 0;
 }

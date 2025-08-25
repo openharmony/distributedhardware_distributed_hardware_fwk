@@ -86,6 +86,7 @@ public:
     void AddOnlineDeviceType(const std::string &networkId, uint16_t deviceType);
     void DeleteOnlineDeviceType(const std::string &networkId);
     uint16_t GetDeviceTypeByNetworkId(const std::string &networkId);
+    std::string GetDeviceIdByNetworkId(const std::string &networkId);
     /* DeviceId is which is hashed by sha256 */
     std::string GetUUIDByDeviceId(const std::string &deviceId);
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -170,6 +170,12 @@ int32_t DistributedHardwareManager::GetComponentVersion(std::unordered_map<DHTyp
 int32_t DistributedHardwareManager::Dump(const std::vector<std::string> &argsStr, std::string &result)
 {
     return HidumpHelper::GetInstance().Dump(argsStr, result);
+}
+
+bool DistributedHardwareManager::GetDHardwareInitState()
+{
+    DHLOGI("DHMgr init state: %{public}d", isAllInit_.load());
+    return isAllInit_.load();
 }
 } // namespace DistributedHardware
 } // namespace OHOS

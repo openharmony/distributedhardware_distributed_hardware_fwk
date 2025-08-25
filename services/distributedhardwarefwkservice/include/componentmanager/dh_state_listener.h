@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 #ifndef OHOS_DISTRIBUTED_HARDWARE_STATE_LISTENER_H
 #define OHOS_DISTRIBUTED_HARDWARE_STATE_LISTENER_H
 
+#include "idistributed_hardware_sink.h"
 #include "idistributed_hardware_source.h"
 
 namespace OHOS {
@@ -25,6 +26,13 @@ public:
     DHStateListener();
     virtual ~DHStateListener();
     void OnStateChanged(const std::string &uuid, const std::string &dhId, const BusinessState state) override;
+};
+
+class DHSinkStateListener : public DistributedHardwareSinkStateListener {
+public:
+    DHSinkStateListener();
+    virtual ~DHSinkStateListener();
+    void OnStateChanged(const std::string &uuid, const std::string &dhId, const BusinessSinkState state) override;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

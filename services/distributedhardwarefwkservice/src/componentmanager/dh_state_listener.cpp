@@ -46,5 +46,26 @@ void DHStateListener::OnStateChanged(const std::string &networkId, const std::st
         GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
     ComponentManager::GetInstance().UpdateBusinessState(networkId, dhId, state);
 }
+
+DHSinkStateListener::DHSinkStateListener()
+{
+    DHLOGI("Ctor DHSinkStateListener");
+}
+
+DHSinkStateListener::~DHSinkStateListener()
+{
+    DHLOGI("Dtor DHSinkStateListener");
+}
+
+void DHSinkStateListener::OnStateChanged(const std::string &networkId, const std::string &dhId,
+    const BusinessSinkState state)
+{
+    if (!IsIdLengthValid(networkId)) {
+        return;
+    }
+    DHLOGI("Receive sink business state change, networkId: %{public}s, dhId: %{public}s, state: %{public}" PRIu32,
+        GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
+    ComponentManager::GetInstance().UpdateSinkBusinessState(networkId, dhId, state);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
