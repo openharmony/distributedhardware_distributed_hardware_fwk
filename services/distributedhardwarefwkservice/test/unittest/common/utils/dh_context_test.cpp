@@ -431,5 +431,20 @@ HWTEST_F(DhContextTest, OnMessage_008, TestSize.Level1)
     cJSON_Delete(json);
     EXPECT_TRUE(DHContext::GetInstance().connectedDevIds_.empty());
 }
+
+HWTEST_F(DhContextTest, GetDeviceIdByNetworkId_001, TestSize.Level1)
+{
+    std::string networkId = "";
+    auto ret = DHContext::GetInstance().GetDeviceIdByNetworkId(networkId);
+    EXPECT_EQ("", ret);
+
+    networkId = "networkId_1";
+    DHContext::GetInstance().AddOnlineDevice(TEST_UDID, TEST_UUID, TEST_NETWORKID);
+    ret = DHContext::GetInstance().GetDeviceIdByNetworkId(networkId);
+    EXPECT_EQ("", ret);
+
+    ret = DHContext::GetInstance().GetDeviceIdByNetworkId(TEST_NETWORKID);
+    EXPECT_EQ(Sha256(TEST_UUID), ret);
+}
 }
 }

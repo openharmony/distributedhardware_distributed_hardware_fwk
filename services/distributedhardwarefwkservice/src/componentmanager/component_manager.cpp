@@ -16,6 +16,7 @@
 #include "component_manager.h"
 
 #include <cinttypes>
+#include <chrono>
 #include <future>
 #include <pthread.h>
 #include <string>
@@ -65,14 +66,17 @@ namespace {
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
     constexpr int32_t INVALID_SA_ID = -1;
     constexpr int32_t UNINIT_COMPONENT_TIMEOUT_SECONDS = 2;
+    constexpr int32_t SYNC_DATA_TIMEOUT_MS = 1000;
 }
 
 ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
     compMonitorPtr_(std::make_shared<ComponentMonitor>()),
     lowLatencyListener_(sptr<LowLatencyListener>(new(std::nothrow) LowLatencyListener())),
     isUnInitTimeOut_(false), dhBizStates_({}), dhStateListener_(std::make_shared<DHStateListener>()),
+    dhSinkStateListener_(std::make_shared<DHSinkStateListener>()),
     dataSyncTriggerListener_(std::make_shared<DHDataSyncTriggerListener>()),
-    dhCommToolPtr_(std::make_shared<DHCommTool>()), needRefreshTaskParams_({})
+    dhCommToolPtr_(std::make_shared<DHCommTool>()), needRefreshTaskParams_({}),
+    workModeParam_(-1, 0, 0, false)
 {
     DHLOGI("Ctor ComponentManager");
 }
@@ -680,6 +684,38 @@ bool ComponentManager::IsIdenticalAccount(const std::string &networkId)
         return true;
     }
     return false;
+}
+
+void ComponentManager::SetAVSyncScene(const DHTopic topic)
+{
+    DHLOGI("set AVSync scene : %{public}" PRIu32, topic);
+    switch (topic) {
+        case DHTopic::TOPIC_AV_LOW_LATENCY: {
+            dhTopic_ = topic;
+            std::lock_guard<std::mutex> lock(workModeParamMtx_);
+            workModeParam_.scene = static_cast<uint32_t>(AVscene::VIDEOCALL);
+            break;
+        }
+        case DHTopic::TOPIC_AV_FLUENCY: {
+            dhTopic_ = topic;
+            std::lock_guard<std::mutex> lock(workModeParamMtx_);
+            workModeParam_.scene = static_cast<uint32_t>(AVscene::BROADCAST);
+            break;
+        }
+        default: {
+            DHLOGW("not AVSync related topic");
+        }
+    }
+}
+
+void ComponentManager::UpdateSinkBusinessState(const std::string &networkId, const std::string &dhId,
+    BusinessSinkState state)
+{
+    if (!IsIdLengthValid(networkId) || !IsIdLengthValid(dhId)) {
+        return;
+    }
+    DHLOGI("UpdateSinkBusinessState, networkId: %{public}s, dhId: %{public}s, state: %{public}" PRIu32,
+        GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
 }
 
 void ComponentManager::UpdateBusinessState(const std::string &networkId, const std::string &dhId, BusinessState state)
@@ -2055,6 +2091,65 @@ int32_t ComponentManager::EnableMetaSourceInternal(const std::string &networkId,
     enableInfo.refEnable = 1;
     status.refLoad = 1;
     return ret;
+}
+
+void ComponentManager::SyncRemoteDeviceInfoBySoftbus(const std::string &realNetworkId, EnableStep enableStep,
+    const sptr<IGetDhDescriptorsCallback> callback)
+{
+    if (callback == nullptr) {
+        DHLOGE("Param callback is null.");
+        return;
+    }
+    std::lock_guard<std::mutex> lock(syncDeviceInfoMapMutex_);
+    syncDeviceInfoMap_[realNetworkId] = {enableStep, callback};
+    std::shared_ptr<std::string> networkIdPtr = std::make_shared<std::string>(realNetworkId);
+    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_DATA_SYNC_MANUAL, networkIdPtr);
+    if (GetEventHandler() == nullptr) {
+        DHLOGE("Can not get eventHandler");
+        callback->OnError(realNetworkId, ERR_DH_FWK_POINTER_IS_NULL);
+        syncDeviceInfoMap_.erase(realNetworkId);
+        return;
+    }
+    GetEventHandler()->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+
+    std::thread([this]() {
+        this->OnGetDescriptorsError();
+    }).detach();
+}
+
+void ComponentManager::OnGetDescriptors(const std::string &realNetworkId, const std::vector<DHDescriptor> &descriptors)
+{
+    DHLOGI("OnGetDescriptors enter, networkId = %{public}s, descriptors.size = %{public}zu",
+        GetAnonyString(realNetworkId).c_str(), descriptors.size());
+    if (descriptors.size() == 0) {
+        DHLOGE("Get dh descriptor faild");
+        return;
+    }
+    std::lock_guard<std::mutex> lock(syncDeviceInfoMapMutex_);
+    auto iter = syncDeviceInfoMap_.find(realNetworkId);
+    if (iter != syncDeviceInfoMap_.end()) {
+        if (iter->second.second != nullptr) {
+            iter->second.second->OnSuccess(realNetworkId, descriptors, iter->second.first);
+            syncDeviceInfoMap_.erase(iter);
+            DHLOGI("Notify get dh descriptor success.");
+        }
+    }
+}
+
+void ComponentManager::OnGetDescriptorsError()
+{
+    DHLOGI("OnGetDescriptorsError enter");
+    std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_DATA_TIMEOUT_MS));
+    std::lock_guard<std::mutex> lock(syncDeviceInfoMapMutex_);
+    for (auto iter = syncDeviceInfoMap_.begin(); iter != syncDeviceInfoMap_.end();) {
+        if (iter->second.second != nullptr) {
+            DHLOGI("OnGetDescriptorsError networkId = %{public}s", GetAnonyString(iter->first).c_str());
+            iter->second.second->OnError(iter->first, ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT);
+            iter = syncDeviceInfoMap_.erase(iter);
+        } else {
+            ++iter;
+        }
+    }
 }
 } // namespace DistributedHardware
 } // namespace OHOS

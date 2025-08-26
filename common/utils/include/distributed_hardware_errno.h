@@ -30,6 +30,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_JSON_PARSE_FAILED = -10004;
     constexpr int32_t ERR_DH_FWK_POINTER_IS_NULL = -10005;
     constexpr int32_t ERR_DH_FWK_INVALID_OSTYPE = -10006;
+    constexpr int32_t ERR_DH_FWK_BAD_OPERATION = -10007;
 
     /* VersionManager errno, range: [-10200, -10299] */
     constexpr int32_t ERR_DH_FWK_VERSION_DEVICE_ID_NOT_EXIST = -10200;
@@ -69,6 +70,8 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE = -10500;
     constexpr int32_t ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_OFFLINE = -10501;
     constexpr int32_t ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED = -10502;
+    constexpr int32_t ERR_DH_FWK_HARDWARE_MANAGER_BUSY = -10503;
+    constexpr int32_t ERR_DH_FWK_HARDWARE_MANAGER_GET_DHINFO_FAIL = -10504;
 
     /* ComponentLoader errno, range: [-10600, -10699] */
     constexpr int32_t ERR_DH_FWK_LOADER_HANDLER_IS_NULL = -10600;

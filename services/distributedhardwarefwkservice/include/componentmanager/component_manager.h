@@ -34,6 +34,7 @@
 #include "idistributed_hardware_sink.h"
 #include "idistributed_hardware_source.h"
 #include "impl_utils.h"
+#include "ipublisher_listener.h"
 #include "low_latency_listener.h"
 #include "meta_capability_info.h"
 #include "task_board.h"
@@ -102,6 +103,11 @@ public:
         std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr);
     int32_t DisableMetaSource(const std::string &networkId, const DHDescriptor &dhDescriptor,
         std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr);
+    void SyncRemoteDeviceInfoBySoftbus(const std::string &realNetworkId, EnableStep enableStep,
+        const sptr<IGetDhDescriptorsCallback> callback);
+    void OnGetDescriptors(const std::string &realNetworkId, const std::vector<DHDescriptor> &descriptors);
+    void SetAVSyncScene(const DHTopic topic);
+    void UpdateSinkBusinessState(const std::string &networkId, const std::string &dhId, BusinessSinkState state);
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
     public:
         ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner);
@@ -121,6 +127,23 @@ private:
     enum class EnableState : int32_t {
         DISABLED,
         ENABLED
+    };
+
+    struct SyncShareData {
+        volatile int lock;
+        uint64_t audio_current_pts;
+        uint64_t audio_update_clock;
+        float audio_speed;
+        uint64_t video_current_pts;
+        uint64_t video_update_clock;
+        float video_speed;
+        uint64_t sync_strategy;
+        bool reset;
+    };
+
+    enum class AVscene : uint32_t {
+        BROADCAST = 1,
+        VIDEOCALL = 2
     };
 
     struct DHStatusCtrlKey {
@@ -262,6 +285,7 @@ private:
     void RecoverAutoEnableSource(DHType dhType);
     void RecoverActiveEnableSink(DHType dhType);
     void RecoverActiveEnableSource(DHType dhType);
+    void OnGetDescriptorsError();
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::shared_mutex compSourceMutex_;
@@ -278,6 +302,7 @@ private:
     std::map<std::pair<std::string, std::string>, BusinessState> dhBizStates_;
     std::mutex bizStateMtx_;
     std::shared_ptr<DistributedHardwareStateListener> dhStateListener_;
+    std::shared_ptr<DistributedHardwareSinkStateListener> dhSinkStateListener_;
     std::shared_ptr<DataSyncTriggerListener> dataSyncTriggerListener_;
 
     std::shared_ptr<ComponentManager::ComponentManagerEventHandler> eventHandler_;
@@ -292,6 +317,16 @@ private:
     std::mutex dhSinkStatusMtx_;
     std::map<DHType, DHSourceStatus> dhSourceStatus_;
     std::mutex dhSourceStatusMtx_;
+    std::map<std::string, std::pair<EnableStep, sptr<IGetDhDescriptorsCallback>>> syncDeviceInfoMap_;
+    std::mutex syncDeviceInfoMapMutex_;
+
+    WorkModeParam workModeParam_;
+    std::mutex workModeParamMtx_;
+
+    sptr<Ashmem> syncSharedMem_ = nullptr;
+    std::shared_ptr<SyncShareData> syncShareData_ = nullptr;
+
+    DHTopic dhTopic_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

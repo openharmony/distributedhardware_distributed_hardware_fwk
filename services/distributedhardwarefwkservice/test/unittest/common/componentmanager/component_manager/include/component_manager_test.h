@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,8 @@
 
 #include "gtest/gtest.h"
 
+#include "get_dh_descriptors_callback_stub.h"
+
 namespace OHOS {
 namespace DistributedHardware {
 class ComponentManagerTest : public testing::Test {
@@ -26,6 +28,17 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
+
+public:
+    class TestGetDistributedHardwareCallback : public GetDhDescriptorsCallbackStub {
+    public:
+        TestGetDistributedHardwareCallback() = default;
+        virtual ~TestGetDistributedHardwareCallback() = default;
+    protected:
+        void OnSuccess(const std::string &networkId, const std::vector<DHDescriptor> &descriptors,
+            EnableStep enableStep) override;
+        void OnError(const std::string &networkId, int32_t error) override;
+    };
 };
 } // namespace DistributedHardware
 } // namespace OHOS

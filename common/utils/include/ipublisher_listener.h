@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,9 +40,11 @@ enum class DHTopic : uint32_t {
     TOPIC_INIT_DHMS_READY = 6,
     // Topic for physical input devices plugin event
     TOPIC_PHY_DEV_PLUGIN = 7,
-    // Topic max border, not use for real topic
     TOPIC_ISOMERISM = 8,
-    TOPIC_MAX = 9
+    TOPIC_AV_FLUENCY = 9,
+    TOPIC_AV_LOW_LATENCY = 10,
+    // Topic max border, not use for real topic
+    TOPIC_MAX = 11
 };
 
 class IPublisherListener : public IRemoteBroker {

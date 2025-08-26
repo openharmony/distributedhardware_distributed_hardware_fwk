@@ -55,6 +55,7 @@ namespace DistributedHardware {
     constexpr const char *SEND_ONLINE = "SendOnLine";
     constexpr const char *COMPONENTSLOAD_PROFILE_PATH =
         "etc/distributedhardware/distributed_hardware_components_cfg.json";
+    constexpr const char *BUSINESS_STATE = "business_state";
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

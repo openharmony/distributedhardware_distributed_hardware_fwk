@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,6 +47,17 @@ enum class BusinessState : uint32_t {
     IDLE,
     RUNNING,
     PAUSING
+};
+
+struct WorkModeParam {
+    int32_t fd;
+    int32_t sharedMemLen;
+    uint32_t scene;
+    bool isAVsync;
+
+    WorkModeParam(int32_t f, int32_t sm, uint32_t s, bool av)
+        : fd(f), sharedMemLen(sm), scene(s), isAVsync(av)
+    {}
 };
 
 class DistributedHardwareStateListener {
@@ -104,6 +115,14 @@ public:
     }
     virtual int32_t UnLoadDistributedHDF()
     {
+        return 0;
+    }
+    virtual int32_t UpdateDistributedHardwareWorkMode(const std::string &networkId, const std::string &dhId,
+        const WorkModeParam &param)
+    {
+        (void)networkId;
+        (void)dhId;
+        (void)param;
         return 0;
     }
 };

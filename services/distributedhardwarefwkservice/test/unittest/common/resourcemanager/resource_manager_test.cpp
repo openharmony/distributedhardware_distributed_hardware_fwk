@@ -925,18 +925,5 @@ HWTEST_F(ResourceManagerTest, GetDataByDHType_001, TestSize.Level1)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
     CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
 }
-
-HWTEST_F(ResourceManagerTest, AsyncGetDistributedHardware_001, TestSize.Level1)
-{
-    std::string networkId = "networkId_test";
-    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
-    sptr<IGetDhDescriptorsCallback> callback = nullptr;
-    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->AsyncGetDistributedHardware(networkId,
-        enableStep, callback));
-
-    sptr<IGetDhDescriptorsCallback> callback1(new (std::nothrow) TestGetDistributedHardwareCallback());
-    ASSERT_NO_FATAL_FAILURE(CapabilityInfoManager::GetInstance()->AsyncGetDistributedHardware(networkId,
-        enableStep, callback1));
-}
 } // namespace DistributedHardware
 } // namespace OHOS

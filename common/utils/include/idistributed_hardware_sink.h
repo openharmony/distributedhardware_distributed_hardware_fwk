@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,27 @@ enum class ResourceEventType : int32_t {
     EVENT_TYPE_CLOSE_PAGE = 2
 };
 
+enum class BusinessSinkState : uint32_t {
+    UNKNOWN,
+    IDLE,
+    RUNNING,
+    PAUSING
+};
+
+class DistributedHardwareSinkStateListener {
+public:
+    /**
+     * @brief report the business state of local driver
+     *        corresponding the local device with the device id and dhid.
+     *
+     * @param networkId the local device networkId.
+     * @param dhId the device peripheral dhId.
+     * @param state business state.
+     */
+    virtual void OnStateChanged(const std::string &networkId, const std::string &dhId,
+        const BusinessSinkState state) = 0;
+};
+
 class SubscribeCallback {
 public:
     virtual int32_t OnSubscribeCallback(const std::string &dhId, int32_t status, const std::string &data) = 0;
@@ -48,6 +69,16 @@ public:
     virtual int32_t PauseDistributedHardware(const std::string &networkId) = 0;
     virtual int32_t ResumeDistributedHardware(const std::string &networkId) = 0;
     virtual int32_t StopDistributedHardware(const std::string &networkId) = 0;
+    virtual void RegisterDistributedHardwareSinkStateListener(
+        std::shared_ptr<DistributedHardwareSinkStateListener> listener)
+    {
+        (void)listener;
+        return;
+    }
+    virtual void UnregisterDistributedHardwareSinkStateListener()
+    {
+        return;
+    }
 };
 extern "C" __attribute__((visibility("default"))) IDistributedHardwareSink* GetSinkHardwareHandler();
 } // namespace DistributedHardware
