@@ -261,8 +261,13 @@ HWTEST_F(AvTransportAudioOutputFilterTest, DoPrepare_002, testing::ext::TestSize
 HWTEST_F(AvTransportAudioOutputFilterTest, MarshalAudioMeta_001, testing::ext::TestSize.Level1)
 {
     ASSERT_TRUE(dSoftbusOutputTest_ != nullptr);
-    std::string json = dSoftbusOutputTest_->MarshalAudioMeta(BufferDataType::AUDIO, 1000, 1);
-    EXPECT_EQ(json, R"({"meta_data_type":0,"meta_timestamp":1000,"meta_frame_number":1})");
+    std::string json = dSoftbusOutputTest_->MarshalAudioMeta(BufferDataType::AUDIO, 1000, 2000, 1);
+    std::string json1 = std::string(R"({"meta_data_type":0,)") +
+                        std::string(R"("meta_timestamp":1000,)") +
+                        std::string(R"("meta_frame_number":1,)") +
+                        std::string(R"("meta_timestamp_string":"1000",)") +
+                        std::string(R"("meta_timestamp_special":"2000"})");
+    EXPECT_EQ(json, json1);
 }
 
 HWTEST_F(AvTransportAudioOutputFilterTest, ProcessAndSendBuffer_002, testing::ext::TestSize.Level1)

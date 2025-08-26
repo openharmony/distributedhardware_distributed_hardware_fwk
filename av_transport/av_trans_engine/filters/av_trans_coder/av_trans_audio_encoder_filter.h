@@ -111,6 +111,8 @@ private:
     constexpr static int32_t SAMPLE_RATE_MIN = 8000;
     constexpr static int32_t SAMPLE_RATE_MAX = 96000;
     constexpr static int32_t BITRATE_OPUS = 32000;
+    constexpr static int32_t INDEX_FLAG = 15;
+    constexpr static int32_t FRAME_OUTINDEX_FLAG = 16;
 
     std::shared_ptr<Filter> nextFilter_ {nullptr};
     std::shared_ptr<EventReceiver> eventReceiver_ {nullptr};
@@ -144,6 +146,10 @@ private:
     std::queue<OH_AVBuffer *> codecBufQueue_;
     std::queue<uint32_t> codecIndexQueue_;
     std::queue<std::shared_ptr<Media::AVBuffer>> inputDataBufferQueue_;
+    std::map<uint32_t, int64_t> ptsMap_;
+    std::mutex ptsMutex_;
+    uint64_t frameInIndex_ = 0;
+    uint64_t frameOutIndex_ = 0;
 };
 } // namespace Pipeline
 } // namespace DistributedHardware

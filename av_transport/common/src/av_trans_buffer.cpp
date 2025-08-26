@@ -80,6 +80,25 @@ bool AVTransBuffer::IsEmpty()
     return data_.empty();
 }
 
+void AVTransBuffer::SetPts(int64_t pts)
+{
+    pts_ = pts;
+}
+
+int64_t AVTransBuffer::GetPts()
+{
+    return pts_;
+}
+
+void AVTransBuffer::SetPtsSpecial(int64_t ptsSpecial)
+{
+    ptsSpecial_ = ptsSpecial;
+}
+
+int64_t AVTransBuffer::GetPtsSpecial()
+{
+    return ptsSpecial_;
+}
 void AVTransBuffer::Reset()
 {
     if (data_[0]) {

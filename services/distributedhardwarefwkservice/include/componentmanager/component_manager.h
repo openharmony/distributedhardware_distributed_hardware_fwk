@@ -108,6 +108,14 @@ public:
     void OnGetDescriptors(const std::string &realNetworkId, const std::vector<DHDescriptor> &descriptors);
     void SetAVSyncScene(const DHTopic topic);
     void UpdateSinkBusinessState(const std::string &networkId, const std::string &dhId, BusinessSinkState state);
+    int32_t InitAVSyncSharedMemory();
+    void DeinitAVSyncSharedMemory();
+    int32_t GetDHIdByDHSubtype(const DHSubtype dhSubtype, std::string &networkId, std::string &dhId);
+    int32_t GetDHSubtypeByDHId(DHSubtype &dhSubtype, const std::string &networkId, const std::string &dhId);
+    void HandleIdleStateChange(const std::string &networkId, const std::string &dhId, const DHType dhType);
+    void HandleBusinessStateChange(const std::string &networkId, const std::string &dhId, const DHSubtype dhSubType,
+        const BusinessState state);
+    void NotifyBusinessStateChange(const DHSubtype dhSubType, const BusinessState state);
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
     public:
         ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner);
@@ -327,6 +335,7 @@ private:
     std::shared_ptr<SyncShareData> syncShareData_ = nullptr;
 
     DHTopic dhTopic_;
+    std::mutex dhTopicMtx_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

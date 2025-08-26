@@ -30,16 +30,7 @@ namespace Pipeline {
 namespace {
 constexpr int32_t DEFAULT_BUFFER_NUM = 8;
 constexpr int32_t MAX_TIME_OUT_MS = 1;
-constexpr int64_t MS_ONE_S = 1000;
-constexpr int64_t NS_ONE_S = 1000000;
 const std::string INPUT_BUFFER_QUEUE_NAME = "AVTransAudioInputBufferQueue";
-
-int64_t GetCurrentTime()
-{
-    struct timespec time = { 0, 0 };
-    clock_gettime(CLOCK_MONOTONIC, &time);
-    return time.tv_sec * MS_ONE_S + time.tv_nsec / NS_ONE_S;
-}
 }
 
 static AutoRegisterFilter<AVTransAudioInputFilter> g_registerAudioEncoderFilter("builtin.avtrans.audio.input",
@@ -264,7 +255,7 @@ Status AVTransAudioInputFilter::ProcessAndSendBuffer(const std::shared_ptr<Media
         return Status::ERROR_NULL_POINTER;
     }
     ++frameNumber_;
-    outBuffer->pts_ = GetCurrentTime();
+    outBuffer->pts_ = buffer->pts_;
     meta->SetData(Media::Tag::USER_FRAME_PTS, outBuffer->pts_);
     outBuffer->memory_->Write(buffer->memory_->GetAddr(), buffer->memory_->GetSize(), 0);
     outputBufQueProducer_->PushBuffer(outBuffer, true);

@@ -425,7 +425,8 @@ HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_001, testing::ext::Te
             Pipeline::FilterType::AUDIO_DATA_SOURCE);
     ASSERT_TRUE(avBusInputTest_ != nullptr);
     int64_t pts= 0;
-    bool ret = avBusInputTest_->UnmarshalAudioMeta("", pts);
+    int64_t ptsSpecial= 0;
+    bool ret = avBusInputTest_->UnmarshalAudioMeta("", pts, ptsSpecial);
     EXPECT_EQ(false, ret);
 }
 
@@ -436,8 +437,231 @@ HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_002, testing::ext::Te
             Pipeline::FilterType::AUDIO_DATA_SOURCE);
     ASSERT_TRUE(avBusInputTest_ != nullptr);
     int64_t pts= 1;
-    bool ret = avBusInputTest_->UnmarshalAudioMeta("AUDIO", pts);
+    int64_t ptsSpecial= 1;
+    bool ret = avBusInputTest_->UnmarshalAudioMeta("AUDIO", pts, ptsSpecial);
     EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_003, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    int64_t pts = 0;
+    int64_t ptsSpecial = 0;
+
+    cJSON *jsonObj = cJSON_CreateObject();
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_string", "123456");
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_special", "789012");
+    char *jsonStr = cJSON_PrintUnformatted(jsonObj);
+
+    bool ret = avBusInputTest_->UnmarshalAudioMeta(std::string(jsonStr), pts, ptsSpecial);
+    EXPECT_EQ(false, ret);
+
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_004, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    int64_t pts = 0;
+    int64_t ptsSpecial = 0;
+
+    cJSON *jsonObj = cJSON_CreateObject();
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp", "not_a_number");
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_string", "123456");
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_special", "789012");
+    char *jsonStr = cJSON_PrintUnformatted(jsonObj);
+
+    bool ret = avBusInputTest_->UnmarshalAudioMeta(std::string(jsonStr), pts, ptsSpecial);
+    EXPECT_EQ(false, ret);
+
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_005, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    int64_t pts = 0;
+    int64_t ptsSpecial = 0;
+
+    cJSON *jsonObj = cJSON_CreateObject();
+    cJSON_AddNumberToObject(jsonObj, "meta_timestamp", 123456);
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_special", "789012");
+    char *jsonStr = cJSON_PrintUnformatted(jsonObj);
+
+    bool ret = avBusInputTest_->UnmarshalAudioMeta(std::string(jsonStr), pts, ptsSpecial);
+    EXPECT_EQ(false, ret);
+
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_006, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    int64_t pts = 0;
+    int64_t ptsSpecial = 0;
+
+    cJSON *jsonObj = cJSON_CreateObject();
+    cJSON_AddNumberToObject(jsonObj, "meta_timestamp", 123456);
+    cJSON_AddNumberToObject(jsonObj, "meta_timestamp_string", 123456);
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_special", "789012");
+    char *jsonStr = cJSON_PrintUnformatted(jsonObj);
+
+    bool ret = avBusInputTest_->UnmarshalAudioMeta(std::string(jsonStr), pts, ptsSpecial);
+    EXPECT_EQ(false, ret);
+
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_007, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    int64_t pts = 0;
+    int64_t ptsSpecial = 0;
+
+    cJSON *jsonObj = cJSON_CreateObject();
+    cJSON_AddNumberToObject(jsonObj, "meta_timestamp", 123456);
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_string", "");
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_special", "789012");
+    char *jsonStr = cJSON_PrintUnformatted(jsonObj);
+
+    bool ret = avBusInputTest_->UnmarshalAudioMeta(std::string(jsonStr), pts, ptsSpecial);
+    EXPECT_EQ(false, ret);
+
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_008, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    int64_t pts = 0;
+    int64_t ptsSpecial = 0;
+
+    cJSON *jsonObj = cJSON_CreateObject();
+    cJSON_AddNumberToObject(jsonObj, "meta_timestamp", 123456);
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_string", "123456");
+    char *jsonStr = cJSON_PrintUnformatted(jsonObj);
+
+    bool ret = avBusInputTest_->UnmarshalAudioMeta(std::string(jsonStr), pts, ptsSpecial);
+    EXPECT_EQ(false, ret);
+    
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObj);
+}
+
+
+HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_009, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    int64_t pts = 0;
+    int64_t ptsSpecial = 0;
+
+    cJSON *jsonObj = cJSON_CreateObject();
+    cJSON_AddNumberToObject(jsonObj, "meta_timestamp", 123456);
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_string", "123456");
+    cJSON_AddNumberToObject(jsonObj, "meta_timestamp_special", 789012);
+    char *jsonStr = cJSON_PrintUnformatted(jsonObj);
+
+    bool ret = avBusInputTest_->UnmarshalAudioMeta(std::string(jsonStr), pts, ptsSpecial);
+    EXPECT_EQ(false, ret);
+    
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_010, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    int64_t pts = 0;
+    int64_t ptsSpecial = 0;
+
+    cJSON *jsonObj = cJSON_CreateObject();
+    cJSON_AddNumberToObject(jsonObj, "meta_timestamp", 123456);
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_string", "123456");
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_special", "");
+    char *jsonStr = cJSON_PrintUnformatted(jsonObj);
+    
+    bool ret = avBusInputTest_->UnmarshalAudioMeta(std::string(jsonStr), pts, ptsSpecial);
+    EXPECT_EQ(false, ret);
+    
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_011, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    int64_t pts = 0;
+    int64_t ptsSpecial = 0;
+
+    cJSON *jsonObj = cJSON_CreateObject();
+    cJSON_AddNumberToObject(jsonObj, "meta_timestamp", 123456);
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_string", "123456");
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_special", "789012");
+    char *jsonStr = cJSON_PrintUnformatted(jsonObj);
+    
+    bool ret = avBusInputTest_->UnmarshalAudioMeta(std::string(jsonStr), pts, ptsSpecial);
+    EXPECT_EQ(true, ret);
+    EXPECT_EQ(123456, pts);
+    EXPECT_EQ(789012, ptsSpecial);
+    
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObj);
+}
+
+HWTEST_F(AvTransportBusInputFilterTest, UnmarshalAudioMeta_012, testing::ext::TestSize.Level1)
+{
+    std::shared_ptr<Pipeline::AVTransBusInputFilter> avBusInputTest_ =
+        std::make_shared<Pipeline::AVTransBusInputFilter>("builtin.avtrans.softbus.input",
+            Pipeline::FilterType::AUDIO_DATA_SOURCE);
+    ASSERT_TRUE(avBusInputTest_ != nullptr);
+    int64_t pts = 0;
+    int64_t ptsSpecial = 0;
+
+    cJSON *jsonObj = cJSON_CreateObject();
+    cJSON_AddNumberToObject(jsonObj, "meta_timestamp", 9876543210LL);
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_string", "9876543210");
+    cJSON_AddStringToObject(jsonObj, "meta_timestamp_special", "1234567890");
+    char *jsonStr = cJSON_PrintUnformatted(jsonObj);
+    
+    bool ret = avBusInputTest_->UnmarshalAudioMeta(std::string(jsonStr), pts, ptsSpecial);
+    EXPECT_EQ(true, ret);
+    EXPECT_EQ(9876543210LL, pts);
+    EXPECT_EQ(1234567890LL, ptsSpecial);
+    
+    cJSON_free(jsonStr);
+    cJSON_Delete(jsonObj);
 }
 
 HWTEST_F(AvTransportBusInputFilterTest, TransName2PkgName_001, testing::ext::TestSize.Level1)

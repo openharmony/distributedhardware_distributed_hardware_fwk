@@ -547,7 +547,17 @@ Status AudioEncoderFilter::ProcessData(std::shared_ptr<Media::AVBuffer> audioDat
         "memcpy_s err: %{public}d, memSize: %{public}d", err, memSize);
     int64_t pts = 0;
     audioData->meta_->GetData(Media::Tag::USER_FRAME_PTS, pts);
+    {
+        std::lock_guard<std::mutex> lock(ptsMutex_);
+        ptsMap_[frameInIndex_] = pts;
+        AVTRANS_LOGI("ProcessData frameInIndex_ %{public}" PRId64", pts: %{public}" PRId64, frameInIndex_, pts);
+        frameInIndex_++;
+        if (frameInIndex_ % FRAME_OUTINDEX_FLAG == 0) {
+            frameInIndex_ = 0;
+        }
+    }
     codecMem->buffer_->meta_->SetData(Media::Tag::USER_FRAME_PTS, pts);
+    AVTRANS_LOGI("before AudioEncoderFilter index %{public}u, pts: %{public}" PRId64, index, pts);
     codecMem->buffer_->flag_ = MediaAVCodec::AVCODEC_BUFFER_FLAG_NONE;
     auto ret = OH_AudioCodec_PushInputBuffer(audioEncoder_, index);
     TRUE_RETURN_V_MSG_E(ret != AV_ERR_OK, Status::ERROR_INVALID_OPERATION,
@@ -586,9 +596,7 @@ void AudioEncoderFilter::OnEncInputBufferAvailable(uint32_t index, OH_AVBuffer *
 
 void AudioEncoderFilter::OnEncOutputBufferAvailable(uint32_t index, OH_AVBuffer *buffer)
 {
-    AVTRANS_LOGD("enter");
-    TRUE_RETURN(audioEncoder_ == nullptr || !isEncoderRunning_.load(),
-        "Encoder is not runnnig, isEncoderRunning_: %{public}d", isEncoderRunning_.load());
+    TRUE_RETURN(audioEncoder_ == nullptr || !isEncoderRunning_.load(), "running:%{public}d", isEncoderRunning_.load());
     TRUE_RETURN(buffer == nullptr || buffer->buffer_ == nullptr || buffer->buffer_->memory_ == nullptr ||
         buffer->buffer_->memory_->GetSize() <= 0 || buffer->buffer_->meta_ == nullptr, "audioData is invaild");
     TRUE_RETURN(outputProducer_ == nullptr, "input queue is nullptr");
@@ -607,9 +615,31 @@ void AudioEncoderFilter::OnEncOutputBufferAvailable(uint32_t index, OH_AVBuffer 
         return;
     }
     int64_t pts = 0;
-    buffer->buffer_->meta_->GetData(Media::Tag::USER_FRAME_PTS, pts);
+    {
+        std::lock_guard<std::mutex> lock(ptsMutex_);
+        auto iter = ptsMap_.find(frameOutIndex_);
+        if (iter != ptsMap_.end()) {
+            pts = iter->second;
+            ptsMap_.erase(iter);
+        }
+        frameOutIndex_++;
+    }
     outBuffer->pts_ = pts;
     meta->SetData(Media::Tag::USER_FRAME_PTS, pts);
+    AVTRANS_LOGD("index:%{public}u,outIndex_:%{public}" PRIu64",pts:%{public}" PRId64, index, frameOutIndex_, pts);
+    if (frameOutIndex_ == INDEX_FLAG) {
+        {
+            std::lock_guard<std::mutex> lock(ptsMutex_);
+            auto iter = ptsMap_.find(frameOutIndex_);
+            if (iter != ptsMap_.end()) {
+                pts = iter->second;
+                ptsMap_.erase(iter);
+            }
+        }
+        AVTRANS_LOGD("the fifth special process index %{public}" PRIu64", pts: %{public}" PRId64, frameOutIndex_, pts);
+        meta->SetData(Media::Tag::USER_FRAME_PTS, pts);
+        frameOutIndex_ = 0;
+    }
     meta->SetData(Media::Tag::AUDIO_OBJECT_NUMBER, index);
     outBuffer->memory_->Write(buffer->buffer_->memory_->GetAddr(), buffer->buffer_->memory_->GetSize(), 0);
     outputProducer_->PushBuffer(outBuffer, true);

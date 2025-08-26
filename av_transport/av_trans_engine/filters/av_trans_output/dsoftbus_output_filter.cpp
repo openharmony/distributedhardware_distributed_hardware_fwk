@@ -33,6 +33,8 @@ namespace Pipeline {
 constexpr int32_t DEFAULT_BUFFER_NUM = 8;
 const std::string META_DATA_TYPE = "meta_data_type";
 const std::string META_TIMESTAMP = "meta_timestamp";
+const std::string META_TIMESTAMP_STRING = "meta_timestamp_string";
+const std::string META_TIMESTAMP_SPECIAL = "meta_timestamp_special";
 const std::string META_FRAME_NUMBER = "meta_frame_number";
 const std::string META_EXT_TIMESTAMP = "meta_ext_timestamp";
 const std::string META_EXT_FRAME_NUMBER = "meta_ext_frame_number";
@@ -260,7 +262,8 @@ Status DSoftbusOutputFilter::DoProcessOutputBuffer(int recvArg, bool dropFrame, 
     return Status::OK;
 }
 
-std::string DSoftbusOutputFilter::MarshalAudioMeta(BufferDataType dataType, int64_t pts, uint32_t frameNumber)
+std::string DSoftbusOutputFilter::MarshalAudioMeta(BufferDataType dataType,
+    int64_t pts, int64_t ptsSpecail, uint32_t frameNumber)
 {
     cJSON *metaJson = cJSON_CreateObject();
     if (metaJson == nullptr) {
@@ -269,6 +272,8 @@ std::string DSoftbusOutputFilter::MarshalAudioMeta(BufferDataType dataType, int6
     cJSON_AddNumberToObject(metaJson, META_DATA_TYPE.c_str(), static_cast<uint32_t>(dataType));
     cJSON_AddNumberToObject(metaJson, META_TIMESTAMP.c_str(), pts);
     cJSON_AddNumberToObject(metaJson, META_FRAME_NUMBER.c_str(), frameNumber);
+    cJSON_AddStringToObject(metaJson, META_TIMESTAMP_STRING.c_str(), std::to_string(pts).c_str());
+    cJSON_AddStringToObject(metaJson, META_TIMESTAMP_SPECIAL.c_str(), std::to_string(ptsSpecail).c_str());
     char *data = cJSON_PrintUnformatted(metaJson);
     if (data == nullptr) {
         cJSON_Delete(metaJson);
@@ -288,12 +293,15 @@ Status DSoftbusOutputFilter::ProcessAndSendBuffer(const std::shared_ptr<Media::A
     }
     auto bufferData = buffer->memory_;
     int64_t pts = 0;
+    int64_t ptsSpecail = 0;
     uint32_t frameNumber = 0;
-    buffer->meta_->GetData(Media::Tag::USER_FRAME_PTS, pts);
+    pts = buffer->pts_;
+    AVTRANS_LOGD("AVBuffer pts is %{public}" PRId64, pts);
+    buffer->meta_->GetData(Media::Tag::USER_FRAME_PTS, ptsSpecail);
     buffer->meta_->GetData(Media::Tag::AUDIO_OBJECT_NUMBER, frameNumber);
     BufferDataType dataType;
     meta_->GetData(Media::Tag::MEDIA_STREAM_TYPE, dataType);
-    auto dataParam = MarshalAudioMeta(dataType, pts, frameNumber);
+    auto dataParam = MarshalAudioMeta(dataType, pts, ptsSpecail, frameNumber);
     cJSON *jsonObj = cJSON_CreateObject();
     if (jsonObj == nullptr) {
         return Status::ERROR_NULL_POINTER;

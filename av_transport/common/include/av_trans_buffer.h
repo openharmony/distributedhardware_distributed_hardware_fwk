@@ -89,10 +89,16 @@ public:
     uint32_t GetDataCount();
     void Reset();
     bool IsEmpty();
+    void SetPts(int64_t pts);
+    int64_t GetPts();
+    void SetPtsSpecial(int64_t ptsSpecial);
+    int64_t GetPtsSpecial();
 
 private:
     std::vector<std::shared_ptr<BufferData>> data_ {};
     std::shared_ptr<BufferMeta> meta_;
+    int64_t pts_ = 0;
+    int64_t ptsSpecial_ = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
