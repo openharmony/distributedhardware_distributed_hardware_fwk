@@ -143,6 +143,18 @@
     {
       "name": "mech_right",
       "value": "居右"
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "已开启“智能跟踪”开关，单指双击即可关闭"
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "已关闭“智能跟踪”开关，单指双击即可开启"
+    },
+    {
+      "name": "audio_back",
+      "value": "返回"
     }
   ]
 }

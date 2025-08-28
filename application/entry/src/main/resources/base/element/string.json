@@ -143,6 +143,18 @@
     {
       "name": "mech_right",
       "value": "Right"
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "The smart tracking switch has been turned on. Double-click the switch to turn it off."
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "The smart tracking switch has been turned off. Double-click the switch to turn it on."
+    },
+    {
+      "name": "audio_back",
+      "value": "Back"
     }
   ]
 }
