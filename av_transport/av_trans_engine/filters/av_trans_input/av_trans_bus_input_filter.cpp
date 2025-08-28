@@ -401,6 +401,7 @@ void AVTransBusInputFilter::OnStreamReceived(const StreamData *data, const Strea
         return;
     }
     std::string message(reinterpret_cast<const char *>(ext->buf), ext->bufLen);
+    TRUE_RETURN(message.length() > MAX_MESSAGES_LEN, "Message length is iilegal.");
     AVTRANS_LOGD("Receive message : %{public}s", message.c_str());
 
     cJSON *resMsg = cJSON_Parse(message.c_str());
