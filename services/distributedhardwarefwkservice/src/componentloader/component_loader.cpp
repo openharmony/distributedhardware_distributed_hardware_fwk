@@ -430,7 +430,7 @@ std::string ComponentLoader::Readfile(const std::string &filePath)
     std::string sAll = "";
     infile.open(filePath);
     if (!infile.is_open()) {
-        DHLOGE("filePath: %{public}s Readfile fail", filePath.c_str());
+        DHLOGE("filePath: %{public}s Readfile fail", GetAnonyString(filePath).c_str());
         return sAll;
     }
 
