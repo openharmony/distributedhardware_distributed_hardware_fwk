@@ -184,6 +184,7 @@ bool AVSyncManager::MergeGroupInfo(std::string &syncGroupInfo)
 
 bool AVSyncManager::MergeGroupInfoInner(std::set<std::string> &groupInfoSet)
 {
+    std::lock_guard<std::mutex> lock(listMutex_);
     for (const auto &item : streamInfoList_) {
         if ((item.sceneType == SCENE_TYPE_D_MIC) || (item.sceneType == SCENE_TYPE_D_SPEAKER)) {
             cJSON *masterStr = cJSON_CreateObject();
