@@ -187,7 +187,7 @@ bool DistributedHardwareFwkKit::IsQueryLocalSysSpecTypeValid(QueryLocalSysSpecTy
 
 int32_t DistributedHardwareFwkKit::LoadDistributedHardwareSA()
 {
-    DHLOGI("Load distributed hardware SA begin!");
+    DHLOGI("Load distributed hardware SA begin.");
     std::unique_lock<std::mutex> locker(dfwkLoadServiceMutex_);
     sptr<ISystemAbilityManager> saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (saMgr == nullptr) {
