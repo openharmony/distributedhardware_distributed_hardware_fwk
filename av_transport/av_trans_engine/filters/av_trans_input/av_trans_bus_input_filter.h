@@ -79,7 +79,7 @@ private:
     Status ProcessAndSendBuffer(const std::shared_ptr<Media::AVBuffer> buffer);
     void StreamDataEnqueue(const StreamData *data, const cJSON *extMsg);
     std::string TransName2PkgName(const std::string &ownerName);
-    bool UnmarshalAudioMeta(const std::string& jsonStr, int64_t& pts);
+    bool UnmarshalAudioMeta(const std::string& jsonStr, int64_t& pts, int64_t& ptsSpecial);
 
 private:
     std::shared_ptr<Media::Meta> configureParam_ {nullptr};

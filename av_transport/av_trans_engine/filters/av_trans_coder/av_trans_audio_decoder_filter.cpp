@@ -548,10 +548,18 @@ Status AudioDecoderFilter::ProcessData(std::shared_ptr<Media::AVBuffer> audioDat
     TRUE_RETURN_V_MSG_E(err != EOK, Status::ERROR_INVALID_OPERATION,
                         "memcpy_s err: %{public}d, memSize: %{public}d", err, memSize);
     int64_t pts = 0;
-    audioData->meta_->GetData(Media::Tag::USER_FRAME_PTS, pts);
+    pts = audioData->pts_;
     {
         std::lock_guard<std::mutex> lock(ptsMutex_);
-        ptsMap_.insert(std::make_pair(index, pts));
+        ptsMap_[frameInIndex_] = pts;
+        frameInIndex_++;
+        AVTRANS_LOGI("frameInIndex_: %{public}" PRIu64 " pts: %{public}" PRId64, frameInIndex_, pts);
+    }
+    if (frameInIndex_ == INDEX_FLAG) {
+        audioData->meta_->GetData(Media::Tag::USER_FRAME_PTS, pts);
+        ptsMap_[INDEX_FLAG] = pts;
+        AVTRANS_LOGI("the fifth special process pts: %{public}" PRId64, pts);
+        frameInIndex_ = 0;
     }
     codecMem->buffer_->pts_ = pts;
     codecMem->buffer_->meta_->SetData(Media::Tag::USER_FRAME_PTS, pts);
@@ -616,14 +624,22 @@ void AudioDecoderFilter::OnDecOutputBufferAvailable(uint32_t index, OH_AVBuffer 
     int64_t pts = 0;
     {
         std::lock_guard<std::mutex> lock(ptsMutex_);
-        auto iter = ptsMap_.find(index);
+        auto iter = ptsMap_.find(frameOutIndex_);
         if (iter != ptsMap_.end()) {
             pts = iter->second;
             ptsMap_.erase(iter);
         }
+        frameOutIndex_++;
     }
     outBuffer->pts_ = pts;
     meta->SetData(Media::Tag::USER_FRAME_PTS, pts);
+    AVTRANS_LOGI("after AudioDecoderFilter index %{public}" PRIu64", pts: %{public}" PRId64, frameOutIndex_, pts);
+
+    if (frameOutIndex_ == INDEX_FLAG) {
+        meta->SetData(Media::Tag::USER_FRAME_PTS, ptsMap_[INDEX_FLAG]);
+        AVTRANS_LOGI("the fifth special process pts: %{public}" PRId64, ptsMap_[INDEX_FLAG]);
+        frameOutIndex_ = 0;
+    }
     outBuffer->memory_->Write(buffer->buffer_->memory_->GetAddr(), buffer->buffer_->memory_->GetSize(), 0);
     outputProducer_->PushBuffer(outBuffer, true);
     auto ret = OH_AudioCodec_FreeOutputBuffer(audioDecoder_, index);

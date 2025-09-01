@@ -630,11 +630,14 @@ int32_t AVAudioReceiverEngine::HandleOutputBuffer(std::shared_ptr<Media::AVBuffe
     TRUE_RETURN_V_MSG_E(isErrState, ERR_DH_AVT_OUTPUT_DATA_FAILED,
         "current state=%{public}" PRId32 " is invalid.", currentState);
     std::shared_ptr<AVTransBuffer> transBuffer = std::make_shared<AVTransBuffer>(MetaType::AUDIO);
-    TRUE_RETURN_V_MSG_E(hisBuffer == nullptr || hisBuffer->memory_ == nullptr, ERR_DH_AVT_NULL_POINTER,
-        "hisBuffer is invalid");
+    TRUE_RETURN_V_MSG_E(hisBuffer == nullptr || hisBuffer->memory_ == nullptr || hisBuffer->meta_ == nullptr,
+        ERR_DH_AVT_NULL_POINTER, "hisBuffer is invalid");
     transBuffer->WrapBufferData(hisBuffer->memory_->GetAddr(), hisBuffer->memory_->GetCapacity(),
         hisBuffer->memory_->GetSize());
-
+    transBuffer->SetPts(hisBuffer->pts_);
+    int64_t ptsSpecial = 0;
+    hisBuffer->meta_->GetData(Media::Tag::USER_FRAME_PTS, ptsSpecial);
+    transBuffer->SetPtsSpecial(ptsSpecial);
     SetCurrentState(StateId::PLAYING);
     TRUE_RETURN_V(receiverCallback_ == nullptr, ERR_DH_AVT_OUTPUT_DATA_FAILED);
     return receiverCallback_->OnDataAvailable(transBuffer);

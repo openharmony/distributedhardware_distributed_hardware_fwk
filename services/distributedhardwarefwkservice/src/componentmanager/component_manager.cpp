@@ -67,6 +67,8 @@ namespace {
     constexpr int32_t INVALID_SA_ID = -1;
     constexpr int32_t UNINIT_COMPONENT_TIMEOUT_SECONDS = 2;
     constexpr int32_t SYNC_DATA_TIMEOUT_MS = 1000;
+    constexpr const char *MIC = "mic";
+    constexpr const char *CAMERA = "camera";
 }
 
 ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
@@ -686,9 +688,228 @@ bool ComponentManager::IsIdenticalAccount(const std::string &networkId)
     return false;
 }
 
+int32_t ComponentManager::InitAVSyncSharedMemory()
+{
+    uint32_t memLen = sizeof(SyncShareData);
+    std::string memName = "AVSyncSharedMemory";
+    syncSharedMem_ = OHOS::Ashmem::CreateAshmem(memName.c_str(), memLen);
+    if (syncSharedMem_ == nullptr) {
+        DHLOGE("create ashmem failed");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    if (!syncSharedMem_->MapReadAndWriteAshmem()) {
+        DHLOGE("mmap ashmem failed");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    {
+        std::lock_guard<std::mutex> lock(workModeParamMtx_);
+        workModeParam_.isAVsync = true;
+        workModeParam_.sharedMemLen = sizeof(SyncShareData);
+        workModeParam_.fd = syncSharedMem_->GetAshmemFd();
+    }
+
+    syncShareData_ = std::make_shared<SyncShareData>();
+    syncShareData_->lock = 1;
+    syncShareData_->audio_current_pts = 0;
+    syncShareData_->audio_update_clock= 0;
+    syncShareData_->audio_speed = 1.0;
+    syncShareData_->video_current_pts= 0;
+    syncShareData_->video_update_clock= 0;
+    syncShareData_->video_speed = 1.0;
+    syncShareData_->sync_strategy= 1;
+    syncShareData_->reset = false;
+
+    bool ret = syncSharedMem_->WriteToAshmem(static_cast<void *>(syncShareData_.get()),
+        sizeof(SyncShareData), 0);
+    if (!ret) {
+        DHLOGE("init sync info failed");
+        return ERR_DH_FWK_BAD_OPERATION;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+void ComponentManager::DeinitAVSyncSharedMemory()
+{
+    if (syncSharedMem_ != nullptr) {
+        syncSharedMem_->UnmapAshmem();
+        syncSharedMem_->CloseAshmem();
+        syncSharedMem_ = nullptr;
+    }
+}
+
+int32_t ComponentManager::GetDHIdByDHSubtype(const DHSubtype dhSubtype, std::string &networkId, std::string &dhId)
+{
+    std::lock_guard<std::mutex> lock(bizStateMtx_);
+    for (const auto &iter : dhBizStates_) {
+        const auto devInfo = iter.first;
+        DHSubtype subType;
+        GetDHSubtypeByDHId(subType, devInfo.first, devInfo.second);
+        if (subType == dhSubtype) {
+            networkId = devInfo.first;
+            dhId = devInfo.second;
+            return DH_FWK_SUCCESS;
+        }
+    }
+    DHLOGE("unable to obtain dhId that matches dhSubtype.");
+    return ERR_DH_FWK_BAD_OPERATION;
+}
+
+int32_t ComponentManager::GetDHSubtypeByDHId(DHSubtype &dhSubtype, const std::string &networkId,
+    const std::string &dhId)
+{
+    if (LocalCapabilityInfoManager::GetInstance() == nullptr) {
+        DHLOGE("LocalCapabilityInfoManager instance is null.");
+        return ERR_DH_FWK_BAD_OPERATION;
+    }
+    std::string deviceId = DHContext::GetInstance().GetDeviceIdByNetworkId(networkId);
+    if (deviceId.empty()) {
+        DHLOGE("Get deviceId by networkId failed");
+        return ERR_DH_FWK_BAD_OPERATION;
+    }
+    std::string dhSubtypeStr = LocalCapabilityInfoManager::GetInstance()->GetDhSubtype(deviceId, dhId);
+    if (dhSubtypeStr.empty()) {
+        DHLOGE("Get dhSubtype by dhId failed");
+        return ERR_DH_FWK_BAD_OPERATION;
+    }
+    if (dhSubtypeStr == MIC) {
+        dhSubtype = DHSubtype::AUDIO_MIC;
+    } else if (dhSubtypeStr == CAMERA) {
+        dhSubtype = DHSubtype::CAMERA;
+    } else {
+        DHLOGE("unable to obtain dhSubtype that matches dhId.");
+        return ERR_DH_FWK_BAD_OPERATION;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+void ComponentManager::HandleIdleStateChange(const std::string &networkId, const std::string &dhId, const DHType dhType)
+{
+    if (dhId.empty() || networkId.empty()) {
+        DHLOGE("targetDHId or targetNetworkId is empty");
+        DeinitAVSyncSharedMemory();
+        return;
+    }
+    auto targetHandler = GetDHSourceInstance(dhType);
+    if (targetHandler == nullptr) {
+        DHLOGE("targetHandler is nullptr");
+        DeinitAVSyncSharedMemory();
+        return;
+    }
+    {
+        std::lock_guard<std::mutex> lock(workModeParamMtx_);
+        workModeParam_.isAVsync = false;
+    }
+    targetHandler->UpdateDistributedHardwareWorkMode(networkId, dhId, workModeParam_);
+    DeinitAVSyncSharedMemory();
+    DHLOGI("handle idle state change success.");
+}
+
+void ComponentManager::HandleBusinessStateChange(const std::string &networkId, const std::string &dhId,
+    const DHSubtype dhSubType, const BusinessState state)
+{
+    DHType sourceType = (dhSubType == DHSubtype::AUDIO_MIC) ? DHType::AUDIO : DHType::CAMERA;
+    DHType targetType = (dhSubType == DHSubtype::AUDIO_MIC) ? DHType::CAMERA : DHType::AUDIO;
+    DHSubtype targetSubType = (dhSubType == DHSubtype::AUDIO_MIC) ? DHSubtype::CAMERA : DHSubtype::AUDIO_MIC;
+    std::string targetDHId = "";
+    std::string targetNetworkId = "";
+    GetDHIdByDHSubtype(targetSubType, targetNetworkId, targetDHId);
+    DHLOGI("targetNetworkId: %{public}s, targetDHId: %{public}s, targetSubType: %{public}" PRIu32,
+        GetAnonyString(targetNetworkId).c_str(), GetAnonyString(targetDHId).c_str(), (uint32_t)targetSubType);
+    if (state == BusinessState::IDLE) {
+        HandleIdleStateChange(targetNetworkId, targetDHId, targetType);
+    } else if (state == BusinessState::RUNNING) {
+        if (targetDHId.empty() || targetNetworkId.empty()) {
+            DHLOGE("target dhardware is not online");
+            return;
+        }
+        BusinessState targetState = QueryBusinessState(targetNetworkId, targetDHId);
+        if (targetState != BusinessState::RUNNING) {
+            DHLOGE("target dhardware is not ready");
+            return;
+        }
+        auto targetHandler = GetDHSourceInstance(targetType);
+        auto sourceHandler = GetDHSourceInstance(sourceType);
+        if (targetHandler == nullptr || sourceHandler == nullptr) {
+            DHLOGE("can not find cameraHandler or audioHandler");
+            return;
+        }
+        
+        int32_t ret = InitAVSyncSharedMemory();
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("InitAVSyncSharedMemory failed");
+            DeinitAVSyncSharedMemory();
+            return;
+        }
+        ret = targetHandler->UpdateDistributedHardwareWorkMode(targetNetworkId, targetDHId, workModeParam_);
+        if (ret != DH_FWK_SUCCESS) {
+            DeinitAVSyncSharedMemory();
+            return;
+        }
+        ret = sourceHandler->UpdateDistributedHardwareWorkMode(networkId, dhId, workModeParam_);
+        if (ret != DH_FWK_SUCCESS) {
+            DeinitAVSyncSharedMemory();
+            HandleIdleStateChange(targetNetworkId, targetDHId, targetType);
+            return;
+        }
+    }
+}
+
+void ComponentManager::NotifyBusinessStateChange(const DHSubtype dhSubType, const BusinessState state)
+{
+    DHLOGI("NotifyBusinessStateChange, dhSubType:%{public}" PRIu32", state:%{public}" PRIu32,
+        static_cast<uint32_t>(dhSubType), static_cast<uint32_t>(state));
+    cJSON *root = cJSON_CreateObject();
+    if (root == nullptr) {
+        DHLOGE("cJSON_CreateObject failed");
+        return;
+    }
+    if (cJSON_AddNumberToObject(root, DH_SUBTYPE, static_cast<uint32_t>(dhSubType)) == nullptr) {
+        DHLOGE("failed to add dhSubType to json");
+        cJSON_Delete(root);
+        return;
+    }
+    if (cJSON_AddNumberToObject(root, BUSINESS_STATE, static_cast<uint32_t>(state)) == nullptr) {
+        DHLOGE("failed to add state to json");
+        cJSON_Delete(root);
+        return;
+    }
+    char *json = cJSON_Print(root);
+    if (json == nullptr) {
+        DHLOGE("failed to print json");
+        cJSON_Delete(root);
+        return;
+    }
+    std::lock_guard<std::mutex> lock(dhTopicMtx_);
+    Publisher::GetInstance().PublishMessage(dhTopic_, json);
+    cJSON_Delete(root);
+    free(json);
+    return;
+}
+
+void ComponentManager::UpdateSinkBusinessState(const std::string &networkId, const std::string &dhId,
+    BusinessSinkState state)
+{
+    if (!IsIdLengthValid(networkId) || !IsIdLengthValid(dhId)) {
+        return;
+    }
+    DHLOGI("UpdateSinkBusinessState, networkId: %{public}s, dhId: %{public}s, state: %{public}" PRIu32,
+        GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
+    DHSubtype dhSubtype;
+    GetDHSubtypeByDHId(dhSubtype, networkId, dhId);
+    DHLOGI("UpdateSinkBusinessState::get dhSubtype:%{public}" PRIu32, static_cast<uint32_t>(dhSubtype));
+    if (state == BusinessSinkState::IDLE) {
+        NotifyBusinessStateChange(dhSubtype, BusinessState::IDLE);
+    } else if (state == BusinessSinkState::RUNNING) {
+        NotifyBusinessStateChange(dhSubtype, BusinessState::RUNNING);
+    } else {
+        DHLOGI("unsupported sink business state");
+    }
+}
+
 void ComponentManager::SetAVSyncScene(const DHTopic topic)
 {
     DHLOGI("set AVSync scene : %{public}" PRIu32, topic);
+    std::lock_guard<std::mutex> lock(dhTopicMtx_);
     switch (topic) {
         case DHTopic::TOPIC_AV_LOW_LATENCY: {
             dhTopic_ = topic;
@@ -708,16 +929,6 @@ void ComponentManager::SetAVSyncScene(const DHTopic topic)
     }
 }
 
-void ComponentManager::UpdateSinkBusinessState(const std::string &networkId, const std::string &dhId,
-    BusinessSinkState state)
-{
-    if (!IsIdLengthValid(networkId) || !IsIdLengthValid(dhId)) {
-        return;
-    }
-    DHLOGI("UpdateSinkBusinessState, networkId: %{public}s, dhId: %{public}s, state: %{public}" PRIu32,
-        GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str(), (uint32_t)state);
-}
-
 void ComponentManager::UpdateBusinessState(const std::string &networkId, const std::string &dhId, BusinessState state)
 {
     if (!IsIdLengthValid(networkId) || !IsIdLengthValid(dhId)) {
@@ -729,7 +940,13 @@ void ComponentManager::UpdateBusinessState(const std::string &networkId, const s
         std::lock_guard<std::mutex> lock(bizStateMtx_);
         dhBizStates_[{networkId, dhId}] = state;
     }
-
+    DHSubtype dhSubtype;
+    GetDHSubtypeByDHId(dhSubtype, networkId, dhId);
+    DHLOGI("UpdateBusinessState::get dhSubtype:%{public}" PRIu32, static_cast<uint32_t>(dhSubtype));
+    if (dhSubtype == DHSubtype::CAMERA || dhSubtype == DHSubtype::AUDIO_MIC) {
+        NotifyBusinessStateChange(dhSubtype, state);
+        HandleBusinessStateChange(networkId, dhId, dhSubtype, state);
+    }
     if (state == BusinessState::IDLE) {
         TaskParam taskParam;
         if (!FetchNeedRefreshTask({networkId, dhId}, taskParam)) {

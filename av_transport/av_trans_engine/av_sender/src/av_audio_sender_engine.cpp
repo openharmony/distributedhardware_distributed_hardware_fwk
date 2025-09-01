@@ -612,6 +612,7 @@ void AVAudioSenderEngine::SetEngineResume(const std::string &value)
 
 int32_t AVAudioSenderEngine::PushData(const std::shared_ptr<AVTransBuffer> &buffer)
 {
+    TRUE_RETURN_V_MSG_E(buffer == nullptr, ERR_DH_AVT_PUSH_DATA_FAILED, "av trans buffer is null");
     StateId currentState = GetCurrentState();
     bool isErrState = (currentState != StateId::STARTED) && (currentState != StateId::PLAYING);
     TRUE_RETURN_V_MSG_E(isErrState, ERR_DH_AVT_PUSH_DATA_FAILED,
@@ -641,6 +642,8 @@ int32_t AVAudioSenderEngine::PushData(const std::shared_ptr<AVTransBuffer> &buff
         return ERR_DH_AVT_PREPARE_FAILED;
     }
     outBuffer->memory_->Write(data->GetAddress(), bufferSize, 0);
+    outBuffer->pts_ = buffer->GetPts();
+    AVTRANS_LOGI("buffer->GetPts(): %{public}" PRId64, buffer->GetPts());
     producer->PushBuffer(outBuffer, true);
     SetCurrentState(StateId::PLAYING);
     return DH_AVT_SUCCESS;

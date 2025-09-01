@@ -75,7 +75,7 @@ public:
 private:
     void PrepareInputBuffer();
     Status ProcessAndSendBuffer(const std::shared_ptr<Media::AVBuffer> buffer);
-    std::string MarshalAudioMeta(BufferDataType dataType, int64_t pts, uint32_t frameNumber);
+    std::string MarshalAudioMeta(BufferDataType dataType, int64_t pts, int64_t ptsSpecail, uint32_t frameNumber);
     std::shared_ptr<Media::Meta> meta_ {nullptr};
     std::shared_ptr<Filter> nextFilter_ {nullptr};
 

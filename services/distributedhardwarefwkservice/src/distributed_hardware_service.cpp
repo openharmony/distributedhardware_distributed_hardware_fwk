@@ -181,6 +181,7 @@ int32_t DistributedHardwareService::RegisterPublisherListener(const DHTopic topi
     const sptr<IPublisherListener> listener)
 {
     Publisher::GetInstance().RegisterListener(topic, listener);
+    ComponentManager::GetInstance().SetAVSyncScene(topic);
     return DH_FWK_SUCCESS;
 }
 

@@ -35,6 +35,8 @@ constexpr int32_t DEFAULT_BUFFER_NUM = 8;
 constexpr int32_t MAX_TIME_OUT_MS = 1;
 const std::string INPUT_BUFFER_QUEUE_NAME = "AVTransBusInputBufferQueue";
 const std::string META_TIMESTAMP = "meta_timestamp";
+const std::string META_TIMESTAMP_STRING = "meta_timestamp_string";
+const std::string META_TIMESTAMP_SPECIAL = "meta_timestamp_special";
 
 bool IsUInt32(const cJSON *jsonObj, const std::string &key)
 {
@@ -418,7 +420,7 @@ void AVTransBusInputFilter::OnStreamReceived(const StreamData *data, const Strea
     cJSON_Delete(resMsg);
 }
 
-bool AVTransBusInputFilter::UnmarshalAudioMeta(const std::string& jsonStr, int64_t& pts)
+bool AVTransBusInputFilter::UnmarshalAudioMeta(const std::string& jsonStr, int64_t& pts, int64_t& ptsSpecial)
 {
     cJSON *metaJson = cJSON_Parse(jsonStr.c_str());
     if (metaJson == nullptr) {
@@ -430,6 +432,29 @@ bool AVTransBusInputFilter::UnmarshalAudioMeta(const std::string& jsonStr, int64
         return false;
     }
     pts = static_cast<int64_t>(ptsObj->valueint);
+    cJSON *ptsStringObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_TIMESTAMP_STRING.c_str());
+    if (ptsStringObj == nullptr || !cJSON_IsString(ptsStringObj)) {
+        cJSON_Delete(metaJson);
+        return false;
+    }
+    auto ptsStr = std::string(ptsStringObj->valuestring);
+    if (ptsStr.empty()) {
+        cJSON_Delete(metaJson);
+        return false;
+    }
+    pts = std::stoll(ptsStr);
+    cJSON *ptsSpecialObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_TIMESTAMP_SPECIAL.c_str());
+    if (ptsSpecialObj == nullptr || !cJSON_IsString(ptsSpecialObj)) {
+        cJSON_Delete(metaJson);
+        return false;
+    }
+    auto ptsSpecialStr = std::string(ptsSpecialObj->valuestring);
+    if (ptsSpecialStr.empty()) {
+        cJSON_Delete(metaJson);
+        return false;
+    }
+    ptsSpecial = std::stoll(ptsSpecialStr);
+    AVTRANS_LOGD("pts: %{public}" PRId64", ptsSpecial: %{public}" PRId64, pts, ptsSpecial);
     cJSON_Delete(metaJson);
     return true;
 }
@@ -459,9 +484,11 @@ void AVTransBusInputFilter::StreamDataEnqueue(const StreamData *data, const cJSO
         return;
     }
     int64_t ptsValue = 0;
-    UnmarshalAudioMeta(std::string(paramItem->valuestring), ptsValue);
+    int64_t ptsSpecialValue = 0;
+    UnmarshalAudioMeta(std::string(paramItem->valuestring), ptsValue, ptsSpecialValue);
+    AVTRANS_LOGI("buffer->GetPts(): %{public}" PRId64, ptsValue);
     outBuffer->pts_ = ptsValue;
-    meta->SetData(Media::Tag::USER_FRAME_PTS, ptsValue);
+    meta->SetData(Media::Tag::USER_FRAME_PTS, ptsSpecialValue);
     outBuffer->memory_->Write(reinterpret_cast<uint8_t *>(data->buf), data->bufLen, 0);
     outputBufQueProducer_->PushBuffer(outBuffer, true);
 }
