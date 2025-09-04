@@ -161,6 +161,7 @@ ohos_unittest("OnlineTaskTest") {
     "c_utils:utils",
     "device_manager:devicemanagersdk",
     "eventhandler:libeventhandler",
+    "ffrt:libffrt",
     "googletest:gmock",
     "googletest:gmock_main",
     "hilog:libhilog",
@@ -207,6 +208,7 @@ ohos_unittest("DHTaskTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "ffrt:libffrt",
     "hilog:libhilog",
   ]
 

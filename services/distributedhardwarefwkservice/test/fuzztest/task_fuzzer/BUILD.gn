@@ -48,6 +48,7 @@ ohos_fuzztest("TaskFuzzTest") {
     "cJSON:cjson",
     "c_utils:utils",
     "eventhandler:libeventhandler",
+    "ffrt:libffrt",
     "hilog:libhilog",
     "samgr:samgr_proxy",
   ]

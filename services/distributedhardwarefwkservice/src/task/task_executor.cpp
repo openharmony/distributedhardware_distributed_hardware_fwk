@@ -18,8 +18,6 @@
 #include <pthread.h>
 #include <thread>
 
-#include "ffrt.h"
-
 #include "dh_context.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -52,7 +50,7 @@ void TaskExecutor::PushTask(const std::shared_ptr<Task> task)
 
     {
         DHLOGI("Push task: %{public}s", task->GetId().c_str());
-        std::unique_lock<std::mutex> lock(taskQueueMtx_);
+        std::unique_lock<ffrt::mutex> lock(taskQueueMtx_);
         if (taskQueue_.size() > MAX_TASK_QUEUE_LENGTH) {
             DHLOGE("Task queue is full");
             return;
@@ -67,10 +65,8 @@ std::shared_ptr<Task> TaskExecutor::PopTask()
 {
     std::shared_ptr<Task> task = nullptr;
 
-    std::unique_lock<std::mutex> lock(taskQueueMtx_);
-    condVar_.wait(lock, [this] {
-        return !(this->taskQueue_.empty());
-    });
+    std::unique_lock<ffrt::mutex> lock(taskQueueMtx_);
+    condVar_.wait(lock, [this] { return !(this->taskQueue_.empty()); });
 
     if (!taskQueue_.empty()) {
         task = taskQueue_.front();
