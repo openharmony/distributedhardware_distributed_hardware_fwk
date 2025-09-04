@@ -86,6 +86,7 @@ public:
     std::shared_ptr<CapabilityInfoManager::CapabilityInfoManagerEventHandler> GetEventHandler();
 
     void DumpCapabilityInfos(std::vector<CapabilityInfo> &capInfos);
+    std::string GetDhSubtype(const std::string &deviceId, const std::string &dhId);
 
 private:
     void HandleCapabilityAddChange(const std::vector<DistributedKv::Entry> &insertRecords);

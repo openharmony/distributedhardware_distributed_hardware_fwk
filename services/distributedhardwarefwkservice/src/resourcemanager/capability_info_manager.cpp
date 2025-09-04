@@ -608,5 +608,23 @@ std::vector<DistributedKv::Entry> CapabilityInfoManager::GetEntriesByKeys(const 
     }
     return dbAdapterPtr_->GetEntriesByKeys(keys);
 }
+
+std::string CapabilityInfoManager::GetDhSubtype(const std::string &deviceId, const std::string &dhId)
+{
+    if (!IsIdLengthValid(deviceId) || !IsIdLengthValid(dhId)) {
+        return "";
+    }
+    std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
+    std::string key = GetCapabilityKey(deviceId, dhId);
+    if (globalCapInfoMap_.find(key) == globalCapInfoMap_.end()) {
+        DHLOGE("Can not find capability In globalCapInfoMap_: %{public}s", GetAnonyString(deviceId).c_str());
+        return "";
+    }
+    if (globalCapInfoMap_[key] == nullptr) {
+        DHLOGE("Pointer is null");
+        return "";
+    }
+    return globalCapInfoMap_[key]->GetDHSubtype();
+}
 } // namespace DistributedHardware
 } // namespace OHOS

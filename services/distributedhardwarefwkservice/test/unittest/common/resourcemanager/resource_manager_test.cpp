@@ -925,5 +925,46 @@ HWTEST_F(ResourceManagerTest, GetDataByDHType_001, TestSize.Level1)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
     CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
 }
+
+HWTEST_F(ResourceManagerTest, GetDhSubtype_001, TestSize.Level1)
+{
+    std::string deviceId = "";
+    std::string dhId = "";
+    auto ret = CapabilityInfoManager::GetInstance()->GetDhSubtype(deviceId, dhId);
+    EXPECT_EQ("", ret);
+
+    deviceId = "deviceId_1";
+    ret = CapabilityInfoManager::GetInstance()->GetDhSubtype(deviceId, dhId);
+    EXPECT_EQ("", ret);
+
+    deviceId = "";
+    dhId = "dhId_1";
+    ret = CapabilityInfoManager::GetInstance()->GetDhSubtype(deviceId, dhId);
+    EXPECT_EQ("", ret);
+}
+
+HWTEST_F(ResourceManagerTest, GetDhSubtype_002, TestSize.Level1)
+{
+    std::string peeruuid = "123456789";
+    std::string dhid = "audio_132";
+    std::string deviceId = Sha256(peeruuid);
+
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", TEST_DEV_TYPE_PAD, DHType::AUDIO, "attrs", "subtype");
+    std::string key = deviceId + "###" + dhid;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    auto ret = CapabilityInfoManager::GetInstance()->GetDhSubtype("deviceId_1", dhid);
+    EXPECT_EQ("", ret);
+
+    ret = CapabilityInfoManager::GetInstance()->GetDhSubtype(deviceId, dhid);
+    EXPECT_EQ("subtype", ret);
+
+    std::shared_ptr<CapabilityInfo> capInfo1 = nullptr;
+    std::string deviceId1 = "deviceId_2";
+    std::string key1 = deviceId1 + "###" + dhid;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key1] = capInfo1;
+    ret = CapabilityInfoManager::GetInstance()->GetDhSubtype(deviceId1, dhid);
+    EXPECT_EQ("", ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
