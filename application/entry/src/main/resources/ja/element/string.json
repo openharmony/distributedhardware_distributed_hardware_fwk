@@ -86,31 +86,52 @@
         },
         {
           "name": "mech_intelligent_tracking",
-          "value": "スマート追跡"
+          "value": "スマート追跡",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_tracking_layout",
-          "value": "追跡モード"
+          "value": "追跡モード",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_enable",
-          "value": "オン"
+          "value": "オン",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_close",
-          "value": "オフ"
+          "value": "オフ",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_left",
-          "value": "左"
+          "value": "左",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_center",
-          "value": "中央"
+          "value": "中央",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_right",
-          "value": "右"
+          "value": "右",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

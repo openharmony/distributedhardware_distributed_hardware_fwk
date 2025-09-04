@@ -86,31 +86,52 @@
         },
         {
           "name": "mech_intelligent_tracking",
-          "value": "Умное отслеживание"
+          "value": "Умное отслеживание",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_tracking_layout",
-          "value": "Режим отслеживания"
+          "value": "Режим отслеживания",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_enable",
-          "value": "Включено"
+          "value": "Включено",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_close",
-          "value": "Выключено"
+          "value": "Выключено",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_left",
-          "value": "Слева"
+          "value": "Слева",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_center",
-          "value": "По центру"
+          "value": "По центру",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_right",
-          "value": "Справа"
+          "value": "Справа",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

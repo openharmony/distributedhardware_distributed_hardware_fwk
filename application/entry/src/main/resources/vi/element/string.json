@@ -86,31 +86,52 @@
         },
         {
           "name": "mech_intelligent_tracking",
-          "value": "Theo dõi thông minh"
+          "value": "Theo dõi thông minh",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_tracking_layout",
-          "value": "Chế độ theo dõi"
+          "value": "Chế độ theo dõi",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_enable",
-          "value": "Bật"
+          "value": "Bật",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_close",
-          "value": "Tắt"
+          "value": "Tắt",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_left",
-          "value": "Trái"
+          "value": "Trái",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_center",
-          "value": "Giữa"
+          "value": "Giữa",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_right",
-          "value": "Phải"
+          "value": "Phải",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

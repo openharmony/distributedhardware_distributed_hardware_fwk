@@ -86,31 +86,52 @@
         },
         {
           "name": "mech_intelligent_tracking",
-          "value": "스마트 추적"
+          "value": "스마트 추적",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_tracking_layout",
-          "value": "추적 모드"
+          "value": "추적 모드",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_enable",
-          "value": "켬"
+          "value": "켬",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_close",
-          "value": "끔"
+          "value": "끔",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_left",
-          "value": "왼쪽"
+          "value": "왼쪽",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_center",
-          "value": "중앙"
+          "value": "중앙",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_right",
-          "value": "오른쪽"
+          "value": "오른쪽",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

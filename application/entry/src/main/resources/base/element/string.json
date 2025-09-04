@@ -118,31 +118,52 @@
     },
     {
       "name": "mech_intelligent_tracking",
-      "value": "Smart tracking"
+      "value": "Smart tracking",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_tracking_layout",
-      "value": "Tracking mode"
+      "value": "Tracking mode",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_enable",
-      "value": "On"
+      "value": "On",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_close",
-      "value": "Off"
+      "value": "Off",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_left",
-      "value": "Left"
+      "value": "Left",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_center",
-      "value": "Center"
+      "value": "Center",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_right",
-      "value": "Right"
+      "value": "Right",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "audio_tracking_switch_on",

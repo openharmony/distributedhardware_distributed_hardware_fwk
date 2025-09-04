@@ -9,7 +9,7 @@
         },
         {
             "name":"pause",
-            "value":"إيقاف مؤقت",
+            "value":"الإيقاف مؤقتًا",
             "attr":{
                 "priority":"translate"
             }
@@ -86,31 +86,52 @@
         },
         {
           "name": "mech_intelligent_tracking",
-          "value": "التتبع الذكي"
+          "value": "التتبع الذكي",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_tracking_layout",
-          "value": "وضع التتبع"
+          "value": "وضع التتبع",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_enable",
-          "value": "تشغيل"
+          "value": "تشغيل",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_close",
-          "value": "إيقاف"
+          "value": "إيقاف",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_left",
-          "value": "على اليسار"
+          "value": "على اليسار",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_center",
-          "value": "في الوسط"
+          "value": "في الوسط",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_right",
-          "value": "على اليمين"
+          "value": "على اليمين",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }
