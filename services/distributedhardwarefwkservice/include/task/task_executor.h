@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,8 @@
 #include <mutex>
 #include <queue>
 
+#include "ffrt.h"
+
 #include "task.h"
 #include "single_instance.h"
 
@@ -38,8 +40,8 @@ private:
 
 private:
     std::queue<std::shared_ptr<Task>> taskQueue_;
-    std::mutex taskQueueMtx_;
-    std::condition_variable condVar_;
+    ffrt::mutex taskQueueMtx_;
+    ffrt::condition_variable condVar_;
     bool taskThreadFlag_;
 };
 } // namespace DistributedHardware
