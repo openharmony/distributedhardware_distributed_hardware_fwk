@@ -2,7 +2,7 @@
     "string":[
         {
             "name":"DHTypeName_Camera",
-            "value":"caméra",
+            "value":"l'appareil photo",
             "attr":{
                 "priority":"translate"
             }
@@ -58,14 +58,14 @@
         },
         {
             "name":"stop_device",
-            "value":"Veuillez déconnecter pour interrompre l'utilisation du %1$s de cet appareil.",
+            "value":"Veuillez déconnecter pour arrêter d'utiliser %1$s de cet appareil.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"DHTypeName_Mic",
-            "value":"microphone",
+            "value":"le micro",
             "attr":{
                 "priority":"translate"
             }
@@ -86,31 +86,52 @@
         },
         {
           "name": "mech_intelligent_tracking",
-          "value": "Suivi intelligent"
+          "value": "Suivi intelligent",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_tracking_layout",
-          "value": "Mode suivi"
+          "value": "Mode suivi",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_enable",
-          "value": "Activé"
+          "value": "Activé",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_close",
-          "value": "Désactivé"
+          "value": "Désactivé",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_left",
-          "value": "Gauche"
+          "value": "Gauche",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_center",
-          "value": "Centre"
+          "value": "Centre",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_right",
-          "value": "Droite"
+          "value": "Droite",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

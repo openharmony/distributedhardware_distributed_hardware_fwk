@@ -118,31 +118,52 @@
     },
     {
       "name": "mech_intelligent_tracking",
-      "value": "智能跟踪"
+      "value": "智能跟踪",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_tracking_layout",
-      "value": "跟踪布局"
+      "value": "跟踪布局",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_enable",
-      "value": "开启"
+      "value": "开启",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_close",
-      "value": "关闭"
+      "value": "关闭",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_left",
-      "value": "居左"
+      "value": "居左",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_center",
-      "value": "居中"
+      "value": "居中",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "mech_right",
-      "value": "居右"
+      "value": "居右",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "audio_tracking_switch_on",

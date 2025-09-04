@@ -86,31 +86,52 @@
         },
         {
           "name": "mech_intelligent_tracking",
-          "value": "རིག་ལྡན་རྗེས་འདེད།"
+          "value": "རིག་ལྡན་རྗེས་འདེད།",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_tracking_layout",
-          "value": "འགྲེམ་ཚུལ་རྗེས་འདེད།"
+          "value": "འགྲེམ་ཚུལ་རྗེས་འདེད།",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_enable",
-          "value": "ཁ་འབྱེད།"
+          "value": "ཁ་འབྱེད།",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_close",
-          "value": "ཁ་རྒྱག"
+          "value": "ཁ་རྒྱག",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_left",
-          "value": "གཡོན་སྒྲིག"
+          "value": "གཡོན་སྒྲིག",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_center",
-          "value": "དཀྱིལ་དུ་འཇོག་པ།"
+          "value": "དཀྱིལ་དུ་འཇོག་པ།",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_right",
-          "value": "གཡས་སྒྲིག"
+          "value": "གཡས་སྒྲིག",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

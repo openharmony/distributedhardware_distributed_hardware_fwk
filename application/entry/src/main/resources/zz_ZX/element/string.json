@@ -74,7 +74,7 @@
     },
     {
       "name": "mech_close",
-      "value": "[TS_1101060]_close"
+      "value": "[TS_1101060]_Off"
     },
     {
       "name": "MechExtAbility_label",
@@ -82,7 +82,7 @@
     },
     {
       "name": "mech_enable",
-      "value": "[TS_1101061]_enable"
+      "value": "[TS_1101061]_On"
     },
     {
       "name": "mech_left",
@@ -98,15 +98,27 @@
     },
     {
       "name": "mech_intelligent_tracking",
-      "value": "[TS_1101058]_Intelligent Tracking"
+      "value": "[TS_1101058]_Smart tracking"
     },
     {
       "name": "mech_tracking_layout",
-      "value": "[TS_1101055]_Tracking Layout"
+      "value": "[TS_1101055]_Tracking mode"
     },
     {
       "name": "mech_center",
       "value": "[TS_1101059]_center"
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "[TS_1122064]_The smart tracking switch has been turned on. Double-click the switch to turn it off."
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "[TS_1122065]_The smart tracking switch has been turned off. Double-click the switch to turn it on."
+    },
+    {
+      "name": "audio_back",
+      "value": "[TS_1122066]_Back"
     }
   ]
 }

@@ -86,31 +86,52 @@
         },
         {
           "name": "mech_intelligent_tracking",
-          "value": "Seguimiento inteligente"
+          "value": "Seguimiento inteligente",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_tracking_layout",
-          "value": "Modo Seguimiento"
+          "value": "Modo Seguimiento",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_enable",
-          "value": "Sí"
+          "value": "Sí",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_close",
-          "value": "No"
+          "value": "No",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_left",
-          "value": "Izquierda"
+          "value": "Izquierda",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_center",
-          "value": "Centro"
+          "value": "Centro",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_right",
-          "value": "Derecha"
+          "value": "Derecha",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

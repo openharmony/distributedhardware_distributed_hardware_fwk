@@ -86,31 +86,52 @@
         },
         {
           "name": "mech_intelligent_tracking",
-          "value": "ئاڭلىق ئىزلاش"
+          "value": "ئاڭلىق ئىزلاش",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_tracking_layout",
-          "value": "ئىزلاش لايىھەسى"
+          "value": "ئىزلاش لايىھەسى",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_enable",
-          "value": "ئوچۇق"
+          "value": "ئوچۇق",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_close",
-          "value": "ئېتىك"
+          "value": "ئېتىك",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_left",
-          "value": "سول"
+          "value": "سول",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_center",
-          "value": "مەركەز"
+          "value": "مەركەز",
+          "attr":{
+              "priority":"translate"
+          }
         },
         {
           "name": "mech_right",
-          "value": "ئوڭ"
+          "value": "ئوڭ",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }
