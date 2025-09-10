@@ -61,7 +61,7 @@
         "description": "$string:ContinueSwitchAbility_desc",
         "label": "$string:ContinueSwitchAbility_label",
         "type": "sys/commonUI",
-        "exported": true
+        "exported": false
       },
       {
         "name": "MechExtAbility",
@@ -69,7 +69,7 @@
         "description": "$string:MechExtAbility_desc",
         "label": "$string:MechExtAbility_label",
         "type": "sys/commonUI",
-        "exported": true
+        "exported": false
       }
     ],
     "metadata": [
