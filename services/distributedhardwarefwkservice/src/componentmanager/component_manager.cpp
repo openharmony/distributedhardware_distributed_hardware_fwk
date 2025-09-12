@@ -757,20 +757,32 @@ int32_t ComponentManager::GetDHIdByDHSubtype(const DHSubtype dhSubtype, std::str
 int32_t ComponentManager::GetDHSubtypeByDHId(DHSubtype &dhSubtype, const std::string &networkId,
     const std::string &dhId)
 {
-    if (LocalCapabilityInfoManager::GetInstance() == nullptr) {
-        DHLOGE("LocalCapabilityInfoManager instance is null.");
-        return ERR_DH_FWK_BAD_OPERATION;
+    std::string deviceId = "";
+    std::string dhSubtypeStr = "";
+    if (networkId == GetLocalNetworkId()) {
+        deviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+        if (deviceId.empty()) {
+            DHLOGE("Get local deviceId failed.");
+            return ERR_DH_FWK_BAD_OPERATION;
+        }
+        dhSubtypeStr = CapabilityInfoManager::GetInstance()->GetDhSubtype(deviceId, dhId);
+        if (dhSubtypeStr.empty()) {
+            DHLOGE("Get local dhSubtype failed.");
+            return ERR_DH_FWK_BAD_OPERATION;
+        }
+    } else {
+        deviceId = DHContext::GetInstance().GetDeviceIdByNetworkId(networkId);
+        if (deviceId.empty()) {
+            DHLOGE("Get remote deviceId failed.");
+            return ERR_DH_FWK_BAD_OPERATION;
+        }
+        dhSubtypeStr = LocalCapabilityInfoManager::GetInstance()->GetDhSubtype(deviceId, dhId);
+        if (dhSubtypeStr.empty()) {
+            DHLOGE("Get remote dhSubtype failed.");
+            return ERR_DH_FWK_BAD_OPERATION;
+        }
     }
-    std::string deviceId = DHContext::GetInstance().GetDeviceIdByNetworkId(networkId);
-    if (deviceId.empty()) {
-        DHLOGE("Get deviceId by networkId failed");
-        return ERR_DH_FWK_BAD_OPERATION;
-    }
-    std::string dhSubtypeStr = LocalCapabilityInfoManager::GetInstance()->GetDhSubtype(deviceId, dhId);
-    if (dhSubtypeStr.empty()) {
-        DHLOGE("Get dhSubtype by dhId failed");
-        return ERR_DH_FWK_BAD_OPERATION;
-    }
+
     if (dhSubtypeStr == MIC) {
         dhSubtype = DHSubtype::AUDIO_MIC;
     } else if (dhSubtypeStr == CAMERA) {
@@ -2072,6 +2084,7 @@ int32_t ComponentManager::InitCompSink(DHType dhType)
         DHLOGE("sinkPtr is null, compType = %{public}#X.", dhType);
         return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
     }
+    sinkPtr->RegisterDistributedHardwareSinkStateListener(dhSinkStateListener_);
     compSink_.insert(std::make_pair(dhType, sinkPtr));
     return DH_FWK_SUCCESS;
 }
@@ -2079,7 +2092,18 @@ int32_t ComponentManager::InitCompSink(DHType dhType)
 int32_t ComponentManager::UninitCompSink(DHType dhType)
 {
     std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
-    auto ret = ComponentLoader::GetInstance().ReleaseSink(dhType);
+    IDistributedHardwareSink *sinkPtr = nullptr;
+    auto ret = ComponentLoader::GetInstance().GetSink(dhType, sinkPtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("GetSource failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
+        return ret;
+    }
+    if (sinkPtr == nullptr) {
+        DHLOGE("sinkPtr is null, compType = %{public}#X.", dhType);
+        return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
+    }
+    sinkPtr->UnregisterDistributedHardwareSinkStateListener();
+    ret = ComponentLoader::GetInstance().ReleaseSink(dhType);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("GetSource failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
         return ret;

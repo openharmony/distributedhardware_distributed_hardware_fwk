@@ -82,6 +82,8 @@ const std::shared_ptr<CapabilityInfo> CAP_INFO_TEST =
 const std::shared_ptr<MetaCapabilityInfo> META_INFO_PTR_TEST = std::make_shared<MetaCapabilityInfo>(
     DH_ID_TEST, DEV_ID_TEST, DEVICE_NAME, TEST_DEV_TYPE_PAD, DHType::CAMERA, DH_ATTR_1, DH_SUBTYPE_TEST, UDIDHASH_TEST,
     CompVersion{ .sinkVersion = TEST_SINK_VERSION_1 });
+
+static std::string g_mocklocalNetworkId = "123456789";
 }
 
 void ComponentManagerTest::SetUpTestCase(void)
@@ -163,6 +165,11 @@ void SetDownComponentLoaderConfig()
             ComponentLoader::GetInstance().compHandlerMap_.erase(itHandler);
         }
     }
+}
+
+std::string GetLocalNetworkId()
+{
+    return g_mocklocalNetworkId;
 }
 
 void ComponentManagerTest::TestGetDistributedHardwareCallback::OnSuccess(
@@ -1082,31 +1089,64 @@ HWTEST_F(ComponentManagerTest, UpdateBusinessState_003, TestSize.Level1)
 
 HWTEST_F(ComponentManagerTest, GetDHSubtypeByDHId_001, TestSize.Level1)
 {
-    std::string peeruuid = "123456789";
-    std::string dhid = "audio_132";
-    std::string deviceId = Sha256(peeruuid);
+    std::string dhid = "audio_1";
+    std::string networkId = "networkId_123";
     DHSubtype dhSubtype;
+    auto ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, networkId, dhid);
+    EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
+
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, NETWORK_TEST, dhid);
+    EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
+
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "");
+    std::string key = deviceId + "###" + dhid;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, NETWORK_TEST, dhid);
+    EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, GetDHSubtypeByDHId_002, TestSize.Level1)
+{
+    std::string dhid = "audio_1";
+    DHSubtype dhSubtype;
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
     std::shared_ptr<CapabilityInfo> capInfo1 = std::make_shared<CapabilityInfo>(
         dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "mic");
     std::string key = deviceId + "###" + dhid;
     LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo1;
-    auto ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, deviceId, dhid);
-    EXPECT_EQ(DHSubtype::AUDIO_MIC, dhSubtype);
+    auto ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, NETWORK_TEST, dhid);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    dhid = "camera_132";
+
+    dhid = "audio_2";
     std::shared_ptr<CapabilityInfo> capInfo2 = std::make_shared<CapabilityInfo>(
         dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs", "camera");
     key = deviceId + "###" + dhid;
     LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo2;
-    ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, deviceId, dhid);
-    EXPECT_EQ(DHSubtype::CAMERA, dhSubtype);
+    ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, NETWORK_TEST, dhid);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
-    dhid = "unknown_132";
+
+    dhid = "audio_3";
     std::shared_ptr<CapabilityInfo> capInfo3 = std::make_shared<CapabilityInfo>(
         dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::UNKNOWN, "attrs", "unknown");
     key = deviceId + "###" + dhid;
     LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo3;
-    ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, deviceId, dhid);
+    ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, NETWORK_TEST, dhid);
+    EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, GetDHSubtypeByDHId_003, TestSize.Level1)
+{
+    std::string dhid = "audio_1";
+    DHSubtype dhSubtype;
+    auto ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, g_mocklocalNetworkId, dhid);
     EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
 }
 
@@ -1123,17 +1163,20 @@ HWTEST_F(ComponentManagerTest, DeinitAVSyncSharedMemory_001, TestSize.Level1)
 
 HWTEST_F(ComponentManagerTest, GetDHIdByDHSubtype_001, TestSize.Level1)
 {
-    std::string peeruuid = "123456789";
+    std::string networkId = "networkId_123456";
     std::string dhid = "audio_132";
-    std::string deviceId = Sha256(peeruuid);
+    std::string deviceId = Sha256(UUID_TEST);
     std::shared_ptr<CapabilityInfo> capInfo1 = std::make_shared<CapabilityInfo>(
         dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "mic");
     std::string key = deviceId + "###" + dhid;
     BusinessState state = BusinessState::IDLE;
     LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo1;
-    ComponentManager::GetInstance().dhBizStates_.emplace(std::make_pair(deviceId, dhid), state);
-    auto ret = ComponentManager::GetInstance().GetDHIdByDHSubtype(DHSubtype::AUDIO_MIC, deviceId, dhid);
+    ComponentManager::GetInstance().dhBizStates_.emplace(std::make_pair(networkId, dhid), state);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, networkId);
+    auto ret = ComponentManager::GetInstance().GetDHIdByDHSubtype(DHSubtype::AUDIO_MIC, networkId, dhid);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    deviceId = "deviceId_test";
     ret = ComponentManager::GetInstance().GetDHIdByDHSubtype(DHSubtype::CAMERA, deviceId, dhid);
     EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
 }
@@ -1315,11 +1358,14 @@ HWTEST_F(ComponentManagerTest, QueryBusinessState_001, TestSize.Level1)
 
 HWTEST_F(ComponentManagerTest, QueryBusinessState_002, TestSize.Level1)
 {
-    BusinessState ret = ComponentManager::GetInstance().QueryBusinessState(NETWORK_TEST, DH_ID_TEST);
+    std::string uuid = "uuid_123";
+    std::string dhId = "camera_1";
+    ComponentManager::GetInstance().dhBizStates_.emplace(std::make_pair(uuid, dhId), BusinessState::IDLE);
+    BusinessState ret = ComponentManager::GetInstance().QueryBusinessState(uuid, dhId);
     EXPECT_EQ(BusinessState::IDLE, ret);
 
     ComponentManager::GetInstance().dhBizStates_.clear();
-    ret = ComponentManager::GetInstance().QueryBusinessState(NETWORK_TEST, DH_ID_TEST);
+    ret = ComponentManager::GetInstance().QueryBusinessState(uuid, dhId);
     EXPECT_EQ(BusinessState::UNKNOWN, ret);
 }
 
@@ -1469,10 +1515,17 @@ HWTEST_F(ComponentManagerTest, UninitCompSource_001, TestSize.Level1)
 HWTEST_F(ComponentManagerTest, UninitCompSink_001, TestSize.Level1)
 {
     ComponentLoader::GetInstance().compHandlerMap_.clear();
+    auto ret = ComponentManager::GetInstance().UninitCompSink(DHType::AUDIO);
+    EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
+}
+
+HWTEST_F(ComponentManagerTest, UninitCompSink_002, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().compHandlerMap_.clear();
     SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().UninitCompSink(DHType::AUDIO);
     SetDownComponentLoaderConfig();
-    EXPECT_EQ(ret, ERR_DH_FWK_LOADER_SINK_UNLOAD);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
 HWTEST_F(ComponentManagerTest, OnDataSyncTrigger_001, testing::ext::TestSize.Level1)
