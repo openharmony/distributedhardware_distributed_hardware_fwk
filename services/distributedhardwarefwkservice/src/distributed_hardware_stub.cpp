@@ -371,8 +371,8 @@ int32_t DistributedHardwareStub::ResumeDistributedHardwareInner(MessageParcel &d
 
 int32_t DistributedHardwareStub::StopDistributedHardwareInner(MessageParcel &data, MessageParcel &reply)
 {
-    if (!IsSystemHap()) {
-        DHLOGE("GetCallerProcessName not system hap.");
+    if (!IsSystemHap() && !IsNativeSA()) {
+        DHLOGE("GetCallerProcessName not system hap or not native sa.");
         return ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL;
     }
     if (!HasAccessDHPermission()) {
@@ -714,6 +714,18 @@ bool DistributedHardwareStub::IsSystemHap()
         return false;
     }
     return true;
+}
+
+bool DistributedHardwareStub::IsNativeSA()
+{
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
+    Security::AccessToken::ATokenTypeEnum tokenType = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    DHLOGI("the tokenType: %{public}d", tokenType);
+    if (tokenType == Security::AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {
+        return true;
+    }
+    DHLOGE("is not native sa");
+    return false;
 }
 } // namespace DistributedHardware
 } // namespace OHOS
