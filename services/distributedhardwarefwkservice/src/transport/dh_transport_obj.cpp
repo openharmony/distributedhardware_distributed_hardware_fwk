@@ -60,6 +60,10 @@ void FromJson(const cJSON *jsonObject, FullCapsRsp &capsRsp)
         int32_t arrSize = cJSON_GetArraySize(capsRspKeyJson);
         for (int32_t i = 0; i < arrSize; i++) {
             cJSON *cap = cJSON_GetArrayItem(capsRspKeyJson, i);
+            if (cap == nullptr) {
+                DHLOGE("get array failed, cap is nullptr");
+                continue;
+            }
             std::shared_ptr<CapabilityInfo> capPtr = std::make_shared<CapabilityInfo>();
             FromJson(cap, *capPtr);
             capsRsp.caps.push_back(capPtr);

@@ -36,6 +36,7 @@ enum class DHType : uint32_t {
 };
 
 enum class DHSubtype : uint32_t {
+    UNKNOWN = 0x0,            // unknown device
     CAMERA = 0x01,            // Camera
     SCREEN = 0x08,            // Display
     INPUT = 0x20,             // Key board

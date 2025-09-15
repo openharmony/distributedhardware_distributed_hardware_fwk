@@ -148,11 +148,10 @@ HWTEST_F(AvAudioSenderEngineTest, Start_002, testing::ext::TestSize.Level1)
     std::string ownerName = "001";
     std::string peerDevId = "pEid";
     auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
-    sender->currentState_ = StateId::CH_CREATED;
-    sender->pipeline_ = std::make_shared<Pipeline::Pipeline>();
+    sender->currentState_ = StateId::IDLE;
+    sender->pipeline_ = nullptr;
     int32_t ret = sender->Start();
-    sender->Stop();
-    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_AVT_START_FAILED, ret);
 }
 
 HWTEST_F(AvAudioSenderEngineTest, Start_003, testing::ext::TestSize.Level1)
@@ -162,7 +161,7 @@ HWTEST_F(AvAudioSenderEngineTest, Start_003, testing::ext::TestSize.Level1)
     auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
     sender->currentState_ = StateId::CH_CREATED;
     sender->pipeline_ = std::make_shared<Pipeline::Pipeline>();
-    sender->dhFwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
+    sender->dhFwkKit_ = nullptr;
     int32_t ret = sender->Start();
     sender->Stop();
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
@@ -173,10 +172,12 @@ HWTEST_F(AvAudioSenderEngineTest, Start_004, testing::ext::TestSize.Level1)
     std::string ownerName = "001";
     std::string peerDevId = "pEid";
     auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
-    sender->currentState_ = StateId::IDLE;
-    sender->pipeline_ = nullptr;
+    sender->currentState_ = StateId::CH_CREATED;
+    sender->pipeline_ = std::make_shared<Pipeline::Pipeline>();
+    sender->dhFwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
     int32_t ret = sender->Start();
-    EXPECT_EQ(ERR_DH_AVT_START_FAILED, ret);
+    sender->Stop();
+    EXPECT_EQ(ERR_DH_AVT_CREATE_CHANNEL_FAILED, ret);
 }
 
 HWTEST_F(AvAudioSenderEngineTest, Stop_001, testing::ext::TestSize.Level1)

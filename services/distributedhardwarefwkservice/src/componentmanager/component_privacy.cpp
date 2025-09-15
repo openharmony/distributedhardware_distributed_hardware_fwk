@@ -305,6 +305,10 @@ void ComponentPrivacy::ComponentEventHandler::ProcessStartPage(const AppExecFwk:
     DHLOGI("ProcessStartPage enter.");
     std::shared_ptr<cJSON> dataMsg = event->GetSharedObject<cJSON>();
     cJSON *innerMsg = cJSON_GetArrayItem(dataMsg.get(), 0);
+    if (innerMsg == NULL) {
+        DHLOGE("innerMsg is nullptr");
+        return;
+    }
     cJSON *subtypeJson = cJSON_GetObjectItem(innerMsg, PRIVACY_SUBTYPE);
     if (!IsString(subtypeJson)) {
         DHLOGE("PRIVACY_SUBTYPE is invalid!");
