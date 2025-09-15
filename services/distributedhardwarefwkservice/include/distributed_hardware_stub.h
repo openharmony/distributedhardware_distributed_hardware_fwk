@@ -61,6 +61,7 @@ private:
     bool ValidQueryLocalSpec(uint32_t spec);
     bool HasAccessDHPermission();
     bool IsSystemHap();
+    bool IsNativeSA();
 };
 } // namespace DistributedHardware
 } // namespace OHOS

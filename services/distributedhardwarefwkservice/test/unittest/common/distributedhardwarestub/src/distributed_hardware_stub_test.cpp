@@ -798,5 +798,21 @@ HWTEST_F(DistributedHardwareStubTest, UnLoadDistributedHDFInner_003, TestSize.Le
     data.WriteRemoteObject(listener->AsObject());
     EXPECT_EQ(DH_FWK_SUCCESS, stubTest_->UnLoadDistributedHDFInner(data, reply));
 }
+
+HWTEST_F(DistributedHardwareStubTest, IsNativeSA_001, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    auto ret = stubTest_->IsNativeSA();
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, StopDistributedHardwareInner_001, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    MessageParcel data;
+    MessageParcel reply;
+    auto ret = stubTest_->StopDistributedHardwareInner(data, reply);
+    EXPECT_EQ(ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
