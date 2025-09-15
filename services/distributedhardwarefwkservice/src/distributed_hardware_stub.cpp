@@ -720,7 +720,6 @@ bool DistributedHardwareStub::IsNativeSA()
 {
     Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
     Security::AccessToken::ATokenTypeEnum tokenType = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
-    // Native进程允许访问
     DHLOGI("the tokenType: %{public}d", tokenType);
     if (tokenType == Security::AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {
         return true;
