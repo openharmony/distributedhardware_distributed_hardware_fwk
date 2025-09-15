@@ -132,6 +132,27 @@
           "attr":{
               "priority":"translate"
           }
+        },
+        {
+          "name": "audio_tracking_switch_on",
+          "value": "스마트 추적 켜짐, 두 번 탭하여 끄기",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_tracking_switch_off",
+          "value": "스마트 추적 꺼짐, 두 번 탭하여 켜기",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_back",
+          "value": "뒤로",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

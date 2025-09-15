@@ -167,15 +167,24 @@
     },
     {
       "name": "audio_tracking_switch_on",
-      "value": "已开启“智能跟踪”开关，单指双击即可关闭"
+      "value": "已开启“智能跟踪”开关，单指双击即可关闭",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "audio_tracking_switch_off",
-      "value": "已关闭“智能跟踪”开关，单指双击即可开启"
+      "value": "已关闭“智能跟踪”开关，单指双击即可开启",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "audio_back",
-      "value": "返回"
+      "value": "返回",
+      "attr":{
+          "priority":"translate"
+      }
     }
   ]
 }

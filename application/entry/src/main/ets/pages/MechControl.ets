@@ -12,129 +12,274 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import { logger } from '../utils/Logger';
 import mechanicManager from '@ohos.distributedHardware.mechanicManager';
 import { BusinessError } from '@ohos.base';
+import router from '@ohos.router';
+import curves from '@ohos.curves';
+import accessibility from '@ohos.accessibility';
+import common from '@ohos.app.ability.common';
+import CommonConstants,{ FontSizeScale } from '../common/constants/CommonConstants';
 
 const TAG = '[MechControl_Page] : ';
+let localStorage = LocalStorage.getShared();
 
-@Entry
+@Entry(localStorage)
 @Component
 struct MechControl {
-  @State isTrackingEnabled: boolean = false;
-  @State currentTrackingLayoutText: ResourceStr = $r('app.string.mech_center');
-  @State currentTrackingLayoutImage: ResourceStr = $r('app.media.track_layout_center');
+  @StorageLink('isTrackingEnabled') @Watch('onSwitchChange') isTrackingEnabled: boolean =
+    this.getDefaultValue('isTrackingEnabled', true);
+  @StorageLink('currentLayout') @Watch('onLayoutChange') currentLayout: mechanicManager.CameraTrackingLayout =
+    this.getDefaultValue('currentLayout', mechanicManager.CameraTrackingLayout.DEFAULT);
+  @StorageLink('currentTrackingLayoutText') currentTrackingLayoutText: ResourceStr = $r('app.string.mech_center');
+  @StorageLink('currentTrackingLayoutImage') currentTrackingLayoutImage: ResourceStr =
+    $r('app.media.track_layout_center');
+  @State fontSizeScale: number = AppStorage.get('currentFontSizeScale') as number;
+  @State pageOpacity: number = 1;
+  @State visibilityState: Visibility = Visibility.Hidden;
+  private context = getContext(this) as common.UIAbilityContext;
 
+  private getDefaultValue<T>(key: string, defaultValue: T): T {
+    const value = AppStorage.get<T>(key);
+    return value !== undefined ? value : defaultValue;
+  }
+
+  pageTransition() {
+    PageTransitionEnter({ type: RouteType.None, duration: 0 })
+    PageTransitionExit({ type: RouteType.None, duration: 0 })
+  }
+
+  onSwitchChange() {
+    logger.info(`${TAG} onSwitchChange in`);
+  }
+
+  onLayoutChange() {
+    logger.info(`${TAG} onLayoutChange in`);
+    switch (this.currentLayout) {
+      case mechanicManager.CameraTrackingLayout.DEFAULT:
+      case mechanicManager.CameraTrackingLayout.MIDDLE: {
+        this.currentTrackingLayoutImage = $r('app.media.track_layout_center');
+        this.currentTrackingLayoutText = $r('app.string.mech_center');
+        break;
+      }
+      case mechanicManager.CameraTrackingLayout.LEFT: {
+        this.currentTrackingLayoutImage = $r('app.media.track_layout_left');
+        this.currentTrackingLayoutText = $r('app.string.mech_left');
+        break;
+      }
+      case mechanicManager.CameraTrackingLayout.RIGHT: {
+        this.currentTrackingLayoutImage = $r('app.media.track_layout_right');
+        this.currentTrackingLayoutText = $r('app.string.mech_right');
+        break;
+      }
+    }
+  }
+
+  toggleEffectChange(){
+    logger.info(`${TAG} toggleEffectChange in`);
+    const originalState = this.isTrackingEnabled;
+    try {
+      if (!this.isTrackingEnabled) {
+        logger.info(`${TAG} enable camera tracking`);
+        mechanicManager.setCameraTrackingEnabled(true);
+        this.isTrackingEnabled = true;
+      } else {
+        logger.info(`${TAG} disable camera tracking`);
+        mechanicManager.setCameraTrackingEnabled(false);
+        this.isTrackingEnabled = false;
+      }
+    } catch (error) {
+      let code: number = (error as BusinessError).code;
+      let message: string = (error as BusinessError).message;
+      logger.error(`${TAG} setUserOperation switch failed. error.code: ${code}, message: ${message}`);
+      this.isTrackingEnabled = originalState;
+    }
+  }
+
+  getSwitchStateInfo(isTrackingEnabled: boolean): string {
+    if (isTrackingEnabled) {
+      logger.info(`SwitchState is on. isTrackingEnabled: ${isTrackingEnabled}`);
+      return this.context.resourceManager.getStringSync($r('app.string.audio_tracking_switch_on').id);
+    } else {
+      logger.info(`SwitchState is off. isTrackingEnabled: ${isTrackingEnabled}`);
+      return this.context.resourceManager.getStringSync($r('app.string.audio_tracking_switch_off').id);
+    }
+  }
 
   aboutToAppear() {
     logger.info(`${TAG} aboutToAppear in`);
+    this.fontSizeScale = this.context.config?.fontSizeScale ?? FontSizeScale.DEFAULT;
+    logger.info(`${TAG} this.fontSizeScale: ${this.fontSizeScale}`);
+    try {
+      this.isTrackingEnabled = mechanicManager.getCameraTrackingEnabled();
+    } catch (error) {
+      let code: number = (error as BusinessError).code;
+      let message: string = (error as BusinessError).message;
+      logger.error(`${TAG} getCameraTrackingEnabled failed. error.code: ${code}, message: ${message}`);
+      this.isTrackingEnabled = this.getDefaultValue('isTrackingEnabled', true);
+    }
+
+    try {
+      this.currentLayout = mechanicManager.getCameraTrackingLayout();
+    } catch (error) {
+      let code: number = (error as BusinessError).code;
+      let message: string = (error as BusinessError).message;
+      logger.error(`${TAG} getCameraTrackingLayout failed. error.code: ${code}, message: ${message}`);
+      this.currentLayout = mechanicManager.CameraTrackingLayout.DEFAULT;
+    }
+    logger.info(`${TAG} aboutToAppear end. isTrackingEnabled: ${this.isTrackingEnabled}, currentLayout: ${this.currentLayout}`);
+  }
+
+  aboutToDisappear(): void {
+    logger.info(`${TAG} aboutToDisappear in`);
+  }
+
+  onPageShow(): void {
+    // Trigger the entry animation
+    this.visibilityState = Visibility.Visible;
   }
 
   @Builder
-  IntelligentTracking(){
-    Column(){
+  IntelligentTracking() {
+    Column() {
       Button() {
-        Image(this.isTrackingEnabled ? $r('app.media.intelligent_tracking') :$r('app.media.intelligent_tracking_dark'))
-          .width(20)
-          .height(20)
-          .margin({left: 3, top: 3})
+        Image(this.isTrackingEnabled ? $r('app.media.intelligent_tracking') : $r('app.media.intelligent_tracking_dark'))
+          .width(CommonConstants.SWITCH_ICON_SIZE)
+          .height(CommonConstants.SWITCH_ICON_SIZE)
+          .margin({ left: CommonConstants.SWITCH_ICON_MARGIN, top: CommonConstants.SWITCH_ICON_MARGIN })
       }
-      .width('40vp')
-      .height('40vp')
-      .backgroundColor(this.isTrackingEnabled ? $r('app.color.color_0A59F7_blue') : $r('sys.color.ohos_id_color_component_normal'))
+      .width(CommonConstants.BUTTON_SIZE)
+      .height(CommonConstants.BUTTON_SIZE)
+      .backgroundColor(this.isTrackingEnabled ? $r('app.color.color_0A59F7_blue') :
+      $r('sys.color.ohos_id_color_component_normal'))
+      .accessibilityText($r('app.string.mech_intelligent_tracking'))
+      .type(ButtonType.Circle)
+      .clickEffect({ level: ClickEffectLevel.LIGHT, scale: CommonConstants.BUTTON_CLICK_SCALE })
       .onClick(() => {
-       const originalState = this.isTrackingEnabled;
+        this.toggleEffectChange();
         try {
-          if (!this.isTrackingEnabled) {
-            logger.info(`${TAG} enable camera tracking`);
-            mechanicManager.setCameraTrackingEnabled(true);
-            this.isTrackingEnabled = true;
-          } else {
-            logger.info(`${TAG} disable camera tracking`);
-            mechanicManager.setCameraTrackingEnabled(false);
-            this.isTrackingEnabled = false;
-          }
+          let eventInfo: accessibility.EventInfo = ({
+            type: 'announceForAccessibility',
+            bundleName: CommonConstants.BUNDLE_NAME,
+            triggerAction: 'click',
+            textAnnouncedForAccessibility: this.getSwitchStateInfo(this.isTrackingEnabled)
+          });
+          accessibility.sendAccessibilityEvent(eventInfo).then(() => {
+            logger.info(`Succeeded in send event, eventInfo is ${JSON.stringify(eventInfo)}`);
+          }).catch((err: Error) => {
+            logger.error('Failed to send accessibility event');
+          });
         } catch (error) {
           let code: number = (error as BusinessError).code;
           let message: string = (error as BusinessError).message;
-          logger.error(`${TAG} setCameraTrackingEnabled failed. error.code: ${code}, message: ${message}`);
-          this.isTrackingEnabled = originalState;
+          logger.error(`${TAG} sendAccessibilityEvent failed,error code: ${code},message: ${message}.`);
         }
         logger.info(`${TAG} onClick end, isTrackingEnabled = ${this.isTrackingEnabled}`);
       })
 
       Text($r('app.string.mech_intelligent_tracking'))
-        .fontSize(12)
-        .lineHeight(16)
+        .fontSize($r('sys.float.ohos_id_text_size_body3'))
+        .lineHeight(CommonConstants.LINE_HEIGHT)
         .fontWeight(FontWeight.Medium)
-        .fontColor($r('app.color.color_black'))
-        .margin({ left: 0, top: 4, right: 0 })
+        .fontColor($r('sys.color.font_primary'))
+        .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
+        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
 
-      Text(this.isTrackingEnabled ? $r('app.string.mech_enable'): $r('app.string.mech_close'))
-        .fontSize(10)
-        .lineHeight(13)
+      Text(this.isTrackingEnabled ? $r('app.string.mech_enable') : $r('app.string.mech_close'))
+        .fontSize($r('sys.float.Caption_M'))
+        .lineHeight(CommonConstants.SMALL_LINE_HEIGHT)
         .fontWeight(FontWeight.Regular)
-        .fontColor($r('app.color.color_black'))
-        .margin({ top: 2 })
+        .fontColor($r('sys.color.font_secondary'))
+        .margin({ top: CommonConstants.SMALL_TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
+        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
     }
+    .translate({ x: this.isTrackingEnabled ? 0 : CommonConstants.TRANSLATE_X })
+    .animation({
+      curve: curves.springMotion(CommonConstants.SPRING_MOTION_RESPONSE,
+        CommonConstants.SPRING_MOTION_DAMPING_FRACTION, CommonConstants.SPRING_MOTION_OVERLAP_DURATION)
+    })
+    .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
+    .margin({
+      left: this.isTrackingEnabled ?
+        (this.fontSizeScale > FontSizeScale.XL ? CommonConstants.NORMAL_SWITCH_MARGIN_LEFT :
+        CommonConstants.MAX_SWITCH_MARGIN_LEFT) :
+        (this.fontSizeScale > FontSizeScale.XL ? CommonConstants.NORMAL_SWITCH_MARGIN_LEFT :
+        CommonConstants.MAX_SWITCH_MARGIN_LEFT) - CommonConstants.SWITCH_OFF_OFFSET
+    })
   }
 
   @Builder
-  TrackingLayout(){
-    Column(){
+  TrackingLayout() {
+    Column() {
       Button() {
         Image(this.currentTrackingLayoutImage)
-          .width(20)
-          .height(20)
+          .width(CommonConstants.SWITCH_ICON_SIZE)
+          .height(CommonConstants.SWITCH_ICON_SIZE)
       }
-      .width('40vp')
-      .height('40vp')
+      .width(CommonConstants.BUTTON_SIZE)
+      .height(CommonConstants.BUTTON_SIZE)
+      .accessibilityText($r('app.string.mech_tracking_layout'))
       .backgroundColor($r('app.color.color_0A59F7_blue'))
+      .type(ButtonType.Circle)
+      .clickEffect({ level: ClickEffectLevel.LIGHT, scale: CommonConstants.BUTTON_CLICK_SCALE })
       .onClick(() => {
         logger.info(`${TAG} onClick TrackingLayout in`);
+        // Trigger the exit animation
+        this.visibilityState = Visibility.Hidden;
+        setTimeout(() => {
+          router.pushUrl({ url: 'pages/TrackingLayout' }, () => {
+            logger.info(`${TAG} setTimeout router pushUrl pages/TrackingLayout`);
+          })
+        }, CommonConstants.ANIMATE_DURATION);
       })
 
       Text($r('app.string.mech_tracking_layout'))
-        .fontSize(12)
-        .lineHeight(16)
+        .fontSize($r('sys.float.ohos_id_text_size_body3'))
+        .lineHeight(CommonConstants.LINE_HEIGHT)
         .fontWeight(FontWeight.Medium)
-        .fontColor($r('app.color.color_black'))
-        .margin({ left: 0, top: 4, right: 0 })
+        .fontColor($r('sys.color.font_primary'))
+        .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
+        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
 
       Text(this.currentTrackingLayoutText)
-        .fontSize(10)
-        .lineHeight(13)
+        .fontSize($r('sys.float.Caption_M'))
+        .lineHeight(CommonConstants.SMALL_LINE_HEIGHT)
         .fontWeight(FontWeight.Regular)
-        .fontColor($r('app.color.color_black'))
-        .margin({ top: 2 })
+        .fontColor($r('sys.color.font_secondary'))
+        .margin({ top: CommonConstants.SMALL_TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
+        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
     }
+    .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
+    .margin({
+      left: this.fontSizeScale > FontSizeScale.DEFAULT ? CommonConstants.NORMAL_LAYOUT_MARGIN_LEFT :
+      CommonConstants.MAX_LAYOUT_MARGIN_LEFT
+    })
   }
 
   build() {
     Column() {
+        Row() {
+          this.IntelligentTracking();
 
-      Flex({
-        direction: FlexDirection.Row,
-        justifyContent: FlexAlign.SpaceEvenly,
-        alignItems: ItemAlign.Center
-      }) {
-        this.IntelligentTracking();
+          if (this.isTrackingEnabled) {
+            this.TrackingLayout();
+          }
 
-        if (this.isTrackingEnabled) {
-          this.TrackingLayout();
         }
-      }
-      .width('100%')
-      .height('100%')
-
+        .width('100%')
+        .height('100%')
+        .justifyContent(FlexAlign.Start)
     }
     .width('100%')
     .height('100%')
     .justifyContent(FlexAlign.Center)
     .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
+    .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
+    .visibility(this.visibilityState)
   }
 }

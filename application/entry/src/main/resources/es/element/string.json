@@ -132,6 +132,27 @@
           "attr":{
               "priority":"translate"
           }
+        },
+        {
+          "name": "audio_tracking_switch_on",
+          "value": "Seguimiento inteligente activado, pulsa dos veces para desactivarlo",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_tracking_switch_off",
+          "value": "Seguimiento inteligente desactivado, pulsa dos veces para activarlo",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_back",
+          "value": "Volver",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

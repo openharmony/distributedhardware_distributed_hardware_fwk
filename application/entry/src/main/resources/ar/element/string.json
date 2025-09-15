@@ -132,6 +132,27 @@
           "attr":{
               "priority":"translate"
           }
+        },
+        {
+          "name": "audio_tracking_switch_on",
+          "value": "تم تشغيل التتبع الذكي، انقر مرتين لإيقافه",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_tracking_switch_off",
+          "value": "تم إيقاف التتبع الذكي، انقر مرتين لتشغيله",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_back",
+          "value": "رجوع",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

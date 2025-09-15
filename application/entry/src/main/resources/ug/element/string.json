@@ -132,6 +132,27 @@
           "attr":{
               "priority":"translate"
           }
+        },
+        {
+          "name": "audio_tracking_switch_on",
+          "value": "ئاڭلىق ئىزلاش تاللانمىسى ئوچۇق، بىر بارماقتا قوش چەكسىڭىز ئېتىلىدۇ",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_tracking_switch_off",
+          "value": "ئاڭلىق ئىزلاش تاللانمىسى ئېتىك، بىر بارماقتا قوش چەكسىڭىز ئېچىلىدۇ",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_back",
+          "value": "قايتىش",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

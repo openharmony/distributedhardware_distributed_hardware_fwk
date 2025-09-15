@@ -132,6 +132,27 @@
           "attr":{
               "priority":"translate"
           }
+        },
+        {
+          "name": "audio_tracking_switch_on",
+          "value": "スマート追跡はオン、ダブルタップでオフにします",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_tracking_switch_off",
+          "value": "スマート追跡はオフ、ダブルタップでオンにします",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_back",
+          "value": "戻る",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

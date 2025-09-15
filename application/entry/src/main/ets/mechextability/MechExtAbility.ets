@@ -16,12 +16,52 @@ import UIExtensionAbility from '@ohos.app.ability.UIExtensionAbility';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Want from '@ohos.app.ability.Want';
 import { logger } from '../utils/Logger';
+import mechanicManager from '@ohos.distributedHardware.mechanicManager';
+import { BusinessError } from '@ohos.base';
 
 const TAG: string = '[MechExtAbility]';
 
 export default class MechExtAbility extends UIExtensionAbility {
+  private callback = (result: mechanicManager.TrackingEventInfo) => {
+    logger.info(`${TAG} result.event = ${result.event}`);
+    if (result.event === mechanicManager.TrackingEvent.CAMERA_TRACKING_USER_ENABLED) {
+      mechanicManager.setCameraTrackingEnabled(true);
+      AppStorage.set('isTrackingEnabled', true);
+    } else if (result.event === mechanicManager.TrackingEvent.CAMERA_TRACKING_USER_DISABLED) {
+      mechanicManager.setCameraTrackingEnabled(false);
+      AppStorage.set('isTrackingEnabled', false);
+    }
+    logger.info(`${TAG}trackingStateChange callback end, AppStorage.get(isTrackingEnabled) =
+      ${AppStorage.get<boolean>('isTrackingEnabled')}`);
+  };
+
+  onTrackingStateChange() {
+    logger.info(`${TAG} onTrackingStateChange in`);
+    try {
+      mechanicManager.on('trackingStateChange', this.callback);
+    } catch (error) {
+      let code: number = error.code;
+      let message: string = error.message;
+      logger.error(`${TAG}trackingStateChange on failed. error.code: ${code}, message: ${message}`);
+    }
+  }
+
+  offTrackingStateChange() {
+    logger.info(`${TAG} offTrackingStateChange in`);
+    try {
+      mechanicManager.off('trackingStateChange', this.callback);
+    } catch (error) {
+      let code: number = (error as BusinessError).code;
+      let message: string = (error as BusinessError).message;
+      logger.error(`${TAG}trackingStateChange off failed. error.code: ${code}, message: ${message}`);
+    }
+  }
+
   onCreate() {
     logger.info(`${TAG} UIExtAbility onCreate`);
+    AppStorage.setOrCreate('isTrackingEnabled', true);
+    AppStorage.setOrCreate('currentLayout', mechanicManager.CameraTrackingLayout.DEFAULT);
+    this.onTrackingStateChange();
   }
 
   onForeground() {
@@ -34,10 +74,12 @@ export default class MechExtAbility extends UIExtensionAbility {
 
   onDestroy() {
     logger.info(`${TAG} UIExtAbility onDestroy`);
+    this.offTrackingStateChange();
   }
 
   onSessionCreate(want: Want, session: UIExtensionContentSession) {
     logger.info(`${TAG} UIExtAbility onSessionCreate.`);
+
     let param: Record<string, UIExtensionContentSession> = {
       'session': session
     };

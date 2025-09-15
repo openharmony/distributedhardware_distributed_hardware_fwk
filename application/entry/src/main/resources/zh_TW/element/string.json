@@ -132,6 +132,27 @@
           "attr":{
               "priority":"translate"
           }
+        },
+        {
+          "name": "audio_tracking_switch_on",
+          "value": "已開啟「智慧追蹤」開關，單指輕觸兩下即可關閉",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_tracking_switch_off",
+          "value": "已關閉「智慧追蹤」開關，單指輕觸兩下即可開啟",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_back",
+          "value": "返回",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }
