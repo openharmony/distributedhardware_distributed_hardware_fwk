@@ -32,7 +32,7 @@ struct TrackingLayout {
   @StorageLink('currentTrackingLayoutImage') currentTrackingLayoutImage: ResourceStr =
     $r('app.media.track_layout_center');
   @StorageLink('currentLayout') @Watch('onLayoutChange') currentLayout: mechanicManager.CameraTrackingLayout =
-    this.getDefaultValue('currentLayout', mechanicManager.CameraTrackingLayout.DEFAULT);;
+    this.getDefaultValue('currentLayout', mechanicManager.CameraTrackingLayout.DEFAULT);
   @State isIconHover:boolean = false;
   @State longPressCanceled: boolean = false;
   @State visibilityState: Visibility = Visibility.Hidden;
