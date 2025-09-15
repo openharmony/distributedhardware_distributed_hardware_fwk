@@ -2,6 +2,7 @@
   "src": [
     "pages/DHardwareUI",
     "pages/ContinueSwitch",
-    "pages/MechControl"
+    "pages/MechControl",
+    "pages/TrackingLayout"
   ]
 }

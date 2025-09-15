@@ -132,6 +132,27 @@
           "attr":{
               "priority":"translate"
           }
+        },
+        {
+          "name": "audio_tracking_switch_on",
+          "value": "༼རིག་ལྡན་རྗེས་འདེད་༽ཀྱི་བསད་སྤར་ཁ་ཕྱེ་ཟིན། མཛུབ་མོ་གཅིག་གིས་ཉིས་རྡེབ་བྱས་ཏེ་ཁ་རྒྱག་ཐུབ།",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_tracking_switch_off",
+          "value": "༼རིག་ལྡན་རྗེས་འདེད་༽ཀྱི་བསད་སྤར་ཁ་བརྒྱབ་ཟིན། མཛུབ་མོ་གཅིག་གིས་ཉིས་རྡེབ་བྱས་ཏེ་ཁ་འབྱེད་ཐུབ།",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_back",
+          "value": "ཕྱིར་ལོག",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

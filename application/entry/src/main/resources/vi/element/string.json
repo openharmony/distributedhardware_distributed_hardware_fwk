@@ -132,6 +132,27 @@
           "attr":{
               "priority":"translate"
           }
+        },
+        {
+          "name": "audio_tracking_switch_on",
+          "value": "Tính năng Theo dõi thông minh đang bật, chạm đúp để tắt",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_tracking_switch_off",
+          "value": "Tính năng Theo dõi thông minh đã tắt, chạm đúp để bật",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_back",
+          "value": "Trở lại",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

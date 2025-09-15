@@ -132,6 +132,27 @@
           "attr":{
               "priority":"translate"
           }
+        },
+        {
+          "name": "audio_tracking_switch_on",
+          "value": "Le Suivi intelligent est activé, toucher deux fois pour le désactiver",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_tracking_switch_off",
+          "value": "Le Suivi intelligent est désactivé, toucher deux fois pour l'activer",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_back",
+          "value": "Retour",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

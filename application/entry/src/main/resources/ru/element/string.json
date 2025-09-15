@@ -132,6 +132,27 @@
           "attr":{
               "priority":"translate"
           }
+        },
+        {
+          "name": "audio_tracking_switch_on",
+          "value": "Умное отслеживание включено, нажмите дважды, чтобы выключить",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_tracking_switch_off",
+          "value": "Умное отслеживание выключено, нажмите дважды, чтобы включить",
+          "attr":{
+              "priority":"translate"
+          }
+        },
+        {
+          "name": "audio_back",
+          "value": "Назад",
+          "attr":{
+              "priority":"translate"
+          }
         }
     ]
 }

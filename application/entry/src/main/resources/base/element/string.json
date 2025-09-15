@@ -167,15 +167,24 @@
     },
     {
       "name": "audio_tracking_switch_on",
-      "value": "The smart tracking switch has been turned on. Double-click the switch to turn it off."
+      "value": "Smart tracking is turned on, double-tap to turn it off",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "audio_tracking_switch_off",
-      "value": "The smart tracking switch has been turned off. Double-click the switch to turn it on."
+      "value": "Smart tracking is turned off, double-tap to turn it on",
+      "attr":{
+          "priority":"translate"
+      }
     },
     {
       "name": "audio_back",
-      "value": "Back"
+      "value": "Back",
+      "attr":{
+          "priority":"translate"
+      }
     }
   ]
 }

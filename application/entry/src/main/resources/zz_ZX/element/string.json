@@ -110,11 +110,11 @@
     },
     {
       "name": "audio_tracking_switch_on",
-      "value": "[TS_1122064]_The smart tracking switch has been turned on. Double-click the switch to turn it off."
+      "value": "[TS_1122064]_Smart tracking is turned on, double-tap to turn it off"
     },
     {
       "name": "audio_tracking_switch_off",
-      "value": "[TS_1122065]_The smart tracking switch has been turned off. Double-click the switch to turn it on."
+      "value": "[TS_1122065]_Smart tracking is turned off, double-tap to turn it on"
     },
     {
       "name": "audio_back",
