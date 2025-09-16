@@ -45,6 +45,10 @@ void Publisher::RegisterListener(const DHTopic topic, const sptr<IPublisherListe
     if (!IsTopicExist(topic)) {
         return;
     }
+    if (publisherItems_[topic] == nullptr) {
+        DHLOGE("The topic: %{public}u, point is null.", static_cast<uint32_t>(topic));
+        return;
+    }
     publisherItems_[topic]->AddListener(listener);
 }
 
@@ -53,12 +57,20 @@ void Publisher::UnregisterListener(const DHTopic topic, const sptr<IPublisherLis
     if (!IsTopicExist(topic)) {
         return;
     }
+    if (publisherItems_[topic] == nullptr) {
+        DHLOGE("The topic: %{public}u, point is null.", static_cast<uint32_t>(topic));
+        return;
+    }
     publisherItems_[topic]->RemoveListener(listener);
 }
 
 void Publisher::PublishMessage(const DHTopic topic, const std::string &message)
 {
     if (!IsTopicExist(topic)) {
+        return;
+    }
+    if (publisherItems_[topic] == nullptr) {
+        DHLOGE("The topic: %{public}u, point is null.", static_cast<uint32_t>(topic));
         return;
     }
     publisherItems_[topic]->PublishMessage(message);

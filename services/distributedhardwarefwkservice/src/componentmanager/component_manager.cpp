@@ -742,7 +742,7 @@ int32_t ComponentManager::GetDHIdByDHSubtype(const DHSubtype dhSubtype, std::str
     std::lock_guard<std::mutex> lock(bizStateMtx_);
     for (const auto &iter : dhBizStates_) {
         const auto devInfo = iter.first;
-        DHSubtype subType;
+        DHSubtype subType = DHSubtype::UNKNOWN;
         GetDHSubtypeByDHId(subType, devInfo.first, devInfo.second);
         if (subType == dhSubtype) {
             networkId = devInfo.first;
@@ -2095,7 +2095,7 @@ int32_t ComponentManager::UninitCompSink(DHType dhType)
     IDistributedHardwareSink *sinkPtr = nullptr;
     auto ret = ComponentLoader::GetInstance().GetSink(dhType, sinkPtr);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetSource failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
+        DHLOGE("GetSinkPtr failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
         return ret;
     }
     if (sinkPtr == nullptr) {
@@ -2105,7 +2105,7 @@ int32_t ComponentManager::UninitCompSink(DHType dhType)
     sinkPtr->UnregisterDistributedHardwareSinkStateListener();
     ret = ComponentLoader::GetInstance().ReleaseSink(dhType);
     if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("GetSource failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
+        DHLOGE("ReleaseSink failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
         return ret;
     }
     compSink_.erase(dhType);

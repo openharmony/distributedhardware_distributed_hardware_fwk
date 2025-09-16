@@ -101,7 +101,7 @@ void DHTransport::OnBytesReceived(int32_t socketId, const void *data, uint32_t d
         return;
     }
 
-    if (memcpy_s(buf, dataLen + 1,  reinterpret_cast<const uint8_t *>(data), dataLen) != EOK) {
+    if (memcpy_s(buf, dataLen + 1, reinterpret_cast<const uint8_t *>(data), dataLen) != EOK) {
         DHLOGE("OnBytesReceived: memcpy memory failed");
         free(buf);
         buf = nullptr;
@@ -502,13 +502,13 @@ int32_t DHTransport::Send(const std::string &remoteNetworkId, const std::string 
         DHLOGE("Send error: msg size: %{public}" PRIu32 " too long", compressedPayLoadSize);
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
-    uint8_t *buf = reinterpret_cast<uint8_t *>(calloc((compressedPayLoadSize), sizeof(uint8_t)));
+    uint8_t *buf = reinterpret_cast<uint8_t *>(calloc((compressedPayLoadSize + 1), sizeof(uint8_t)));
     if (buf == nullptr) {
         DHLOGE("Send: malloc memory failed");
         return ERR_DH_FWK_COMPONENT_TRANSPORT_OPT_FAILED;
     }
 
-    if (memcpy_s(buf, compressedPayLoadSize, reinterpret_cast<const uint8_t *>(compressedPayLoad.c_str()),
+    if (memcpy_s(buf, compressedPayLoadSize + 1, reinterpret_cast<const uint8_t *>(compressedPayLoad.c_str()),
                  compressedPayLoadSize) != EOK) {
         DHLOGE("Send: memcpy memory failed");
         free(buf);
