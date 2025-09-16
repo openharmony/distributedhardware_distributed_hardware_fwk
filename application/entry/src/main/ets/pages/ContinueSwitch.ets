@@ -220,6 +220,10 @@ struct ContinueSwitch {
     this.extContext = localStorage.get<common.UIExtensionContext>('context');
     this.startReason = AppStorage.get<string>('startReason');
     this.isShowBack = AppStorage.get<boolean>('isShowBack') ?? true;
+    if (this.isPC && this.startReason === 'from_search') {
+      logger.info(`${TAG} aboutToAppear: pc & from_search`);
+      this.isShowBack = false;
+    }
     logger.info(`${TAG} aboutToAppear: startReason is ${this.startReason}, isShowBack: ${this.isShowBack}`);
     this.phoneSwitchTextMarginInit();
     setTimeout(() => {
