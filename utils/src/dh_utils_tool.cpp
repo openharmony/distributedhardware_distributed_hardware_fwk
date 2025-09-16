@@ -366,7 +366,7 @@ int32_t GetDeviceSystemType(const std::string &extraData)
     }
     cJSON *paramKey = cJSON_GetObjectItem(jsonObj, PARAM_KEY_OS_TYPE);
     if (paramKey == NULL || !cJSON_IsNumber(paramKey)) {
-        DHLOGE("paramKey is null or paramKey is invaild type!");
+        DHLOGE("paramKey is null or paramKey is invalid type!");
         cJSON_Delete(jsonObj);
         return ERR_DH_FWK_INVALID_OSTYPE;
     }

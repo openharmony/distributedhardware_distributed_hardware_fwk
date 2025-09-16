@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,8 +35,12 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "AccessManager"
 
-constexpr int32_t DH_RETRY_INIT_DM_COUNT = 6;
-constexpr int32_t DH_RETRY_INIT_DM_INTERVAL_US = 1000 * 500;
+namespace {
+    constexpr int32_t OLD_HO_DEVICE_TYPE = -1;
+    constexpr int32_t NEW_HO_DEVICE_TYPE = 11;
+    constexpr int32_t DH_RETRY_INIT_DM_COUNT = 6;
+    constexpr int32_t DH_RETRY_INIT_DM_INTERVAL_US = 1000 * 500;
+}
 
 AccessManager::~AccessManager()
 {
@@ -169,8 +173,27 @@ void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
 
 void AccessManager::OnDeviceReady(const DmDeviceInfo &deviceInfo)
 {
-    (void)deviceInfo;
-    return;
+    std::lock_guard<std::mutex> lock(accessMutex_);
+    DHLOGI("device ready, networkId: %{public}s, deviceName: %{public}s",
+        GetAnonyString(deviceInfo.networkId).c_str(), GetAnonyString(deviceInfo.deviceName).c_str());
+    std::string networkId = std::string(deviceInfo.networkId);
+    if (!IsIdLengthValid(networkId)) {
+        DHLOGE("networkId is invalid.");
+        return;
+    }
+
+    if (!DeviceParamMgr::GetInstance().IsDeviceE2ESync()) {
+        DHLOGI("local device is not e2e device, no need sync data.");
+        return;
+    }
+
+    DHLOGI("local device is e2e device.");
+    int32_t osType = GetDeviceSystemType(deviceInfo.extraData);
+    if (osType != OLD_HO_DEVICE_TYPE && osType != NEW_HO_DEVICE_TYPE) {
+        DHLOGI("remote is single frame device, need sync data.");
+        DistributedHardwareManagerFactory::GetInstance().ActiveSyncDataByNetworkId(networkId);
+        return;
+    }
 }
 
 void AccessManager::OnDeviceChanged(const DmDeviceInfo &deviceInfo)

@@ -32,7 +32,10 @@ config("module_private_config") {
 ohos_unittest("AccessManagerTest") {
   module_out_path = module_out_path
 
-  sources = [ "access_manager_test.cpp" ]
+  sources = [
+    "access_manager_test.cpp",
+    "mock_device_param_mgr.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 
@@ -59,6 +62,8 @@ ohos_unittest("AccessManagerTest") {
     "c_utils:utils",
     "device_manager:devicemanagersdk",
     "eventhandler:libeventhandler",
+    "googletest:gmock",
+    "googletest:gmock_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",

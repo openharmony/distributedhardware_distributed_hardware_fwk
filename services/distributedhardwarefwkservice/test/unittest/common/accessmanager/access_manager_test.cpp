@@ -25,6 +25,7 @@
 #include "dh_context.h"
 #include "distributed_hardware_manager_factory.h"
 #include "distributed_hardware_errno.h"
+#include "mock_device_param_mgr.h"
 
 using namespace testing::ext;
 using namespace testing;
@@ -79,6 +80,8 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
+private:
+    std::shared_ptr<MockIDeviceParamMgr> deviceParamMgr_;
 };
 
 void AccessManagerTest::SetUp()
@@ -88,9 +91,15 @@ void AccessManagerTest::SetUp()
     g_UnInitDMValue = 0;
     g_RegisterDMValue = 0;
     g_UnRegisterDMValue = 0;
+    auto deviceParamMgr = IDeviceParamMgr::GetOrCreateInstance();
+    deviceParamMgr_ = std::static_pointer_cast<MockIDeviceParamMgr>(deviceParamMgr);
 }
 
-void AccessManagerTest::TearDown() {}
+void AccessManagerTest::TearDown()
+{
+    IDeviceParamMgr::ReleaseInstance();
+    deviceParamMgr_ = nullptr;
+}
 
 void AccessManagerTest::SetUpTestCase() {}
 
@@ -353,6 +362,58 @@ HWTEST_F(AccessManagerTest, SendOnLineEvent_004, TestSize.Level1)
     int32_t ret =
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid, deviceType, osType);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+HWTEST_F(AccessManagerTest, OnDeviceReady_001, TestSize.Level1)
+{
+    DmDeviceInfo deviceInfo1 = {
+        .deviceId = "123456789",
+        .networkId = ""
+    };
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceReady(deviceInfo1));
+
+    DmDeviceInfo deviceInfo2 = {
+        .deviceId = "123456789",
+        .networkId = "123456789"
+    };
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceReady(deviceInfo2));
+}
+
+HWTEST_F(AccessManagerTest, OnDeviceReady_002, TestSize.Level1)
+{
+    DmDeviceInfo deviceInfo = {
+        .deviceId = "123456789",
+        .networkId = "123456789"
+    };
+    EXPECT_CALL(*deviceParamMgr_, IsDeviceE2ESync()).WillRepeatedly(Return(false));
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceReady(deviceInfo));
+}
+
+HWTEST_F(AccessManagerTest, OnDeviceReady_003, TestSize.Level1)
+{
+    DmDeviceInfo deviceInfo1 = {
+        .deviceId = "123456789",
+        .networkId = "123456789",
+        .extraData = "{\"OS_TYPE\": 10}"
+    };
+    EXPECT_CALL(*deviceParamMgr_, IsDeviceE2ESync()).WillRepeatedly(Return(true));
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceReady(deviceInfo1));
+
+    DmDeviceInfo deviceInfo2 = {
+        .deviceId = "123456789",
+        .networkId = "123456789",
+        .extraData = "{\"OS_TYPE\": 11}"
+    };
+    EXPECT_CALL(*deviceParamMgr_, IsDeviceE2ESync()).WillRepeatedly(Return(true));
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceReady(deviceInfo2));
+
+    DmDeviceInfo deviceInfo3 = {
+        .deviceId = "123456789",
+        .networkId = "123456789",
+        .extraData = "{\"OS_TYPE\": -1}"
+    };
+    EXPECT_CALL(*deviceParamMgr_, IsDeviceE2ESync()).WillRepeatedly(Return(true));
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceReady(deviceInfo3));
 }
 } // namespace DistributedHardware
 } // namespace OHOS
