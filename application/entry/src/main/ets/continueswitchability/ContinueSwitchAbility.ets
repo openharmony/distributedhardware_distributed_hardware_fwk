@@ -56,11 +56,15 @@ export default class ContinueSwitchAbility extends UIExtensionAbility {
     if (parameters) {
       startReason = parameters.startReason as string;
       navigationMode = parameters.navigationMode as NavigationMode;
+      logger.info(`${TAG} settings navigationMode: ${navigationMode}`);
     }
 
     if (startReason === 'from_search' && navigationMode === NavigationMode.Split) {
-      logger.info(`${TAG} navigationMode: ${navigationMode}`);
+      logger.info(`${TAG} current display is search & split mode`);
       isShowBack = false;
+    } else {
+      logger.info(`${TAG} current display is not search & split mode`);
+      isShowBack = true;
     }
 
     AppStorage.setOrCreate('continueSession', session);

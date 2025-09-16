@@ -78,6 +78,7 @@ struct ContinueSwitch {
   @State paddingStartNormal: LengthMetrics = LengthMetrics.resource($r('sys.float.margin_left'));
   @State paddingStartPc: LengthMetrics = LengthMetrics.vp(16);
   @State isBacked: boolean = false;
+  @State isAnimatorDone: boolean = false;
   private listener: mediaQuery.MediaQueryListener = mediaQuery.matchMediaSync('(dark-mode:true)');
   private extContext?: common.UIExtensionContext;
   private scroller: Scroller = new Scroller();
@@ -216,17 +217,22 @@ struct ContinueSwitch {
     this.listener.on('change', (mediaQueryResult: mediaQuery.MediaQueryResult) => {
       this.onPortrait(mediaQueryResult);
     })
-    this.registerFoldChangeListener();
     this.extContext = localStorage.get<common.UIExtensionContext>('context');
     this.startReason = AppStorage.get<string>('startReason');
     this.isShowBack = AppStorage.get<boolean>('isShowBack') ?? true;
+    if (this.isPC && this.startReason === 'from_search') {
+      logger.info(`${TAG} aboutToAppear: pc & from_search`);
+      this.isShowBack = false;
+    }
     logger.info(`${TAG} aboutToAppear: startReason is ${this.startReason}, isShowBack: ${this.isShowBack}`);
     this.phoneSwitchTextMarginInit();
+    setTimeout(() => {
+      this.isAnimatorDone = true;
+    }, 1)
   }
 
   aboutToDisappear() {
     logger.info(`${TAG} aboutToDisappear in`);
-    this.unRegisterFoldChangeListener();
   }
 
   onBackPress() {
@@ -454,6 +460,7 @@ struct ContinueSwitch {
       .padding({ left: this.gapLength, right: this.gapLength })
       .margin({ bottom: '44vp' })
       .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
+      .visibility(this.getContentVisibility())
     }
     .width('100%')
     .height('100%')
@@ -497,6 +504,10 @@ struct ContinueSwitch {
       logger.info(`${TAG} onAreaChange: newArea.width = ${newArea.width}, newArea.height = ${newArea.height}`);
       this.getImageAnimatorSize(newArea);
     })
+  }
+
+  private getContentVisibility(): Visibility {
+    return (this.imageAnimatorWidth !== 0 && this.isAnimatorDone) ? Visibility.Visible : Visibility.Hidden;
   }
 
   private getImageAnimatorSize(compArea:Area) {
@@ -544,45 +555,6 @@ struct ContinueSwitch {
       return CommonConstants.ANIMATOR_WIDTH_PAD;
     }
     return CommonConstants.ANIMATOR_WIDTH_PHONE;
-  }
-
-  /**
-   * 根据折叠状态更新是否显示返回按钮
-   */
-  private refreshFoldStatus(foldStatus: display.FoldStatus): void {
-    logger.info(`${TAG} refreshFoldStatus in. foldStatus: ${foldStatus}. startReason: ${this.startReason}`);
-    this.isShowBack = (this.startReason !== 'from_search' || foldStatus === display.FoldStatus.FOLD_STATUS_FOLDED);
-    logger.info(`${TAG} refreshFoldStatus end. this.isShowBack: ${this.isShowBack}.`);
-  }
-
-  /**
-   * 折叠状态发生变化
-   */
-  private displayCallback: Callback<display.FoldStatus> = (data: display.FoldStatus) => {
-    this.refreshFoldStatus(data);
-  }
-
-  private registerFoldChangeListener(): void {
-    logger.info(`${TAG} registerFoldChangeListener in.isSmallFoldProduct: ${this.isSmallFoldProduct}`);
-    try {
-      // 首次非L+V折叠刷新isShowBack
-      if (!this.isSmallFoldProduct && display.isFoldable()) {
-        let data: display.FoldStatus = display.getFoldStatus();
-        this.refreshFoldStatus(data);
-      }
-      display.on('foldStatusChange', this.displayCallback);
-    } catch (err) {
-      logger.error(`${TAG} registerFoldChangeListener failed. err.message: ${err.message}`);
-    }
-  }
-
-  private unRegisterFoldChangeListener(): void {
-    logger.info(`${TAG} unRegisterFoldChangeListener in.`);
-    try {
-      display.off('foldStatusChange', this.displayCallback);
-    } catch (err) {
-      logger.error(`${TAG} unRegisterFoldChangeListener failed. err.message: ${err.message}`);
-    }
   }
 
   private isMirrorLanguages():
