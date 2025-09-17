@@ -1231,6 +1231,8 @@ int32_t ComponentManager::UnregisterDHStatusListener(
 
 int32_t ComponentManager::EnableSink(const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid)
 {
+    DHLOGI("Start enablesink, dhType: %{public}#X, dhid: %{public}s", dhDescriptor.dhType,
+        GetAnonyString(dhDescriptor.id).c_str());
     sptr<IHDSinkStatusListener> listener;
     int32_t ret = EnableSinkInternal(dhDescriptor, callingUid, callingPid, listener);
     if (ret == DH_FWK_SUCCESS) {
@@ -1244,6 +1246,8 @@ int32_t ComponentManager::EnableSink(const DHDescriptor &dhDescriptor, int32_t c
 
 int32_t ComponentManager::DisableSink(const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid)
 {
+    DHLOGI("Start disableSink, dhType: %{public}#X, dhid: %{public}s", dhDescriptor.dhType,
+        GetAnonyString(dhDescriptor.id).c_str());
     sptr<IHDSinkStatusListener> listener;
     int32_t ret = DisableSinkInternal(dhDescriptor, callingUid, callingPid, listener);
     if (ret == DH_FWK_SUCCESS) {
@@ -1258,6 +1262,8 @@ int32_t ComponentManager::DisableSink(const DHDescriptor &dhDescriptor, int32_t 
 int32_t ComponentManager::EnableSource(const std::string &networkId,
     const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid)
 {
+    DHLOGI("Start enablesource dhType: %{public}#X, dhid: %{public}s", dhDescriptor.dhType,
+        GetAnonyString(dhDescriptor.id).c_str());
     sptr<IHDSourceStatusListener> listener;
     int32_t ret = EnableSourceInternal(networkId, dhDescriptor, callingUid, callingPid, listener);
     if (ret == DH_FWK_SUCCESS) {
@@ -1272,6 +1278,8 @@ int32_t ComponentManager::EnableSource(const std::string &networkId,
 int32_t ComponentManager::DisableSource(const std::string &networkId,
     const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid)
 {
+    DHLOGI("Start disableSink, dhType: %{public}#X, dhid: %{public}s", dhDescriptor.dhType,
+        GetAnonyString(dhDescriptor.id).c_str());
     sptr<IHDSourceStatusListener> listener;
     int32_t ret = DisableSourceInternal(networkId, dhDescriptor, callingUid, callingPid, listener);
     if (ret == DH_FWK_SUCCESS) {
@@ -1366,6 +1374,7 @@ bool ComponentManager::IsFeatureMatched(const std::vector<std::string> &sourceFe
 int32_t ComponentManager::EnableSinkInternal(const DHDescriptor &dhDescriptor,
     int32_t callingUid, int32_t callingPid, sptr<IHDSinkStatusListener> &listener)
 {
+    DHLOGI("Start EnableSinkInternal, dhType: %{public}#X", dhDescriptor.dhType);
     std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
 
     // Check if the input parameters and device type support it
@@ -1378,15 +1387,7 @@ int32_t ComponentManager::EnableSinkInternal(const DHDescriptor &dhDescriptor,
     auto &enableInfo = status.enableInfos[dhDescriptor.id];
 
     // Check if the business is being called repeatedly
-    DHStatusCtrlKey ctrlKey {
-        .uid = callingUid,
-        .pid = callingPid
-    };
-    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
-    if (statusCtrl.enableState == EnableState::ENABLED) {
-        DHLOGE("Repeat call EnableSink, uid = %{public}d, pid = %{public}d.", ctrlKey.uid, ctrlKey.pid);
-        return ERR_DH_FWK_COMPONENT_REPEAT_CALL;
-    }
+    DHStatusCtrlKey ctrlKey { .uid = callingUid, .pid = callingPid };
 
     // Get business enable status listener
     auto itrListener = status.listeners.find(ctrlKey);
@@ -1394,9 +1395,16 @@ int32_t ComponentManager::EnableSinkInternal(const DHDescriptor &dhDescriptor,
         listener = itrListener->second;
     }
 
+    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
+    if (statusCtrl.enableState == EnableState::ENABLED) {
+        DHLOGI("Repeat call EnableSink, uid = %{public}d, pid = %{public}d.", ctrlKey.uid, ctrlKey.pid);
+        return DH_FWK_SUCCESS;
+    }
+
     // Check reference count
     if (enableInfo.refEnable || status.refLoad) {
         // Change status, we won't call back directly here because there is a lock
+        DHLOGI("Add reference count, dhType: %{public}#X", dhDescriptor.dhType);
         statusCtrl.enableState = EnableState::ENABLED;
         enableInfo.refEnable++;
         status.refLoad++;
@@ -1432,8 +1440,8 @@ int32_t ComponentManager::EnableSinkInternal(const DHDescriptor &dhDescriptor,
 int32_t ComponentManager::DisableSinkInternal(const DHDescriptor &dhDescriptor,
     int32_t callingUid, int32_t callingPid, sptr<IHDSinkStatusListener> &listener)
 {
+    DHLOGI("Start DisableSinkInternal, dhType: %{public}#X", dhDescriptor.dhType);
     std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
-
     // Check if the input parameters and device type support it
     if (!ComponentLoader::GetInstance().IsDHTypeSupport(dhDescriptor.dhType)) {
         DHLOGE("Not support dhType: %{public}#X!", dhDescriptor.dhType);
@@ -1444,15 +1452,7 @@ int32_t ComponentManager::DisableSinkInternal(const DHDescriptor &dhDescriptor,
     auto &enableInfo = status.enableInfos[dhDescriptor.id];
 
     // Check if the business is being called repeatedly
-    DHStatusCtrlKey ctrlKey {
-        .uid = callingUid,
-        .pid = callingPid
-    };
-    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
-    if (statusCtrl.enableState == EnableState::DISABLED) {
-        DHLOGE("Repeat call DisableSink, uid = %{public}d, pid = %{public}d.", ctrlKey.uid, ctrlKey.pid);
-        return ERR_DH_FWK_COMPONENT_REPEAT_CALL;
-    }
+    DHStatusCtrlKey ctrlKey { .uid = callingUid, .pid = callingPid };
 
     // Get business enable status listener
     auto itrListener = status.listeners.find(ctrlKey);
@@ -1460,9 +1460,16 @@ int32_t ComponentManager::DisableSinkInternal(const DHDescriptor &dhDescriptor,
         listener = itrListener->second;
     }
 
+    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
+    if (statusCtrl.enableState == EnableState::DISABLED) {
+        DHLOGE("Repeat call DisableSink, uid = %{public}d, pid = %{public}d.", ctrlKey.uid, ctrlKey.pid);
+        return DH_FWK_SUCCESS;
+    }
+
     // Check reference count
     if (enableInfo.refEnable > 1 || status.refLoad > 1) {
         // Change status, we won't call back directly here because there is a lock
+        DHLOGI("Delete reference count, dhType: %{public}#X", dhDescriptor.dhType);
         statusCtrl.enableState = EnableState::DISABLED;
         enableInfo.refEnable--;
         status.refLoad--;
@@ -1495,6 +1502,7 @@ int32_t ComponentManager::DisableSinkInternal(const DHDescriptor &dhDescriptor,
 int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
     const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid, sptr<IHDSourceStatusListener> &listener)
 {
+    DHLOGI("Start EnableSourceInternal, dhType: %{public}#X", dhDescriptor.dhType);
     // Check if the input parameters and device type support it
     if (!ComponentLoader::GetInstance().IsDHTypeSupport(dhDescriptor.dhType)) {
         DHLOGE("Not support dhType: %{public}#X!", dhDescriptor.dhType);
@@ -1510,22 +1518,23 @@ int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
     auto &status = dhSourceStatus_[dhDescriptor.dhType];
     auto &enableInfo = status.enableInfos[enableInfoKey];
 
-    // Check if the business is being called repeatedly
-    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
-    if (statusCtrl.enableState == EnableState::ENABLED) {
-        DHLOGE("Repeat call EnableSource, uid = %{public}d, pid = %{public}d.", ctrlKey.uid, ctrlKey.pid);
-        return ERR_DH_FWK_COMPONENT_REPEAT_CALL;
-    }
-
     // Get business enable status listener
     auto itrListener = status.listeners.find(ctrlKey);
     if (itrListener != status.listeners.end()) {
         listener = itrListener->second;
     }
 
+    // Check if the business is being called repeatedly
+    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
+    if (statusCtrl.enableState == EnableState::ENABLED) {
+        DHLOGE("Repeat call EnableSource, uid = %{public}d, pid = %{public}d.", ctrlKey.uid, ctrlKey.pid);
+        return DH_FWK_SUCCESS;
+    }
+
     // Check enable reference count
     if (enableInfo.refEnable) {
         // Change status, we won't call back directly here because there is a lock
+        DHLOGI("Add reference count, dhType: %{public}#X", dhDescriptor.dhType);
         statusCtrl.enableState = EnableState::ENABLED;
         enableInfo.refEnable++;
         status.refLoad++;
@@ -1560,20 +1569,15 @@ int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
 int32_t ComponentManager::DisableSourceInternal(const std::string &networkId,
     const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid, sptr<IHDSourceStatusListener> &listener)
 {
+    DHLOGI("Start DisableSourceInternal, dhType: %{public}#X", dhDescriptor.dhType);
     // Check if the input parameters and device type support it
     if (!ComponentLoader::GetInstance().IsDHTypeSupport(dhDescriptor.dhType)) {
         DHLOGE("Not support dhType: %{public}#X!", dhDescriptor.dhType);
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
 
-    DHStatusSourceEnableInfoKey enableInfoKey {
-        .networkId = networkId,
-        .dhId = dhDescriptor.id
-    };
-    DHStatusCtrlKey ctrlKey {
-        .uid = callingUid,
-        .pid = callingPid
-    };
+    DHStatusSourceEnableInfoKey enableInfoKey { .networkId = networkId, .dhId = dhDescriptor.id };
+    DHStatusCtrlKey ctrlKey { .uid = callingUid, .pid = callingPid };
     auto uuid = DHContext::GetInstance().GetUUIDByNetworkId(networkId);
 
     std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
@@ -1581,22 +1585,23 @@ int32_t ComponentManager::DisableSourceInternal(const std::string &networkId,
     auto &status = dhSourceStatus_[dhDescriptor.dhType];
     auto &enableInfo = status.enableInfos[enableInfoKey];
 
-    // Check if the business is being called repeatedly
-    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
-    if (statusCtrl.enableState == EnableState::DISABLED) {
-        DHLOGE("Repeat call DisableSource, uid = %{public}d, pid = %{public}d.", ctrlKey.uid, ctrlKey.pid);
-        return ERR_DH_FWK_COMPONENT_REPEAT_CALL;
-    }
-
     // Get business enable status listener
     auto itrListener = status.listeners.find(ctrlKey);
     if (itrListener != status.listeners.end()) {
         listener = itrListener->second;
     }
 
+    // Check if the business is being called repeatedly
+    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
+    if (statusCtrl.enableState == EnableState::DISABLED) {
+        DHLOGE("Repeat call DisableSource, uid = %{public}d, pid = %{public}d.", ctrlKey.uid, ctrlKey.pid);
+        return DH_FWK_SUCCESS;
+    }
+
     // Check enable reference count
     if (enableInfo.refEnable > 1) {
         // Change status, we won't call back directly here because there is a lock
+        DHLOGI("Delete reference count, dhType: %{public}#X", dhDescriptor.dhType);
         statusCtrl.enableState = EnableState::DISABLED;
         enableInfo.refEnable--;
         status.refLoad--;
