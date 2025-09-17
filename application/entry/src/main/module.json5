@@ -66,9 +66,6 @@
       },
       {
         "name": "ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS_EXTENSION"
-      },
-      {
-        "name": "ohos.permission.CONNECT_MECHANIC_HARDWARE"
       }
     ],
     "extensionAbilities": [
