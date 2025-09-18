@@ -35,6 +35,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 namespace {
+    constexpr int32_t WAIT_DISABLETASK_TIMEOUT_MS = 1000;
     constexpr uint16_t PHONE_TYPE = 14;
     constexpr const char *OFFLINE_TASK_INNER = "OffLineTask";
 }
@@ -187,7 +188,12 @@ void OffLineTask::WaitDisableTaskFinish()
 {
     DHLOGI("start wait disable task finish");
     std::unique_lock<std::mutex> waitLock(unFinishTaskMtx_);
-    finishCondVar_.wait(waitLock, [&] { return this->unFinishChildrenTasks_.empty(); });
+    auto waitStatus = finishCondVar_.wait_for(waitLock, std::chrono::milliseconds(WAIT_DISABLETASK_TIMEOUT_MS),
+        [&] { return this->unFinishChildrenTasks_.empty(); });
+    if (!waitStatus) {
+        DHLOGE("disabletask unfinish or disabletask timeout.");
+        return;
+    }
     DHLOGI("all disable task finish");
     DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(GetNetworkId());
 }

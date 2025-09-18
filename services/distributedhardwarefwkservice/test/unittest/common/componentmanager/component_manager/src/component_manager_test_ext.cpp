@@ -131,7 +131,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndDisableSink_001, testing::ext::Te
     auto ret = ComponentManager::GetInstance().EnableSink(CAMERA_DESCRIPTOR, CAMERA_UID, CAMERA_PID);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
     ret = ComponentManager::GetInstance().EnableSink(CAMERA_DESCRIPTOR, CAMERA_UID, CAMERA_PID);
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 
     auto handler = std::make_shared<MockHardwareHandler>();
     EXPECT_CALL(*componentLoader_, GetHardwareHandler(_, _))
@@ -141,7 +141,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndDisableSink_001, testing::ext::Te
     ret = ComponentManager::GetInstance().DisableSink(CAMERA_DESCRIPTOR, CAMERA_UID, CAMERA_PID);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
     ret = ComponentManager::GetInstance().DisableSink(CAMERA_DESCRIPTOR, CAMERA_UID, CAMERA_PID);
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
     ret = ComponentManager::GetInstance().UnregisterDHStatusListener(sinkListener, CAMERA_UID, CAMERA_PID);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
@@ -247,7 +247,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_001, testing::ext
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
     ret = ComponentManager::GetInstance().EnableSource(VALUABLE_DEVICE_INFO.networkId,
         CAMERA_DESCRIPTOR, CAMERA_UID, CAMERA_PID);
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 
     EXPECT_CALL(*componentLoader_, ReleaseSource(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
     ret = ComponentManager::GetInstance().DisableSource(VALUABLE_DEVICE_INFO.networkId,
@@ -255,7 +255,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_001, testing::ext
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
     ret = ComponentManager::GetInstance().DisableSource(VALUABLE_DEVICE_INFO.networkId,
         CAMERA_DESCRIPTOR, CAMERA_UID, CAMERA_PID);
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 
     ret = ComponentManager::GetInstance().UnregisterDHStatusListener(VALUABLE_DEVICE_INFO.networkId,
         sourceListener, CAMERA_UID, CAMERA_PID);

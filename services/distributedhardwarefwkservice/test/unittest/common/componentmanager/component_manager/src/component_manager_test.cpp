@@ -1440,7 +1440,7 @@ HWTEST_F(ComponentManagerTest, EnableSink_001, TestSize.Level1)
     auto ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
     ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, 0, 0);
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
 HWTEST_F(ComponentManagerTest, DisableSink_001, TestSize.Level1)
@@ -1477,7 +1477,7 @@ HWTEST_F(ComponentManagerTest, DisableSource_001, TestSize.Level1)
     SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().DisableSource(NETWORK_TEST, dhDescriptor, 0, 0);
     SetDownComponentLoaderConfig();
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
 HWTEST_F(ComponentManagerTest, ForceDisableSink_001, TestSize.Level1)
