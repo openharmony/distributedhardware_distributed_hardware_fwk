@@ -162,10 +162,11 @@ HWTEST_F(AvSenderEngineTest, Start_002, testing::ext::TestSize.Level1)
     std::string peerDevId = "pEid";
     auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
     sender->currentState_ = StateId::CH_CREATED;
-    sender->pipeline_ = nullptr;
+    sender->pipeline_ = std::make_shared<OHOS::Media::Pipeline::PipelineCore>();
+    sender->dhFwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
     int32_t ret = sender->Start();
     sender->Stop();
-    EXPECT_EQ(ERR_DH_AVT_START_FAILED, ret);
+    EXPECT_EQ(DH_AVT_SUCCESS, ret);
 }
 
 HWTEST_F(AvSenderEngineTest, Start_003, testing::ext::TestSize.Level1)
@@ -175,7 +176,7 @@ HWTEST_F(AvSenderEngineTest, Start_003, testing::ext::TestSize.Level1)
     auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
     sender->currentState_ = StateId::CH_CREATED;
     sender->pipeline_ = std::make_shared<OHOS::Media::Pipeline::PipelineCore>();
-    sender->dhFwkKit_ = nullptr;
+    sender->dhFwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
     int32_t ret = sender->Start();
     sender->Stop();
     EXPECT_EQ(DH_AVT_SUCCESS, ret);
@@ -187,11 +188,10 @@ HWTEST_F(AvSenderEngineTest, Start_004, testing::ext::TestSize.Level1)
     std::string peerDevId = "pEid";
     auto sender = std::make_shared<AVSenderEngine>(ownerName, peerDevId);
     sender->currentState_ = StateId::CH_CREATED;
-    sender->pipeline_ = std::make_shared<OHOS::Media::Pipeline::PipelineCore>();
-    sender->dhFwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
+    sender->pipeline_ = nullptr;
     int32_t ret = sender->Start();
     sender->Stop();
-    EXPECT_EQ(ERR_DH_AVT_CREATE_CHANNEL_FAILED, ret);
+    EXPECT_EQ(ERR_DH_AVT_START_FAILED, ret);
 }
 
 HWTEST_F(AvSenderEngineTest, Stop_001, testing::ext::TestSize.Level1)

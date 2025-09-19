@@ -163,12 +163,10 @@ int32_t AVSenderEngine::Start()
     }
     ErrorCode errCode = pipeline_->Start();
     TRUE_RETURN_V_MSG_E(errCode != ErrorCode::SUCCESS, ERR_DH_AVT_START_FAILED, "start pipeline failed");
-
-    if (dhFwkKit_ != nullptr) {
-        int32_t ret = dhFwkKit_->CreateControlChannel(engineId_, peerDevId_);
+    TRUE_RETURN_V_MSG_E(dhFwkKit_ == nullptr, ERR_DH_AVT_START_FAILED, "dhFwkKit is nullptr");
+    int32_t ret = dhFwkKit_->CreateControlChannel(engineId_, peerDevId_);
         TRUE_RETURN_V_MSG_E(ret != DH_AVT_SUCCESS, ERR_DH_AVT_CREATE_CHANNEL_FAILED,
             "create av control center channel failed");
-    }
 
     SetCurrentState(StateId::STARTED);
     AVTRANS_LOGI("Start sender engine success.");

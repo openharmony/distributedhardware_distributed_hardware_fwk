@@ -442,7 +442,7 @@ bool AVTransBusInputFilter::UnmarshalAudioMeta(const std::string& jsonStr, int64
         cJSON_Delete(metaJson);
         return false;
     }
-    pts = std::stoll(ptsStr);
+    pts = std::atoll(ptsStr.c_str());
     cJSON *ptsSpecialObj = cJSON_GetObjectItemCaseSensitive(metaJson, META_TIMESTAMP_SPECIAL.c_str());
     if (ptsSpecialObj == nullptr || !cJSON_IsString(ptsSpecialObj)) {
         cJSON_Delete(metaJson);
@@ -453,7 +453,7 @@ bool AVTransBusInputFilter::UnmarshalAudioMeta(const std::string& jsonStr, int64
         cJSON_Delete(metaJson);
         return false;
     }
-    ptsSpecial = std::stoll(ptsSpecialStr);
+    ptsSpecial = std::atoll(ptsSpecialStr.c_str());
     AVTRANS_LOGD("pts: %{public}" PRId64", ptsSpecial: %{public}" PRId64, pts, ptsSpecial);
     cJSON_Delete(metaJson);
     return true;
