@@ -15,7 +15,6 @@ import("//build/ohos.gni")
 import("./DHardware_UI.gni")
 
 ohos_app("DHardware_UI") {
-  hap_profile = "entry/src/main/module.json"
   deps = [
     ":DHardware_UI_js_assets",
     ":DHardware_UI_resources",
