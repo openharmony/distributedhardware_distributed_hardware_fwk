@@ -52,4 +52,5 @@ ohos_js_assets("DHardware_UI_js_assets") {
 ohos_resources("DHardware_UI_resources") {
   sources = [ "entry/src/main/resources" ]
   deps = [ ":DHardware_UI_app_profile" ]
+  hap_profile = "entry/src/main/module.json"
 }
