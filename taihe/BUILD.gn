@@ -88,23 +88,12 @@ generate_static_abc("hardware_taihe_abc") {
   dependencies = [ ":run_hardware_taihe" ]
 }
 
-generate_static_abc("hardware_taihe_test") {
-  base_url = "${distributedhardwarefwk_path}/taihe/test"
-  files =
-      [ "${distributedhardwarefwk_path}/taihe/test/test_main.ets" ]
-  is_boot_abc = "True"
-  device_dst_file = "/system/framework/hardware_taihe_test.abc"
-}
-
 ohos_prebuilt_etc("hardware_taihe_etc") {
   source = "$target_out_dir/hardware_taihe_abc.abc"
   module_install_dir = "framework"
   part_name = "$part_name"
   subsystem_name = "$subsystem_name"
-  deps = [
-    ":hardware_taihe_abc",
-    ":hardware_taihe_test",
-  ]
+  deps = [ ":hardware_taihe_abc" ]
 }
 
 group("distributed_hardware_taihe") {
