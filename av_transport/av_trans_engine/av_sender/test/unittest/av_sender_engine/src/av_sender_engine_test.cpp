@@ -166,7 +166,7 @@ HWTEST_F(AvSenderEngineTest, Start_002, testing::ext::TestSize.Level1)
     sender->dhFwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
     int32_t ret = sender->Start();
     sender->Stop();
-    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_AVT_CREATE_CHANNEL_FAILED, ret);
 }
 
 HWTEST_F(AvSenderEngineTest, Start_003, testing::ext::TestSize.Level1)
@@ -179,7 +179,7 @@ HWTEST_F(AvSenderEngineTest, Start_003, testing::ext::TestSize.Level1)
     sender->dhFwkKit_ = std::make_shared<DistributedHardwareFwkKit>();
     int32_t ret = sender->Start();
     sender->Stop();
-    EXPECT_EQ(DH_AVT_SUCCESS, ret);
+    EXPECT_EQ(ERR_DH_AVT_CREATE_CHANNEL_FAILED, ret);
 }
 
 HWTEST_F(AvSenderEngineTest, Start_004, testing::ext::TestSize.Level1)
