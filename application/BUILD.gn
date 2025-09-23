@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Huawei Device Co., Ltd.
+# Copyright (c) 2024-2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,19 +14,23 @@
 import("//build/ohos.gni")
 import("./DHardware_UI.gni")
 
-ohos_hap("DHardware_UI") {
-  hap_profile = "entry/src/main/module.json"
+ohos_app("DHardware_UI") {
   deps = [
     ":DHardware_UI_js_assets",
     ":DHardware_UI_resources",
   ]
   publicity_file = "../publicity.xml"
+  js_build_mode = "release"
   certificate_profile = "signature/DHardware_UI.p7b"
   hap_name = "DHardware_UI"
   part_name = "distributed_hardware_fwk"
   subsystem_name = "distributedhardware"
-  js_build_mode = "release"
   module_install_dir = "app/DHardware_UI"
+  sdk_home = "//prebuilts/ohos-sdk/linux"
+  sdk_type_name = [ "sdk.dir" ]
+  assemble_type = "assembleHap"
+  build_level = "module"
+  build_modules = [ "entry" ]
   if (defined(sign_hap_py_path)) {
     certificate_profile = "${certificate_profile_path}"
     key_alias = "DHardwareUI Release"
