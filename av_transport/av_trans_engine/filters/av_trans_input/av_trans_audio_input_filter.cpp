@@ -219,14 +219,16 @@ Status AVTransAudioInputFilter::DoProcessInputBuffer(int recvArg, bool dropFrame
     (void)recvArg;
     (void)dropFrame;
     std::shared_ptr<Media::AVBuffer> filledBuffer = nullptr;
-    if (curState_ != FilterState::RUNNING) {
-        AVTRANS_LOGE("Current status ia not running.");
-        return Status::ERROR_WRONG_STATE;
-    }
+    TRUE_RETURN_V_MSG_E((inputBufQueConsumer_ == nullptr), Status::ERROR_WRONG_STATE, "InputBufQueConsumer is null");
     Media::Status ret = inputBufQueConsumer_->AcquireBuffer(filledBuffer);
     if (ret != Media::Status::OK) {
         AVTRANS_LOGE("Acquire buffer err.");
         return Status::ERROR_INVALID_OPERATION;
+    }
+    if (curState_ != FilterState::RUNNING) {
+        inputBufQueConsumer_->ReleaseBuffer(filledBuffer);
+        AVTRANS_LOGE("Current status ia not running.");
+        return Status::ERROR_WRONG_STATE;
     }
     ProcessAndSendBuffer(filledBuffer);
     inputBufQueConsumer_->ReleaseBuffer(filledBuffer);
