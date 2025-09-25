@@ -332,13 +332,13 @@ void DHContext::DHFWKIsomerismListener::OnMessage(const DHTopic topic, const std
     cJSON *eventObj = cJSON_GetObjectItemCaseSensitive(messageJson, ISOMERISM_EVENT_KEY);
     if (!IsString(eventObj)) {
         cJSON_Delete(messageJson);
-        DHLOGE("OnMessage event invaild");
+        DHLOGE("OnMessage event invalid");
         return;
     }
     cJSON *devObj = cJSON_GetObjectItemCaseSensitive(messageJson, DEV_ID);
     if (!IsString(devObj)) {
         cJSON_Delete(messageJson);
-        DHLOGE("OnMessage deviceId invaild");
+        DHLOGE("OnMessage deviceId invalid");
         return;
     }
     std::string event = eventObj->valuestring;

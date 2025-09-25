@@ -192,13 +192,6 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
         return ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED;
     }
 
-    if (DeviceParamMgr::GetInstance().IsDeviceE2ESync()) {
-        if (osType != OLD_HO_DEVICE_TYPE && osType != NEW_HO_DEVICE_TYPE) {
-            DHLOGI("local device is e2e device and remote is single frame device, need initiative sync data.");
-            MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
-        }
-    }
-
     if (osType == OLD_HO_DEVICE_TYPE || osType == NEW_HO_DEVICE_TYPE) {
         DHLOGE("double frame device, networkId = %{public}s, uuid = %{public}s, udid = %{public}s, need clear data.",
             GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
@@ -285,6 +278,12 @@ bool DistributedHardwareManagerFactory::GetSAProcessState()
 bool DistributedHardwareManagerFactory::GetDHardwareInitState()
 {
     return DistributedHardwareManager::GetInstance().GetDHardwareInitState();
+}
+
+void DistributedHardwareManagerFactory::ActiveSyncDataByNetworkId(const std::string &networkId)
+{
+    DHLOGI("active sync data, networkId: %{public}s", GetAnonyString(networkId).c_str());
+    MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

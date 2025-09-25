@@ -46,6 +46,7 @@ public:
     bool GetSAProcessState();
     void CheckExitSAOrNot();
     bool GetDHardwareInitState();
+    void ActiveSyncDataByNetworkId(const std::string &networkId);
 private:
     bool Init();
     void ExitDHFWK();
