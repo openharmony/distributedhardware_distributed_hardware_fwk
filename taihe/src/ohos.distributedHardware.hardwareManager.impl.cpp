@@ -65,6 +65,7 @@ void PauseDistributedHardwareSync(::ohos::distributedHardware::hardwareManager::
     if (ret != 0) {
         DHLOGE("PauseDistributedHardware for DHType: %{public}u filed", (uint32_t)dhType);
     }
+    return;
 }
 
 void ResumeDistributedHardwareSync(::ohos::distributedHardware::hardwareManager::HardwareDescriptor const& description)
@@ -92,6 +93,7 @@ void ResumeDistributedHardwareSync(::ohos::distributedHardware::hardwareManager:
     if (ret != 0) {
         DHLOGE("ResumeDistributedHardware for DHType: %{public}u filed", (uint32_t)dhType);
     }
+    return;
 }
 
 void StopDistributedHardwareSync(::ohos::distributedHardware::hardwareManager::HardwareDescriptor const& description)
@@ -119,6 +121,7 @@ void StopDistributedHardwareSync(::ohos::distributedHardware::hardwareManager::H
     if (ret != 0) {
         DHLOGE("StopDistributedHardware for DHType: %{public}u filed", (uint32_t)dhType);
     }
+    return;
 }
 }  // namespace
 
