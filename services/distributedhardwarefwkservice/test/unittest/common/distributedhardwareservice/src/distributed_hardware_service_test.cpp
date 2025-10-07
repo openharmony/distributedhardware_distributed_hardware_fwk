@@ -186,6 +186,15 @@ HWTEST_F(DistributedHardwareServiceTest, publish_message_002, TestSize.Level1)
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
+HWTEST_F(DistributedHardwareServiceTest, publish_message_003, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string msg = "msg";
+    DHTopic topic = DHTopic::TOPIC_CREATE_SESSION_READY;
+    auto ret = service.PublishMessage(topic, msg);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
 /**
  * @tc.name: onStop_test_002
  * @tc.desc: Verify the OnStop function
@@ -702,6 +711,14 @@ HWTEST_F(DistributedHardwareServiceTest, GetDeviceDhInfo_002, TestSize.Level1)
     std::string key = deviceId + "###" + "dhId_1";
     LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
     auto ret = service.GetDeviceDhInfo(realNetworkId, udidHash, deviceId, enableStep, callback);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareServiceTest, LoadSinkDMSDPService_001, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string udid = "";
+    auto ret = service.LoadSinkDMSDPService(udid);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 } // namespace DistributedHardware

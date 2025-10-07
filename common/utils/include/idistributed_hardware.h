@@ -65,6 +65,8 @@ public:
     virtual int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors) = 0;
     virtual int32_t LoadDistributedHDF(const DHType dhType) = 0;
     virtual int32_t UnLoadDistributedHDF(const DHType dhType) = 0;
+    virtual int32_t LoadSinkDMSDPService(const std::string &udid) = 0;
+    virtual int32_t NotifySinkRemoteSourceStarted(const std::string &udid) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

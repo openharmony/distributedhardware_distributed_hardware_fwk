@@ -39,11 +39,14 @@ namespace DistributedHardware {
 int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
     MessageOption &option)
 {
+    DHLOGI("OnRemoteRequest, code = %{public}u.", code);
     if (data.ReadInterfaceToken() != GetDescriptor()) {
         DHLOGE("IPC Token valid fail!");
         return ERR_INVALID_DATA;
     }
-    if (code != static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED)) {
+    if (code != static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED) &&
+        code != static_cast<uint32_t>(DHMsgInterfaceCode::INIT_SINK_DMSDP) &&
+        code != static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SINK_DEVICE_REMOTE_DMSDP_STARTED)) {
         if (!IPCSkeleton::IsLocalCalling()) {
             DHLOGE("Invalid request, only support local, code = %{public}u.", code);
             return ERR_DH_FWK_IS_LOCAL_PROCESS_FAIL;
@@ -77,9 +80,6 @@ int32_t DistributedHardwareStub::OnRemoteRequest(uint32_t code, MessageParcel &d
         }
         case static_cast<uint32_t>(DHMsgInterfaceCode::QUERY_LOCAL_SYS_SPEC): {
             return QueryLocalSysSpecInner(data, reply);
-        }
-        case static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED): {
-            return HandleNotifySourceRemoteSinkStarted(data, reply);
         }
         default:
             return OnRemoteRequestEx(code, data, reply, option);
@@ -646,6 +646,40 @@ int32_t DistributedHardwareStub::WriteDescriptors(MessageParcel &data, const std
     return NO_ERROR;
 }
 
+int32_t DistributedHardwareStub::HandleLoadSinkDMSDPService(MessageParcel &data, MessageParcel &reply)
+{
+    std::string udid = data.ReadString();
+    if (!IsIdLengthValid(udid)) {
+        DHLOGE("The udid is invalid.");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    DHLOGI("Load sink DMSDP service start, the udid: %{public}s.", GetAnonyString(udid).c_str());
+    int32_t ret = LoadSinkDMSDPService(udid);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("write ret failed.");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    DHLOGI("Load sink DMSDP service end.");
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::HandleNotifySinkRemoteSourceStarted(MessageParcel &data, MessageParcel &reply)
+{
+    std::string udid = data.ReadString();
+    if (!IsIdLengthValid(udid)) {
+        DHLOGE("The udid is invalid.");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    DHLOGI("Notify sink device remote source started, the udid: %{public}s.", GetAnonyString(udid).c_str());
+    int32_t ret = NotifySinkRemoteSourceStarted(udid);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("write ret failed.");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    DHLOGI("notify sink device remote source end.");
+    return DH_FWK_SUCCESS;
+}
+
 int32_t DistributedHardwareStub::OnRemoteRequestEx(uint32_t code, MessageParcel &data, MessageParcel &reply,
     MessageOption &option)
 {
@@ -691,6 +725,25 @@ int32_t DistributedHardwareStub::OnRemoteRequestEx(uint32_t code, MessageParcel 
         }
         case static_cast<uint32_t>(DHMsgInterfaceCode::UNLOAD_HDF): {
             return UnLoadDistributedHDFInner(data, reply);
+        }
+        default:
+            return OnRemoteRequestRPC(code, data, reply, option);
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::OnRemoteRequestRPC(uint32_t code, MessageParcel &data, MessageParcel &reply,
+    MessageOption &option)
+{
+    switch (code) {
+        case static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED): {
+            return HandleNotifySourceRemoteSinkStarted(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::INIT_SINK_DMSDP): {
+            return HandleLoadSinkDMSDPService(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SINK_DEVICE_REMOTE_DMSDP_STARTED): {
+            return HandleNotifySinkRemoteSourceStarted(data, reply);
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);

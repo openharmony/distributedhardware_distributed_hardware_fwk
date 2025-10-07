@@ -43,8 +43,10 @@ enum class DHTopic : uint32_t {
     TOPIC_ISOMERISM = 8,
     TOPIC_AV_FLUENCY = 9,
     TOPIC_AV_LOW_LATENCY = 10,
+    TOPIC_CREATE_SESSION_READY = 11,
+    TOPIC_SOURCE_DHMS_READY = 12,
     // Topic max border, not use for real topic
-    TOPIC_MAX = 11
+    TOPIC_MAX = 13
 };
 
 class IPublisherListener : public IRemoteBroker {
