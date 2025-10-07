@@ -194,13 +194,17 @@ void OnLineTask::CreateEnableSinkTask()
 
 void OnLineTask::CreateMetaEnableTask()
 {
-    DHLOGI("CreateMetaEnableTask, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
-        GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetUDID()).c_str());
+    if (!DHContext::GetInstance().IsDoubleFwkDevice(GetNetworkId())) {
+        DHLOGE("online device is not double frame device or networkId not find.");
+        return;
+    }
     uint16_t deviceType = DHContext::GetInstance().GetDeviceTypeByNetworkId(GetNetworkId());
     if (deviceType != PHONE_TYPE) {
         DHLOGE("online device not phone, deviceType = %{public}d", deviceType);
         return;
     }
+    DHLOGI("CreateMetaEnableTask, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
+        GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(GetUDID()).c_str());
     TaskParam taskParam = {
         .networkId = GetNetworkId(),
         .uuid = GetUUID(),

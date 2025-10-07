@@ -48,6 +48,8 @@ namespace {
     const std::string DEV_NAME_TEST = "phone";
     const DHType DH_TYPE_TEST = DHType::AUDIO;
     const uint16_t DEV_TYPE_TEST = 14;
+    constexpr int32_t NEW_HO_DEVICE_TYPE_TEST = 11;
+    constexpr int32_t INVALID_OSTYPE = 0;
 }
 
 class OnlineTaskTest : public testing::Test {
@@ -166,6 +168,32 @@ HWTEST_F(OnlineTaskTest, IsAllDisableTaskFinish_002, TestSize.Level1)
     auto ret = TaskBoard::GetInstance().IsAllDisableTaskFinish();
     EXPECT_EQ(ret, true);
     TaskBoard::GetInstance().tasks_.clear();
+}
+
+HWTEST_F(OnlineTaskTest, CreateMetaEnableTask_001, TestSize.Level1)
+{
+    OnLineTask onlineTask(NETWORKID_TEST, UUID_TEST, UDID_TEST, DHID_TEST, DH_TYPE_TEST);
+    ASSERT_NO_FATAL_FAILURE(onlineTask.CreateMetaEnableTask());
+}
+
+HWTEST_F(OnlineTaskTest, CreateMetaEnableTask_002, TestSize.Level1)
+{
+    OnLineTask onlineTask(NETWORKID_TEST, UUID_TEST, UDID_TEST, DHID_TEST, DH_TYPE_TEST);
+    DHContext::GetInstance().AddOnlineDeviceOSType(NETWORKID_TEST, NEW_HO_DEVICE_TYPE_TEST);
+    ASSERT_NO_FATAL_FAILURE(onlineTask.CreateMetaEnableTask());
+}
+
+HWTEST_F(OnlineTaskTest, CreateMetaDisableTask_001, TestSize.Level1)
+{
+    OffLineTask offlineTask(NETWORKID_TEST, UUID_TEST, UDID_TEST, DHID_TEST, DH_TYPE_TEST);
+    ASSERT_NO_FATAL_FAILURE(offlineTask.CreateMetaDisableTask());
+}
+
+HWTEST_F(OnlineTaskTest, CreateMetaDisableTask_002, TestSize.Level1)
+{
+    OffLineTask offlineTask(NETWORKID_TEST, UUID_TEST, UDID_TEST, DHID_TEST, DH_TYPE_TEST);
+    DHContext::GetInstance().AddOnlineDeviceOSType(NETWORKID_TEST, NEW_HO_DEVICE_TYPE_TEST);
+    ASSERT_NO_FATAL_FAILURE(offlineTask.CreateMetaDisableTask());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

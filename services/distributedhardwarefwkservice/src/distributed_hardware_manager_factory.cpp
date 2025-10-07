@@ -186,6 +186,7 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
     DHContext::GetInstance().AddOnlineDevice(udid, uuid, networkId);
     DHContext::GetInstance().AddRealTimeOnlineDeviceNetworkId(networkId);
     DHContext::GetInstance().AddOnlineDeviceType(networkId, deviceType);
+    DHContext::GetInstance().AddOnlineDeviceOSType(networkId, osType);
 
     if (!isInit_.load() && !Init()) {
         DHLOGE("distributedHardwareMgr is null");
