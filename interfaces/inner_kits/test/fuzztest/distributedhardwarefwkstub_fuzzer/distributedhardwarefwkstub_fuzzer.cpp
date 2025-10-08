@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <fuzzer/FuzzedDataProvider.h>
 #include <string>
 #include <thread>
 #include <unistd.h>
@@ -43,6 +44,7 @@ void DistributedHardwareFwkStubFuzzTest(const uint8_t *data, size_t size)
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
+
     MessageParcel pdata;
     MessageParcel reply;
     MessageOption option;

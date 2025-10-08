@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -20,16 +20,17 @@ module_out_path = unittest_output_path
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "include",
     "${utils_path}/include",
+    "${common_path}/utils/include",
   ]
 }
 
-## UnitTest histreamer_ability_parser_test
-ohos_unittest("HistreamerAbilityParserTest") {
+## UnitTest dh_utils_tool_test
+ohos_unittest("UtilsToolTest") {
   module_out_path = module_out_path
 
-  sources = [ "${utils_path}/test/unittest/common/histreamer_ability_parser/histreamer_ability_parser_test.cpp" ]
+  sources =
+      [ "${utils_path}/test/utilstool/utils_tool_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
@@ -38,11 +39,12 @@ ohos_unittest("HistreamerAbilityParserTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "hitrace:hitrace_meter",
     "hilog:libhilog",
   ]
 }
 
-group("histreamer_ability_parser_test") {
+group("utils_tool_test") {
   testonly = true
-  deps = [ ":HistreamerAbilityParserTest" ]
+  deps = [ ":UtilsToolTest" ]
 }

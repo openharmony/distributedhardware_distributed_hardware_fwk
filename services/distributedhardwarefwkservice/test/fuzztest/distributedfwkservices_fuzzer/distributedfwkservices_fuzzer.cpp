@@ -19,6 +19,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <fuzzer/FuzzedDataProvider.h>
 #include <string>
 #include <unistd.h>
 
@@ -74,10 +75,11 @@ void FwkServicesQueryLocalSysSpecFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
-    DistributedHardwareService service(SAID, true);
-    uint32_t sysSpec = *(reinterpret_cast<const uint32_t*>(data));
-    QueryLocalSysSpecType spec = SPEC_TYPE[sysSpec % QUERY_LOCAL_SYS_SIZE];
 
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    uint32_t sysSpec = fdp.ConsumeIntegral<uint32_t>();
+    QueryLocalSysSpecType spec = SPEC_TYPE[sysSpec % QUERY_LOCAL_SYS_SIZE];
     service.QueryLocalSysSpec(spec);
 }
 
@@ -86,10 +88,11 @@ void FwkServicesQueryDhSysSpecFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
-    DistributedHardwareService service(SAID, true);
-    std::string targetKey(reinterpret_cast<const char*>(data), size);
-    std::string attrs(reinterpret_cast<const char*>(data), size);
 
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    std::string targetKey = fdp.ConsumeRandomLengthString();
+    std::string attrs = fdp.ConsumeRandomLengthString();
     service.QueryDhSysSpec(targetKey, attrs);
 }
 
@@ -98,45 +101,50 @@ void FwkServicesNotifySourceRemoteSinkStartedFuzzTest(const uint8_t* data, size_
     if ((data == nullptr) || (size == 0)) {
         return;
     }
-    DistributedHardwareService service(SAID, true);
-    std::string deviceId(reinterpret_cast<const char*>(data), size);
 
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    std::string deviceId = fdp.ConsumeRandomLengthString();
     service.NotifySourceRemoteSinkStarted(deviceId);
 }
 
 void FwkServicesPauseDistributedHardwareFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
-    DistributedHardwareService service(SAID, true);
-    DHType dhType = DHType::AUDIO;
-    std::string networkId(reinterpret_cast<const char*>(data), size);
 
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    std::string networkId = fdp.ConsumeRandomLengthString();
     service.PauseDistributedHardware(dhType, networkId);
 }
 
 void FwkServicesResumeDistributedHardwareFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
+
     DistributedHardwareService service(SAID, true);
-    DHType dhType = DHType::AUDIO;
-    std::string networkId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    std::string networkId = fdp.ConsumeRandomLengthString();
 
     service.ResumeDistributedHardware(dhType, networkId);
 }
 
 void FwkServicesStopDistributedHardwareFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
+
     DistributedHardwareService service(SAID, true);
-    DHType dhType = DHType::AUDIO;
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    
+    FuzzedDataProvider fdp(data, size);
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    std::string networkId = fdp.ConsumeRandomLengthString();
     service.StopDistributedHardware(dhType, networkId);
 }
 
@@ -145,8 +153,10 @@ void FwkServicesGetDistributedHardwareFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
+
     DistributedHardwareService service(SAID, true);
-    std::string networkId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
     sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
     EnableStep enableStep = EnableStep::ENABLE_SOURCE;
     service.GetDistributedHardware(networkId, enableStep, callback);
@@ -157,10 +167,11 @@ void FwkServicesRegisterDHStatusListenerFuzzTest(const uint8_t* data, size_t siz
     if ((data == nullptr) || (size == 0)) {
         return;
     }
-    DistributedHardwareService service(SAID, true);
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    sptr<IHDSourceStatusListener> listener = nullptr;
 
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
+    sptr<IHDSourceStatusListener> listener = nullptr;
     service.RegisterDHStatusListener(networkId, listener);
 }
 
@@ -169,8 +180,10 @@ void FwkServicesUnregisterDHStatusListenerFuzzTest(const uint8_t* data, size_t s
     if ((data == nullptr) || (size == 0)) {
         return;
     }
+
     DistributedHardwareService service(SAID, true);
-    std::string networkId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
     sptr<IHDSourceStatusListener> listener = nullptr;
 
     service.UnregisterDHStatusListener(networkId, listener);
@@ -178,55 +191,67 @@ void FwkServicesUnregisterDHStatusListenerFuzzTest(const uint8_t* data, size_t s
 
 void FwkServicesEnableSinkFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
-    DistributedHardwareService service(SAID, true);
-    std::vector<DHDescriptor> descriptors = {
-        { std::string(reinterpret_cast<const char*>(data), size), DHType::AUDIO }
-    };
 
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    std::string dhId = fdp.ConsumeRandomLengthString();
+    DHDescriptor descriptor { dhId, dhType };
+    std::vector<DHDescriptor> descriptors;
+    descriptors.push_back(descriptor);
     service.EnableSink(descriptors);
 }
 
 void FwkServicesDisableSinkFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
-    DistributedHardwareService service(SAID, true);
-    std::vector<DHDescriptor> descriptors = {
-        { std::string(reinterpret_cast<const char*>(data), size), DHType::AUDIO }
-    };
 
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    std::string dhId = fdp.ConsumeRandomLengthString();
+    DHDescriptor descriptor { dhId, dhType };
+    std::vector<DHDescriptor> descriptors;
+    descriptors.push_back(descriptor);
     service.DisableSink(descriptors);
 }
 
 void FwkServicesEnableSourceFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
-    DistributedHardwareService service(SAID, true);
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    std::vector<DHDescriptor> descriptors = {
-        { std::string(reinterpret_cast<const char*>(data), size), DHType::AUDIO }
-    };
 
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    std::string networkId = fdp.ConsumeRandomLengthString();
+    std::string dhId = fdp.ConsumeRandomLengthString();
+    DHDescriptor descriptor { dhId, dhType };
+    std::vector<DHDescriptor> descriptors;
+    descriptors.push_back(descriptor);
     service.EnableSource(networkId, descriptors);
 }
 
 void FwkServicesDisableSourceFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
-    DistributedHardwareService service(SAID, true);
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    std::vector<DHDescriptor> descriptors = {
-        { std::string(reinterpret_cast<const char*>(data), size), DHType::AUDIO }
-    };
 
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    std::string networkId = fdp.ConsumeRandomLengthString();
+    std::string dhId = fdp.ConsumeRandomLengthString();
+    DHDescriptor descriptor { dhId, dhType };
+    std::vector<DHDescriptor> descriptors;
+    descriptors.push_back(descriptor);
     service.DisableSource(networkId, descriptors);
 }
 }

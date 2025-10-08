@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <fuzzer/FuzzedDataProvider.h>
 #include <string>
 #include <unistd.h>
 
@@ -27,14 +28,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-namespace {
-    const uint32_t TOPIC_SIZE = 4;
-    const DHTopic topicFuzz[TOPIC_SIZE] = {
-        DHTopic::TOPIC_START_DSCREEN, DHTopic::TOPIC_SINK_PROJECT_WINDOW_INFO,
-        DHTopic::TOPIC_STOP_DSCREEN, DHTopic::TOPIC_DEV_OFFLINE
-    };
-}
-
 void MockPublisherItemListener::OnMessage(const DHTopic topic, const std::string &message)
 {
     (void)topic;
@@ -53,13 +46,14 @@ int32_t MockPublisherItemListener::OnRemoteRequest(
 
 void PublisherItemFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
 
-    DHTopic topic = topicFuzz[data[0] % TOPIC_SIZE];
+    FuzzedDataProvider fdp(data, size);
+    DHTopic topic = static_cast<DHTopic>(fdp.ConsumeIntegral<uint32_t>());
     sptr<IPublisherListener> listener(new MockPublisherItemListener());
-    std::string message(reinterpret_cast<const char*>(data), size);
+    std::string message = fdp.ConsumeRandomLengthString();
 
     PublisherItem publisherItem(topic);
 

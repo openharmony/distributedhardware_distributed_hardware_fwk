@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <fuzzer/FuzzedDataProvider.h>
 #include <string>
 #include <vector>
 
@@ -30,7 +31,9 @@ void SyncMetaInfoFromDBFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
-    std::string deviceId(reinterpret_cast<const char*>(data), size);
+
+    FuzzedDataProvider fdp(data, size);
+    std::string deviceId = fdp.ConsumeRandomLengthString();
     MetaInfoManager::GetInstance()->Init();
     MetaInfoManager::GetInstance()->SyncMetaInfoFromDB(deviceId);
 }
@@ -40,20 +43,24 @@ void GetDataByKeyPrefixFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
-    std::string keyPrefix(reinterpret_cast<const char*>(data), size);
+
+    FuzzedDataProvider fdp(data, size);
+    std::string keyPrefix = fdp.ConsumeRandomLengthString();
     MetaCapInfoMap metaCapMap;
     MetaInfoManager::GetInstance()->GetDataByKeyPrefix(keyPrefix, metaCapMap);
 }
 
 void GetMetaCapInfoFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(uint16_t))) {
         return;
     }
-    std::string deviceId(reinterpret_cast<const char*>(data), size);
-    std::string udidHash(reinterpret_cast<const char*>(data), size);
-    std::string dhId(reinterpret_cast<const char*>(data), size);
-    uint16_t deviceType = 14;
+
+    FuzzedDataProvider fdp(data, size);
+    uint16_t deviceType = fdp.ConsumeIntegral<uint16_t>();
+    std::string deviceId = fdp.ConsumeRandomLengthString();
+    std::string udidHash = fdp.ConsumeRandomLengthString();
+    std::string dhId = fdp.ConsumeRandomLengthString();
     std::shared_ptr<MetaCapabilityInfo> metaCapPtr = std::make_shared<MetaCapabilityInfo>(
         dhId, deviceId, "devName_test", deviceType, DHType::CAMERA, "attrs_test", "subtype", udidHash,
         CompVersion{ .sinkVersion = "1.0" });
