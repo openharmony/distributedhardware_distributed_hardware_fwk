@@ -25,10 +25,8 @@ export default class MechExtAbility extends UIExtensionAbility {
   private callback = (result: mechanicManager.TrackingEventInfo) => {
     logger.info(`${TAG} result.event = ${result.event}`);
     if (result.event === mechanicManager.TrackingEvent.CAMERA_TRACKING_USER_ENABLED) {
-      mechanicManager.setCameraTrackingEnabled(true);
       AppStorage.set('isTrackingEnabled', true);
     } else if (result.event === mechanicManager.TrackingEvent.CAMERA_TRACKING_USER_DISABLED) {
-      mechanicManager.setCameraTrackingEnabled(false);
       AppStorage.set('isTrackingEnabled', false);
     }
     logger.info(`${TAG}trackingStateChange callback end, AppStorage.get(isTrackingEnabled) =
