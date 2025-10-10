@@ -86,6 +86,9 @@ public:
     void AddOnlineDeviceType(const std::string &networkId, uint16_t deviceType);
     void DeleteOnlineDeviceType(const std::string &networkId);
     uint16_t GetDeviceTypeByNetworkId(const std::string &networkId);
+    void AddOnlineDeviceOSType(const std::string &networkId, int32_t osType);
+    void DeleteOnlineDeviceOSType(const std::string &networkId);
+    bool IsDoubleFwkDevice(const std::string &networkId);
     std::string GetDeviceIdByNetworkId(const std::string &networkId);
     /* DeviceId is which is hashed by sha256 */
     std::string GetUUIDByDeviceId(const std::string &deviceId);
@@ -137,6 +140,9 @@ private:
 
     std::map<std::string, uint16_t> onlineDevTypeMap_;
     std::shared_mutex onlineDevTypeMutex_;
+
+    std::map<std::string, int32_t> onlineDevOSTypeMap_;
+    std::shared_mutex onlineDevOSTypeMutex_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

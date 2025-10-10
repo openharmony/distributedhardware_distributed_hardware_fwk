@@ -28,6 +28,9 @@ namespace {
 const std::string TEST_NETWORKID = "111111";
 const std::string TEST_UUID = "222222";
 const std::string TEST_UDID = "333333";
+constexpr int32_t OLD_HO_DEVICE_TYPE_TEST = -1;
+constexpr int32_t NEW_HO_DEVICE_TYPE_TEST = 11;
+constexpr int32_t INVALID_OSTYPE = 0;
 }
 
 class DhContextTest : public testing::Test {
@@ -445,6 +448,29 @@ HWTEST_F(DhContextTest, GetDeviceIdByNetworkId_001, TestSize.Level1)
 
     ret = DHContext::GetInstance().GetDeviceIdByNetworkId(TEST_NETWORKID);
     EXPECT_EQ(Sha256(TEST_UUID), ret);
+}
+
+HWTEST_F(DhContextTest, CheckAndDeleteOnlineDeviceOSType_001, TestSize.Level1)
+{
+    std::string networkId = "networkId_123";
+    auto ret = DHContext::GetInstance().IsDoubleFwkDevice(networkId);
+    DHContext::GetInstance().DeleteOnlineDeviceOSType(networkId);
+    EXPECT_EQ(false, ret);
+
+    DHContext::GetInstance().AddOnlineDeviceOSType(networkId, INVALID_OSTYPE);
+    ret = DHContext::GetInstance().IsDoubleFwkDevice(networkId);
+    DHContext::GetInstance().DeleteOnlineDeviceOSType(networkId);
+    EXPECT_EQ(false, ret);
+
+    DHContext::GetInstance().AddOnlineDeviceOSType(networkId, OLD_HO_DEVICE_TYPE_TEST);
+    ret = DHContext::GetInstance().IsDoubleFwkDevice(networkId);
+    DHContext::GetInstance().DeleteOnlineDeviceOSType(networkId);
+    EXPECT_EQ(true, ret);
+
+    DHContext::GetInstance().AddOnlineDeviceOSType(networkId, NEW_HO_DEVICE_TYPE_TEST);
+    ret = DHContext::GetInstance().IsDoubleFwkDevice(networkId);
+    DHContext::GetInstance().DeleteOnlineDeviceOSType(networkId);
+    EXPECT_EQ(true, ret);
 }
 }
 }

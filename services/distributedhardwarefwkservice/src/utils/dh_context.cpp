@@ -33,6 +33,8 @@ namespace {
     constexpr const char *ISOMERISM_EVENT_KEY = "isomerism_event";
     const std::string ISOMERISM_EVENT_CONNECT_VAL = "isomerism_connect";
     const std::string ISOMERISM_EVENT_DISCONNECT_VAL = "isomerism_disconnect";
+    constexpr int32_t OLD_HO_DEVICE_TYPE = -1;
+    constexpr int32_t NEW_HO_DEVICE_TYPE = 11;
 }
 IMPLEMENT_SINGLE_INSTANCE(DHContext);
 DHContext::DHContext()
@@ -440,6 +442,44 @@ std::string DHContext::GetDeviceIdByNetworkId(const std::string &networkId)
         }
     }
     return deviceId;
+}
+
+void DHContext::AddOnlineDeviceOSType(const std::string &networkId, int32_t osType)
+{
+    DHLOGI("Add online device ostype, networkId: %{public}s", GetAnonyString(networkId).c_str());
+    std::unique_lock<std::shared_mutex> lock(onlineDevOSTypeMutex_);
+    onlineDevOSTypeMap_.insert(std::make_pair(networkId, osType));
+}
+
+void DHContext::DeleteOnlineDeviceOSType(const std::string &networkId)
+{
+    DHLOGI("Delete online device ostype, networkId: %{public}s", GetAnonyString(networkId).c_str());
+    std::unique_lock<std::shared_mutex> lock(onlineDevOSTypeMutex_);
+    auto iter = onlineDevOSTypeMap_.find(networkId);
+    if (iter == onlineDevOSTypeMap_.end()) {
+        DHLOGE("NetworkId not exist.");
+        return;
+    }
+    onlineDevOSTypeMap_.erase(iter);
+    DHLOGI("Delete device ostype success.");
+}
+
+bool DHContext::IsDoubleFwkDevice(const std::string &networkId)
+{
+    DHLOGI("judge online device ostype, networkId: %{public}s", GetAnonyString(networkId).c_str());
+    std::unique_lock<std::shared_mutex> lock(onlineDevOSTypeMutex_);
+    auto iter = onlineDevOSTypeMap_.find(networkId);
+    if (iter == onlineDevOSTypeMap_.end()) {
+        DHLOGE("NetworkId not exist.");
+        return false;
+    }
+
+    if (iter->second != OLD_HO_DEVICE_TYPE && iter->second != NEW_HO_DEVICE_TYPE) {
+        DHLOGE("online device is not double frame device, remove this element from the map.");
+        onlineDevOSTypeMap_.erase(iter);
+        return false;
+    }
+    return true;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

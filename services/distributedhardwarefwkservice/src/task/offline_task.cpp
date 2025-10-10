@@ -225,13 +225,17 @@ void OffLineTask::AddChildrenTask(std::shared_ptr<Task> childrenTask)
 
 void OffLineTask::CreateMetaDisableTask()
 {
-    DHLOGI("CreateMetaDisableTask, networkId = %{public}s, uuid = %{public}s", GetAnonyString(GetNetworkId()).c_str(),
-        GetAnonyString(GetUUID()).c_str());
+    if (!DHContext::GetInstance().IsDoubleFwkDevice(GetNetworkId())) {
+        DHLOGE("online device is not double frame device or networkId not find.");
+        return;
+    }
     uint16_t deviceType = DHContext::GetInstance().GetDeviceTypeByNetworkId(GetNetworkId());
     if (deviceType != PHONE_TYPE) {
         DHLOGE("offline device not phone, deviceType = %{public}d", deviceType);
         return;
     }
+    DHLOGI("CreateMetaDisableTask, networkId = %{public}s, uuid = %{public}s", GetAnonyString(GetNetworkId()).c_str(),
+        GetAnonyString(GetUUID()).c_str());
     TaskParam taskParam = {
         .networkId = GetNetworkId(),
         .uuid = GetUUID(),
