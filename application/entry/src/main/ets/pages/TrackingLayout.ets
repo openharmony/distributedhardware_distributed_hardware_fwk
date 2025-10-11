@@ -17,7 +17,7 @@ import { logger } from '../utils/Logger';
 import router from '@ohos.router';
 import mechanicManager from '@ohos.distributedHardware.mechanicManager';
 import { BusinessError } from '@ohos.base';
-import CommonConstants from '../common/constants/CommonConstants';
+import CommonConstants, { FontSizeScale, LanguagesUtil } from '../common/constants/CommonConstants';
 
 const TAG = '[TrackingLayout_Page] : ';
 let localStorage = LocalStorage.getShared();
@@ -109,10 +109,14 @@ struct TrackingLayout {
         .fontColor($r('sys.color.font_primary'))
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
-        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
+        .maxFontScale(FontSizeScale.MD)
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
-    .margin({left: CommonConstants.TEXT_MARGIN_LEFT})
+    .margin({
+      left: CommonConstants.TEXT_MARGIN_LEFT,
+      top: CommonConstants.LAYOUT_ICON_MARGIN_TOP,
+      right: LanguagesUtil.isMirrorLanguages() ? CommonConstants.LAYOUT_MARGIN_RIGHT_MIRROR : 0,
+    })
   }
 
   @Builder
@@ -143,10 +147,11 @@ struct TrackingLayout {
         .fontColor($r('sys.color.font_primary'))
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
-        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
+        .maxFontScale(FontSizeScale.MD)
+        .width(CommonConstants.BUTTON_SIZE)
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
-    .margin({ left: CommonConstants.LEFT_ICON_MARGIN_LEFT })
+    .margin({ left: CommonConstants.LEFT_ICON_MARGIN_LEFT, top: CommonConstants.LAYOUT_ICON_MARGIN_TOP })
   }
 
   @Builder
@@ -180,10 +185,11 @@ struct TrackingLayout {
         .fontColor($r('sys.color.font_primary'))
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
-        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
+        .maxFontScale(FontSizeScale.MD)
+        .width(CommonConstants.BUTTON_SIZE)
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
-    .margin({ left: CommonConstants.OTHER_ICON_MARGIN_LEFT })
+    .margin({ left: CommonConstants.OTHER_ICON_MARGIN_LEFT, top: CommonConstants.LAYOUT_ICON_MARGIN_TOP })
   }
 
   @Builder
@@ -215,16 +221,17 @@ struct TrackingLayout {
         .fontColor($r('sys.color.font_primary'))
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
-        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
+        .maxFontScale(FontSizeScale.MD)
+        .width(CommonConstants.BUTTON_SIZE)
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
-    .margin({ left: CommonConstants.OTHER_ICON_MARGIN_LEFT })
+    .margin({ left: CommonConstants.OTHER_ICON_MARGIN_LEFT, top: CommonConstants.LAYOUT_ICON_MARGIN_TOP })
   }
 
   build() {
     Column() {
       Flex({
-        direction: FlexDirection.Row, justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center
+        direction: FlexDirection.Row, justifyContent: FlexAlign.Start, alignItems: ItemAlign.Start
       }) {
         this.BackButton();
         this.TrackingLayoutLeft();

@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { logger } from '../../utils/Logger';
+import i18n from '@ohos.i18n';
 
 export default class CommonConstants {
   //ContinueSwitch page :
@@ -54,10 +56,6 @@ export default class CommonConstants {
   // Update prompt text
   public static readonly UPDATE_PROMPT_LINE_HEIGHT: number = 16;
   public static readonly UPDATE_PROMPT_MARGIN_TOP: number = 9;
-  // isMirrorLanguages
-  public static readonly MIRROR_LANGUAGES: Array<string> = ['ug', 'ar'];
-  // isTibetanLanguages
-  public static readonly TIBETAN_LANGUAGES: Array<string> = ['bo'];
 
   /**
    * Button click Scale.
@@ -162,7 +160,7 @@ export default class CommonConstants {
   /**
    * Normal Layout margin left.
    */
-  public static readonly NORMAL_LAYOUT_MARGIN_LEFT: number = 55;
+  public static readonly NORMAL_LAYOUT_MARGIN_LEFT: number = 46;
 
   /**
    * Max Layout margin left.
@@ -179,6 +177,32 @@ export default class CommonConstants {
    */
   public static readonly SWITCH_OFF_OFFSET: number = 4;
 
+  public static readonly NORMAL_LAYOUT_MARGIN_LEFT: number = 46;
+
+  /**
+   * Switch text width.
+   */
+  public static readonly SWITCH_TEXT_WIDTH: number = 73;
+
+  /**
+   * Switch icon margin top.
+   */
+  public static readonly SWITCH_ICON_MARGIN_TOP: number = 23;
+
+  /**
+   * Layout icon margin top.
+   */
+  public static readonly LAYOUT_ICON_MARGIN_TOP: number = 31;
+
+  /**
+   * Switch icon margin top when ultra long languages.
+   */
+  public static readonly SWITCH_ICON_MARGIN_TOP_ULTRA: number = 10;
+
+  /**
+   * Switch icon margin top when ultra long languages.
+   */
+  public static readonly LAYOUT_MARGIN_RIGHT_MIRROR: number = 19;
 }
 
 export enum FontSizeScale {
@@ -191,4 +215,33 @@ export enum FontSizeScale {
   XXL1 = 1.75,
   XXL2 = 2,
   XXL3 = 3.2,
+}
+
+export class LanguagesUtil {
+  // isMirrorLanguages
+  public static readonly MIRROR_LANGUAGES: Array<string> = ['ug', 'ar'];
+  // isTibetanLanguages
+  public static readonly TIBETAN_LANGUAGES: Array<string> = ['bo'];
+  // isUltraLongLanguages
+  public static readonly ULTRA_LONG_LANGUAGES: Array<string> = ['ru'];
+
+  public static isMirrorLanguages(): boolean {
+    logger.info(`isMirrorLanguages in`);
+    let locale = new Intl.Locale(i18n.System.getSystemLanguage()).toString();
+    return LanguagesUtil.MIRROR_LANGUAGES.includes(locale);
+  }
+
+  public static isUltraLongLanguages(): boolean {
+    logger.info(`isUltraLongLanguages in`);
+    let locale = new Intl.Locale(i18n.System.getSystemLanguage()).toString();
+    logger.info(`isUltraLongLanguages: ${locale}`);
+    return LanguagesUtil.ULTRA_LONG_LANGUAGES.includes(locale);
+  }
+
+  public static isTibetanLanguages(): boolean {
+    logger.info(`isTibetanLanguages in`);
+    let locale = new Intl.Locale(i18n.System.getSystemLanguage()).toString();
+    logger.info(`isTibetanLanguages: ${locale}`);
+    return LanguagesUtil.TIBETAN_LANGUAGES.includes(locale);
+  }
 }
