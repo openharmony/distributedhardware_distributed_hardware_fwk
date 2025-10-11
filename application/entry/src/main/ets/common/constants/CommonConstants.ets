@@ -177,8 +177,6 @@ export default class CommonConstants {
    */
   public static readonly SWITCH_OFF_OFFSET: number = 4;
 
-  public static readonly NORMAL_LAYOUT_MARGIN_LEFT: number = 46;
-
   /**
    * Switch text width.
    */
