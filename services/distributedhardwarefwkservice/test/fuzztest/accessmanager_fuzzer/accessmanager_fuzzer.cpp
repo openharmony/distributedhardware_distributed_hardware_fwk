@@ -19,11 +19,10 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <fuzzer/FuzzedDataProvider.h>
 #include <securec.h>
 #include <string>
 #include <unistd.h>
-
-#include "device_manager.h"
 
 #include "access_manager.h"
 #include "distributed_hardware_errno.h"
@@ -35,15 +34,50 @@ namespace {
     constexpr uint32_t SLEEP_TIME_US = 10 * 1000;
 }
 
-void OnDeviceReadyFuzzTest(const uint8_t* data, size_t size)
+void OnDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+    if ((data == nullptr) || (size == 0 || size >= DM_MAX_DEVICE_ID_LEN)) {
         return;
     }
 
-    AccessManager::GetInstance()->Init();
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
     DmDeviceInfo deviceInfo;
-    int32_t ret = memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, (reinterpret_cast<const char *>(data)), size);
+    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), size);
+    if (ret != EOK) {
+        return;
+    }
+    AccessManager::GetInstance()->OnDeviceOnline(deviceInfo);
+    usleep(SLEEP_TIME_US);
+}
+
+void OnDeviceOfflineFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0 || size >= DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
+    DmDeviceInfo deviceInfo;
+    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), size);
+    if (ret != EOK) {
+        return;
+    }
+    AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
+    usleep(SLEEP_TIME_US);
+}
+
+void OnDeviceReadyFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0 || size >= DM_MAX_DEVICE_ID_LEN)) {
+        return;
+    }
+
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
+    DmDeviceInfo deviceInfo;
+    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), size);
     if (ret != EOK) {
         return;
     }
@@ -52,91 +86,20 @@ void OnDeviceReadyFuzzTest(const uint8_t* data, size_t size)
     usleep(SLEEP_TIME_US);
 }
 
-void OnDeviceOfflineFuzzTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
-    AccessManager::GetInstance()->Init();
-    DmDeviceInfo deviceInfo;
-    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, (reinterpret_cast<const char *>(data)), size);
-    if (ret != EOK) {
-        return;
-    }
-    AccessManager::GetInstance()->OnDeviceOffline(deviceInfo);
-    usleep(SLEEP_TIME_US);
-}
-
 void OnDeviceChangedFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
+    if ((data == nullptr) || (size == 0 || size >= DM_MAX_DEVICE_ID_LEN)) {
         return;
     }
 
-    AccessManager::GetInstance()->Init();
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
     DmDeviceInfo deviceInfo;
-    int32_t ret = memcpy_s(deviceInfo.deviceId, DM_MAX_DEVICE_ID_LEN, (reinterpret_cast<const char *>(data)), size);
+    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), size);
     if (ret != EOK) {
         return;
     }
     AccessManager::GetInstance()->OnDeviceChanged(deviceInfo);
-    usleep(SLEEP_TIME_US);
-}
-
-void UnInitFuzzTest(const uint8_t* data, size_t size)
-{
-    (void)data;
-    (void)size;
-    AccessManager::GetInstance()->UnInit();
-    usleep(SLEEP_TIME_US);
-}
-
-void UnInitDeviceManagerFuzzTest(const uint8_t* data, size_t size)
-{
-    (void)data;
-    (void)size;
-    AccessManager::GetInstance()->UnInitDeviceManager();
-    usleep(SLEEP_TIME_US);
-}
-
-void UnRegisterDevStateCallbackFuzzTest(const uint8_t* data, size_t size)
-{
-    (void)data;
-    (void)size;
-    AccessManager::GetInstance()->UnRegisterDevStateCallback();
-    usleep(SLEEP_TIME_US);
-}
-
-void OnRemoteDiedFuzzTest(const uint8_t* data, size_t size)
-{
-    (void)data;
-    (void)size;
-    AccessManager::GetInstance()->OnRemoteDied();
-    usleep(SLEEP_TIME_US);
-}
-
-void CheckTrustedDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
-{
-    (void)data;
-    (void)size;
-    AccessManager::GetInstance()->CheckTrustedDeviceOnline();
-    usleep(SLEEP_TIME_US);
-}
-
-void OnDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size > DM_MAX_DEVICE_ID_LEN)) {
-        return;
-    }
-
-    AccessManager::GetInstance()->Init();
-    DmDeviceInfo deviceInfo;
-    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, (reinterpret_cast<const char *>(data)), size);
-    if (ret != EOK) {
-        return;
-    }
-    AccessManager::GetInstance()->OnDeviceOnline(deviceInfo);
     usleep(SLEEP_TIME_US);
 }
 }
@@ -146,15 +109,10 @@ void OnDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DistributedHardware::OnDeviceReadyFuzzTest(data, size);
     OHOS::DistributedHardware::OnDeviceOnlineFuzzTest(data, size);
-    OHOS::DistributedHardware::OnDeviceChangedFuzzTest(data, size);
-    OHOS::DistributedHardware::UnInitFuzzTest(data, size);
-    OHOS::DistributedHardware::UnInitDeviceManagerFuzzTest(data, size);
-    OHOS::DistributedHardware::UnRegisterDevStateCallbackFuzzTest(data, size);
-    OHOS::DistributedHardware::OnRemoteDiedFuzzTest(data, size);
-    OHOS::DistributedHardware::CheckTrustedDeviceOnlineFuzzTest(data, size);
     OHOS::DistributedHardware::OnDeviceOfflineFuzzTest(data, size);
+    OHOS::DistributedHardware::OnDeviceReadyFuzzTest(data, size);
+    OHOS::DistributedHardware::OnDeviceChangedFuzzTest(data, size);
     return 0;
 }
 

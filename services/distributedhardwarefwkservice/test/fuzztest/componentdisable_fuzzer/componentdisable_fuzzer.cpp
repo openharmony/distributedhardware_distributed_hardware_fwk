@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +14,8 @@
  */
 
 #include "componentdisable_fuzzer.h"
+
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "component_disable.h"
 #include "distributed_hardware_errno.h"
@@ -74,15 +76,16 @@ void FuzzDistributedHardwareSource::RegisterDataSyncTriggerListener(std::shared_
 }
 void ComponentDisableFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(int32_t))) {
         return;
     }
 
     auto compDisable = std::make_shared<ComponentDisable>();
-    std::string uuid(reinterpret_cast<const char*>(data), size);
-    std::string dhId(reinterpret_cast<const char*>(data), size);
-    int32_t status = DH_FWK_SUCCESS;
-    std::string disableData(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    int32_t status = fdp.ConsumeIntegral<int32_t>();
+    std::string uuid = fdp.ConsumeRandomLengthString();
+    std::string dhId = fdp.ConsumeRandomLengthString();
+    std::string disableData = fdp.ConsumeRandomLengthString();
     compDisable->OnUnregisterResult(uuid, dhId, status, disableData);
 }
 
@@ -93,10 +96,11 @@ void DisableFuzzTest(const uint8_t* data, size_t size)
     }
 
     auto compDisable = std::make_shared<ComponentDisable>();
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    std::string dhId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
+    std::string dhId = fdp.ConsumeRandomLengthString();
     auto handler = std::make_shared<FuzzDistributedHardwareSource>();
-    std::string disableData(reinterpret_cast<const char*>(data), size);
+    std::string disableData = fdp.ConsumeRandomLengthString();
     compDisable->Disable(networkId, dhId, handler.get());
 }
 }

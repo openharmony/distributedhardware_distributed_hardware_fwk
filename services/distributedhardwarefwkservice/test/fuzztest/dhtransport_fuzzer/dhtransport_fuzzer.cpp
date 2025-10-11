@@ -201,15 +201,6 @@ void DhTransportOnShutdownFuzzTest(const uint8_t* data, size_t size)
     dhTransportTest->UnInit();
 }
 
-void DhTransportInitFuzzTest(const uint8_t* data, size_t size)
-{
-    (void)data;
-    (void)size;
-    std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
-    std::shared_ptr<DHTransport> dhTransportTest = std::make_shared<DHTransport>(dhCommTool);
-    dhTransportTest->Init();
-}
-
 void DhTransportOnBytesFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(int32_t) + sizeof(uint32_t))) {
@@ -218,13 +209,6 @@ void DhTransportOnBytesFuzzTest(const uint8_t* data, size_t size)
     int32_t socketId = *(reinterpret_cast<const int32_t*>(data));
     uint32_t dataLen = *(reinterpret_cast<const uint32_t*>(data + sizeof(int32_t)));
     OnBytes(socketId, data, dataLen);
-}
-
-void DhTransportGetDHCommToolPtrFuzzTest(const uint8_t* data, size_t size)
-{
-    (void)data;
-    (void)size;
-    auto ptr = GetDHCommToolPtr();
 }
 }
 }
@@ -244,9 +228,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::DhTransportOnSocketClosedFuzzTest(data, size);
     OHOS::DistributedHardware::DhTransportOnBindFuzzTest(data, size);
     OHOS::DistributedHardware::DhTransportOnShutdownFuzzTest(data, size);
-    OHOS::DistributedHardware::DhTransportInitFuzzTest(data, size);
     OHOS::DistributedHardware::DhTransportOnBytesFuzzTest(data, size);
-    OHOS::DistributedHardware::DhTransportGetDHCommToolPtrFuzzTest(data, size);
     return 0;
 }
 

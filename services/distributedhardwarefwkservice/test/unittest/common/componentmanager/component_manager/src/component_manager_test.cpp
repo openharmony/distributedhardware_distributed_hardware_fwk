@@ -133,27 +133,24 @@ void ComponentManagerTest::TearDown()
 
 void SetUpComponentLoaderConfig()
 {
-    if (ComponentLoader::GetInstance().compHandlerMap_.find(DHType::AUDIO)
-        == ComponentLoader::GetInstance().compHandlerMap_.end()) {
-        CompHandler handler;
-        handler.compConfig.name = "distributed_audio";
-        handler.compConfig.type = DHType::AUDIO;
-        handler.compConfig.compHandlerLoc = "libdistributed_camera_handler.z.so";
-        handler.compConfig.compHandlerVersion = "1.0";
-        handler.compConfig.compSourceLoc = "libdistributed_camera_source_sdk.z.so";
-        handler.compConfig.compSourceVersion = "1.0";
-        handler.compConfig.compSinkLoc = "libdistributed_camera_sink_sdk.z.so";
-        handler.compConfig.compSinkVersion = "2.0";
-        handler.compConfig.compSinkSaId = TEST_COMP_SINK_SA_ID;
-        handler.compConfig.haveFeature = false;
-        handler.hardwareHandler = nullptr;
-        handler.sourceHandler = nullptr;
-        handler.sinkHandler = nullptr;
-        handler.type = DHType::AUDIO;
-        handler.sinkSaId = TEST_SINK_SA_ID;
-        handler.sourceSaId = TEST_SOURCE_SA_ID;
-        ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = handler;
-    }
+    CompHandler handler;
+    handler.compConfig.name = "distributed_audio";
+    handler.compConfig.type = DHType::AUDIO;
+    handler.compConfig.compHandlerLoc = "libdistributed_camera_handler.z.so";
+    handler.compConfig.compHandlerVersion = "1.0";
+    handler.compConfig.compSourceLoc = "libdistributed_camera_source_sdk.z.so";
+    handler.compConfig.compSourceVersion = "1.0";
+    handler.compConfig.compSinkLoc = "libdistributed_camera_sink_sdk.z.so";
+    handler.compConfig.compSinkVersion = "2.0";
+    handler.compConfig.compSinkSaId = TEST_COMP_SINK_SA_ID;
+    handler.compConfig.haveFeature = false;
+    handler.hardwareHandler = nullptr;
+    handler.sourceHandler = nullptr;
+    handler.sinkHandler = nullptr;
+    handler.type = DHType::AUDIO;
+    handler.sinkSaId = TEST_SINK_SA_ID;
+    handler.sourceSaId = TEST_SOURCE_SA_ID;
+    ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = handler;
 }
 
 void SetDownComponentLoaderConfig()

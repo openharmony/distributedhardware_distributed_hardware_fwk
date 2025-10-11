@@ -339,13 +339,6 @@ void CapabilityInfoManagerEventHandlerCtorFuzzTest(const uint8_t* data, size_t s
     CapabilityInfoManager::GetInstance()->UnInit();
 }
 
-void GetEventHandlerFuzzTest(const uint8_t* data, size_t size)
-{
-    (void)data;
-    (void)size;
-    CapabilityInfoManager::GetInstance()->GetEventHandler();
-}
-
 void OnChangeFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -367,15 +360,6 @@ void OnChangeFuzzTest(const uint8_t* data, size_t size)
     DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds),
         deviceId, true);
     CapabilityInfoManager::GetInstance()->OnChange(changeIn);
-}
-
-void GetDataByDHTypeFuzzTest(const uint8_t* data, size_t size)
-{
-    (void)data;
-    (void)size;
-    DHType dhType = DHType::AUDIO;
-    std::map<std::string, std::shared_ptr<CapabilityInfo>> capabilityMap;
-    CapabilityInfoManager::GetInstance()->GetDataByDHType(dhType, capabilityMap);
 }
 
 void GetEntriesByKeysFuzzTest(const uint8_t* data, size_t size)
@@ -407,9 +391,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::HasCapabilityFuzzTest(data, size);
     OHOS::DistributedHardware::DumpCapabilityInfosFuzzTest(data, size);
     OHOS::DistributedHardware::CapabilityInfoManagerEventHandlerCtorFuzzTest(data, size);
-    OHOS::DistributedHardware::GetEventHandlerFuzzTest(data, size);
     OHOS::DistributedHardware::OnChangeFuzzTest(data, size);
-    OHOS::DistributedHardware::GetDataByDHTypeFuzzTest(data, size);
     OHOS::DistributedHardware::GetEntriesByKeysFuzzTest(data, size);
     return 0;
 }

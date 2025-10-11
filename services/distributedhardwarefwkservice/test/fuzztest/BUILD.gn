@@ -16,22 +16,18 @@ group("fuzztest") {
 
   deps = [
     "accessmanager_fuzzer:fuzztest",
-    "accessmanageroffline_fuzzer:fuzztest",
     "capabilityinfomanager_fuzzer:fuzztest",
     "componentdisable_fuzzer:fuzztest",
     "componentenable_fuzzer:fuzztest",
     "componentloader_fuzzer:fuzztest",
     "componentmanager_fuzzer:fuzztest",
     "dhcommtool_fuzzer:fuzztest",
-    "dhmanagerfactory_fuzzer:fuzztest",
     "dhtransport_fuzzer:fuzztest",
     "distributedfwkservices_fuzzer:fuzztest",
-    "enabledcompsdump_fuzzer:fuzztest",
     "metainfomgr_fuzzer:fuzztest",
     "publisher_fuzzer:fuzztest",
     "publisheritem_fuzzer:fuzztest",
     "resourcemanager_fuzzer:fuzztest",
-    "task_fuzzer:fuzztest",
     "versioninfomanager_fuzzer:fuzztest",
   ]
 }

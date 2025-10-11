@@ -31,31 +31,24 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-namespace {
-    const uint32_t DH_TYPE_SIZE = 10;
-    const DHType dhTypeFuzz[DH_TYPE_SIZE] = {
-        DHType::CAMERA, DHType::AUDIO, DHType::SCREEN, DHType::VIRMODEM_AUDIO,
-        DHType::INPUT, DHType::A2D, DHType::GPS, DHType::HFP
-    };
-}
 void ComponentManagerFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size < sizeof(int32_t))) {
+    if ((data == nullptr) || (size < sizeof(int32_t) + sizeof(int32_t) + sizeof(uint32_t))) {
         return;
     }
 
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    std::string uuid(reinterpret_cast<const char*>(data), size);
-    std::string dhId(reinterpret_cast<const char*>(data), size);
-    DHType dhType = dhTypeFuzz[data[0] % DH_TYPE_SIZE];
-    bool enableSource = false;
-    sptr<IHDSinkStatusListener> sinkListener = nullptr;
-    sptr<IHDSourceStatusListener> sourceListener = nullptr;
     FuzzedDataProvider fdp(data, size);
     int32_t callingUid = fdp.ConsumeIntegral<int32_t>();
     int32_t callingPid = fdp.ConsumeIntegral<int32_t>();
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    std::string networkId = fdp.ConsumeRandomLengthString();
+    std::string uuid = fdp.ConsumeRandomLengthString();
+    std::string dhId = fdp.ConsumeRandomLengthString();
+    bool enableSource = false;
+    sptr<IHDSinkStatusListener> sinkListener = nullptr;
+    sptr<IHDSourceStatusListener> sourceListener = nullptr;
     DHDescriptor dhDescriptor {
-        .id = std::string(reinterpret_cast<const char*>(data), size),
+        .id = dhId,
         .dhType = dhType
     };
 
@@ -82,7 +75,8 @@ void OnDataSyncTriggerFuzzTest(const uint8_t* data, size_t size)
         return;
     }
 
-    std::string networkId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
     DHDataSyncTriggerListener dhDataSyncTrigger;
     dhDataSyncTrigger.OnDataSyncTrigger(networkId);
 }
@@ -93,8 +87,9 @@ void OnStateChangedFuzzTest(const uint8_t* data, size_t size)
         return;
     }
 
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    std::string dhId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
+    std::string dhId = fdp.ConsumeRandomLengthString();
     BusinessState state = BusinessState::UNKNOWN;
     DHStateListener dhData;
     dhData.OnStateChanged(networkId, dhId, state);

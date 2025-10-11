@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "component_loader.h"
 #include "constants.h"
@@ -25,23 +26,14 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-namespace {
-const uint32_t DH_TYPE_SIZE = 10;
-const DHType dhTypeFuzz[DH_TYPE_SIZE] = {
-    DHType::CAMERA, DHType::AUDIO, DHType::SCREEN, DHType::VIRMODEM_AUDIO,
-    DHType::INPUT, DHType::A2D, DHType::GPS, DHType::HFP
-};
-}
-
 void ComponentManagerFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
 
-    ComponentLoader::GetInstance().Init();
-    DHType dhType = dhTypeFuzz[data[0] % DH_TYPE_SIZE];
-
+    FuzzedDataProvider fdp(data, size);
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
     IHardwareHandler *hardwareHandlerPtr = nullptr;
     ComponentLoader::GetInstance().GetHardwareHandler(dhType, hardwareHandlerPtr);
     IDistributedHardwareSource *sourcePtr = nullptr;

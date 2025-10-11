@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <fuzzer/FuzzedDataProvider.h>
 #include <string>
 #include <unistd.h>
 
@@ -30,11 +31,6 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     constexpr uint32_t SLEEP_TIME_US = 10 * 1000;
-    const uint32_t DH_TYPE_SIZE = 10;
-    const DHType dhTypeFuzz[DH_TYPE_SIZE] = {
-        DHType::CAMERA, DHType::AUDIO, DHType::SCREEN, DHType::VIRMODEM_AUDIO,
-        DHType::INPUT, DHType::A2D, DHType::GPS, DHType::HFP
-    };
 }
 
 void VersioninfoManagerFuzzTest(const uint8_t* data, size_t size)
@@ -42,17 +38,18 @@ void VersioninfoManagerFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
-
+    FuzzedDataProvider fdp(data, size);
+    std::string id = fdp.ConsumeRandomLengthString();
     VersionInfo versionInfo;
-    versionInfo.deviceId = std::string(reinterpret_cast<const char*>(data), size);
-    versionInfo.dhVersion = std::string(reinterpret_cast<const char*>(data), size);
+    versionInfo.deviceId = fdp.ConsumeRandomLengthString();
+    versionInfo.dhVersion = fdp.ConsumeRandomLengthString();
 
     CompVersion compVer;
-    compVer.dhType = dhTypeFuzz[data[0] % DH_TYPE_SIZE];
-    compVer.name = std::string(reinterpret_cast<const char*>(data), size);
-    compVer.handlerVersion = std::string(reinterpret_cast<const char*>(data), size);
-    compVer.sourceVersion = std::string(reinterpret_cast<const char*>(data), size);
-    compVer.sinkVersion = std::string(reinterpret_cast<const char*>(data), size);
+    compVer.dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    compVer.name = fdp.ConsumeRandomLengthString();
+    compVer.handlerVersion = fdp.ConsumeRandomLengthString();
+    compVer.sourceVersion = fdp.ConsumeRandomLengthString();
+    compVer.sinkVersion = fdp.ConsumeRandomLengthString();
     versionInfo.compVersions.insert(std::pair<DHType, CompVersion>(compVer.dhType, compVer));
 
     VersionInfo info;
