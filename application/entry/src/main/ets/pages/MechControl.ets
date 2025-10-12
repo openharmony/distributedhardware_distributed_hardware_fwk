@@ -20,7 +20,7 @@ import router from '@ohos.router';
 import curves from '@ohos.curves';
 import accessibility from '@ohos.accessibility';
 import common from '@ohos.app.ability.common';
-import CommonConstants,{ FontSizeScale } from '../common/constants/CommonConstants';
+import CommonConstants,{ FontSizeScale, LanguagesUtil } from '../common/constants/CommonConstants';
 
 const TAG = '[MechControl_Page] : ';
 let localStorage = LocalStorage.getShared();
@@ -185,7 +185,8 @@ struct MechControl {
         .fontColor($r('sys.color.font_primary'))
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
-        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
+        .maxFontScale(FontSizeScale.MD)
+        .width(CommonConstants.SWITCH_TEXT_WIDTH)
 
       Text(this.isTrackingEnabled ? $r('app.string.mech_enable') : $r('app.string.mech_close'))
         .fontSize($r('sys.float.Caption_M'))
@@ -194,20 +195,22 @@ struct MechControl {
         .fontColor($r('sys.color.font_secondary'))
         .margin({ top: CommonConstants.SMALL_TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
-        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
+        .maxFontScale(FontSizeScale.MD)
     }
-    .translate({ x: this.isTrackingEnabled ? 0 : CommonConstants.TRANSLATE_X })
+    .translate({
+      x: this.isTrackingEnabled ? 0 :
+        (LanguagesUtil.isMirrorLanguages() ? -CommonConstants.TRANSLATE_X : CommonConstants.TRANSLATE_X)
+    })
     .animation({
       curve: curves.springMotion(CommonConstants.SPRING_MOTION_RESPONSE,
         CommonConstants.SPRING_MOTION_DAMPING_FRACTION, CommonConstants.SPRING_MOTION_OVERLAP_DURATION)
     })
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
     .margin({
-      left: this.isTrackingEnabled ?
-        (this.fontSizeScale > FontSizeScale.XL ? CommonConstants.NORMAL_SWITCH_MARGIN_LEFT :
-        CommonConstants.MAX_SWITCH_MARGIN_LEFT) :
-        (this.fontSizeScale > FontSizeScale.XL ? CommonConstants.NORMAL_SWITCH_MARGIN_LEFT :
-        CommonConstants.MAX_SWITCH_MARGIN_LEFT) - CommonConstants.SWITCH_OFF_OFFSET
+      left: CommonConstants.NORMAL_SWITCH_MARGIN_LEFT,
+      right: LanguagesUtil.isMirrorLanguages() ? CommonConstants.NORMAL_SWITCH_MARGIN_LEFT : 0,
+      top: LanguagesUtil.isUltraLongLanguages() ? CommonConstants.SWITCH_ICON_MARGIN_TOP_ULTRA :
+        CommonConstants.SWITCH_ICON_MARGIN_TOP
     })
   }
 
@@ -243,7 +246,8 @@ struct MechControl {
         .fontColor($r('sys.color.font_primary'))
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
-        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
+        .maxFontScale(FontSizeScale.MD)
+        .width(CommonConstants.SWITCH_TEXT_WIDTH)
 
       Text(this.currentTrackingLayoutText)
         .fontSize($r('sys.float.Caption_M'))
@@ -252,12 +256,13 @@ struct MechControl {
         .fontColor($r('sys.color.font_secondary'))
         .margin({ top: CommonConstants.SMALL_TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
-        .maxFontScale(CommonConstants.MAX_FONT_SCALE)
+        .maxFontScale(FontSizeScale.MD)
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
     .margin({
-      left: this.fontSizeScale > FontSizeScale.DEFAULT ? CommonConstants.NORMAL_LAYOUT_MARGIN_LEFT :
-      CommonConstants.MAX_LAYOUT_MARGIN_LEFT
+      left: LanguagesUtil.isMirrorLanguages() ? 0 :CommonConstants.NORMAL_LAYOUT_MARGIN_LEFT,
+      top: LanguagesUtil.isUltraLongLanguages() ? CommonConstants.SWITCH_ICON_MARGIN_TOP_ULTRA :
+        CommonConstants.SWITCH_ICON_MARGIN_TOP
     })
   }
 
@@ -274,10 +279,10 @@ struct MechControl {
         .width('100%')
         .height('100%')
         .justifyContent(FlexAlign.Start)
+        .alignItems(VerticalAlign.Top)
     }
     .width('100%')
     .height('100%')
-    .justifyContent(FlexAlign.Center)
     .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
     .visibility(this.visibilityState)

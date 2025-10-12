@@ -20,11 +20,10 @@ import deviceInfo from '@ohos.deviceInfo';
 import { BusinessError } from '@ohos.base';
 import mediaQuery from '@ohos.mediaquery';
 import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
-import CommonConstants, { FontSizeScale } from '../common/constants/CommonConstants';
+import CommonConstants, { FontSizeScale, LanguagesUtil } from '../common/constants/CommonConstants';
 import { logger } from '../utils/Logger';
 import { TipsJumpUtils } from '../utils/TipsJumpUtils';
 import systemParameterEnhance from '@ohos.systemParameterEnhance';
-import i18n from '@ohos.i18n';
 import { LengthMetrics } from '@ohos.arkui.node';
 import { DeviceUtil } from '../utils/DeviceUtil';
 
@@ -418,7 +417,7 @@ struct ContinueSwitch {
               .fontWeight(FontWeight.Medium)
               .fontSize(CommonConstants.SYMBOL_INFO_CIRCLE)
               .fontColor([$r('sys.color.ohos_id_color_activated')])
-              .margin(this.isMirrorLanguages() ? { left: CommonConstants.SYMBOL_MARGIN_RIGHT } :
+              .margin(LanguagesUtil.isMirrorLanguages() ? { left: CommonConstants.SYMBOL_MARGIN_RIGHT } :
                 { right: CommonConstants.SYMBOL_MARGIN_RIGHT })
               .width(CommonConstants.SYMBOL_INFO_CIRCLE)
               .height(CommonConstants.SYMBOL_INFO_CIRCLE)
@@ -447,7 +446,7 @@ struct ContinueSwitch {
               .fontColor($r('sys.color.ohos_id_color_text_secondary'))
               .textAlign(TextAlign.Start)
               .width('100%')
-              .lineHeight(this.isTibetanLanguages() ? 19 : 0)
+              .lineHeight(LanguagesUtil.isTibetanLanguages() ? 19 : 0)
           }
           .padding({
             left: CommonConstants.TEXT_LIST_ALIGN_DISTANCE,
@@ -555,20 +554,5 @@ struct ContinueSwitch {
       return CommonConstants.ANIMATOR_WIDTH_PAD;
     }
     return CommonConstants.ANIMATOR_WIDTH_PHONE;
-  }
-
-  private isMirrorLanguages():
-    boolean {
-    logger.info(`${TAG} isMirrorLanguages in`);
-    let locale = new Intl.Locale(i18n.System.getSystemLanguage()).toString();
-    return CommonConstants.MIRROR_LANGUAGES.includes(locale);
-  }
-
-  private isTibetanLanguages():
-    boolean {
-    logger.info(`${TAG} isTibetanLanguages in`);
-    let locale = new Intl.Locale(i18n.System.getSystemLanguage()).toString();
-    logger.info(`${TAG} isTibetanLanguages: ${locale}`);
-    return CommonConstants.TIBETAN_LANGUAGES.includes(locale);
   }
 }
