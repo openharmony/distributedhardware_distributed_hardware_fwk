@@ -151,7 +151,7 @@ struct MechControl {
       }
       .width(CommonConstants.BUTTON_SIZE)
       .height(CommonConstants.BUTTON_SIZE)
-      .backgroundColor(this.isTrackingEnabled ? $r('app.color.color_0A59F7_blue') :
+      .backgroundColor(this.isTrackingEnabled ? $r('sys.color.ohos_id_color_emphasize') :
       $r('sys.color.ohos_id_color_component_normal'))
       .accessibilityText($r('app.string.mech_intelligent_tracking'))
       .type(ButtonType.Circle)
@@ -225,7 +225,7 @@ struct MechControl {
       .width(CommonConstants.BUTTON_SIZE)
       .height(CommonConstants.BUTTON_SIZE)
       .accessibilityText($r('app.string.mech_tracking_layout'))
-      .backgroundColor($r('app.color.color_0A59F7_blue'))
+      .backgroundColor($r('sys.color.ohos_id_color_emphasize'))
       .type(ButtonType.Circle)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: CommonConstants.BUTTON_CLICK_SCALE })
       .onClick(() => {
