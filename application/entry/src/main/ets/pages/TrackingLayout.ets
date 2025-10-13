@@ -132,7 +132,7 @@ struct TrackingLayout {
       .height(CommonConstants.BUTTON_SIZE)
       .accessibilityText($r('app.string.mech_left'))
       .backgroundColor(this.currentLayout == mechanicManager.CameraTrackingLayout.LEFT ?
-      $r('app.color.color_0A59F7_blue') : $r('sys.color.ohos_id_color_component_normal'))
+      $r('sys.color.ohos_id_color_emphasize') : $r('sys.color.ohos_id_color_component_normal'))
       .onClick(() => {
         logger.info(`${TAG} onClick TrackingLayoutLeft in`);
         this.onLeftIconClick();
@@ -169,7 +169,7 @@ struct TrackingLayout {
       .height(CommonConstants.BUTTON_SIZE)
       .accessibilityText($r('app.string.mech_center'))
       .backgroundColor((this.currentLayout == mechanicManager.CameraTrackingLayout.MIDDLE ||
-        this.currentLayout == mechanicManager.CameraTrackingLayout.DEFAULT) ? $r('app.color.color_0A59F7_blue') :
+        this.currentLayout == mechanicManager.CameraTrackingLayout.DEFAULT) ? $r('sys.color.ohos_id_color_emphasize') :
       $r('sys.color.ohos_id_color_component_normal'))
       .onClick(() => {
         logger.info(`${TAG} onClick TrackingLayoutCenter in`);
@@ -206,7 +206,7 @@ struct TrackingLayout {
       .height(CommonConstants.BUTTON_SIZE)
       .accessibilityText($r('app.string.mech_right'))
       .backgroundColor(this.currentLayout == mechanicManager.CameraTrackingLayout.RIGHT ?
-      $r('app.color.color_0A59F7_blue') : $r('sys.color.ohos_id_color_component_normal'))
+      $r('sys.color.ohos_id_color_emphasize') : $r('sys.color.ohos_id_color_component_normal'))
       .onClick(() => {
         logger.info(`${TAG} onClick TrackingLayoutRight in`);
         this.onRightIconClick();
