@@ -306,6 +306,18 @@ size_t DHContext::GetRealTimeOnlineDeviceCount()
     return realTimeOnLineNetworkIdSet_.size();
 }
 
+bool DHContext::IsRealTimeOnlineDevice(const std::string &networkId)
+{
+    DHLOGI("Jude is online device, networkId: %{public}s", GetAnonyString(networkId).c_str());
+    std::shared_lock<std::shared_mutex> lock(realTimeNetworkIdMutex_);
+    auto iter = realTimeOnLineNetworkIdSet_.find(networkId);
+    if (iter == realTimeOnLineNetworkIdSet_.end()) {
+        DHLOGE("networkid not exist");
+        return false;
+    }
+    return true;
+}
+
 void DHContext::RegisDHFWKIsomerismListener()
 {
     sptr<IPublisherListener> dhFwkIsomerismListener(new (std::nothrow) DHFWKIsomerismListener());

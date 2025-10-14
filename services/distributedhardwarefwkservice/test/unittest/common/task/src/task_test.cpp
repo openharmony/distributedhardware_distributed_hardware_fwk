@@ -424,5 +424,50 @@ HWTEST_F(TaskTest, task_test_025, TestSize.Level1)
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::UNKNOWN, taskParam, fatherTask);
     ASSERT_EQ(nullptr, task);
 }
+
+HWTEST_F(TaskTest, CreateTask_001, TestSize.Level1)
+{
+    TaskParam taskParam = {
+        .networkId = "networkId_1",
+        .uuid = "uuid_1",
+        .udid = "udid_1",
+        .dhId = "camera_1",
+        .dhType = DHType::CAMERA
+    };
+    std::shared_ptr<Task> fatherTask =
+        std::make_shared<OffLineTask>("networkId_1", "uuid_1", "udid_1", "camera_1", DHType::CAMERA);
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::META_DISABLE, taskParam, fatherTask);
+    ASSERT_NE(nullptr, task);
+}
+
+HWTEST_F(TaskTest, CreateTask_002, TestSize.Level1)
+{
+    TaskParam taskParam = {
+        .networkId = "networkId_2",
+        .uuid = "uuid_2",
+        .udid = "udid_2",
+        .dhId = "camera_2",
+        .dhType = DHType::CAMERA
+    };
+    std::shared_ptr<Task> fatherTask =
+        std::make_shared<OffLineTask>("networkId_2", "uuid_2", "udid_2", "camera_2", DHType::CAMERA);
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::DISABLE, taskParam, fatherTask);
+    ASSERT_NE(nullptr, task);
+}
+
+HWTEST_F(TaskTest, CreateTask_003, TestSize.Level1)
+{
+    TaskParam taskParam = {
+        .networkId = "networkId_2",
+        .uuid = "uuid_2",
+        .udid = "udid_2",
+        .dhId = "camera_2",
+        .dhType = DHType::CAMERA
+    };
+    std::shared_ptr<Task> fatherTask =
+        std::make_shared<OffLineTask>("networkId_2", "uuid_2", "udid_2", "camera_2", DHType::CAMERA);
+    auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, fatherTask);
+    ASSERT_NE(nullptr, task);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

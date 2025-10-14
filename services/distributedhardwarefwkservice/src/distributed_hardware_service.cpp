@@ -437,10 +437,11 @@ int32_t DistributedHardwareService::GetDistributedHardware(const std::string &ne
         DHLOGE("networkId size is invalid or callback ptr is null");
         return ERR_DH_FWK_PARA_INVALID;
     }
-
     bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
-    if (!isInit) {
-        DHLOGW("DHManager is not init");
+    bool isOnline = DHContext::GetInstance().IsRealTimeOnlineDevice(networkId);
+    if (((!isInit || !isOnline) && enableStep == EnableStep::ENABLE_SOURCE) ||
+        (!isInit && enableStep == EnableStep::ENABLE_SINK)) {
+        DHLOGE("DHManager is not init or the device is not online device.");
         return ERR_DH_FWK_HARDWARE_MANAGER_BUSY;
     }
     DHLOGI("GetDistributedHardware start");

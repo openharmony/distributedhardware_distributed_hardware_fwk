@@ -472,5 +472,17 @@ HWTEST_F(DhContextTest, CheckAndDeleteOnlineDeviceOSType_001, TestSize.Level1)
     DHContext::GetInstance().DeleteOnlineDeviceOSType(networkId);
     EXPECT_EQ(true, ret);
 }
+
+HWTEST_F(DhContextTest, IsRealTimeOnlineDevice_001, TestSize.Level1)
+{
+    std::string networkId = "networkId_1";
+    DHContext::GetInstance().AddRealTimeOnlineDeviceNetworkId(networkId);
+    auto ret = DHContext::GetInstance().IsRealTimeOnlineDevice(networkId);
+    EXPECT_EQ(true, ret);
+
+    DHContext::GetInstance().DeleteRealTimeOnlineDeviceNetworkId(networkId);
+    ret = DHContext::GetInstance().IsRealTimeOnlineDevice(networkId);
+    EXPECT_EQ(false, ret);
+}
 }
 }

@@ -313,36 +313,55 @@ HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Le
 {
     DistributedHardwareService service(ASID, true);
     std::string networkId = "";
-    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    EnableStep enableSourceStep = EnableStep::ENABLE_SOURCE;
+    EnableStep enableSinkStep = EnableStep::ENABLE_SINK;
     DistributedHardwareManager::GetInstance().isAllInit_.store(true);
-    auto ret = service.GetDistributedHardware(networkId, enableStep, nullptr);
+    auto ret = service.GetDistributedHardware(networkId, enableSourceStep, nullptr);
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 
     networkId = "111";
-    ret = service.GetDistributedHardware(networkId, enableStep, nullptr);
+    ret = service.GetDistributedHardware(networkId, enableSourceStep, nullptr);
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 
+    DistributedHardwareManager::GetInstance().isAllInit_.store(false);
     sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
-    ret = service.GetDistributedHardware(networkId, enableStep, callback);
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    ret = service.GetDistributedHardware(networkId, enableSourceStep, callback);
+    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
 
-    networkId = "local";
-    ret = service.GetDistributedHardware(networkId, enableStep, callback);
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    ret = service.GetDistributedHardware(networkId, enableSinkStep, callback);
+    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
+
+    DistributedHardwareManager::GetInstance().isAllInit_.store(true);
+    ret = service.GetDistributedHardware(networkId, enableSourceStep, callback);
+    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
+
+    DistributedHardwareManager::GetInstance().isAllInit_.store(false);
+    DHContext::GetInstance().AddRealTimeOnlineDeviceNetworkId(networkId);
+    ret = service.GetDistributedHardware(networkId, enableSourceStep, callback);
+    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
+
+    ret = service.GetDistributedHardware(networkId, enableSinkStep, callback);
+    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
 }
 
 HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_002, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string networkId = "networkId_1";
-    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    EnableStep enableSourceStep = EnableStep::ENABLE_SOURCE;
+    EnableStep enableSinkStep = EnableStep::ENABLE_SINK;
     sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
-    DistributedHardwareManager::GetInstance().isAllInit_.store(false);
-    auto ret = service.GetDistributedHardware(networkId, enableStep, callback);
-    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
-
     DistributedHardwareManager::GetInstance().isAllInit_.store(true);
-    ret = service.GetDistributedHardware(networkId, enableStep, callback);
+    auto ret = service.GetDistributedHardware(networkId, enableSinkStep, callback);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    DHContext::GetInstance().AddRealTimeOnlineDeviceNetworkId(networkId);
+    ret = service.GetDistributedHardware(networkId, enableSourceStep, callback);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    networkId = "local";
+    DHContext::GetInstance().AddRealTimeOnlineDeviceNetworkId(networkId);
+    ret = service.GetDistributedHardware(networkId, enableSourceStep, callback);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 

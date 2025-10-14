@@ -35,9 +35,10 @@
 namespace OHOS {
 namespace DistributedHardware {
 namespace {
-    constexpr int32_t WAIT_DISABLETASK_TIMEOUT_MS = 1000;
     constexpr uint16_t PHONE_TYPE = 14;
     constexpr const char *OFFLINE_TASK_INNER = "OffLineTask";
+    constexpr int32_t USLEEP_TIME = 2000 * 10;
+    constexpr int32_t RETRY_MAX_TIMES = 15;
 }
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "OffLineTask"
@@ -103,9 +104,14 @@ void OffLineTask::DoTaskInner()
     this->SetTaskState(TaskState::SUCCESS);
     DHLOGI("Finish OffLine task, remove it, id: %{public}s", GetId().c_str());
     TaskBoard::GetInstance().RemoveTask(this->GetId());
+    int32_t retryCount = 0;
     if (DHContext::GetInstance().GetRealTimeOnlineDeviceCount() == 0 &&
-        DHContext::GetInstance().GetIsomerismConnectCount() == 0 &&
-        TaskBoard::GetInstance().IsAllDisableTaskFinish()) {
+        DHContext::GetInstance().GetIsomerismConnectCount() == 0) {
+        while (!TaskBoard::GetInstance().IsAllDisableTaskFinish() && retryCount < RETRY_MAX_TIMES) {
+            retryCount++;
+            usleep(USLEEP_TIME);
+            DHLOGI("judge disable task is finished, retryCount = %{public}d", retryCount);
+        }
         DHLOGI("all devices are offline and all disable tasks are finished, start to free the resource");
         DistributedHardwareManagerFactory::GetInstance().UnInit();
     }
@@ -188,12 +194,7 @@ void OffLineTask::WaitDisableTaskFinish()
 {
     DHLOGI("start wait disable task finish");
     std::unique_lock<std::mutex> waitLock(unFinishTaskMtx_);
-    auto waitStatus = finishCondVar_.wait_for(waitLock, std::chrono::milliseconds(WAIT_DISABLETASK_TIMEOUT_MS),
-        [&] { return this->unFinishChildrenTasks_.empty(); });
-    if (!waitStatus) {
-        DHLOGE("disabletask unfinish or disabletask timeout.");
-        return;
-    }
+    finishCondVar_.wait(waitLock, [&] { return this->unFinishChildrenTasks_.empty(); });
     DHLOGI("all disable task finish");
     DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(GetNetworkId());
 }
@@ -210,11 +211,11 @@ void OffLineTask::ClearOffLineInfo()
 
 void OffLineTask::NotifyFatherFinish(std::string taskId)
 {
-    {
-        std::lock_guard<std::mutex> lock(unFinishTaskMtx_);
-        this->unFinishChildrenTasks_.erase(taskId);
+    std::lock_guard<std::mutex> lock(unFinishTaskMtx_);
+    this->unFinishChildrenTasks_.erase(taskId);
+    if (unFinishChildrenTasks_.empty()) {
+        finishCondVar_.notify_all();
     }
-    finishCondVar_.notify_all();
 }
 
 void OffLineTask::AddChildrenTask(std::shared_ptr<Task> childrenTask)
