@@ -46,6 +46,8 @@ enum class DHMsgInterfaceCode : uint32_t {
     LOAD_HDF = 480022,
     UNLOAD_HDF = 480023,
     NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED = 1,
+    INIT_SINK_DMSDP = 0,
+    NOTIFY_SINK_DEVICE_REMOTE_DMSDP_STARTED = 1212,
 };
 } // namespace DistributedHardware
 } // namespace OHOS

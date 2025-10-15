@@ -237,6 +237,19 @@ void DistributedHardwareProxyTest::TestGetDistributedHardwareCallback::OnError(
     (void)error;
 }
 
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::LoadSinkDMSDPService(const std::string &udid)
+{
+    (void)udid;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::NotifySinkRemoteSourceStarted(
+    const std::string &udid)
+{
+    (void)udid;
+    return DH_FWK_SUCCESS;
+}
+
 /**
  * @tc.name: RegisterPublisherListener_001
  * @tc.desc: Verify the RegisterPublisherListener function
@@ -751,6 +764,46 @@ HWTEST_F(DistributedHardwareProxyTest, UnLoadDistributedHDF_002, TestSize.Level1
     DistributedHardwareProxy dhProxy(nullptr);
     auto ret = dhProxy.UnLoadDistributedHDF(DHType::CAMERA);
     EXPECT_EQ(ERR_DH_AVT_SERVICE_REMOTE_IS_NULL, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, LoadSinkDMSDPService_001, TestSize.Level1)
+{
+    std::string udid = "";
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+    auto ret = dhProxy.LoadSinkDMSDPService(udid);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, LoadSinkDMSDPService_002, TestSize.Level1)
+{
+    std::string udid = "udid_123";
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+    auto ret = dhProxy.LoadSinkDMSDPService(udid);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, NotifySinkRemoteSourceStarted_001, TestSize.Level1)
+{
+    std::string udid = "";
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+    auto ret = dhProxy.NotifySinkRemoteSourceStarted(udid);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareProxyTest, NotifySinkRemoteSourceStarted_002, TestSize.Level1)
+{
+    std::string udid = "udid_123";
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+    auto ret = dhProxy.NotifySinkRemoteSourceStarted(udid);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

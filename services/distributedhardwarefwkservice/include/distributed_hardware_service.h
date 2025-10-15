@@ -19,6 +19,7 @@
 #include "event_handler.h"
 #include "ipc_object_stub.h"
 #include "system_ability.h"
+#include "system_ability_load_callback_stub.h"
 
 #include "distributed_hardware_fwk_kit.h"
 #include "distributed_hardware_fwk_kit_paras.h"
@@ -64,6 +65,18 @@ public:
     int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors) override;
     int32_t LoadDistributedHDF(const DHType dhType) override;
     int32_t UnLoadDistributedHDF(const DHType dhType) override;
+    int32_t LoadSinkDMSDPService(const std::string &udid) override;
+    int32_t NotifySinkRemoteSourceStarted(const std::string &udid) override;
+
+public:
+    class LoadDMSDPServiceCallback : public SystemAbilityLoadCallbackStub {
+    public:
+        LoadDMSDPServiceCallback() = default;
+        ~LoadDMSDPServiceCallback() override = default;
+
+        void OnLoadSystemAbilitySuccess(int32_t systemAbilityId, const sptr<IRemoteObject> &remoteObject) override;
+        void OnLoadSystemAbilityFail(int32_t systemAbilityId) override;
+    };
 
 protected:
     void OnStart() override;

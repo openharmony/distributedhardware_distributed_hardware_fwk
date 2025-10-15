@@ -58,6 +58,8 @@ namespace {
     constexpr int32_t INIT_BUSINESS_DELAY_TIME_MS = 5 * 100;
     const std::string INIT_TASK_ID = "CheckAndInitDH";
     const std::string LOCAL_NETWORKID_ALIAS = "local";
+    constexpr int32_t DMSDP_ADAPTER_SA_ID = 4812;
+    constexpr int32_t DHMS_SERVICE_SA_ID = 4801;
 }
 
 DistributedHardwareService::DistributedHardwareService(int32_t saId, bool runOnCreate)
@@ -194,6 +196,11 @@ int32_t DistributedHardwareService::UnregisterPublisherListener(const DHTopic to
 
 int32_t DistributedHardwareService::PublishMessage(const DHTopic topic, const std::string &msg)
 {
+    if (topic == DHTopic::TOPIC_CREATE_SESSION_READY) {
+        // because permission check, fwk no need send RPC, dmsdp send RPC.
+        DHLOGI("Sink DMSDP create session server success, no need fwk notify remote.");
+        return DH_FWK_SUCCESS;
+    }
     DHContext::GetInstance();
     Publisher::GetInstance().PublishMessage(topic, msg);
     return DH_FWK_SUCCESS;
@@ -626,6 +633,49 @@ int32_t DistributedHardwareService::UnLoadDistributedHDF(const DHType dhType)
             break;
     }
     return ERR_DH_FWK_NO_HDF_SUPPORT;
+}
+
+int32_t DistributedHardwareService::LoadSinkDMSDPService(const std::string &udid)
+{
+    DHLOGI("Load DMSDP SA start");
+    (void)udid;
+    sptr<ISystemAbilityManager> saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (saMgr == nullptr) {
+        DHLOGE("Get System Ability Manager failed");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+
+    sptr<IRemoteObject> remote = saMgr->CheckSystemAbility(DMSDP_ADAPTER_SA_ID);
+    if (remote != nullptr) {
+        DHLOGI("DMSDP service has already been loaded!");
+        return DH_FWK_SUCCESS;
+    }
+    sptr<LoadDMSDPServiceCallback> loadDMSDPServiceCb(new LoadDMSDPServiceCallback);
+    int32_t ret = saMgr->LoadSystemAbility(DMSDP_ADAPTER_SA_ID, loadDMSDPServiceCb);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Failed to load DMSDP service, ret: %{public}d", ret);
+        return ret;
+    }
+    DHLOGI("Load DMSDP SA end");
+    return DH_FWK_SUCCESS;
+}
+
+void DistributedHardwareService::LoadDMSDPServiceCallback::OnLoadSystemAbilitySuccess(
+    int32_t systemAbilityId, const sptr<IRemoteObject> &remoteObject)
+{
+    DHLOGI("Load DMSDP service success. systemAbilityId: %{public}d", systemAbilityId);
+    (void)remoteObject;
+}
+
+void DistributedHardwareService::LoadDMSDPServiceCallback::OnLoadSystemAbilityFail(int32_t systemAbilityId)
+{
+    DHLOGI("Load DMSDP service fail. systemAbilityId: %{public}d", systemAbilityId);
+}
+
+int32_t DistributedHardwareService::NotifySinkRemoteSourceStarted(const std::string &udid)
+{
+    Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_SOURCE_DHMS_READY, udid);
+    return DH_FWK_SUCCESS;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

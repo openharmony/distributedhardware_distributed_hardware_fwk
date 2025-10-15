@@ -814,5 +814,37 @@ HWTEST_F(DistributedHardwareStubTest, StopDistributedHardwareInner_001, TestSize
     auto ret = stubTest_->StopDistributedHardwareInner(data, reply);
     EXPECT_EQ(ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL, ret);
 }
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequestRPC_001, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::INIT_SINK_DMSDP);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    auto ret = stubTest_->OnRemoteRequestRPC(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    std::string udid = "udid_123";
+    data.WriteString(udid);
+    ret = stubTest_->OnRemoteRequestRPC(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequestRPC_002, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SINK_DEVICE_REMOTE_DMSDP_STARTED);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    auto ret = stubTest_->OnRemoteRequestRPC(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    std::string udid = "udid_123";
+    data.WriteString(udid);
+    ret = stubTest_->OnRemoteRequestRPC(code, data, reply, option);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

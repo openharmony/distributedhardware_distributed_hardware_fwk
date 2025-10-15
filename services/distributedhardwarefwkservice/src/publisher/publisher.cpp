@@ -31,7 +31,9 @@ Publisher::Publisher() : publisherItems_({
         { DHTopic::TOPIC_PHY_DEV_PLUGIN, std::make_shared<PublisherItem>(DHTopic::TOPIC_PHY_DEV_PLUGIN) },
         { DHTopic::TOPIC_ISOMERISM, std::make_shared<PublisherItem>(DHTopic::TOPIC_ISOMERISM) },
         { DHTopic::TOPIC_AV_FLUENCY, std::make_shared<PublisherItem>(DHTopic::TOPIC_AV_FLUENCY) },
-        { DHTopic::TOPIC_AV_LOW_LATENCY, std::make_shared<PublisherItem>(DHTopic::TOPIC_AV_LOW_LATENCY) }
+        { DHTopic::TOPIC_AV_LOW_LATENCY, std::make_shared<PublisherItem>(DHTopic::TOPIC_AV_LOW_LATENCY) },
+        { DHTopic::TOPIC_CREATE_SESSION_READY, std::make_shared<PublisherItem>(DHTopic::TOPIC_CREATE_SESSION_READY) },
+        { DHTopic::TOPIC_SOURCE_DHMS_READY, std::make_shared<PublisherItem>(DHTopic::TOPIC_SOURCE_DHMS_READY) }
     })
 {
 }

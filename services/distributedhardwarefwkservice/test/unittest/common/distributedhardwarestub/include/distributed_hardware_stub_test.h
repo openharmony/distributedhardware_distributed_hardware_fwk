@@ -197,6 +197,18 @@ int32_t UnLoadDistributedHDF(const DHType dhType)
     (void)dhType;
     return DH_FWK_SUCCESS;
 }
+
+int32_t LoadSinkDMSDPService(const std::string &udid)
+{
+    (void)udid;
+    return DH_FWK_SUCCESS;
+}
+
+int32_t NotifySinkRemoteSourceStarted(const std::string &udid)
+{
+    (void)udid;
+    return DH_FWK_SUCCESS;
+}
 };
 
 class MockGetDhDescriptorsCallbackStub : public IRemoteStub<IGetDhDescriptorsCallback> {

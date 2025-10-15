@@ -52,10 +52,13 @@ private:
     int32_t DisableSourceInner(MessageParcel &data, MessageParcel &reply);
     int32_t LoadDistributedHDFInner(MessageParcel &data, MessageParcel &reply);
     int32_t UnLoadDistributedHDFInner(MessageParcel &data, MessageParcel &reply);
+    int32_t HandleLoadSinkDMSDPService(MessageParcel &data, MessageParcel &reply);
+    int32_t HandleNotifySinkRemoteSourceStarted(MessageParcel &data, MessageParcel &reply);
 
     int32_t ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors);
     int32_t WriteDescriptors(MessageParcel &data, const std::vector<DHDescriptor> &descriptors);
     int32_t OnRemoteRequestEx(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option);
+    int32_t OnRemoteRequestRPC(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option);
 
     bool ValidTopic(uint32_t topic);
     bool ValidQueryLocalSpec(uint32_t spec);

@@ -68,6 +68,8 @@ public:
     int32_t DisableSource(const std::string &networkId, const std::vector<DHDescriptor> &descriptors) override;
     int32_t LoadDistributedHDF(const DHType dhType) override;
     int32_t UnLoadDistributedHDF(const DHType dhType) override;
+    int32_t LoadSinkDMSDPService(const std::string &udid) override;
+    int32_t NotifySinkRemoteSourceStarted(const std::string &udid) override;
 
 private:
     int32_t ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors);
