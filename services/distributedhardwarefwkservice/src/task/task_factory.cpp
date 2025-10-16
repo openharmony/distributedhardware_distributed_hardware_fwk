@@ -68,7 +68,9 @@ std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskP
     }
     if (fatherTask != nullptr) {
         task->SetFatherTask(fatherTask);
-        fatherTask->AddChildrenTask(task);
+        if (taskType == TaskType::DISABLE || taskType == TaskType::META_DISABLE) {
+            fatherTask->AddChildrenTask(task);
+        }
     }
     TaskBoard::GetInstance().AddTask(task);
     return task;

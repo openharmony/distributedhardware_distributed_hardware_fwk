@@ -81,6 +81,7 @@ public:
     void AddRealTimeOnlineDeviceNetworkId(const std::string &networkId);
     void DeleteRealTimeOnlineDeviceNetworkId(const std::string &networkId);
     size_t GetRealTimeOnlineDeviceCount();
+    bool IsRealTimeOnlineDevice(const std::string &networkId);
     void GetOnlineDeviceUdidHash(std::vector<std::string> &udidHashVec);
     void GetOnlineDeviceDeviceId(std::vector<std::string> &deviceIdVec);
     void AddOnlineDeviceType(const std::string &networkId, uint16_t deviceType);

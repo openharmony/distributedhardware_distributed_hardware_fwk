@@ -195,6 +195,19 @@ HWTEST_F(OnlineTaskTest, CreateMetaDisableTask_002, TestSize.Level1)
     DHContext::GetInstance().AddOnlineDeviceOSType(NETWORKID_TEST, NEW_HO_DEVICE_TYPE_TEST);
     ASSERT_NO_FATAL_FAILURE(offlineTask.CreateMetaDisableTask());
 }
+
+HWTEST_F(OnlineTaskTest, NotifyFatherFinish_001, TestSize.Level1)
+{
+    OffLineTask offlineTask(NETWORKID_TEST, UUID_TEST, UDID_TEST, DHID_TEST, DH_TYPE_TEST);
+    std::string taskId = "offline_task_1";
+    std::string disabletaskId = "disable_1";
+    offlineTask.unFinishChildrenTasks_.insert(taskId);
+    offlineTask.unFinishChildrenTasks_.insert(disabletaskId);
+    ASSERT_NO_FATAL_FAILURE(offlineTask.NotifyFatherFinish(disabletaskId));
+
+    offlineTask.unFinishChildrenTasks_.erase(taskId);
+    ASSERT_NO_FATAL_FAILURE(offlineTask.NotifyFatherFinish(taskId));
+}
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif
