@@ -37,7 +37,7 @@ namespace DistributedHardware {
 namespace {
     constexpr uint16_t PHONE_TYPE = 14;
     constexpr const char *OFFLINE_TASK_INNER = "OffLineTask";
-    constexpr int32_t USLEEP_TIME = 2000 * 10;
+    constexpr int32_t USLEEP_TIME = 2000 * 100;
     constexpr int32_t RETRY_MAX_TIMES = 15;
 }
 #undef DH_LOG_TAG
