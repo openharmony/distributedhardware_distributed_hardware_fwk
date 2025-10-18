@@ -39,18 +39,16 @@ int32_t ComponentDisable::Disable(const std::string &networkId, const std::strin
     if (!IsIdLengthValid(networkId) || !IsIdLengthValid(dhId)) {
         return ERR_DH_FWK_PARA_INVALID;
     }
-    DHLOGD("networkId = %{public}s dhId = %{public}s.", GetAnonyString(networkId).c_str(),
-        GetAnonyString(dhId).c_str());
+    DHLOGI("networkId = %{public}s dhId = %{public}s.", GetAnonyString(networkId).c_str(), dhId.c_str());
     if (handler == nullptr) {
-        DHLOGE("handler is null, networkId = %{public}s dhId = %{public}s.", GetAnonyString(networkId).c_str(),
-            GetAnonyString(dhId).c_str());
+        DHLOGE("handler is null, networkId = %{public}s.", GetAnonyString(networkId).c_str());
         return ERR_DH_FWK_PARA_INVALID;
     }
 
     auto ret = handler->UnregisterDistributedHardware(networkId, dhId, shared_from_this());
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("UnregisterDistributedHardware failed, networkId = %{public}s dhId = %{public}s.",
-            GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str());
+            GetAnonyString(networkId).c_str(), dhId.c_str());
         HiSysEventWriteCompMgrFailedMsg(DHFWK_DH_UNREGISTER_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             GetAnonyString(dhId), ret, "dhfwk unregister distributed hardware failed.");
         return ERR_DH_FWK_COMPONENT_UNREGISTER_FAILED;
@@ -62,7 +60,7 @@ int32_t ComponentDisable::Disable(const std::string &networkId, const std::strin
         [this]() { return status_ != std::numeric_limits<int32_t>::max(); });
     if (!waitStatus) {
         DHLOGE("disable timeout, networkId = %{public}s dhId = %{public}s.", GetAnonyString(networkId).c_str(),
-            GetAnonyString(dhId).c_str());
+            dhId.c_str());
         HiSysEventWriteCompMgrFailedMsg(DHFWK_DH_UNREGISTER_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             GetAnonyString(dhId), ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT,
             "dhfwk distributed hardware disable timeout.");
@@ -79,10 +77,10 @@ int32_t ComponentDisable::OnUnregisterResult(const std::string &networkId, const
     }
     if (status == DH_FWK_SUCCESS) {
         DHLOGI("disable success, networkId = %{public}s, dhId = %{public}s.", GetAnonyString(networkId).c_str(),
-            GetAnonyString(dhId).c_str());
+            dhId.c_str());
     } else {
         DHLOGE("disable failed, networkId = %{public}s, dhId = %{public}s, status = %{public}d.",
-            GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str(), status);
+            GetAnonyString(networkId).c_str(), dhId.c_str(), status);
     }
 
     std::unique_lock<std::mutex> lock(mutex_);
