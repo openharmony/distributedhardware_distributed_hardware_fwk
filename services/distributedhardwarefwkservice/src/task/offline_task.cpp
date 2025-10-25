@@ -27,6 +27,7 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager_factory.h"
+#include "local_capability_info_manager.h"
 #include "meta_info_manager.h"
 #include "task_board.h"
 #include "task_executor.h"
@@ -119,9 +120,9 @@ void OffLineTask::DoTaskInner()
 
 void OffLineTask::CreateDisableTask()
 {
-    DHLOGI("networkId = %{public}s, uuid = %{public}s", GetAnonyString(GetNetworkId()).c_str(),
-        GetAnonyString(GetUUID()).c_str());
     std::string deviceId = GetDeviceIdByUUID(GetUUID());
+    DHLOGI("create disablesource task, networkId = %{public}s, uuid = %{public}s, deviceId = %{public}s",
+        GetAnonyString(GetNetworkId()).c_str(), GetAnonyString(GetUUID()).c_str(), GetAnonyString(deviceId).c_str());
     std::vector<std::pair<std::string, DHType>> devDhInfos;
     std::vector<std::shared_ptr<CapabilityInfo>> capabilityInfos;
     CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, capabilityInfos);
@@ -130,6 +131,17 @@ void OffLineTask::CreateDisableTask()
             devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
         }
     });
+
+    if (devDhInfos.empty()) {
+        DHLOGW("Can not get cap info from CapabilityInfo, try use local info");
+        std::vector<std::shared_ptr<CapabilityInfo>> localCapInfos;
+        LocalCapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(deviceId, localCapInfos);
+        std::for_each(localCapInfos.begin(), localCapInfos.end(), [&](std::shared_ptr<CapabilityInfo> cap) {
+            if (cap != nullptr) {
+                devDhInfos.push_back({cap->GetDHId(), cap->GetDHType()});
+            }
+        });
+    }
 
     if (devDhInfos.empty()) {
         DHLOGW("Can not get cap info from CapabilityInfo, try use meta info");
@@ -144,8 +156,7 @@ void OffLineTask::CreateDisableTask()
     }
 
     if (devDhInfos.empty()) {
-        DHLOGE("Can not get cap info, uuid = %{public}s, deviceId = %{public}s", GetAnonyString(GetUUID()).c_str(),
-            GetAnonyString(deviceId).c_str());
+        DHLOGE("Can not get cap info, uuid = %{public}s", GetAnonyString(GetUUID()).c_str());
         return;
     }
 

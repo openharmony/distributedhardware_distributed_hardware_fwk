@@ -104,7 +104,7 @@ int32_t DisableTask::UnRegisterHardware()
     }
     DHLOGI("disable task %{public}s, id = %{public}s, uuid = %{public}s, dhId = %{public}s.",
         (ret == DH_FWK_SUCCESS) ? "success" : "failed", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
-        GetAnonyString(GetDhId()).c_str());
+        GetDhId().c_str());
     DHTraceEnd();
     return ret;
 }
@@ -174,7 +174,7 @@ int32_t DisableTask::DoAutoDisable()
         .id = GetDhId(),
         .dhType = GetDhType()
     };
-    DHLOGI("DisableSourceTask DhType = %{public}#X, id= %{public}s", GetDhType(), GetAnonyString(GetDhId()).c_str());
+    DHLOGI("DisableSourceTask DhType = %{public}#X, id= %{public}s", GetDhType(), GetDhId().c_str());
     auto ret = ComponentManager::GetInstance().ForceDisableSource(GetNetworkId(), dhDescriptor);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("DisableSource failed!");

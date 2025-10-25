@@ -208,6 +208,18 @@ HWTEST_F(OnlineTaskTest, NotifyFatherFinish_001, TestSize.Level1)
     offlineTask.unFinishChildrenTasks_.erase(taskId);
     ASSERT_NO_FATAL_FAILURE(offlineTask.NotifyFatherFinish(taskId));
 }
+
+HWTEST_F(OnlineTaskTest, CreateDisableTask_002, TestSize.Level1)
+{
+    OffLineTask offlineTask(NETWORKID_TEST, UUID_TEST, UDID_TEST, DHID_TEST, DH_TYPE_TEST);
+    ASSERT_NO_FATAL_FAILURE(offlineTask.CreateDisableTask());
+
+    std::shared_ptr<CapabilityInfo> localCapInfo = nullptr;
+    std::string deviceId = Sha256(UUID_TEST);
+    std::string key = deviceId + "###" + DHID_TEST;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = localCapInfo;
+    ASSERT_NO_FATAL_FAILURE(offlineTask.CreateDisableTask());
+}
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

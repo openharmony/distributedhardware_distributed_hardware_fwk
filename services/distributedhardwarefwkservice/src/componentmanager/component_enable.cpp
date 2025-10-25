@@ -39,18 +39,16 @@ int32_t ComponentEnable::Enable(const std::string &networkId, const std::string 
     if (!IsIdLengthValid(networkId) || !IsIdLengthValid(dhId)) {
         return ERR_DH_FWK_PARA_INVALID;
     }
-    DHLOGD("networkId = %{public}s dhId = %{public}s.", GetAnonyString(networkId).c_str(),
-        GetAnonyString(dhId).c_str());
+    DHLOGI("networkId = %{public}s dhId = %{public}s.", GetAnonyString(networkId).c_str(), dhId.c_str());
     if (handler == nullptr) {
-        DHLOGE("handler is null, networkId = %{public}s dhId = %{public}s.", GetAnonyString(networkId).c_str(),
-            GetAnonyString(dhId).c_str());
+        DHLOGE("handler is null, networkId = %{public}s.", GetAnonyString(networkId).c_str());
         return ERR_DH_FWK_PARA_INVALID;
     }
 
     auto ret = handler->RegisterDistributedHardware(networkId, dhId, param, shared_from_this());
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("RegisterDistributedHardware failed, networkId = %{public}s dhId = %{public}s.",
-            GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str());
+            GetAnonyString(networkId).c_str(), dhId.c_str());
         HiSysEventWriteCompMgrFailedMsg(DHFWK_DH_REGISTER_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             GetAnonyString(dhId), ret, "dhfwk register distributed hardware failed.");
         return ERR_DH_FWK_COMPONENT_REGISTER_FAILED;
@@ -62,7 +60,7 @@ int32_t ComponentEnable::Enable(const std::string &networkId, const std::string 
         [this]() { return status_ != std::numeric_limits<int32_t>::max(); });
     if (!waitStatus) {
         DHLOGE("enable timeout, networkId = %{public}s dhId = %{public}s", GetAnonyString(networkId).c_str(),
-            GetAnonyString(dhId).c_str());
+            dhId.c_str());
         HiSysEventWriteCompMgrFailedMsg(DHFWK_DH_REGISTER_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             GetAnonyString(dhId), ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT,
             "dhfwk distributed hardware enable timeout.");
@@ -79,10 +77,10 @@ int32_t ComponentEnable::OnRegisterResult(const std::string &networkId, const st
     }
     if (status == DH_FWK_SUCCESS) {
         DHLOGI("enable success, networkId = %{public}s, dhId = %{public}s.", GetAnonyString(networkId).c_str(),
-            GetAnonyString(dhId).c_str());
+            dhId.c_str());
     } else {
         DHLOGE("enable failed, networkId = %{public}s, dhId = %{public}s, status = %{public}d.",
-            GetAnonyString(networkId).c_str(), GetAnonyString(dhId).c_str(), status);
+            GetAnonyString(networkId).c_str(), dhId.c_str(), status);
     }
 
     std::unique_lock<std::mutex> lock(mutex_);

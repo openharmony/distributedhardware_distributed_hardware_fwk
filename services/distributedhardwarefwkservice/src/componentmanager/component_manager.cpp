@@ -357,11 +357,6 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
     auto result = compDisable->Disable(networkId, dhId, find->second);
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < DISABLE_RETRY_MAX_TIMES; retryCount++) {
-            if (DHContext::GetInstance().IsDeviceOnline(uuid)) {
-                DHLOGE("device is already online, no need try disable, uuid = %{public}s",
-                    GetAnonyString(uuid).c_str());
-                return result;
-            }
             if (compDisable->Disable(networkId, dhId, find->second) == DH_FWK_SUCCESS) {
                 DHLOGE("disable success, retryCount = %{public}d", retryCount);
                 EnabledCompsDump::GetInstance().DumpDisabledComp(networkId, dhType, dhId);
@@ -372,7 +367,7 @@ int32_t ComponentManager::Disable(const std::string &networkId, const std::strin
         return result;
     }
     DHLOGI("disable result is %{public}d, uuid = %{public}s, dhId = %{public}s", result, GetAnonyString(uuid).c_str(),
-        GetAnonyString(dhId).c_str());
+        dhId.c_str());
     EnabledCompsDump::GetInstance().DumpDisabledComp(networkId, dhType, dhId);
 
     return result;
@@ -1278,7 +1273,7 @@ int32_t ComponentManager::EnableSource(const std::string &networkId,
 int32_t ComponentManager::DisableSource(const std::string &networkId,
     const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid)
 {
-    DHLOGI("Start disableSink, dhType: %{public}#X, dhid: %{public}s", dhDescriptor.dhType,
+    DHLOGI("Start disableSource, dhType: %{public}#X, dhid: %{public}s", dhDescriptor.dhType,
         GetAnonyString(dhDescriptor.id).c_str());
     sptr<IHDSourceStatusListener> listener;
     int32_t ret = DisableSourceInternal(networkId, dhDescriptor, callingUid, callingPid, listener);

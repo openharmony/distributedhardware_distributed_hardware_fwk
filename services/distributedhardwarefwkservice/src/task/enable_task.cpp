@@ -99,7 +99,7 @@ int32_t EnableTask::RegisterHardware()
     }
     DHLOGI("enable task %{public}s, id = %{public}s, uuid = %{public}s, dhId = %{public}s.",
         (ret == DH_FWK_SUCCESS) ? "success" : "failed", GetId().c_str(), GetAnonyString(GetUUID()).c_str(),
-        GetAnonyString(GetDhId()).c_str());
+        GetDhId().c_str());
     DHTraceEnd();
     return ret;
 }
