@@ -43,8 +43,10 @@ public:
      * @param remoteNetworkId the target device network id
      */
     void TriggerReqFullDHCaps(const std::string &remoteNetworkId);
-    void GetAndSendLocalFullCaps(const std::string &reqNetworkId);
-    FullCapsRsp ParseAndSaveRemoteDHCaps(const std::string &remoteCaps);
+    void GetAndSendLocalFullCaps(const std::string &reqNetworkId, bool isSyncMeta);
+    FullCapsRsp ParseAndSaveRemoteDHCaps(const std::string &remoteCaps, bool isSyncMeta);
+    std::string GetLocalFullMetaCapsInfo(bool isSyncMeta);
+    std::string GetLocalFullCapsInfo(bool isSyncMeta);
 
     class DHCommToolEventHandler : public AppExecFwk::EventHandler {
     public:
@@ -53,7 +55,8 @@ public:
         ~DHCommToolEventHandler() override = default;
         void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
     private:
-        void ProcessFullCapsRsp(const FullCapsRsp &capsRsp, const std::shared_ptr<DHCommTool> dhCommToolPtr);
+        void ProcessFullCapsRsp(const FullCapsRsp &capsRsp, const std::shared_ptr<DHCommTool> dhCommToolPtr,
+            bool isSyncMeta);
         std::weak_ptr<DHCommTool> dhCommToolWPtr_;
     };
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> GetEventHandler();

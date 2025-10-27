@@ -21,6 +21,7 @@
 #include <cJSON.h>
 
 #include "capability_info.h"
+#include "meta_capability_info.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -31,19 +32,23 @@ const char* const COMM_MSG_MSG_KEY = "msg";
 const char* const COMM_MSG_USERID_KEY = "userId";
 const char* const COMM_MSG_TOKENID_KEY = "tokenId";
 const char* const COMM_MSG_ACCOUNTID_KEY = "accountId";
+const char* const COMM_MSG_SYNC_META_KEY = "sync_meta";
 
 struct FullCapsRsp {
     // the networkd id of rsp from which device
     std::string networkId;
     // the full dh caps
     std::vector<std::shared_ptr<CapabilityInfo>> caps;
-    FullCapsRsp() : networkId(""), caps({}) {}
-    FullCapsRsp(std::string networkId, std::vector<std::shared_ptr<CapabilityInfo>> caps) : networkId(networkId),
-        caps(caps) {}
+    // the full dh metacaps
+    std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCaps;
+    FullCapsRsp() : networkId(""), caps({}), metaCaps({}) {}
+    FullCapsRsp(std::string networkId, std::vector<std::shared_ptr<CapabilityInfo>> caps,
+        std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCaps) : networkId(networkId), caps(caps),
+        metaCaps(metaCaps) {}
 };
 
-void ToJson(cJSON *jsonObject, const FullCapsRsp &capsRsp);
-void FromJson(const cJSON *jsonObject, FullCapsRsp &capsRsp);
+void ToJson(cJSON *jsonObject, const FullCapsRsp &capsRsp, bool isSyncMeta);
+void FromJson(const cJSON *jsonObject, FullCapsRsp &capsRsp, bool isSyncMeta);
 
 struct CommMsg {
     int32_t code;
@@ -51,9 +56,11 @@ struct CommMsg {
     uint64_t tokenId;
     std::string msg;
     std::string accountId;
-    CommMsg() : code(-1), userId(-1), tokenId(0), msg(""), accountId("") {}
-    CommMsg(int32_t code, int32_t userId, uint64_t tokenId, std::string msg, std::string accountId) : code(code),
-        userId(userId), tokenId(tokenId), msg(msg), accountId(accountId) {}
+    bool isSyncMeta;
+    CommMsg() : code(-1), userId(-1), tokenId(0), msg(""), accountId(""), isSyncMeta(false) {}
+    CommMsg(int32_t code, int32_t userId, uint64_t tokenId, std::string msg, std::string accountId,
+        bool isSyncMeta) : code(code), userId(userId), tokenId(tokenId), msg(msg),
+        accountId(accountId), isSyncMeta(isSyncMeta) {}
 };
 
 void ToJson(cJSON *jsonObject, const CommMsg &commMsg);

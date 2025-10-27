@@ -54,11 +54,12 @@ void DhTransportGetAndSendLocalFullCapsFuzzTest(const uint8_t* data, size_t size
         return;
     }
 
+    bool isSyncMeta = true;
     FuzzedDataProvider fdp(data, size);
     std::string remoteNetworkId = fdp.ConsumeRandomLengthString();
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     dhCommTool->dhTransportPtr_ = std::make_shared<DHTransport>(dhCommTool);
-    dhCommTool->GetAndSendLocalFullCaps(remoteNetworkId);
+    dhCommTool->GetAndSendLocalFullCaps(remoteNetworkId, isSyncMeta);
     dhCommTool->dhTransportPtr_ = nullptr;
 }
 
@@ -68,10 +69,11 @@ void DhTransportParseAndSaveRemoteDHCapsFuzzTest(const uint8_t* data, size_t siz
         return;
     }
 
+    bool isSyncMeta = true;
     FuzzedDataProvider fdp(data, size);
     std::string remoteCaps = fdp.ConsumeRandomLengthString();
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
-    dhCommTool->ParseAndSaveRemoteDHCaps(remoteCaps);
+    dhCommTool->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta);
 }
 
 void DHCommToolEventHandlerProcessEventFuzzTest(const uint8_t* data, size_t size)
@@ -100,22 +102,23 @@ void DHCommToolEventHandlerProcessFullCapsRspFuzzTest(const uint8_t* data, size_
     auto commTool = std::make_shared<DHCommTool>();
     DHCommTool::DHCommToolEventHandler handler(runner, commTool);
 
+    bool isSyncMeta = true;
     FullCapsRsp capsRsp;
-    handler.ProcessFullCapsRsp(capsRsp, commTool);
+    handler.ProcessFullCapsRsp(capsRsp, commTool, isSyncMeta);
 
     FuzzedDataProvider fdp(data, size);
     capsRsp.networkId = fdp.ConsumeRandomLengthString();
-    handler.ProcessFullCapsRsp(capsRsp, commTool);
+    handler.ProcessFullCapsRsp(capsRsp, commTool, isSyncMeta);
 
     auto capInfo = std::make_shared<CapabilityInfo>();
     capsRsp.caps.push_back(capInfo);
-    handler.ProcessFullCapsRsp(capsRsp, nullptr);
+    handler.ProcessFullCapsRsp(capsRsp, nullptr, isSyncMeta);
 
     auto commToolNoTrans = std::make_shared<DHCommTool>();
-    handler.ProcessFullCapsRsp(capsRsp, commToolNoTrans);
+    handler.ProcessFullCapsRsp(capsRsp, commToolNoTrans, isSyncMeta);
 
     commTool->Init();
-    handler.ProcessFullCapsRsp(capsRsp, commTool);
+    handler.ProcessFullCapsRsp(capsRsp, commTool, isSyncMeta);
 }
 }
 }
