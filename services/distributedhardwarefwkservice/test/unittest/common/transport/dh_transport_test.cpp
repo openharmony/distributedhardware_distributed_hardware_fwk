@@ -270,59 +270,6 @@ HWTEST_F(DhTransportTest, GetRemoteNetworkIdBySocketId_001, TestSize.Level1)
     ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(jsonStr));
 }
 
-HWTEST_F(DhTransportTest, ToJson_FullCapsRsp_001, TestSize.Level1)
-{
-    cJSON *json = nullptr;
-    FullCapsRsp capsRsp;
-    ToJson(json, capsRsp);
-
-    cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
-    std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
-    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
-        "dhId_test", "deviceId_test", "devName_test", 14, DHType::CAMERA, "attrs_test", "subtype");
-    resInfos.emplace_back(capInfo);
-    capsRsp.networkId = "123456";
-    capsRsp.caps = resInfos;
-    ToJson(jsonObject, capsRsp);
-    cJSON_Delete(jsonObject);
-    EXPECT_FALSE(capsRsp.networkId.empty());
-}
-
-HWTEST_F(DhTransportTest, FromJson_FullCapsRsp_001, TestSize.Level1)
-{
-    cJSON *json = nullptr;
-    FullCapsRsp capsRsp;
-    FromJson(json, capsRsp);
-
-    cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
-    cJSON_AddStringToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, "caps_rsp_networkIid_test");
-    cJSON_AddStringToObject(jsonObject, CAPS_RSP_CAPS_KEY, "caps_rsp_caps_test");
-    FromJson(jsonObject, capsRsp);
-    cJSON_Delete(jsonObject);
-    EXPECT_FALSE(capsRsp.networkId.empty());
-}
-
-HWTEST_F(DhTransportTest, FromJson_FullCapsRsp_002, TestSize.Level1)
-{
-    cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
-    cJSON_AddNumberToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, 1);
-
-    cJSON *jsonArr = cJSON_CreateArray();
-    if (jsonArr == nullptr) {
-        cJSON_Delete(jsonObject);
-        return;
-    }
-    cJSON_AddItemToArray(jsonArr, cJSON_CreateNumber(1));
-    cJSON_AddItemToObject(jsonObject, CAPS_RSP_CAPS_KEY, jsonArr);
-    FullCapsRsp capsRsp;
-    FromJson(jsonObject, capsRsp);
-    cJSON_Delete(jsonObject);
-    EXPECT_TRUE(capsRsp.networkId.empty());
-}
-
 HWTEST_F(DhTransportTest, ToJson_CommMsg_001, TestSize.Level1)
 {
     cJSON *json = nullptr;
@@ -434,6 +381,38 @@ HWTEST_F(DhTransportTest, FromJson_CommMsg_007, TestSize.Level1)
     EXPECT_FALSE(commMsg.msg.empty());
 }
 
+HWTEST_F(DhTransportTest, FromJson_CommMsg_008, TestSize.Level1)
+{
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_USERID_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_TOKENID_KEY, 1);
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY, "comm_msg_msg_test");
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_ACCOUNTID_KEY, "account_test");
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_SYNC_META_KEY, "sync_meta_test");
+    CommMsg commMsg;
+    FromJson(jsonObject, commMsg);
+    cJSON_Delete(jsonObject);
+    EXPECT_FALSE(commMsg.msg.empty());
+}
+
+HWTEST_F(DhTransportTest, FromJson_CommMsg_009, TestSize.Level1)
+{
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_USERID_KEY, 1);
+    cJSON_AddNumberToObject(jsonObject, COMM_MSG_TOKENID_KEY, 1);
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY, "comm_msg_msg_test");
+    cJSON_AddStringToObject(jsonObject, COMM_MSG_ACCOUNTID_KEY, "account_test");
+    cJSON_AddBoolToObject(jsonObject, COMM_MSG_SYNC_META_KEY, true);
+    CommMsg commMsg;
+    FromJson(jsonObject, commMsg);
+    cJSON_Delete(jsonObject);
+    EXPECT_FALSE(commMsg.msg.empty());
+}
+
 HWTEST_F(DhTransportTest, CreateClientSocket_001, TestSize.Level1)
 {
     std::string remoteNetworkId = "";
@@ -536,7 +515,7 @@ HWTEST_F(DhTransportTest, HandleReceiveMessage_001, TestSize.Level1)
     uint64_t tokenId = 1;
     std::string networkId = "123456";
     std::string accountId = "111";
-    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId, tokenId, networkId, accountId);
+    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId, tokenId, networkId, accountId, true);
     std::string payload = GetCommMsgString(commMsg);
     std::string compressedPayLoad = Compress(payload);
     std::vector<int32_t> userIds;
@@ -552,7 +531,7 @@ HWTEST_F(DhTransportTest, HandleReceiveMessage_002, TestSize.Level1)
     uint64_t tokenId = 1;
     std::string networkId = "123456";
     std::string accountId = "111";
-    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId, tokenId, networkId, accountId);
+    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId, tokenId, networkId, accountId, true);
     std::string payload = GetCommMsgString(commMsg);
     std::string compressedPayLoad = Compress(payload);
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
@@ -567,7 +546,7 @@ HWTEST_F(DhTransportTest, HandleReceiveMessage_003, TestSize.Level1)
     uint64_t tokenId = 1;
     std::string networkId = "123456";
     std::string accountId = "111";
-    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, userId, tokenId, networkId, accountId);
+    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, userId, tokenId, networkId, accountId, true);
     std::string payload = GetCommMsgString(commMsg);
     std::string compressedPayLoad = Compress(payload);
     ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad));
@@ -580,7 +559,7 @@ HWTEST_F(DhTransportTest, HandleReceiveMessage_004, TestSize.Level1)
     uint64_t tokenId = 1;
     std::string networkId = "123456";
     std::string accountId = "111";
-    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, userId, tokenId, networkId, accountId);
+    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, userId, tokenId, networkId, accountId, true);
     std::string payload = GetCommMsgString(commMsg);
     std::string compressedPayLoad = Compress(payload);
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();

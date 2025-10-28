@@ -31,6 +31,7 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "local_capability_info_manager.h"
+#include "meta_info_manager.h"
 #include "task_executor.h"
 
 namespace OHOS {
@@ -143,7 +144,7 @@ void DHCommTool::TriggerReqFullDHCaps(const std::string &remoteNetworkId)
         DHLOGE("Start socket error");
         return;
     }
-    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId_, tokenId_, localNetworkId, accountId_);
+    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId_, tokenId_, localNetworkId, accountId_, true);
     std::string payload = GetCommMsgString(commMsg);
 
     int32_t ret = dhTransportPtr_->Send(remoteNetworkId, payload);
@@ -154,39 +155,80 @@ void DHCommTool::TriggerReqFullDHCaps(const std::string &remoteNetworkId)
     DHLOGI("Trigger req remote full attrs success.");
 }
 
-void DHCommTool::GetAndSendLocalFullCaps(const std::string &reqNetworkId)
+std::string DHCommTool::GetLocalFullCapsInfo(bool isSyncMeta)
+{
+    DHLOGI("get local cap info start");
+    std::string localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
+    std::vector<std::shared_ptr<CapabilityInfo>> localFullCapInfos;
+    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(localDeviceId, localFullCapInfos);
+    FullCapsRsp capsRsp;
+    capsRsp.networkId = GetLocalNetworkId();
+    capsRsp.caps = localFullCapInfos;
+    cJSON *root = cJSON_CreateObject();
+    if (root == nullptr) {
+        DHLOGE("Create cJSON object failed.");
+        return "";
+    }
+    ToJson(root, capsRsp, isSyncMeta);
+    char *msg = cJSON_PrintUnformatted(root);
+    if (msg == nullptr) {
+        cJSON_Delete(root);
+        return "";
+    }
+    std::string fullCapsMsg(msg);
+    cJSON_free(msg);
+    cJSON_Delete(root);
+    return fullCapsMsg;
+}
+
+std::string DHCommTool::GetLocalFullMetaCapsInfo(bool isSyncMeta)
+{
+    DHLOGI("get local metaCap info start");
+    std::string localUdidHash = DHContext::GetInstance().GetDeviceInfo().udidHash;
+    std::vector<std::shared_ptr<MetaCapabilityInfo>> lcoalFullMetaCapInfos;
+    MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(localUdidHash, lcoalFullMetaCapInfos);
+    FullCapsRsp capsRsp;
+    capsRsp.networkId = GetLocalNetworkId();
+    capsRsp.metaCaps = lcoalFullMetaCapInfos;
+    cJSON *root = cJSON_CreateObject();
+    if (root == nullptr) {
+        DHLOGE("Create cJSON object failed.");
+        return "";
+    }
+    ToJson(root, capsRsp, isSyncMeta);
+    char *fullMetaInfo = cJSON_PrintUnformatted(root);
+    if (fullMetaInfo == nullptr) {
+        cJSON_Delete(root);
+        return "";
+    }
+    std::string fullMetaCaps(fullMetaInfo);
+    cJSON_free(fullMetaInfo);
+    cJSON_Delete(root);
+    return fullMetaCaps;
+}
+
+void DHCommTool::GetAndSendLocalFullCaps(const std::string &reqNetworkId, bool isSyncMeta)
 {
     DHLOGI("GetAndSendLocalFullCaps, reqNetworkId: %{public}s", GetAnonyString(reqNetworkId).c_str());
     if (dhTransportPtr_ == nullptr) {
         DHLOGE("transport is null");
         return;
     }
-    std::string localDeviceId = DHContext::GetInstance().GetDeviceInfo().deviceId;
-    std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
-    CapabilityInfoManager::GetInstance()->GetCapabilitiesByDeviceId(localDeviceId, resInfos);
-    FullCapsRsp capsRsp;
-    capsRsp.networkId = GetLocalNetworkId();
-    capsRsp.caps = resInfos;
-    cJSON *root = cJSON_CreateObject();
-    if (root == nullptr) {
-        DHLOGE("Create cJSON object failed.");
+    std::string localFullInfo;
+    if (isSyncMeta) {
+        localFullInfo = GetLocalFullMetaCapsInfo(isSyncMeta);
+    } else {
+        localFullInfo = GetLocalFullCapsInfo(isSyncMeta);
+    }
+    if (localFullInfo.empty()) {
+        DHLOGE("Get lcoal full device info failed.");
         return;
     }
-    ToJson(root, capsRsp);
-    char *msg = cJSON_PrintUnformatted(root);
-    if (msg == nullptr) {
-        cJSON_Delete(root);
-        return;
-    }
-    std::string fullCapsMsg(msg);
-    cJSON_free(msg);
-    cJSON_Delete(root);
-
     CommMsg commMsg;
     commMsg.code = DH_COMM_RSP_FULL_CAPS;
-    commMsg.msg = fullCapsMsg;
+    commMsg.msg = localFullInfo;
+    commMsg.isSyncMeta = true;
     std::string payload = GetCommMsgString(commMsg);
-
     int32_t ret = dhTransportPtr_->Send(reqNetworkId, payload);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Send back Caps failed, ret: %{public}d", ret);
@@ -195,24 +237,32 @@ void DHCommTool::GetAndSendLocalFullCaps(const std::string &reqNetworkId)
     DHLOGI("Send back Caps success");
 }
 
-FullCapsRsp DHCommTool::ParseAndSaveRemoteDHCaps(const std::string &remoteCaps)
+FullCapsRsp DHCommTool::ParseAndSaveRemoteDHCaps(const std::string &remoteCaps, bool isSyncMeta)
 {
     FullCapsRsp capsRsp;
-    DHLOGI("ParseAndSaveRemoteDHCaps enter");
+    DHLOGI("Receive remote device full capinfos, parse and save remote device capinfos.");
     cJSON *root = cJSON_Parse(remoteCaps.c_str());
     if (root == NULL) {
         DHLOGE("Parse remote Caps failed");
         return capsRsp;
     }
 
-    FromJson(root, capsRsp);
+    FromJson(root, capsRsp, isSyncMeta);
     cJSON_Delete(root);
-    int32_t ret = LocalCapabilityInfoManager::GetInstance()->AddCapability(capsRsp.caps);
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Save local capabilities error, ret: %{public}d", ret);
-        return capsRsp;
+    if (isSyncMeta) {
+        int32_t ret = MetaInfoManager::GetInstance()->AddMetaCapInfos(capsRsp.metaCaps);
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("Save remote device metaCapInfos error, ret: %{public}d", ret);
+            return capsRsp;
+        }
+    } else {
+        int32_t ret = LocalCapabilityInfoManager::GetInstance()->AddCapability(capsRsp.caps);
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("Save remote device capabilities error, ret: %{public}d", ret);
+            return capsRsp;
+        }
     }
-    DHLOGE("Save local capabilities success");
+    DHLOGI("Save remote device capinfo success");
     return capsRsp;
 }
 
@@ -246,15 +296,12 @@ void DHCommTool::DHCommToolEventHandler::ProcessEvent(
     }
     switch (eventId) {
         case DH_COMM_REQ_FULL_CAPS: {
-            dhCommToolPtr->GetAndSendLocalFullCaps(commMsg->msg);
+            dhCommToolPtr->GetAndSendLocalFullCaps(commMsg->msg, commMsg->isSyncMeta);
             break;
         }
         case DH_COMM_RSP_FULL_CAPS: {
-            // parse remote rsp full attrs and save to local db
-            FullCapsRsp capsRsp = dhCommToolPtr->ParseAndSaveRemoteDHCaps(commMsg->msg);
-            DHLOGI("Receive full remote capabilities, remote networkid: %{public}s, caps size: %{public}" PRIu32,
-                GetAnonyString(capsRsp.networkId).c_str(), static_cast<uint32_t>(capsRsp.caps.size()));
-            ProcessFullCapsRsp(capsRsp, dhCommToolPtr);
+            FullCapsRsp capsRsp = dhCommToolPtr->ParseAndSaveRemoteDHCaps(commMsg->msg, commMsg->isSyncMeta);
+            ProcessFullCapsRsp(capsRsp, dhCommToolPtr, commMsg->isSyncMeta);
             break;
         }
         default:
@@ -264,9 +311,9 @@ void DHCommTool::DHCommToolEventHandler::ProcessEvent(
 }
 
 void DHCommTool::DHCommToolEventHandler::ProcessFullCapsRsp(const FullCapsRsp &capsRsp,
-    const std::shared_ptr<DHCommTool> dhCommToolPtr)
+    const std::shared_ptr<DHCommTool> dhCommToolPtr, bool isSyncMeta)
 {
-    if (capsRsp.networkId.empty() || capsRsp.caps.empty()) {
+    if (capsRsp.networkId.empty()) {
         DHLOGE("Receive remote caps info invalid!");
         return;
     }
@@ -279,26 +326,32 @@ void DHCommTool::DHCommToolEventHandler::ProcessFullCapsRsp(const FullCapsRsp &c
         return;
     }
     // after receive rsp, close dsoftbus channel
-    DHLOGI("we receive full remote capabilities, close channel, remote networkId: %{public}s",
+    DHLOGI("receive full remote capabilities, close channel, remote networkId: %{public}s",
         GetAnonyString(capsRsp.networkId).c_str());
     dhCommToolPtr->GetDHTransportPtr()->StopSocket(capsRsp.networkId);
 
-    // trigger register dh by full attrs
-    std::string uuid = DHContext::GetInstance().GetUUIDByNetworkId(capsRsp.networkId);
-    if (uuid.empty()) {
-        DHLOGE("Can not find remote device uuid by networkid: %{public}s", GetAnonyString(capsRsp.networkId).c_str());
-        return;
-    }
-
+    // Return remote capInfos to the business
     std::vector<DHDescriptor> descriptors;
-    for (auto const &cap : capsRsp.caps) {
-        if (cap == nullptr) {
-            continue;
+    if (isSyncMeta) {
+        for (auto const &metaCap : capsRsp.metaCaps) {
+            if (metaCap == nullptr) {
+                continue;
+            }
+            DHDescriptor descriptor;
+            descriptor.id = metaCap->GetDHId();
+            descriptor.dhType = metaCap->GetDHType();
+            descriptors.push_back(descriptor);
         }
-        DHDescriptor descriptor;
-        descriptor.id = cap->GetDHId();
-        descriptor.dhType = cap->GetDHType();
-        descriptors.push_back(descriptor);
+    } else {
+        for (auto const &cap : capsRsp.caps) {
+            if (cap == nullptr) {
+                continue;
+            }
+            DHDescriptor descriptor;
+            descriptor.id = cap->GetDHId();
+            descriptor.dhType = cap->GetDHType();
+            descriptors.push_back(descriptor);
+        }
     }
     ComponentManager::GetInstance().OnGetDescriptors(capsRsp.networkId, descriptors);
 }

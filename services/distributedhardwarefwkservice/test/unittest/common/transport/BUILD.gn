@@ -79,6 +79,41 @@ ohos_unittest("DhCommToolTest") {
   }
 }
 
+ohos_unittest("DhTransportObjTest") {
+  module_out_path = module_out_path
+
+  sources = [ "dh_transport_obj_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "device_manager:devicemanagersdk",
+    "dsoftbus:softbus_client",
+    "eventhandler:libeventhandler",
+    "googletest:gmock",
+    "googletest:gmock_main",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+}
+
 ohos_unittest("DhTransportTest") {
   module_out_path = module_out_path
 
@@ -132,6 +167,7 @@ group("transport_test") {
   testonly = true
   deps = [
     ":DhCommToolTest",
+    ":DhTransportObjTest",
     ":DhTransportTest",
   ]
 }
