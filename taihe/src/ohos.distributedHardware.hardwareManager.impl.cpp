@@ -32,6 +32,7 @@ using namespace OHOS::DistributedHardware;
 namespace {
 // To be implemented.
 
+constexpr int32_t ERR_NO_PERMISSION = 201;
 constexpr int32_t ERR_NOT_SYSTEM_APP = 202;
 
 bool IsSystemApp()
@@ -40,12 +41,24 @@ bool IsSystemApp()
     return OHOS::Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(tokenId);
 }
 
+bool HasAccessDHPermission()
+{
+    Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetCallingTokenID();
+    const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
+    int32_t result = Security::AccessToken::AccessTokenKit::VerifyAccessToken(callerToken,
+        permissionName);
+    return (result == Security::AccessToken::PERMISSION_GRANTED);
+}
+
 void PauseDistributedHardwareSync(::ohos::distributedHardware::hardwareManager::HardwareDescriptor const& description)
 {
     DHLOGI("PauseDistributedHardware in");
     if (!IsSystemApp()) {
         taihe::set_business_error(ERR_NOT_SYSTEM_APP, "The caller is not a system application.");
         return;
+    }
+    if (!HasAccessDHPermission()) {
+        taihe::set_business_error(ERR_NO_PERMISSION, "Permission verify failed.");
     }
     int32_t hardwareType = description.type;
     DHType dhType = DHType::UNKNOWN;
@@ -75,6 +88,9 @@ void ResumeDistributedHardwareSync(::ohos::distributedHardware::hardwareManager:
         taihe::set_business_error(ERR_NOT_SYSTEM_APP, "The caller is not a system application.");
         return;
     }
+    if (!HasAccessDHPermission()) {
+        taihe::set_business_error(ERR_NO_PERMISSION, "Permission verify failed.");
+    }
     int32_t hardwareType = description.type;
     DHType dhType = DHType::UNKNOWN;
     DHSubtype dhSubtype = static_cast<DHSubtype>(hardwareType);
@@ -102,6 +118,9 @@ void StopDistributedHardwareSync(::ohos::distributedHardware::hardwareManager::H
     if (!IsSystemApp()) {
         taihe::set_business_error(ERR_NOT_SYSTEM_APP, "The caller is not a system application.");
         return;
+    }
+    if (!HasAccessDHPermission()) {
+        taihe::set_business_error(ERR_NO_PERMISSION, "Permission verify failed.");
     }
     int32_t hardwareType = description.type;
     DHType dhType = DHType::UNKNOWN;
