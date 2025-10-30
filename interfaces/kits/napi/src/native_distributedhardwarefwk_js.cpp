@@ -17,6 +17,9 @@
 
 #include "ipc_skeleton.h"
 #include "js_native_api.h"
+
+#include "accesstoken_kit.h"
+#include "ipc_skeleton.h"
 #include "tokenid_kit.h"
 
 #include "device_type.h"
@@ -120,6 +123,30 @@ bool DistributedHardwareManager::IsSystemApp()
     return OHOS::Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(tokenId);
 }
 
+bool DistributedHardwareManager::HasAccessDHPermission()
+{
+    OHOS::Security::AccessToken::AccessTokenID callerToken = OHOS::IPCSkeleton::GetCallingTokenID();
+    const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
+    int32_t result = OHOS::Security::AccessToken::AccessTokenKit::VerifyAccessToken(callerToken,
+        permissionName);
+    return (result == OHOS::Security::AccessToken::PERMISSION_GRANTED);
+}
+
+bool DistributedHardwareManager::Verify(napi_env env)
+{
+    if (!IsSystemApp()) {
+        DHLOGE("GetCallerProcessName not system hap.");
+        CreateBusinessErr(env, ERR_NOT_SYSTEM_APP);
+        return false;
+    }
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        CreateBusinessErr(env, ERR_NO_PERMISSION);
+        return false;
+    }
+    return true;
+}
+
 napi_value DistributedHardwareManager::CreateBusinessErr(napi_env env, int32_t errCode)
 {
     napi_value error = nullptr;
@@ -142,8 +169,7 @@ napi_value DistributedHardwareManager::CreateBusinessErr(napi_env env, int32_t e
 napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, napi_callback_info info)
 {
     DHLOGI("PauseDistributedHardware in");
-    if (!IsSystemApp()) {
-        CreateBusinessErr(env, ERR_NOT_SYSTEM_APP);
+    if (!Verify(env)) {
         return nullptr;
     }
     napi_value result = nullptr;
@@ -195,8 +221,7 @@ napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, na
 napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, napi_callback_info info)
 {
     DHLOGI("ResumeDistributedHardware in");
-    if (!IsSystemApp()) {
-        CreateBusinessErr(env, ERR_NOT_SYSTEM_APP);
+    if (!Verify(env)) {
         return nullptr;
     }
     napi_value result = nullptr;
@@ -248,8 +273,7 @@ napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, n
 napi_value DistributedHardwareManager::StopDistributedHardware(napi_env env, napi_callback_info info)
 {
     DHLOGI("StopDistributedHardware in");
-    if (!IsSystemApp()) {
-        CreateBusinessErr(env, ERR_NOT_SYSTEM_APP);
+    if (!Verify(env)) {
         return nullptr;
     }
     napi_value result = nullptr;

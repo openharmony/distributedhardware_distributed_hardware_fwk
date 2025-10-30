@@ -46,5 +46,7 @@ public:
 
 private:
     static bool IsSystemApp();
+    static bool HasAccessDHPermission();
+    static bool Verify(napi_env env);
 };
 #endif // OHOS_DH_NATIVE_DISTRIBUTED_HARDWARE_JS_H
