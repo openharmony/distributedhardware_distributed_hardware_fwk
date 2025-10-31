@@ -602,5 +602,47 @@ HWTEST_F(MetaInfoMgrTest, GetEntriesByKeys_001, TestSize.Level1)
     EXPECT_EQ(0, ret.size());
     MetaInfoManager::GetInstance()->UnInit();
 }
+
+HWTEST_F(MetaInfoMgrTest, GetDhSubtypeByUdidHash_001, TestSize.Level1)
+{
+    std::string udidHash = "";
+    std::string dhId = "";
+    auto ret = MetaInfoManager::GetInstance()->GetDhSubtypeByUdidHash(udidHash, dhId);
+    EXPECT_EQ("", ret);
+
+    udidHash = "udidHash_1";
+    ret = MetaInfoManager::GetInstance()->GetDhSubtypeByUdidHash(udidHash, dhId);
+    EXPECT_EQ("", ret);
+
+    udidHash = "";
+    dhId = "dhId_1";
+    ret = MetaInfoManager::GetInstance()->GetDhSubtypeByUdidHash(udidHash, dhId);
+    EXPECT_EQ("", ret);
+}
+
+HWTEST_F(MetaInfoMgrTest, GetDhSubtypeByUdidHash_002, TestSize.Level1)
+{
+    std::string dhid = "audio_123";
+    std::string deviceId = "deviceId_123";
+    std::string udidHash = "udidHash_123";
+
+    std::shared_ptr<MetaCapabilityInfo> metaCapPtr = std::make_shared<MetaCapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::CAMERA, "attrs_test", "subtype", udidHash,
+        CompVersion{ .sinkVersion = "1.0" });
+    std::string key = udidHash + "###" + dhid;
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key] = metaCapPtr;
+    auto ret = MetaInfoManager::GetInstance()->GetDhSubtypeByUdidHash("udidHash_456", dhid);
+    EXPECT_EQ("", ret);
+
+    ret = MetaInfoManager::GetInstance()->GetDhSubtypeByUdidHash(udidHash, dhid);
+    EXPECT_EQ("subtype", ret);
+
+    std::shared_ptr<MetaCapabilityInfo> metaCapPtr1 = nullptr;
+    std::string udidHash1 = "udidHash_456";
+    std::string key1 = udidHash1 + "###" + dhid;
+    MetaInfoManager::GetInstance()->globalMetaInfoMap_[key1] = metaCapPtr1;
+    ret = MetaInfoManager::GetInstance()->GetDhSubtypeByUdidHash(udidHash1, dhid);
+    EXPECT_EQ("", ret);
+}
 }
 }

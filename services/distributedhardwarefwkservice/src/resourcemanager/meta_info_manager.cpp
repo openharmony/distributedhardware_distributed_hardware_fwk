@@ -506,5 +506,27 @@ std::vector<DistributedKv::Entry> MetaInfoManager::GetEntriesByKeys(const std::v
     }
     return dbAdapterPtr_->GetEntriesByKeys(keys);
 }
+
+std::string MetaInfoManager::GetDhSubtypeByUdidHash(const std::string &udidHash, const std::string &dhId)
+{
+    if (!IsIdLengthValid(udidHash) || !IsIdLengthValid(dhId)) {
+        DHLOGE("get subtype in metaInfo, param is invalid.");
+        return "";
+    }
+    DHLOGI("get remote device subtype, udidHash: %{public}s, dhid: %{public}s", GetAnonyString(udidHash).c_str(),
+        dhId.c_str());
+    std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
+    std::string key = GetCapabilityKey(udidHash, dhId);
+    auto iter = globalMetaInfoMap_.find(key);
+    if (iter == globalMetaInfoMap_.end()) {
+        DHLOGE("Can not find capability In globalMetaInfoMap_.");
+        return "";
+    }
+    if (iter->second == nullptr) {
+        DHLOGE("Pointer is null");
+        return "";
+    }
+    return iter->second->GetDHSubtype();
+}
 }
 }
