@@ -767,14 +767,16 @@ int32_t ComponentManager::GetDHSubtypeByDHId(DHSubtype &dhSubtype, const std::st
         }
     } else {
         deviceId = DHContext::GetInstance().GetDeviceIdByNetworkId(networkId);
-        if (deviceId.empty()) {
-            DHLOGE("Get remote deviceId failed.");
-            return ERR_DH_FWK_BAD_OPERATION;
-        }
         dhSubtypeStr = LocalCapabilityInfoManager::GetInstance()->GetDhSubtype(deviceId, dhId);
         if (dhSubtypeStr.empty()) {
-            DHLOGE("Get remote dhSubtype failed.");
-            return ERR_DH_FWK_BAD_OPERATION;
+            DHLOGW("Can not get remote dhSubtype from LocalCapability, try use meta info.");
+            std::string udid = DHContext::GetInstance().GetUDIDByNetworkId(networkId);
+            std::string udidHash = Sha256(udid);
+            dhSubtypeStr = MetaInfoManager::GetInstance()->GetDhSubtypeByUdidHash(udidHash, dhId);
+            if (dhSubtypeStr.empty()) {
+                DHLOGE("Get remote dhSubtype failed.");
+                return ERR_DH_FWK_BAD_OPERATION;
+            }
         }
     }
 

@@ -1147,6 +1147,17 @@ HWTEST_F(ComponentManagerTest, GetDHSubtypeByDHId_003, TestSize.Level1)
     EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
 }
 
+HWTEST_F(ComponentManagerTest, GetDHSubtypeByDHId_004, TestSize.Level1)
+{
+    std::string dhid = "audio_1";
+    DHSubtype dhSubtype;
+    std::string networkId = "networkId_123";
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, networkId);
+    auto ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, networkId, dhid);
+    EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
+    DHContext::GetInstance().devIdEntrySet_.clear();
+}
+
 HWTEST_F(ComponentManagerTest, InitAVSyncSharedMemory_001, TestSize.Level1)
 {
     auto ret = ComponentManager::GetInstance().InitAVSyncSharedMemory();
