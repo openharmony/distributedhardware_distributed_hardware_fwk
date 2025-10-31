@@ -24,6 +24,7 @@
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_fwk_kit.h"
 #include "tokenid_kit.h"
+#include "accesstoken_kit.h"
 
 using namespace OHOS::DistributedHardware;
 #undef DH_LOG_TAG
@@ -43,11 +44,11 @@ bool IsSystemApp()
 
 bool HasAccessDHPermission()
 {
-    Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetCallingTokenID();
+    OHOS::Security::AccessToken::AccessTokenID callerToken = OHOS::IPCSkeleton::GetCallingTokenID();
     const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
-    int32_t result = Security::AccessToken::AccessTokenKit::VerifyAccessToken(callerToken,
+    int32_t result = OHOS::Security::AccessToken::AccessTokenKit::VerifyAccessToken(callerToken,
         permissionName);
-    return (result == Security::AccessToken::PERMISSION_GRANTED);
+    return (result == OHOS::Security::AccessToken::PERMISSION_GRANTED);
 }
 
 void PauseDistributedHardwareSync(::ohos::distributedHardware::hardwareManager::HardwareDescriptor const& description)
