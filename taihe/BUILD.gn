@@ -84,7 +84,9 @@ taihe_shared_library("hardware_taihe") {
 
 generate_static_abc("hardware_taihe_abc") {
   base_url = "$taihe_generated_file_path"
-  files = [ "$taihe_generated_file_path/@ohos.distributedHardware.hardwareManager.ets" ]
+  files = [
+    "$taihe_generated_file_path/@ohos.distributedHardware.hardwareManager.ets",
+  ]
   is_boot_abc = "True"
   device_dst_file = "/system/framework/hardware_taihe_abc.abc"
   dependencies = [ ":run_hardware_taihe" ]
