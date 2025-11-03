@@ -1,0 +1,158 @@
+{
+    "string":[
+        {
+            "name":"pause",
+            "value":"Wstrzymaj",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"mech_close",
+            "value":"Wył.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"mech_enable",
+            "value":"Wł.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"mech_left",
+            "value":"Po lewej",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"update_version_prompt",
+            "value":"Na obu urządzeniach musi być uruchomiony system HarmonyOS NEXT",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"mech_right",
+            "value":"Po prawej",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"audio_tracking_switch_on",
+            "value":"Inteligentne śledzenie jest włączone, dotknij dwukrotnie, aby je wyłączyć",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_privacy_text",
+            "value":"Ta usługa korzysta z Bluetooth i WLAN i musi wysyłać nazwę tego urządzenia do urządzeń, an które przekazujesz zawartość. Włączenie tej opcji oznacza zaakceptowanie tych warunków.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"DHTypeName_Camera",
+            "value":"aparatu",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"mech_intelligent_tracking",
+            "value":"Inteligentne śledzenie",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"audio_tracking_switch_off",
+            "value":"Inteligentne śledzenie jest wyłączone, dotknij dwukrotnie, aby je włączyć",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_desc_text",
+            "value":"Zacznij wyświetlać lub edytować zawartość na jednym urządzeniu i bezproblemowo kontynuuj korzystanie z niej na urządzeniu znajdującym się w pobliżu, które jest zalogowane w tym samym ID HUAWEI. Jeśli Przekazywanie jest dostępne, w doku aplikacji pojawi się ikona. %s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"connected_to",
+            "value":"Połączono z %1$s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"learn_more",
+            "value":"Dowiedz się więcej",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"mech_tracking_layout",
+            "value":"Tryb śledzenia",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue",
+            "value":"Wznów",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"disconnect",
+            "value":"Rozłącz",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"audio_back",
+            "value":"Wstecz",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stop_device",
+            "value":"Rozłącz, aby przestać korzystać z %1$s tego urządzenia.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"mikrofonu",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"mech_center",
+            "value":"Na środku",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"continue_title",
+            "value":"Przekazywanie",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}
