@@ -1,6 +1,6 @@
 {
   "version": {
-    "curVersion": "1.0.5"
+    "curVersion": "1.0.6"
   },
   "searchPages": [
     {
@@ -30,7 +30,12 @@
             "phone",
             "tablet",
             "2in1"
-          ]
+          ],
+          "checkItem": {
+            "type": "param",
+            "checkKey": "const.continuation.disable_continuation_service",
+            "value": "false"
+          }
         }
       ]
     }
