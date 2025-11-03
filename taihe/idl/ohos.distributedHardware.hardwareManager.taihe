@@ -1,0 +1,48 @@
+/*
+ * Copyright (C) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+ @!namespace("@ohos.distributedHardware.hardwareManager", "hardwareManager")
+ @!sts_inject("""
+static { loadLibrary("hardware_taihe.z") }
+""")
+
+enum DistributedHardwareType: i32 {
+    ALL = 0,
+    CAMERA = 1,
+    SCREEN = 8,
+    MODEM_MIC = 256,
+    MODEM_SPEAKER = 512,
+    MIC = 1024,
+    SPEAKER = 2048
+}
+
+enum DistributedHardwareErrorCode: i32 {
+    ERR_CODE_DISTRIBUTED_HARDWARE_NOT_STARTED = 24200101,
+    ERR_CODE_DEVICE_NOT_CONNECTED = 24200102
+}
+
+struct HardwareDescriptor {
+    type: DistributedHardwareType;
+    srcNetworkId: Optional<String>;
+}
+
+@gen_promise("pauseDistributedHardware")
+function PauseDistributedHardwareSync(description: HardwareDescriptor): void;
+
+@gen_promise("resumeDistributedHardware")
+function ResumeDistributedHardwareSync(description: HardwareDescriptor): void;
+
+@gen_promise("stopDistributedHardware")
+function StopDistributedHardwareSync(description: HardwareDescriptor): void;
