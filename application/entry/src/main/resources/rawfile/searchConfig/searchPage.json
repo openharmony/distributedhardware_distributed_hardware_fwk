@@ -27,15 +27,26 @@
           "enable": "true",
           "childItems": "",
           "supportDevices": [
-            "phone",
-            "tablet",
-            "2in1"
+            "phone"
           ],
           "checkItem": {
             "type": "param",
-            "checkKey": "const.continuation.disable_continuation_service",
+            "checkKey": "const.continuation.disable_application_continuation",
             "value": "false"
           }
+        },
+        {
+          "itemName": "settings_continue",
+          "itemTitle": "$string:continue_title",
+          "itemDescription": "",
+          "icon": "",
+          "alias": "接续|接力|应用接续|应用迁移",
+          "enable": "true",
+          "childItems": "",
+          "supportDevices": [
+            "tablet",
+            "2in1"
+          ]
         }
       ]
     }
