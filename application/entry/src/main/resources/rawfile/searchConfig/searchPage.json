@@ -19,7 +19,7 @@
       ],
       "searchItems": [
         {
-          "itemName": "settings_continue",
+          "itemName": "settings_continue_phone",
           "itemTitle": "$string:continue_title",
           "itemDescription": "",
           "icon": "",
@@ -36,7 +36,7 @@
           }
         },
         {
-          "itemName": "settings_continue",
+          "itemName": "settings_continue_pad_pc",
           "itemTitle": "$string:continue_title",
           "itemDescription": "",
           "icon": "",
