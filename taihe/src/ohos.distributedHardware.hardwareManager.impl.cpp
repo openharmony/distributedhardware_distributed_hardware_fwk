@@ -24,6 +24,7 @@
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_fwk_kit.h"
 #include "tokenid_kit.h"
+#include "accesstoken_kit.h"
 
 using namespace OHOS::DistributedHardware;
 #undef DH_LOG_TAG
@@ -32,6 +33,7 @@ using namespace OHOS::DistributedHardware;
 namespace {
 // To be implemented.
 
+constexpr int32_t ERR_NO_PERMISSION = 201;
 constexpr int32_t ERR_NOT_SYSTEM_APP = 202;
 
 bool IsSystemApp()
@@ -40,12 +42,24 @@ bool IsSystemApp()
     return OHOS::Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(tokenId);
 }
 
+bool HasAccessDHPermission()
+{
+    OHOS::Security::AccessToken::AccessTokenID callerToken = OHOS::IPCSkeleton::GetCallingTokenID();
+    const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
+    int32_t result = OHOS::Security::AccessToken::AccessTokenKit::VerifyAccessToken(callerToken,
+        permissionName);
+    return (result == OHOS::Security::AccessToken::PERMISSION_GRANTED);
+}
+
 void PauseDistributedHardwareSync(::ohos::distributedHardware::hardwareManager::HardwareDescriptor const& description)
 {
     DHLOGI("PauseDistributedHardware in");
     if (!IsSystemApp()) {
         taihe::set_business_error(ERR_NOT_SYSTEM_APP, "The caller is not a system application.");
         return;
+    }
+    if (!HasAccessDHPermission()) {
+        taihe::set_business_error(ERR_NO_PERMISSION, "Permission verify failed.");
     }
     int32_t hardwareType = description.type;
     DHType dhType = DHType::UNKNOWN;
@@ -75,6 +89,9 @@ void ResumeDistributedHardwareSync(::ohos::distributedHardware::hardwareManager:
         taihe::set_business_error(ERR_NOT_SYSTEM_APP, "The caller is not a system application.");
         return;
     }
+    if (!HasAccessDHPermission()) {
+        taihe::set_business_error(ERR_NO_PERMISSION, "Permission verify failed.");
+    }
     int32_t hardwareType = description.type;
     DHType dhType = DHType::UNKNOWN;
     DHSubtype dhSubtype = static_cast<DHSubtype>(hardwareType);
@@ -102,6 +119,9 @@ void StopDistributedHardwareSync(::ohos::distributedHardware::hardwareManager::H
     if (!IsSystemApp()) {
         taihe::set_business_error(ERR_NOT_SYSTEM_APP, "The caller is not a system application.");
         return;
+    }
+    if (!HasAccessDHPermission()) {
+        taihe::set_business_error(ERR_NO_PERMISSION, "Permission verify failed.");
     }
     int32_t hardwareType = description.type;
     DHType dhType = DHType::UNKNOWN;
