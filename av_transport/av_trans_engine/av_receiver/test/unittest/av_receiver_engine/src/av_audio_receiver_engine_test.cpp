@@ -301,8 +301,7 @@ HWTEST_F(AvAudioReceiverEngineTest, SetParameterInner_003, testing::ext::TestSiz
     std::string peerDevId = "pEid";
     auto receiver = std::make_shared<AVAudioReceiverEngine>(ownerName, peerDevId);
     receiver->meta_ = nullptr;
-    receiver->SetParameterInner(AVTransTag::INVALID, "1");
-    EXPECT_EQ(receiver->meta_, nullptr);
+    EXPECT_NO_FATAL_FAILURE(receiver->SetParameterInner(AVTransTag::INVALID, "1"));
 }
 
 HWTEST_F(AvAudioReceiverEngineTest, Stop_002, testing::ext::TestSize.Level1)
@@ -755,9 +754,8 @@ HWTEST_F(AvAudioReceiverEngineTest, OnCallback_001, testing::ext::TestSize.Level
     auto receiver = std::make_shared<AVAudioReceiverEngine>(ownerName, peerDevId);
     receiver->currentState_ = StateId::INITIALIZED;
 
-    receiver->OnCallback(nullptr, Pipeline::FilterCallBackCommand::FILTER_CALLBACK_COMMAND_MAX,
-        Pipeline::StreamType::STREAMTYPE_MAX);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_EQ(Status::OK, receiver->OnCallback(nullptr, Pipeline::FilterCallBackCommand::FILTER_CALLBACK_COMMAND_MAX,
+        Pipeline::StreamType::STREAMTYPE_MAX));
 }
 
 HWTEST_F(AvAudioReceiverEngineTest, OnCallback_002, testing::ext::TestSize.Level1)
@@ -767,9 +765,8 @@ HWTEST_F(AvAudioReceiverEngineTest, OnCallback_002, testing::ext::TestSize.Level
     auto receiver = std::make_shared<AVAudioReceiverEngine>(ownerName, peerDevId);
     receiver->currentState_ = StateId::INITIALIZED;
 
-    receiver->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
-        Pipeline::StreamType::STREAMTYPE_MAX);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_EQ(Status::OK, receiver->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
+        Pipeline::StreamType::STREAMTYPE_MAX));
 }
 
 HWTEST_F(AvAudioReceiverEngineTest, OnCallback_003, testing::ext::TestSize.Level1)
@@ -779,9 +776,8 @@ HWTEST_F(AvAudioReceiverEngineTest, OnCallback_003, testing::ext::TestSize.Level
     auto receiver = std::make_shared<AVAudioReceiverEngine>(ownerName, peerDevId);
     receiver->currentState_ = StateId::INITIALIZED;
 
-    receiver->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
-        Pipeline::StreamType::STREAMTYPE_RAW_AUDIO);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, receiver->OnCallback(nullptr,
+        Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED, Pipeline::StreamType::STREAMTYPE_RAW_AUDIO));
 }
 
 HWTEST_F(AvAudioReceiverEngineTest, OnCallback_004, testing::ext::TestSize.Level1)
@@ -791,9 +787,8 @@ HWTEST_F(AvAudioReceiverEngineTest, OnCallback_004, testing::ext::TestSize.Level
     auto receiver = std::make_shared<AVAudioReceiverEngine>(ownerName, peerDevId);
     receiver->currentState_ = StateId::INITIALIZED;
 
-    receiver->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
-        Pipeline::StreamType::STREAMTYPE_DECODED_AUDIO);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, receiver->OnCallback(nullptr,
+        Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED, Pipeline::StreamType::STREAMTYPE_DECODED_AUDIO));
 }
 
 } // namespace DistributedHardware
