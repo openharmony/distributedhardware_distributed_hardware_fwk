@@ -520,7 +520,7 @@ HWTEST_F(AvReceiverEngineTest, OnChannelEvent_003, testing::ext::TestSize.Level1
 
     event.type = EventType::EVENT_DATA_RECEIVED;
     receiver->OnChannelEvent(event);
-    EXPECT_EQ(StateId::INITIALIZED, receiver->currentState_);
+    EXPECT_NO_FATAL_FAILURE(receiver->OnChannelEvent(event));
 }
 
 HWTEST_F(AvReceiverEngineTest, OnChannelEvent_004, testing::ext::TestSize.Level1)

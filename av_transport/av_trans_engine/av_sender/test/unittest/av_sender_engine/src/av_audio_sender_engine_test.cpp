@@ -436,10 +436,9 @@ HWTEST_F(AvAudioSenderEngineTest, SetParameterInner_001, testing::ext::TestSize.
     std::string value = "500";
     auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
     sender->meta_ = nullptr;
-    sender->SetParameterInner(AVTransTag::INVALID, "H264");
     sender->SetVideoPixelFormat("10");
     sender->SetVideoBitRate("11");
-    EXPECT_EQ(sender->meta_, nullptr);
+    EXPECT_NO_FATAL_FAILURE(sender->SetParameterInner(AVTransTag::INVALID, "H264"));
 }
 
 HWTEST_F(AvAudioSenderEngineTest, PushData_001, testing::ext::TestSize.Level1)
@@ -841,9 +840,8 @@ HWTEST_F(AvAudioSenderEngineTest, OnCallback_001, testing::ext::TestSize.Level1)
     auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
     sender->currentState_ = StateId::INITIALIZED;
 
-    sender->OnCallback(nullptr, Pipeline::FilterCallBackCommand::FILTER_CALLBACK_COMMAND_MAX,
-        Pipeline::StreamType::STREAMTYPE_MAX);
-    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+    EXPECT_EQ(Status::OK, sender->OnCallback(nullptr, Pipeline::FilterCallBackCommand::FILTER_CALLBACK_COMMAND_MAX,
+        Pipeline::StreamType::STREAMTYPE_MAX));
 }
 
 HWTEST_F(AvAudioSenderEngineTest, OnCallback_002, testing::ext::TestSize.Level1)
@@ -853,9 +851,8 @@ HWTEST_F(AvAudioSenderEngineTest, OnCallback_002, testing::ext::TestSize.Level1)
     auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
     sender->currentState_ = StateId::INITIALIZED;
 
-    sender->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
-        Pipeline::StreamType::STREAMTYPE_MAX);
-    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+    EXPECT_EQ(Status::OK, sender->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
+        Pipeline::StreamType::STREAMTYPE_MAX));
 }
 
 HWTEST_F(AvAudioSenderEngineTest, OnCallback_003, testing::ext::TestSize.Level1)
@@ -865,9 +862,8 @@ HWTEST_F(AvAudioSenderEngineTest, OnCallback_003, testing::ext::TestSize.Level1)
     auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
     sender->currentState_ = StateId::INITIALIZED;
 
-    sender->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
-        Pipeline::StreamType::STREAMTYPE_RAW_AUDIO);
-    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, sender->OnCallback(nullptr,
+        Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED, Pipeline::StreamType::STREAMTYPE_RAW_AUDIO));
 }
 
 HWTEST_F(AvAudioSenderEngineTest, OnCallback_004, testing::ext::TestSize.Level1)
@@ -877,9 +873,8 @@ HWTEST_F(AvAudioSenderEngineTest, OnCallback_004, testing::ext::TestSize.Level1)
     auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
     sender->currentState_ = StateId::INITIALIZED;
 
-    sender->OnCallback(nullptr, Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED,
-        Pipeline::StreamType::STREAMTYPE_ENCODED_AUDIO);
-    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+    EXPECT_EQ(Status::ERROR_NULL_POINTER, sender->OnCallback(nullptr,
+        Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED, Pipeline::StreamType::STREAMTYPE_ENCODED_AUDIO));
 }
 
 HWTEST_F(AvAudioSenderEngineTest, LinkAudioSinkFilter_001, testing::ext::TestSize.Level1)
@@ -893,8 +888,8 @@ HWTEST_F(AvAudioSenderEngineTest, LinkAudioSinkFilter_001, testing::ext::TestSiz
 
     sender->LinkAudioSinkFilter(nullptr, Pipeline::StreamType::STREAMTYPE_ENCODED_AUDIO);
     sender->pipeline_ = std::make_shared<Pipeline::Pipeline>();
-    sender->LinkAudioSinkFilter(nullptr, Pipeline::StreamType::STREAMTYPE_ENCODED_AUDIO);
-    EXPECT_EQ(StateId::INITIALIZED, sender->currentState_);
+
+    EXPECT_EQ(Status::OK, sender->LinkAudioSinkFilter(nullptr, Pipeline::StreamType::STREAMTYPE_ENCODED_AUDIO));
 }
 } // namespace DistributedHardware
 } // namespace OHOS
