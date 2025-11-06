@@ -1,0 +1,108 @@
+# Copyright (C) 2025 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/config/components/ets_frontend/ets2abc_config.gni")
+import("//build/ohos.gni")
+import("//build/ohos/taihe_idl/taihe.gni")
+import(
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+
+subsystem_name = "distributedhardware"
+part_name = "distributed_hardware_fwk"
+
+taihe_generated_file_path = "$taihe_file_path/out/$subsystem_name/$part_name"
+
+copy_taihe_idl("hardware_taihe_idl") {
+  sources = [ "idl/ohos.distributedHardware.hardwareManager.taihe" ]
+
+  external_deps = []
+}
+
+ohos_taihe("run_hardware_taihe") {
+  taihe_generated_file_path = "$taihe_generated_file_path"
+  deps = [ ":hardware_taihe_idl" ]
+  outputs = [
+    "$taihe_generated_file_path/src/ohos.distributedHardware.hardwareManager.ani.cpp",
+    "$taihe_generated_file_path/src/ohos.distributedHardware.hardwareManager.abi.c",
+  ]
+}
+
+taihe_shared_library("hardware_taihe") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    boundary_sanitize = true
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+    integer_overflow = true
+    ubsan = true
+  }
+  taihe_generated_file_path = "$taihe_generated_file_path"
+  subsystem_name = "$subsystem_name"
+  part_name = "$part_name"
+  sources = get_target_outputs(":run_hardware_taihe")
+  sources += [
+    "src/ani_constructor.cpp",
+    "src/ohos.distributedHardware.hardwareManager.impl.cpp",
+  ]
+  include_dirs = [
+    "include",
+    "${av_center_kits_path}/include",
+    "${av_trans_path}/common/include",
+    "${av_trans_path}/interface",
+    "${innerkits_path}/include",
+    "${common_path}/log/include",
+    "${common_path}/utils/include",
+  ]
+  deps = [
+    ":run_hardware_taihe",
+    "${distributedhardwarefwk_path}/interfaces/inner_kits:libdhfwk_sdk",
+  ]
+  external_deps = [
+    "access_token:libaccesstoken_sdk",
+    "access_token:libtokenid_sdk",
+    "access_token:libtokensetproc_shared",
+    "cJSON:cjson",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "hisysevent:libhisysevent",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+}
+
+generate_static_abc("hardware_taihe_abc") {
+  base_url = "$taihe_generated_file_path"
+  files = [
+    "$taihe_generated_file_path/@ohos.distributedHardware.hardwareManager.ets",
+  ]
+  is_boot_abc = "True"
+  device_dst_file = "/system/framework/hardware_taihe_abc.abc"
+  dependencies = [ ":run_hardware_taihe" ]
+}
+
+ohos_prebuilt_etc("hardware_taihe_etc") {
+  source = "$target_out_dir/hardware_taihe_abc.abc"
+  module_install_dir = "framework"
+  part_name = "$part_name"
+  subsystem_name = "$subsystem_name"
+  deps = [ ":hardware_taihe_abc" ]
+}
+
+group("distributed_hardware_taihe") {
+  deps = [
+    ":hardware_taihe",
+    ":hardware_taihe_etc",
+  ]
+}
