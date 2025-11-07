@@ -19,7 +19,7 @@
       ],
       "searchItems": [
         {
-          "itemName": "settings_continue",
+          "itemName": "settings_continue_phone",
           "itemTitle": "$string:continue_title",
           "itemDescription": "",
           "icon": "",
@@ -27,7 +27,23 @@
           "enable": "true",
           "childItems": "",
           "supportDevices": [
-            "phone",
+            "phone"
+          ],
+          "checkItem": {
+            "type": "param",
+            "checkKey": "const.continuation.disable_application_continuation",
+            "value": "false"
+          }
+        },
+        {
+          "itemName": "settings_continue_pad_pc",
+          "itemTitle": "$string:continue_title",
+          "itemDescription": "",
+          "icon": "",
+          "alias": "接续|接力|应用接续|应用迁移",
+          "enable": "true",
+          "childItems": "",
+          "supportDevices": [
             "tablet",
             "2in1"
           ]
