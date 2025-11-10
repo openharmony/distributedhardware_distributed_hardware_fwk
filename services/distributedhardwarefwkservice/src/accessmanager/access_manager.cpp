@@ -120,67 +120,76 @@ void AccessManager::OnRemoteDied()
 
 void AccessManager::OnDeviceOnline(const DmDeviceInfo &deviceInfo)
 {
+    DHLOGI("Dhfwk receive online device notify");
     std::lock_guard<std::mutex> lock(accessMutex_);
-    DHLOGI("AccessManager online, networkId: %{public}s, deviceName: %{public}s, deviceTypeId: %{public}d",
-        GetAnonyString(deviceInfo.networkId).c_str(), GetAnonyString(deviceInfo.deviceName).c_str(),
-        deviceInfo.deviceTypeId);
-
-    auto networkId = std::string(deviceInfo.networkId);
+    auto deviceName = std::string(deviceInfo.deviceName, strnlen(deviceInfo.deviceName, DM_MAX_DEVICE_NAME_LEN));
+    auto networkId = std::string(deviceInfo.networkId, strnlen(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN));
     if (!IsIdLengthValid(networkId)) {
+        DHLOGE("Param networkId is invalid");
         return;
     }
     auto uuid = GetUUIDByDm(networkId);
     if (!IsIdLengthValid(uuid)) {
+        DHLOGE("Param uuid is invalid");
         return;
     }
     auto udid = GetUDIDByDm(networkId);
     if (!IsIdLengthValid(udid)) {
+        DHLOGE("Param udid is invalid");
         return;
     }
     int32_t osType = GetDeviceSystemType(deviceInfo.extraData);
+    DHLOGI("Online device deviceName: %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s,"
+        "deviceTypeId: %{public}d, osType: %{public}d", GetAnonyString(deviceName).c_str(),
+        GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str(),
+        deviceInfo.deviceTypeId, osType);
+
     auto ret = DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid,
         deviceInfo.deviceTypeId, osType);
-    DHLOGI("AccessManager online result: %{public}d, networkId: %{public}s, uuid: %{public}s, udid: %{public}s,"
-        "osType = %{public}d", ret, GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(),
-        GetAnonyString(udid).c_str(), osType);
+    DHLOGI("Online event result: %{public}d, networkId: %{public}s", ret, GetAnonyString(networkId).c_str());
 }
 
 void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
 {
+    DHLOGI("Dhfwk receive offline device notify");
     std::lock_guard<std::mutex> lock(accessMutex_);
-    DHLOGI("AccessManager offline, networkId: %{public}s, deviceName: %{public}s, deviceTypeId: %{public}d",
-        GetAnonyString(deviceInfo.networkId).c_str(), GetAnonyString(deviceInfo.deviceName).c_str(),
-        deviceInfo.deviceTypeId);
-
-    auto networkId = std::string(deviceInfo.networkId);
+    auto deviceName = std::string(deviceInfo.deviceName, strnlen(deviceInfo.deviceName, DM_MAX_DEVICE_NAME_LEN));
+    auto networkId = std::string(deviceInfo.networkId, strnlen(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN));
     if (!IsIdLengthValid(networkId)) {
+        DHLOGE("Param networkId is invalid");
         return;
     }
     std::string uuid = DHContext::GetInstance().GetUUIDByNetworkId(networkId);
     if (!IsIdLengthValid(uuid)) {
+        DHLOGE("Param uuid is invalid");
         return;
     }
     std::string udid = DHContext::GetInstance().GetUDIDByNetworkId(networkId);
     if (!IsIdLengthValid(udid)) {
+        DHLOGE("Param udid is invalid");
         return;
     }
+    DHLOGI("Offline device deviceName: %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s,"
+        "deviceTypeId: %{public}d", GetAnonyString(deviceName).c_str(), GetAnonyString(networkId).c_str(),
+        GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str(), deviceInfo.deviceTypeId);
 
     auto ret = DistributedHardwareManagerFactory::GetInstance().SendOffLineEvent(networkId, uuid, udid,
         deviceInfo.deviceTypeId);
-    DHLOGI("offline result: %{public}d, networkId: %{public}s, uuid: %{public}s, udid: %{public}s",
-        ret, GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
+    DHLOGI("Offline event result: %{public}d, networkId: %{public}s", ret, GetAnonyString(networkId).c_str());
 }
 
 void AccessManager::OnDeviceReady(const DmDeviceInfo &deviceInfo)
 {
+    DHLOGI("Dhfwk receive device ready notify");
     std::lock_guard<std::mutex> lock(accessMutex_);
-    DHLOGI("device ready, networkId: %{public}s, deviceName: %{public}s",
-        GetAnonyString(deviceInfo.networkId).c_str(), GetAnonyString(deviceInfo.deviceName).c_str());
-    std::string networkId = std::string(deviceInfo.networkId);
+    auto deviceName = std::string(deviceInfo.deviceName, strnlen(deviceInfo.deviceName, DM_MAX_DEVICE_NAME_LEN));
+    auto networkId = std::string(deviceInfo.networkId, strnlen(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN));
     if (!IsIdLengthValid(networkId)) {
-        DHLOGE("networkId is invalid.");
+        DHLOGE("Param networkId is invalid");
         return;
     }
+    DHLOGI("Ready device deviceName: %{public}s, networkId: %{public}s", GetAnonyString(deviceName).c_str(),
+        GetAnonyString(networkId).c_str());
 
     if (!DeviceParamMgr::GetInstance().IsDeviceE2ESync()) {
         DHLOGI("local device is not e2e device, no need sync data.");
@@ -211,7 +220,7 @@ void AccessManager::CheckTrustedDeviceOnline()
         return;
     }
     for (const auto &deviceInfo : deviceList) {
-        const auto networkId = std::string(deviceInfo.networkId);
+        const auto networkId = std::string(deviceInfo.networkId, strnlen(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN));
         const auto uuid = GetUUIDByDm(networkId);
         const auto udid = GetUDIDByDm(networkId);
         int32_t osType = GetDeviceSystemType(deviceInfo.extraData);
