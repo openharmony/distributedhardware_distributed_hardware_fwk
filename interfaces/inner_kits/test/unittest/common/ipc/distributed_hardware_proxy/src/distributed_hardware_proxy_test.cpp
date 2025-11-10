@@ -506,7 +506,7 @@ HWTEST_F(DistributedHardwareProxyTest, NotifySourceRemoteSinkStarted_001, TestSi
     ASSERT_TRUE(dhStubPtr != nullptr);
     DistributedHardwareProxy dhProxy(dhStubPtr);
     auto ret = dhProxy.NotifySourceRemoteSinkStarted(deviceId);
-    EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 /**

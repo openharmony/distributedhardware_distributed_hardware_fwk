@@ -49,7 +49,7 @@ public:
     int32_t CreateControlChannel(int32_t engineId, const std::string &peerDevId) override;
     int32_t NotifyAVCenter(int32_t engineId, const AVTransEvent &event) override;
     int32_t RegisterCtlCenterCallback(int32_t engineId, const sptr<IAvTransControlCenterCallback> callback) override;
-    int32_t NotifySourceRemoteSinkStarted(std::string &deviceId) override;
+    int32_t NotifySourceRemoteSinkStarted(std::string &udid) override;
     int32_t PauseDistributedHardware(DHType dhType, const std::string &networkId) override;
     int32_t ResumeDistributedHardware(DHType dhType, const std::string &networkId) override;
     int32_t StopDistributedHardware(DHType dhType, const std::string &networkId) override;
@@ -67,6 +67,7 @@ public:
     int32_t UnLoadDistributedHDF(const DHType dhType) override;
     int32_t LoadSinkDMSDPService(const std::string &udid) override;
     int32_t NotifySinkRemoteSourceStarted(const std::string &udid) override;
+    int32_t CheckDHAccessPermission(const std::string &udid);
 
 public:
     class LoadDMSDPServiceCallback : public SystemAbilityLoadCallbackStub {

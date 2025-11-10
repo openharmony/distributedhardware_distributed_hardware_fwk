@@ -17,6 +17,8 @@
 
 #include <cinttypes>
 
+#include "accesstoken_kit.h"
+#include "device_manager.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "ipc_types.h"
@@ -301,11 +303,15 @@ int32_t DistributedHardwareService::RegisterCtlCenterCallback(int32_t engineId,
     return AVTransControlCenter::GetInstance().RegisterCtlCenterCallback(engineId, callback);
 }
 
-int32_t DistributedHardwareService::NotifySourceRemoteSinkStarted(std::string &deviceId)
+int32_t DistributedHardwareService::NotifySourceRemoteSinkStarted(std::string &udid)
 {
-    DHLOGI("DistributedHardwareService NotifySourceRemoteSinkStarted Init DHMS Ready Start.");
-    Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_INIT_DHMS_READY, deviceId);
-    DHLOGI("DistributedHardwareService NotifySourceRemoteSinkStarted Init DHMS Ready End.");
+    if (CheckDHAccessPermission(udid) != DH_FWK_SUCCESS) {
+        DHLOGE("check permission failed.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    DHLOGI("Notify source remote init sink DHMS ready start.");
+    Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_INIT_DHMS_READY, udid);
+    DHLOGI("Notify source remote init sink DHMS ready End.");
     return DH_FWK_SUCCESS;
 }
 
@@ -638,8 +644,11 @@ int32_t DistributedHardwareService::UnLoadDistributedHDF(const DHType dhType)
 
 int32_t DistributedHardwareService::LoadSinkDMSDPService(const std::string &udid)
 {
+    if (CheckDHAccessPermission(udid) != DH_FWK_SUCCESS) {
+        DHLOGE("check permission failed.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
     DHLOGI("Load DMSDP SA start");
-    (void)udid;
     sptr<ISystemAbilityManager> saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (saMgr == nullptr) {
         DHLOGE("Get System Ability Manager failed");
@@ -675,7 +684,34 @@ void DistributedHardwareService::LoadDMSDPServiceCallback::OnLoadSystemAbilityFa
 
 int32_t DistributedHardwareService::NotifySinkRemoteSourceStarted(const std::string &udid)
 {
+    if (CheckDHAccessPermission(udid) != DH_FWK_SUCCESS) {
+        DHLOGE("check permission failed.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    DHLOGI("Notify sink remote init source DHMS ready start.");
     Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_SOURCE_DHMS_READY, udid);
+    DHLOGI("Notify sink remote init source DHMS ready end.");
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::CheckDHAccessPermission(const std::string &udid)
+{
+    std::string networkId = "";
+    DeviceManager::GetInstance().GetNetworkIdByUdid(DH_FWK_PKG_NAME, udid, networkId);
+    if (!IsIdLengthValid(networkId)) {
+        DHLOGE("the networkId: %{public}s is invalid, not a trusted device.", GetAnonyString(networkId).c_str());
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    DHLOGI("start check the device permission, udid: %{public}s, networkId: %{public}s", GetAnonyString(udid).c_str(),
+        GetAnonyString(networkId).c_str());
+    Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetDCallingTokenID();
+    uint32_t dAccessToken = Security::AccessToken::AccessTokenKit::AllocLocalTokenID(networkId, callerToken);
+    const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
+    int32_t result = Security::AccessToken::AccessTokenKit::VerifyAccessToken(dAccessToken, permissionName);
+    if (result != Security::AccessToken::PERMISSION_GRANTED) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
     return DH_FWK_SUCCESS;
 }
 } // namespace DistributedHardware

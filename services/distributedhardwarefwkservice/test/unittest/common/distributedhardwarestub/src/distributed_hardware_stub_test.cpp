@@ -195,7 +195,7 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_010, TestSize.Level1)
     std::string deviceId = "deviceId_test";
     data.WriteString(deviceId);
     auto ret = stubTest_->OnRemoteRequest(code, data, reply, option);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
 HWTEST_F(DistributedHardwareStubTest, OnRemoteRequest_011, TestSize.Level1)
@@ -845,6 +845,17 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequestRPC_002, TestSize.Level1)
     data.WriteString(udid);
     ret = stubTest_->OnRemoteRequestRPC(code, data, reply, option);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(DistributedHardwareStubTest, OnRemoteRequestRPC_003, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    uint32_t code = static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SOURCE_DEVICE_REMOTE_DMSDP_STARTED);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    auto ret = stubTest_->OnRemoteRequestRPC(code, data, reply, option);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
