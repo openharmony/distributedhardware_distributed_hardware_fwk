@@ -139,7 +139,7 @@ void AccessManager::OnDeviceOnline(const DmDeviceInfo &deviceInfo)
         return;
     }
     int32_t osType = GetDeviceSystemType(deviceInfo.extraData);
-    DHLOGI("Online device deviceName: %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s,"
+    DHLOGI("Online device deviceName: %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s, "
         "deviceTypeId: %{public}d, osType: %{public}d", GetAnonyString(deviceName).c_str(),
         GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str(),
         deviceInfo.deviceTypeId, osType);
@@ -169,7 +169,7 @@ void AccessManager::OnDeviceOffline(const DmDeviceInfo &deviceInfo)
         DHLOGE("Param udid is invalid");
         return;
     }
-    DHLOGI("Offline device deviceName: %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s,"
+    DHLOGI("Offline device deviceName: %{public}s, networkId: %{public}s, uuid: %{public}s, udid: %{public}s, "
         "deviceTypeId: %{public}d", GetAnonyString(deviceName).c_str(), GetAnonyString(networkId).c_str(),
         GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str(), deviceInfo.deviceTypeId);
 
@@ -224,7 +224,7 @@ void AccessManager::CheckTrustedDeviceOnline()
         const auto uuid = GetUUIDByDm(networkId);
         const auto udid = GetUDIDByDm(networkId);
         int32_t osType = GetDeviceSystemType(deviceInfo.extraData);
-        DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s, udid = %{public}s,"
+        DHLOGI("Send trusted device online, networkId = %{public}s, uuid = %{public}s, udid = %{public}s, "
             "osType = %{public}d", GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(),
             GetAnonyString(udid).c_str(), osType);
         DistributedHardwareManagerFactory::GetInstance().SendOnLineEvent(networkId, uuid, udid,
