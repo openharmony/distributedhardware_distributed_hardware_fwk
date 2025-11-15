@@ -32,6 +32,7 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     constexpr uint16_t PHONE_TYPE = 14;
+    constexpr uint32_t WAIT_SYNC_TIME_MS = 13 * 1000;
 }
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "OnLineTask"
@@ -105,6 +106,7 @@ void OnLineTask::DoSyncInfo()
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("SyncMetaInfoFromDB failed, udidHash = %{public}s, errCode = %{public}d",
             GetAnonyString(udidHash).c_str(), ret);
+        ActiveSyncMetaData();
     }
 }
 
@@ -214,6 +216,26 @@ void OnLineTask::CreateMetaEnableTask()
     };
     auto task = TaskFactory::GetInstance().CreateTask(TaskType::META_ENABLE, taskParam, shared_from_this());
     TaskExecutor::GetInstance().PushTask(task);
+}
+
+void OnLineTask::ActiveSyncMetaData()
+{
+    auto handler = MetaInfoManager::GetInstance()->GetEventHandler();
+    if (handler != nullptr) {
+        std::string networkId = GetNetworkId();
+        std::string udidHash = Sha256(GetUDID());
+        DHLOGI("Active sync data, networkId: %{public}s, udidHash: %{public}s", GetAnonyString(networkId).c_str(),
+            GetAnonyString(udidHash).c_str());
+        auto task = [udidHash, networkId]() {
+            std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
+            MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(udidHash, metaCapInfos);
+            if (metaCapInfos.empty()) {
+                DHLOGW("No meta data found, trigger sync");
+                MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
+            }
+        };
+        handler->PostTask(task, WAIT_SYNC_TIME_MS);
+    }
 }
 } // namespace DistributedHardware
 } // namespace OHOS
