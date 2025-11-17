@@ -120,6 +120,6 @@ group("distributed_hardware_service_test") {
   testonly = true
   deps = [
     ":DistributedHardwareServiceTest",
-    ":DistributedHardwareServiceExtTest"
+    ":DistributedHardwareServiceExtTest",
   ]
 }
