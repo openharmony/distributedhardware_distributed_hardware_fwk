@@ -39,7 +39,7 @@ void OnDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0 || size >= DM_MAX_DEVICE_ID_LEN)) {
         return;
     }
-
+    AccessManager::GetInstance()->Init();
     FuzzedDataProvider fdp(data, size);
     std::string networkId = fdp.ConsumeRandomLengthString();
     DmDeviceInfo deviceInfo;
@@ -56,7 +56,7 @@ void OnDeviceOfflineFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0 || size >= DM_MAX_DEVICE_ID_LEN)) {
         return;
     }
-
+    AccessManager::GetInstance()->Init();
     FuzzedDataProvider fdp(data, size);
     std::string networkId = fdp.ConsumeRandomLengthString();
     DmDeviceInfo deviceInfo;
@@ -73,7 +73,7 @@ void OnDeviceReadyFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0 || size >= DM_MAX_DEVICE_ID_LEN)) {
         return;
     }
-
+    AccessManager::GetInstance()->Init();
     FuzzedDataProvider fdp(data, size);
     std::string networkId = fdp.ConsumeRandomLengthString();
     DmDeviceInfo deviceInfo;
@@ -91,7 +91,7 @@ void OnDeviceChangedFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0 || size >= DM_MAX_DEVICE_ID_LEN)) {
         return;
     }
-
+    AccessManager::GetInstance()->Init();
     FuzzedDataProvider fdp(data, size);
     std::string networkId = fdp.ConsumeRandomLengthString();
     DmDeviceInfo deviceInfo;
