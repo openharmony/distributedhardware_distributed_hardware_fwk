@@ -164,5 +164,58 @@ HWTEST_F(DBAdapterTest, ClearDataByPrefix_001, TestSize.Level1)
     auto ret = MetaInfoManager::GetInstance()->dbAdapterPtr_->ClearDataByPrefix(prefix);
     EXPECT_EQ(false, ret);
 }
+
+HWTEST_F(DBAdapterTest, CloudSyncData_001, TestSize.Level1)
+{
+    ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
+    MetaInfoManager::GetInstance()->dbAdapterPtr_->kvStoragePtr_ = nullptr;
+    auto ret = MetaInfoManager::GetInstance()->dbAdapterPtr_->CloudSyncData();
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL, ret);
+}
+
+HWTEST_F(DBAdapterTest, CloudSyncCallback_001, TestSize.Level1)
+{
+    ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
+    DistributedKv::ProgressDetail detail;
+    detail.code = DistributedKv::Status::SUCCESS;
+    detail.progress = DistributedKv::Progress::SYNC_FINISH;
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->dbAdapterPtr_->CloudSyncCallback(std::move(detail)));
+}
+
+HWTEST_F(DBAdapterTest, CloudSyncCallback_002, TestSize.Level1)
+{
+    ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
+    DistributedKv::ProgressDetail detail;
+    detail.code = DistributedKv::Status::SUCCESS;
+    detail.progress = DistributedKv::Progress::SYNC_IN_PROGRESS;
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->dbAdapterPtr_->CloudSyncCallback(std::move(detail)));
+}
+
+HWTEST_F(DBAdapterTest, CloudSyncCallback_003, TestSize.Level1)
+{
+    ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
+    DistributedKv::ProgressDetail detail;
+    detail.code = DistributedKv::Status::ERROR;
+    detail.progress = DistributedKv::Progress::SYNC_FINISH;
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->dbAdapterPtr_->CloudSyncCallback(std::move(detail)));
+}
+
+HWTEST_F(DBAdapterTest, CloudSyncCallback_004, TestSize.Level1)
+{
+    ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
+    DistributedKv::ProgressDetail detail;
+    detail.code = DistributedKv::Status::ERROR;
+    detail.progress = DistributedKv::Progress::SYNC_IN_PROGRESS;
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->dbAdapterPtr_->CloudSyncCallback(std::move(detail)));
+}
+
+HWTEST_F(DBAdapterTest, CloudSyncCallback_005, TestSize.Level1)
+{
+    ASSERT_TRUE(MetaInfoManager::GetInstance()->dbAdapterPtr_ != nullptr);
+    DistributedKv::ProgressDetail detail;
+    detail.code = DistributedKv::Status::TIME_OUT;
+    detail.progress = DistributedKv::Progress::SYNC_IN_PROGRESS;
+    ASSERT_NO_FATAL_FAILURE(MetaInfoManager::GetInstance()->dbAdapterPtr_->CloudSyncCallback(std::move(detail)));
+}
 }
 }

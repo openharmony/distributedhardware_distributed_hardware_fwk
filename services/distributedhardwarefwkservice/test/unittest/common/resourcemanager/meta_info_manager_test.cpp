@@ -644,5 +644,19 @@ HWTEST_F(MetaInfoMgrTest, GetDhSubtypeByUdidHash_002, TestSize.Level1)
     ret = MetaInfoManager::GetInstance()->GetDhSubtypeByUdidHash(udidHash1, dhid);
     EXPECT_EQ("", ret);
 }
+
+HWTEST_F(MetaInfoMgrTest, ActiveCloudSyncData_001, TestSize.Level1)
+{
+    MetaInfoManager::GetInstance()->dbAdapterPtr_ = nullptr;
+    auto ret = MetaInfoManager::GetInstance()->ActiveCloudSyncData();
+    EXPECT_EQ(ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL, ret);
+}
+
+HWTEST_F(MetaInfoMgrTest, ActiveCloudSyncData_002, TestSize.Level1)
+{
+    MetaInfoManager::GetInstance()->Init();
+    auto ret = MetaInfoManager::GetInstance()->ActiveCloudSyncData();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
 }
 }

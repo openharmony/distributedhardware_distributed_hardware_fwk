@@ -528,5 +528,16 @@ std::string MetaInfoManager::GetDhSubtypeByUdidHash(const std::string &udidHash,
     }
     return iter->second->GetDHSubtype();
 }
+
+int32_t MetaInfoManager::ActiveCloudSyncData()
+{
+    DHLOGI("ActiveCloudSyncData start");
+    if (dbAdapterPtr_ == nullptr) {
+        DHLOGE("dbAdapterPtr is null");
+        return ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL;
+    }
+    dbAdapterPtr_->CloudSyncData();
+    return DH_FWK_SUCCESS;
+}
 }
 }
