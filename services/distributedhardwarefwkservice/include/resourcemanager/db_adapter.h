@@ -55,6 +55,8 @@ public:
     std::vector<DistributedKv::Entry> GetEntriesByKeys(const std::vector<std::string> &keys);
     bool SyncDataByNetworkId(const std::string &networkId);
     bool ClearDataByPrefix(const std::string &prefix);
+    int32_t CloudSyncData();
+    static void CloudSyncCallback(DistributedKv::ProgressDetail &&detail);
 
 private:
     int32_t RegisterChangeListener();

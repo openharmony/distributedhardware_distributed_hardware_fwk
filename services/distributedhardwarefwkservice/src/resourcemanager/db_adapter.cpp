@@ -15,6 +15,7 @@
 
 #include "db_adapter.h"
 
+#include <functional>
 #include <vector>
 
 #include "anonymous_string.h"
@@ -596,6 +597,44 @@ bool DBAdapter::ClearDataByPrefix(const std::string &prefix)
         return false;
     }
     return true;
+}
+
+int32_t DBAdapter::CloudSyncData()
+{
+    DHLOGI("active sync meta data");
+    std::function<void(DistributedKv::ProgressDetail &&)> callback = CloudSyncCallback;
+    DistributedKv::Status status;
+    {
+        std::lock_guard<std::mutex> lock(dbAdapterMutex_);
+        if (kvStoragePtr_ == nullptr) {
+            DHLOGE("kvStoragePtr_ is nullptr!");
+            return ERR_DH_FWK_RESOURCE_KV_STORAGE_POINTER_NULL;
+        }
+        status = kvStoragePtr_->CloudSync(callback);
+    }
+    if (status == DistributedKv::Status::CLOUD_DISABLED) {
+        DHLOGE("cloud sync disabled, status: %{public}d", status);
+        return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
+    }
+    if (status != DistributedKv::Status::SUCCESS) {
+        DHLOGE("cloud sync failed, status: %{public}d", status);
+        return ERR_DH_FWK_RESOURCE_KV_STORAGE_OPERATION_FAIL;
+    }
+    DHLOGI("cloud sync ok, status: %{public}d", status);
+    return DH_FWK_SUCCESS;
+}
+
+void DBAdapter::CloudSyncCallback(DistributedKv::ProgressDetail &&detail)
+{
+    DHLOGI("CloudSyncCallback start");
+    auto code = detail.code;
+    auto progress = detail.progress;
+    if (progress == DistributedKv::Progress::SYNC_FINISH && code == DistributedKv::Status::SUCCESS) {
+        DHLOGI("active sync meta data success");
+    }
+    if (progress == DistributedKv::Progress::SYNC_FINISH && code != DistributedKv::Status::SUCCESS) {
+        DHLOGE("active sync meta data failed");
+    }
 }
 } // namespace DistributedHardware
 } // namespace OHOS

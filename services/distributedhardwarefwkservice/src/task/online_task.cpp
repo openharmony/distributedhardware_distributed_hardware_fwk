@@ -226,12 +226,12 @@ void OnLineTask::ActiveSyncMetaData()
         std::string udidHash = Sha256(GetUDID());
         DHLOGI("Active sync data, networkId: %{public}s, udidHash: %{public}s", GetAnonyString(networkId).c_str(),
             GetAnonyString(udidHash).c_str());
-        auto task = [udidHash, networkId]() {
+        auto task = [udidHash]() {
             std::vector<std::shared_ptr<MetaCapabilityInfo>> metaCapInfos;
             MetaInfoManager::GetInstance()->GetMetaCapInfosByUdidHash(udidHash, metaCapInfos);
             if (metaCapInfos.empty()) {
                 DHLOGW("No meta data found, trigger sync");
-                MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
+                MetaInfoManager::GetInstance()->ActiveCloudSyncData();
             }
         };
         handler->PostTask(task, WAIT_SYNC_TIME_MS);

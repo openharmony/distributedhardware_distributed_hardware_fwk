@@ -53,6 +53,7 @@ public:
     int32_t SyncDataByNetworkId(const std::string &networkId);
     int32_t ClearRemoteDeviceMetaInfoData(const std::string &peerudid, const std::string &peeruuid);
     std::string GetDhSubtypeByUdidHash(const std::string &udidHash, const std::string &dhId);
+    int32_t ActiveCloudSyncData();
     /* Database data changes callback */
     virtual void OnChange(const DistributedKv::ChangeNotification &changeNotification) override;
     /* Cloud data changes callback */
