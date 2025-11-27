@@ -341,17 +341,6 @@ void UnLoadDistributedHDFFuzzTest(const uint8_t *data, size_t size)
     dhfwkKit.UnLoadDistributedHDF(dhType);
 }
 
-void OnDHFWKOnLineFuzzTest(const uint8_t *data, size_t size)
-{
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-
-    DistributedHardwareFwkKit dhfwkKit;
-    bool isOnLine = *(reinterpret_cast<const bool*>(data));
-    dhfwkKit.OnDHFWKOnLine(isOnLine);
-}
-
 void QueryLocalSysSpecFuzzTest(const uint8_t *data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
@@ -430,7 +419,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     OHOS::DistributedHardware::DisableSinkFuzzTest(data, size);
     OHOS::DistributedHardware::LoadDistributedHDFFuzzTest(data, size);
     OHOS::DistributedHardware::UnLoadDistributedHDFFuzzTest(data, size);
-    OHOS::DistributedHardware::OnDHFWKOnLineFuzzTest(data, size);
     OHOS::DistributedHardware::QueryLocalSysSpecFuzzTest(data, size);
     OHOS::DistributedHardware::RegisterDHStatusListenerOneParamFuzzTest(data, size);
     OHOS::DistributedHardware::UnregisterDHStatusListenerOneParamFuzzTest(data, size);

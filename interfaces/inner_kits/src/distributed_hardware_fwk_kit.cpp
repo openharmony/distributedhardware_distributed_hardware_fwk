@@ -92,10 +92,9 @@ std::string DumpDescriptors(const std::vector<DHDescriptor> &descriptors)
     return descriptorsInfo;
 }
 
-DistributedHardwareFwkKit::DistributedHardwareFwkKit() : isDHFWKOnLine_(false)
+DistributedHardwareFwkKit::DistributedHardwareFwkKit()
 {
     DHLOGI("Ctor DistributedHardwareFwkKit");
-    DHFWKSAManager::GetInstance().RegisterSAStateCallback([this](bool isOnLine) { this->OnDHFWKOnLine(isOnLine); });
     DHFWKSAManager::GetInstance().RegisterAbilityListener();
 }
 
@@ -106,8 +105,7 @@ DistributedHardwareFwkKit::~DistributedHardwareFwkKit()
 
 int32_t DistributedHardwareFwkKit::RegisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener)
 {
-    DHLOGI("Register publisher listener, topic: %{public}" PRIu32 ", is DHFWK online: %{public}s",
-        (uint32_t)topic, isDHFWKOnLine_ ? "true" : "false");
+    DHLOGI("Register publisher listener, topic: %{public}" PRIu32 "", (uint32_t)topic);
     if (!IsDHTopicValid(topic)) {
         DHLOGE("Topic invalid, topic: %{public}" PRIu32, (uint32_t)topic);
         return ERR_DH_FWK_PARA_INVALID;
@@ -130,8 +128,7 @@ int32_t DistributedHardwareFwkKit::RegisterPublisherListener(const DHTopic topic
 
 int32_t DistributedHardwareFwkKit::UnregisterPublisherListener(const DHTopic topic, sptr<IPublisherListener> listener)
 {
-    DHLOGI("Unregister publisher listener, topic: %{public}" PRIu32 ", is DHFWK online: %{public}s",
-        (uint32_t)topic, isDHFWKOnLine_ ? "true" : "false");
+    DHLOGI("Unregister publisher listener, topic: %{public}" PRIu32 "", (uint32_t)topic);
     if (!IsDHTopicValid(topic)) {
         DHLOGE("Topic invalid, topic: %{public}" PRIu32, (uint32_t)topic);
         return ERR_DH_FWK_PARA_INVALID;
@@ -172,12 +169,6 @@ int32_t DistributedHardwareFwkKit::PublishMessage(const DHTopic topic, const std
 bool DistributedHardwareFwkKit::IsDHTopicValid(DHTopic topic)
 {
     return topic > DHTopic::TOPIC_MIN && topic < DHTopic::TOPIC_MAX;
-}
-
-void DistributedHardwareFwkKit::OnDHFWKOnLine(bool isOnLine)
-{
-    DHLOGI("Receive DHFWK online callback, %{public}s", (isOnLine ? "true" : "false"));
-    isDHFWKOnLine_ = isOnLine;
 }
 
 bool DistributedHardwareFwkKit::IsQueryLocalSysSpecTypeValid(QueryLocalSysSpecType spec)

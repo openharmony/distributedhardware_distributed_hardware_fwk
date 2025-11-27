@@ -38,10 +38,6 @@ void DHFWKSAManagerTest::TearDown()
 {
 }
 
-void DHFWKSaStateCallback(bool callback)
-{
-}
-
 /**
  * @tc.name: RegisterAbilityListener_001
  * @tc.desc: Verify the RegisterAbilityListener function
@@ -98,20 +94,6 @@ HWTEST_F(DHFWKSAManagerTest, GetDHFWKProxy_002, TestSize.Level1)
 }
 
 /**
- * @tc.name: RegisterSAStateCallback_001
- * @tc.desc: Verify the RegisterSAStateCallback function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DHFWKSAManagerTest, RegisterSAStateCallback_001, TestSize.Level1)
-{
-    DHFWKSAStateCb callback;
-    DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.store(true);
-    DHFWKSAManager::GetInstance().RegisterSAStateCallback(callback);
-    EXPECT_EQ(true, DHFWKSAManager::GetInstance().isSubscribeDHFWKSAChangeListener_.load());
-}
-
-/**
  * @tc.name: OnAddSystemAbility_001
  * @tc.desc: Verify the OnAddSystemAbility function
  * @tc.type: FUNC
@@ -158,7 +140,6 @@ HWTEST_F(DHFWKSAManagerTest, OnAddSystemAbility_003, TestSize.Level1)
     ASSERT_TRUE(DHFWKSAManager::GetInstance().saListener_ != nullptr);
     int32_t systemAbilityId = DISTRIBUTED_HARDWARE_SA_ID;
     std::string deviceId = "deviceId";
-    DHFWKSAManager::GetInstance().saStateCallback_ = DHFWKSaStateCallback;
     DHFWKSAManager::GetInstance().saListener_->OnAddSystemAbility(systemAbilityId, deviceId);
     EXPECT_NE(nullptr, DHFWKSAManager::GetInstance().saListener_);
 }
@@ -210,7 +191,6 @@ HWTEST_F(DHFWKSAManagerTest, OnRemoveSystemAbility_003, TestSize.Level1)
     ASSERT_TRUE(DHFWKSAManager::GetInstance().saListener_ != nullptr);
     int32_t systemAbilityId = DISTRIBUTED_HARDWARE_SA_ID;
     std::string deviceId = "deviceId";
-    DHFWKSAManager::GetInstance().saStateCallback_ = DHFWKSaStateCallback;
     DHFWKSAManager::GetInstance().saListener_->OnAddSystemAbility(systemAbilityId, deviceId);
     EXPECT_NE(nullptr, DHFWKSAManager::GetInstance().saListener_);
 }
