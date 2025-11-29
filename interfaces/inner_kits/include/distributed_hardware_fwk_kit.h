@@ -78,13 +78,6 @@ public:
     API_EXPORT int32_t PublishMessage(const DHTopic topic, const std::string &message);
 
     /**
-     * @brief Distributed hardware framework online.
-     * @param isOnLine Online or not.
-     * @return No return value.
-     */
-    void OnDHFWKOnLine(bool isOnLine);
-
-    /**
      * @brief Query Local system specifications
      *
      * @param spec specification type
@@ -280,7 +273,6 @@ private:
     int32_t LoadDistributedHardwareSA();
 
 private:
-    std::atomic<bool> isDHFWKOnLine_;
     std::mutex dfwkLoadServiceMutex_;
 };
 } // namespace DistributedHardware

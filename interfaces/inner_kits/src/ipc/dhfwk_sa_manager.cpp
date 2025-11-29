@@ -32,8 +32,8 @@ constexpr uint32_t MAX_LISTENER_SIZE = 256;
 
 IMPLEMENT_SINGLE_INSTANCE(DHFWKSAManager);
 DHFWKSAManager::DHFWKSAManager()
-    : dhfwkOnLine_(false), isSubscribeDHFWKSAChangeListener_(false), dhfwkProxy_(nullptr),
-      saListener_(sptr<SystemAbilityListener>(new SystemAbilityListener())), saStateCallback_(nullptr),
+    : isSubscribeDHFWKSAChangeListener_(false), dhfwkProxy_(nullptr),
+      saListener_(sptr<SystemAbilityListener>(new SystemAbilityListener())),
       publisherListenersCache_({}), avTransControlCenterCbCache_({})
 {
     DHLOGI("Ctor DHFWKSAManager");
@@ -41,7 +41,6 @@ DHFWKSAManager::DHFWKSAManager()
 DHFWKSAManager::~DHFWKSAManager()
 {
     DHLOGI("Dtor DHFWKSAManager");
-    dhfwkOnLine_ = false;
     isSubscribeDHFWKSAChangeListener_.store(false);
     dhfwkProxy_ = nullptr;
     saListener_ = nullptr;
@@ -97,12 +96,6 @@ sptr<IDistributedHardware> DHFWKSAManager::GetDHFWKProxy()
     return dhfwkProxy_;
 }
 
-void DHFWKSAManager::RegisterSAStateCallback(DHFWKSAStateCb callback)
-{
-    std::lock_guard<std::mutex> lock(saStatCbMutex_);
-    saStateCallback_ = callback;
-}
-
 void DHFWKSAManager::SystemAbilityListener::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 {
     (void)deviceId;
@@ -111,13 +104,6 @@ void DHFWKSAManager::SystemAbilityListener::OnAddSystemAbility(int32_t systemAbi
         return;
     }
 
-    DHFWKSAManager::GetInstance().dhfwkOnLine_ = true;
-    {
-        std::lock_guard<std::mutex> lock(DHFWKSAManager::GetInstance().saStatCbMutex_);
-        if (DHFWKSAManager::GetInstance().saStateCallback_ != nullptr) {
-            DHFWKSAManager::GetInstance().saStateCallback_(true);
-        }
-    }
     if (DHFWKSAManager::GetInstance().RestoreListener() != DH_FWK_SUCCESS) {
         DHLOGE("Partial listeners failed to restore");
     }
@@ -132,16 +118,9 @@ void DHFWKSAManager::SystemAbilityListener::OnRemoveSystemAbility(int32_t system
         return;
     }
 
-    DHFWKSAManager::GetInstance().dhfwkOnLine_ = false;
     {
         std::lock_guard<std::mutex> lock(DHFWKSAManager::GetInstance().proxyMutex_);
         DHFWKSAManager::GetInstance().dhfwkProxy_ = nullptr;
-    }
-    {
-        std::lock_guard<std::mutex> lock(DHFWKSAManager::GetInstance().saStatCbMutex_);
-        if (DHFWKSAManager::GetInstance().saStateCallback_ != nullptr) {
-            DHFWKSAManager::GetInstance().saStateCallback_(false);
-        }
     }
     DHLOGI("sa %{public}" PRId32 " stopped", systemAbilityId);
 }

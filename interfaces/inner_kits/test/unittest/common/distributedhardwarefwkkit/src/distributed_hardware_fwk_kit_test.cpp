@@ -220,20 +220,6 @@ HWTEST_F(DistributedHardwareFwkKitTest, PublishMessage_004, testing::ext::TestSi
 }
 
 /**
- * @tc.name: OnDHFWKOnLine_001
- * @tc.desc: Verify the OnDHFWKOnLine function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DistributedHardwareFwkKitTest, OnDHFWKOnLine_001, testing::ext::TestSize.Level0)
-{
-    ASSERT_TRUE(dhfwkPtr_ != nullptr);
-    bool isOnLine = true;
-    dhfwkPtr_->OnDHFWKOnLine(isOnLine);
-    EXPECT_EQ(nullptr, DHFWKSAManager::GetInstance().GetDHFWKProxy());
-}
-
-/**
  * @tc.name: RegisterPublisherListener_002
  * @tc.desc: Verify the RegisterPublisherListener function
  * @tc.type: FUNC

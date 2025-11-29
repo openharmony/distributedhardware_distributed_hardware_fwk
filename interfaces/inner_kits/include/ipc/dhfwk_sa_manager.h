@@ -17,7 +17,6 @@
 #define OHOS_DHFWK_SA_MANAGER_H
 
 #include <atomic>
-#include <functional>
 #include <mutex>
 #include <set>
 
@@ -29,8 +28,6 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-// DHFWK sa state callback, param true for started, false for stopped.
-using DHFWKSAStateCb = std::function<void(bool)>;
 class DHFWKSAManager {
 DECLARE_SINGLE_INSTANCE_BASE(DHFWKSAManager);
 public:
@@ -38,7 +35,6 @@ public:
     virtual ~DHFWKSAManager();
     void RegisterAbilityListener();
     sptr<IDistributedHardware> GetDHFWKProxy();
-    void RegisterSAStateCallback(DHFWKSAStateCb callback);
 
     int32_t AddPublisherListenerToCache(const DHTopic topic, sptr<IPublisherListener> listener);
     void RemovePublisherListenerFromCache(const DHTopic topic, sptr<IPublisherListener> listener);
@@ -56,13 +52,10 @@ private:
     int32_t RestoreListener();
 
 private:
-    std::atomic<bool> dhfwkOnLine_;
     std::atomic<bool> isSubscribeDHFWKSAChangeListener_;
     std::mutex proxyMutex_;
     sptr<IDistributedHardware> dhfwkProxy_;
     sptr<SystemAbilityListener> saListener_;
-    std::mutex saStatCbMutex_;
-    DHFWKSAStateCb saStateCallback_;
     std::mutex publisherListenersMutex_;
     std::unordered_map<DHTopic, std::set<sptr<IPublisherListener>>> publisherListenersCache_;
     std::mutex avTransControlCenterCbMutex_;
