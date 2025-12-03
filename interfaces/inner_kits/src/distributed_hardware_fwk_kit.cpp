@@ -460,12 +460,13 @@ int32_t DistributedHardwareFwkKit::LoadDistributedHDF(const DHType dhType)
             DHLOGE("Load distributed hardware SA failed, can not load distributed HDF.");
             return ERR_DH_FWK_POINTER_IS_NULL;
         }
-        if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
-            DHLOGE("DHFWK already not online or get proxy failed yet, can not load distributed HDF.");
-            return ERR_DH_FWK_POINTER_IS_NULL;
-        }
     }
-    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->LoadDistributedHDF(dhType);
+    auto proxy = DHFWKSAManager::GetInstance().GetDHFWKProxy();
+    if (proxy == nullptr) {
+        DHLOGE("DHFWK proxy is null, can not load distributed HDF.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return proxy->LoadDistributedHDF(dhType);
 }
 
 int32_t DistributedHardwareFwkKit::UnLoadDistributedHDF(const DHType dhType)
