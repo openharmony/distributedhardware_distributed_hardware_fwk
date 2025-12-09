@@ -283,33 +283,18 @@ int32_t DistributedHardwareStub::RegisterControlCenterCallbackInner(MessageParce
 int32_t OHOS::DistributedHardware::DistributedHardwareStub::HandleNotifySourceRemoteSinkStarted(MessageParcel &data,
     MessageParcel &reply)
 {
-    DHLOGI("HandleNotifySourceRemoteSinkStarted Start.");
-    Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetDCallingTokenID();
+    DHLOGI("Notify source device remote sink DMSDP start.");
     std::string udid = data.ReadString();
     if (!IsIdLengthValid(udid)) {
-        DHLOGE("the udid: %{public}s is invalid.", GetAnonyString(udid).c_str());
+        DHLOGE("The udid is invalid.");
         return ERR_DH_FWK_PARA_INVALID;
     }
-    std::string networkId = "";
-    DeviceManager::GetInstance().GetNetworkIdByUdid(DH_FWK_PKG_NAME, udid, networkId);
-    if (!IsIdLengthValid(networkId)) {
-        DHLOGE("the networkId: %{public}s is invalid, not a trusted device.", GetAnonyString(networkId).c_str());
-        return ERR_DH_FWK_PARA_INVALID;
-    }
-    uint32_t dAccessToken = Security::AccessToken::AccessTokenKit::AllocLocalTokenID(networkId, callerToken);
-    const std::string permissionName = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
-    int32_t result = Security::AccessToken::AccessTokenKit::VerifyAccessToken(dAccessToken, permissionName);
-    if (result != Security::AccessToken::PERMISSION_GRANTED) {
-        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
-        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
-    }
-
     int32_t ret = NotifySourceRemoteSinkStarted(udid);
     if (!reply.WriteInt32(ret)) {
         DHLOGE("write ret failed.");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
     }
-    DHLOGI("HandleNotifySourceRemoteSinkStarted End.");
+    DHLOGI("Notify source device End.");
     return DH_FWK_SUCCESS;
 }
 
@@ -648,12 +633,12 @@ int32_t DistributedHardwareStub::WriteDescriptors(MessageParcel &data, const std
 
 int32_t DistributedHardwareStub::HandleLoadSinkDMSDPService(MessageParcel &data, MessageParcel &reply)
 {
+    DHLOGI("Load sink DMSDP service start");
     std::string udid = data.ReadString();
     if (!IsIdLengthValid(udid)) {
         DHLOGE("The udid is invalid.");
         return ERR_DH_FWK_PARA_INVALID;
     }
-    DHLOGI("Load sink DMSDP service start, the udid: %{public}s.", GetAnonyString(udid).c_str());
     int32_t ret = LoadSinkDMSDPService(udid);
     if (!reply.WriteInt32(ret)) {
         DHLOGE("write ret failed.");
@@ -665,18 +650,19 @@ int32_t DistributedHardwareStub::HandleLoadSinkDMSDPService(MessageParcel &data,
 
 int32_t DistributedHardwareStub::HandleNotifySinkRemoteSourceStarted(MessageParcel &data, MessageParcel &reply)
 {
+    DHLOGI("Notify sink device remote source DMSDP started.");
     std::string udid = data.ReadString();
     if (!IsIdLengthValid(udid)) {
         DHLOGE("The udid is invalid.");
         return ERR_DH_FWK_PARA_INVALID;
     }
-    DHLOGI("Notify sink device remote source started, the udid: %{public}s.", GetAnonyString(udid).c_str());
+
     int32_t ret = NotifySinkRemoteSourceStarted(udid);
     if (!reply.WriteInt32(ret)) {
         DHLOGE("write ret failed.");
         return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
     }
-    DHLOGI("notify sink device remote source end.");
+    DHLOGI("Notify sink device End.");
     return DH_FWK_SUCCESS;
 }
 
