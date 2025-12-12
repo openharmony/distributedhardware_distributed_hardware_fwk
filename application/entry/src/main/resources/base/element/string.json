@@ -120,14 +120,14 @@
       "name": "mech_intelligent_tracking",
       "value": "Smart tracking",
       "attr":{
-          "priority":"translate"
+          "priority":"LT"
       }
     },
     {
       "name": "mech_tracking_layout",
       "value": "Tracking mode",
       "attr":{
-          "priority":"translate"
+          "priority":"LT"
       }
     },
     {
@@ -141,28 +141,28 @@
       "name": "mech_close",
       "value": "Off",
       "attr":{
-          "priority":"translate"
+          "priority":"LT"
       }
     },
     {
       "name": "mech_left",
       "value": "Left",
       "attr":{
-          "priority":"translate"
+          "priority":"LT"
       }
     },
     {
       "name": "mech_center",
       "value": "Center",
       "attr":{
-          "priority":"translate"
+          "priority":"LT"
       }
     },
     {
       "name": "mech_right",
       "value": "Right",
       "attr":{
-          "priority":"translate"
+          "priority":"LT"
       }
     },
     {

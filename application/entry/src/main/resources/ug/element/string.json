@@ -88,14 +88,14 @@
           "name": "mech_intelligent_tracking",
           "value": "ئاڭلىق ئىزلاش",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_tracking_layout",
           "value": "ئىزلاش لايىھەسى",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
@@ -109,28 +109,28 @@
           "name": "mech_close",
           "value": "ئېتىك",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_left",
           "value": "سول",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_center",
           "value": "مەركەز",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_right",
           "value": "ئوڭ",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {

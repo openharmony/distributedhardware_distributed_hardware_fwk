@@ -86,11 +86,11 @@
     },
     {
       "name": "mech_left",
-      "value": "[TS_1101053]_left"
+      "value": "[TS_1101053]_Left"
     },
     {
       "name": "mech_right",
-      "value": "[TS_1101054]_right"
+      "value": "[TS_1101054]_Right"
     },
     {
       "name": "MechExtAbility_desc",
@@ -106,7 +106,7 @@
     },
     {
       "name": "mech_center",
-      "value": "[TS_1101059]_center"
+      "value": "[TS_1101059]_Center"
     },
     {
       "name": "audio_tracking_switch_on",

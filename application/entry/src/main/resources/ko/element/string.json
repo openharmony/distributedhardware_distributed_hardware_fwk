@@ -88,14 +88,14 @@
           "name": "mech_intelligent_tracking",
           "value": "스마트 추적",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_tracking_layout",
           "value": "추적 모드",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
@@ -107,30 +107,30 @@
         },
         {
           "name": "mech_close",
-          "value": "끔",
+          "value": "꺼짐",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_left",
           "value": "왼쪽",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_center",
           "value": "중앙",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_right",
           "value": "오른쪽",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {

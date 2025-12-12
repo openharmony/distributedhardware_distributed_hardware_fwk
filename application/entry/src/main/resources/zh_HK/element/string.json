@@ -88,14 +88,14 @@
           "name": "mech_intelligent_tracking",
           "value": "智能追蹤",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_tracking_layout",
           "value": "追蹤佈局",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
@@ -109,28 +109,28 @@
           "name": "mech_close",
           "value": "關閉",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_left",
           "value": "靠左",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_center",
           "value": "置中",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_right",
           "value": "靠右",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
