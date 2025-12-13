@@ -88,14 +88,14 @@
           "name": "mech_intelligent_tracking",
           "value": "التتبع الذكي",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_tracking_layout",
           "value": "وضع التتبع",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
@@ -107,30 +107,30 @@
         },
         {
           "name": "mech_close",
-          "value": "إيقاف",
+          "value": "مغلق",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_left",
           "value": "على اليسار",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_center",
           "value": "في الوسط",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_right",
           "value": "على اليمين",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {

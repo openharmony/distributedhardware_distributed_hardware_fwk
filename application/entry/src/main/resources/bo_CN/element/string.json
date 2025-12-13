@@ -88,14 +88,14 @@
           "name": "mech_intelligent_tracking",
           "value": "རིག་ལྡན་རྗེས་འདེད།",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_tracking_layout",
           "value": "འགྲེམ་ཚུལ་རྗེས་འདེད།",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
@@ -109,28 +109,28 @@
           "name": "mech_close",
           "value": "ཁ་རྒྱག",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_left",
           "value": "གཡོན་སྒྲིག",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_center",
           "value": "དཀྱིལ་དུ་འཇོག་པ།",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_right",
           "value": "གཡས་སྒྲིག",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {

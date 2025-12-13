@@ -79,7 +79,7 @@
         },
         {
             "name":"continue_privacy_text",
-            "value":"Este servicio utiliza Bluetooth y WLAN, y necesita enviar el nombre de este dispositivo a los dispositivos con los que compartas contenido. Si activas este selector, significa que aceptas estos términos.",
+            "value":"Este servicio utiliza el Bluetooth y la red WLAN, y necesita enviar el nombre de este dispositivo a los dispositivos con los que establezca conexión. Si activas esta opción, significa que aceptas estos términos.",
             "attr":{
                 "priority":"LT"
             }
@@ -88,14 +88,14 @@
           "name": "mech_intelligent_tracking",
           "value": "Seguimiento inteligente",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_tracking_layout",
           "value": "Modo Seguimiento",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
@@ -109,28 +109,28 @@
           "name": "mech_close",
           "value": "No",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_left",
           "value": "Izquierda",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_center",
           "value": "Centro",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_right",
           "value": "Derecha",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {

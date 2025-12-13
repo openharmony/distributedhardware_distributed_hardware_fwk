@@ -88,14 +88,14 @@
           "name": "mech_intelligent_tracking",
           "value": "Умное отслеживание",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_tracking_layout",
           "value": "Режим отслеживания",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
@@ -109,28 +109,28 @@
           "name": "mech_close",
           "value": "Выключено",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_left",
           "value": "Слева",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_center",
           "value": "По центру",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_right",
           "value": "Справа",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {

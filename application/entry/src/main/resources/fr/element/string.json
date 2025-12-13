@@ -88,14 +88,14 @@
           "name": "mech_intelligent_tracking",
           "value": "Suivi intelligent",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_tracking_layout",
           "value": "Mode suivi",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
@@ -109,7 +109,7 @@
           "name": "mech_close",
           "value": "Désactivé",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
@@ -123,14 +123,14 @@
           "name": "mech_center",
           "value": "Centre",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
           "name": "mech_right",
           "value": "Droite",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
         },
         {
