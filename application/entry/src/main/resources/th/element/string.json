@@ -11,35 +11,35 @@
             "name":"mech_close",
             "value":"ปิด",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_enable",
             "value":"เปิด",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_left",
             "value":"ซ้าย",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"update_version_prompt",
             "value":"ทั้งสองอุปกรณ์จะต้องใช้งาน HarmonyOS NEXT",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_right",
             "value":"ขวา",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"continue_privacy_text",
             "value":"บริการนี้ใช้บลูทูธและ WLAN และจำเป็นต้องส่งชื่ออุปกรณ์นี้ไปยังอุปกรณ์ที่คุณทำการส่งต่อ เมื่อเปิดใช้งาน แสดงว่าคุณยอมรับข้อกำหนดเหล่านี้",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"mech_intelligent_tracking",
             "value":"การติดตามอัจฉริยะ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,7 +81,7 @@
             "name":"continue_desc_text",
             "value":"เริ่มดูหรือแก้ไขเนื้อหาบนอุปกรณ์หนึ่ง จากนั้นดำเนินการต่อบนอุปกรณ์ใกล้เคียงที่ล็อกอินด้วย HUAWEI ID เดียวกันอย่างราบรื่น เมื่อการส่งต่อพร้อมใช้งาน ไอคอนจะปรากฏในแท่นวางแอป %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,7 +102,7 @@
             "name":"mech_tracking_layout",
             "value":"โหมดการติดตาม",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,14 +144,14 @@
             "name":"mech_center",
             "value":"ตรงกลาง",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_title",
             "value":"การส่งต่อ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

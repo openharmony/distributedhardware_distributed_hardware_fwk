@@ -11,35 +11,35 @@
             "name":"mech_close",
             "value":"Wył.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_enable",
             "value":"Wł.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_left",
             "value":"Po lewej",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"update_version_prompt",
             "value":"Na obu urządzeniach musi być uruchomiony system HarmonyOS NEXT",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_right",
             "value":"Po prawej",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -51,9 +51,9 @@
         },
         {
             "name":"continue_privacy_text",
-            "value":"Ta usługa korzysta z Bluetooth i WLAN i musi wysyłać nazwę tego urządzenia do urządzeń, an które przekazujesz zawartość. Włączenie tej opcji oznacza zaakceptowanie tych warunków.",
+            "value":"Ta usługa korzysta z Bluetooth i WLAN i musi wysyłać nazwę tego urządzenia do urządzeń, na które przekazujesz zawartość. Włączenie tej opcji oznacza zaakceptowanie tych warunków.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"mech_intelligent_tracking",
             "value":"Inteligentne śledzenie",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,7 +81,7 @@
             "name":"continue_desc_text",
             "value":"Zacznij wyświetlać lub edytować zawartość na jednym urządzeniu i bezproblemowo kontynuuj korzystanie z niej na urządzeniu znajdującym się w pobliżu, które jest zalogowane w tym samym ID HUAWEI. Jeśli Przekazywanie jest dostępne, w doku aplikacji pojawi się ikona. %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,7 +102,7 @@
             "name":"mech_tracking_layout",
             "value":"Tryb śledzenia",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,14 +144,14 @@
             "name":"mech_center",
             "value":"Na środku",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_title",
             "value":"Przekazywanie",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

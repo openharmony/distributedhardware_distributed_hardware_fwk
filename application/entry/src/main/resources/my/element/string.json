@@ -11,35 +11,35 @@
             "name":"mech_close",
             "value":"ပိတ်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_enable",
             "value":"ဖွင့်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_left",
             "value":"ဘယ်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"update_version_prompt",
             "value":"စက်နှစ်ခုလုံးသည် HarmonyOS NEXT ကို လုပ်ဆောင်နေရပါမည်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_right",
             "value":"ညာ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"continue_privacy_text",
             "value":"ဤဝန်ဆောင်မှုက ဘလူးတုသ်နှင့် WLAN ကို သုံးပြီး သင် လွှဲအပ်မည့် စက်များထံ ဤစက်အမည်ကို ပေးပို့ရန် လိုပါသည်။ ၎င်းကို ဖွင့်ခြင်းအားဖြင့် သင်သည် ဤစည်းမျဉ်းများကို သဘောတူပါသည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"mech_intelligent_tracking",
             "value":"စမတ်ခြေရာခံ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,7 +81,7 @@
             "name":"continue_desc_text",
             "value":"စက်တစ်လုံးတွင် အကြောင်းအရာများကို ကြည့်ရှုခြင်း သို့မဟုတ် တည်းဖြတ်ခြင်းအား စတင်လုပ်ဆောင်လိုက်ပါ၊ ထို့နောက် တူညီသည့် HUAWEI ID အတွင်း ဝင်ရောက်ထားသော အနီးရှိ စက်တွင် အထစ်အငေါ့ မရှိ ဆက်လုပ်ဆောင်နိုင်ပါမည်။ လွှဲအပ်ခြင်း လုပ်ဆောင်ချက်ကို ရရှိချိန်တွင် အိုင်ကွန်သည် အက်ပ် Dock တွင် ပေါ်လာပါမည်။ %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,7 +102,7 @@
             "name":"mech_tracking_layout",
             "value":"ခြေရာခံ စနစ်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,14 +144,14 @@
             "name":"mech_center",
             "value":"အလယ်ဗဟို",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_title",
             "value":"လွှဲအပ်ခြင်း",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

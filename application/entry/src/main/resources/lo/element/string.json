@@ -11,35 +11,35 @@
             "name":"mech_close",
             "value":"ປິດ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_enable",
             "value":"ເປີດ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_left",
             "value":"ຊ້າຍ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"update_version_prompt",
             "value":"​ອຸ​ປະ​ກອນ​ທັງ​ສອງ​ເຄື່ອງ​ຕ້ອງ​ເປີດໃຊ້​ HarmonyOS NEXT",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_right",
             "value":"ຂວາ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"continue_privacy_text",
             "value":"ການ​ບໍ​ລິ​ການ​ນີ້​ໃຊ້ Bluetooth ແລະ WLAN ແລະ ຈຳ​ເປັນ​ຕ້ອງ​ສົ່ງ​ຊື່​ຂອງ​ອຸ​ປະ​ກອນ​ນີ້​ໄປ​ຫາ​ອຸ​ປະ​ກອນ​ທີ່​ທ່ານ​ສົ່ງ​ມອບ​ຫາ. ໂດຍການເປີດສິ່ງນີ້, ສະແດງວ່າທ່ານເຫັນດີນຳຂໍ້ກຳນົດເຫຼົ່ານີ້.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"mech_intelligent_tracking",
             "value":"ການ​ຕິດ​ຕາມ​ອັດ​ສະ​ລິ​ຍະ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -79,9 +79,9 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"​ເລີ່ມ​ຕົ້ນ​ການ​ເບິ່ງ ຫຼື ການ​ແກ້​ໄຂ​ເນື້ອ​ຫາ​ໃນ​ອຸ​ປະ​ກອນໜຶ່ງ ແລະ ຈາກນັ້ນ​ສືບ​ຕໍ່​​ຢ່າງ​ຄ່ອງ​ແຄ້ວໃນ​ອຸ​ປະ​ກອນ​ໃກ້​ຄຽງ​ທີ່​ເຂົ້າ​ສູ່​ລະ​ບົບ HUAWEI ID ດຽວ​ກັນ​ຢ່າງ. ເມື່ອການ​ສົ່ງ​ມອບ​ບໍ່​ມີ​ໃຫ້, ໄອ​ຄອນ​ຈະ​ປະ​ກົດ​ໃນ​ດັອກ​ແອັບ. %s",
+            "value":"ເລີ່ມຕົ້ນການເບິ່ງ ຫຼື ການແກ້ໄຂເນື້ອຫາໃນອຸປະກອນໜຶ່ງ ແລະ ຈາກນັ້ນສືບຕໍ່ຢູ່ໃນອຸປະກອນໃກ້ຄຽງທີ່ເຂົ້າສູ່ລະບົບ HUAWEI ID ດຽວກັັນຢ່າງຄ່ອງແຄ້ວ. ເມື່ອການສົ່ງມອບມີໃຫ້, ໄອຄອນຈະປະກົດໃນດັອກແອັບ. %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,7 +102,7 @@
             "name":"mech_tracking_layout",
             "value":"ໂໝດ​ການ​ຕິດ​ຕາມ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,14 +144,14 @@
             "name":"mech_center",
             "value":"ໃຈກາງ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_title",
             "value":"ການສົ່ງມອບ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

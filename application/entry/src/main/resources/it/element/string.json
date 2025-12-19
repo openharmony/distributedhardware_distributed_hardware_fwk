@@ -11,35 +11,35 @@
             "name":"mech_close",
             "value":"Disattivato",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_enable",
             "value":"Attivato",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_left",
             "value":"Sinistra",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"update_version_prompt",
             "value":"Entrambi i dispositivi devono eseguire HarmonyOS NEXT",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_right",
             "value":"Destra",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -51,9 +51,9 @@
         },
         {
             "name":"continue_privacy_text",
-            "value":"Questo servizio utilizza il Bluetooth e la WLAN e richiede l'invio del nome di questo dispositivo ai dispositivi destinatari del passaggio. Attivando questa funzione, l'utente accetta i presenti termini.",
+            "value":"Questo servizio utilizza Bluetooth e WLAN, oltre a richiedere l'invio del nome di questo dispositivo ai dispositivi destinatari del passaggio. Attivando questa funzione, l'utente accetta i presenti termini.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"mech_intelligent_tracking",
             "value":"Tracciamento intelligente",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,7 +81,7 @@
             "name":"continue_desc_text",
             "value":"Inizia a visualizzare o modificare i contenuti su un dispositivo, quindi continua senza interruzioni su un dispositivo nelle vicinanze connesso con lo stesso HUAWEI ID. Quando Passaggio è disponibile, apparirà un'icona nel dock dell'app. %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,7 +102,7 @@
             "name":"mech_tracking_layout",
             "value":"Modalità di tracciamento",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,14 +144,14 @@
             "name":"mech_center",
             "value":"Centro",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_title",
             "value":"Passaggio",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

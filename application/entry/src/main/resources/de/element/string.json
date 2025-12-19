@@ -11,35 +11,35 @@
             "name":"mech_close",
             "value":"Deaktiviert",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_enable",
             "value":"Aktiviert",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_left",
             "value":"Links",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"update_version_prompt",
             "value":"Auf beiden Geräten muss HarmonyOS NEXT ausgeführt werden",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_right",
             "value":"Rechts",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"continue_privacy_text",
             "value":"Dieser Service nutzt Bluetooth und WLAN und muss den Namen dieses Geräts an die Geräte senden, mit denen Sie die Übergabe vornehmen. Durch Aktivieren dieser Option stimmen Sie diesen Bedingungen zu.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"mech_intelligent_tracking",
             "value":"Intelligente Verfolgung",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,7 +81,7 @@
             "name":"continue_desc_text",
             "value":"Beginnen Sie mit dem Anzeigen oder Bearbeiten von Inhalten auf einem Gerät und fahren Sie dann nahtlos auf einem Gerät in der Nähe fort, das bei derselben HUAWEI ID angemeldet ist. Wenn Übergabe verfügbar ist, wird im App-Dock ein Symbol angezeigt. %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,7 +102,7 @@
             "name":"mech_tracking_layout",
             "value":"Nachverfolgungsmodus",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,14 +144,14 @@
             "name":"mech_center",
             "value":"Zentrieren",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_title",
             "value":"Übergabe",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

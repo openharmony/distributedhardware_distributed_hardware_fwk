@@ -144,7 +144,7 @@
             "name":"mech_center",
             "value":"Centre",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
