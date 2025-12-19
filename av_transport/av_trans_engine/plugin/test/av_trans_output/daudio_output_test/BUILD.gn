@@ -22,6 +22,7 @@ ohos_unittest("DaudioOutputPluginTest") {
 
   include_dirs = [
     "${common_path}/include",
+    "${dh_fwk_utils_path}/include",
     "${plugin_path}/interface",
     "${plugin_path}/plugins/av_trans_output/daudio_output",
   ]

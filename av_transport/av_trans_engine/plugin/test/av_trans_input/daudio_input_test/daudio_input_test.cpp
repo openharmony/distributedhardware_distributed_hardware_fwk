@@ -17,7 +17,10 @@
 
 #include "av_trans_message.h"
 #include "av_trans_errno.h"
+#include "access_listener_service.h"
 #include "softbus_channel_adapter.h"
+#include <chrono>
+#include <thread>
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -675,6 +678,79 @@ HWTEST_F(DaudioInputTest, FindSessionName_001, TestSize.Level1)
     EXPECT_NE(ret.size(), 0);
     ret = SoftbusChannelAdapter::GetInstance().FindSessNameByPeerSessName("name");
     EXPECT_EQ(ret.size(), 0);
+}
+
+HWTEST_F(DaudioInputTest, StartAuthorizationTimer_001, TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    std::string requestId = "0";
+    std::string requestIdDiff = "1";
+    int32_t timeOutMs = 1000;
+    SoftbusChannelAdapter::GetInstance().StartAuthorizationTimer(requestId, timeOutMs);
+    SoftbusChannelAdapter::GetInstance().ProcessAuthorizationResult(requestId, true);
+    std::this_thread::sleep_for(std::chrono::milliseconds(timeOutMs));
+    SoftbusChannelAdapter::GetInstance().StartAuthorizationTimer(requestIdDiff, timeOutMs);
+    std::this_thread::sleep_for(std::chrono::milliseconds(timeOutMs * 2));
+    EXPECT_EQ(SoftbusChannelAdapter::GetInstance().authTimerCancelFlags_[requestId], false);
+}
+
+HWTEST_F(DaudioInputTest, CancelAuthorizationTimer_001, TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    std::string requestId = "2";
+    SoftbusChannelAdapter::GetInstance().CancelAuthorizationTimer(requestId);
+    SoftbusChannelAdapter::GetInstance().authTimerCancelFlags_[requestId] = false;
+    EXPECT_EQ(SoftbusChannelAdapter::GetInstance().authTimerCancelFlags_[requestId], false);
+}
+
+HWTEST_F(DaudioInputTest, HandleAuthorizationTimeout_001, TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    std::string requestId = "3";
+    std::string networkId = "networkId";
+    SoftbusChannelAdapter::GetInstance().HandleAuthorizationTimeout(requestId);
+    SoftbusChannelAdapter::GetInstance().pendingAuthRequests_[requestId] = "";
+    SoftbusChannelAdapter::GetInstance().HandleAuthorizationTimeout(requestId);
+    SoftbusChannelAdapter::GetInstance().pendingAuthRequests_[requestId] = networkId;
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, true);
+    SoftbusChannelAdapter::GetInstance().HandleAuthorizationTimeout(requestId);
+    SoftbusChannelAdapter::GetInstance().pendingAuthRequests_[requestId] = networkId;
+    DAudioAccessConfigManager::GetInstance().ClearAuthorizationResult(networkId);
+    SoftbusChannelAdapter::GetInstance().HandleAuthorizationTimeout(requestId);
+    EXPECT_EQ(DAudioAccessConfigManager::GetInstance().authorizationResults_[networkId], false);
+}
+
+HWTEST_F(DaudioInputTest, ProcessAuthorizationResult_001, TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    std::string requestId = "4";
+    std::string networkId = "networkId";
+    SoftbusChannelAdapter::GetInstance().ProcessAuthorizationResult(requestId, false);
+    SoftbusChannelAdapter::GetInstance().pendingAuthRequests_[requestId] = "";
+    SoftbusChannelAdapter::GetInstance().ProcessAuthorizationResult(requestId, false);
+    SoftbusChannelAdapter::GetInstance().pendingAuthRequests_[requestId] = networkId;
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, true);
+    SoftbusChannelAdapter::GetInstance().ProcessAuthorizationResult(requestId, false);
+    SoftbusChannelAdapter::GetInstance().pendingAuthRequests_[requestId] = networkId;
+    DAudioAccessConfigManager::GetInstance().ClearAuthorizationResult(networkId);
+    SoftbusChannelAdapter::GetInstance().ProcessAuthorizationResult(requestId, false);
+    EXPECT_EQ(DAudioAccessConfigManager::GetInstance().authorizationResults_[networkId], false);
+}
+
+HWTEST_F(DaudioInputTest, RequestAndWaitForAuthorization_001, TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    std::string networkId = "networkId";
+    int32_t ret = SoftbusChannelAdapter::GetInstance().RequestAndWaitForAuthorization(networkId);
+    DAudioAccessConfigManager::GetInstance().pkgName_ = "pkgName";
+    ret = SoftbusChannelAdapter::GetInstance().RequestAndWaitForAuthorization(networkId);
+    DAudioAccessConfigManager::GetInstance().pkgName_ = "";
+    sptr<IAccessListener> listener(new AccessListenerService());
+    DAudioAccessConfigManager::GetInstance().listener_ = listener;
+    ret = SoftbusChannelAdapter::GetInstance().RequestAndWaitForAuthorization(networkId);
+    DAudioAccessConfigManager::GetInstance().pkgName_ = "pkgName";
+    ret = SoftbusChannelAdapter::GetInstance().RequestAndWaitForAuthorization(networkId);
+    EXPECT_EQ(ret, DH_AVT_SUCCESS);
 }
 
 } // namespace DistributedHardware

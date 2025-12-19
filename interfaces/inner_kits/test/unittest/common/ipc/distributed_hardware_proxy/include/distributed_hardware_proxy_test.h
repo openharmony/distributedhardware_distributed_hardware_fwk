@@ -70,6 +70,11 @@ public:
         int32_t UnLoadDistributedHDF(const DHType dhType);
         int32_t LoadSinkDMSDPService(const std::string &udid);
         int32_t NotifySinkRemoteSourceStarted(const std::string &udid);
+        int32_t RegisterHardwareAccessListener(const DHType dhType, sptr<IAuthorizationResultCallback> callback,
+            int32_t &timeOut, const std::string &pkgName);
+        int32_t UnregisterHardwareAccessListener(const DHType dhType, sptr<IAuthorizationResultCallback> callback,
+            const std::string &pkgName);
+        void SetAuthorizationResult(const DHType dhType, const std::string &requestId, bool &granted);
     };
 
     class TestDistributedHardwareStub2 : public TestDistributedHardwareStub {

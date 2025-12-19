@@ -30,6 +30,7 @@
 #include "dh_comm_tool.h"
 #include "dh_modem_context_ext.h"
 #include "event_handler.h"
+#include "iauthorization_result_callback.h"
 #include "idistributed_hardware.h"
 #include "idistributed_hardware_sink.h"
 #include "idistributed_hardware_source.h"
@@ -116,6 +117,10 @@ public:
     void HandleBusinessStateChange(const std::string &networkId, const std::string &dhId, const DHSubtype dhSubType,
         const BusinessState state);
     void NotifyBusinessStateChange(const DHSubtype dhSubType, const BusinessState state);
+    int32_t AddAccessListener(const DHType dhType, int32_t &timeOut, const std::string &pkgName,
+        const sptr<IAuthorizationResultCallback> &callback);
+    int32_t RemoveAccessListener(const DHType dhType, const std::string &pkgName);
+    sptr<IAuthorizationResultCallback> GetAccessListener(const DHType dhType, const std::string &pkgName);
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
     public:
         ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner);
@@ -336,6 +341,8 @@ private:
 
     DHTopic dhTopic_ = DHTopic::TOPIC_MIN;
     std::mutex dhTopicMtx_;
+    std::map<std::pair<DHType, std::string>, sptr<IAuthorizationResultCallback>> accessListenerMap_;
+    std::mutex accessListenerMutex_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

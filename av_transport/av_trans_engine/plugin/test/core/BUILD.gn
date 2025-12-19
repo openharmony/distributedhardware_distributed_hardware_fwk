@@ -23,6 +23,7 @@ ohos_unittest("AvTransInputOutputTest") {
     "${plugin_path}/core",
     "${plugin_path}/interface",
     "${common_path}/include",
+    "${dh_fwk_utils_path}/include",
   ]
 
   sources = [

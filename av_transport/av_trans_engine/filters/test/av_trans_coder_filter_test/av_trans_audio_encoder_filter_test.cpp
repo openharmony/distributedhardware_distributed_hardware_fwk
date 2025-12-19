@@ -19,6 +19,8 @@
 #include "av_sync_utils.h"
 #include "native_avmagic.h"
 #include "av_trans_constants.h"
+#include <chrono>
+#include <thread>
 
 using namespace testing::ext;
 using namespace OHOS::DistributedHardware;
@@ -106,6 +108,34 @@ HWTEST_F(AvTransportAudioEncoderFilterTest, StartAudioCodec_001, testing::ext::T
     avAudioEncoderTest_->initEncParams_.codecType = Pipeline::AudioCodecType::AUDIO_CODEC_AAC;
     ret = avAudioEncoderTest_->CreateAudioCodec();
     EXPECT_EQ(Status::OK, ret);
+}
+
+HWTEST_F(AvTransportAudioEncoderFilterTest, StartAudioCodec_002, testing::ext::TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    std::shared_ptr<Pipeline::AudioEncoderFilter> avAudioEncoderTest_ =
+        std::make_shared<Pipeline::AudioEncoderFilter>("builtin.recorder.audioencoderfilter",
+            Pipeline::FilterType::FILTERTYPE_AENC);
+    ASSERT_TRUE(avAudioEncoderTest_ != nullptr);
+
+    // Create Audio Codec
+    avAudioEncoderTest_->initEncParams_.codecType = Pipeline::AudioCodecType::AUDIO_CODEC_AAC;
+    avAudioEncoderTest_->CreateAudioCodec();
+    std::string networkId = "0";
+    DAudioAccessConfigManager::GetInstance().currentNetworkId_ = networkId;
+    int32_t timeOutMs = 3000;
+    Status ret = avAudioEncoderTest_->StartAudioCodec();
+    std::this_thread::sleep_for(std::chrono::milliseconds(timeOutMs));
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    ret = avAudioEncoderTest_->StartAudioCodec();
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, false);
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    ret = avAudioEncoderTest_->StartAudioCodec();
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, true);
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    DAudioAccessConfigManager::GetInstance().currentNetworkId_ = "";
+    ret = avAudioEncoderTest_->StartAudioCodec();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
 }
 
 HWTEST_F(AvTransportAudioEncoderFilterTest, StopAudioCodec_001, testing::ext::TestSize.Level1)

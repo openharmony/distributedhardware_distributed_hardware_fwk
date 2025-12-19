@@ -107,6 +107,34 @@ HWTEST_F(AvTransportAudioDecoderFilterTest, StartAudioCodec_001, testing::ext::T
     EXPECT_EQ(Status::OK, ret);
 }
 
+HWTEST_F(AvTransportAudioDecoderFilterTest, StartAudioCodec_002, testing::ext::TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =
+        std::make_shared<Pipeline::AudioDecoderFilter>("builtin.recorder.audiodecoderfilter",
+            Pipeline::FilterType::FILTERTYPE_ADEC);
+    ASSERT_TRUE(avAudioDecoderTest_ != nullptr);
+
+    // Create Audio Codec
+    avAudioDecoderTest_->initDecParams_.codecType = Pipeline::AudioCodecType::AUDIO_CODEC_AAC;
+    avAudioDecoderTest_->CreateAudioCodec();
+    std::string networkId = "0";
+    DAudioAccessConfigManager::GetInstance().currentNetworkId_ = networkId;
+    int32_t timeOutMs = 3000;
+    Status ret = avAudioDecoderTest_->StartAudioCodec();
+    std::this_thread::sleep_for(std::chrono::milliseconds(timeOutMs));
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    ret = avAudioDecoderTest_->StartAudioCodec();
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, false);
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    ret = avAudioDecoderTest_->StartAudioCodec();
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, true);
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+    DAudioAccessConfigManager::GetInstance().currentNetworkId_ = "";
+    ret = avAudioDecoderTest_->StartAudioCodec();
+    EXPECT_EQ(Status::ERROR_INVALID_OPERATION, ret);
+}
+
 HWTEST_F(AvTransportAudioDecoderFilterTest, StopAudioCodec_001, testing::ext::TestSize.Level1)
 {
     std::shared_ptr<Pipeline::AudioDecoderFilter> avAudioDecoderTest_ =

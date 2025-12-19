@@ -209,6 +209,31 @@ int32_t NotifySinkRemoteSourceStarted(const std::string &udid)
     (void)udid;
     return DH_FWK_SUCCESS;
 }
+
+int32_t RegisterHardwareAccessListener(const DHType dhType, sptr<IAuthorizationResultCallback> callback,
+    int32_t &timeOut, const std::string &pkgName)
+{
+    (void)dhType;
+    (void)callback;
+    (void)timeOut;
+    (void)pkgName;
+    return DH_FWK_SUCCESS;
+}
+int32_t UnregisterHardwareAccessListener(const DHType dhType, sptr<IAuthorizationResultCallback> callback,
+    const std::string &pkgName)
+{
+    (void)dhType;
+    (void)callback;
+    (void)pkgName;
+    return DH_FWK_SUCCESS;
+}
+void SetAuthorizationResult(const DHType dhType, const std::string &requestId, bool &granted)
+{
+    (void)dhType;
+    (void)requestId;
+    (void)granted;
+    return;
+}
 };
 
 class MockGetDhDescriptorsCallbackStub : public IRemoteStub<IGetDhDescriptorsCallback> {

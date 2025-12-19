@@ -23,6 +23,7 @@ config("module_private_config") {
   include_dirs = [
     "${filters_path}/av_trans_coder",
     "${common_path}/include",
+    "${dh_fwk_utils_path}/include",
     "${distributed_av_transport_path}/framework",
     "${distributed_av_transport_path}/framework/filter/include",
     "${distributed_av_transport_path}/framework/pipeline/include",

@@ -19,6 +19,7 @@
 #define FUZZ_PROJECT_NAME "distributedhardwarefwkkit_fuzzer"
 
 #include <string>
+#include "authorization_result_callback_stub.h"
 #include "get_dh_descriptors_callback_stub.h"
 #include "hardware_status_listener_stub.h"
 #include "iav_trans_control_center_callback.h"
@@ -71,6 +72,14 @@ protected:
     {
     return nullptr;
     }
+};
+
+class TestAuthorizationResultCallback : public AuthorizationResultCallbackStub {
+public:
+    TestAuthorizationResultCallback() = default;
+    virtual ~TestAuthorizationResultCallback() = default;
+protected:
+    void OnAuthorizationResult(const std::string &networkId, const std::string &requestId) override;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
