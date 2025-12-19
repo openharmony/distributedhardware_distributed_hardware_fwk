@@ -11,35 +11,35 @@
             "name":"mech_close",
             "value":"Desativado",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_enable",
             "value":"Ativado",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_left",
             "value":"Esquerda",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"update_version_prompt",
             "value":"Ambos os dispositivos devem ter o HarmonyOS NEXT",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_right",
             "value":"Direita",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"continue_privacy_text",
             "value":"Este serviço utiliza o Bluetooth e a WLAN, e necessita de enviar o nome deste dispositivo para os dispositivos para os quais efetuar a transferência. Ao ativar isto, está a concordar com estes termos.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"mech_intelligent_tracking",
             "value":"Rastreamento inteligente",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,7 +81,7 @@
             "name":"continue_desc_text",
             "value":"Comece a ver ou a editar conteúdos num dispositivo e continue instantaneamente num dispositivo nas proximidades com sessão iniciada na mesma Conta HUAWEI. Aparece um ícone na doca de aplicações quando a Transferência está disponível. %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,7 +102,7 @@
             "name":"mech_tracking_layout",
             "value":"Modo de rastreamento",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,14 +144,14 @@
             "name":"mech_center",
             "value":"Centro",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_title",
             "value":"Transferência",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

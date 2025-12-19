@@ -11,35 +11,35 @@
             "name":"mech_close",
             "value":"Mati",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_enable",
             "value":"Hidup",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_left",
             "value":"Kiri",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"update_version_prompt",
             "value":"Kedua perangkat harus menjalankan HarmonyOS NEXT",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_right",
             "value":"Kanan",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"continue_privacy_text",
             "value":"Layanan ini menggunakan Bluetooth dan WLAN serta perlu mengirimkan nama perangkat ini ke perangkat yang Anda tuju untuk serah terima. Dengan menghidupkan ini, Anda menyetujui persyaratan ini.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"mech_intelligent_tracking",
             "value":"Pelacakan pintar",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,7 +81,7 @@
             "name":"continue_desc_text",
             "value":"Mulai melihat atau mengedit konten di satu perangkat, lalu lanjutkan dengan lancar di perangkat di sekitar yang masuk ke ID HUAWEI yang sama. Ketika Serah Terima tersedia, sebuah ikon akan muncul di dok aplikasi. %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,7 +102,7 @@
             "name":"mech_tracking_layout",
             "value":"Mode pelacakan",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,14 +144,14 @@
             "name":"mech_center",
             "value":"Tengah",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_title",
             "value":"Serah Terima",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

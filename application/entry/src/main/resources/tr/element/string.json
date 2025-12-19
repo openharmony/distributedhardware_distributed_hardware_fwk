@@ -11,35 +11,35 @@
             "name":"mech_close",
             "value":"Kapalı",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_enable",
             "value":"Açık",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_left",
             "value":"Sol",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"update_version_prompt",
             "value":"Her iki cihaz da HarmonyOS NEXT çalıştırıyor olmalıdır",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"mech_right",
             "value":"Sağ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"continue_privacy_text",
             "value":"Bu servis Bluetooth ile WLAN kullanır ve bu cihazın adını devrettiğiniz cihazlara göndermeniz gerekir. Bunu açarak bu şartları kabul etmiş olursunuz.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"mech_intelligent_tracking",
             "value":"Akıllı izleme",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,7 +81,7 @@
             "name":"continue_desc_text",
             "value":"İçeriği tek bir cihazda görüntülemeye veya düzenlemeye başlayın ve ardından aynı HUAWEI Kimliğine giriş yapmış olan yakınlardaki bir cihazda sorunsuz bir şekilde devam edin. Devretme kullanılabilir olduğunda uygulama çekmecesinde bir simge görüntülenir. %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,7 +102,7 @@
             "name":"mech_tracking_layout",
             "value":"İzleme modu",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,14 +144,14 @@
             "name":"mech_center",
             "value":"Orta",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"continue_title",
             "value":"Devretme",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
