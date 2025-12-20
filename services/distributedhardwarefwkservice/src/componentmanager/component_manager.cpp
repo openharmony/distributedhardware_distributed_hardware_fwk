@@ -66,7 +66,7 @@ namespace {
     constexpr int32_t ENABLE_PARAM_RETRY_TIME = 500 * 1000;
     constexpr int32_t INVALID_SA_ID = -1;
     constexpr int32_t UNINIT_COMPONENT_TIMEOUT_SECONDS = 2;
-    constexpr int32_t SYNC_DATA_TIMEOUT_MS = 1000;
+    constexpr int32_t SYNC_DATA_TIMEOUT_MS = 1000 * 9;
     constexpr const char *MIC = "mic";
     constexpr const char *CAMERA = "camera";
 }
