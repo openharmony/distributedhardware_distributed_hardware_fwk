@@ -589,6 +589,62 @@ int32_t DistributedHardwareStub::UnLoadDistributedHDFInner(MessageParcel &data, 
     return DH_FWK_SUCCESS;
 }
 
+int32_t DistributedHardwareStub::RegisterHardwareAccessListenerInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    DHType dhType = static_cast<DHType>(data.ReadUint32());
+    sptr<IAuthorizationResultCallback> callback = iface_cast<IAuthorizationResultCallback>(data.ReadRemoteObject());
+    if (callback == nullptr) {
+        DHLOGE("Register hardware access listener callback is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    int32_t timeOut = data.ReadInt32();
+    std::string pkgName = data.ReadString();
+    int32_t ret = RegisterHardwareAccessListener(dhType, callback, timeOut, pkgName);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::UnregisterHardwareAccessListenerInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    DHType dhType = static_cast<DHType>(data.ReadUint32());
+    sptr<IAuthorizationResultCallback> callback = iface_cast<IAuthorizationResultCallback>(data.ReadRemoteObject());
+    if (callback == nullptr) {
+        DHLOGE("Unregister hardware access listener callback is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    std::string pkgName = data.ReadString();
+    int32_t ret = UnregisterHardwareAccessListener(dhType, callback, pkgName);
+    if (!reply.WriteInt32(ret)) {
+        DHLOGE("Write ret code failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareStub::SetAuthorizationResultInner(MessageParcel &data, MessageParcel &reply)
+{
+    if (!HasAccessDHPermission()) {
+        DHLOGE("The caller has no ACCESS_DISTRIBUTED_HARDWARE permission.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
+    DHType dhType = static_cast<DHType>(data.ReadUint32());
+    std::string requestId = data.ReadString();
+    bool granted = data.ReadBool();
+    SetAuthorizationResult(dhType, requestId, granted);
+    return DH_FWK_SUCCESS;
+}
+
 int32_t DistributedHardwareStub::ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors)
 {
     int32_t size = data.ReadInt32();
@@ -730,6 +786,15 @@ int32_t DistributedHardwareStub::OnRemoteRequestRPC(uint32_t code, MessageParcel
         }
         case static_cast<uint32_t>(DHMsgInterfaceCode::NOTIFY_SINK_DEVICE_REMOTE_DMSDP_STARTED): {
             return HandleNotifySinkRemoteSourceStarted(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::REGISTER_HARDWARE_ACCESS_LISTENER): {
+            return RegisterHardwareAccessListenerInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::UNREGISTER_HARDWARE_ACCESS_LISTENER): {
+            return UnregisterHardwareAccessListenerInner(data, reply);
+        }
+        case static_cast<uint32_t>(DHMsgInterfaceCode::SET_AUTHORIZATION_RESULT): {
+            return SetAuthorizationResultInner(data, reply);
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);

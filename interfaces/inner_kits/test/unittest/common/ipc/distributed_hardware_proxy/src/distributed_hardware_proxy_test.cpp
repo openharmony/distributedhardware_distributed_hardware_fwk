@@ -250,6 +250,32 @@ int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::NotifySinkRem
     return DH_FWK_SUCCESS;
 }
 
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::RegisterHardwareAccessListener(const DHType dhType,
+    sptr<IAuthorizationResultCallback> callback, int32_t &timeOut, const std::string &pkgName)
+{
+    (void)dhType;
+    (void)callback;
+    (void)timeOut;
+    (void)pkgName;
+    return DH_FWK_SUCCESS;
+}
+int32_t DistributedHardwareProxyTest::TestDistributedHardwareStub::UnregisterHardwareAccessListener(const DHType dhType,
+    sptr<IAuthorizationResultCallback> callback, const std::string &pkgName)
+{
+    (void)dhType;
+    (void)callback;
+    (void)pkgName;
+    return DH_FWK_SUCCESS;
+}
+void DistributedHardwareProxyTest::TestDistributedHardwareStub::SetAuthorizationResult(const DHType dhType,
+    const std::string &requestId, bool &granted)
+{
+    (void)dhType;
+    (void)requestId;
+    (void)granted;
+    return;
+}
+
 /**
  * @tc.name: RegisterPublisherListener_001
  * @tc.desc: Verify the RegisterPublisherListener function

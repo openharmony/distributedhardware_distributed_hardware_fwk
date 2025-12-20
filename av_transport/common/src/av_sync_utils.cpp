@@ -335,5 +335,163 @@ uint64_t U8ToU64(const uint8_t *arrayPtr, size_t arraySize)
     }
     return result;
 }
+
+DAudioAccessConfigManager& DAudioAccessConfigManager::GetInstance()
+{
+    static auto instance = new DAudioAccessConfigManager();
+    return *instance;
+}
+
+int32_t DAudioAccessConfigManager::SetAccessConfig(const sptr<IAccessListener> &listener,
+    int32_t timeOut, const std::string &pkgName)
+{
+    AVTRANS_LOGI("SetAccessConfig start");
+
+    if (listener == nullptr) {
+        AVTRANS_LOGE("listener is nullptr");
+        return ERR_DH_AVT_INVALID_PARAM;
+    }
+    if (pkgName.empty()) {
+        AVTRANS_LOGE("pkgName is empty");
+        return ERR_DH_AVT_INVALID_PARAM;
+    }
+
+    std::lock_guard<std::mutex> lock(mtxLock_);
+    listener_ = listener;
+    timeOut_ = timeOut;
+    pkgName_ = pkgName;
+
+    return DH_AVT_SUCCESS;
+}
+
+sptr<IAccessListener> DAudioAccessConfigManager::GetAccessListener()
+{
+    std::lock_guard<std::mutex> lock(mtxLock_);
+    return listener_;
+}
+
+int32_t DAudioAccessConfigManager::GetAccessTimeOut()
+{
+    std::lock_guard<std::mutex> lock(mtxLock_);
+    return timeOut_;
+}
+
+std::string DAudioAccessConfigManager::GetAccessPkgName()
+{
+    std::lock_guard<std::mutex> lock(mtxLock_);
+    return pkgName_;
+}
+
+void DAudioAccessConfigManager::ClearAccessConfig()
+{
+    AVTRANS_LOGI("ClearAccessConfig");
+    std::lock_guard<std::mutex> lock(mtxLock_);
+    listener_ = nullptr;
+    timeOut_ = 0;
+    pkgName_ = "";
+    authorizationResults_.clear();
+}
+
+void DAudioAccessConfigManager::SetAuthorizationGranted(const std::string &networkId, bool granted)
+{
+    AVTRANS_LOGI("SetAuthorizationGranted, networkId: %{public}s, granted: %{public}d",
+        GetAnonyString(networkId).c_str(), granted);
+
+    {
+        std::lock_guard<std::mutex> lock(mtxLock_);
+        authorizationResults_[networkId] = granted;
+    }
+
+    authCondVar_.notify_all();
+}
+
+bool DAudioAccessConfigManager::IsAuthorizationGranted(const std::string &networkId)
+{
+    std::lock_guard<std::mutex> lock(mtxLock_);
+    auto it = authorizationResults_.find(networkId);
+    if (it == authorizationResults_.end()) {
+        AVTRANS_LOGW("No authorization decision for networkId: %{public}s", GetAnonyString(networkId).c_str());
+        return false;
+    }
+    return it->second;
+}
+
+bool DAudioAccessConfigManager::HasAuthorizationDecision(const std::string &networkId)
+{
+    std::lock_guard<std::mutex> lock(mtxLock_);
+    return authorizationResults_.find(networkId) != authorizationResults_.end();
+}
+
+void DAudioAccessConfigManager::ClearAuthorizationResult(const std::string &networkId)
+{
+    AVTRANS_LOGI("ClearAuthorizationResult, networkId: %{public}s", GetAnonyString(networkId).c_str());
+
+    std::lock_guard<std::mutex> lock(mtxLock_);
+    auto it = authorizationResults_.find(networkId);
+    if (it != authorizationResults_.end()) {
+        authorizationResults_.erase(it);
+    }
+}
+
+void DAudioAccessConfigManager::SetCurrentNetworkId(const std::string &networkId)
+{
+    AVTRANS_LOGI("SetCurrentNetworkId, networkId: %{public}s", GetAnonyString(networkId).c_str());
+
+    std::lock_guard<std::mutex> lock(mtxLock_);
+    currentNetworkId_ = networkId;
+}
+
+std::string DAudioAccessConfigManager::GetCurrentNetworkId()
+{
+    std::lock_guard<std::mutex> lock(mtxLock_);
+    return currentNetworkId_;
+}
+
+bool DAudioAccessConfigManager::WaitForAuthorizationResult(const std::string &networkId, int32_t timeoutSeconds)
+{
+    AVTRANS_LOGI("WaitForAuthorizationResult for device: %{public}s, timeout: %{public}d seconds",
+        GetAnonyString(networkId).c_str(), timeoutSeconds);
+
+    if (HasAuthorizationDecision(networkId)) {
+        AVTRANS_LOGI("Authorization decision already exists");
+        return true;
+    }
+
+    std::unique_lock<std::mutex> lock(mtxLock_);
+    bool gotResult = authCondVar_.wait_for(
+        lock,
+        std::chrono::seconds(timeoutSeconds),
+        [this, &networkId]() {
+            return authorizationResults_.find(networkId) != authorizationResults_.end();
+        }
+    );
+
+    return gotResult;
+}
+
+void DAudioAccessConfigManager::ClearAccessConfigByPkgName(const std::string &pkgName)
+{
+    AVTRANS_LOGI("ClearAccessConfigByPkgName, pkgName: %{public}s", pkgName.c_str());
+
+    if (pkgName.empty()) {
+        AVTRANS_LOGW("Input pkgName is empty, skip clear");
+        return;
+    }
+
+    std::lock_guard<std::mutex> lock(mtxLock_);
+    if (pkgName_ == pkgName) {
+        AVTRANS_LOGI("Current pkgName matches, clearing access config");
+        listener_ = nullptr;
+        timeOut_ = 0;
+        pkgName_ = "";
+        currentNetworkId_ = "";
+    }
+
+    if (!authorizationResults_.empty()) {
+        authorizationResults_.clear();
+    }
+
+    authCondVar_.notify_all();
+}
 } // namespace DistributedHardware
 } // namespace OHOS

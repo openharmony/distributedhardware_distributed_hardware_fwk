@@ -68,6 +68,7 @@ public:
     void OnSoftbusTimeSyncResult(const TimeSyncResultInfo *info, int32_t result);
     void OnSoftbusStreamReceived(int32_t sessionId, const StreamData *data, const StreamData *ext,
         const StreamFrameInfo *frameInfo);
+    void ProcessAuthorizationResult(const std::string &requestId, bool granted);
 
 private:
     SoftbusChannelAdapter(const SoftbusChannelAdapter&) = delete;
@@ -85,17 +86,28 @@ private:
     std::string FindSessNameByPeerSessName(const std::string peerSessionName);
     void SendEventChannelOPened(const std::string &mySessName, const std::string &peerDevId);
 
+    int32_t RequestAndWaitForAuthorization(const std::string &peerDevId);
+    void HandleAuthorizationTimeout(const std::string &requestId);
+    std::string GenerateRequestId();
+    void StartAuthorizationTimer(const std::string &requestId, int32_t timeOutMs);
+    void CancelAuthorizationTimer(const std::string &requestId);
+
 private:
     std::mutex timeSyncMtx_;
     std::mutex idMapMutex_;
     std::mutex listenerMtx_;
     std::mutex serverMapMtx_;
+    std::mutex authRequestMutex_;
 
     ISocketListener sessListener_;
     std::map<std::string, int32_t> serverMap_;
     std::set<std::string> timeSyncSessNames_;
     std::map<std::string, int32_t> devId2SessIdMap_;
     std::map<std::string, ISoftbusChannelListener *> listenerMap_;
+
+    std::map<std::string, std::string> pendingAuthRequests_;  // requestId -> peerDevId
+    std::map<std::string, std::shared_ptr<std::thread>> authTimerThreads_;  // requestId -> timer thread
+    std::map<std::string, bool> authTimerCancelFlags_;  // requestId -> cancel flag
 };
 } // namespace DistributedHardware
 } // namespace OHOS

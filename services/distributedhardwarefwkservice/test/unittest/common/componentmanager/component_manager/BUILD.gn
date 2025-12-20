@@ -28,6 +28,7 @@ config("module_private_config") {
     "${services_path}/distributedhardwarefwkservice/include",
     "${services_path}/distributedhardwarefwkservice/include/componentloader",
     "${services_path}/distributedhardwarefwkservice/include/componentmanager",
+    "${services_path}/distributedhardwarefwkservice/include/ipc",
     "${services_path}/distributedhardwarefwkservice/include/lowlatency",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
     "${services_path}/distributedhardwarefwkservice/include/versionmanager",
@@ -73,6 +74,7 @@ ohos_unittest("ComponentManagerExtraTest") {
     "hilog:libhilog",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "selinux_adapter:librestorecon",
   ]
@@ -121,6 +123,7 @@ ohos_unittest("ComponentManagerTest") {
     "hilog:libhilog",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "selinux_adapter:librestorecon",
   ]
@@ -186,6 +189,7 @@ ohos_unittest("ComponentManagerTestExt") {
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
 

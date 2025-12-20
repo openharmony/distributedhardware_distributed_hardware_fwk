@@ -56,6 +56,7 @@ ohos_unittest("VersionManagerTest") {
     "eventhandler:libeventhandler",
     "kv_store:distributeddata_inner",
     "hilog:libhilog",
+    "ipc:ipc_core",
   ]
 
   defines = [

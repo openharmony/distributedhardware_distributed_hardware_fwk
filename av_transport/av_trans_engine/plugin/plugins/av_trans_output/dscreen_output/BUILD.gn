@@ -20,6 +20,7 @@ ohos_source_set("plugin_AVTransDscreenOutput") {
     "${common_path}/include",
     "${output_controller_path}/include",
     "${plugin_path}/interface",
+    "${dh_fwk_utils_path}/include",
   ]
 
   sources = [

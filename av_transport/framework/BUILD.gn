@@ -47,6 +47,7 @@ ohos_shared_library("distributed_av_pipeline_fwk") {
   ]
 
   sources = [
+    "${common_path}/src/av_sync_utils.cpp",
     "${common_path}/src/av_trans_log.cpp",
     "${common_path}/src/softbus_channel_adapter.cpp",
     "${distributed_av_transport_path}/av_trans_engine/filters/av_trans_coder/av_trans_audio_decoder_filter.cpp",

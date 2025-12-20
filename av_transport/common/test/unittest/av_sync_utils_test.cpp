@@ -18,6 +18,8 @@
 #include "av_sync_utils.h"
 
 #include "av_trans_constants.h"
+#include "av_trans_errno.h"
+#include "access_listener_service.h"
 #include "cJSON.h"
 #include "ashmem_mock.h"
 
@@ -170,6 +172,76 @@ HWTEST_F(AvSyncUtilsTest, WriteClockUnitToMemory_001, TestSize.Level1)
     };
     auto ret = WriteClockUnitToMemory(memory, unit);
     EXPECT_EQ(false, ret == 0);
+}
+
+HWTEST_F(AvSyncUtilsTest, SetAccessConfig_001, TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    sptr<IAccessListener> listenerNull = nullptr;
+    int32_t timeOut = 0;
+    std::string pkgName = "pkgName";
+    int32_t ret = DAudioAccessConfigManager::GetInstance().SetAccessConfig(listenerNull, timeOut, pkgName);
+    EXPECT_EQ(ret, ERR_DH_AVT_INVALID_PARAM);
+    sptr<IAccessListener> listener(new AccessListenerService());
+    std::string pkgNameNull = "";
+    ret = DAudioAccessConfigManager::GetInstance().SetAccessConfig(listener, timeOut, pkgNameNull);
+    EXPECT_EQ(ret, ERR_DH_AVT_INVALID_PARAM);
+    ret = DAudioAccessConfigManager::GetInstance().SetAccessConfig(listener, timeOut, pkgName);
+    EXPECT_EQ(ret, DH_AVT_SUCCESS);
+}
+
+HWTEST_F(AvSyncUtilsTest, IsAuthorizationGranted_001, TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    std::string networkId = "0";
+    std::string networkIdDiff = "1";
+    bool ret = DAudioAccessConfigManager::GetInstance().IsAuthorizationGranted(networkId);
+    EXPECT_EQ(ret, false);
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkIdDiff, true);
+    ret = DAudioAccessConfigManager::GetInstance().IsAuthorizationGranted(networkId);
+    EXPECT_EQ(ret, false);
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, false);
+    ret = DAudioAccessConfigManager::GetInstance().IsAuthorizationGranted(networkId);
+    EXPECT_EQ(ret, false);
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, true);
+    ret = DAudioAccessConfigManager::GetInstance().IsAuthorizationGranted(networkId);
+    EXPECT_EQ(ret, true);
+}
+
+HWTEST_F(AvSyncUtilsTest, ClearAuthorizationResult_001, TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    std::string networkId = "0";
+    DAudioAccessConfigManager::GetInstance().ClearAuthorizationResult(networkId);
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, true);
+    DAudioAccessConfigManager::GetInstance().ClearAuthorizationResult(networkId);
+    bool ret = DAudioAccessConfigManager::GetInstance().HasAuthorizationDecision(networkId);
+    EXPECT_EQ(ret, false);
+}
+
+HWTEST_F(AvSyncUtilsTest, WaitForAuthorizationResult_001, TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    std::string networkId = "0";
+    bool ret = DAudioAccessConfigManager::GetInstance().WaitForAuthorizationResult(networkId);
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, true);
+    ret = DAudioAccessConfigManager::GetInstance().WaitForAuthorizationResult(networkId);
+    EXPECT_EQ(ret, true);
+}
+
+HWTEST_F(AvSyncUtilsTest, ClearAccessConfigByPkgName_001, TestSize.Level1)
+{
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfig();
+    std::string pkgNameNull = "";
+    std::string networkId = "0";
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfigByPkgName(pkgNameNull);
+    std::string pkgName = "pkgName";
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfigByPkgName(pkgName);
+    DAudioAccessConfigManager::GetInstance().pkgName_ = pkgName;
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, true);
+    DAudioAccessConfigManager::GetInstance().ClearAccessConfigByPkgName(pkgName);
+    bool ret = DAudioAccessConfigManager::GetInstance().HasAuthorizationDecision(networkId);
+    EXPECT_EQ(ret, false);
 }
 }
 }

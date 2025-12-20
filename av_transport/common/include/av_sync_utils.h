@@ -16,11 +16,14 @@
 #ifndef OHOS_AV_TRANSPORT_SHARED_MEMORY_H
 #define OHOS_AV_TRANSPORT_SHARED_MEMORY_H
 
+#include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <securec.h>
 #include "parcel.h"
 #include "message_parcel.h"
+#include "iaccess_listener.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -163,6 +166,44 @@ uint32_t U8ToU32(const uint8_t *arrayPtr, size_t arraySize);
 uint64_t U8ToU64(const uint8_t *arrayPtr, size_t arraySize);
 void U32ToU8(uint8_t *arrayPtr, uint32_t value, size_t arraySize);
 void U64ToU8(uint8_t *arrayPtr, uint64_t value, size_t arraySize);
+
+class DAudioAccessConfigManager {
+public:
+    static DAudioAccessConfigManager& GetInstance();
+private:
+    DAudioAccessConfigManager(const DAudioAccessConfigManager&) = delete;
+    DAudioAccessConfigManager& operator= (const DAudioAccessConfigManager&) = delete;
+    DAudioAccessConfigManager(DAudioAccessConfigManager&&) = delete;
+    DAudioAccessConfigManager& operator= (DAudioAccessConfigManager&&) = delete;
+    DAudioAccessConfigManager() = default;
+    virtual ~DAudioAccessConfigManager() = default;
+
+public:
+    int32_t SetAccessConfig(const sptr<IAccessListener> &listener, int32_t timeOut,
+        const std::string &pkgName);
+    sptr<IAccessListener> GetAccessListener();
+    int32_t GetAccessTimeOut();
+    std::string GetAccessPkgName();
+    void ClearAccessConfig();
+    void SetAuthorizationGranted(const std::string &networkId, bool granted);
+    bool IsAuthorizationGranted(const std::string &networkId);
+    bool HasAuthorizationDecision(const std::string &networkId);
+    void ClearAuthorizationResult(const std::string &networkId);
+    void SetCurrentNetworkId(const std::string &networkId);
+    std::string GetCurrentNetworkId();
+    bool WaitForAuthorizationResult(const std::string &networkId, int32_t timeoutSeconds = 3);
+    void ClearAccessConfigByPkgName(const std::string &pkgName);
+
+private:
+    std::mutex mtxLock_;
+    std::condition_variable authCondVar_;
+    sptr<IAccessListener> listener_ = nullptr;
+    int32_t timeOut_ = 0;
+    std::string pkgName_ = "";
+    std::string currentNetworkId_ = "";
+
+    std::map<std::string, bool> authorizationResults_;
+};
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_AV_TRANSPORT_SHARED_MEMORY_H

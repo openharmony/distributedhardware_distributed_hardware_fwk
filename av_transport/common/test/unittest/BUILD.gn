@@ -26,6 +26,8 @@ ohos_unittest("AvSyncUtilsTest") {
     "${plugin_path}/interface",
     "${output_controller_path}/include",
     "${plugin_path}/interface",
+    "${dh_fwk_services_path}/distributedhardwarefwkservice/include",
+    "${dh_fwk_services_path}/distributedhardwarefwkservice/include/ipc",
   ]
 
   sources = [
@@ -55,6 +57,8 @@ ohos_unittest("AvSyncUtilsTest") {
     "googletest:gmock_main",
     "ipc:ipc_core",
     "hilog:libhilog",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
 
   cflags = [

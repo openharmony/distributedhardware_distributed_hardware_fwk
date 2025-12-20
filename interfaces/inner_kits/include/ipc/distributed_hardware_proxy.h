@@ -70,6 +70,11 @@ public:
     int32_t UnLoadDistributedHDF(const DHType dhType) override;
     int32_t LoadSinkDMSDPService(const std::string &udid) override;
     int32_t NotifySinkRemoteSourceStarted(const std::string &udid) override;
+    int32_t RegisterHardwareAccessListener(const DHType dhType, sptr<IAuthorizationResultCallback> callback,
+        int32_t &timeOut, const std::string &pkgName) override;
+    int32_t UnregisterHardwareAccessListener(const DHType dhType, sptr<IAuthorizationResultCallback> callback,
+        const std::string &pkgName) override;
+    void SetAuthorizationResult(const DHType dhType, const std::string &requestId, bool &granted) override;
 
 private:
     int32_t ReadDescriptors(MessageParcel &data, std::vector<DHDescriptor> &descriptors);

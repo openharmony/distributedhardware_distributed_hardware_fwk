@@ -16,10 +16,16 @@
 #include "softbus_channel_adapter.h"
 
 #include <algorithm>
+#include <chrono>
+#include <condition_variable>
+#include <iomanip>
+#include <random>
 #include <securec.h>
+#include <sstream>
 #include <thread>
 #include <unistd.h>
 
+#include "av_sync_utils.h"
 #include "av_trans_constants.h"
 #include "av_trans_errno.h"
 #include "av_trans_log.h"
@@ -75,6 +81,9 @@ const static std::pair<std::string, std::string> LOCAL_TO_PEER_SESSION_NAME_MAP[
     {OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + RECEIVER_DATA_SESSION_NAME_SUFFIX,
      OWNER_NAME_D_VIRMODEM_SPEAKER + "_" + SENDER_DATA_SESSION_NAME_SUFFIX},
 };
+static const int32_t HEX_WIDTH = 16;
+static const int32_t SECONDS_TO_MS = 1000;
+static const int32_t DEFAULT_TIMEOUT_MS = 30000;
 } // namespace
 
 static void OnSessionOpened(int32_t sessionId, PeerSocketInfo info)
@@ -479,9 +488,13 @@ int32_t SoftbusChannelAdapter::OnSoftbusChannelOpened(std::string peerSessionNam
     TRUE_RETURN_V_MSG_E(peerSessionName.empty(), ERR_DH_AVT_INVALID_PARAM, "peerSessionName is empty().");
     TRUE_RETURN_V_MSG_E(peerDevId.empty(), ERR_DH_AVT_INVALID_PARAM, "peerDevId is empty().");
 
-    std::lock_guard<std::mutex> lock(idMapMutex_);
     std::string mySessionName = FindSessNameByPeerSessName(peerSessionName);
     TRUE_RETURN_V_MSG_E(mySessionName.empty(), ERR_DH_AVT_INVALID_PARAM, "mySessionName is empty().");
+
+    DAudioAccessConfigManager::GetInstance().SetCurrentNetworkId(peerDevId);
+    RequestAndWaitForAuthorization(peerDevId);
+
+    std::lock_guard<std::mutex> lock(idMapMutex_);
     EventType type = (result == 0) ? EventType::EVENT_CHANNEL_OPENED : EventType::EVENT_CHANNEL_OPEN_FAIL;
     AVTransEvent event = {type, mySessionName, peerDevId};
     {
@@ -632,6 +645,166 @@ void SoftbusChannelAdapter::SendChannelEvent(const std::string sessName, const A
         TRUE_RETURN(listener == nullptr, "input listener is nullptr.");
     }
     listener->OnChannelEvent(event);
+}
+
+std::string SoftbusChannelAdapter::GenerateRequestId()
+{
+    std::random_device rd;
+    std::mt19937_64 gen(rd());
+    std::uniform_int_distribution<uint64_t> dis;
+
+    uint64_t randomNum = dis(gen);
+    auto now = std::chrono::system_clock::now();
+    auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+
+    std::stringstream ss;
+    ss << "req_" << std::hex << std::setfill('0') << std::setw(HEX_WIDTH) << timestamp
+       << "_" << std::setw(HEX_WIDTH) << randomNum;
+
+    std::string requestId = ss.str();
+    AVTRANS_LOGI("Generated requestId: %{public}s", GetAnonyString(requestId).c_str());
+    return requestId;
+}
+
+void SoftbusChannelAdapter::StartAuthorizationTimer(const std::string &requestId, int32_t timeOutMs)
+{
+    AVTRANS_LOGI("Start authorization timer, requestId: %{public}s, timeout: %{public}d ms",
+        GetAnonyString(requestId).c_str(), timeOutMs);
+
+    CancelAuthorizationTimer(requestId);
+    std::lock_guard<std::mutex> lock(authRequestMutex_);
+    authTimerCancelFlags_[requestId] = false;
+
+    auto timerThread = std::make_shared<std::thread>([this, requestId, timeOutMs]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(timeOutMs));
+
+        bool shouldTimeout = false;
+        {
+            std::lock_guard<std::mutex> lock(authRequestMutex_);
+            auto flagIt = authTimerCancelFlags_.find(requestId);
+            if (flagIt != authTimerCancelFlags_.end() && !flagIt->second) {
+                shouldTimeout = true;
+            }
+            authTimerCancelFlags_.erase(requestId);
+        }
+
+        if (shouldTimeout) {
+            AVTRANS_LOGI("Authorization timeout for requestId: %{public}s", GetAnonyString(requestId).c_str());
+            HandleAuthorizationTimeout(requestId);
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(authRequestMutex_);
+            authTimerThreads_.erase(requestId);
+        }
+    });
+
+    authTimerThreads_[requestId] = timerThread;
+    timerThread->detach();
+}
+
+void SoftbusChannelAdapter::CancelAuthorizationTimer(const std::string &requestId)
+{
+    AVTRANS_LOGI("Cancel authorization timer, requestId: %{public}s", GetAnonyString(requestId).c_str());
+
+    std::lock_guard<std::mutex> lock(authRequestMutex_);
+    auto flagIt = authTimerCancelFlags_.find(requestId);
+    if (flagIt != authTimerCancelFlags_.end()) {
+        flagIt->second = true;
+    }
+}
+
+void SoftbusChannelAdapter::HandleAuthorizationTimeout(const std::string &requestId)
+{
+    AVTRANS_LOGE("Authorization timeout, requestId: %{public}s", GetAnonyString(requestId).c_str());
+
+    std::string networkId;
+    {
+        std::lock_guard<std::mutex> lock(authRequestMutex_);
+        auto it = pendingAuthRequests_.find(requestId);
+        if (it != pendingAuthRequests_.end()) {
+            networkId = it->second;
+            pendingAuthRequests_.erase(it);
+        }
+    }
+
+    if (networkId.empty()) {
+        AVTRANS_LOGW("Authorization request not found for timeout, requestId: %{public}s",
+            GetAnonyString(requestId).c_str());
+        return;
+    }
+
+    if (DAudioAccessConfigManager::GetInstance().HasAuthorizationDecision(networkId)) {
+        AVTRANS_LOGI("Authorization result already exists for device: %{public}s, timeout cover last result",
+            GetAnonyString(networkId).c_str());
+    }
+
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, false);
+}
+
+void SoftbusChannelAdapter::ProcessAuthorizationResult(const std::string &requestId, bool granted)
+{
+    AVTRANS_LOGI("Process authorization result, requestId: %{public}s, granted: %{public}d",
+        GetAnonyString(requestId).c_str(), granted);
+
+    CancelAuthorizationTimer(requestId);
+
+    std::string networkId;
+    {
+        std::lock_guard<std::mutex> lock(authRequestMutex_);
+        auto it = pendingAuthRequests_.find(requestId);
+        if (it != pendingAuthRequests_.end()) {
+            networkId = it->second;
+            pendingAuthRequests_.erase(it);
+        }
+    }
+
+    if (networkId.empty()) {
+        AVTRANS_LOGE("Authorization request not found or already processed: %{public}s",
+            GetAnonyString(requestId).c_str());
+        return;
+    }
+
+    if (DAudioAccessConfigManager::GetInstance().HasAuthorizationDecision(networkId)) {
+        AVTRANS_LOGE("Authorization result already exists for device: %{public}s, cover last result",
+            GetAnonyString(networkId).c_str());
+    }
+
+    DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(networkId, granted);
+}
+
+int32_t SoftbusChannelAdapter::RequestAndWaitForAuthorization(const std::string &peerNetworkId)
+{
+    AVTRANS_LOGI("Request authorization");
+
+    sptr<IAccessListener> listener = DAudioAccessConfigManager::GetInstance().GetAccessListener();
+    if (listener == nullptr) {
+        DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(peerNetworkId, true);
+        AVTRANS_LOGI("listener is null, no authorization config, allow by default");
+        return DH_AVT_SUCCESS;
+    }
+    int32_t timeOut = DAudioAccessConfigManager::GetInstance().GetAccessTimeOut();
+    std::string pkgName = DAudioAccessConfigManager::GetInstance().GetAccessPkgName();
+    if (pkgName.empty()) {
+        DAudioAccessConfigManager::GetInstance().SetAuthorizationGranted(peerNetworkId, true);
+        AVTRANS_LOGI("package is null, no authorization config, allow by default");
+        return DH_AVT_SUCCESS;
+    }
+
+    std::string requestId = GenerateRequestId();
+    {
+        std::lock_guard<std::mutex> lock(authRequestMutex_);
+        pendingAuthRequests_[requestId] = peerNetworkId;
+    }
+
+    int32_t timeOutMs = (timeOut > 0) ? timeOut * SECONDS_TO_MS : DEFAULT_TIMEOUT_MS;
+    StartAuthorizationTimer(requestId, timeOutMs);
+    AuthDeviceInfo remoteDevInfo;
+    remoteDevInfo.networkId = peerNetworkId;
+    remoteDevInfo.deviceName = "Remote Device";
+    remoteDevInfo.deviceType = 0;
+    listener->OnRequestHardwareAccess(requestId, remoteDevInfo, DHType::AUDIO, pkgName);
+    return DH_AVT_SUCCESS;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

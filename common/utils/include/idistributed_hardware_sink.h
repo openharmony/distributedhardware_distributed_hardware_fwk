@@ -17,10 +17,12 @@
 #define OHOS_DISTRIBUTED_HARDWARE_IDISTRIBUTED_HARDWARE_SINK_H
 
 #include <string>
+#include "iaccess_listener.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 const std::string COMPONENT_LOADER_GET_SINK_HANDLER = "GetSinkHardwareHandler";
+const int32_t ERR_OK = 0;
 enum class ResourceEventType : int32_t {
     EVENT_TYPE_QUERY_RESOURCE = 0,
     EVENT_TYPE_PULL_UP_PAGE = 1,
@@ -69,6 +71,25 @@ public:
     virtual int32_t PauseDistributedHardware(const std::string &networkId) = 0;
     virtual int32_t ResumeDistributedHardware(const std::string &networkId) = 0;
     virtual int32_t StopDistributedHardware(const std::string &networkId) = 0;
+    virtual int32_t SetAccessListener(sptr<IAccessListener> listener, int32_t &timeOut,
+        const std::string &pkgName)
+    {
+        (void)listener;
+        (void)timeOut;
+        (void)pkgName;
+        return ERR_OK;
+    }
+    virtual int32_t RemoveAccessListener(const std::string &pkgName)
+    {
+        (void)pkgName;
+        return ERR_OK;
+    }
+    virtual int32_t SetAuthorizationResult(const std::string &requestId, bool granted)
+    {
+        (void)requestId;
+        (void)granted;
+        return ERR_OK;
+    }
     virtual void RegisterDistributedHardwareSinkStateListener(
         std::shared_ptr<DistributedHardwareSinkStateListener> listener)
     {

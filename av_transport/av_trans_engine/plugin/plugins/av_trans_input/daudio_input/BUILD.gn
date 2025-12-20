@@ -19,6 +19,7 @@ ohos_source_set("plugin_AVTransDaudioInput") {
   include_dirs = [
     "${common_path}/include",
     "${plugin_path}/interface",
+    "${dh_fwk_utils_path}/include",
   ]
 
   sources = [ "daudio_input_plugin.cpp" ]

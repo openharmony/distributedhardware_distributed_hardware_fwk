@@ -1006,5 +1006,133 @@ int32_t DistributedHardwareProxy::NotifySinkRemoteSourceStarted(const std::strin
     DHLOGI("NotifySinkRemoteSourceStarted End");
     return reply.ReadInt32();
 }
+
+int32_t DistributedHardwareProxy::RegisterHardwareAccessListener(const DHType dhType,
+    sptr<IAuthorizationResultCallback> callback, int32_t &timeOut, const std::string &pkgName)
+{
+    DHLOGI("RegisterHardwareAccessListener Start");
+    if (callback == nullptr) {
+        DHLOGE("status listener is null");
+        return ERR_DH_FWK_STATUS_LISTENER_IS_NULL;
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("RegisterHardwareAccessListener error, remote info is null");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    uint32_t type = static_cast<uint32_t>(dhType);
+    if (!data.WriteUint32(type)) {
+        DHLOGE("Write type failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteRemoteObject(callback->AsObject())) {
+        DHLOGE("Write callback failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteInt32(timeOut)) {
+        DHLOGE("Write timeOut failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteString(pkgName)) {
+        DHLOGE("Write pkgName failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(DHMsgInterfaceCode::REGISTER_HARDWARE_ACCESS_LISTENER), data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+    DHLOGI("RegisterHardwareAccessListener End");
+    return reply.ReadInt32();
+}
+
+int32_t DistributedHardwareProxy::UnregisterHardwareAccessListener(const DHType dhType,
+    sptr<IAuthorizationResultCallback> callback, const std::string &pkgName)
+{
+    DHLOGI("UnregisterHardwareAccessListener Start");
+    if (callback == nullptr) {
+        DHLOGE("status listener is null");
+        return ERR_DH_FWK_STATUS_LISTENER_IS_NULL;
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("UnregisterHardwareAccessListener error, remote info is null");
+        return ERR_DH_AVT_SERVICE_REMOTE_IS_NULL;
+    }
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return ERR_DH_FWK_SERVICE_WRITE_TOKEN_FAIL;
+    }
+    uint32_t type = static_cast<uint32_t>(dhType);
+    if (!data.WriteUint32(type)) {
+        DHLOGE("Write type failed");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteRemoteObject(callback->AsObject())) {
+        DHLOGE("Write callback failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    if (!data.WriteString(pkgName)) {
+        DHLOGE("Write pkgName failed!");
+        return ERR_DH_FWK_SERVICE_WRITE_INFO_FAIL;
+    }
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(DHMsgInterfaceCode::UNREGISTER_HARDWARE_ACCESS_LISTENER), data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        return ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL;
+    }
+    DHLOGI("UnregisterHardwareAccessListener End");
+    return reply.ReadInt32();
+}
+
+void DistributedHardwareProxy::SetAuthorizationResult(const DHType dhType, const std::string &requestId, bool &granted)
+{
+    DHLOGI("SetAuthorizationResult Start");
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        DHLOGE("SetAuthorizationResult error, remote info is null");
+        return;
+    }
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        DHLOGE("WriteInterfaceToken fail!");
+        return;
+    }
+    uint32_t type = static_cast<uint32_t>(dhType);
+    if (!data.WriteUint32(type)) {
+        DHLOGE("Write type failed");
+        return;
+    }
+    if (!data.WriteString(requestId)) {
+        DHLOGE("Write requestId failed!");
+        return;
+    }
+    if (!data.WriteBool(granted)) {
+        DHLOGE("Write granted failed");
+        return;
+    }
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(DHMsgInterfaceCode::SET_AUTHORIZATION_RESULT), data, reply, option);
+    if (ret != NO_ERROR) {
+        DHLOGE("Send Request failed, ret: %{public}d", ret);
+        return;
+    }
+    DHLOGI("OnHardwareAccessReques End");
+    return;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

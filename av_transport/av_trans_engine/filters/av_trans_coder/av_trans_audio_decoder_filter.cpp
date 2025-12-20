@@ -16,6 +16,7 @@
 #include "av_trans_audio_decoder_filter.h"
 
 #include "av_trans_log.h"
+#include "av_sync_utils.h"
 #include "filter_factory.h"
 
 #undef DH_LOG_TAG
@@ -443,6 +444,22 @@ Status AudioDecoderFilter::StartAudioCodec()
 {
     AVTRANS_LOGI("enter");
     TRUE_RETURN_V_MSG_E(audioDecoder_ == nullptr, Status::ERROR_NULL_POINTER, "audioCodec is null");
+    std::string networkId = DAudioAccessConfigManager::GetInstance().GetCurrentNetworkId();
+    if (!networkId.empty()) {
+        if (!DAudioAccessConfigManager::GetInstance().HasAuthorizationDecision(networkId)) {
+            int32_t timeOut = DAudioAccessConfigManager::GetInstance().GetAccessTimeOut();
+            bool gotResult = DAudioAccessConfigManager::GetInstance().WaitForAuthorizationResult(networkId, timeOut);
+            if (!gotResult) {
+                AVTRANS_LOGE("Authorization timeout, cannot start encoder");
+                return Status::ERROR_INVALID_OPERATION;
+            }
+        }
+
+        if (!DAudioAccessConfigManager::GetInstance().IsAuthorizationGranted(networkId)) {
+            AVTRANS_LOGE("Authorization denied, cannot start encoder");
+            return Status::ERROR_INVALID_OPERATION;
+        }
+    }
     auto res = OH_AudioCodec_Start(audioDecoder_);
     TRUE_RETURN_V_MSG_E(res != AV_ERR_OK, Status::ERROR_INVALID_OPERATION,
                         "audioDecoder start failed: %{public}d", res);

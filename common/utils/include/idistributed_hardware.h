@@ -23,6 +23,7 @@
 #include "iremote_broker.h"
 #include "device_type.h"
 #include "dhardware_descriptor.h"
+#include "iauthorization_result_callback.h"
 #include "iget_dh_descriptors_callback.h"
 #include "ihardware_status_listener.h"
 
@@ -67,6 +68,11 @@ public:
     virtual int32_t UnLoadDistributedHDF(const DHType dhType) = 0;
     virtual int32_t LoadSinkDMSDPService(const std::string &udid) = 0;
     virtual int32_t NotifySinkRemoteSourceStarted(const std::string &udid) = 0;
+    virtual int32_t RegisterHardwareAccessListener(const DHType dhType, sptr<IAuthorizationResultCallback> callback,
+        int32_t &timeOut, const std::string &pkgName) = 0;
+    virtual int32_t UnregisterHardwareAccessListener(const DHType dhType,
+        sptr<IAuthorizationResultCallback> callback, const std::string &pkgName) = 0;
+    virtual void SetAuthorizationResult(const DHType dhType, const std::string &requestId, bool &granted) = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

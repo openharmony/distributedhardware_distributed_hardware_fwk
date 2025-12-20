@@ -478,5 +478,40 @@ int32_t DistributedHardwareFwkKit::UnLoadDistributedHDF(const DHType dhType)
     }
     return DHFWKSAManager::GetInstance().GetDHFWKProxy()->UnLoadDistributedHDF(dhType);
 }
+
+int32_t DistributedHardwareFwkKit::RegisterHardwareAccessListener(const DHType dhType,
+    sptr<IAuthorizationResultCallback> callback, int32_t timeOut, const std::string &pkgName)
+{
+    DHLOGI("Register hardware access listener");
+    auto proxy = DHFWKSAManager::GetInstance().GetDHFWKProxy();
+    if (proxy == nullptr) {
+        DHLOGE("DHFWK proxy is null, can not load distributed HDF.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return proxy->RegisterHardwareAccessListener(dhType, callback, timeOut, pkgName);
+}
+
+int32_t DistributedHardwareFwkKit::UnregisterHardwareAccessListener(const DHType dhType,
+    sptr<IAuthorizationResultCallback> callback, const std::string &pkgName)
+{
+    DHLOGI("Unregister hardware access listener");
+    auto proxy = DHFWKSAManager::GetInstance().GetDHFWKProxy();
+    if (proxy == nullptr) {
+        DHLOGE("DHFWK proxy is null, can not load distributed HDF.");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return proxy->UnregisterHardwareAccessListener(dhType, callback, pkgName);
+}
+
+void DistributedHardwareFwkKit::SetAuthorizationResult(const DHType dhType, const std::string &requestId, bool granted)
+{
+    DHLOGI("Set authorization result");
+    auto proxy = DHFWKSAManager::GetInstance().GetDHFWKProxy();
+    if (proxy == nullptr) {
+        DHLOGE("DHFWK proxy is null, can not load distributed HDF.");
+        return;
+    }
+    proxy->SetAuthorizationResult(dhType, requestId, granted);
+}
 } // DistributedHardware
 } // OHOS

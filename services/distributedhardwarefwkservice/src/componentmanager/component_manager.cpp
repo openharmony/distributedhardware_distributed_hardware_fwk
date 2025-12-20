@@ -28,6 +28,7 @@
 #include "system_ability_definition.h"
 
 #include "anonymous_string.h"
+#include "access_listener_service.h"
 #include "capability_info_manager.h"
 #include "component_disable.h"
 #include "component_enable.h"
@@ -2393,6 +2394,125 @@ void ComponentManager::OnGetDescriptorsError()
             ++iter;
         }
     }
+}
+
+int32_t ComponentManager::AddAccessListener(const DHType dhType, int32_t &timeOut, const std::string &pkgName,
+    const sptr<IAuthorizationResultCallback> &callback)
+{
+    DHLOGI("AddAccessListener dhType=%{public}u, pkgName=%{public}s", (uint32_t)dhType, pkgName.c_str());
+
+    if (callback == nullptr) {
+        DHLOGE("callback is nullptr");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    if (pkgName.empty()) {
+        DHLOGE("pkgName is empty");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    std::map<DHType, IDistributedHardwareSink*> dhSinkMap = GetDHSinkInstance();
+    if (dhSinkMap.empty()) {
+        DHLOGE("Get DH sink instance map is empty");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+
+    if (dhSinkMap.find(dhType) == dhSinkMap.end()) {
+        DHLOGE("SetAccessListener for DHType: %{public}u not init sink handler", (uint32_t)dhType);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (dhSinkMap[dhType] == nullptr) {
+        DHLOGE("Sinkhandler ptr is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    sptr<IAccessListener> listener(new AccessListenerService());
+    int32_t ret = dhSinkMap[dhType]->SetAccessListener(listener, timeOut, pkgName);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("SetAccessListener failed for DHType=%{public}u, ret=%{public}d",
+            (uint32_t)dhType, ret);
+        return ret;
+    }
+
+    std::lock_guard<std::mutex> lock(accessListenerMutex_);
+    auto key = std::make_pair(dhType, pkgName);
+    if (accessListenerMap_.find(key) != accessListenerMap_.end()) {
+        DHLOGW("DHType=%{public}u, pkgName=%{public}s already registered, will update callback",
+            (uint32_t)dhType, pkgName.c_str());
+    }
+
+    accessListenerMap_[key] = callback;
+    DHLOGI("Save callback for DHType=%{public}u, pkgName=%{public}s, current map size=%{public}zu",
+        (uint32_t)dhType, pkgName.c_str(), accessListenerMap_.size());
+
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::RemoveAccessListener(const DHType dhType, const std::string &pkgName)
+{
+    DHLOGI("RemoveAccessListener dhType=%{public}u, pkgName=%{public}s", (uint32_t)dhType, pkgName.c_str());
+
+    if (pkgName.empty()) {
+        DHLOGE("pkgName is empty");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    std::map<DHType, IDistributedHardwareSink*> dhSinkMap = GetDHSinkInstance();
+    if (dhSinkMap.empty()) {
+        DHLOGE("Get DH sink instance map is empty");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+
+    if (dhSinkMap.find(dhType) == dhSinkMap.end()) {
+        DHLOGE("RemoveAccessListener for DHType: %{public}u not init sink handler", (uint32_t)dhType);
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (dhSinkMap[dhType] == nullptr) {
+        DHLOGE("Sinkhandler ptr is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    int32_t ret = dhSinkMap[dhType]->RemoveAccessListener(pkgName);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("RemoveAccessListener failed for DHType=%{public}u, ret=%{public}d",
+            (uint32_t)dhType, ret);
+        return ret;
+    }
+
+    std::lock_guard<std::mutex> lock(accessListenerMutex_);
+    auto key = std::make_pair(dhType, pkgName);
+    auto it = accessListenerMap_.find(key);
+    if (it == accessListenerMap_.end()) {
+        DHLOGW("DHType=%{public}u, pkgName=%{public}s not found in map", (uint32_t)dhType, pkgName.c_str());
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    accessListenerMap_.erase(it);
+    DHLOGI("Remove callback for DHType=%{public}u, pkgName=%{public}s, remaining size=%{public}zu",
+        (uint32_t)dhType, pkgName.c_str(), accessListenerMap_.size());
+
+    return DH_FWK_SUCCESS;
+}
+
+sptr<IAuthorizationResultCallback> ComponentManager::GetAccessListener(const DHType dhType, const std::string &pkgName)
+{
+    DHLOGI("GetAccessListener dhType=%{public}u, pkgName=%{public}s", (uint32_t)dhType, pkgName.c_str());
+
+    if (pkgName.empty()) {
+        DHLOGE("pkgName is empty");
+        return nullptr;
+    }
+
+    std::lock_guard<std::mutex> lock(accessListenerMutex_);
+
+    auto key = std::make_pair(dhType, pkgName);
+    auto it = accessListenerMap_.find(key);
+    if (it == accessListenerMap_.end()) {
+        DHLOGW("DHType=%{public}u, pkgName=%{public}s not found in map", (uint32_t)dhType, pkgName.c_str());
+        return nullptr;
+    }
+
+    return it->second;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

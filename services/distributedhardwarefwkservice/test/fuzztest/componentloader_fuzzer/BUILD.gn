@@ -55,6 +55,7 @@ ohos_fuzztest("ComponentLoaderFuzzTest") {
     "cJSON:cjson",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
+    "ipc:ipc_core",
     "samgr:samgr_proxy",
   ]
 }

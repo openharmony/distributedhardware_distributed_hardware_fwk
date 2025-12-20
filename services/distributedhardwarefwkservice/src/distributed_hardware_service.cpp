@@ -714,5 +714,70 @@ int32_t DistributedHardwareService::CheckDHAccessPermission(const std::string &u
     }
     return DH_FWK_SUCCESS;
 }
+
+int32_t DistributedHardwareService::RegisterHardwareAccessListener(const DHType dhType,
+    sptr<IAuthorizationResultCallback> callback, int32_t &timeOut, const std::string &pkgName)
+{
+    DHLOGI("RegisterHardwareAccessListener dhType=%{public}u, pkgName=%{public}s, timeOut=%{public}d",
+        (uint32_t)dhType, pkgName.c_str(), timeOut);
+
+    if (callback == nullptr) {
+        DHLOGE("callback is nullptr");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (pkgName.empty()) {
+        DHLOGE("pkgName is empty");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    int32_t ret = ComponentManager::GetInstance().AddAccessListener(dhType, timeOut, pkgName, callback);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("AddAccessListener failed, ret=%{public}d", ret);
+        return ret;
+    }
+
+    return DH_FWK_SUCCESS;
+}
+
+int32_t DistributedHardwareService::UnregisterHardwareAccessListener(const DHType dhType,
+    sptr<IAuthorizationResultCallback> callback, const std::string &pkgName)
+{
+    DHLOGI("UnregisterHardwareAccessListener dhType=%{public}u, pkgName=%{public}s",
+        (uint32_t)dhType, pkgName.c_str());
+
+    if (pkgName.empty()) {
+        DHLOGE("pkgName is empty");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+
+    int32_t ret = ComponentManager::GetInstance().RemoveAccessListener(dhType, pkgName);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("RemoveAccessListener failed, ret=%{public}d", ret);
+        return ret;
+    }
+
+    return DH_FWK_SUCCESS;
+}
+
+void DistributedHardwareService::SetAuthorizationResult(const DHType dhType, const std::string &requestId,
+    bool &granted)
+{
+    DHLOGI("SetAuthorizationResult requestId=%{public}s, granted=%{public}d", requestId.c_str(), granted);
+
+    std::map<DHType, IDistributedHardwareSink*> sinkMap = ComponentManager::GetInstance().GetDHSinkInstance();
+    if (sinkMap.find(dhType) == sinkMap.end()) {
+        DHLOGE("SetAuthorizationResult for DHType: %{public}u not init sink handler", (uint32_t)dhType);
+        return;
+    }
+    if (sinkMap[dhType] == nullptr) {
+        DHLOGE("Sinkhandler ptr is null");
+        return;
+    }
+    int32_t ret = sinkMap[dhType]->SetAuthorizationResult(requestId, granted);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("SetAuthorizationResult failed, ret=%{public}d", ret);
+        return;
+    }
+}
 } // namespace DistributedHardware
 } // namespace OHOS

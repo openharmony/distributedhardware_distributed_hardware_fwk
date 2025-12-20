@@ -22,11 +22,13 @@ ohos_unittest("DsoftbusOutputPluginTest") {
 
   include_dirs = [
     "${common_path}/include",
+    "${dh_fwk_utils_path}/include",
     "${plugin_path}/interface",
     "${plugin_path}/plugins/av_trans_output/dsoftbus_output",
   ]
 
   sources = [
+    "${common_path}/src/av_sync_utils.cpp",
     "${common_path}/src/av_trans_log.cpp",
     "${common_path}/src/av_trans_meta.cpp",
     "${common_path}/src/av_trans_utils.cpp",

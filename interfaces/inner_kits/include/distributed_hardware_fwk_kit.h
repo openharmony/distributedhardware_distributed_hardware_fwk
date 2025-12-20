@@ -250,6 +250,38 @@ public:
      */
     API_EXPORT int32_t UnLoadDistributedHDF(const DHType dhType);
 
+    /**
+     * @brief Register hardware access listener.
+     *
+     * @param dhType distributed hardware type.
+     * @param callback hardware access listener.
+     * @param timeOut time out ms.
+     * @param pkgName owner info.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t RegisterHardwareAccessListener(const DHType dhType, sptr<IAuthorizationResultCallback> callback,
+        int32_t timeOut, const std::string &pkgName);
+
+    /**
+     * @brief Unregister hardware access listener.
+     *
+     * @param dhType distributed hardware type.
+     * @param callback hardware access listener.
+     * @param pkgName owner info.
+     * @return Returns 0 if success.
+     */
+    API_EXPORT int32_t UnregisterHardwareAccessListener(const DHType dhType,
+        sptr<IAuthorizationResultCallback> callback, const std::string &pkgName);
+
+    /**
+     * @brief Set authorization result.
+     *
+     * @param dhType distributed hardware type.
+     * @param requestId distributed hardware request id.
+     * @param granted authorization result.
+     */
+    API_EXPORT void SetAuthorizationResult(const DHType dhType, const std::string &requestId, bool granted);
+
 private:
     /**
      * @brief Determine whether the topic is valid.
