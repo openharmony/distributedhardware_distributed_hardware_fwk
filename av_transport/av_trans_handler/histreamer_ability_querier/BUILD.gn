@@ -91,11 +91,3 @@ ohos_shared_library("histreamer_ability_querier") {
   part_name = "distributed_hardware_fwk"
   subsystem_name = "distributedhardware"
 }
-
-ohos_rust_shared_ffi("histreamer_ability_querier_core") {
-  sources = [ "src/histreamer_ability_querier_core.rs" ]
-  crate_name = "histreamer_ability_querier_core"
-  crate_type = "cdylib"
-  subsystem_name = "distributedhardware"
-  part_name = "distributed_hardware_fwk"
-}
