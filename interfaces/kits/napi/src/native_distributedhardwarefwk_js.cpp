@@ -44,25 +44,25 @@ namespace {
         }                                                                   \
     } while (0)
 
-#define DH_CALL(theCall) DH_CALL_BASE(theCall, nullptr) 
-#define DH_CALL_RETURN_VOID(theCall) DH_CALL_BASE(theCall, DH_RETVAL_NOTHING) 
+#define DH_CALL(theCall) DH_CALL_BASE(theCall, nullptr)
+#define DH_CALL_RETURN_VOID(theCall) DH_CALL_BASE(theCall, DH_RETVAL_NOTHING)
 
 #define DH_ASSERT_BASE(env, assertion, message, code, retVal)                                    \
     do {                                                                                     \
         if (!(assertion)) {                                                                  \
-            napi_value errMsg;\
-            DH_CALL(napi_create_string_utf8(env, message, NAPI_AUTO_LENGTH, &errMsg));\
-            napi_value error;\
-            DH_CALL(napi_create_error(env, nullptr, errMsg, &error));\
-            napi_value errorCode;\
-            DH_CALL(napi_create_int32(env, code, &errorCode));\
+            napi_value errMsg; \
+            DH_CALL(napi_create_string_utf8(env, message, NAPI_AUTO_LENGTH, &errMsg)); \
+            napi_value error; \
+            DH_CALL(napi_create_error(env, nullptr, errMsg, &error)); \
+            napi_value errorCode; \
+            DH_CALL(napi_create_int32(env, code, &errorCode)); \
             DH_CALL(napi_set_named_property(env, error, "errorCode", errorCode));\
-            DH_CALL(napi_throw(env, error));\
+            DH_CALL(napi_throw(env, error)); \
             return retVal;                                                                   \
         }                                                                                    \
     } while (0)
 
-#define DH_ASSERT(env, assertion, message, code) DH_ASSERT_BASE(env, assertion, message, code, nullptr) 
+#define DH_ASSERT(env, assertion, message, code) DH_ASSERT_BASE(env, assertion, message, code, nullptr)
 
 const int32_t DH_NAPI_ARGS_ONE = 1;
 const int32_t DH_NAPI_ARGS_TWO = 2;
@@ -206,7 +206,8 @@ napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, na
     napi_value argv[2] = {nullptr};
     napi_value thisVar = nullptr;
     DH_CALL(napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
-    DH_ASSERT(env, ((argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO)), "requires 1 or 2 parameter",ERR_INVALID_PARAMS); 
+    DH_ASSERT(env, ((argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO)),
+                             "requires 1 or 2 parameter", ERR_INVALID_PARAMS);
 
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[0], &valueType);
@@ -258,7 +259,8 @@ napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, n
     napi_value argv[2] = {nullptr};
     napi_value thisVar = nullptr;
     DH_CALL(napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
-    DH_ASSERT(env, ((argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO)), "requires 1 or 2 parameter",ERR_INVALID_PARAMS); 
+    DH_ASSERT(env, ((argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO)),
+                        "requires  or 2 parameter", ERR_INVALID_PARAMS);
 
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[0], &valueType);
@@ -310,7 +312,8 @@ napi_value DistributedHardwareManager::StopDistributedHardware(napi_env env, nap
     napi_value argv[2] = {nullptr};
     napi_value thisVar = nullptr;
     DH_CALL(napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
-    DH_ASSERT(env, ((argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO)), "requires 1 or 2 parameter",ERR_INVALID_PARAMS); 
+    DH_ASSERT(env, (argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO),
+                         "requires 1 or  parameter", ERR_INVALID_PARAMS);
 
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[0], &valueType);
