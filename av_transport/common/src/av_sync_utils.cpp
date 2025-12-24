@@ -461,8 +461,9 @@ bool DAudioAccessConfigManager::WaitForAuthorizationResult(const std::string &ne
     bool gotResult = authCondVar_.wait_for(
         lock,
         std::chrono::seconds(timeoutSeconds),
-        [this, &networkId]() {
-            return authorizationResults_.find(networkId) != authorizationResults_.end();
+        [&networkId]() {
+            return DAudioAccessConfigManager::authorizationResults_.find(networkId) !=
+                   DAudioAccessConfigManager::authorizationResults_.end();
         }
     );
 
