@@ -56,7 +56,7 @@ namespace {
             DH_CALL(napi_create_error(env, nullptr, errMsg, &error)); \
             napi_value errorCode; \
             DH_CALL(napi_create_int32(env, code, &errorCode)); \
-            DH_CALL(napi_set_named_property(env, error, "errorCode", errorCode));\
+            DH_CALL(napi_set_named_property(env, error, "errorCode", errorCode)); \
             DH_CALL(napi_throw(env, error)); \
             return retVal;                                                                   \
         }                                                                                    \
