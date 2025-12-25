@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,13 +18,15 @@
 #include <cinttypes>
 
 #include "accesstoken_kit.h"
+#include "cJSON.h"
 #include "device_manager.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "ipc_types.h"
 #include "ipublisher_listener.h"
 #include "iservice_registry.h"
-#include "cJSON.h"
+#include "mem_mgr_client.h"
+#include "mem_mgr_proxy.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
 
@@ -85,6 +87,7 @@ void DistributedHardwareService::OnStart()
     }
     state_ = ServiceRunningState::STATE_RUNNING;
     DistributedHardwareManagerFactory::GetInstance().SetSAProcessState(false);
+    AddSystemAbilityListener(MEMORY_MANAGER_SA_ID);
     DHLOGI("DistributedHardwareService::OnStart start service success.");
 }
 
@@ -171,6 +174,8 @@ void DistributedHardwareService::OnStop()
     DHLOGI("DistributedHardwareService::OnStop ready to stop service.");
     state_ = ServiceRunningState::STATE_NOT_START;
     registerToService_ = false;
+    int pid = getpid();
+    Memory::MemMgrClient::GetInstance().NotifyProcessStatus(pid, 1, 0, DISTRIBUTED_HARDWARE_SA_ID);
 }
 
 int32_t DistributedHardwareService::OnIdle(const SystemAbilityOnDemandReason& idleReason)
@@ -542,6 +547,12 @@ int32_t DistributedHardwareService::UnregisterDHStatusListener(
 
 int32_t DistributedHardwareService::EnableSink(const std::vector<DHDescriptor> &descriptors)
 {
+    if (!ComponentManager::GetInstance().IsSinkActiveEnabled()) {
+        DHLOGI("No business enable sink, set sa status to critical and start delay task");
+        int pid = getpid();
+        Memory::MemMgrClient::GetInstance().SetCritical(pid, true, DISTRIBUTED_HARDWARE_SA_ID);
+        DistributedHardwareManagerFactory::GetInstance().DelaySaStatusTask();
+    }
     for (const auto &descriptor : descriptors) {
         TaskParam taskParam = {
             .dhId = descriptor.id,
@@ -559,6 +570,7 @@ int32_t DistributedHardwareService::EnableSink(const std::vector<DHDescriptor> &
 
 int32_t DistributedHardwareService::DisableSink(const std::vector<DHDescriptor> &descriptors)
 {
+    DistributedHardwareManagerFactory::GetInstance().DelaySaStatusTask();
     for (const auto &descriptor : descriptors) {
         TaskParam taskParam = {
             .dhId = descriptor.id,
@@ -579,6 +591,12 @@ int32_t DistributedHardwareService::EnableSource(
 {
     if (!IsIdLengthValid(networkId)) {
         return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (!ComponentManager::GetInstance().IsSourceEnabled() && !HdfOperateManager::GetInstance().IsAnyHdfInuse()) {
+        DHLOGI("No business enable source, set sa status to critical and start delay task");
+        int pid = getpid();
+        Memory::MemMgrClient::GetInstance().SetCritical(pid, true, DISTRIBUTED_HARDWARE_SA_ID);
+        DistributedHardwareManagerFactory::GetInstance().DelaySaStatusTask();
     }
     for (const auto &descriptor : descriptors) {
         TaskParam taskParam = {
@@ -602,6 +620,7 @@ int32_t DistributedHardwareService::DisableSource(
     if (!IsIdLengthValid(networkId)) {
         return ERR_DH_FWK_PARA_INVALID;
     }
+    DistributedHardwareManagerFactory::GetInstance().DelaySaStatusTask();
     for (const auto &descriptor : descriptors) {
         TaskParam taskParam = {
             .networkId = networkId,
@@ -620,6 +639,12 @@ int32_t DistributedHardwareService::DisableSource(
 
 int32_t DistributedHardwareService::LoadDistributedHDF(const DHType dhType)
 {
+    if (!ComponentManager::GetInstance().IsSourceEnabled() && !HdfOperateManager::GetInstance().IsAnyHdfInuse()) {
+        DHLOGI("No business load hdf, set sa status to critical and start delay task");
+        int pid = getpid();
+        Memory::MemMgrClient::GetInstance().SetCritical(pid, true, DISTRIBUTED_HARDWARE_SA_ID);
+        DistributedHardwareManagerFactory::GetInstance().DelaySaStatusTask();
+    }
     switch (dhType) {
         case DHType::AUDIO:
         case DHType::CAMERA:
@@ -635,6 +660,7 @@ int32_t DistributedHardwareService::UnLoadDistributedHDF(const DHType dhType)
     switch (dhType) {
         case DHType::AUDIO:
         case DHType::CAMERA:
+            DistributedHardwareManagerFactory::GetInstance().DelaySaStatusTask();
             return HdfOperateManager::GetInstance().UnLoadDistributedHDF(dhType);
         default:
             break;
@@ -777,6 +803,18 @@ void DistributedHardwareService::SetAuthorizationResult(const DHType dhType, con
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("SetAuthorizationResult failed, ret=%{public}d", ret);
         return;
+    }
+}
+
+void DistributedHardwareService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    (void)deviceId;
+    DHLOGI("called systemAbilityId:%{public}d", systemAbilityId);
+    if (systemAbilityId == MEMORY_MANAGER_SA_ID) {
+        DHLOGI("Notify service start and set sa status to critical");
+        int pid = getpid();
+        Memory::MemMgrClient::GetInstance().NotifyProcessStatus(pid, 1, 1, DISTRIBUTED_HARDWARE_SA_ID);
+        Memory::MemMgrClient::GetInstance().SetCritical(pid, true, DISTRIBUTED_HARDWARE_SA_ID);
     }
 }
 } // namespace DistributedHardware

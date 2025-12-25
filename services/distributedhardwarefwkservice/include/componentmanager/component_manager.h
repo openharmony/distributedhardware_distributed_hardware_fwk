@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -121,6 +121,8 @@ public:
         const sptr<IAuthorizationResultCallback> &callback);
     int32_t RemoveAccessListener(const DHType dhType, const std::string &pkgName);
     sptr<IAuthorizationResultCallback> GetAccessListener(const DHType dhType, const std::string &pkgName);
+    bool IsSourceEnabled();
+    bool IsSinkActiveEnabled();
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
     public:
         ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner);

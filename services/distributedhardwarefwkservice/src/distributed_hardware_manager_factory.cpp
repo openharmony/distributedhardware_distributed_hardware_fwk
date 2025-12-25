@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,14 +22,16 @@
 #include <thread>
 #include <vector>
 
-#include "iservice_registry.h"
-#include "system_ability_definition.h"
-
 #include "dm_device_info.h"
 #include "device_manager.h"
+#include "iservice_registry.h"
+#include "mem_mgr_client.h"
+#include "mem_mgr_proxy.h"
+#include "system_ability_definition.h"
 
 #include "anonymous_string.h"
 #include "constants.h"
+#include "component_manager.h"
 #include "dh_context.h"
 #include "dh_utils_hisysevent.h"
 #include "dh_utils_hitrace.h"
@@ -38,6 +40,7 @@
 #include "distributed_hardware_log.h"
 #include "distributed_hardware_manager.h"
 #include "device_param_mgr.h"
+#include "event_handler_factory.h"
 #include "hdf_operate.h"
 #include "local_capability_info_manager.h"
 #include "meta_info_manager.h"
@@ -50,6 +53,8 @@ namespace DistributedHardware {
 namespace {
     constexpr int32_t OLD_HO_DEVICE_TYPE = -1;
     constexpr int32_t NEW_HO_DEVICE_TYPE = 11;
+    const std::string SA_STATUS_TASK_ID = "sa_status_task";
+    constexpr int32_t DELAY_TIME_MS = 480000;
 }
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DistributedHardwareManagerFactory"
@@ -86,6 +91,10 @@ bool DistributedHardwareManagerFactory::Init()
     }
     isInit_.store(true);
     releaseStatus_.store(false);
+    if (CreateSaStatusHandler() == DH_FWK_SUCCESS) {
+        DHLOGI("CreateSaStatusHandler success!");
+        DelaySaStatusTask();
+    }
     DHLOGI("success");
     return true;
 }
@@ -193,6 +202,14 @@ int32_t DistributedHardwareManagerFactory::SendOnLineEvent(const std::string &ne
         return ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED;
     }
 
+    if (!ComponentManager::GetInstance().IsSourceEnabled() && !ComponentManager::GetInstance().IsSinkActiveEnabled() &&
+        !HdfOperateManager::GetInstance().IsAnyHdfInuse()) {
+        int pid = getpid();
+        Memory::MemMgrClient::GetInstance().SetCritical(pid, true, DISTRIBUTED_HARDWARE_SA_ID);
+        DHLOGI("New device online, set sa status to critical");
+        DelaySaStatusTask();
+    }
+
     if (osType == OLD_HO_DEVICE_TYPE || osType == NEW_HO_DEVICE_TYPE) {
         DHLOGE("double frame device, networkId = %{public}s, uuid = %{public}s, udid = %{public}s, need clear data.",
             GetAnonyString(networkId).c_str(), GetAnonyString(uuid).c_str(), GetAnonyString(udid).c_str());
@@ -285,6 +302,59 @@ void DistributedHardwareManagerFactory::ActiveSyncDataByNetworkId(const std::str
 {
     DHLOGI("active sync data, networkId: %{public}s", GetAnonyString(networkId).c_str());
     MetaInfoManager::GetInstance()->SyncDataByNetworkId(networkId);
+}
+
+int32_t DistributedHardwareManagerFactory::CreateSaStatusHandler()
+{
+    DHLOGI("call!");
+    std::lock_guard<std::mutex> lock(saStatusMutex_);
+    if (saStatusHandler_ == nullptr) {
+        saStatusHandler_ = EventHandlerFactory::GetInstance().GetEventHandler();
+    }
+    if (saStatusHandler_ == nullptr) {
+        DHLOGE("saStatusHandler_ is nullptr!");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+void DistributedHardwareManagerFactory::DelaySaStatusTask()
+{
+    DHLOGI("delay sa status task begin");
+    auto task = []() {
+        if (!ComponentManager::GetInstance().IsSourceEnabled() &&
+            !ComponentManager::GetInstance().IsSinkActiveEnabled() &&
+            !HdfOperateManager::GetInstance().IsAnyHdfInuse()) {
+            int pid = getpid();
+            Memory::MemMgrClient::GetInstance().SetCritical(pid, false, DISTRIBUTED_HARDWARE_SA_ID);
+            DHLOGI("Delay task timeout, set sa status to Non-critical");
+            return;
+        }
+        DHLOGI("Has business use, no need set sa status");
+    };
+    {
+        std::lock_guard<std::mutex> lock(saStatusMutex_);
+        if (saStatusHandler_ == nullptr) {
+            DHLOGE("saStatusHandler_ is nullptr ");
+            return;
+        }
+        saStatusHandler_->RemoveTask(SA_STATUS_TASK_ID);
+        DHLOGI("delay sa status post task");
+        saStatusHandler_->PostTask(task, SA_STATUS_TASK_ID, DELAY_TIME_MS);
+    }
+}
+
+int32_t DistributedHardwareManagerFactory::DestroySaStatusHandler()
+{
+    DHLOGI("call!");
+    std::lock_guard<std::mutex> lock(saStatusMutex_);
+    if (saStatusHandler_ == nullptr) {
+        DHLOGE("saStatusHandler_ is nullptr!");
+        return ERR_DH_FWK_POINTER_IS_NULL;
+    }
+    saStatusHandler_->RemoveTask(SA_STATUS_TASK_ID);
+    saStatusHandler_ = nullptr;
+    return DH_FWK_SUCCESS;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

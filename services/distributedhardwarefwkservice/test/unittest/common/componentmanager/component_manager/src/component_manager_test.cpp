@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1677,6 +1677,20 @@ HWTEST_F(ComponentManagerTest, NotifyBusinessStateChange_001, testing::ext::Test
     BusinessState state = BusinessState::UNKNOWN;
     DHSubtype dhSubType = DHSubtype::CAMERA;
     ASSERT_NO_FATAL_FAILURE(ComponentManager::GetInstance().NotifyBusinessStateChange(dhSubType, state));
+}
+
+HWTEST_F(ComponentManagerTest, IsSourceEanbled_001, testing::ext::TestSize.Level1)
+{
+    ComponentManager::GetInstance().dhSourceStatus_.clear();
+    auto ret = ComponentManager::GetInstance().IsSourceEnabled();
+    EXPECT_EQ(ret, false);
+}
+
+HWTEST_F(ComponentManagerTest, IsSinkActiveEnabled_001, testing::ext::TestSize.Level1)
+{
+    ComponentManager::GetInstance().dhSinkStatus_.clear();
+    auto ret = ComponentManager::GetInstance().IsSinkActiveEnabled();
+    EXPECT_EQ(ret, false);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
