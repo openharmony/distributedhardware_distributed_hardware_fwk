@@ -15,7 +15,9 @@
 
 #include "device_param_mgr.h"
 
+#include "os_account_manager.h"
 #include <parameter.h>
+#include <parameters.h>
 
 #include "distributed_hardware_log.h"
 
@@ -25,6 +27,7 @@ namespace {
     constexpr int32_t BUF_LENTH = 128;
     const char *SYNC_TYPE_E2E = "1";
     const char *DATA_SYNC_PARAM = "persist.distributed_scene.sys_settings_data_sync";
+    constexpr const char *ENTERPRISE_SPACE_ENABLE_PARAM = "persist.space_mgr_service.enterprise_space_enable";
 }
 IMPLEMENT_SINGLE_INSTANCE(DeviceParamMgr);
 void DeviceParamMgr::QueryDeviceDataSyncMode()
@@ -33,14 +36,50 @@ void DeviceParamMgr::QueryDeviceDataSyncMode()
     int32_t ret = GetParameter(DATA_SYNC_PARAM, "", paramBuf, BUF_LENTH);
     DHLOGI("The device paramBuf: %{public}s", paramBuf);
     if (ret > 0 && strncmp(paramBuf, SYNC_TYPE_E2E, strlen(SYNC_TYPE_E2E)) == 0) {
-        DHLOGI("Determine the e2e device success");
+        DHLOGI("Determining the e2e device succeeded.");
         isDeviceE2ESync_.store(true);
+        return;
     }
+    DHLOGW("Determining is not e2e device");
 }
 
-bool DeviceParamMgr::IsDeviceE2ESync()
+bool DeviceParamMgr::QueryUserBelongToSpace()
 {
-    return isDeviceE2ESync_;
+    auto ret = AccountSA::OsAccountManager::GetForegroundOsAccountLocalId(userId_);
+    DHLOGI("Current userId= %{public}d", userId_);
+    if (ret == ERR_OK) {
+        DHLOGI("Get userId Success.");
+        AccountSA::DomainAccountInfo info;
+        ret = AccountSA::OsAccountManager::GetOsAccountDomainInfo(userId_, info);
+        if (ret == ERR_OK && !info.accountName_.empty()) {
+            DHLOGI("User is an enterprise user.");
+            return true;
+        }
+    }
+    DHLOGI("User is not an enterprise user.");
+    return false;
+}
+
+bool DeviceParamMgr::QueryDeviceSpaceMode()
+{
+    bool isEnterpriseSpaceEnable = system::GetBoolParameter(ENTERPRISE_SPACE_ENABLE_PARAM, false);
+    if (isEnterpriseSpaceEnable) {
+        DHLOGI("Enterprise space enablement");
+        return true;
+    }
+    DHLOGI("Enterprise space close");
+    return false;
+}
+
+bool DeviceParamMgr::GetDeviceSyncDataMode()
+{
+    if (!isDeviceE2ESync_.load()) {
+        return false;
+    }
+    if (QueryDeviceSpaceMode() && !QueryUserBelongToSpace()) {
+        return false;
+    }
+    return true;
 }
 }
 }

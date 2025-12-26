@@ -29,8 +29,11 @@ config("module_private_config") {
 ohos_unittest("UtilsToolTest") {
   module_out_path = module_out_path
 
-  sources =
-      [ "${utils_path}/test/utilstool/utils_tool_test.cpp" ]
+  sources = [
+    "${utils_path}/test/utilstool/utils_tool_test.cpp",
+    "${utils_path}/test/utilstool/device_param_mgr_test.cpp",
+    "${utils_path}/test/utilstool/mock_os_account_manager.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 
@@ -39,9 +42,21 @@ ohos_unittest("UtilsToolTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gmock_main",
     "hitrace:hitrace_meter",
     "hilog:libhilog",
+    "init:libbegetutil",
   ]
+
+  cflags = [ "-Dprivate=public" ]
+
+  if (dhfwk_os_account) {
+    external_deps += [
+      "os_account:libaccountkits",
+      "os_account:os_account_innerkits",
+    ]
+  }
 }
 
 group("utils_tool_test") {

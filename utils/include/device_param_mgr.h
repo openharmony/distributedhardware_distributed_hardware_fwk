@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,20 +16,23 @@
 #ifndef GET_DEVICE_PARAM_H
 #define GET_DEVICE_PARAM_H
 
+#include <atomic>
 #include <string>
 
-#include <atomic>
-
 #include "single_instance.h"
+
 namespace OHOS {
 namespace DistributedHardware {
 class DeviceParamMgr {
     DECLARE_SINGLE_INSTANCE(DeviceParamMgr);
 public:
     void QueryDeviceDataSyncMode();
-    bool IsDeviceE2ESync();
+    bool GetDeviceSyncDataMode();
+    bool QueryUserBelongToSpace();
+    bool QueryDeviceSpaceMode();
 private:
     std::atomic<bool> isDeviceE2ESync_{false};
+    int32_t userId_ = 0;
 };
 }
 }

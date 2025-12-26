@@ -13,30 +13,24 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_MOCK_DEVICE_PARAM_MGR_H
-#define OHOS_DISTRIBUTED_HARDWARE_MOCK_DEVICE_PARAM_MGR_H
+#ifndef OHOS_DISTRIBUTED_HARDWARE_DEVICE_PARAM_MGR_TEST_H
+#define OHOS_DISTRIBUTED_HARDWARE_DEVICE_PARAM_MGR_TEST_H
 
-#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
-#include "device_param_mgr.h"
+#include "mock_os_account_manager.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class IDeviceParamMgr {
+class DeviceParamMgrTest : public testing::Test {
 public:
-    virtual ~IDeviceParamMgr() = default;
+    static void SetUpTestCase(void);
+    static void TearDownTestCase(void);
+    void SetUp();
+    void TearDown();
 
-    virtual bool GetDeviceSyncDataMode() = 0;
-    static std::shared_ptr<IDeviceParamMgr> GetOrCreateInstance();
-    static void ReleaseInstance();
-private:
-    static std::shared_ptr<IDeviceParamMgr> ParamMgrInstance_;
-};
-
-class MockIDeviceParamMgr : public IDeviceParamMgr {
-public:
-    MOCK_METHOD(bool, GetDeviceSyncDataMode, ());
+    static inline std::shared_ptr<AccountSA::MockIOsAccountManager> deviceDataSyncParamMgr_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif // OHOS_DISTRIBUTED_HARDWARE_MOCK_DEVICE_PARAM_MGR_H
+#endif

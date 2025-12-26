@@ -191,12 +191,12 @@ void AccessManager::OnDeviceReady(const DmDeviceInfo &deviceInfo)
     DHLOGI("Ready device deviceName: %{public}s, networkId: %{public}s", GetAnonyString(deviceName).c_str(),
         GetAnonyString(networkId).c_str());
 
-    if (!DeviceParamMgr::GetInstance().IsDeviceE2ESync()) {
+    if (!DeviceParamMgr::GetInstance().GetDeviceSyncDataMode()) {
         DHLOGI("local device is not e2e device, no need sync data.");
         return;
     }
+    DHLOGI("Current user is enterprise space, need active sync data.");
 
-    DHLOGI("local device is e2e device.");
     int32_t osType = GetDeviceSystemType(deviceInfo.extraData);
     if (osType != OLD_HO_DEVICE_TYPE && osType != NEW_HO_DEVICE_TYPE) {
         DHLOGI("remote is single frame device, need sync data.");

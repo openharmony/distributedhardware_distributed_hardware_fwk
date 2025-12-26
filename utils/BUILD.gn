@@ -86,6 +86,17 @@ ohos_shared_library("distributedhardwareutils") {
     "zlib:shared_libz",
   ]
 
+  if (dhfwk_os_account) {
+    external_deps += [
+      "os_account:libaccountkits",
+      "os_account:os_account_innerkits",
+    ]
+  }
+
+  if (dhfwk_os_account) {
+    defines += [ "OS_ACCOUNT_PART" ]
+  }
+
   subsystem_name = "distributedhardware"
 
   part_name = "distributed_hardware_fwk"
