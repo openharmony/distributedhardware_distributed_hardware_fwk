@@ -33,7 +33,36 @@ namespace {
     size_t argc = num;                \
     napi_value argv[num] = {nullptr}; \
     napi_value thisVar = nullptr;     \
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr))
+    DH_CALL(napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr))
+
+#define DH_RETVAL_NOTHING
+#define DH_CALL_BASE(theCall, retVal)                                      \
+    do {                                                                    \
+        if ((theCall) != napi_ok) {                                         \
+            DHLOGE("napi call failed, theCall: %{public}s", #theCall); \
+            return retVal;                                                  \
+        }                                                                   \
+    } while (0)
+
+#define DH_CALL(theCall) DH_CALL_BASE(theCall, nullptr)
+#define DH_CALL_RETURN_VOID(theCall) DH_CALL_BASE(theCall, DH_RETVAL_NOTHING)
+
+#define DH_ASSERT_BASE(env, assertion, message, code, retVal)                                    \
+    do {                                                                                     \
+        if (!(assertion)) {                                                                  \
+            napi_value errMsg; \
+            DH_CALL(napi_create_string_utf8(env, message, NAPI_AUTO_LENGTH, &errMsg)); \
+            napi_value error; \
+            DH_CALL(napi_create_error(env, nullptr, errMsg, &error)); \
+            napi_value errorCode; \
+            DH_CALL(napi_create_int32(env, code, &errorCode)); \
+            DH_CALL(napi_set_named_property(env, error, "errorCode", errorCode)); \
+            DH_CALL(napi_throw(env, error)); \
+            return retVal;                                                                   \
+        }                                                                                    \
+    } while (0)
+
+#define DH_ASSERT(env, assertion, message, code) DH_ASSERT_BASE(env, assertion, message, code, nullptr)
 
 const int32_t DH_NAPI_ARGS_ONE = 1;
 const int32_t DH_NAPI_ARGS_TWO = 2;
@@ -80,18 +109,18 @@ void DistributedHardwareManager::JsObjectToString(const napi_env &env, const nap
     const std::string &fieldStr, char *dest, const int32_t destLen)
 {
     bool hasProperty = false;
-    NAPI_CALL_RETURN_VOID(env, napi_has_named_property(env, object, fieldStr.c_str(), &hasProperty));
+    DH_CALL_RETURN_VOID(napi_has_named_property(env, object, fieldStr.c_str(), &hasProperty));
     if (hasProperty) {
         napi_value field = nullptr;
         napi_valuetype valueType = napi_undefined;
 
         napi_get_named_property(env, object, fieldStr.c_str(), &field);
-        NAPI_CALL_RETURN_VOID(env, napi_typeof(env, field, &valueType));
+        DH_CALL_RETURN_VOID(napi_typeof(env, field, &valueType));
         if (!CheckArgsType(env, valueType == napi_string, fieldStr.c_str(), "string")) {
             return;
         }
         size_t result = 0;
-        NAPI_CALL_RETURN_VOID(env, napi_get_value_string_utf8(env, field, dest, destLen, &result));
+        DH_CALL_RETURN_VOID(napi_get_value_string_utf8(env, field, dest, destLen, &result));
     } else {
         DHLOGE("devicemanager napi js to str no property: %{public}s", fieldStr.c_str());
     }
@@ -101,13 +130,13 @@ void DistributedHardwareManager::JsObjectToInt(const napi_env &env, const napi_v
     const std::string &fieldStr, int32_t &fieldRef)
 {
     bool hasProperty = false;
-    NAPI_CALL_RETURN_VOID(env, napi_has_named_property(env, object, fieldStr.c_str(), &hasProperty));
+    DH_CALL_RETURN_VOID(napi_has_named_property(env, object, fieldStr.c_str(), &hasProperty));
     if (hasProperty) {
         napi_value field = nullptr;
         napi_valuetype valueType = napi_undefined;
 
         napi_get_named_property(env, object, fieldStr.c_str(), &field);
-        NAPI_CALL_RETURN_VOID(env, napi_typeof(env, field, &valueType));
+        DH_CALL_RETURN_VOID(napi_typeof(env, field, &valueType));
         if (!CheckArgsType(env, valueType == napi_number, fieldStr.c_str(), "number")) {
             return;
         }
@@ -176,8 +205,9 @@ napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, na
     size_t argc = 2;
     napi_value argv[2] = {nullptr};
     napi_value thisVar = nullptr;
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
-    NAPI_ASSERT(env, ((argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO)), "requires 1 or 2 parameter");
+    DH_CALL(napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
+    DH_ASSERT(env, ((argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO)),
+                             "requires 1 or 2 parameter", ERR_INVALID_PARAMS);
 
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[0], &valueType);
@@ -228,8 +258,9 @@ napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, n
     size_t argc = 2;
     napi_value argv[2] = {nullptr};
     napi_value thisVar = nullptr;
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
-    NAPI_ASSERT(env, ((argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO)), "requires 1 or 2 parameter");
+    DH_CALL(napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
+    DH_ASSERT(env, ((argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO)),
+                        "requires  or 2 parameter", ERR_INVALID_PARAMS);
 
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[0], &valueType);
@@ -280,8 +311,9 @@ napi_value DistributedHardwareManager::StopDistributedHardware(napi_env env, nap
     size_t argc = 2;
     napi_value argv[2] = {nullptr};
     napi_value thisVar = nullptr;
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
-    NAPI_ASSERT(env, ((argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO)), "requires 1 or 2 parameter");
+    DH_CALL(napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
+    DH_ASSERT(env, (argc >= DH_NAPI_ARGS_ONE) && (argc <= DH_NAPI_ARGS_TWO),
+                         "requires 1 or  parameter", ERR_INVALID_PARAMS);
 
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[0], &valueType);
@@ -331,7 +363,7 @@ napi_value DistributedHardwareManager::Init(napi_env env, napi_value exports)
     };
 
     DHLOGI("DistributedHardwareManager::Init is called!");
-    NAPI_CALL(env, napi_define_properties(env, exports, sizeof(dhmProperties) / sizeof(dhmProperties[0]),
+    DH_CALL(napi_define_properties(env, exports, sizeof(dhmProperties) / sizeof(dhmProperties[0]),
         dhmProperties));
     DHLOGI("All functions are configured..");
     return exports;
