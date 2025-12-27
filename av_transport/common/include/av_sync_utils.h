@@ -198,11 +198,10 @@ private:
     std::mutex mtxLock_;
     std::condition_variable authCondVar_;
     sptr<IAccessListener> listener_ = nullptr;
-    int32_t timeOut_ = 0;
+    inline static int32_t timeOut_ = 0;
     std::string pkgName_ = "";
-    std::string currentNetworkId_ = "";
-
-    std::map<std::string, bool> authorizationResults_;
+    inline static std::string currentNetworkId_ = "";
+    inline static std::map<std::string, bool> authorizationResults_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
