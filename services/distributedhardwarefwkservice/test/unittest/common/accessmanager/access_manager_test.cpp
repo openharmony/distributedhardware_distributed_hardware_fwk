@@ -385,7 +385,7 @@ HWTEST_F(AccessManagerTest, OnDeviceReady_002, TestSize.Level1)
         .deviceId = "123456789",
         .networkId = "123456789"
     };
-    EXPECT_CALL(*deviceParamMgr_, IsDeviceE2ESync()).WillRepeatedly(Return(false));
+    EXPECT_CALL(*deviceParamMgr_, GetDeviceSyncDataMode()).WillRepeatedly(Return(false));
     ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceReady(deviceInfo));
 }
 
@@ -396,7 +396,7 @@ HWTEST_F(AccessManagerTest, OnDeviceReady_003, TestSize.Level1)
         .networkId = "123456789",
         .extraData = "{\"OS_TYPE\": 10}"
     };
-    EXPECT_CALL(*deviceParamMgr_, IsDeviceE2ESync()).WillRepeatedly(Return(true));
+    EXPECT_CALL(*deviceParamMgr_, GetDeviceSyncDataMode()).WillRepeatedly(Return(true));
     ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceReady(deviceInfo1));
 
     DmDeviceInfo deviceInfo2 = {
@@ -404,7 +404,7 @@ HWTEST_F(AccessManagerTest, OnDeviceReady_003, TestSize.Level1)
         .networkId = "123456789",
         .extraData = "{\"OS_TYPE\": 11}"
     };
-    EXPECT_CALL(*deviceParamMgr_, IsDeviceE2ESync()).WillRepeatedly(Return(true));
+    EXPECT_CALL(*deviceParamMgr_, GetDeviceSyncDataMode()).WillRepeatedly(Return(true));
     ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceReady(deviceInfo2));
 
     DmDeviceInfo deviceInfo3 = {
@@ -412,8 +412,17 @@ HWTEST_F(AccessManagerTest, OnDeviceReady_003, TestSize.Level1)
         .networkId = "123456789",
         .extraData = "{\"OS_TYPE\": -1}"
     };
-    EXPECT_CALL(*deviceParamMgr_, IsDeviceE2ESync()).WillRepeatedly(Return(true));
+    EXPECT_CALL(*deviceParamMgr_, GetDeviceSyncDataMode()).WillRepeatedly(Return(true));
     ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceReady(deviceInfo3));
+}
+HWTEST_F(AccessManagerTest, OnDeviceReady_004, TestSize.Level1)
+{
+    DmDeviceInfo deviceInfo = {
+        .deviceId = "123456789",
+        .networkId = "123456789",
+    };
+    EXPECT_CALL(*deviceParamMgr_, GetDeviceSyncDataMode()).WillRepeatedly(Return(false));
+    ASSERT_NO_FATAL_FAILURE(AccessManager::GetInstance()->OnDeviceReady(deviceInfo));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

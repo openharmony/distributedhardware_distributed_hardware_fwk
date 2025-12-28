@@ -13,29 +13,19 @@
  * limitations under the License.
  */
 
-#include "mock_device_param_mgr.h"
+#include "mock_os_account_manager.h"
 
 namespace OHOS {
-namespace DistributedHardware {
-std::shared_ptr<IDeviceParamMgr> IDeviceParamMgr::ParamMgrInstance_;
+namespace AccountSA {
 
-std::shared_ptr<IDeviceParamMgr> IDeviceParamMgr::GetOrCreateInstance()
+ErrCode OsAccountManager::GetForegroundOsAccountLocalId(int32_t& userId)
 {
-    if (!ParamMgrInstance_) {
-        ParamMgrInstance_ = std::make_shared<MockIDeviceParamMgr>();
-    }
-    return ParamMgrInstance_;
+    return AccountSA::IOsAccountManager::ParamDataSyncMgrInstance_->GetForegroundOsAccountLocalId(userId);
 }
 
-void IDeviceParamMgr::ReleaseInstance()
+ErrCode OsAccountManager::GetOsAccountDomainInfo(int32_t userId, AccountSA::DomainAccountInfo& info)
 {
-    ParamMgrInstance_.reset();
-    ParamMgrInstance_ = nullptr;
+    return AccountSA::IOsAccountManager::ParamDataSyncMgrInstance_->GetOsAccountDomainInfo(userId, info);
 }
-
-bool GetDeviceSyncDataMode()
-{
-    return IDeviceParamMgr::GetOrCreateInstance()->GetDeviceSyncDataMode();
-}
-} // namespace DistributedHardware
+} // namespace AccountSA
 } // namespace OHOS
