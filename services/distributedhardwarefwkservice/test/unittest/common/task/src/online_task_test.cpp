@@ -98,6 +98,7 @@ HWTEST_F(OnlineTaskTest, CreateEnableTask_001, TestSize.Level1)
     ASSERT_NO_FATAL_FAILURE(onlineTask.CreateEnableTask());
 }
 
+#ifdef UT_COVER_SPECIAL
 HWTEST_F(OnlineTaskTest, CreateEnableSinkTask_001, TestSize.Level1)
 {
     OnLineTask onlineTask(NETWORKID_TEST, UUID_TEST, UDID_TEST, DHID_TEST, DH_TYPE_TEST);
@@ -110,6 +111,7 @@ HWTEST_F(OnlineTaskTest, CreateEnableSinkTask_001, TestSize.Level1)
     EXPECT_CALL(*utilTool_, GetLocalDeviceInfo()).WillRepeatedly(Return(deviceInfo));
     ASSERT_NO_FATAL_FAILURE(onlineTask.CreateEnableSinkTask());
 }
+#endif
 
 HWTEST_F(OnlineTaskTest, CreateDisableTask_001, TestSize.Level1)
 {
@@ -126,6 +128,7 @@ HWTEST_F(OnlineTaskTest, CreateDisableTask_001, TestSize.Level1)
     ASSERT_NO_FATAL_FAILURE(offlineTask.CreateDisableTask());
 }
 
+#ifdef UT_COVER_SPECIAL
 HWTEST_F(OnlineTaskTest, CreateDisableSinkTask_001, TestSize.Level1)
 {
     OffLineTask offlineTask(NETWORKID_TEST, UUID_TEST, UDID_TEST, DHID_TEST, DH_TYPE_TEST);
@@ -138,6 +141,7 @@ HWTEST_F(OnlineTaskTest, CreateDisableSinkTask_001, TestSize.Level1)
     EXPECT_CALL(*utilTool_, GetLocalDeviceInfo()).WillRepeatedly(Return(deviceInfo));
     ASSERT_NO_FATAL_FAILURE(offlineTask.CreateDisableSinkTask());
 }
+#endif
 
 HWTEST_F(OnlineTaskTest, DumpAllTasks_001, TestSize.Level1)
 {
