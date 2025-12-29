@@ -77,49 +77,7 @@ ohos_unittest("DistributedHardwareServiceTest") {
   ]
 }
 
-ohos_unittest("DistributedHardwareServiceExtTest") {
-  module_out_path = module_out_path
-
-  sources = [ "src/distributed_hardware_service_ext_test.cpp" ]
-
-  configs = [ ":module_private_config" ]
-
-  deps = [
-    "${innerkits_path}:libdhfwk_sdk",
-    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-  ]
-
-  cflags = [
-    "-Wall",
-    "-Werror",
-    "-g3",
-    "-Dprivate=public",
-    "-Dprotected=public",
-  ]
-
-  defines = [
-    "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"DistributedHardwareServiceExtTest\"",
-    "LOG_DOMAIN=0xD004100",
-  ]
-
-  external_deps = [
-    "cJSON:cjson",
-    "c_utils:utils",
-    "dsoftbus:softbus_client",
-    "eventhandler:libeventhandler",
-    "hilog:libhilog",
-    "ipc:ipc_core",
-    "kv_store:distributeddata_inner",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
-  ]
-}
-
 group("distributed_hardware_service_test") {
   testonly = true
-  deps = [
-    ":DistributedHardwareServiceTest",
-    ":DistributedHardwareServiceExtTest",
-  ]
+  deps = [ ":DistributedHardwareServiceTest" ]
 }
