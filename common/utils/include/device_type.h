@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +40,8 @@ enum class DHSubtype : uint32_t {
     CAMERA = 0x01,            // Camera
     SCREEN = 0x08,            // Display
     INPUT = 0x20,             // Key board
+    MODEM_MIC = 0x100,        // MODEM MIC
+    MODEM_SPEAKER = 0x200,    // MODEM SPEAKER
     AUDIO_MIC = 0x400,        // AUDIO Mic
     AUDIO_SPEAKER = 0x800     // AUDIO Speaker
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -161,7 +161,7 @@ bool DistributedHardwareManager::HasAccessDHPermission()
     return (result == OHOS::Security::AccessToken::PERMISSION_GRANTED);
 }
 
-bool DistributedHardwareManager::Verify(napi_env env)
+bool DistributedHardwareManager::Verify(napi_env env, int32_t type)
 {
     if (!IsSystemApp()) {
         DHLOGE("GetCallerProcessName not system hap.");
@@ -173,7 +173,21 @@ bool DistributedHardwareManager::Verify(napi_env env)
         CreateBusinessErr(env, ERR_NO_PERMISSION);
         return false;
     }
+    if (!IsSupportType(type)) {
+        DHLOGE("param type is invalid.");
+        CreateBusinessErr(env, ERR_INVALID_PARAMS);
+        return false;
+    }
     return true;
+}
+
+bool DistributedHardwareManager::IsSupportType(int32_t type)
+{
+    if (type == ALL || type == CAMERA || type == SCREEN || type == MODEM_MIC || type == MODEM_SPEAKER ||
+        type == MIC || type == SPEAKER) {
+        return true;
+    }
+    return false;
 }
 
 napi_value DistributedHardwareManager::CreateBusinessErr(napi_env env, int32_t errCode)
@@ -198,9 +212,6 @@ napi_value DistributedHardwareManager::CreateBusinessErr(napi_env env, int32_t e
 napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, napi_callback_info info)
 {
     DHLOGI("PauseDistributedHardware in");
-    if (!Verify(env)) {
-        return nullptr;
-    }
     napi_value result = nullptr;
     size_t argc = 2;
     napi_value argv[2] = {nullptr};
@@ -217,6 +228,9 @@ napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, na
     int32_t type = -1;
     char networkId[96];
     JsObjectToInt(env, argv[0], "type", type);
+    if (!Verify(env, type)) {
+        return nullptr;
+    }
     DHType dhType = DHType::UNKNOWN;
     DHSubtype dhSubtype = static_cast<DHSubtype>(type);
     if (dhSubtype == DHSubtype::AUDIO_MIC || dhSubtype == DHSubtype::AUDIO_SPEAKER) {
@@ -251,9 +265,6 @@ napi_value DistributedHardwareManager::PauseDistributedHardware(napi_env env, na
 napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, napi_callback_info info)
 {
     DHLOGI("ResumeDistributedHardware in");
-    if (!Verify(env)) {
-        return nullptr;
-    }
     napi_value result = nullptr;
     size_t argc = 2;
     napi_value argv[2] = {nullptr};
@@ -270,6 +281,9 @@ napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, n
     int32_t type = -1;
     char networkId[96];
     JsObjectToInt(env, argv[0], "type", type);
+    if (!Verify(env, type)) {
+        return nullptr;
+    }
     DHType dhType = DHType::UNKNOWN;
     DHSubtype dhSubtype = static_cast<DHSubtype>(type);
     if (dhSubtype == DHSubtype::AUDIO_MIC || dhSubtype == DHSubtype::AUDIO_SPEAKER) {
@@ -304,9 +318,6 @@ napi_value DistributedHardwareManager::ResumeDistributedHardware(napi_env env, n
 napi_value DistributedHardwareManager::StopDistributedHardware(napi_env env, napi_callback_info info)
 {
     DHLOGI("StopDistributedHardware in");
-    if (!Verify(env)) {
-        return nullptr;
-    }
     napi_value result = nullptr;
     size_t argc = 2;
     napi_value argv[2] = {nullptr};
@@ -323,6 +334,9 @@ napi_value DistributedHardwareManager::StopDistributedHardware(napi_env env, nap
     int32_t type = -1;
     char networkId[96];
     JsObjectToInt(env, argv[0], "type", type);
+    if (!Verify(env, type)) {
+        return nullptr;
+    }
     DHType dhType = DHType::UNKNOWN;
     DHSubtype dhSubtype = static_cast<DHSubtype>(type);
     if (dhSubtype == DHSubtype::AUDIO_MIC || dhSubtype == DHSubtype::AUDIO_SPEAKER) {
