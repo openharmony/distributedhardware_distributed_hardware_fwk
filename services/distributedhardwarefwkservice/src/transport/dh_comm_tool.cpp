@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -147,10 +147,20 @@ void DHCommTool::TriggerReqFullDHCaps(const std::string &remoteNetworkId)
     CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId_, tokenId_, localNetworkId, accountId_, true);
     std::string payload = GetCommMsgString(commMsg);
 
-    int32_t ret = dhTransportPtr_->Send(remoteNetworkId, payload);
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Trigger req remote full attrs error");
-        return;
+    {
+        std::lock_guard<std::mutex> lock(syncRequestsMutex_);
+        if (syncRequests_.find(remoteNetworkId) != syncRequests_.end()) {
+            DHLOGI("Request for networkId: %{public}s already in progress", GetAnonyString(remoteNetworkId).c_str());
+            return;
+        }
+        syncRequests_[remoteNetworkId] = GetRandomID();
+
+        int32_t ret = dhTransportPtr_->Send(remoteNetworkId, payload);
+        if (ret != DH_FWK_SUCCESS) {
+            DHLOGE("Trigger req remote full attrs error");
+            syncRequests_.erase(remoteNetworkId);
+            return;
+        }
     }
     DHLOGI("Trigger req remote full attrs success.");
 }
@@ -249,6 +259,16 @@ FullCapsRsp DHCommTool::ParseAndSaveRemoteDHCaps(const std::string &remoteCaps, 
 
     FromJson(root, capsRsp, isSyncMeta);
     cJSON_Delete(root);
+    {
+        FullCapsRsp invalidCaps;
+        std::lock_guard<std::mutex> lock(syncRequestsMutex_);
+        auto it = syncRequests_.find(capsRsp.networkId);
+        if (it == syncRequests_.end()) {
+            DHLOGE("Ignore response, networkId: %{public}s no request", GetAnonyString(capsRsp.networkId).c_str());
+            return invalidCaps;
+        }
+        syncRequests_.erase(it);
+    }
     if (isSyncMeta) {
         int32_t ret = MetaInfoManager::GetInstance()->AddMetaCapInfos(capsRsp.metaCaps);
         if (ret != DH_FWK_SUCCESS) {

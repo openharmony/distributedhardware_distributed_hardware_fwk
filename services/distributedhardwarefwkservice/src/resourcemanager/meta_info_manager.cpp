@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -119,8 +119,8 @@ int32_t MetaInfoManager::UnInit()
 
 int32_t MetaInfoManager::AddMetaCapInfos(const std::vector<std::shared_ptr<MetaCapabilityInfo>> &metaCapInfos)
 {
-    if (metaCapInfos.empty() || metaCapInfos.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("MetaCapInfos is empty or too large!");
+    if (metaCapInfos.empty() || metaCapInfos.size() > MAX_WRITE_DB_DATA_SIZE) {
+        DHLOGE("MetaCapInfos is empty or too large, metaCapInfos size: %{public}zu", metaCapInfos.size());
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     std::lock_guard<std::mutex> lock(metaInfoMgrMutex_);
@@ -242,7 +242,7 @@ int32_t MetaInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, MetaCa
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("On dataVector error, maybe empty or too large.");
+        DHLOGE("On dataVector error, maybe empty or too large, dataVector size: %{public}zu", dataVector.size());
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {

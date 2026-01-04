@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -185,8 +185,32 @@ HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_003, TestSize.Level1)
         return;
     }
     std::string remoteCaps(cjson);
+    std::string requestId = "111";
+    dhCommToolTest_->syncRequests_[networkId] = requestId;
     FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta);
     EXPECT_EQ(networkId, ret.networkId);
+    cJSON_Delete(jsonObject);
+}
+
+HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_004, TestSize.Level1)
+{
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
+    cJSON *jsonObject = cJSON_CreateObject();
+    ASSERT_TRUE(jsonObject != nullptr);
+    std::string networkId = "123456";
+    bool isSyncMeta = false;
+    cJSON_AddStringToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, networkId.c_str());
+    char* cjson = cJSON_PrintUnformatted(jsonObject);
+    if (cjson == nullptr) {
+        cJSON_Delete(jsonObject);
+        return;
+    }
+    std::string remoteCaps(cjson);
+    std::string invalidId = "invalidId";
+    std::string requestId = "111";
+    dhCommToolTest_->syncRequests_[invalidId] = requestId;
+    FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta);
+    EXPECT_EQ("", ret.networkId);
     cJSON_Delete(jsonObject);
 }
 

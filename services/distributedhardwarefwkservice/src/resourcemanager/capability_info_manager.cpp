@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -192,8 +192,8 @@ int32_t CapabilityInfoManager::SyncRemoteCapabilityInfos()
 
 int32_t CapabilityInfoManager::AddCapability(const std::vector<std::shared_ptr<CapabilityInfo>> &resInfos)
 {
-    if (resInfos.empty() || resInfos.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("ResInfo is empty or too large!");
+    if (resInfos.empty() || resInfos.size() > MAX_WRITE_DB_DATA_SIZE) {
+        DHLOGE("ResInfo is empty or too large, resInfos size: %{public}zu", resInfos.size());
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
@@ -572,7 +572,7 @@ int32_t CapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPrefix, 
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("On dataVector error, maybe empty or too large.");
+        DHLOGE("On dataVector error, maybe empty or too large, dataVector size: %{public}zu", dataVector.size());
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {

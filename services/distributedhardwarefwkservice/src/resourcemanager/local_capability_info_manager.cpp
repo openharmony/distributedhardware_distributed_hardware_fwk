@@ -97,7 +97,7 @@ int32_t LocalCapabilityInfoManager::SyncDeviceInfoFromDB(const std::string &devi
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("On dataVector error, maybe empty or too large.");
+        DHLOGE("On dataVector error, maybe empty or too large, dataVector size: %{public}zu", dataVector.size());
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {
@@ -113,8 +113,8 @@ int32_t LocalCapabilityInfoManager::SyncDeviceInfoFromDB(const std::string &devi
 
 int32_t LocalCapabilityInfoManager::AddCapability(const std::vector<std::shared_ptr<CapabilityInfo>> &resInfos)
 {
-    if (resInfos.empty() || resInfos.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("resInfo is empty or too large!");
+    if (resInfos.empty() || resInfos.size() > MAX_WRITE_DB_DATA_SIZE) {
+        DHLOGE("resInfo is empty or too large, resInfos size: %{public}zu", resInfos.size());
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     std::lock_guard<std::mutex> lock(capInfoMgrMutex_);
@@ -244,7 +244,7 @@ int32_t LocalCapabilityInfoManager::GetDataByKeyPrefix(const std::string &keyPre
         return ERR_DH_FWK_RESOURCE_DB_ADAPTER_OPERATION_FAIL;
     }
     if (dataVector.empty() || dataVector.size() > MAX_DB_RECORD_SIZE) {
-        DHLOGE("On dataVector error, maybe empty or too large!");
+        DHLOGE("On dataVector error, maybe empty or too large, dataVector size: %{public}zu", dataVector.size());
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
     for (const auto &data : dataVector) {
