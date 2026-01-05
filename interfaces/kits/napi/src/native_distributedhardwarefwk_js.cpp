@@ -415,6 +415,24 @@ void DistributedHardwareManager::InitDistributedHardwareType(napi_env env, napi_
     napi_set_named_property(env, exports, propertyName, obj);
 }
 
+void DistributedHardwareManager::InitDistributedHardwareErrorCode(napi_env env, napi_value exports)
+{
+    char propertyName[] = "DistributedHardwareErrorCode";
+    napi_value dhNotStart = nullptr;
+    napi_value deviceNotConnect = nullptr;
+    napi_create_int32(env, static_cast<int32_t>(DHBussinessErrorCode::ERR_CODE_DH_NOT_START), &dhNotStart);
+    napi_create_int32(env, static_cast<int32_t>(DHBussinessErrorCode::ERR_CODE_DEVICE_NOT_CONNECT), &deviceNotConnect);
+
+    napi_property_descriptor desc[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("ERR_CODE_DISTRIBUTED_HARDWARE_NOT_STARTED", dhNotStart),
+        DECLARE_NAPI_STATIC_PROPERTY("ERR_CODE_DEVICE_NOT_CONNECTED", deviceNotConnect),
+    };
+    napi_value obj = nullptr;
+    napi_create_object(env, &obj);
+    napi_define_properties(env, obj, sizeof(desc) / sizeof(desc[0]), desc);
+    napi_set_named_property(env, exports, propertyName, obj);
+}
+
 /*
  * Function registering all props and functions of ohos.distributedhardware
  */
@@ -423,6 +441,7 @@ static napi_value Export(napi_env env, napi_value exports)
     DHLOGI("Export is called!");
     DistributedHardwareManager::Init(env, exports);
     DistributedHardwareManager::InitDistributedHardwareType(env, exports);
+    DistributedHardwareManager::InitDistributedHardwareErrorCode(env, exports);
     return exports;
 }
 

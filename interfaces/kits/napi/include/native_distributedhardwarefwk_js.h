@@ -35,6 +35,7 @@ public:
     ~DistributedHardwareManager();
     static napi_value Init(napi_env env, napi_value exports);
     static void InitDistributedHardwareType(napi_env env, napi_value exports);
+    static void InitDistributedHardwareErrorCode(napi_env env, napi_value exports);
     static napi_value PauseDistributedHardware(napi_env env, napi_callback_info info);
     static napi_value ResumeDistributedHardware(napi_env env, napi_callback_info info);
     static napi_value StopDistributedHardware(napi_env env, napi_callback_info info);
