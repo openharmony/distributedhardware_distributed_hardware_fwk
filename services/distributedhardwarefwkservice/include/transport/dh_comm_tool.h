@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -72,6 +72,8 @@ private:
     std::string accountId_;
     int32_t userId_ = -1;
     uint64_t tokenId_ = 0;
+    std::map<std::string, std::string> syncRequests_;
+    std::mutex syncRequestsMutex_;
 };
 } // DistributedHardware
 } // OHOS
