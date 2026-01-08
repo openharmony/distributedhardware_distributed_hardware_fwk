@@ -53,6 +53,7 @@ ohos_unittest("AvSyncUtilsTest") {
     "bounds_checking_function:libsec_shared",
     "cJSON:cjson",
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "googletest:gmock",
     "googletest:gmock_main",
     "ipc:ipc_core",
