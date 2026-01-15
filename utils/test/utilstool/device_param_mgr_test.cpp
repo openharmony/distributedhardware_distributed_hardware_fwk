@@ -27,6 +27,8 @@ bool g_parameterVaule = true;
 namespace system {
 bool GetBoolParameter(const std::string& key, bool def)
 {
+    (void)key;
+    (void)def;
     return g_parameterVaule;
 }
 }

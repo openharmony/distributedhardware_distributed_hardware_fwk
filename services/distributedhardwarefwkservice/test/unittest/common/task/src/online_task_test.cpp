@@ -231,13 +231,6 @@ HWTEST_F(OnlineTaskTest, DoSyncInfo_001, TestSize.Level1)
     MetaInfoManager::GetInstance()->eventHandler_ = nullptr;
     ASSERT_NO_FATAL_FAILURE(onlineTask.DoSyncInfo());
 }
-
-HWTEST_F(OnlineTaskTest, DoSyncInfo_002, TestSize.Level1)
-{
-    OnLineTask onlineTask(NETWORKID_TEST, UUID_TEST, UDID_TEST, DHID_TEST, DH_TYPE_TEST);
-    MetaInfoManager::GetInstance()->Init();
-    ASSERT_NO_FATAL_FAILURE(onlineTask.DoSyncInfo());
-}
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

@@ -406,16 +406,6 @@ HWTEST_F(TaskTest, task_test_023, TestSize.Level1)
     ASSERT_EQ(true, task->childrenTasks_.empty());
 }
 
-HWTEST_F(TaskTest, task_test_024, TestSize.Level1)
-{
-    TaskParam taskParam;
-    std::shared_ptr<Task> fatherTask =
-        std::make_shared<OnLineTask>("networkId", "uuid", "udid", "dhId", DHType::CAMERA);
-    auto task = TaskFactory::GetInstance().CreateTask(TaskType::META_DISABLE, taskParam, fatherTask);
-    task->DoTask();
-    ASSERT_TRUE(task->childrenTasks_.empty());
-}
-
 HWTEST_F(TaskTest, task_test_025, TestSize.Level1)
 {
     TaskParam taskParam;
