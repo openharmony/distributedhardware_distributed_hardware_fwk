@@ -12,6 +12,12 @@
                   {
                     "name":"usual.event.BOOT_COMPLETED"
                   }
+                ],
+                "deviceonline": [
+                  {
+                      "name": "deviceonline",
+                      "value": "on"
+                  }
                 ]
             },
             "stop-on-demand": {

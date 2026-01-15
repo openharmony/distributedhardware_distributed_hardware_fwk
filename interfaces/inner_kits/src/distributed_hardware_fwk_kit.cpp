@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -347,10 +347,18 @@ int32_t DistributedHardwareFwkKit::GetDistributedHardware(const std::string &net
     }
     DHLOGI("Get distributed hardware networkId %{public}s.", GetAnonyString(networkId).c_str());
     if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
-        DHLOGI("DHFWK not online or get proxy failed, can not get distributed hardware.");
+        DHLOGE("DHFWK not online or get proxy failed, try to load DFWK service.");
+        if (LoadDistributedHardwareSA() != DH_FWK_SUCCESS) {
+            DHLOGE("Load distributed hardware SA failed, can not load distributed HDF.");
+            return ERR_DH_FWK_POINTER_IS_NULL;
+        }
+    }
+    auto proxy = DHFWKSAManager::GetInstance().GetDHFWKProxy();
+    if (proxy == nullptr) {
+        DHLOGE("DHFWK proxy is null, can not load distributed HDF.");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->GetDistributedHardware(networkId, enableStep, callback);
+    return proxy->GetDistributedHardware(networkId, enableStep, callback);
 }
 
 int32_t DistributedHardwareFwkKit::RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener)
@@ -381,10 +389,18 @@ int32_t DistributedHardwareFwkKit::RegisterDHStatusListener(
     }
     DHLOGI("Register distributed hardware status source listener %{public}s.", GetAnonyString(networkId).c_str());
     if (DHFWKSAManager::GetInstance().GetDHFWKProxy() == nullptr) {
-        DHLOGI("DHFWK not online or get proxy failed, can not register distributed hardware status listener.");
+        DHLOGE("DHFWK not online or get proxy failed, try to load DFWK service.");
+        if (LoadDistributedHardwareSA() != DH_FWK_SUCCESS) {
+            DHLOGE("Load distributed hardware SA failed, can not load distributed HDF.");
+            return ERR_DH_FWK_POINTER_IS_NULL;
+        }
+    }
+    auto proxy = DHFWKSAManager::GetInstance().GetDHFWKProxy();
+    if (proxy == nullptr) {
+        DHLOGE("DHFWK proxy is null, can not load distributed HDF.");
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
-    return DHFWKSAManager::GetInstance().GetDHFWKProxy()->RegisterDHStatusListener(networkId, listener);
+    return proxy->RegisterDHStatusListener(networkId, listener);
 }
 
 int32_t DistributedHardwareFwkKit::UnregisterDHStatusListener(

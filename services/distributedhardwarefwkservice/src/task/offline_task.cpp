@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -189,6 +189,9 @@ void OffLineTask::CreateDisableSinkTask()
         return;
     }
     for (const auto &localInfo : localMetaInfos) {
+        if (localInfo.second == DHType::MODEM) {
+            continue;
+        }
         TaskParam taskParam = {
             .networkId = localDeviceInfo.networkId,
             .uuid = localDeviceInfo.uuid,

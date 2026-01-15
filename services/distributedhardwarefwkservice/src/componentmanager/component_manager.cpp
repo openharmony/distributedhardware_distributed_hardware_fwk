@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,6 @@
 #include "component_enable.h"
 #include "component_loader.h"
 #include "constants.h"
-#include "hdf_operate.h"
 #include "device_manager.h"
 #include "dh_context.h"
 #include "dh_data_sync_trigger_listener.h"
@@ -44,7 +43,9 @@
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
+#include "distributed_hardware_manager_factory.h"
 #include "enabled_comps_dump.h"
+#include "hdf_operate.h"
 #include "local_capability_info_manager.h"
 #include "low_latency.h"
 #include "meta_info_manager.h"
@@ -1299,6 +1300,11 @@ int32_t ComponentManager::ForceDisableSink(const DHDescriptor &dhDescriptor)
             DHLOGI("Callback business sink OnDisable.");
         }
     }
+    if (DHContext::GetInstance().GetRealTimeOnlineDeviceCount() != 0) {
+        if (!IsSinkActiveEnabled()) {
+            DistributedHardwareManagerFactory::GetInstance().DelaySaStatusTask();
+        }
+    }
     return ret;
 }
 
@@ -1314,6 +1320,11 @@ int32_t ComponentManager::ForceDisableSource(const std::string &networkId, const
         for (auto listener : listeners) {
             listener->OnDisable(networkId, dhDescriptor);
             DHLOGI("Callback business source OnDisable.");
+        }
+    }
+    if (DHContext::GetInstance().GetRealTimeOnlineDeviceCount() != 0) {
+        if (!IsSourceEnabled() || !HdfOperateManager::GetInstance().IsAnyHdfInuse()) {
+            DistributedHardwareManagerFactory::GetInstance().DelaySaStatusTask();
         }
     }
     return ret;
@@ -2513,6 +2524,42 @@ sptr<IAuthorizationResultCallback> ComponentManager::GetAccessListener(const DHT
     }
 
     return it->second;
+}
+
+bool ComponentManager::IsSourceEnabled()
+{
+    DHLOGI("check whether enabled source");
+    bool isEnable = false;
+    std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
+    for (auto iter = dhSourceStatus_.begin(); iter != dhSourceStatus_.end(); ++iter) {
+        if (iter->first == DHType::MODEM && iter->second.refLoad > 0) {
+            DHLOGI("modem source is enabled");
+            isEnable = true;
+            break;
+        }
+
+        if (iter->second.refLoad > 0 && !iter->second.listeners.empty()) {
+            DHLOGI("has business active enable source");
+            isEnable = true;
+            break;
+        }
+    }
+    return isEnable;
+}
+
+bool ComponentManager::IsSinkActiveEnabled()
+{
+    DHLOGI("check whether enabled sink");
+    bool isEnable = false;
+    std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
+    for (auto iter = dhSinkStatus_.begin(); iter != dhSinkStatus_.end(); ++iter) {
+        if (iter->second.refLoad > 0 && !iter->second.listeners.empty()) {
+            DHLOGI("has business active enable sink");
+            isEnable = true;
+            break;
+        }
+    }
+    return isEnable;
 }
 } // namespace DistributedHardware
 } // namespace OHOS

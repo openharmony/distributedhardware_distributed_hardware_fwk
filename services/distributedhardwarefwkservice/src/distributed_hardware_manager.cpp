@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,7 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
 #include "device_param_mgr.h"
+#include "event_handler_factory.h"
 #include "hidump_helper.h"
 #include "local_capability_info_manager.h"
 #include "local_hardware_manager.h"
@@ -59,6 +60,7 @@ int32_t DistributedHardwareManager::LocalInit()
     ComponentLoader::GetInstance().Init();
     VersionManager::GetInstance().Init();
     LocalHardwareManager::GetInstance().Init();
+    EventHandlerFactory::GetInstance().Init();
     DeviceParamMgr::GetInstance().QueryDeviceDataSyncMode();
     DHLOGI("DHFWK Local Init end");
     isLocalInit_.store(true);
@@ -91,6 +93,7 @@ int32_t DistributedHardwareManager::Release()
     CapabilityInfoManager::GetInstance()->UnInit();
     MetaInfoManager::GetInstance()->UnInit();
     LocalCapabilityInfoManager::GetInstance()->UnInit();
+    EventHandlerFactory::GetInstance().UnInit();
     DHModemContextExt::GetInstance().UnInit();
     isAllInit_.store(false);
     isLocalInit_.store(false);

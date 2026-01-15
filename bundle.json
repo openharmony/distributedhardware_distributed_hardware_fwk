@@ -60,7 +60,8 @@
         "ffrt",
         "libevdev",
         "selinux_adapter",
-        "os_account"
+        "os_account",
+        "memmgr"
       ]
     },
     "build": {

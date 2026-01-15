@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,8 +19,10 @@
 #include <thread>
 #include <vector>
 
-#include "constants.h"
 #include "cJSON.h"
+#include "system_ability_definition.h"
+
+#include "constants.h"
 #include "component_loader.h"
 #include "component_manager.h"
 #include "dh_context.h"
@@ -499,15 +501,14 @@ HWTEST_F(DistributedHardwareServiceTest, DisableSink_001, TestSize.Level1)
 HWTEST_F(DistributedHardwareServiceTest, EnableSource_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
-    std::string networkId = "111";
+    std::string networkId = "";
     std::vector<DHDescriptor> descriptors{{"id_test", DHType::AUDIO}};
-
     auto ret = service.EnableSource(networkId, descriptors);
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
-
-    networkId = "";
-    ret = service.EnableSource(networkId, descriptors);
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
+
+    networkId = "networkId_test";
+    ret = service.EnableSource(networkId, descriptors);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
 /**
@@ -755,6 +756,17 @@ HWTEST_F(DistributedHardwareServiceTest, NotifySourceRemoteSinkStarted_001, Test
     std::string udid = "";
     auto ret = service.NotifySourceRemoteSinkStarted(udid);
     EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
+}
+
+HWTEST_F(DistributedHardwareServiceTest, OnAddSystemAbility_001, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string deviceId = "";
+    int32_t systemAbilityId = 0;
+    ASSERT_NO_FATAL_FAILURE(service.OnAddSystemAbility(systemAbilityId, deviceId));
+
+    systemAbilityId = MEMORY_MANAGER_SA_ID;
+    ASSERT_NO_FATAL_FAILURE(service.OnAddSystemAbility(systemAbilityId, deviceId));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

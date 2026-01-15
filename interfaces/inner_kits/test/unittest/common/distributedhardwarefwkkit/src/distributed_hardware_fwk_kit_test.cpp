@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -439,26 +439,6 @@ HWTEST_F(DistributedHardwareFwkKitTest, StopDistributedHardware_001, testing::ex
 }
 
 /**
- * @tc.name: GetDistributedHardware_001
- * @tc.desc: Verify the GetDistributedHardware function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DistributedHardwareFwkKitTest, GetDistributedHardware_001, testing::ext::TestSize.Level0)
-{
-    ASSERT_TRUE(dhfwkPtr_ != nullptr);
-    std::string networkId = "";
-    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
-    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
-    int32_t ret = dhfwkPtr_->GetDistributedHardware(networkId, enableStep, callback);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
-
-    networkId = "networkId_test";
-    ret = dhfwkPtr_->GetDistributedHardware(networkId, enableStep, callback);
-    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
-}
-
-/**
  * @tc.name: RegisterDHStatusListener_001
  * @tc.desc: Verify the RegisterDHStatusListener function
  * @tc.type: FUNC
@@ -469,25 +449,6 @@ HWTEST_F(DistributedHardwareFwkKitTest, RegisterDHStatusListener_001, testing::e
     ASSERT_TRUE(dhfwkPtr_ != nullptr);
     sptr<IHDSinkStatusListener> listener(new TestHDSinkStatusListener());
     int32_t ret = dhfwkPtr_->RegisterDHStatusListener(listener);
-    EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
-}
-
-/**
- * @tc.name: RegisterDHStatusListener_002
- * @tc.desc: Verify the RegisterDHStatusListener function
- * @tc.type: FUNC
- * @tc.require: AR000GHSJM
- */
-HWTEST_F(DistributedHardwareFwkKitTest, RegisterDHStatusListener_002, testing::ext::TestSize.Level0)
-{
-    ASSERT_TRUE(dhfwkPtr_ != nullptr);
-    std::string networkId = "";
-    sptr<IHDSourceStatusListener> listener(new TestHDSourceStatusListener());
-    int32_t ret = dhfwkPtr_->RegisterDHStatusListener(networkId, listener);
-    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
-
-    networkId = "networkId_test";
-    ret = dhfwkPtr_->RegisterDHStatusListener(networkId, listener);
     EXPECT_EQ(ERR_DH_FWK_POINTER_IS_NULL, ret);
 }
 
@@ -614,6 +575,46 @@ HWTEST_F(DistributedHardwareFwkKitTest, UnLoadDistributedHDF_001, testing::ext::
     ASSERT_TRUE(dhfwkPtr_ != nullptr);
     int32_t ret = dhfwkPtr_->UnLoadDistributedHDF(DHType::CAMERA);
     EXPECT_EQ(ERR_DH_AVT_SERVICE_IPC_SEND_REQUEST_FAIL, ret);
+}
+
+/**
+ * @tc.name: GetDistributedHardware_001
+ * @tc.desc: Verify the GetDistributedHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, GetDistributedHardware_001, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    std::string networkId = "";
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    int32_t ret = dhfwkPtr_->GetDistributedHardware(networkId, enableStep, callback);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+
+    sptr<IHDSourceStatusListener> listener(new TestHDSourceStatusListener());
+    ret = dhfwkPtr_->RegisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
+}
+
+/**
+ * @tc.name: GetDistributedHardware_001
+ * @tc.desc: Verify the GetDistributedHardware function
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareFwkKitTest, GetDistributedHardware_002, testing::ext::TestSize.Level0)
+{
+    ASSERT_TRUE(dhfwkPtr_ != nullptr);
+    std::string networkId = "networkId_test";
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    int32_t ret = dhfwkPtr_->GetDistributedHardware(networkId, enableStep, callback);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL, ret);
+
+    sptr<IHDSourceStatusListener> listener(new TestHDSourceStatusListener());
+    ret = dhfwkPtr_->RegisterDHStatusListener(networkId, listener);
+    EXPECT_EQ(ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
