@@ -57,10 +57,11 @@ struct CommMsg {
     std::string msg;
     std::string accountId;
     bool isSyncMeta;
-    CommMsg() : code(-1), userId(-1), tokenId(0), msg(""), accountId(""), isSyncMeta(false) {}
+    std::string realNetworkId;
+    CommMsg() : code(-1), userId(-1), tokenId(0), msg(""), accountId(""), isSyncMeta(false), realNetworkId("") {}
     CommMsg(int32_t code, int32_t userId, uint64_t tokenId, std::string msg, std::string accountId,
-        bool isSyncMeta) : code(code), userId(userId), tokenId(tokenId), msg(msg),
-        accountId(accountId), isSyncMeta(isSyncMeta) {}
+        bool isSyncMeta, std::string realNetworkId) : code(code), userId(userId), tokenId(tokenId), msg(msg),
+        accountId(accountId), isSyncMeta(isSyncMeta), realNetworkId(realNetworkId) {}
 };
 
 void ToJson(cJSON *jsonObject, const CommMsg &commMsg);

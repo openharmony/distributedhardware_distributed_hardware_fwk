@@ -71,6 +71,7 @@ namespace {
     constexpr int32_t SYNC_DATA_TIMEOUT_MS = 1000 * 9;
     constexpr const char *MIC = "mic";
     constexpr const char *CAMERA = "camera";
+    const std::string SYNC_TIMEOUT_TASK_NAME = "sync_timeout";
 }
 
 ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
@@ -2356,20 +2357,31 @@ void ComponentManager::SyncRemoteDeviceInfoBySoftbus(const std::string &realNetw
         return;
     }
     std::lock_guard<std::mutex> lock(syncDeviceInfoMapMutex_);
-    syncDeviceInfoMap_[realNetworkId] = {enableStep, callback};
-    std::shared_ptr<std::string> networkIdPtr = std::make_shared<std::string>(realNetworkId);
-    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_DATA_SYNC_MANUAL, networkIdPtr);
+    auto iter = syncDeviceInfoMap_.find(realNetworkId);
+    if (iter != syncDeviceInfoMap_.end()) {
+        iter->second.second.push_back(callback);
+        DHLOGI("Add callback for existing request, networkId: %{public}s, total callbacks: %{public}zu",
+            GetAnonyString(realNetworkId).c_str(), iter->second.second.size());
+        return;
+    }
+    DHLOGI("Add new request, networkId: %{public}s", GetAnonyString(realNetworkId).c_str());
+    syncDeviceInfoMap_[realNetworkId] = {enableStep, {callback}};
     if (GetEventHandler() == nullptr) {
         DHLOGE("Can not get eventHandler");
         callback->OnError(realNetworkId, ERR_DH_FWK_POINTER_IS_NULL);
         syncDeviceInfoMap_.erase(realNetworkId);
         return;
     }
+    std::shared_ptr<std::string> networkIdPtr = std::make_shared<std::string>(realNetworkId);
+    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_DATA_SYNC_MANUAL, networkIdPtr);
     GetEventHandler()->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
 
-    std::thread([this]() {
-        this->OnGetDescriptorsError();
-    }).detach();
+    auto syncTimeoutTask = [this, realNetworkId]() {
+        HandleSyncDataTimeout(realNetworkId);
+    };
+    std::string timeoutTaskId = realNetworkId + SYNC_TIMEOUT_TASK_NAME;
+    DHLOGI("Post sync data timeout task");
+    GetEventHandler()->PostTask(syncTimeoutTask, timeoutTaskId, SYNC_DATA_TIMEOUT_MS);
 }
 
 void ComponentManager::OnGetDescriptors(const std::string &realNetworkId, const std::vector<DHDescriptor> &descriptors)
@@ -2377,34 +2389,55 @@ void ComponentManager::OnGetDescriptors(const std::string &realNetworkId, const 
     DHLOGI("OnGetDescriptors enter, networkId = %{public}s, descriptors.size = %{public}zu",
         GetAnonyString(realNetworkId).c_str(), descriptors.size());
     if (descriptors.size() == 0) {
-        DHLOGE("Get dh descriptor faild");
+        DHLOGE("Get dh descriptor failed");
         return;
     }
     std::lock_guard<std::mutex> lock(syncDeviceInfoMapMutex_);
     auto iter = syncDeviceInfoMap_.find(realNetworkId);
     if (iter != syncDeviceInfoMap_.end()) {
-        if (iter->second.second != nullptr) {
-            iter->second.second->OnSuccess(realNetworkId, descriptors, iter->second.first);
-            syncDeviceInfoMap_.erase(iter);
-            DHLOGI("Notify get dh descriptor success.");
+        for (auto& callback : iter->second.second) {
+            if (callback != nullptr) {
+                callback->OnSuccess(realNetworkId, descriptors, iter->second.first);
+                DHLOGI("Notify get dh descriptor success.");
+            }
+        }
+        DHLOGI("Clear all request, networkId= %{public}s", GetAnonyString(realNetworkId).c_str());
+        syncDeviceInfoMap_.erase(iter);
+        if (GetEventHandler() != nullptr) {
+            std::string timeoutTaskId = realNetworkId + SYNC_TIMEOUT_TASK_NAME;
+            DHLOGI("Remove sync timeout task, taskId= %{public}s", GetAnonyString(timeoutTaskId).c_str());
+            GetEventHandler()->RemoveTask(timeoutTaskId);
         }
     }
 }
 
-void ComponentManager::OnGetDescriptorsError()
+void ComponentManager::HandleSyncDataTimeout(const std::string &realNetworkId)
 {
-    DHLOGI("OnGetDescriptorsError enter");
-    std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_DATA_TIMEOUT_MS));
+    DHLOGI("Sync data timeout, networkId: %{public}s", GetAnonyString(realNetworkId).c_str());
     std::lock_guard<std::mutex> lock(syncDeviceInfoMapMutex_);
-    for (auto iter = syncDeviceInfoMap_.begin(); iter != syncDeviceInfoMap_.end();) {
-        if (iter->second.second != nullptr) {
-            DHLOGI("OnGetDescriptorsError networkId = %{public}s", GetAnonyString(iter->first).c_str());
-            iter->second.second->OnError(iter->first, ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT);
-            iter = syncDeviceInfoMap_.erase(iter);
-        } else {
-            ++iter;
+    auto iter = syncDeviceInfoMap_.find(realNetworkId);
+    if (iter != syncDeviceInfoMap_.end()) {
+        for (auto& callback : iter->second.second) {
+            if (callback != nullptr) {
+                DHLOGI("Sync data timeout, notify callback: %{public}s", GetAnonyString(realNetworkId).c_str());
+                callback->OnError(realNetworkId, ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT);
+            }
         }
+        syncDeviceInfoMap_.erase(iter);
+        DHLOGI("Remove timeout request for networkId: %{public}s", GetAnonyString(realNetworkId).c_str());
     }
+}
+
+bool ComponentManager::IsRequestSyncData(const std::string &networkId)
+{
+    DHLOGI("Check whether it is the networkId requesting: %{public}s", GetAnonyString(networkId).c_str());
+    std::lock_guard<std::mutex> lock(syncDeviceInfoMapMutex_);
+    auto iter = syncDeviceInfoMap_.find(networkId);
+    if (iter != syncDeviceInfoMap_.end()) {
+        DHLOGI("The networkId has request sync");
+        return true;
+    }
+    return false;
 }
 
 int32_t ComponentManager::AddAccessListener(const DHType dhType, int32_t &timeOut, const std::string &pkgName,

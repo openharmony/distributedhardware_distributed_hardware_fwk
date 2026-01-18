@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2024-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -22,7 +22,10 @@ config("module_private_config") {
     "include",
     "${utils_path}/include",
     "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/componentmanager",
+    "${services_path}/distributedhardwarefwkservice/include/lowlatency",
     "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "${services_path}/distributedhardwarefwkservice/include/task",
     "${services_path}/distributedhardwarefwkservice/include/transport",
     "${services_path}/distributedhardwarefwkservice/include/utils",
     "${common_path}/utils/include",

@@ -144,23 +144,13 @@ void DHCommTool::TriggerReqFullDHCaps(const std::string &remoteNetworkId)
         DHLOGE("Start socket error");
         return;
     }
-    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId_, tokenId_, localNetworkId, accountId_, true);
+    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId_, tokenId_, localNetworkId, accountId_, true, "");
     std::string payload = GetCommMsgString(commMsg);
 
-    {
-        std::lock_guard<std::mutex> lock(syncRequestsMutex_);
-        if (syncRequests_.find(remoteNetworkId) != syncRequests_.end()) {
-            DHLOGI("Request for networkId: %{public}s already in progress", GetAnonyString(remoteNetworkId).c_str());
-            return;
-        }
-        syncRequests_[remoteNetworkId] = GetRandomID();
-
-        int32_t ret = dhTransportPtr_->Send(remoteNetworkId, payload);
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGE("Trigger req remote full attrs error");
-            syncRequests_.erase(remoteNetworkId);
-            return;
-        }
+    int32_t ret = dhTransportPtr_->Send(remoteNetworkId, payload);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Trigger req remote full attrs error");
+        return;
     }
     DHLOGI("Trigger req remote full attrs success.");
 }
@@ -247,7 +237,8 @@ void DHCommTool::GetAndSendLocalFullCaps(const std::string &reqNetworkId, bool i
     DHLOGI("Send back Caps success");
 }
 
-FullCapsRsp DHCommTool::ParseAndSaveRemoteDHCaps(const std::string &remoteCaps, bool isSyncMeta)
+FullCapsRsp DHCommTool::ParseAndSaveRemoteDHCaps(const std::string &remoteCaps, bool isSyncMeta,
+    const std::string &realNetworkId)
 {
     FullCapsRsp capsRsp;
     DHLOGI("Receive remote device full capinfos, parse and save remote device capinfos.");
@@ -259,31 +250,71 @@ FullCapsRsp DHCommTool::ParseAndSaveRemoteDHCaps(const std::string &remoteCaps, 
 
     FromJson(root, capsRsp, isSyncMeta);
     cJSON_Delete(root);
-    {
-        FullCapsRsp invalidCaps;
-        std::lock_guard<std::mutex> lock(syncRequestsMutex_);
-        auto it = syncRequests_.find(capsRsp.networkId);
-        if (it == syncRequests_.end()) {
-            DHLOGE("Ignore response, networkId: %{public}s no request", GetAnonyString(capsRsp.networkId).c_str());
-            return invalidCaps;
-        }
-        syncRequests_.erase(it);
+    FullCapsRsp invalidCaps;
+    if (!ComponentManager::GetInstance().IsRequestSyncData(realNetworkId)) {
+        DHLOGE("Ignore response, networkId: %{public}s no request sync", GetAnonyString(realNetworkId).c_str());
+        return invalidCaps;
     }
-    if (isSyncMeta) {
-        int32_t ret = MetaInfoManager::GetInstance()->AddMetaCapInfos(capsRsp.metaCaps);
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGE("Save remote device metaCapInfos error, ret: %{public}d", ret);
-            return capsRsp;
-        }
-    } else {
-        int32_t ret = LocalCapabilityInfoManager::GetInstance()->AddCapability(capsRsp.caps);
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGE("Save remote device capabilities error, ret: %{public}d", ret);
-            return capsRsp;
-        }
+
+    if (!IsSaveRemoteDHCaps(capsRsp, isSyncMeta, realNetworkId)) {
+        DHLOGE("save remote device capabilityInfo failed");
+        return invalidCaps;
     }
-    DHLOGI("Save remote device capinfo success");
     return capsRsp;
+}
+
+bool DHCommTool::IsSaveRemoteDHCaps(const FullCapsRsp &capsRsp, bool isSyncMeta, const std::string &realNetworkId)
+{
+    if (isSyncMeta) {
+        std::string remoteUuid = DHContext::GetInstance().GetUUIDByNetworkId(realNetworkId);
+        std::string remoteUdidHash = DHContext::GetInstance().GetUdidHashIdByUUID(remoteUuid);
+        if (remoteUdidHash.empty()) {
+            DHLOGE("remoteUdidHash is empty");
+            return false;
+        }
+        for (auto const &metaCap : capsRsp.metaCaps) {
+            if (metaCap == nullptr) {
+                continue;
+            }
+            std::string udidHash = SplitString(metaCap->GetKey());
+            if (remoteUdidHash != udidHash) {
+                DHLOGE("the udidHash: %{public}s is not trustworthy", GetAnonyString(udidHash).c_str());
+                return false;
+            }
+        }
+        MetaInfoManager::GetInstance()->AddMetaCapInfos(capsRsp.metaCaps);
+        DHLOGI("Save remote device metacapinfo success");
+        return true;
+    } else {
+        std::string remoteDeviceId = DHContext::GetInstance().GetDeviceIdByNetworkId(realNetworkId);
+        if (remoteDeviceId.empty()) {
+            DHLOGE("remoteDeviceId is empty");
+            return false;
+        }
+        for (auto const &capInfo : capsRsp.caps) {
+            if (capInfo == nullptr) {
+                continue;
+            }
+            std::string deviceId = SplitString(capInfo->GetKey());
+            if (remoteDeviceId != deviceId) {
+                DHLOGE("the deviceId: %{public}s is not trustworthy", GetAnonyString(deviceId).c_str());
+                return false;
+            }
+        }
+        LocalCapabilityInfoManager::GetInstance()->AddCapability(capsRsp.caps);
+        DHLOGI("Save remote device capinfo success");
+        return true;
+    }
+}
+
+std::string DHCommTool::SplitString(const std::string &capInfoPrefix)
+{
+    std::string prefix = "";
+    size_t pos = capInfoPrefix.find(RESOURCE_SEPARATOR);
+    if (pos != std::string::npos) {
+        prefix = capInfoPrefix.substr(0, pos);
+    }
+    return prefix;
 }
 
 DHCommTool::DHCommToolEventHandler::DHCommToolEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner,
@@ -320,8 +351,9 @@ void DHCommTool::DHCommToolEventHandler::ProcessEvent(
             break;
         }
         case DH_COMM_RSP_FULL_CAPS: {
-            FullCapsRsp capsRsp = dhCommToolPtr->ParseAndSaveRemoteDHCaps(commMsg->msg, commMsg->isSyncMeta);
-            ProcessFullCapsRsp(capsRsp, dhCommToolPtr, commMsg->isSyncMeta);
+            FullCapsRsp capsRsp =
+                dhCommToolPtr->ParseAndSaveRemoteDHCaps(commMsg->msg, commMsg->isSyncMeta, commMsg->realNetworkId);
+            ProcessFullCapsRsp(capsRsp, dhCommToolPtr, commMsg->isSyncMeta, commMsg->realNetworkId);
             break;
         }
         default:
@@ -331,9 +363,9 @@ void DHCommTool::DHCommToolEventHandler::ProcessEvent(
 }
 
 void DHCommTool::DHCommToolEventHandler::ProcessFullCapsRsp(const FullCapsRsp &capsRsp,
-    const std::shared_ptr<DHCommTool> dhCommToolPtr, bool isSyncMeta)
+    const std::shared_ptr<DHCommTool> dhCommToolPtr, bool isSyncMeta, const std::string &realNetworkId)
 {
-    if (capsRsp.networkId.empty()) {
+    if (realNetworkId.empty()) {
         DHLOGE("Receive remote caps info invalid!");
         return;
     }
@@ -347,8 +379,8 @@ void DHCommTool::DHCommToolEventHandler::ProcessFullCapsRsp(const FullCapsRsp &c
     }
     // after receive rsp, close dsoftbus channel
     DHLOGI("receive full remote capabilities, close channel, remote networkId: %{public}s",
-        GetAnonyString(capsRsp.networkId).c_str());
-    dhCommToolPtr->GetDHTransportPtr()->StopSocket(capsRsp.networkId);
+        GetAnonyString(realNetworkId).c_str());
+    dhCommToolPtr->GetDHTransportPtr()->StopSocket(realNetworkId);
 
     // Return remote capInfos to the business
     std::vector<DHDescriptor> descriptors;
@@ -373,7 +405,7 @@ void DHCommTool::DHCommToolEventHandler::ProcessFullCapsRsp(const FullCapsRsp &c
             descriptors.push_back(descriptor);
         }
     }
-    ComponentManager::GetInstance().OnGetDescriptors(capsRsp.networkId, descriptors);
+    ComponentManager::GetInstance().OnGetDescriptors(realNetworkId, descriptors);
 }
 
 std::shared_ptr<DHCommTool::DHCommToolEventHandler> DHCommTool::GetEventHandler()

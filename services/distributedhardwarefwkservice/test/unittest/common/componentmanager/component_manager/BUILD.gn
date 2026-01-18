@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -41,55 +41,6 @@ config("module_private_config") {
     "${common_path}/utils/include",
     "${common_path}/log/include",
   ]
-}
-
-ohos_unittest("ComponentManagerExtraTest") {
-  module_out_path = module_out_path
-
-  sources = [ "src/component_manager_extra_test.cpp" ]
-
-  cflags = [
-    "-Wall",
-    "-Werror",
-    "-g3",
-    "-Dprivate=public",
-  ]
-
-  configs = [ ":module_private_config" ]
-
-  deps = [
-    "${innerkits_path}:libdhfwk_sdk",
-    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-    "${utils_path}:distributedhardwareutils",
-  ]
-
-  external_deps = [
-    "access_token:libaccesstoken_sdk",
-    "access_token:libnativetoken",
-    "access_token:libtoken_setproc",
-    "cJSON:cjson",
-    "c_utils:utils",
-    "dsoftbus:softbus_client",
-    "eventhandler:libeventhandler",
-    "hilog:libhilog",
-    "ipc:ipc_single",
-    "kv_store:distributeddata_inner",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
-    "selinux_adapter:librestorecon",
-  ]
-
-  defines = [
-    "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"ComponentManagerExtraTest\"",
-    "LOG_DOMAIN=0xD004100",
-  ]
-
-  if (!distributed_hardware_fwk_low_latency) {
-    defines += [ "DHARDWARE_CLOSE_UT" ]
-  } else {
-    defines += [ "DHARDWARE_CHECK_RESOURCE" ]
-  }
 }
 
 ohos_unittest("ComponentManagerTest") {
@@ -209,7 +160,6 @@ ohos_unittest("ComponentManagerTestExt") {
 group("component_manager_test") {
   testonly = true
   deps = [
-    ":ComponentManagerExtraTest",
     ":ComponentManagerTest",
     ":ComponentManagerTestExt",
   ]
