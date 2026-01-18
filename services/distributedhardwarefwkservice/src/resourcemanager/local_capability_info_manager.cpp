@@ -106,6 +106,7 @@ int32_t LocalCapabilityInfoManager::SyncDeviceInfoFromDB(const std::string &devi
             DHLOGE("Get capability ptr by value failed");
             continue;
         }
+        DHLOGI("Save capInfo to local memory, Key: %{public}s", capabilityInfo->GetAnonymousKey().c_str());
         globalCapInfoMap_[capabilityInfo->GetKey()] = capabilityInfo;
     }
     return DH_FWK_SUCCESS;
