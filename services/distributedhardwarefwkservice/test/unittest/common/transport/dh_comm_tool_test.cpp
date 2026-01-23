@@ -180,10 +180,7 @@ HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_003, TestSize.Level1)
     bool isSyncMeta = false;
     cJSON_AddStringToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, networkId.c_str());
     char* cjson = cJSON_PrintUnformatted(jsonObject);
-    if (cjson == nullptr) {
-        cJSON_Delete(jsonObject);
-        return;
-    }
+    ASSERT_TRUE(cjson != nullptr);
     std::string remoteCaps(cjson);
     std::string requestId = "111";
     dhCommToolTest_->syncRequests_[networkId] = requestId;
