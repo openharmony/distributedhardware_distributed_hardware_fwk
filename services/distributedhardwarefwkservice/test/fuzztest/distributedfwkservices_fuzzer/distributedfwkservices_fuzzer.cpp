@@ -70,6 +70,15 @@ protected:
     }
 };
 
+class TestAuthorizationResultCallback : public IRemoteStub<IAuthorizationResultCallback> {
+public:
+    void OnAuthorizationResult(const std::string &networkId, const std::string &requestId) override
+    {
+        (void)networkId;
+        (void)requestId;
+    }
+};
+
 void FwkServicesQueryLocalSysSpecFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
@@ -254,6 +263,50 @@ void FwkServicesDisableSourceFuzzTest(const uint8_t* data, size_t size)
     descriptors.push_back(descriptor);
     service.DisableSource(networkId, descriptors);
 }
+
+void FwkServicesRegisterHardwareAccessListenerFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
+        return;
+    }
+
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    int32_t timeOut = fdp.ConsumeIntegral<int32_t>();
+    std::string pkgName = fdp.ConsumeRandomLengthString();
+    sptr<IAuthorizationResultCallback> callback(new TestAuthorizationResultCallback());
+    service.RegisterHardwareAccessListener(dhType, callback, timeOut, pkgName);
+}
+
+void FwkServicesUnregisterHardwareAccessListenerFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
+        return;
+    }
+
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    std::string pkgName = fdp.ConsumeRandomLengthString();
+    sptr<IAuthorizationResultCallback> callback(new TestAuthorizationResultCallback());
+    service.UnregisterHardwareAccessListener(dhType, callback, pkgName);
+}
+
+void FwkServicesSetAuthorizationResultFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(uint32_t))) {
+        return;
+    }
+
+    DistributedHardwareService service(SAID, true);
+    FuzzedDataProvider fdp(data, size);
+    DHType dhType = static_cast<DHType>(fdp.ConsumeIntegral<uint32_t>());
+    std::string requestId = fdp.ConsumeRandomLengthString();
+    sptr<IAuthorizationResultCallback> callback(new TestAuthorizationResultCallback());
+    bool granted = fdp.ConsumeBool();
+    service.SetAuthorizationResult(dhType, requestId, granted);
+}
 }
 }
 
@@ -266,5 +319,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::FwkServicesPauseDistributedHardwareFuzzTest(data, size);
     OHOS::DistributedHardware::FwkServicesResumeDistributedHardwareFuzzTest(data, size);
     OHOS::DistributedHardware::FwkServicesStopDistributedHardwareFuzzTest(data, size);
+    OHOS::DistributedHardware::FwkServicesRegisterHardwareAccessListenerFuzzTest(data, size);
+    OHOS::DistributedHardware::FwkServicesUnregisterHardwareAccessListenerFuzzTest(data, size);
+    OHOS::DistributedHardware::FwkServicesSetAuthorizationResultFuzzTest(data, size);
     return 0;
 }
