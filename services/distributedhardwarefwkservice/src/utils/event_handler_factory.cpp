@@ -26,7 +26,7 @@ namespace {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "EventHandlerFactory"
 
-IMPLEMENT_SINGLE_INSTANCE(EventHandlerFactory);
+FWK_IMPLEMENT_SINGLE_INSTANCE(EventHandlerFactory);
 int32_t EventHandlerFactory::Init()
 {
     DHLOGI("Init start!");

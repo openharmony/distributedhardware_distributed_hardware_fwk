@@ -22,7 +22,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-IMPLEMENT_SINGLE_INSTANCE(HiStreamerQueryTool);
+FWK_IMPLEMENT_SINGLE_INSTANCE(HiStreamerQueryTool);
 using QueryAudioEncoderFunc = int32_t (*)(char*);
 using QueryAudioDecoderFunc = int32_t (*)(char*);
 using QueryVideoEncoderFunc = int32_t (*)(char*);

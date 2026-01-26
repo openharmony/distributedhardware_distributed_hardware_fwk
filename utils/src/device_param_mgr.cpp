@@ -29,7 +29,7 @@ namespace {
     const char *DATA_SYNC_PARAM = "persist.distributed_scene.sys_settings_data_sync";
     constexpr const char *ENTERPRISE_SPACE_ENABLE_PARAM = "persist.space_mgr_service.enterprise_space_enable";
 }
-IMPLEMENT_SINGLE_INSTANCE(DeviceParamMgr);
+FWK_IMPLEMENT_SINGLE_INSTANCE(DeviceParamMgr);
 void DeviceParamMgr::QueryDeviceDataSyncMode()
 {
     char paramBuf[BUF_LENTH] = {0};

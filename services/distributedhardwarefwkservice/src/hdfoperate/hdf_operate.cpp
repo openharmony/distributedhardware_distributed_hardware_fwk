@@ -86,7 +86,7 @@ bool HdfOperator::IsNeedErase()
     return hdfLoadRef_ <= 0;
 }
 
-IMPLEMENT_SINGLE_INSTANCE(HdfOperateManager);
+FWK_IMPLEMENT_SINGLE_INSTANCE(HdfOperateManager);
 
 int32_t HdfOperateManager::LoadDistributedHDF(DHType dhType)
 {

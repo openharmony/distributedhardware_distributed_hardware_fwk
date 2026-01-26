@@ -26,7 +26,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-IMPLEMENT_SINGLE_INSTANCE(MockTaskFactory);
+FWK_IMPLEMENT_SINGLE_INSTANCE(MockTaskFactory);
 std::shared_ptr<Task> MockTaskFactory::CreateTask(TaskType taskType, TaskParam taskParam,
     std::shared_ptr<Task> fatherTask)
 {

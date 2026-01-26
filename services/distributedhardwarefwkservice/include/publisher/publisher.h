@@ -25,7 +25,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 class Publisher {
-DECLARE_SINGLE_INSTANCE_BASE(Publisher);
+FWK_DECLARE_SINGLE_INSTANCE_BASE(Publisher);
 public:
     virtual ~Publisher();
     void RegisterListener(const DHTopic topic, const sptr<IPublisherListener> listener);

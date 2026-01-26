@@ -21,12 +21,12 @@
 #include <atomic>
 #include <mutex>
 #include "device_type.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class DistributedHardwareManager : public IDistributedHardwareManager {
-DECLARE_SINGLE_INSTANCE(DistributedHardwareManager);
+FWK_DECLARE_SINGLE_INSTANCE(DistributedHardwareManager);
 public:
     int32_t LocalInit();
     int32_t Initialize() override;

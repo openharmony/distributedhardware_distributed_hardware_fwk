@@ -31,7 +31,7 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "TaskFactory"
 
-IMPLEMENT_SINGLE_INSTANCE(TaskFactory);
+FWK_IMPLEMENT_SINGLE_INSTANCE(TaskFactory);
 std::shared_ptr<Task> TaskFactory::CreateTask(TaskType taskType, TaskParam taskParam, std::shared_ptr<Task> fatherTask)
 {
     DHLOGI("taskType: %{public}d, networkId: %{public}s, uuid: %{public}s, dhId: %{public}s",

@@ -19,7 +19,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-IMPLEMENT_SINGLE_INSTANCE(Publisher);
+FWK_IMPLEMENT_SINGLE_INSTANCE(Publisher);
 Publisher::Publisher() : publisherItems_({
         { DHTopic::TOPIC_START_DSCREEN, std::make_shared<PublisherItem>(DHTopic::TOPIC_START_DSCREEN) },
         { DHTopic::TOPIC_SINK_PROJECT_WINDOW_INFO,

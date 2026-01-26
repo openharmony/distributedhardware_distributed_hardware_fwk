@@ -24,12 +24,12 @@
 #include "event_runner.h"
 
 #include "device_type.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class DistributedHardwareManagerFactory {
-    DECLARE_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
+    FWK_DECLARE_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
 
 public:
     bool InitLocalDevInfo();

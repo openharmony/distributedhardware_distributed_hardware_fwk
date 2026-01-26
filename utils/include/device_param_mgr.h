@@ -19,12 +19,12 @@
 #include <atomic>
 #include <string>
 
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class DeviceParamMgr {
-    DECLARE_SINGLE_INSTANCE(DeviceParamMgr);
+    FWK_DECLARE_SINGLE_INSTANCE(DeviceParamMgr);
 public:
     void QueryDeviceDataSyncMode();
     bool GetDeviceSyncDataMode();

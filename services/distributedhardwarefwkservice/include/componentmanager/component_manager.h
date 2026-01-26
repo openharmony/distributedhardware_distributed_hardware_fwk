@@ -23,7 +23,7 @@
 #include <mutex>
 #include <future>
 
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 #include "component_monitor.h"
 #include "capability_info.h"
 #include "device_type.h"
@@ -47,7 +47,7 @@ namespace OHOS {
 namespace DistributedHardware {
 using ActionResult = std::unordered_map<DHType, std::shared_future<int32_t>>;
 class ComponentManager {
-    DECLARE_SINGLE_INSTANCE_BASE(ComponentManager);
+    FWK_DECLARE_SINGLE_INSTANCE_BASE(ComponentManager);
 
 public:
     ComponentManager();

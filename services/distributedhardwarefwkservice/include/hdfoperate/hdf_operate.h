@@ -23,7 +23,7 @@
 
 #include "idistributed_hardware.h"
 #include "idistributed_hardware_source.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -64,7 +64,7 @@ private:
 };
 
 class HdfOperateManager {
-DECLARE_SINGLE_INSTANCE(HdfOperateManager);
+FWK_DECLARE_SINGLE_INSTANCE(HdfOperateManager);
 public:
     int32_t LoadDistributedHDF(DHType dhType);
     int32_t UnLoadDistributedHDF(DHType dhType);

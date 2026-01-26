@@ -22,13 +22,13 @@
 #include <string>
 #include <unordered_map>
 
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 #include "task.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class TaskBoard {
-DECLARE_SINGLE_INSTANCE(TaskBoard);
+FWK_DECLARE_SINGLE_INSTANCE(TaskBoard);
 public:
     bool IsAllTaskFinish();
     bool IsAllDisableTaskFinish();

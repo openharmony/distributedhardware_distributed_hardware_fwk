@@ -24,12 +24,12 @@
 
 #include "system_ability_status_change_stub.h"
 
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class ComponentMonitor {
-REMOVE_NO_USE_CONSTRUCTOR(ComponentMonitor);
+FWK_REMOVE_NO_USE_CONSTRUCTOR(ComponentMonitor);
 public:
     explicit ComponentMonitor();
     ~ComponentMonitor();

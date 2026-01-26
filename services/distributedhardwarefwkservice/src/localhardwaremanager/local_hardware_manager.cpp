@@ -40,7 +40,7 @@ namespace {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "LocalHardwareManager"
 
-IMPLEMENT_SINGLE_INSTANCE(LocalHardwareManager)
+FWK_IMPLEMENT_SINGLE_INSTANCE(LocalHardwareManager)
 
 LocalHardwareManager::LocalHardwareManager() {}
 LocalHardwareManager::~LocalHardwareManager() {}

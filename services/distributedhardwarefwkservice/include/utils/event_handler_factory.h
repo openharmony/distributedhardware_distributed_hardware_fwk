@@ -20,12 +20,12 @@
 #include <mutex>
 #include "event_handler.h"
 
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class EventHandlerFactory {
-DECLARE_SINGLE_INSTANCE(EventHandlerFactory);
+FWK_DECLARE_SINGLE_INSTANCE(EventHandlerFactory);
 
 public:
     int32_t Init();

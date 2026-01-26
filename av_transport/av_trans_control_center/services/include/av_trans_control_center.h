@@ -20,13 +20,13 @@
 #include "av_trans_constants.h"
 #include "av_trans_message.h"
 #include "iav_trans_control_center_callback.h"
-#include "single_instance.h"
+#include "av_single_instance.h"
 #include "softbus_channel_adapter.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class AVTransControlCenter : public ISoftbusChannelListener {
-    DECLARE_SINGLE_INSTANCE_BASE(AVTransControlCenter);
+    AV_DECLARE_SINGLE_INSTANCE_BASE(AVTransControlCenter);
 public:
     AVTransControlCenter();
     virtual ~AVTransControlCenter();

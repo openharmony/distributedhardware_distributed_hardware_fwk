@@ -23,13 +23,13 @@
 #include "refbase.h"
 #include "system_ability_status_change_stub.h"
 
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 #include "idistributed_hardware.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class DHFWKSAManager {
-DECLARE_SINGLE_INSTANCE_BASE(DHFWKSAManager);
+FWK_DECLARE_SINGLE_INSTANCE_BASE(DHFWKSAManager);
 public:
     DHFWKSAManager();
     virtual ~DHFWKSAManager();

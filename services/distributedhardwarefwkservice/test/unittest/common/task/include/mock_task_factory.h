@@ -18,13 +18,13 @@
 
 #include <memory>
 
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 #include "task.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class MockTaskFactory {
-DECLARE_SINGLE_INSTANCE(MockTaskFactory);
+FWK_DECLARE_SINGLE_INSTANCE(MockTaskFactory);
 public:
     std::shared_ptr<Task> CreateTask(TaskType taskType, TaskParam taskParam, std::shared_ptr<Task> fatherTask);
 };

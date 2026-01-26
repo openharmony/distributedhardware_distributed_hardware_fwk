@@ -22,7 +22,7 @@
 #include "enabled_comps_dump.h"
 #include "device_type.h"
 #include "impl_utils.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -36,7 +36,7 @@ enum class HidumpFlag {
 };
 
 class HidumpHelper {
-DECLARE_SINGLE_INSTANCE_BASE(HidumpHelper);
+FWK_DECLARE_SINGLE_INSTANCE_BASE(HidumpHelper);
 public:
     int32_t Dump(const std::vector<std::string>& args, std::string &result);
 

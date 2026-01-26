@@ -22,7 +22,7 @@
 #include "refbase.h"
 
 #include "ipublisher_listener.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -34,7 +34,7 @@ public:
     }
 };
 class PublisherItem {
-REMOVE_NO_USE_CONSTRUCTOR(PublisherItem);
+FWK_REMOVE_NO_USE_CONSTRUCTOR(PublisherItem);
 public:
     PublisherItem();
     explicit PublisherItem(DHTopic topic);

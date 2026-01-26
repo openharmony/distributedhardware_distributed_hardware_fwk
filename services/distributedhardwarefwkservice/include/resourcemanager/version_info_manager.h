@@ -25,7 +25,7 @@
 #include "db_adapter.h"
 #include "event_handler.h"
 #include "impl_utils.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 #include "version_info.h"
 
 class DBAdapter;

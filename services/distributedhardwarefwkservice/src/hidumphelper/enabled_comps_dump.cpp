@@ -19,7 +19,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-IMPLEMENT_SINGLE_INSTANCE(EnabledCompsDump);
+FWK_IMPLEMENT_SINGLE_INSTANCE(EnabledCompsDump);
 
 void EnabledCompsDump::DumpEnabledComp(const std::string &networkId, const DHType dhType, const std::string &dhId)
 {

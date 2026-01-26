@@ -25,12 +25,12 @@
 #include "device_type.h"
 #include "ihardware_handler.h"
 #include "meta_capability_info.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class LocalHardwareManager {
-    DECLARE_SINGLE_INSTANCE_BASE(LocalHardwareManager);
+    FWK_DECLARE_SINGLE_INSTANCE_BASE(LocalHardwareManager);
 
 public:
     LocalHardwareManager();

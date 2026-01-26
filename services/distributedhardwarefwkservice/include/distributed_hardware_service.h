@@ -24,7 +24,7 @@
 #include "distributed_hardware_fwk_kit.h"
 #include "distributed_hardware_fwk_kit_paras.h"
 #include "distributed_hardware_stub.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {

@@ -21,12 +21,12 @@
 
 #include "device_type.h"
 #include "dh_timer.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class LowLatency {
-DECLARE_SINGLE_INSTANCE_BASE(LowLatency);
+FWK_DECLARE_SINGLE_INSTANCE_BASE(LowLatency);
 public:
     void EnableLowLatency(DHType dhType);
     void DisableLowLatency(DHType dhType);

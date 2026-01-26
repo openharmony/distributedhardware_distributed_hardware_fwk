@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,19 +13,19 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_DISTRIBUTED_HARDWARE_SINGLE_INSTANCE_H
-#define OHOS_DISTRIBUTED_HARDWARE_SINGLE_INSTANCE_H
+#ifndef OHOS_AV_TRANSPORT_SINGLE_INSTANCE_H
+#define OHOS_AV_TRANSPORT_SINGLE_INSTANCE_H
 
 namespace OHOS {
 namespace DistributedHardware {
-#define REMOVE_NO_USE_CONSTRUCTOR(className)            \
+#define AV_REMOVE_NO_USE_CONSTRUCTOR(className)         \
 private:                                                \
     className(const className&) = delete;               \
     className& operator= (const className&) = delete;   \
     className(className&&) = delete;                    \
     className& operator= (className&&) = delete;        \
 
-#define DECLARE_SINGLE_INSTANCE_BASE(className)         \
+#define AV_DECLARE_SINGLE_INSTANCE_BASE(className)      \
 public:                                                 \
     static className & GetInstance();                   \
 private:                                                \
@@ -34,13 +34,13 @@ private:                                                \
     className(className&&) = delete;                    \
     className& operator= (className&&) = delete;        \
 
-#define DECLARE_SINGLE_INSTANCE(className)              \
-    DECLARE_SINGLE_INSTANCE_BASE(className)             \
+#define AV_DECLARE_SINGLE_INSTANCE(className)           \
+    AV_DECLARE_SINGLE_INSTANCE_BASE(className)          \
 private:                                                \
     className() = default;                              \
     virtual ~className() = default;                     \
 
-#define IMPLEMENT_SINGLE_INSTANCE(className)            \
+#define AV_IMPLEMENT_SINGLE_INSTANCE(className)         \
 className & className::GetInstance()                    \
 {                                                       \
     static className instance;                          \
@@ -48,4 +48,4 @@ className & className::GetInstance()                    \
 }
 } // namespace DistributedHardware
 } // namespace OHOS
-#endif // OHOS_DISTRIBUTED_HARDWARE_SINGLE_INSTANCE_H
+#endif // OHOS_AV_TRANSPORT_SINGLE_INSTANCE_H
