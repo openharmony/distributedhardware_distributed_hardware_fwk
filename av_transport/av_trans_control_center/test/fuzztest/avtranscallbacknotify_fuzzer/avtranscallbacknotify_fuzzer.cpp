@@ -15,6 +15,8 @@
 
 #include "avtranscallbacknotify_fuzzer.h"
 
+#include <fuzzer/FuzzedDataProvider.h>
+
 #include "av_trans_control_center_callback.h"
 #include "av_sync_utils.h"
 
@@ -26,9 +28,11 @@ void AVTransCallbackNotifyFuzzTest(const uint8_t *data, size_t size)
     if ((data == nullptr) || (size < sizeof(int32_t))) {
         return;
     }
-    EventType type = static_cast<EventType>(*(reinterpret_cast<const uint32_t*>(data)) % DC_EVENTTYPE_SIZE);
-    std::string content(reinterpret_cast<const char*>(data), size);
-    std::string peerDevId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    EventType type =
+        static_cast<EventType>(*(reinterpret_cast<const uint32_t*>(data)) % DC_EVENTTYPE_SIZE);
+    std::string content = fdp.ConsumeRandomLengthString();
+    std::string peerDevId = fdp.ConsumeRandomLengthString();
     AVTransEvent event = AVTransEvent{ type, content, peerDevId };
     AVTransEventExt eventExt = AVTransEventExt(event);
     sptr<AVTransControlCenterCallback> controlCenterCallback(new (std::nothrow) AVTransControlCenterCallback());
