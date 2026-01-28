@@ -44,7 +44,7 @@ namespace DistributedHardware {
 #define DH_LOG_TAG "DistributedHardwareManager"
 
 
-IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManager);
+FWK_IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManager);
 
 int32_t DistributedHardwareManager::LocalInit()
 {

@@ -23,7 +23,7 @@
 #include "iremote_stub.h"
 
 #include "ipublisher_listener.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {

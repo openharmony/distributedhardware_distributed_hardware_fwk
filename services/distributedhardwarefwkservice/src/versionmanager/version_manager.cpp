@@ -28,7 +28,7 @@ namespace DistributedHardware {
 
 const std::string DH_LOCAL_VERSION = "1.0";
 
-IMPLEMENT_SINGLE_INSTANCE(VersionManager);
+FWK_IMPLEMENT_SINGLE_INSTANCE(VersionManager);
 
 int32_t VersionManager::Init()
 {

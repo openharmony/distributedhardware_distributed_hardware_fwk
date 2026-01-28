@@ -21,7 +21,7 @@
 #include <string>
 
 #include "device_type.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -41,7 +41,7 @@ struct HidumpCompInfo {
 };
 
 class EnabledCompsDump {
-DECLARE_SINGLE_INSTANCE_BASE(EnabledCompsDump);
+FWK_DECLARE_SINGLE_INSTANCE_BASE(EnabledCompsDump);
 public:
     void DumpEnabledComp(const std::string &networkId, const DHType dhType, const std::string &dhId);
     void DumpDisabledComp(const std::string &networkId, const DHType dhType, const std::string &dhId);

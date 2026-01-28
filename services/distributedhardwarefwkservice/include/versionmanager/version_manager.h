@@ -20,7 +20,7 @@
 #include <vector>
 #include <string>
 
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 #include "distributed_hardware_errno.h"
 #include "device_type.h"
 #include "utils/impl_utils.h"
@@ -28,7 +28,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 class VersionManager {
-    DECLARE_SINGLE_INSTANCE_BASE(VersionManager);
+    FWK_DECLARE_SINGLE_INSTANCE_BASE(VersionManager);
 
 public:
     VersionManager() {}

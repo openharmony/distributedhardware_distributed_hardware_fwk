@@ -17,13 +17,13 @@
 #define OHOS_DISTRIBUTED_HARDWARE_DHMODEMCONTEXTEXT_H
 
 #include "idistributed_modem_ext.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 
 class DHModemContextExt {
-DECLARE_SINGLE_INSTANCE_BASE(DHModemContextExt);
+FWK_DECLARE_SINGLE_INSTANCE_BASE(DHModemContextExt);
 public:
     DHModemContextExt();
     ~DHModemContextExt();

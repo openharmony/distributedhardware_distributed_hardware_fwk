@@ -24,7 +24,7 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "AVTransControlCenter"
 
-IMPLEMENT_SINGLE_INSTANCE(AVTransControlCenter);
+AV_IMPLEMENT_SINGLE_INSTANCE(AVTransControlCenter);
 
 AVTransControlCenter::AVTransControlCenter()
 {

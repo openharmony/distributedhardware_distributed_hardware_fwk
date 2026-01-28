@@ -149,7 +149,7 @@
               "ihardware_handler.h",
               "ihardware_status_listener.h",
               "ipublisher_listener.h",
-              "single_instance.h"
+              "dhfwk_single_instance.h"
             ],
             "header_base": "//foundation/distributedhardware/distributed_hardware_fwk/common/utils/include"
           }

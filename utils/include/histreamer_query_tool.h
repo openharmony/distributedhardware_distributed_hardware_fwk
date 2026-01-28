@@ -20,7 +20,7 @@
 #include <string>
 #include <atomic>
 
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 namespace OHOS {
 namespace DistributedHardware {
 enum class HISTREAM_PLUGIN_TYPE : uint8_t {
@@ -31,7 +31,7 @@ enum class HISTREAM_PLUGIN_TYPE : uint8_t {
 };
 
 class HiStreamerQueryTool {
-DECLARE_SINGLE_INSTANCE(HiStreamerQueryTool);
+FWK_DECLARE_SINGLE_INSTANCE(HiStreamerQueryTool);
 public:
     std::string QueryHiStreamerPluginInfo(HISTREAM_PLUGIN_TYPE type);
 private:

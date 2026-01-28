@@ -26,7 +26,7 @@ namespace DistributedHardware {
 
 constexpr int32_t TASK_TIMEOUT_MS = 5000;
 
-IMPLEMENT_SINGLE_INSTANCE(TaskBoard);
+FWK_IMPLEMENT_SINGLE_INSTANCE(TaskBoard);
 
 int32_t TaskBoard::WaitForALLTaskFinish()
 {

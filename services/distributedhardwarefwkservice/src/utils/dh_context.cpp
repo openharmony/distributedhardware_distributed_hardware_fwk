@@ -36,7 +36,7 @@ namespace {
     constexpr int32_t OLD_HO_DEVICE_TYPE = -1;
     constexpr int32_t NEW_HO_DEVICE_TYPE = 11;
 }
-IMPLEMENT_SINGLE_INSTANCE(DHContext);
+FWK_IMPLEMENT_SINGLE_INSTANCE(DHContext);
 DHContext::DHContext()
 {
     DHLOGI("Ctor DHContext");

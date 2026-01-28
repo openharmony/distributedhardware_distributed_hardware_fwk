@@ -28,7 +28,7 @@ namespace OHOS {
 namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "LowLatency"
-IMPLEMENT_SINGLE_INSTANCE(LowLatency);
+FWK_IMPLEMENT_SINGLE_INSTANCE(LowLatency);
 namespace {
     const std::string LOW_LATENCY_TIMER_ID = "low_latency_timer_id";
     const std::string LOW_LATENCY_KEY = "identity";

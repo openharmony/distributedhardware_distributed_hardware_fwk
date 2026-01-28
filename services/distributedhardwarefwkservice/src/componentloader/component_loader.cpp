@@ -39,7 +39,7 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "ComponentLoader"
 
-IMPLEMENT_SINGLE_INSTANCE(ComponentLoader);
+FWK_IMPLEMENT_SINGLE_INSTANCE(ComponentLoader);
 using GetHardwareClass = IHardwareHandler *(*)();
 using GetSourceHardwareClass = IDistributedHardwareSource *(*)();
 using GetSinkHardwareClass = IDistributedHardwareSink *(*)();

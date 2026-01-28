@@ -28,7 +28,7 @@ namespace {
     const uint32_t MAX_TASK_QUEUE_LENGTH = 256;
     constexpr const char *TRIGGER_TASK = "TriggerTask";
 }
-IMPLEMENT_SINGLE_INSTANCE(TaskExecutor);
+FWK_IMPLEMENT_SINGLE_INSTANCE(TaskExecutor);
 TaskExecutor::TaskExecutor() : taskThreadFlag_(true)
 {
     DHLOGI("Ctor TaskExecutor");

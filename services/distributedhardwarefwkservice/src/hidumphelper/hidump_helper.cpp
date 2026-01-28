@@ -28,7 +28,7 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-IMPLEMENT_SINGLE_INSTANCE(HidumpHelper);
+FWK_IMPLEMENT_SINGLE_INSTANCE(HidumpHelper);
 namespace {
 const std::string ARGS_HELP = "-h";
 const std::string LOADED_COMP_LIST = "-l";

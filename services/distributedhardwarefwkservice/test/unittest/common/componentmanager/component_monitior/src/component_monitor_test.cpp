@@ -24,7 +24,7 @@
 #include "component_loader.h"
 #include "iservice_registry.h"
 #include "system_ability_status_change_stub.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 using namespace testing::ext;
 

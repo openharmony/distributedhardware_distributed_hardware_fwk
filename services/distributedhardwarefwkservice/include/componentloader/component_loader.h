@@ -21,7 +21,7 @@
 #include <mutex>
 #include <vector>
 
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 #include "distributed_hardware_errno.h"
 #include "device_type.h"
 #include "ihardware_handler.h"
@@ -67,7 +67,7 @@ struct CompHandler {
 }
 
 class ComponentLoader {
-    DECLARE_SINGLE_INSTANCE_BASE(ComponentLoader);
+    FWK_DECLARE_SINGLE_INSTANCE_BASE(ComponentLoader);
 
 public:
     ComponentLoader() : isLocalVersionInit_(false) {}

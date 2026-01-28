@@ -23,12 +23,12 @@
 #include "ffrt.h"
 
 #include "task.h"
-#include "single_instance.h"
+#include "dhfwk_single_instance.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 class TaskExecutor {
-DECLARE_SINGLE_INSTANCE_BASE(TaskExecutor);
+FWK_DECLARE_SINGLE_INSTANCE_BASE(TaskExecutor);
 public:
     explicit TaskExecutor();
     ~TaskExecutor();

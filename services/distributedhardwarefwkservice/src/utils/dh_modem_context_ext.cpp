@@ -22,7 +22,7 @@
 #include "distributed_hardware_log.h"
 namespace OHOS {
 namespace DistributedHardware {
-IMPLEMENT_SINGLE_INSTANCE(DHModemContextExt);
+FWK_IMPLEMENT_SINGLE_INSTANCE(DHModemContextExt);
 
 constexpr const char* LIB_DISTRIBUTEDMODEM_EXT_NAME = "libdistributedmodem_ext.z.so";
 

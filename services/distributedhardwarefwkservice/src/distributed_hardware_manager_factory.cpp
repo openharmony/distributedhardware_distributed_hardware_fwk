@@ -59,7 +59,7 @@ namespace {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "DistributedHardwareManagerFactory"
 
-IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
+FWK_IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
 bool DistributedHardwareManagerFactory::InitLocalDevInfo()
 {
     DHLOGI("InitLocalDevInfo start");

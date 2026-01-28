@@ -60,7 +60,7 @@ namespace DistributedHardware {
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "ComponentManager"
 
-IMPLEMENT_SINGLE_INSTANCE(ComponentManager);
+FWK_IMPLEMENT_SINGLE_INSTANCE(ComponentManager);
 
 namespace {
     constexpr int32_t ENABLE_RETRY_MAX_TIMES = 3;
