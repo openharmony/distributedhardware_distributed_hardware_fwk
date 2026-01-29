@@ -52,6 +52,7 @@ public:
     void ActiveSyncDataByNetworkId(const std::string &networkId);
     void DelaySaStatusTask();
     int32_t DestroySaStatusHandler();
+    void SetSaToCritical();
 private:
     bool Init();
     void ExitDHFWK();
@@ -66,6 +67,7 @@ private:
 
     std::shared_ptr<AppExecFwk::EventHandler> saStatusHandler_;
     std::mutex saStatusMutex_;
+    std::mutex setSaStatusOperateMutex_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
