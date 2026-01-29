@@ -44,7 +44,8 @@ public:
      */
     void TriggerReqFullDHCaps(const std::string &remoteNetworkId);
     void GetAndSendLocalFullCaps(const std::string &reqNetworkId, bool isSyncMeta);
-    FullCapsRsp ParseAndSaveRemoteDHCaps(const std::string &remoteCaps, bool isSyncMeta);
+    FullCapsRsp ParseAndSaveRemoteDHCaps(const std::string &remoteCaps, bool isSyncMeta,
+        const std::string &realNetworkId);
     std::string GetLocalFullMetaCapsInfo(bool isSyncMeta);
     std::string GetLocalFullCapsInfo(bool isSyncMeta);
 
@@ -56,7 +57,7 @@ public:
         void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
     private:
         void ProcessFullCapsRsp(const FullCapsRsp &capsRsp, const std::shared_ptr<DHCommTool> dhCommToolPtr,
-            bool isSyncMeta);
+            bool isSyncMeta, const std::string &realNetworkId);
         std::weak_ptr<DHCommTool> dhCommToolWPtr_;
     };
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> GetEventHandler();
@@ -65,15 +66,14 @@ public:
 private:
     bool CheckCallerAclRight(const std::string &localNetworkId, const std::string &remoteNetworkId);
     bool GetOsAccountInfo();
-
+    std::string SplitString(const std::string &capInfoPrefix);
+    bool IsSaveRemoteDHCaps(const FullCapsRsp &capsRsp, bool isSyncMeta, const std::string &realNetworkId);
 private:
     std::shared_ptr<DHTransport> dhTransportPtr_;
     std::shared_ptr<DHCommTool::DHCommToolEventHandler> eventHandler_;
     std::string accountId_;
     int32_t userId_ = -1;
     uint64_t tokenId_ = 0;
-    std::map<std::string, std::string> syncRequests_;
-    std::mutex syncRequestsMutex_;
 };
 } // DistributedHardware
 } // OHOS

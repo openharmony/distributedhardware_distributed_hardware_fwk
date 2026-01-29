@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -254,7 +254,7 @@ HWTEST_F(DhTransportTest, GetRemoteNetworkIdBySocketId_001, TestSize.Level1)
     dhTransportTest_->ClearDeviceSocketOpened(remoteDevId);
 
     std::string payload = "";
-    dhTransportTest_->HandleReceiveMessage(payload);
+    dhTransportTest_->HandleReceiveMessage(payload, networkid);
 
     payload = "payload_test";
     cJSON *jsonObj = cJSON_CreateObject();
@@ -267,7 +267,7 @@ HWTEST_F(DhTransportTest, GetRemoteNetworkIdBySocketId_001, TestSize.Level1)
         return;
     }
     std::string jsonStr(cjson);
-    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(jsonStr));
+    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(jsonStr, networkid));
 }
 
 HWTEST_F(DhTransportTest, ToJson_CommMsg_001, TestSize.Level1)
@@ -515,13 +515,13 @@ HWTEST_F(DhTransportTest, HandleReceiveMessage_001, TestSize.Level1)
     uint64_t tokenId = 1;
     std::string networkId = "123456";
     std::string accountId = "111";
-    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId, tokenId, networkId, accountId, true);
+    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId, tokenId, networkId, accountId, true, networkId);
     std::string payload = GetCommMsgString(commMsg);
     std::string compressedPayLoad = Compress(payload);
     std::vector<int32_t> userIds;
     EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
         .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(INVALID_USER_ID)));
-    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad));
+    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad, networkId));
 }
 
 HWTEST_F(DhTransportTest, HandleReceiveMessage_002, TestSize.Level1)
@@ -531,12 +531,12 @@ HWTEST_F(DhTransportTest, HandleReceiveMessage_002, TestSize.Level1)
     uint64_t tokenId = 1;
     std::string networkId = "123456";
     std::string accountId = "111";
-    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId, tokenId, networkId, accountId, true);
+    CommMsg commMsg(DH_COMM_REQ_FULL_CAPS, userId, tokenId, networkId, accountId, true, networkId);
     std::string payload = GetCommMsgString(commMsg);
     std::string compressedPayLoad = Compress(payload);
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     dhTransportTest_->dhCommToolWPtr_ = dhCommTool;
-    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad));
+    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad, networkId));
 }
 
 HWTEST_F(DhTransportTest, HandleReceiveMessage_003, TestSize.Level1)
@@ -546,10 +546,10 @@ HWTEST_F(DhTransportTest, HandleReceiveMessage_003, TestSize.Level1)
     uint64_t tokenId = 1;
     std::string networkId = "123456";
     std::string accountId = "111";
-    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, userId, tokenId, networkId, accountId, true);
+    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, userId, tokenId, networkId, accountId, true, networkId);
     std::string payload = GetCommMsgString(commMsg);
     std::string compressedPayLoad = Compress(payload);
-    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad));
+    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad, networkId));
 }
 
 HWTEST_F(DhTransportTest, HandleReceiveMessage_004, TestSize.Level1)
@@ -559,13 +559,13 @@ HWTEST_F(DhTransportTest, HandleReceiveMessage_004, TestSize.Level1)
     uint64_t tokenId = 1;
     std::string networkId = "123456";
     std::string accountId = "111";
-    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, userId, tokenId, networkId, accountId, true);
+    CommMsg commMsg(DH_COMM_RSP_FULL_CAPS, userId, tokenId, networkId, accountId, true, networkId);
     std::string payload = GetCommMsgString(commMsg);
     std::string compressedPayLoad = Compress(payload);
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     dhTransportTest_->dhCommToolWPtr_ = dhCommTool;
     dhCommTool->Init();
-    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad));
+    ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad, networkId));
     dhCommTool->UnInit();
 }
 }

@@ -1602,17 +1602,8 @@ HWTEST_F(ComponentManagerTest, OnGetDescriptors_002, TestSize.Level0)
     descriptor.id = "camera_1";
     descriptor.dhType = DHType::CAMERA;
     descriptors.push_back(descriptor);
-    ComponentManager::GetInstance().syncDeviceInfoMap_[realNetworkId] = {enableStep, nullptr};
+    ComponentManager::GetInstance().syncDeviceInfoMap_[realNetworkId] = {enableStep, {nullptr}};
     ComponentManager::GetInstance().OnGetDescriptors("realNetworkId_test", descriptors);
-    EXPECT_FALSE(ComponentManager::GetInstance().syncDeviceInfoMap_.empty());
-}
-
-HWTEST_F(ComponentManagerTest, OnGetDescriptorsError_001, TestSize.Level0)
-{
-    std::string realNetworkId = "realNetworkId_1";
-    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
-    ComponentManager::GetInstance().syncDeviceInfoMap_[realNetworkId] = {enableStep, nullptr};
-    ComponentManager::GetInstance().OnGetDescriptorsError();
     EXPECT_FALSE(ComponentManager::GetInstance().syncDeviceInfoMap_.empty());
 }
 
@@ -1691,6 +1682,25 @@ HWTEST_F(ComponentManagerTest, IsSinkActiveEnabled_001, testing::ext::TestSize.L
     ComponentManager::GetInstance().dhSinkStatus_.clear();
     auto ret = ComponentManager::GetInstance().IsSinkActiveEnabled();
     EXPECT_EQ(ret, false);
+}
+
+HWTEST_F(ComponentManagerTest, HandleSyncDataTimeout_001, TestSize.Level0)
+{
+    ComponentManager::GetInstance().syncDeviceInfoMap_.clear();
+    std::string realNetworkId = "realNetworkId_1";
+    ComponentManager::GetInstance().HandleSyncDataTimeout(realNetworkId);
+    auto ret = ComponentManager::GetInstance().IsRequestSyncData(realNetworkId);
+    EXPECT_EQ(ret, false);
+}
+
+HWTEST_F(ComponentManagerTest, HandleSyncDataTimeout_002, testing::ext::TestSize.Level1)
+{
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    std::string realNetworkId = "networkid_123";
+    ComponentManager::GetInstance().syncDeviceInfoMap_[realNetworkId] = {enableStep, {nullptr}};
+    auto ret = ComponentManager::GetInstance().IsRequestSyncData(realNetworkId);
+    ComponentManager::GetInstance().HandleSyncDataTimeout(realNetworkId);
+    EXPECT_EQ(ret, true);
 }
 } // namespace DistributedHardware
 } // namespace OHOS

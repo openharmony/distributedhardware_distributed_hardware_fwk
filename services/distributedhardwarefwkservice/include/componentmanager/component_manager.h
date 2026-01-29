@@ -123,6 +123,7 @@ public:
     sptr<IAuthorizationResultCallback> GetAccessListener(const DHType dhType, const std::string &pkgName);
     bool IsSourceEnabled();
     bool IsSinkActiveEnabled();
+    bool IsRequestSyncData(const std::string &networkId);
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
     public:
         ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner);
@@ -300,7 +301,7 @@ private:
     void RecoverAutoEnableSource(DHType dhType);
     void RecoverActiveEnableSink(DHType dhType);
     void RecoverActiveEnableSource(DHType dhType);
-    void OnGetDescriptorsError();
+    void HandleSyncDataTimeout(const std::string &realNetworkId);
 private:
     std::map<DHType, IDistributedHardwareSource*> compSource_;
     std::shared_mutex compSourceMutex_;
@@ -332,7 +333,7 @@ private:
     std::mutex dhSinkStatusMtx_;
     std::map<DHType, DHSourceStatus> dhSourceStatus_;
     std::mutex dhSourceStatusMtx_;
-    std::map<std::string, std::pair<EnableStep, sptr<IGetDhDescriptorsCallback>>> syncDeviceInfoMap_;
+    std::map<std::string, std::pair<EnableStep, std::vector<sptr<IGetDhDescriptorsCallback>>>> syncDeviceInfoMap_;
     std::mutex syncDeviceInfoMapMutex_;
 
     WorkModeParam workModeParam_;

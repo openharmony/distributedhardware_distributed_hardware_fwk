@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -110,7 +110,7 @@ void DHTransport::OnBytesReceived(int32_t socketId, const void *data, uint32_t d
 
     std::string message(buf, buf + dataLen);
     DHLOGI("Receive message size: %{public}" PRIu32, dataLen);
-    HandleReceiveMessage(message);
+    HandleReceiveMessage(message, remoteNeworkId);
     free(buf);
     buf = nullptr;
     return;
@@ -165,7 +165,7 @@ bool DHTransport::CheckCalleeAclRight(const std::shared_ptr<CommMsg> commMsg)
     return DeviceManager::GetInstance().CheckSinkAccessControl(dmSrcCaller, dmDstCallee);
 }
 
-void DHTransport::HandleReceiveMessage(const std::string &payload)
+void DHTransport::HandleReceiveMessage(const std::string &payload, const std::string &remoteNeworkId)
 {
     if (!IsMessageLengthValid(payload)) {
         return;
@@ -186,6 +186,7 @@ void DHTransport::HandleReceiveMessage(const std::string &payload)
             return;
         }
     }
+    commMsg->realNetworkId = remoteNeworkId;
     DHLOGI("Receive DH msg, code: %{public}d, msg: %{public}s", commMsg->code, GetAnonyString(commMsg->msg).c_str());
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(commMsg->code, commMsg);
     std::shared_ptr<DHCommTool> dhCommToolSPtr = dhCommToolWPtr_.lock();

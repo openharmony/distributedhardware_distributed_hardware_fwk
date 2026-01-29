@@ -21,6 +21,7 @@
 
 #include "capability_info.h"
 #include "capability_info_manager.h"
+#include "component_manager.h"
 #include "dh_transport_obj.h"
 #include "dh_utils_tool.h"
 #include "dh_comm_tool.h"
@@ -153,8 +154,9 @@ HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_001, TestSize.Level1)
 {
     ASSERT_TRUE(dhCommToolTest_ != nullptr);
     std::string remoteCaps = "";
+    std::string realNetworkId = "";
     bool isSyncMeta = false;
-    FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta);
+    FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta, realNetworkId);
     EXPECT_EQ("", ret.networkId);
 }
 
@@ -162,12 +164,14 @@ HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_002, TestSize.Level1)
 {
     ASSERT_TRUE(dhCommToolTest_ != nullptr);
     std::string remoteCaps = "remoteCaps_test";
+    std::string realNetworkId = "";
     bool isSyncMeta = false;
-    FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta);
+    FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta, realNetworkId);
     EXPECT_EQ("", ret.networkId);
 
     isSyncMeta = true;
-    ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta);
+    realNetworkId = "networkId_123";
+    ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta, realNetworkId);
     EXPECT_EQ("", ret.networkId);
 }
 
@@ -177,6 +181,7 @@ HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_003, TestSize.Level1)
     cJSON *jsonObject = cJSON_CreateObject();
     ASSERT_TRUE(jsonObject != nullptr);
     std::string networkId = "123456";
+    std::string realNetworkId = "networkId_123";
     bool isSyncMeta = false;
     cJSON_AddStringToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, networkId.c_str());
     char* cjson = cJSON_PrintUnformatted(jsonObject);
@@ -185,31 +190,7 @@ HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_003, TestSize.Level1)
         return;
     }
     std::string remoteCaps(cjson);
-    std::string requestId = "111";
-    dhCommToolTest_->syncRequests_[networkId] = requestId;
-    FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta);
-    EXPECT_EQ(networkId, ret.networkId);
-    cJSON_Delete(jsonObject);
-}
-
-HWTEST_F(DhCommToolTest, ParseAndSaveRemoteDHCaps_004, TestSize.Level1)
-{
-    ASSERT_TRUE(dhCommToolTest_ != nullptr);
-    cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
-    std::string networkId = "123456";
-    bool isSyncMeta = false;
-    cJSON_AddStringToObject(jsonObject, CAPS_RSP_NETWORKID_KEY, networkId.c_str());
-    char* cjson = cJSON_PrintUnformatted(jsonObject);
-    if (cjson == nullptr) {
-        cJSON_Delete(jsonObject);
-        return;
-    }
-    std::string remoteCaps(cjson);
-    std::string invalidId = "invalidId";
-    std::string requestId = "111";
-    dhCommToolTest_->syncRequests_[invalidId] = requestId;
-    FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta);
+    FullCapsRsp ret = dhCommToolTest_->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta, realNetworkId);
     EXPECT_EQ("", ret.networkId);
     cJSON_Delete(jsonObject);
 }
@@ -250,14 +231,14 @@ HWTEST_F(DhCommToolTest, ProcessFullCapsRsp_001, TestSize.Level1)
     std::string networkId = "";
     bool isSyncMeta = false;
     FullCapsRsp capsRsp(networkId, caps, metaCaps);
-    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp, dhCommToolTest_, isSyncMeta));
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp, dhCommToolTest_, isSyncMeta, networkId));
 
     networkId = "networkId_test";
     FullCapsRsp capsRsp1(networkId, caps, metaCaps);
-    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp1, dhCommToolTest_, isSyncMeta));
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp1, dhCommToolTest_, isSyncMeta, networkId));
 
     std::shared_ptr<DHCommTool> dhCommToolPtr = nullptr;
-    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp1, dhCommToolPtr, isSyncMeta));
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp1, dhCommToolPtr, isSyncMeta, networkId));
 }
 
 HWTEST_F(DhCommToolTest, ProcessFullCapsRsp_002, TestSize.Level1)
@@ -281,7 +262,7 @@ HWTEST_F(DhCommToolTest, ProcessFullCapsRsp_002, TestSize.Level1)
     caps.push_back(capInfo1);
     caps.push_back(capInfo2);
     FullCapsRsp capsRsp1(networkId, caps, metaCaps);
-    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp1, dhCommToolTest_, isSyncMeta));
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp1, dhCommToolTest_, isSyncMeta, networkId));
 
     isSyncMeta = true;
     CompVersion compVersion;
@@ -293,7 +274,7 @@ HWTEST_F(DhCommToolTest, ProcessFullCapsRsp_002, TestSize.Level1)
     metaCaps.push_back(metaCapInfo1);
     metaCaps.push_back(metaCapInfo2);
     FullCapsRsp capsRsp2(networkId, caps, metaCaps);
-    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp2, dhCommToolTest_, isSyncMeta));
+    ASSERT_NO_FATAL_FAILURE(eventHandler.ProcessFullCapsRsp(capsRsp2, dhCommToolTest_, isSyncMeta, networkId));
 }
 
 HWTEST_F(DhCommToolTest, CheckCallerAclRight_001, TestSize.Level1)
@@ -376,6 +357,18 @@ HWTEST_F(DhCommToolTest, GetOsAccountInfo_004, TestSize.Level1)
         .WillOnce(DoAll(SetArgReferee<0>(osAccountInfo), Return(DH_FWK_SUCCESS)));
     auto ret = dhCommToolTest_->GetOsAccountInfo();
     EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(DhCommToolTest, SplitString_001, TestSize.Level1)
+{
+    ASSERT_TRUE(dhCommToolTest_ != nullptr);
+    std::string capInfoPrefix = "";
+    auto ret = dhCommToolTest_->SplitString(capInfoPrefix);
+    EXPECT_EQ("", ret);
+
+    capInfoPrefix = "123###camera_1";
+    ret = dhCommToolTest_->SplitString(capInfoPrefix);
+    EXPECT_EQ("123", ret);
 }
 }
 }

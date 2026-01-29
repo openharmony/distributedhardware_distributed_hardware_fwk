@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -72,8 +72,9 @@ void DhTransportParseAndSaveRemoteDHCapsFuzzTest(const uint8_t* data, size_t siz
     bool isSyncMeta = true;
     FuzzedDataProvider fdp(data, size);
     std::string remoteCaps = fdp.ConsumeRandomLengthString();
+    std::string realNetworkId = fdp.ConsumeRandomLengthString();
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
-    dhCommTool->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta);
+    dhCommTool->ParseAndSaveRemoteDHCaps(remoteCaps, isSyncMeta, realNetworkId);
 }
 
 void DHCommToolEventHandlerProcessEventFuzzTest(const uint8_t* data, size_t size)
@@ -104,21 +105,34 @@ void DHCommToolEventHandlerProcessFullCapsRspFuzzTest(const uint8_t* data, size_
 
     bool isSyncMeta = true;
     FullCapsRsp capsRsp;
-    handler.ProcessFullCapsRsp(capsRsp, commTool, isSyncMeta);
+    std::string realNetworkId = "";
+    handler.ProcessFullCapsRsp(capsRsp, commTool, isSyncMeta, realNetworkId);
 
     FuzzedDataProvider fdp(data, size);
-    capsRsp.networkId = fdp.ConsumeRandomLengthString();
-    handler.ProcessFullCapsRsp(capsRsp, commTool, isSyncMeta);
+    realNetworkId = fdp.ConsumeRandomLengthString();
+    handler.ProcessFullCapsRsp(capsRsp, commTool, isSyncMeta, realNetworkId);
 
     auto capInfo = std::make_shared<CapabilityInfo>();
     capsRsp.caps.push_back(capInfo);
-    handler.ProcessFullCapsRsp(capsRsp, nullptr, isSyncMeta);
+    handler.ProcessFullCapsRsp(capsRsp, nullptr, isSyncMeta, realNetworkId);
 
     auto commToolNoTrans = std::make_shared<DHCommTool>();
-    handler.ProcessFullCapsRsp(capsRsp, commToolNoTrans, isSyncMeta);
+    handler.ProcessFullCapsRsp(capsRsp, commToolNoTrans, isSyncMeta, realNetworkId);
 
     commTool->Init();
-    handler.ProcessFullCapsRsp(capsRsp, commTool, isSyncMeta);
+    handler.ProcessFullCapsRsp(capsRsp, commTool, isSyncMeta, realNetworkId);
+}
+
+void SplitStringFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    FuzzedDataProvider fdp(data, size);
+    std::string realNetworkId = fdp.ConsumeRandomLengthString();
+    std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
+    dhCommTool->SplitString(realNetworkId);
 }
 }
 }
@@ -133,6 +147,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::DhTransportParseAndSaveRemoteDHCapsFuzzTest(data, size);
     OHOS::DistributedHardware::DHCommToolEventHandlerProcessEventFuzzTest(data, size);
     OHOS::DistributedHardware::DHCommToolEventHandlerProcessFullCapsRspFuzzTest(data, size);
+    OHOS::DistributedHardware::SplitStringFuzzTest(data, size);
     return 0;
 }
 
