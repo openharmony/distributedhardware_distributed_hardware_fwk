@@ -24,6 +24,7 @@ group("fuzztest") {
     "dhcommtool_fuzzer:fuzztest",
     "dhtransport_fuzzer:fuzztest",
     "distributedfwkservices_fuzzer:fuzztest",
+    "distributedfwkstub_fuzzer:fuzztest",
     "metainfomgr_fuzzer:fuzztest",
     "publisher_fuzzer:fuzztest",
     "publisheritem_fuzzer:fuzztest",
