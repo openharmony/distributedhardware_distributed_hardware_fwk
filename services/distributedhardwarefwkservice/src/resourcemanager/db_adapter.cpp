@@ -307,6 +307,8 @@ int32_t DBAdapter::GetDataByKeyPrefix(const std::string &keyPrefix, std::vector<
         DHLOGE("AllEntries size: %{public}zu is invalid, maybe empty or too large.", allEntries.size());
         return ERR_DH_FWK_RESOURCE_RES_DB_DATA_INVALID;
     }
+    DHLOGI("Get data by key prefix: %{public}s success, allEntries size: %{public}zu.",
+        GetAnonyString(keyPrefix).c_str(), allEntries.size());
     for (const auto& item : allEntries) {
         values.push_back(item.value.ToString());
     }

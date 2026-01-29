@@ -183,6 +183,7 @@ int32_t MetaInfoManager::SyncMetaInfoFromDB(const std::string &udidHash)
             DHLOGE("Get capability ptr by value failed");
             continue;
         }
+        DHLOGI("Save metaCapInfo to local memory, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
         globalMetaInfoMap_[metaCapInfo->GetKey()] = metaCapInfo;
     }
     return DH_FWK_SUCCESS;
@@ -220,6 +221,7 @@ int32_t MetaInfoManager::SyncRemoteMetaInfos()
                 DHLOGE("device MetaInfo not need sync from db");
                 continue;
             }
+            DHLOGI("Save metaCapInfo to local memory, Key: %{public}s", metaCapInfo->GetAnonymousKey().c_str());
             globalMetaInfoMap_[metaCapInfo->GetKey()] = metaCapInfo;
         }
     }
