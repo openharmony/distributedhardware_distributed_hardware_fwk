@@ -27,6 +27,8 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+constexpr uint64_t NEW_TAG = 0xD004100;
+
 AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t size)
 {
     int32_t fd = AshmemCreate(name.c_str(), size);
@@ -34,26 +36,27 @@ AVTransSharedMemory CreateAVTransSharedMemory(const std::string &name, size_t si
         AVTRANS_LOGE("create av trans shared memory failed, name=%{public}s, fd=%{public}" PRId32, name.c_str(), fd);
         return AVTransSharedMemory{0, 0, name, nullptr};
     }
+    fdsan_exchange_owner_tag(fd, 0, NEW_TAG);
 
     unsigned int prot = PROT_READ | PROT_WRITE;
     int result = AshmemSetProt(fd, static_cast<int>(prot));
     if (result < 0) {
         AVTRANS_LOGE("AshmemSetProt failed, name=%{public}s, fd=%{public}" PRId32, name.c_str(), fd);
-        (void)::close(fd);
+        (void)::fdsan_close_with_tag(fd, NEW_TAG);
         return AVTransSharedMemory{0, 0, name, nullptr};
     }
 
     void *addr = ::mmap(nullptr, size, static_cast<int>(prot), MAP_SHARED, fd, 0);
     if (addr == MAP_FAILED) {
         AVTRANS_LOGE("shared memory mmap failed, name=%{public}s, fd=%{public}" PRId32, name.c_str(), fd);
-        (void)::close(fd);
+        (void)::fdsan_close_with_tag(fd, NEW_TAG);
         return AVTransSharedMemory{0, 0, name, nullptr};
     }
 
     uint8_t *base = reinterpret_cast<uint8_t*>(addr);
     if (memset_s(base, size, INVALID_VALUE_FALG, size) != EOK) {
         AVTRANS_LOGE("memset_s failed.");
-        (void)::close(fd);
+        (void)::fdsan_close_with_tag(fd, NEW_TAG);
         (void)::munmap(addr, size);
         return AVTransSharedMemory{0, 0, name, nullptr};
     }
@@ -70,8 +73,9 @@ void CloseAVTransSharedMemory(AVTransSharedMemory &memory) noexcept
         AVTRANS_LOGE("invalid input shared memory");
         return;
     }
+    fdsan_exchange_owner_tag(memory.fd, 0, NEW_TAG);
     if (memory.fd > 0) {
-        (void)::close(memory.fd);
+        (void)::fdsan_close_with_tag(memory.fd, NEW_TAG);
         memory.fd = -1;
     }
     if (memory.addr != nullptr) {
