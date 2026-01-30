@@ -52,22 +52,23 @@ void CapabilityInfoManagerFuzzTest(const uint8_t* data, size_t size)
         return;
     }
 
+    FuzzedDataProvider fdp(data, size);
     DistributedKv::Entry insert;
     DistributedKv::Entry update;
     DistributedKv::Entry del;
-    insert.key = std::string(reinterpret_cast<const char*>(data), size);
-    update.key = std::string(reinterpret_cast<const char*>(data), size);
-    del.key = std::string(reinterpret_cast<const char*>(data), size);
-    insert.value = std::string(reinterpret_cast<const char*>(data), size);
-    update.value = std::string(reinterpret_cast<const char*>(data), size);
-    del.value = std::string(reinterpret_cast<const char*>(data), size);
+    insert.key = fdp.ConsumeRandomLengthString();
+    update.key = fdp.ConsumeRandomLengthString();
+    del.key = fdp.ConsumeRandomLengthString();
+    insert.value = fdp.ConsumeRandomLengthString();
+    update.value = fdp.ConsumeRandomLengthString();
+    del.value = fdp.ConsumeRandomLengthString();
     std::vector<DistributedKv::Entry> inserts;
     std::vector<DistributedKv::Entry> updates;
     std::vector<DistributedKv::Entry> deleteds;
     inserts.push_back(insert);
     updates.push_back(update);
     deleteds.push_back(del);
-    std::string deviceId(reinterpret_cast<const char*>(data), size);
+    std::string deviceId = fdp.ConsumeRandomLengthString();
 
     DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds),
         deviceId, true);
@@ -122,22 +123,23 @@ void AddCapabilityInMemFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
+    FuzzedDataProvider fdp(data, size);
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos;
     CapabilityInfoManager::GetInstance()->AddCapabilityInMem(resInfos);
 
-    std::string dhId1(reinterpret_cast<const char*>(data), size);
-    std::string deviceId1(reinterpret_cast<const char*>(data), size);
-    std::string deviceName1(reinterpret_cast<const char*>(data), size);
-    std::string dhAttrs1(reinterpret_cast<const char*>(data), size);
-    std::string dhSubtype1(reinterpret_cast<const char*>(data), size);
+    std::string dhId1 = fdp.ConsumeRandomLengthString();
+    std::string deviceId1 = fdp.ConsumeRandomLengthString();
+    std::string deviceName1 = fdp.ConsumeRandomLengthString();
+    std::string dhAttrs1 = fdp.ConsumeRandomLengthString();
+    std::string dhSubtype1 = fdp.ConsumeRandomLengthString();
     std::shared_ptr<CapabilityInfo> capInfo1 = std::make_shared<CapabilityInfo>(
         dhId1, deviceId1, deviceName1, TEST_DEV_TYPE_PAD, DHType::AUDIO, dhAttrs1, dhSubtype1);
 
-    std::string dhId2(reinterpret_cast<const char*>(data), size);
-    std::string deviceId2(reinterpret_cast<const char*>(data), size);
-    std::string deviceName2(reinterpret_cast<const char*>(data), size);
-    std::string dhAttrs2(reinterpret_cast<const char*>(data), size);
-    std::string dhSubtype2(reinterpret_cast<const char*>(data), size);
+    std::string dhId2 = fdp.ConsumeRandomLengthString();
+    std::string deviceId2 = fdp.ConsumeRandomLengthString();
+    std::string deviceName2 = fdp.ConsumeRandomLengthString();
+    std::string dhAttrs2 = fdp.ConsumeRandomLengthString();
+    std::string dhSubtype2 = fdp.ConsumeRandomLengthString();
     std::shared_ptr<CapabilityInfo> capInfo2 = std::make_shared<CapabilityInfo>(
         dhId2, deviceId2, deviceName2, TEST_DEV_TYPE_PAD, DHType::CAMERA, dhAttrs2, dhSubtype2);
     std::vector<std::shared_ptr<CapabilityInfo>> resInfos1 { capInfo1, capInfo2 };
@@ -167,9 +169,10 @@ void CapabilityInfoManagerOnChangeInsertFuzzTest(const uint8_t* data, size_t siz
     if (insertJson == nullptr) {
         return;
     }
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    std::string udId(reinterpret_cast<const char*>(data), size);
-    std::string uuId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
+    std::string udId = fdp.ConsumeRandomLengthString();
+    std::string uuId = fdp.ConsumeRandomLengthString();
     DHContext::GetInstance().AddOnlineDevice(udId, uuId, networkId);
     std::string deviceId = Sha256(uuId);
     cJSON_AddStringToObject(insertJson, DH_ID, "111111");
@@ -182,7 +185,7 @@ void CapabilityInfoManagerOnChangeInsertFuzzTest(const uint8_t* data, size_t siz
     }
     std::string jsonStr(cjson);
     DistributedKv::Entry insert;
-    insert.key = std::string(reinterpret_cast<const char*>(data), size);
+    insert.key = fdp.ConsumeRandomLengthString();
     insert.value = jsonStr;
 
     DistributedKv::Entry update;
@@ -211,9 +214,10 @@ void CapabilityInfoManagerOnChangeUpdateFuzzTest(const uint8_t* data, size_t siz
     if (updateJson == nullptr) {
         return;
     }
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    std::string udId(reinterpret_cast<const char*>(data), size);
-    std::string uuId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
+    std::string udId = fdp.ConsumeRandomLengthString();
+    std::string uuId = fdp.ConsumeRandomLengthString();
     DHContext::GetInstance().AddOnlineDevice(udId, uuId, networkId);
     std::string deviceId = Sha256(uuId);
     cJSON_AddStringToObject(updateJson, DH_ID, "222222");
@@ -226,7 +230,7 @@ void CapabilityInfoManagerOnChangeUpdateFuzzTest(const uint8_t* data, size_t siz
     }
     std::string jsonStr(cjson);
     DistributedKv::Entry update;
-    update.key = std::string(reinterpret_cast<const char*>(data), size);
+    update.key = fdp.ConsumeRandomLengthString();
     update.value = jsonStr;
 
     DistributedKv::Entry insert;
@@ -255,9 +259,10 @@ void CapabilityInfoManagerOnChangeDeleteFuzzTest(const uint8_t* data, size_t siz
     if (deleteJson == nullptr) {
         return;
     }
-    std::string networkId(reinterpret_cast<const char*>(data), size);
-    std::string udId(reinterpret_cast<const char*>(data), size);
-    std::string uuId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string networkId = fdp.ConsumeRandomLengthString();
+    std::string udId = fdp.ConsumeRandomLengthString();
+    std::string uuId = fdp.ConsumeRandomLengthString();
     DHContext::GetInstance().AddOnlineDevice(udId, uuId, networkId);
     std::string deviceId = Sha256(uuId);
     cJSON_AddStringToObject(deleteJson, DH_ID, "333333");
@@ -270,7 +275,7 @@ void CapabilityInfoManagerOnChangeDeleteFuzzTest(const uint8_t* data, size_t siz
     }
     std::string jsonStr(cjson);
     DistributedKv::Entry del;
-    del.key = std::string(reinterpret_cast<const char*>(data), size);
+    del.key = fdp.ConsumeRandomLengthString();
     del.value = jsonStr;
 
     DistributedKv::Entry insert;
@@ -296,8 +301,9 @@ void HasCapabilityFuzzTest(const uint8_t* data, size_t size)
         return;
     }
 
-    std::string dhId(reinterpret_cast<const char*>(data), size);
-    std::string deviceId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string dhId = fdp.ConsumeRandomLengthString();
+    std::string deviceId = fdp.ConsumeRandomLengthString();
 
     CapabilityInfoManager::GetInstance()->HasCapability(deviceId, dhId);
 }
