@@ -571,12 +571,12 @@ Status AudioDecoderFilter::ProcessData(std::shared_ptr<Media::AVBuffer> audioDat
         ptsMap_[frameInIndex_] = pts;
         frameInIndex_++;
         AVTRANS_LOGI("frameInIndex_: %{public}" PRIu64 " pts: %{public}" PRId64, frameInIndex_, pts);
-    }
-    if (frameInIndex_ == INDEX_FLAG) {
-        audioData->meta_->GetData(Media::Tag::USER_FRAME_PTS, pts);
-        ptsMap_[INDEX_FLAG] = pts;
-        AVTRANS_LOGI("the fifth special process pts: %{public}" PRId64, pts);
-        frameInIndex_ = 0;
+        if (frameInIndex_ == INDEX_FLAG) {
+            audioData->meta_->GetData(Media::Tag::USER_FRAME_PTS, pts);
+            ptsMap_[INDEX_FLAG] = pts;
+            AVTRANS_LOGI("the fifth special process pts: %{public}" PRId64, pts);
+            frameInIndex_ = 0;
+        }
     }
     codecMem->buffer_->pts_ = pts;
     codecMem->buffer_->meta_->SetData(Media::Tag::USER_FRAME_PTS, pts);
@@ -651,11 +651,13 @@ void AudioDecoderFilter::OnDecOutputBufferAvailable(uint32_t index, OH_AVBuffer 
     outBuffer->pts_ = pts;
     meta->SetData(Media::Tag::USER_FRAME_PTS, pts);
     AVTRANS_LOGI("after AudioDecoderFilter index %{public}" PRIu64", pts: %{public}" PRId64, frameOutIndex_, pts);
-
-    if (frameOutIndex_ == INDEX_FLAG) {
-        meta->SetData(Media::Tag::USER_FRAME_PTS, ptsMap_[INDEX_FLAG]);
-        AVTRANS_LOGI("the fifth special process pts: %{public}" PRId64, ptsMap_[INDEX_FLAG]);
-        frameOutIndex_ = 0;
+    {
+        std::lock_guard<std::mutex> ptsLock(ptsMutex_);
+        if (frameOutIndex_ == INDEX_FLAG && ptsMap_.find(INDEX_FLAG) != ptsMap_.end()) {
+            meta->SetData(Media::Tag::USER_FRAME_PTS, ptsMap_[INDEX_FLAG]);
+            AVTRANS_LOGI("the fifth special process pts: %{public}" PRId64, ptsMap_[INDEX_FLAG]);
+            frameOutIndex_ = 0;
+        }
     }
     outBuffer->memory_->Write(buffer->buffer_->memory_->GetAddr(), buffer->buffer_->memory_->GetSize(), 0);
     outputProducer_->PushBuffer(outBuffer, true);
