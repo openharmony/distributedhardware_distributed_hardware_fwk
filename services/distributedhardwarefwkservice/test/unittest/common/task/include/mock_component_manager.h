@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,8 @@ namespace OHOS {
 namespace DistributedHardware {
 class IComponentManager {
 public:
-    virtual int32_t CheckDemandStart(const std::string &uuid, const DHType dhType, bool &enableSource) = 0;
+    virtual int32_t CheckDemandStart(const std::string &udid, const std::string &uuid, const DHType dhType,
+        bool &enableSource) = 0;
     virtual int32_t ForceDisableSink(const DHDescriptor &dhDescriptor) = 0;
     virtual int32_t ForceDisableSource(const std::string &networkId, const DHDescriptor &dhDescriptor) = 0;
     virtual int32_t EnableSink(const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid) = 0;
@@ -45,7 +46,7 @@ public:
 class MockComponentManager : public IComponentManager {
 public:
     virtual ~MockComponentManager() = default;
-    MOCK_METHOD(int32_t, CheckDemandStart, (const std::string&, const DHType, (bool&)));
+    MOCK_METHOD(int32_t, CheckDemandStart, (const std::string&, const std::string&, const DHType, (bool&)));
     MOCK_METHOD(int32_t, ForceDisableSink, (const DHDescriptor&));
     MOCK_METHOD(int32_t, ForceDisableSource, (const std::string&, (const DHDescriptor&)));
     MOCK_METHOD(int32_t, EnableSink, (const DHDescriptor&, int32_t, int32_t));

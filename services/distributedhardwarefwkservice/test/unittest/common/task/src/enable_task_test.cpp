@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -96,7 +96,7 @@ HWTEST_F(EnableTaskTest, RegisterHardware_004, TestSize.Level0)
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
     EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return("udid_test"));
-    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(Return(-1));
+    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _, _)).Times(1).WillRepeatedly(Return(-1));
     auto ret = enableTask->RegisterHardware();
     EXPECT_EQ(-1, ret);
 }
@@ -106,8 +106,8 @@ HWTEST_F(EnableTaskTest, DoAutoEnable_001, TestSize.Level0)
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
     EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return("udid_test"));
-    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(
-        DoAll(SetArgReferee<2>(false), Return(0)));
+    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _, _)).Times(1).WillRepeatedly(
+        DoAll(SetArgReferee<3>(false), Return(0)));
     auto ret = enableTask->DoAutoEnable();
     EXPECT_EQ(ERR_DH_FWK_COMPONENT_NO_NEED_ENABLE, ret);
 }
@@ -117,8 +117,8 @@ HWTEST_F(EnableTaskTest, DoAutoEnable_002, TestSize.Level0)
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
     EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return("udid_test"));
-    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(
-        DoAll(SetArgReferee<2>(true), Return(0)));
+    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _, _)).Times(1).WillRepeatedly(
+        DoAll(SetArgReferee<3>(true), Return(0)));
     EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(-1));
     auto ret = enableTask->DoAutoEnable();
     EXPECT_EQ(-1, ret);
@@ -129,8 +129,8 @@ HWTEST_F(EnableTaskTest, DoAutoEnable_003, TestSize.Level0)
     auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_1.networkId, TASK_PARAM_1.uuid, TASK_PARAM_1.udid,
         TASK_PARAM_1.dhId, TASK_PARAM_1.dhType);
     EXPECT_CALL(*utilTool_, GetLocalUdid()).WillRepeatedly(Return("udid_test"));
-    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _)).Times(1).WillRepeatedly(
-        DoAll(SetArgReferee<2>(true), Return(0)));
+    EXPECT_CALL(*componentManager_, CheckDemandStart(_, _, _, _)).Times(1).WillRepeatedly(
+        DoAll(SetArgReferee<3>(true), Return(0)));
     EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(0));
     auto ret = enableTask->DoAutoEnable();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);

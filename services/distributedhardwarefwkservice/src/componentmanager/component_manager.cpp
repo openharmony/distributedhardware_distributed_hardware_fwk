@@ -1093,13 +1093,14 @@ int32_t ComponentManager::CheckSinkConfigStart(const DHType dhType, bool &enable
     return DH_FWK_SUCCESS;
 }
 
-int32_t ComponentManager::CheckDemandStart(const std::string &uuid, const DHType dhType, bool &enableSource)
+int32_t ComponentManager::CheckDemandStart(const std::string &udid, const std::string &uuid, const DHType dhType,
+    bool &enableSource)
 {
     DHLOGI("CheckDemandStart the dhType: %{public}#X configuration start.", dhType);
     enableSource = false;
 
     CompVersion compVersion;
-    auto ret = GetRemoteVerInfo(compVersion, uuid, dhType);
+    auto ret = GetRemoteVerInfo(compVersion, udid, uuid, dhType);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("GetRemoteVerInfo fail.");
         return ret;
@@ -1352,18 +1353,21 @@ int32_t ComponentManager::CheckIdenticalAccount(const std::string &networkId,
     return DH_FWK_SUCCESS;
 }
 
-int32_t ComponentManager::GetRemoteVerInfo(CompVersion &compVersion, const std::string &uuid, DHType dhType)
+int32_t ComponentManager::GetRemoteVerInfo(CompVersion &compVersion, const std::string &udid, const std::string &uuid,
+    DHType dhType)
 {
     MetaCapInfoMap metaInfoMap;
     MetaInfoManager::GetInstance()->GetMetaDataByDHType(dhType, metaInfoMap);
+    auto udidHash = Sha256(udid);
     for (const auto &metaInfo : metaInfoMap) {
-        if (DHContext::GetInstance().GetUUIDByDeviceId(metaInfo.second->GetDeviceId()) == uuid) {
+        if (DHContext::GetInstance().GetUUIDByDeviceId(metaInfo.second->GetDeviceId()) == uuid ||
+            metaInfo.second->GetUdidHash() == udidHash) {
             compVersion = metaInfo.second->GetCompVersion();
             return DH_FWK_SUCCESS;
         }
     }
-    DHLOGE("The metaInfo corresponding to uuid was not found, uuid =%{public}s, dhType = %{public}#X.",
-        GetAnonyString(uuid).c_str(), dhType);
+    DHLOGE("Not find the corresponding metaInfo, udidhash= %{public}s, uuid= %{public}s, dhType= %{public}#X.",
+        GetAnonyString(udidHash).c_str(), GetAnonyString(uuid).c_str(), dhType);
     return ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND;
 }
 

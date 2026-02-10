@@ -83,7 +83,7 @@ public:
     bool FetchNeedRefreshTask(const std::pair<std::string, std::string> &taskKey, TaskParam &taskParam);
 
     int32_t CheckSinkConfigStart(const DHType dhType, bool &enableSink);
-    int32_t CheckDemandStart(const std::string &uuid, const DHType dhType, bool &enableSource);
+    int32_t CheckDemandStart(const std::string &udid, const std::string &uuid, const DHType dhType, bool &enableSource);
     int32_t RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener, int32_t callingUid, int32_t callingPid);
     int32_t UnregisterDHStatusListener(sptr<IHDSinkStatusListener> listener, int32_t callingUid, int32_t callingPid);
     int32_t RegisterDHStatusListener(const std::string &networkId,
@@ -270,7 +270,7 @@ private:
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
     int32_t CheckSubtypeResource(const std::string &subtype, const std::string &networkId);
 
-    int32_t GetRemoteVerInfo(CompVersion &compVersion, const std::string &uuid, DHType dhType);
+    int32_t GetRemoteVerInfo(CompVersion &compVersion, const std::string &udid, const std::string &uuid, DHType dhType);
     bool IsFeatureMatched(const std::vector<std::string> &sourceFeatureFilters,
         const std::vector<std::string> &sinkSupportedFeatures);
     int32_t EnableSinkInternal(const DHDescriptor &dhDescriptor,

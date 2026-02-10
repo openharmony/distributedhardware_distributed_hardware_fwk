@@ -1406,7 +1406,7 @@ HWTEST_F(ComponentManagerTest, GetDHSourceInstance_002, TestSize.Level1)
 HWTEST_F(ComponentManagerTest, CheckDemandStart_001, TestSize.Level1)
 {
     bool enableSource = false;
-    auto ret = ComponentManager::GetInstance().CheckDemandStart(UUID_TEST, DHType::AUDIO, enableSource);
+    auto ret = ComponentManager::GetInstance().CheckDemandStart(UDID_TEST, UUID_TEST, DHType::AUDIO, enableSource);
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND);
 }
 
