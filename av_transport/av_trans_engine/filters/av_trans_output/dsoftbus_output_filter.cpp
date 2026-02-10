@@ -263,17 +263,19 @@ Status DSoftbusOutputFilter::DoProcessOutputBuffer(int recvArg, bool dropFrame, 
 }
 
 std::string DSoftbusOutputFilter::MarshalAudioMeta(BufferDataType dataType,
-    int64_t pts, int64_t ptsSpecail, uint32_t frameNumber)
+    int64_t pts, int64_t ptsSpecial, uint32_t frameNumber)
 {
     cJSON *metaJson = cJSON_CreateObject();
     if (metaJson == nullptr) {
         return "";
     }
+    std::string ptsStr = std::to_string(pts);
+    std::string ptsSpecialStr = std::to_string(ptsSpecial);
     cJSON_AddNumberToObject(metaJson, META_DATA_TYPE.c_str(), static_cast<uint32_t>(dataType));
     cJSON_AddNumberToObject(metaJson, META_TIMESTAMP.c_str(), pts);
     cJSON_AddNumberToObject(metaJson, META_FRAME_NUMBER.c_str(), frameNumber);
-    cJSON_AddStringToObject(metaJson, META_TIMESTAMP_STRING.c_str(), std::to_string(pts).c_str());
-    cJSON_AddStringToObject(metaJson, META_TIMESTAMP_SPECIAL.c_str(), std::to_string(ptsSpecail).c_str());
+    cJSON_AddStringToObject(metaJson, META_TIMESTAMP_STRING.c_str(), ptsStr.c_str());
+    cJSON_AddStringToObject(metaJson, META_TIMESTAMP_SPECIAL.c_str(), ptsSpecialStr.c_str());
     char *data = cJSON_PrintUnformatted(metaJson);
     if (data == nullptr) {
         cJSON_Delete(metaJson);
@@ -293,15 +295,15 @@ Status DSoftbusOutputFilter::ProcessAndSendBuffer(const std::shared_ptr<Media::A
     }
     auto bufferData = buffer->memory_;
     int64_t pts = 0;
-    int64_t ptsSpecail = 0;
+    int64_t ptsSpecial = 0;
     uint32_t frameNumber = 0;
     pts = buffer->pts_;
     AVTRANS_LOGD("AVBuffer pts is %{public}" PRId64, pts);
-    buffer->meta_->GetData(Media::Tag::USER_FRAME_PTS, ptsSpecail);
+    buffer->meta_->GetData(Media::Tag::USER_FRAME_PTS, ptsSpecial);
     buffer->meta_->GetData(Media::Tag::AUDIO_OBJECT_NUMBER, frameNumber);
     BufferDataType dataType;
     meta_->GetData(Media::Tag::MEDIA_STREAM_TYPE, dataType);
-    auto dataParam = MarshalAudioMeta(dataType, pts, ptsSpecail, frameNumber);
+    auto dataParam = MarshalAudioMeta(dataType, pts, ptsSpecial, frameNumber);
     cJSON *jsonObj = cJSON_CreateObject();
     if (jsonObj == nullptr) {
         return Status::ERROR_NULL_POINTER;
