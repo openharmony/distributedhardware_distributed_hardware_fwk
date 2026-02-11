@@ -30,7 +30,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Her iki cihaz da HarmonyOS NEXT çalıştırıyor olmalıdır",
+            "value":"Her iki cihaz da NEXT çalıştırıyor olmalıdır",
             "attr":{
                 "priority":"LT"
             }
@@ -79,7 +79,7 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"İçeriği tek bir cihazda görüntülemeye veya düzenlemeye başlayın ve ardından aynı HUAWEI Kimliğine giriş yapmış olan yakınlardaki bir cihazda sorunsuz bir şekilde devam edin. Devretme kullanılabilir olduğunda uygulama çekmecesinde bir simge görüntülenir. %s",
+            "value":"İçeriği tek bir cihazda görüntülemeye veya düzenlemeye başlayın ve ardından aynı Kimliğine giriş yapmış olan yakınlardaki bir cihazda sorunsuz bir şekilde devam edin. Devretme kullanılabilir olduğunda uygulama çekmecesinde bir simge görüntülenir. %s",
             "attr":{
                 "priority":"LT"
             }

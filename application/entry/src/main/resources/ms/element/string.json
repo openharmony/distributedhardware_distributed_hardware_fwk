@@ -30,7 +30,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Kedua-dua peranti mestilah menggunakan HarmonyOS NEXT",
+            "value":"Kedua-dua peranti mestilah menggunakan NEXT",
             "attr":{
                 "priority":"LT"
             }
@@ -79,7 +79,7 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"Lihat atau edit kandungan pada satu peranti. Kemudian teruskan pada peranti berdekatan yang dilog masuk ke ID HUAWEI yang sama. Apabila Penyerahan tersedia, ikon akan muncul dalam dok aplikasi. %s",
+            "value":"Lihat atau edit kandungan pada satu peranti. Kemudian teruskan pada peranti berdekatan yang dilog masuk ke ID yang sama. Apabila Penyerahan tersedia, ikon akan muncul dalam dok aplikasi. %s",
             "attr":{
                 "priority":"LT"
             }
