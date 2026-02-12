@@ -30,7 +30,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Kedua perangkat harus menjalankan HarmonyOS NEXT",
+            "value":"Kedua perangkat harus menjalankan NEXT",
             "attr":{
                 "priority":"LT"
             }
@@ -79,7 +79,7 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"Mulai melihat atau mengedit konten di satu perangkat, lalu lanjutkan dengan lancar di perangkat di sekitar yang masuk ke ID HUAWEI yang sama. Ketika Serah Terima tersedia, sebuah ikon akan muncul di dok aplikasi. %s",
+            "value":"Mulai melihat atau mengedit konten di satu perangkat, lalu lanjutkan dengan lancar di perangkat di sekitar yang masuk ke ID yang sama. Ketika Serah Terima tersedia, sebuah ikon akan muncul di dok aplikasi. %s",
             "attr":{
                 "priority":"LT"
             }
