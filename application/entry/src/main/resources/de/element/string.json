@@ -30,7 +30,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Auf beiden Geräten muss HarmonyOS NEXT ausgeführt werden",
+            "value":"Auf beiden Geräten muss NEXT ausgeführt werden",
             "attr":{
                 "priority":"LT"
             }
@@ -79,7 +79,7 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"Beginnen Sie mit dem Anzeigen oder Bearbeiten von Inhalten auf einem Gerät und fahren Sie dann nahtlos auf einem Gerät in der Nähe fort, das bei derselben HUAWEI ID angemeldet ist. Wenn Übergabe verfügbar ist, wird im App-Dock ein Symbol angezeigt. %s",
+            "value":"Beginnen Sie mit dem Anzeigen oder Bearbeiten von Inhalten auf einem Gerät und fahren Sie dann nahtlos auf einem Gerät in der Nähe fort, das bei derselben ID angemeldet ist. Wenn Übergabe verfügbar ist, wird im App-Dock ein Symbol angezeigt. %s",
             "attr":{
                 "priority":"LT"
             }

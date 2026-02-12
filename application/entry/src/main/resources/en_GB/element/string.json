@@ -30,7 +30,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Both devices must be running HarmonyOS NEXT",
+            "value":"Both devices must be running NEXT",
             "attr":{
                 "priority":"translate"
             }
@@ -79,7 +79,7 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"Start viewing or editing content on one device, and then seamlessly continue on a nearby device logged in to the same HUAWEI ID. When Handover is available, an icon will appear in the app dock. %s",
+            "value":"Start viewing or editing content on one device, and then seamlessly continue on a nearby device logged in to the same ID. When Handover is available, an icon will appear in the app dock. %s",
             "attr":{
                 "priority":"translate"
             }
