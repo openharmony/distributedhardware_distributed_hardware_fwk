@@ -783,7 +783,7 @@ int32_t ComponentManager::GetDHSubtypeByDHId(DHSubtype &dhSubtype, const std::st
         dhSubtype = DHSubtype::CAMERA;
     } else {
         dhSubtype = DHSubtype::UNKNOWN;
-        DHLOGE("unable to obtain dhSubtype that matches dhId = %{public}s.", GetAnonyString(dhId).c_str());
+        DHLOGE("unable to obtain dhSubtype that matches dhId, dhId:%{public}s", GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_BAD_OPERATION;
     }
     return DH_FWK_SUCCESS;
