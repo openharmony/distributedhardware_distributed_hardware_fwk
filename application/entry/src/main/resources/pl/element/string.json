@@ -30,7 +30,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Na obu urządzeniach musi być uruchomiony system HarmonyOS NEXT",
+            "value":"Na obu urządzeniach musi być uruchomiony system NEXT",
             "attr":{
                 "priority":"LT"
             }
@@ -79,7 +79,7 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"Zacznij wyświetlać lub edytować zawartość na jednym urządzeniu i bezproblemowo kontynuuj korzystanie z niej na urządzeniu znajdującym się w pobliżu, które jest zalogowane w tym samym ID HUAWEI. Jeśli Przekazywanie jest dostępne, w doku aplikacji pojawi się ikona. %s",
+            "value":"Zacznij wyświetlać lub edytować zawartość na jednym urządzeniu i bezproblemowo kontynuuj korzystanie z niej na urządzeniu znajdującym się w pobliżu, które jest zalogowane w tym samym ID. Jeśli Przekazywanie jest dostępne, w doku aplikacji pojawi się ikona. %s",
             "attr":{
                 "priority":"LT"
             }

@@ -30,7 +30,7 @@
         },
         {
             "name":"update_version_prompt",
-            "value":"Ambos os dispositivos devem ter o HarmonyOS NEXT",
+            "value":"Ambos os dispositivos devem ter o NEXT",
             "attr":{
                 "priority":"LT"
             }
@@ -79,7 +79,7 @@
         },
         {
             "name":"continue_desc_text",
-            "value":"Comece a ver ou a editar conteúdos num dispositivo e continue instantaneamente num dispositivo nas proximidades com sessão iniciada na mesma Conta HUAWEI. Aparece um ícone na doca de aplicações quando a Transferência está disponível. %s",
+            "value":"Comece a ver ou a editar conteúdos num dispositivo e continue instantaneamente num dispositivo nas proximidades com sessão iniciada na mesma Conta. Aparece um ícone na doca de aplicações quando a Transferência está disponível. %s",
             "attr":{
                 "priority":"LT"
             }
