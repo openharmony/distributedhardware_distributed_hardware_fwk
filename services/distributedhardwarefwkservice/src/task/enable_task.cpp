@@ -170,7 +170,7 @@ int32_t EnableTask::DoAutoEnable()
     }
 
     bool enableSource = false;
-    int32_t ret = ComponentManager::GetInstance().CheckDemandStart(GetUUID(), GetDhType(), enableSource);
+    int32_t ret = ComponentManager::GetInstance().CheckDemandStart(GetUDID(), GetUUID(), GetDhType(), enableSource);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("CheckDemandStart failed!");
         return ret;

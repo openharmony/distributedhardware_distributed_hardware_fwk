@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -640,7 +640,8 @@ HWTEST_F(ComponentManagerTestExt, CheckDemandStart_001, testing::ext::TestSize.L
         .WillRepeatedly(DoAll(SetArgReferee<0>(dhVersion), Return(DH_FWK_SUCCESS)));
 
     bool isEnableSource = false;
-    auto ret = ComponentManager::GetInstance().CheckDemandStart(VALUABLE_DEVICE_INFO.uuid, targetType, isEnableSource);
+    auto ret = ComponentManager::GetInstance().CheckDemandStart("udid_1", VALUABLE_DEVICE_INFO.uuid, targetType,
+        isEnableSource);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
@@ -659,7 +660,7 @@ HWTEST_F(ComponentManagerTestExt, CheckDemandStart_002, testing::ext::TestSize.L
     for (size_t i = 0; i < 2; ++i) {
         bool isEnableSource = false;
         auto ret = ComponentManager::GetInstance().CheckDemandStart(
-            VALUABLE_DEVICE_INFO.uuid, DHType::CAMERA, isEnableSource);
+            "udid_1", VALUABLE_DEVICE_INFO.uuid, DHType::CAMERA, isEnableSource);
         EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND);
     }
 }
@@ -700,7 +701,7 @@ HWTEST_F(ComponentManagerTestExt, CheckDemandStart_004, testing::ext::TestSize.L
 
     bool isEnableSource = false;
     auto ret = ComponentManager::GetInstance().CheckDemandStart(
-        VALUABLE_DEVICE_INFO.uuid, DHType::AUDIO, isEnableSource);
+        "udid_1", VALUABLE_DEVICE_INFO.uuid, DHType::AUDIO, isEnableSource);
     EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
 }
 
@@ -720,7 +721,7 @@ HWTEST_F(ComponentManagerTestExt, CheckDemandStart_005, testing::ext::TestSize.L
 
     bool isEnableSource = false;
     auto ret = ComponentManager::GetInstance().CheckDemandStart(
-        VALUABLE_DEVICE_INFO.uuid, DHType::CAMERA, isEnableSource);
+        "udid_1", VALUABLE_DEVICE_INFO.uuid, DHType::CAMERA, isEnableSource);
     EXPECT_EQ(ret, 1);
 }
 
@@ -756,7 +757,8 @@ HWTEST_F(ComponentManagerTestExt, CheckDemandStart_006, testing::ext::TestSize.L
         .WillRepeatedly(DoAll(SetArgReferee<0>(dhVersion), Return(DH_FWK_SUCCESS)));
 
     bool isEnableSource = false;
-    auto ret = ComponentManager::GetInstance().CheckDemandStart(VALUABLE_DEVICE_INFO.uuid, targetType, isEnableSource);
+    auto ret = ComponentManager::GetInstance().CheckDemandStart("udid_1", VALUABLE_DEVICE_INFO.uuid, targetType,
+        isEnableSource);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
@@ -792,7 +794,8 @@ HWTEST_F(ComponentManagerTestExt, CheckDemandStart_007, testing::ext::TestSize.L
         .WillRepeatedly(DoAll(SetArgReferee<0>(dhVersion), Return(DH_FWK_SUCCESS)));
 
     bool isEnableSource = false;
-    auto ret = ComponentManager::GetInstance().CheckDemandStart(VALUABLE_DEVICE_INFO.uuid, targetType, isEnableSource);
+    auto ret = ComponentManager::GetInstance().CheckDemandStart("udid_1", VALUABLE_DEVICE_INFO.uuid, targetType,
+        isEnableSource);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 

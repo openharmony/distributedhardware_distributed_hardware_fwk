@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,10 +37,11 @@ void IComponentManager::ReleaseInstance()
     componentManager_ = nullptr;
 }
 
-int32_t ComponentManager::CheckDemandStart(const std::string &uuid, const DHType dhType, bool &enableSource)
+int32_t ComponentManager::CheckDemandStart(const std::string &udid, const std::string &uuid, const DHType dhType,
+    bool &enableSource)
 {
     enableSource = true;
-    return IComponentManager::GetOrCreateInstance()->CheckDemandStart(uuid, dhType, enableSource);
+    return IComponentManager::GetOrCreateInstance()->CheckDemandStart(udid, uuid, dhType, enableSource);
 }
 
 int32_t ComponentManager::ForceDisableSink(const DHDescriptor &dhDescriptor)
