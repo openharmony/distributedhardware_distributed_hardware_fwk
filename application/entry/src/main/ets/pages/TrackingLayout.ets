@@ -36,6 +36,7 @@ struct TrackingLayout {
   @State isIconHover:boolean = false;
   @State longPressCanceled: boolean = false;
   @State visibilityState: Visibility = Visibility.Hidden;
+  @StorageProp('controlCenterIsDarkMode') isShowAsDarkMode: boolean = false;
 
   private getDefaultValue<T>(key: string, defaultValue: T): T {
     const value = AppStorage.get<T>(key);
@@ -85,7 +86,8 @@ struct TrackingLayout {
         SymbolGlyph($r('sys.symbol.chevron_backward'))
           .fontWeight(FontWeight.Medium)
           .fontSize(CommonConstants.BACK_SYMBOL_SIZE)
-          .fontColor([$r('sys.color.ohos_id_color_primary')])
+          .fontColor([this.isShowAsDarkMode ?
+            $r('sys.color.ohos_id_color_primary_dark') : $r('sys.color.ohos_id_color_primary')])
       }
       .width(CommonConstants.BUTTON_SIZE)
       .height(CommonConstants.BUTTON_SIZE)
@@ -123,7 +125,9 @@ struct TrackingLayout {
   TrackingLayoutLeft() {
     Column() {
       Button() {
-        Image(this.currentLayout == mechanicManager.CameraTrackingLayout.LEFT ? $r('app.media.track_layout_left') :
+        Image((this.currentLayout == mechanicManager.CameraTrackingLayout.LEFT || 
+          this.isShowAsDarkMode) ?
+        $r('app.media.track_layout_left') :
         $r('app.media.track_layout_left_dark'))
           .width(CommonConstants.SWITCH_ICON_SIZE)
           .height(CommonConstants.SWITCH_ICON_SIZE)
@@ -144,7 +148,7 @@ struct TrackingLayout {
         .fontSize($r('sys.float.Body_S'))
         .lineHeight(CommonConstants.LINE_HEIGHT)
         .fontWeight(FontWeight.Regular)
-        .fontColor($r('sys.color.font_primary'))
+        .fontColor(this.isShowAsDarkMode ? $r('sys.color.font_on_primary') : $r('sys.color.font_primary'))
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
@@ -159,7 +163,8 @@ struct TrackingLayout {
     Column() {
       Button() {
         Image((this.currentLayout == mechanicManager.CameraTrackingLayout.MIDDLE ||
-          this.currentLayout == mechanicManager.CameraTrackingLayout.DEFAULT) ?
+          this.currentLayout == mechanicManager.CameraTrackingLayout.DEFAULT ||
+          this.isShowAsDarkMode) ?
         $r('app.media.track_layout_center') :
         $r('app.media.track_layout_center_dark'))
           .width(CommonConstants.SWITCH_ICON_SIZE)
@@ -182,7 +187,7 @@ struct TrackingLayout {
         .fontSize($r('sys.float.Body_S'))
         .lineHeight(CommonConstants.LINE_HEIGHT)
         .fontWeight(FontWeight.Regular)
-        .fontColor($r('sys.color.font_primary'))
+        .fontColor(this.isShowAsDarkMode ? $r('sys.color.font_on_primary') : $r('sys.color.font_primary'))
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
@@ -196,7 +201,8 @@ struct TrackingLayout {
   TrackingLayoutRight() {
     Column() {
       Button() {
-        Image(this.currentLayout == mechanicManager.CameraTrackingLayout.RIGHT ?
+        Image((this.currentLayout == mechanicManager.CameraTrackingLayout.RIGHT ||
+          this.isShowAsDarkMode) ?
         $r('app.media.track_layout_right') :
         $r('app.media.track_layout_right_dark'))
           .width(CommonConstants.SWITCH_ICON_SIZE)
@@ -218,7 +224,7 @@ struct TrackingLayout {
         .fontSize($r('sys.float.Body_S'))
         .lineHeight(CommonConstants.LINE_HEIGHT)
         .fontWeight(FontWeight.Regular)
-        .fontColor($r('sys.color.font_primary'))
+        .fontColor(this.isShowAsDarkMode ? $r('sys.color.font_on_primary') : $r('sys.color.font_primary'))
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)

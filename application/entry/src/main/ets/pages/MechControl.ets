@@ -38,6 +38,7 @@ struct MechControl {
   @State fontSizeScale: number = AppStorage.get('currentFontSizeScale') as number;
   @State pageOpacity: number = 1;
   @State visibilityState: Visibility = Visibility.Hidden;
+  @StorageProp('controlCenterIsDarkMode') isShowAsDarkMode: boolean = false;
   private context = getContext(this) as common.UIAbilityContext;
 
   private getDefaultValue<T>(key: string, defaultValue: T): T {
@@ -144,7 +145,9 @@ struct MechControl {
   IntelligentTracking() {
     Column() {
       Button() {
-        Image(this.isTrackingEnabled ? $r('app.media.intelligent_tracking') : $r('app.media.intelligent_tracking_dark'))
+        Image((this.isTrackingEnabled || this.isShowAsDarkMode) ?
+        $r('app.media.intelligent_tracking') :
+        $r('app.media.intelligent_tracking_dark'))
           .width(CommonConstants.SWITCH_ICON_SIZE)
           .height(CommonConstants.SWITCH_ICON_SIZE)
           .margin({ left: CommonConstants.SWITCH_ICON_MARGIN, top: CommonConstants.SWITCH_ICON_MARGIN })
@@ -182,7 +185,7 @@ struct MechControl {
         .fontSize($r('sys.float.ohos_id_text_size_body3'))
         .lineHeight(CommonConstants.LINE_HEIGHT)
         .fontWeight(FontWeight.Medium)
-        .fontColor($r('sys.color.font_primary'))
+        .fontColor(this.isShowAsDarkMode ? $r('sys.color.font_on_primary') : $r('sys.color.font_primary'))
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
@@ -192,7 +195,7 @@ struct MechControl {
         .fontSize($r('sys.float.Caption_M'))
         .lineHeight(CommonConstants.SMALL_LINE_HEIGHT)
         .fontWeight(FontWeight.Regular)
-        .fontColor($r('sys.color.font_secondary'))
+        .fontColor(this.isShowAsDarkMode ? $r('sys.color.font_on_secondary') : $r('sys.color.font_secondary'))
         .margin({ top: CommonConstants.SMALL_TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
@@ -243,7 +246,7 @@ struct MechControl {
         .fontSize($r('sys.float.ohos_id_text_size_body3'))
         .lineHeight(CommonConstants.LINE_HEIGHT)
         .fontWeight(FontWeight.Medium)
-        .fontColor($r('sys.color.font_primary'))
+        .fontColor(this.isShowAsDarkMode ? $r('sys.color.font_on_primary') : $r('sys.color.font_primary'))
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
@@ -253,7 +256,7 @@ struct MechControl {
         .fontSize($r('sys.float.Caption_M'))
         .lineHeight(CommonConstants.SMALL_LINE_HEIGHT)
         .fontWeight(FontWeight.Regular)
-        .fontColor($r('sys.color.font_secondary'))
+        .fontColor(this.isShowAsDarkMode ? $r('sys.color.font_on_secondary') : $r('sys.color.font_secondary'))
         .margin({ top: CommonConstants.SMALL_TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
