@@ -78,8 +78,8 @@ export default class MechExtAbility extends UIExtensionAbility {
   onSessionCreate(want: Want, session: UIExtensionContentSession) {
     logger.info(`${TAG} UIExtAbility onSessionCreate.`);
 
-    if (want?.parameter?.isShowAsDarkMode !== undefined) {
-      let isShowAsDarkMode = want?.parameter?.isShowAsDarkMode as boolean;
+    if (want?.parameters?.isShowAsDarkMode !== undefined) {
+      let isShowAsDarkMode = want?.parameters?.isShowAsDarkMode as boolean;
       AppStorage.setOrCreate('controlCenterIsDarkMode', isShowAsDarkMode);
     }
     let param: Record<string, UIExtensionContentSession> = {
