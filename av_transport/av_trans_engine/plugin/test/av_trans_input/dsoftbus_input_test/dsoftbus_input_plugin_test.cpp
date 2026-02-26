@@ -211,7 +211,11 @@ StreamData CreateTestStreamData(const std::string& data)
 {
     StreamData streamData;
     char* buf = new char[data.size() + 1];
-    memcpy_s(buf, data.size() + 1, data.c_str(), data.size() + 1);
+    errno_t err = memcpy_s(buf, data.size() + 1, data.c_str(), data.size() + 1);
+    if (err != 0) {
+        delete[] buf;
+        return streamData;
+    }
     streamData.buf = buf;
     streamData.bufLen = static_cast<int>(data.size());
     return streamData;
@@ -239,7 +243,8 @@ StreamData CreateTestExtData(uint32_t metaType, const std::string& paramJson)
 std::string CreateValidVideoMetaJson(bool withExtParams = true)
 {
     if (withExtParams) {
-        return R"({"pts_":100,"cts_":0,"width_":1920,"height_":1080,"frameNum_":100,"extPts_":50,"extFrameNum_":5,"format_":0})";
+        return R"({"pts_":100,"cts_":0,"width_":1920,"height_":1080,"frameNum_":100,"extPts_":50,
+            "extFrameNum_":5,"format_":0})";
     }
     return R"({"pts_":100,"cts_":0,"width_":1920,"height_":1080,"frameNum_":100,"format_":0})";
 }
@@ -667,7 +672,6 @@ HWTEST_F(DsoftbusInputPluginTest, CreateBuffer_008, TestSize.Level1)
         cJSON_Delete(resMsg);
     }
 }
-}
 
 HWTEST_F(DsoftbusInputPluginTest, CreateBuffer_009, TestSize.Level1)
 {
@@ -678,7 +682,8 @@ HWTEST_F(DsoftbusInputPluginTest, CreateBuffer_009, TestSize.Level1)
     std::string videoData = "test video data";
     StreamData data = CreateTestStreamData(videoData);
     // Create JSON with extPts = 0
-    std::string metaJson = R"({"pts_":100,"cts_":0,"width_":1920,"height_":1080,"frameNum_":100,"extPts_":0,"extFrameNum_":0,"format_":0})";
+    std::string metaJson = R"({"pts_":100,"cts_":0,"width_":1920,"height_":1080,"frameNum_":100,"extPts_":0,
+        "extFrameNum_":0,"format_":0})";
     cJSON* resMsg = CreateTestCJsonObject(metaType, metaJson);
 
     auto buffer = plugin->CreateBuffer(metaType, &data, resMsg);
@@ -720,7 +725,5 @@ HWTEST_F(DsoftbusInputPluginTest, CreateBuffer_010, TestSize.Level1)
         cJSON_Delete(resMsg);
     }
 }
-}
-
 } // namespace DistributedHardware
 } // namespace OHOS
