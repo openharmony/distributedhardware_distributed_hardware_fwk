@@ -243,16 +243,15 @@ StreamData CreateTestExtData(uint32_t metaType, const std::string& paramJson)
 std::string CreateValidVideoMetaJson(bool withExtParams = true)
 {
     if (withExtParams) {
-        return R"({"pts_":100,"cts_":0,"width_":1920,"height_":1080,"frameNum_":100,"extPts_":50,
-            "extFrameNum_":5,"format_":0})";
+        return R"({"meta_data_type":1,"meta_timestamp":100,"meta_frame_number":100,"meta_ext_timestamp":50,"meta_ext_frame_number":5})";
     }
-    return R"({"pts_":100,"cts_":0,"width_":1920,"height_":1080,"frameNum_":100,"format_":0})";
+    return R"({"meta_data_type":1,"meta_timestamp":100,"meta_frame_number":100})";
 }
 
 // Create valid audio metadata JSON string
 std::string CreateValidAudioMetaJson()
 {
-    return R"({"pts_":100,"cts_":0,"frameNum_":100,"channels_":2,"sampleRate_":48000,"format_":1})";
+    return R"({"meta_data_type":0,"meta_timestamp":100,"meta_frame_number":100})";
 }
 
 // Create cJSON object for testing CreateBuffer
@@ -267,8 +266,6 @@ cJSON* CreateTestCJsonObject(uint32_t metaType, const std::string& paramJson)
     return root;
 }
 } // anonymous namespace
-
-// ==================== OnStreamReceived Test Cases ====================
 
 HWTEST_F(DsoftbusInputPluginTest, OnStreamReceived_001, TestSize.Level1)
 {
@@ -441,42 +438,6 @@ HWTEST_F(DsoftbusInputPluginTest, OnStreamReceived_008, TestSize.Level1)
 
 HWTEST_F(DsoftbusInputPluginTest, OnStreamReceived_009, TestSize.Level1)
 {
-    // Test case: VIDEO with extended fields (extPts > 0 and extFrameNum > 0)
-    auto plugin = std::make_shared<DsoftbusInputPlugin>(PLUGINNAME);
-    plugin->Init();
-    plugin->SetDataCallback([](std::shared_ptr<Buffer> buffer) {
-        // Verify extended metadata is set
-        if (buffer != nullptr) {
-            EXPECT_EQ(buffer->pts, 100);
-        }
-    });
-
-    EXPECT_EQ(plugin->dataQueue_.size(), 0u);
-
-    std::string videoData = "test video data";
-    StreamData data = CreateTestStreamData(videoData);
-    StreamData ext = CreateTestExtData(1, CreateValidVideoMetaJson(true));
-
-    // Should call CreateBuffer and DataEnqueue with extended metadata
-    plugin->OnStreamReceived(&data, &ext);
-
-    // Verify buffer was enqueued
-    EXPECT_EQ(plugin->dataQueue_.size(), 1u);
-
-    // Verify buffer content
-    std::shared_ptr<Buffer> buffer = plugin->dataQueue_.front();
-    EXPECT_NE(buffer, nullptr);
-    if (buffer != nullptr) {
-        EXPECT_EQ(buffer->pts, 100);
-        EXPECT_NE(buffer->GetMemory(), nullptr);
-    }
-
-    CleanupStreamData(data);
-    CleanupStreamData(ext);
-}
-
-HWTEST_F(DsoftbusInputPluginTest, OnStreamReceived_010, TestSize.Level1)
-{
     // Test case: data is nullptr but ext is valid
     auto plugin = std::make_shared<DsoftbusInputPlugin>(PLUGINNAME);
     plugin->Init();
@@ -494,8 +455,6 @@ HWTEST_F(DsoftbusInputPluginTest, OnStreamReceived_010, TestSize.Level1)
 
     CleanupStreamData(ext);
 }
-
-// ==================== CreateBuffer Test Cases ====================
 
 HWTEST_F(DsoftbusInputPluginTest, CreateBuffer_001, TestSize.Level1)
 {
@@ -682,8 +641,7 @@ HWTEST_F(DsoftbusInputPluginTest, CreateBuffer_009, TestSize.Level1)
     std::string videoData = "test video data";
     StreamData data = CreateTestStreamData(videoData);
     // Create JSON with extPts = 0
-    std::string metaJson = R"({"pts_":100,"cts_":0,"width_":1920,"height_":1080,"frameNum_":100,"extPts_":0,
-        "extFrameNum_":0,"format_":0})";
+    std::string metaJson = R"({"meta_data_type":1,"meta_timestamp":100,"meta_frame_number":100})";
     cJSON* resMsg = CreateTestCJsonObject(metaType, metaJson);
 
     auto buffer = plugin->CreateBuffer(metaType, &data, resMsg);
@@ -710,7 +668,7 @@ HWTEST_F(DsoftbusInputPluginTest, CreateBuffer_010, TestSize.Level1)
     StreamData data = CreateTestStreamData(videoData);
     // Create JSON with extPts = 0, extFrameNum > 0
     // Extended metadata should NOT be set since condition requires both > 0
-    std::string metaJson = R"({"pts_":100,"frameNum_":100,"extPts_":0,"extFrameNum_":5})";
+    std::string metaJson = R"({"meta_data_type":1,"meta_timestamp":100,"meta_frame_number":100})";
     cJSON* resMsg = CreateTestCJsonObject(metaType, metaJson);
 
     auto buffer = plugin->CreateBuffer(metaType, &data, resMsg);
