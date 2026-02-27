@@ -17,6 +17,7 @@
 
 #include "anonymous_string.h"
 #include "capability_info_manager.h"
+#include "component_loader.h"
 #include "dh_utils_tool.h"
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_log.h"
@@ -218,8 +219,27 @@ void OnLineTask::CreateMetaEnableTask()
     TaskExecutor::GetInstance().PushTask(task);
 }
 
+bool OnLineTask::IsNeedActiveSyncData()
+{
+    IDistributedHardwareSource *sourcePtr = nullptr;
+    auto ret = ComponentLoader::GetInstance().GetSource(DHType::MODEM, sourcePtr);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Get Modem Source failed.");
+        return false;
+    }
+    if (sourcePtr == nullptr) {
+        DHLOGE("Modem sourceptr is nullptr.");
+        return false;
+    }
+    return true;
+}
+
 void OnLineTask::ActiveSyncMetaData()
 {
+    if (!IsNeedActiveSyncData()) {
+        DHLOGE("No need active sync data.");
+        return;
+    }
     auto handler = MetaInfoManager::GetInstance()->GetEventHandler();
     if (handler != nullptr) {
         std::string networkId = GetNetworkId();
