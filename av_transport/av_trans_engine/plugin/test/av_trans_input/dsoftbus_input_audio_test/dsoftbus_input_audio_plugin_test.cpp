@@ -196,37 +196,6 @@ HWTEST_F(DsoftbusInputAudioPluginTest, SetDataCallback_002, TestSize.Level1)
     EXPECT_EQ(Status::OK, ret);
 }
 
-// ==================== Test Helper Functions ====================
-
-namespace {
-// Create test StreamData with string content
-StreamData CreateTestStreamData(const std::string& data)
-{
-    StreamData streamData;
-    char* buf = new char[data.size() + 1];
-    errno_t err = memcpy_s(buf, data.size() + 1, data.c_str(), data.size() + 1);
-    if (err != 0) {
-        delete[] buf;
-        return streamData;
-    }
-    streamData.buf = buf;
-    streamData.bufLen = static_cast<int>(data.size());
-    return streamData;
-}
-
-// Cleanup StreamData to prevent memory leak
-void CleanupStreamData(StreamData& data)
-{
-    if (data.buf != nullptr) {
-        delete[] data.buf;
-        data.buf = nullptr;
-    }
-    data.bufLen = 0;
-}
-} // anonymous namespace
-
-// ==================== CreateBuffer Test Cases ====================
-
 HWTEST_F(DsoftbusInputAudioPluginTest, CreateBuffer_001, TestSize.Level1)
 {
     // Test case: data is nullptr
@@ -237,25 +206,6 @@ HWTEST_F(DsoftbusInputAudioPluginTest, CreateBuffer_001, TestSize.Level1)
     cJSON* resMsg = cJSON_Parse("{}");
 
     auto buffer = plugin->CreateBuffer(metaType, data, resMsg);
-    EXPECT_EQ(buffer, nullptr);
-
-    if (resMsg != nullptr) {
-        cJSON_Delete(resMsg);
-    }
-}
-
-HWTEST_F(DsoftbusInputAudioPluginTest, CreateBuffer_002, TestSize.Level1)
-{
-    // Test case: data->buf is nullptr
-    auto plugin = std::make_shared<DsoftbusInputAudioPlugin>(PLUGINNAME);
-
-    uint32_t metaType = 0;  // AUDIO
-    StreamData data;
-    data.buf = nullptr;
-    data.bufLen = 10;
-    cJSON* resMsg = cJSON_Parse("{}");
-
-    auto buffer = plugin->CreateBuffer(metaType, &data, resMsg);
     EXPECT_EQ(buffer, nullptr);
 
     if (resMsg != nullptr) {

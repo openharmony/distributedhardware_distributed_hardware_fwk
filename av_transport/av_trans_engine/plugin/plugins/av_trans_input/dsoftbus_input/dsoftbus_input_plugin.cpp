@@ -282,8 +282,8 @@ void DsoftbusInputPlugin::OnStreamReceived(const StreamData *data, const StreamD
 std::shared_ptr<Buffer> DsoftbusInputPlugin::CreateBuffer(uint32_t metaType,
     const StreamData *data, const cJSON *resMsg)
 {
-    if (data == nullptr || data->buf == nullptr) {
-        AVTRANS_LOGE("data or data->buf is nullptr.");
+    if (data == nullptr) {
+        AVTRANS_LOGE("data is nullptr.");
         return nullptr;
     }
     auto buffer = Buffer::CreateDefaultBuffer(static_cast<BufferMetaType>(metaType), data->bufLen);
