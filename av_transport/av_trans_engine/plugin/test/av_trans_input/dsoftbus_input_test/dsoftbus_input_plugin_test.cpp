@@ -207,7 +207,15 @@ namespace {
 StreamData CreateTestStreamData(const std::string& data)
 {
     StreamData streamData;
-    char* buf = new char[data.size() + 1];
+    streamData.buf = nullptr;
+    streamData.bufLen = 0;
+    if (data.empty()) {
+        return streamData;
+    }
+    char* buf = new (std::nothrow) char[data.size() + 1];
+    if (buf == nullptr) {
+        return streamData;
+    }
     errno_t err = memcpy_s(buf, data.size() + 1, data.c_str(), data.size() + 1);
     if (err != 0) {
         delete[] buf;
