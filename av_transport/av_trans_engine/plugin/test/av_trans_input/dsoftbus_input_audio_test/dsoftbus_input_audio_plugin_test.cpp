@@ -195,5 +195,22 @@ HWTEST_F(DsoftbusInputAudioPluginTest, SetDataCallback_002, TestSize.Level1)
     plugin->OnChannelEvent(event3);
     EXPECT_EQ(Status::OK, ret);
 }
+
+HWTEST_F(DsoftbusInputAudioPluginTest, CreateBuffer_001, TestSize.Level1)
+{
+    // Test case: data is nullptr
+    auto plugin = std::make_shared<DsoftbusInputAudioPlugin>(PLUGINNAME);
+
+    uint32_t metaType = 0;  // AUDIO
+    StreamData* data = nullptr;
+    cJSON* resMsg = cJSON_Parse("{}");
+
+    auto buffer = plugin->CreateBuffer(metaType, data, resMsg);
+    EXPECT_EQ(buffer, nullptr);
+
+    if (resMsg != nullptr) {
+        cJSON_Delete(resMsg);
+    }
+}
 } // namespace DistributedHardware
 } // namespace OHOS
