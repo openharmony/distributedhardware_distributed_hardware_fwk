@@ -112,6 +112,7 @@ struct TrackingLayout {
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
+        .accessibilityLevel('no')
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
     .margin({
