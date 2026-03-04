@@ -69,6 +69,7 @@ int32_t GetDhDescriptorsCallbackStub::ReadDescriptors(MessageParcel &data, std::
         DHDescriptor descriptor;
         descriptor.dhType = static_cast<DHType>(data.ReadUint32());
         descriptor.id = data.ReadString();
+        descriptor.customParams = data.ReadString();
         descriptors.push_back(descriptor);
     }
     return NO_ERROR;

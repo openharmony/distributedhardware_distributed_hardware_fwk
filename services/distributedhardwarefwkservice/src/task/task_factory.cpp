@@ -85,6 +85,7 @@ std::shared_ptr<Task> TaskFactory::CreateEnableTask(const TaskParam &taskParam)
         enableTask->SetEffectSource(taskParam.effectSource);
         enableTask->SetCallingUid(taskParam.callingUid);
         enableTask->SetCallingPid(taskParam.callingPid);
+        enableTask->SetCustomParams(taskParam.customParams);
     }
     return enableTask;
 }

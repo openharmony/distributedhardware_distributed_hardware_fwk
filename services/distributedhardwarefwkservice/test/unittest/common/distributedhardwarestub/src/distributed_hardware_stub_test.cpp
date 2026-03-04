@@ -857,5 +857,19 @@ HWTEST_F(DistributedHardwareStubTest, OnRemoteRequestRPC_003, TestSize.Level1)
     auto ret = stubTest_->OnRemoteRequestRPC(code, data, reply, option);
     EXPECT_EQ(ERR_DH_FWK_PARA_INVALID, ret);
 }
+
+HWTEST_F(DistributedHardwareStubTest, WriteDescriptors_001, TestSize.Level1)
+{
+    ASSERT_TRUE(stubTest_ != nullptr);
+    const std::string descriptorId = "id_test";
+    const std::string customParams = "{\"scene\":\"enable\"}";
+    MessageParcel data;
+    std::vector<DHDescriptor> descriptors{
+        { .id = descriptorId, .dhType = DHType::AUDIO, .customParams = customParams }
+    };
+
+    auto ret = stubTest_->WriteDescriptors(data, descriptors);
+    EXPECT_EQ(NO_ERROR, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

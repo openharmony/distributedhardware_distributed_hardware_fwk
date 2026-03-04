@@ -604,7 +604,8 @@ int32_t DistributedHardwareService::EnableSource(
             .effectSink = false,
             .effectSource = true,
             .callingUid = IPCSkeleton::GetCallingUid(),
-            .callingPid = IPCSkeleton::GetCallingPid()
+            .callingPid = IPCSkeleton::GetCallingPid(),
+            .customParams = descriptor.customParams
         };
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
         TaskExecutor::GetInstance().PushTask(task);

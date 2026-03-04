@@ -19,7 +19,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 int32_t ComponentEnable::Enable(const std::string &networkId, const std::string &dhId, const EnableParam &param,
-    IDistributedHardwareSource *handler)
+    IDistributedHardwareSource *handler, const std::string &customParams)
 {
     return DH_FWK_SUCCESS;
 }

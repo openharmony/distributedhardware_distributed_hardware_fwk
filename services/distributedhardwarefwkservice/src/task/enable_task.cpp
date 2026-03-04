@@ -144,6 +144,16 @@ int32_t EnableTask::GetCallingPid()
     return callingPid_;
 }
 
+void EnableTask::SetCustomParams(const std::string &customParams)
+{
+    customParams_ = customParams;
+}
+
+std::string EnableTask::GetCustomParams()
+{
+    return customParams_;
+}
+
 int32_t EnableTask::DoAutoEnable()
 {
     std::string localUdid = GetLocalUdid();
@@ -181,7 +191,8 @@ int32_t EnableTask::DoAutoEnable()
     }
     DHDescriptor dhDescriptor {
         .id = GetDhId(),
-        .dhType = GetDhType()
+        .dhType = GetDhType(),
+        .customParams = customParams_
     };
     ret = ComponentManager::GetInstance().EnableSource(GetNetworkId(), dhDescriptor, GetCallingUid(), GetCallingPid());
     if (ret != DH_FWK_SUCCESS) {
@@ -195,7 +206,8 @@ int32_t EnableTask::DoActiveEnable()
     int32_t ret = DH_FWK_SUCCESS;
     DHDescriptor dhDescriptor {
         .id = GetDhId(),
-        .dhType = GetDhType()
+        .dhType = GetDhType(),
+        .customParams = customParams_
     };
     if (GetEffectSink()) {
         ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, GetCallingUid(), GetCallingPid());

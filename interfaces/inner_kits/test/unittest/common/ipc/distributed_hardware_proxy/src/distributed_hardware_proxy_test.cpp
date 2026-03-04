@@ -831,5 +831,24 @@ HWTEST_F(DistributedHardwareProxyTest, NotifySinkRemoteSourceStarted_002, TestSi
     auto ret = dhProxy.NotifySinkRemoteSourceStarted(udid);
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
+
+HWTEST_F(DistributedHardwareProxyTest, WriteDescriptors_002, TestSize.Level1)
+{
+    constexpr int32_t descriptorSize = 1;
+    const std::string descriptorId = "camera_1";
+    const std::string customParams = "{\"scene\":\"enable\"}";
+    MessageParcel data;
+    std::vector<DHDescriptor> descriptors;
+    data.WriteInt32(descriptorSize);
+    data.WriteInt32(static_cast<int32_t>(DHType::CAMERA));
+    data.WriteString(descriptorId);
+    data.WriteString(customParams);
+
+    sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
+    ASSERT_TRUE(dhStubPtr != nullptr);
+    DistributedHardwareProxy dhProxy(dhStubPtr);
+    auto ret = dhProxy.ReadDescriptors(data, descriptors);
+    EXPECT_EQ(NO_ERROR, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
