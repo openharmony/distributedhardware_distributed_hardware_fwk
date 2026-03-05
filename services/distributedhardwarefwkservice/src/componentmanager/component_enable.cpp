@@ -34,7 +34,7 @@ ComponentEnable::ComponentEnable() : status_(std::numeric_limits<int32_t>::max()
 ComponentEnable::~ComponentEnable() {}
 
 int32_t ComponentEnable::Enable(const std::string &networkId, const std::string &dhId, const EnableParam &param,
-    IDistributedHardwareSource *handler)
+    IDistributedHardwareSource *handler, const std::string &customParams)
 {
     if (!IsIdLengthValid(networkId) || !IsIdLengthValid(dhId)) {
         return ERR_DH_FWK_PARA_INVALID;
@@ -52,6 +52,20 @@ int32_t ComponentEnable::Enable(const std::string &networkId, const std::string 
         HiSysEventWriteCompMgrFailedMsg(DHFWK_DH_REGISTER_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             GetAnonyString(dhId), ret, "dhfwk register distributed hardware failed.");
         return ERR_DH_FWK_COMPONENT_REGISTER_FAILED;
+    }
+
+    if (!customParams.empty()) {
+        DHLOGI("Config custom params before register, dhId = %{public}s", dhId.c_str());
+        auto configRet = handler->ConfigDistributedHardware(networkId, dhId, "enable_init_params",
+            customParams);
+        if (configRet != DH_FWK_SUCCESS) {
+            DHLOGE("ConfigDistributedHardware failed, networkId = %{public}s dhId = %{public}s.",
+                GetAnonyString(networkId).c_str(), dhId.c_str());
+            HiSysEventWriteCompMgrFailedMsg(DHFWK_DH_REGISTER_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+                GetAnonyString(dhId), configRet, "dhfwk config distributed hardware failed.");
+            return ERR_DH_FWK_COMPONENT_CONFIG_FAILED;
+        }
+        DHLOGI("ConfigDistributedHardware success, dhId = %{public}s", dhId.c_str());
     }
 
     // wait for callback until timeout

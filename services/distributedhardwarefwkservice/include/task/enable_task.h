@@ -36,6 +36,8 @@ public:
     int32_t GetCallingUid();
     void SetCallingPid(int32_t callingPid);
     int32_t GetCallingPid();
+    void SetCustomParams(const std::string &customParams);
+    std::string GetCustomParams();
 
 private:
     /* synchronous function for register distributed hardware, return on asynchronous register finish */
@@ -53,6 +55,8 @@ private:
     int32_t callingUid_{ 0 };
     // enable or disable calling pid
     int32_t callingPid_{ 0 };
+    // custom params for enable
+    std::string customParams_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

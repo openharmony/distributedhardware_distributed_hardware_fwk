@@ -28,7 +28,7 @@ public:
     ComponentEnable();
     virtual ~ComponentEnable();
     int32_t Enable(const std::string &networkId, const std::string &dhId, const EnableParam &param,
-        IDistributedHardwareSource *handler);
+        IDistributedHardwareSource *handler, const std::string &customParams = "");
     int32_t OnRegisterResult(const std::string &networkId, const std::string &dhId, int32_t status,
         const std::string &data) override;
 

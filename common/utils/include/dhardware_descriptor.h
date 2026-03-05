@@ -27,6 +27,7 @@ namespace DistributedHardware {
 struct DHDescriptor {
     std::string id;
     DHType dhType;
+    std::string customParams;
 };
 
 enum class EnableStep : uint32_t {

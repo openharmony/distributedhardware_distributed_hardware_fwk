@@ -252,7 +252,7 @@ bool ComponentManager::WaitForResult(const Action &action, ActionResult actionsR
 }
 
 int32_t ComponentManager::Enable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
-    const DHType dhType, bool isActive)
+    const DHType dhType, bool isActive, const std::string &customParams)
 {
     DHLOGI("start.");
     if (!IsIdLengthValid(networkId) || !IsIdLengthValid(uuid) || !IsIdLengthValid(dhId)) {
@@ -281,14 +281,15 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
     }
 
     auto compEnable = std::make_shared<ComponentEnable>();
-    auto result = compEnable->Enable(networkId, dhId, param, (compSource_.find(dhType))->second);
+    auto result = compEnable->Enable(networkId, dhId, param, (compSource_.find(dhType))->second, customParams);
     if (result != DH_FWK_SUCCESS) {
         for (int32_t retryCount = 0; retryCount < ENABLE_RETRY_MAX_TIMES; retryCount++) {
             if (!DHContext::GetInstance().IsDeviceOnline(uuid)) {
                 DHLOGE("device is already offline, no need try enable, uuid= %{public}s", GetAnonyString(uuid).c_str());
                 return result;
             }
-            if (compEnable->Enable(networkId, dhId, param, (compSource_.find(dhType))->second) == DH_FWK_SUCCESS) {
+            if (compEnable->Enable(networkId, dhId, param, (compSource_.find(dhType))->second, customParams)
+                    == DH_FWK_SUCCESS) {
                 DHLOGE("enable success, retryCount = %{public}d", retryCount);
                 EnabledCompsDump::GetInstance().DumpEnabledComp(networkId, dhType, dhId);
                 return DH_FWK_SUCCESS;
@@ -1552,7 +1553,7 @@ int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
     // Check load reference count
     if (status.refLoad) {
         auto ret = Enable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType,
-            (callingUid != 0) || (callingPid != 0));
+            (callingUid != 0) || (callingPid != 0), dhDescriptor.customParams);
         if (ret != DH_FWK_SUCCESS) {
             DHLOGE("Enable failed, ret = %{public}d.", ret);
             return ret;
@@ -1565,7 +1566,7 @@ int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
     }
 
     auto ret = RealEnableSource(networkId, uuid, dhDescriptor, statusCtrl, enableInfo, status,
-        (callingUid != 0) || (callingPid != 0));
+        (callingUid != 0) || (callingPid != 0), dhDescriptor.customParams);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("RealEnableSource failed, ret = %{public}d.", ret);
         return ret;
@@ -1752,7 +1753,7 @@ int32_t ComponentManager::ForceDisableSourceInternal(const std::string &networkI
 
 int32_t ComponentManager::RealEnableSource(const std::string &networkId, const std::string &uuid,
     const DHDescriptor &dhDescriptor, DHStatusCtrl &statusCtrl,
-    DHStatusEnableInfo &enableInfo, DHSourceStatus &status, bool isActive)
+    DHStatusEnableInfo &enableInfo, DHSourceStatus &status, bool isActive, const std::string &customParams)
 {
     auto ret = InitCompSource(dhDescriptor.dhType);
     if (ret != DH_FWK_SUCCESS) {
@@ -1772,7 +1773,7 @@ int32_t ComponentManager::RealEnableSource(const std::string &networkId, const s
         UninitCompSource(dhDescriptor.dhType);
         return ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT;
     }
-    ret = Enable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType, isActive);
+    ret = Enable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType, isActive, customParams);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("Enable failed, ret = %{public}d.", ret);
         std::unordered_map<DHType, std::shared_future<int32_t>> futureResult;

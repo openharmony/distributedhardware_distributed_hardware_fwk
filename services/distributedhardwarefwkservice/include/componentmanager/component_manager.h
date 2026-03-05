@@ -57,7 +57,7 @@ public:
     int32_t Init();
     int32_t UnInit();
     int32_t Enable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
-        const DHType dhType, bool isActive = false);
+        const DHType dhType, bool isActive = false, const std::string &customParams = "");
     int32_t Disable(const std::string &networkId, const std::string &uuid, const std::string &dhId,
         const DHType dhType);
     void UpdateBusinessState(const std::string &uuid, const std::string &dhId, BusinessState state);
@@ -286,7 +286,8 @@ private:
     int32_t ForceDisableSourceInternal(const std::string &networkId,
         const DHDescriptor &dhDescriptor, std::vector<sptr<IHDSourceStatusListener>> &listeners);
     int32_t RealEnableSource(const std::string &networkId, const std::string &uuid, const DHDescriptor &dhDescriptor,
-        DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status, bool isActive);
+        DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status, bool isActive,
+        const std::string &customParams = "");
     int32_t RealDisableSource(const std::string &networkId, const std::string &uuid, const DHDescriptor &dhDescriptor,
         DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status);
     int32_t EnableMetaSourceInternal(const std::string &networkId, const DHDescriptor &dhDescriptor,
