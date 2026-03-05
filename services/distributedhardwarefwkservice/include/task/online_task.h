@@ -33,8 +33,6 @@ private:
     void CreateEnableTask();
     void CreateMetaEnableTask();
     void CreateEnableSinkTask();
-    void ActiveSyncMetaData();
-    bool IsNeedActiveSyncData();
 };
 } // namespace DistributedHardware
 } // namespace OHOS
