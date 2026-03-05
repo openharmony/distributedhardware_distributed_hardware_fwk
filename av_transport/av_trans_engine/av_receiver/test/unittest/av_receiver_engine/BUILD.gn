@@ -14,9 +14,6 @@
 import("//build/test.gni")
 import("../../../../../distributed_av_transport.gni")
 
-module_out_path =
-    "distributed_hardware_fwk/distributed_hardware_fwk/av_receiver_engine_test"
-
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
@@ -36,7 +33,7 @@ config("module_private_config") {
 }
 
 ohos_unittest("AvReceiverEngineTest") {
-  module_out_path = module_out_path
+  module_out_path = unittest_output_path
 
   sources = [ "src/av_receiver_engine_test.cpp" ]
 
@@ -116,7 +113,7 @@ config("module_audio_private_config") {
 }
 
 ohos_unittest("AvAudioReceiverEngineTest") {
-  module_out_path = module_out_path
+  module_out_path = unittest_output_path
 
   sources = [ "src/av_audio_receiver_engine_test.cpp" ]
 
