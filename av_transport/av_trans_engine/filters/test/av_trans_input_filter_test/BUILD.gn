@@ -14,9 +14,6 @@
 import("//build/test.gni")
 import("../../../../distributed_av_transport.gni")
 
-module_out_path =
-    "distributed_hardware_fwk/distributed_hardware_fwk/av_trans_input"
-
 config("module_private_config") {
   visibility = [ ":*" ]
 
@@ -31,7 +28,7 @@ config("module_private_config") {
 }
 
 ohos_unittest("AvTransAudioInputFilterTest") {
-  module_out_path = module_out_path
+  module_out_path = unittest_output_path
 
   configs = [ ":module_private_config" ]
 
@@ -79,7 +76,7 @@ ohos_unittest("AvTransAudioInputFilterTest") {
 }
 
 ohos_unittest("AVTransBusInputFilterTest") {
-  module_out_path = module_out_path
+  module_out_path = unittest_output_path
 
   configs = [ ":module_private_config" ]
 

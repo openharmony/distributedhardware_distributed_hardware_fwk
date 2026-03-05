@@ -18,7 +18,7 @@ import("../../../../../distributed_av_transport.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("FilterFactoryFuzzTest") {
-  module_out_path = "distributed_hardware_fwk/av_transport/filter"
+  module_out_path = fuzz_test_output_path
   fuzz_config_file =
       "${filter_path}/test/fuzztest/filterfactory_fuzzer"
 
