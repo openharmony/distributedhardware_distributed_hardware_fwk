@@ -44,6 +44,7 @@ private:
     std::atomic<bool> isLocalInit_{false};
     std::atomic<bool> isAllInit_{false};
     std::mutex dhInitMgrMutex_;
+    std::mutex localInitMgrMutex_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
