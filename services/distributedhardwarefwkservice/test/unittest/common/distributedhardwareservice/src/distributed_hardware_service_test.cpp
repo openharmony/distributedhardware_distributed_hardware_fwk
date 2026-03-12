@@ -325,8 +325,6 @@ HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Le
     DistributedHardwareService service(ASID, true);
     std::string networkId = "";
     EnableStep enableSourceStep = EnableStep::ENABLE_SOURCE;
-    EnableStep enableSinkStep = EnableStep::ENABLE_SINK;
-    DistributedHardwareManager::GetInstance().isAllInit_.store(true);
     auto ret = service.GetDistributedHardware(networkId, enableSourceStep, nullptr);
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 
@@ -334,46 +332,38 @@ HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_001, TestSize.Le
     ret = service.GetDistributedHardware(networkId, enableSourceStep, nullptr);
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 
-    DistributedHardwareManager::GetInstance().isAllInit_.store(false);
     sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
     ret = service.GetDistributedHardware(networkId, enableSourceStep, callback);
-    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
+    EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
 
-    ret = service.GetDistributedHardware(networkId, enableSinkStep, callback);
-    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
-
+    DHContext::GetInstance().AddRealTimeOnlineDeviceNetworkId(networkId);
     DistributedHardwareManager::GetInstance().isAllInit_.store(true);
     ret = service.GetDistributedHardware(networkId, enableSourceStep, callback);
-    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 
     DistributedHardwareManager::GetInstance().isAllInit_.store(false);
+    DistributedHardwareService::PendingGetDHRequest request = { networkId, enableSourceStep, callback };
+    service.pendingGetDHRequests_.push_back(request);
+    networkId = "networkId_123";
     DHContext::GetInstance().AddRealTimeOnlineDeviceNetworkId(networkId);
     ret = service.GetDistributedHardware(networkId, enableSourceStep, callback);
-    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
-
-    ret = service.GetDistributedHardware(networkId, enableSinkStep, callback);
-    EXPECT_EQ(ret, ERR_DH_FWK_HARDWARE_MANAGER_BUSY);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
 HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_002, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
     std::string networkId = "networkId_1";
-    EnableStep enableSourceStep = EnableStep::ENABLE_SOURCE;
     EnableStep enableSinkStep = EnableStep::ENABLE_SINK;
     sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
     DistributedHardwareManager::GetInstance().isAllInit_.store(true);
     auto ret = service.GetDistributedHardware(networkId, enableSinkStep, callback);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 
-    DHContext::GetInstance().AddRealTimeOnlineDeviceNetworkId(networkId);
-    ret = service.GetDistributedHardware(networkId, enableSourceStep, callback);
+    DistributedHardwareManager::GetInstance().isAllInit_.store(false);
+    ret = service.GetDistributedHardware(networkId, enableSinkStep, callback);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
-
-    networkId = "local";
-    DHContext::GetInstance().AddRealTimeOnlineDeviceNetworkId(networkId);
-    ret = service.GetDistributedHardware(networkId, enableSourceStep, callback);
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    service.pendingGetDHRequests_.clear();
 }
 
 /**
@@ -767,6 +757,23 @@ HWTEST_F(DistributedHardwareServiceTest, OnAddSystemAbility_001, TestSize.Level1
 
     systemAbilityId = MEMORY_MANAGER_SA_ID;
     ASSERT_NO_FATAL_FAILURE(service.OnAddSystemAbility(systemAbilityId, deviceId));
+}
+
+HWTEST_F(DistributedHardwareServiceTest, CleanupExpiredRequests_001, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    ASSERT_NO_FATAL_FAILURE(service.CleanupExpiredRequests());
+
+    std::string networkId = "networkId_111";
+    EnableStep enableSourceStep = EnableStep::ENABLE_SOURCE;
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    DistributedHardwareService::PendingGetDHRequest request = { networkId, enableSourceStep, callback };
+    service.pendingGetDHRequests_.push_back(request);
+    DistributedHardwareManager::GetInstance().isAllInit_.store(false);
+    ASSERT_NO_FATAL_FAILURE(service.CleanupExpiredRequests());
+
+    DistributedHardwareManager::GetInstance().isAllInit_.store(true);
+    ASSERT_NO_FATAL_FAILURE(service.CleanupExpiredRequests());
 }
 } // namespace DistributedHardware
 } // namespace OHOS

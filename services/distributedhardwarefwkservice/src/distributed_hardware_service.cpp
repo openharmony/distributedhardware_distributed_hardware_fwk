@@ -64,6 +64,8 @@ namespace {
     const std::string LOCAL_NETWORKID_ALIAS = "local";
     constexpr int32_t DMSDP_ADAPTER_SA_ID = 4812;
     constexpr int32_t DHMS_SERVICE_SA_ID = 4801;
+    constexpr uint32_t RETRY_CHECK_DHFWK_INIT_MAX_TIMES = 25;
+    constexpr int32_t WAIT_INIT_TIME_MS = 200;
 }
 
 DistributedHardwareService::DistributedHardwareService(int32_t saId, bool runOnCreate)
@@ -448,21 +450,10 @@ int32_t DistributedHardwareService::GetDeviceDhInfo(const std::string &realNetwo
     return ERR_DH_FWK_HARDWARE_MANAGER_GET_DHINFO_FAIL;
 }
 
-int32_t DistributedHardwareService::GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+void DistributedHardwareService::StartGetDeviceDhInfo(const std::string &networkId, EnableStep enableStep,
     const sptr<IGetDhDescriptorsCallback> callback)
 {
-    if (!IsIdLengthValid(networkId) || callback == nullptr) {
-        DHLOGE("networkId size is invalid or callback ptr is null");
-        return ERR_DH_FWK_PARA_INVALID;
-    }
-    bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
-    bool isOnline = DHContext::GetInstance().IsRealTimeOnlineDevice(networkId);
-    if (((!isInit || !isOnline) && enableStep == EnableStep::ENABLE_SOURCE) ||
-        (!isInit && enableStep == EnableStep::ENABLE_SINK)) {
-        DHLOGE("DHManager is not init or the device is not online device.");
-        return ERR_DH_FWK_HARDWARE_MANAGER_BUSY;
-    }
-    DHLOGI("GetDistributedHardware start");
+    DHLOGI("StartGetDeviceDhInfo start");
     std::string deviceId;
     std::string realNetworkId;
     std::string udid;
@@ -483,8 +474,105 @@ int32_t DistributedHardwareService::GetDistributedHardware(const std::string &ne
         DHLOGI("Need active sync deviceInfo by softbus.");
         ComponentManager::GetInstance().SyncRemoteDeviceInfoBySoftbus(realNetworkId, enableStep, callback);
     }
-    DHLOGI("GetDistributedHardware end");
+    DHLOGI("StartGetDeviceDhInfo end");
+}
+
+int32_t DistributedHardwareService::GetDistributedHardware(const std::string &networkId, EnableStep enableStep,
+    const sptr<IGetDhDescriptorsCallback> callback)
+{
+    if (!IsIdLengthValid(networkId) || callback == nullptr) {
+        DHLOGE("networkId size is invalid or callback ptr is null");
+        return ERR_DH_FWK_PARA_INVALID;
+    }
+    if (enableStep == EnableStep::ENABLE_SOURCE) {
+        bool isOnline = DHContext::GetInstance().IsRealTimeOnlineDevice(networkId);
+        if (!isOnline) {
+            DHLOGE("This networkId: %{public}s is not trust device.", GetAnonyString(networkId).c_str());
+            return ERR_DH_FWK_PARA_INVALID;
+        }
+        bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
+        if (!isInit) {
+            std::lock_guard<std::mutex> lock(pendingRequestsMutex_);
+            PendingGetDHRequest request = { networkId, enableStep, callback };
+            if (pendingGetDHRequests_.empty()) {
+                DHLOGI("dhfwk not initialized, request queued for networkId: %{public}s",
+                    GetAnonyString(networkId).c_str());
+                pendingGetDHRequests_.push_back(request);
+                StartCleanupTimer();
+            } else {
+                DHLOGI("Add new request, networkId: %{public}s", GetAnonyString(networkId).c_str());
+                pendingGetDHRequests_.push_back(request);
+            }
+            return DH_FWK_SUCCESS;
+        }
+    }
+
+    if (enableStep == EnableStep::ENABLE_SINK) {
+        bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
+        if (!isInit) {
+            std::lock_guard<std::mutex> lock(pendingRequestsMutex_);
+            PendingGetDHRequest request = { networkId, enableStep, callback };
+            if (pendingGetDHRequests_.empty()) {
+                DHLOGI("dhfwk not initialized, request queued for networkId: %{public}s",
+                    GetAnonyString(networkId).c_str());
+                pendingGetDHRequests_.push_back(request);
+                StartCleanupTimer();
+            } else {
+                DHLOGI("Add new request, networkId: %{public}s", GetAnonyString(networkId).c_str());
+                pendingGetDHRequests_.push_back(request);
+            }
+            return DH_FWK_SUCCESS;
+        }
+    }
+    StartGetDeviceDhInfo(networkId, enableStep, callback);
     return DH_FWK_SUCCESS;
+}
+
+void DistributedHardwareService::StartCleanupTimer()
+{
+    DHLOGI("StartCleanupTimer start");
+    cleanupRunning_.store(true);
+    cleanupThread_ = std::thread([this]() {
+        while (cleanupRunning_.load()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_INIT_TIME_MS));
+            if (!cleanupRunning_.load()) {
+                break;
+            }
+            CleanupExpiredRequests();
+        }
+    });
+    cleanupThread_.detach();
+}
+
+void DistributedHardwareService::CleanupExpiredRequests()
+{
+    std::lock_guard<std::mutex> lock(pendingRequestsMutex_);
+    if (pendingGetDHRequests_.empty()) {
+        // 没有待处理请求，停止清理线程
+        cleanupRunning_.store(false);
+        return;
+    }
+    bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
+    if (isInit) {
+        // 同步数据
+        DHLOGI("dhfwk init finished");
+        for (auto iter = pendingGetDHRequests_.begin(); iter != pendingGetDHRequests_.end(); ++iter) {
+            StartGetDeviceDhInfo(iter->networkId, iter->enableStep, iter->callback);
+        }
+        cleanupRunning_.store(false);
+        return;
+    }
+    if (dhfwkInitTimes_ > RETRY_CHECK_DHFWK_INIT_MAX_TIMES) {
+        DHLOGI("dhfwk init timeout");
+        for (auto iter = pendingGetDHRequests_.begin(); iter != pendingGetDHRequests_.end(); ++iter) {
+            if (iter->callback != nullptr) {
+                iter->callback->OnError(iter->networkId, ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT);
+            }
+        }
+        cleanupRunning_.store(false);
+        return;
+    }
+    dhfwkInitTimes_++;
 }
 
 int32_t DistributedHardwareService::RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener)

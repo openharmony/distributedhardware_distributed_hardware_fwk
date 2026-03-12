@@ -20,6 +20,7 @@
 #include "ipc_object_stub.h"
 #include "system_ability.h"
 #include "system_ability_load_callback_stub.h"
+#include <thread>
 
 #include "distributed_hardware_fwk_kit.h"
 #include "distributed_hardware_fwk_kit_paras.h"
@@ -98,11 +99,26 @@ private:
     bool IsDepSAStart();
     int32_t GetDeviceDhInfo(const std::string &realNetworkId, const std::string &udidHash, const std::string &deviceId,
         EnableStep enableStep, const sptr<IGetDhDescriptorsCallback> callback);
+    void StartGetDeviceDhInfo(const std::string &networkId, EnableStep enableStep,
+        const sptr<IGetDhDescriptorsCallback> callback);
+    void StartCleanupTimer();
+    void CleanupExpiredRequests();
 
 private:
     bool registerToService_ = false;
     ServiceRunningState state_ = ServiceRunningState::STATE_NOT_START;
     std::shared_ptr<OHOS::AppExecFwk::EventHandler> eventHandler_ = nullptr;
+
+    struct PendingGetDHRequest {
+        std::string networkId;
+        EnableStep enableStep;
+        sptr<IGetDhDescriptorsCallback> callback;
+    };
+    std::vector<PendingGetDHRequest> pendingGetDHRequests_;
+    std::mutex pendingRequestsMutex_;
+    std::atomic<bool> cleanupRunning_{false};
+    std::thread cleanupThread_;
+    uint32_t dhfwkInitTimes_ = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS
