@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "capabilityinfomanager_fuzzer.h"
+#include "capabilityinfomanagerthree_fuzzer.h"
 
 #include <fuzzer/FuzzedDataProvider.h>
 
@@ -27,6 +27,11 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    constexpr int32_t EVEN_CHECK = 2;
+    const uint32_t MIN_DH_TYPE = 0;
+    const uint32_t MAX_DH_TYPE = 10;
+}
 
 void TestGetDistributedHardwareCallback::OnSuccess(const std::string &networkId,
     const std::vector<DHDescriptor> &descriptors, EnableStep enableStep)
@@ -42,64 +47,60 @@ void TestGetDistributedHardwareCallback::OnError(const std::string &networkId, i
     (void)error;
 }
 
-void CapabilityInfoManagerFuzzTest(const uint8_t* data, size_t size)
+void CapabilityInfoManagerEventHandlerCtorFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size <= sizeof(DistributedKv::ChangeNotification))) {
+    if ((data == nullptr) || (size == 0)) {
         return;
     }
 
-    FuzzedDataProvider fdp(data, size);
+    auto runner = AppExecFwk::EventRunner::Create(true);
+    std::shared_ptr<CapabilityInfoManager> mgrPtr;
+    if (data[0] % EVEN_CHECK == 0) {
+        mgrPtr = nullptr;
+    } else {
+        mgrPtr = std::make_shared<CapabilityInfoManager>();
+    }
+
+    CapabilityInfoManager::CapabilityInfoManagerEventHandler handler(runner, mgrPtr);
+    CapabilityInfoManager::GetInstance()->Init();
+    CapabilityInfoManager::CapabilityInfoManagerEventHandler handler2(runner, mgrPtr);
+    CapabilityInfoManager::GetInstance()->UnInit();
+}
+
+void OnChangeFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    std::string uuId(reinterpret_cast<const char*>(data), size);
+    std::string deviceId = Sha256(uuId);
     DistributedKv::Entry insert;
     DistributedKv::Entry update;
     DistributedKv::Entry del;
-    insert.key = fdp.ConsumeRandomLengthString();
-    update.key = fdp.ConsumeRandomLengthString();
-    del.key = fdp.ConsumeRandomLengthString();
-    insert.value = fdp.ConsumeRandomLengthString();
-    update.value = fdp.ConsumeRandomLengthString();
-    del.value = fdp.ConsumeRandomLengthString();
     std::vector<DistributedKv::Entry> inserts;
     std::vector<DistributedKv::Entry> updates;
     std::vector<DistributedKv::Entry> deleteds;
     inserts.push_back(insert);
     updates.push_back(update);
     deleteds.push_back(del);
-    std::string deviceId = fdp.ConsumeRandomLengthString();
 
     DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds),
         deviceId, true);
     CapabilityInfoManager::GetInstance()->OnChange(changeIn);
 }
 
-void RemoveCapabilityInfoInMemFuzzTest(const uint8_t* data, size_t size)
+void GetEntriesByKeysFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
         return;
     }
-    std::string deviceId(reinterpret_cast<const char*>(data), size);
-    CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInMem(deviceId);
-}
 
-void RemoveCapabilityInfoByKeyFuzzTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-    std::string key(reinterpret_cast<const char*>(data), size);
-    CapabilityInfoManager::GetInstance()->Init();
-    CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoByKey(key);
-    CapabilityInfoManager::GetInstance()->UnInit();
-}
+    FuzzedDataProvider fdp(data, size);
+    int bufSize = fdp.ConsumeIntegralInRange<int>(MIN_DH_TYPE, MAX_DH_TYPE);
 
-void RemoveCapabilityInfoInDBFuzzTest(const uint8_t* data, size_t size)
-{
-    if ((data == nullptr) || (size == 0)) {
-        return;
-    }
-    std::string deviceId(reinterpret_cast<const char*>(data), size);
-    CapabilityInfoManager::GetInstance()->Init();
-    CapabilityInfoManager::GetInstance()->RemoveCapabilityInfoInDB(deviceId);
-    CapabilityInfoManager::GetInstance()->UnInit();
+    std::vector<std::string> keys = {std::string(reinterpret_cast<const char*>(data), bufSize)};
+    CapabilityInfoManager::GetInstance()->GetEntriesByKeys(keys);
 }
 }
 }
@@ -108,10 +109,9 @@ void RemoveCapabilityInfoInDBFuzzTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DistributedHardware::CapabilityInfoManagerFuzzTest(data, size);
-    OHOS::DistributedHardware::RemoveCapabilityInfoInMemFuzzTest(data, size);
-    OHOS::DistributedHardware::RemoveCapabilityInfoByKeyFuzzTest(data, size);
-    OHOS::DistributedHardware::RemoveCapabilityInfoInDBFuzzTest(data, size);
+    OHOS::DistributedHardware::CapabilityInfoManagerEventHandlerCtorFuzzTest(data, size);
+    OHOS::DistributedHardware::OnChangeFuzzTest(data, size);
+    OHOS::DistributedHardware::GetEntriesByKeysFuzzTest(data, size);
     return 0;
 }
 
