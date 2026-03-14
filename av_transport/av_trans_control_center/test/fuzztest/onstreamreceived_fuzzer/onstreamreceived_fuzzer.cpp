@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <fuzzer/FuzzedDataProvider.h>
 #include <string>
 #include <thread>
 #include <unistd.h>
@@ -27,6 +28,10 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+const uint32_t MIN_DH_TYPE = 0;
+const uint32_t MAX_DH_TYPE = 10;
+}
 
 void OnStreamReceivedFuzzTest(const uint8_t *data, size_t size)
 {
@@ -34,12 +39,16 @@ void OnStreamReceivedFuzzTest(const uint8_t *data, size_t size)
         return;
     }
 
+    FuzzedDataProvider fdp(data, size);
+
+    int bufSize = fdp.ConsumeIntegralInRange<int>(MIN_DH_TYPE, MAX_DH_TYPE);
+
     int32_t sessionId = *(reinterpret_cast<const int32_t*>(data));
     const StreamData streamData = {
-        const_cast<char*>(reinterpret_cast<const char*>(data)), static_cast<int>(size)
+        const_cast<char*>(reinterpret_cast<const char*>(data)), bufSize
     };
     const StreamData extData = {
-        const_cast<char*>(reinterpret_cast<const char*>(data)), static_cast<int>(size)
+        const_cast<char*>(reinterpret_cast<const char*>(data)), bufSize
     };
     const StreamFrameInfo frameInfo = {
         *(reinterpret_cast<const int*>(data)), *(reinterpret_cast<const int64_t*>(data)),
