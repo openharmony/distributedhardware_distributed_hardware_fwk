@@ -756,10 +756,7 @@ int32_t DistributedHardwareService::UnLoadDistributedHDF(const DHType dhType)
 
 int32_t DistributedHardwareService::LoadSinkDMSDPService(const std::string &udid)
 {
-    if (CheckDHAccessPermission(udid) != DH_FWK_SUCCESS) {
-        DHLOGE("check permission failed.");
-        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
-    }
+    (void)udid;
     DHLOGI("Load DMSDP SA start");
     sptr<ISystemAbilityManager> saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (saMgr == nullptr) {
@@ -796,10 +793,6 @@ void DistributedHardwareService::LoadDMSDPServiceCallback::OnLoadSystemAbilityFa
 
 int32_t DistributedHardwareService::NotifySinkRemoteSourceStarted(const std::string &udid)
 {
-    if (CheckDHAccessPermission(udid) != DH_FWK_SUCCESS) {
-        DHLOGE("check permission failed.");
-        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
-    }
     DHLOGI("Notify sink remote init source DHMS ready start.");
     Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_SOURCE_DHMS_READY, udid);
     DHLOGI("Notify sink remote init source DHMS ready end.");
