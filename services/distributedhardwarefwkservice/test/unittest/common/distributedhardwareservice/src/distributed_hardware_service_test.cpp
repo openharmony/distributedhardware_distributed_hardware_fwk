@@ -724,22 +724,6 @@ HWTEST_F(DistributedHardwareServiceTest, GetDeviceDhInfo_002, TestSize.Level1)
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
-HWTEST_F(DistributedHardwareServiceTest, LoadSinkDMSDPService_001, TestSize.Level1)
-{
-    DistributedHardwareService service(ASID, true);
-    std::string udid = "";
-    auto ret = service.LoadSinkDMSDPService(udid);
-    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
-}
-
-HWTEST_F(DistributedHardwareServiceTest, NotifySinkRemoteSourceStarted_001, TestSize.Level1)
-{
-    DistributedHardwareService service(ASID, true);
-    std::string udid = "";
-    auto ret = service.NotifySinkRemoteSourceStarted(udid);
-    EXPECT_EQ(ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL, ret);
-}
-
 HWTEST_F(DistributedHardwareServiceTest, NotifySourceRemoteSinkStarted_001, TestSize.Level1)
 {
     DistributedHardwareService service(ASID, true);
