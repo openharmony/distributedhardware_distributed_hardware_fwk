@@ -49,6 +49,7 @@ FWK_IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManager);
 int32_t DistributedHardwareManager::LocalInit()
 {
     DHLOGI("DHFWK Local Init begin");
+    std::lock_guard<std::mutex> lock(localInitMgrMutex_);
     if (isLocalInit_.load()) {
         DHLOGI("Local init already finish");
         return DH_FWK_SUCCESS;
