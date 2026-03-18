@@ -41,7 +41,7 @@ ohos_source_set("avtrans_input_filter") {
     ]
   }
 
-  public_deps = [
+  deps = [
     "${plugin_path}/plugins/av_trans_input/daudio_input:plugin_AVTransDaudioInput",
     "${plugin_path}/plugins/av_trans_input/dscreen_input:plugin_AVTransDscreenInput",
     "${plugin_path}/plugins/av_trans_input/dsoftbus_input:plugin_AVTransDsoftbusInput",
@@ -94,7 +94,7 @@ ohos_source_set("avtrans_output_filter") {
     "hilog:libhilog",
   ]
 
-  public_deps = [
+  deps = [
     "${plugin_path}/plugins/av_trans_output/daudio_output:plugin_AVTransDaudioOutput",
     "${plugin_path}/plugins/av_trans_output/dscreen_output:plugin_AVTransDscreenOutput",
     "${plugin_path}/plugins/av_trans_output/dsoftbus_output:plugin_AVTransDsoftbusOutput",

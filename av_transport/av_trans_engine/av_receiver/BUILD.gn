@@ -76,6 +76,10 @@ ohos_shared_library("distributed_av_receiver") {
     "${distributed_av_transport_path}/framework:distributed_av_pipeline_fwk",
     "${filters_path}:avtrans_input_filter",
     "${filters_path}:avtrans_output_filter",
+    "${plugin_path}/plugins/av_trans_output/daudio_output:plugin_AVTransDaudioOutput",
+    "${plugin_path}/plugins/av_trans_output/dscreen_output:plugin_AVTransDscreenOutput",
+    "${plugin_path}/plugins/av_trans_output/dsoftbus_output:plugin_AVTransDsoftbusOutput",
+    "${plugin_path}/plugins/av_trans_output/dsoftbus_output_audio:plugin_AVTransDsoftbusOutputAudio",
   ]
 
   defines = [
