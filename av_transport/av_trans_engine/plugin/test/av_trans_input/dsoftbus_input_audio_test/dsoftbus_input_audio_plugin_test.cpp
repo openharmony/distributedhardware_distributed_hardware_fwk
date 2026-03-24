@@ -230,12 +230,13 @@ void CleanupStreamData(StreamData& data)
 
 StreamData CreateTestExtData(uint32_t metaType, const std::string& paramJson)
 {
+    const size_t ESCAPED_QUOTE_LEN = 2;
     std::string escapedParam = paramJson;
     // Escape double quotes for valid JSON string
     size_t pos = 0;
     while ((pos = escapedParam.find('"', pos)) != std::string::npos) {
         escapedParam.replace(pos, 1, R"(\")");
-        pos += 2;
+        pos += ESCAPED_QUOTE_LEN;
     }
     std::string jsonStr = R"({"avtrans_data_meta_type": )" + std::to_string(metaType) +
                           R"(, "avtrans_data_param": ")" + escapedParam + R"("})";
