@@ -1920,7 +1920,7 @@ void ComponentManager::RecoverAutoEnableSource(DHType dhType)
     MetaCapInfoMap metaInfoMap;
     MetaInfoManager::GetInstance()->GetMetaDataByDHType(dhType, metaInfoMap);
     for (const auto &metaInfo : metaInfoMap) {
-        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(metaInfo.second->GetDeviceId());
+        std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(metaInfo.second->GetUdidHash());
         if (uuid.empty()) {
             DHLOGE("Can not find uuid by capability deviceId: %{public}s",
                 GetAnonyString(metaInfo.second->GetDeviceId()).c_str());
@@ -1933,9 +1933,11 @@ void ComponentManager::RecoverAutoEnableSource(DHType dhType)
             continue;
         }
 
+        std::string udid = DHContext::GetInstance().GetUDIDByNetworkId(networkId);
         TaskParam taskParam = {
             .networkId = networkId,
             .uuid = uuid,
+            .udid = udid,
             .dhId = metaInfo.second->GetDHId(),
             .dhType = metaInfo.second->GetDHType()
         };
