@@ -29,8 +29,6 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     constexpr int32_t EVEN_CHECK = 2;
-    const uint32_t MIN_DH_TYPE = 0;
-    const uint32_t MAX_DH_TYPE = 10;
 }
 
 void TestGetDistributedHardwareCallback::OnSuccess(const std::string &networkId,
@@ -73,7 +71,8 @@ void OnChangeFuzzTest(const uint8_t* data, size_t size)
         return;
     }
 
-    std::string uuId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string uuId = fdp.ConsumeRandomLengthString();
     std::string deviceId = Sha256(uuId);
     DistributedKv::Entry insert;
     DistributedKv::Entry update;
@@ -97,9 +96,9 @@ void GetEntriesByKeysFuzzTest(const uint8_t* data, size_t size)
     }
 
     FuzzedDataProvider fdp(data, size);
-    int bufSize = fdp.ConsumeIntegralInRange<int>(MIN_DH_TYPE, MAX_DH_TYPE);
-
-    std::vector<std::string> keys = {std::string(reinterpret_cast<const char*>(data), bufSize)};
+    std::string key = fdp.ConsumeRandomLengthString();
+    std::vector<std::string> keys;
+    keys.push_back(key);
     CapabilityInfoManager::GetInstance()->GetEntriesByKeys(keys);
 }
 }
