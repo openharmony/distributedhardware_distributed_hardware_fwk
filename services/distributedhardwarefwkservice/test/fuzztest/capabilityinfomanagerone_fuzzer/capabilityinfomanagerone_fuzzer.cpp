@@ -50,7 +50,8 @@ void SyncDeviceInfoFromDBFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
-    std::string deviceId(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string deviceId = fdp.ConsumeRandomLengthString();
     CapabilityInfoManager::GetInstance()->Init();
     CapabilityInfoManager::GetInstance()->SyncDeviceInfoFromDB(deviceId);
     CapabilityInfoManager::GetInstance()->SyncRemoteCapabilityInfos();
@@ -90,7 +91,8 @@ void GetDataByKeyFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return;
     }
-    std::string key(reinterpret_cast<const char*>(data), size);
+    FuzzedDataProvider fdp(data, size);
+    std::string key = fdp.ConsumeRandomLengthString();
     std::shared_ptr<CapabilityInfo> capInfoPtr;
     CapabilityInfoManager::GetInstance()->GetDataByKey(key, capInfoPtr);
 
