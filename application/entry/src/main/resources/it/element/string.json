@@ -29,13 +29,6 @@
             }
         },
         {
-            "name":"update_version_prompt",
-            "value":"Entrambi i dispositivi devono eseguire NEXT",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"mech_right",
             "value":"Destra",
             "attr":{
@@ -47,13 +40,6 @@
             "value":"Il Tracciamento intelligente è attivato, tocca due volte per disattivarlo",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"Questo servizio utilizza Bluetooth e WLAN, oltre a richiedere l'invio del nome di questo dispositivo ai dispositivi destinatari del passaggio. Attivando questa funzione, l'utente accetta i presenti termini.",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -78,22 +64,8 @@
             }
         },
         {
-            "name":"continue_desc_text",
-            "value":"Inizia a visualizzare o modificare i contenuti su un dispositivo, quindi continua senza interruzioni su un dispositivo nelle vicinanze connesso con lo stesso ID. Quando Passaggio è disponibile, apparirà un'icona nel dock dell'app. %s",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"connected_to",
             "value":"Connesso a %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"learn_more",
-            "value":"Ulteriori informazioni",
             "attr":{
                 "priority":"translate"
             }
@@ -143,13 +115,6 @@
         {
             "name":"mech_center",
             "value":"Centro",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue_title",
-            "value":"Passaggio",
             "attr":{
                 "priority":"LT"
             }

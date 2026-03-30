@@ -15,24 +15,10 @@
             }
         },
         {
-            "name":"continue_desc_text",
-            "value":"يمكنك بدء عرض المحتوى أو تعديله على أحد الأجهزة، ثم متابعة العملية آنيًا على جهاز قريب تم تسجيل الدخول عليه بحساب هواوي نفسه. ستظهر أيقونة في شريط الإرساء عند توفر ميزة التسليم. %s",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"connected_to",
             "value":"متصل بجهاز %1$s",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"learn_more",
-            "value":"معرفة المزيد",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -50,13 +36,6 @@
             }
         },
         {
-            "name":"update_version_prompt",
-            "value":"يجب أن يعمل كلا الجهازين بنظام OpenHarmony NEXT",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"stop_device",
             "value":"اقطع الاتصال لإيقاف استخدام %1$s لهذا الجهاز.",
             "attr":{
@@ -68,20 +47,6 @@
             "value":"الميكروفون",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"continue_title",
-            "value":"التسليم",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"تستخدم هذه الخدمة البلوتوث والشبكة اللاسلكية، وتحتاج إلى إرسال اسم هذا الجهاز إلى الأجهزة التي تسلّم إليها المهام. بتشغيلك لهذه الميزة، فأنت تعني بذلك موافقتك على هذه البنود.",
-            "attr":{
-                "priority":"LT"
             }
         },
         {

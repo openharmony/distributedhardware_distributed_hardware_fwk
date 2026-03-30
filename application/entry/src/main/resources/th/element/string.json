@@ -29,13 +29,6 @@
             }
         },
         {
-            "name":"update_version_prompt",
-            "value":"ทั้งสองอุปกรณ์จะต้องใช้งาน NEXT",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"mech_right",
             "value":"ขวา",
             "attr":{
@@ -47,13 +40,6 @@
             "value":"เปิดการติดตามอัจฉริยะแล้ว แตะสองครั้งเพื่อปิด",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"บริการนี้ใช้บลูทูธและ WLAN และจำเป็นต้องส่งชื่ออุปกรณ์นี้ไปยังอุปกรณ์ที่คุณทำการส่งต่อ เมื่อเปิดใช้งาน แสดงว่าคุณยอมรับข้อกำหนดเหล่านี้",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -78,22 +64,8 @@
             }
         },
         {
-            "name":"continue_desc_text",
-            "value":"เริ่มดูหรือแก้ไขเนื้อหาบนอุปกรณ์หนึ่ง จากนั้นดำเนินการต่อบนอุปกรณ์ใกล้เคียงที่ล็อกอินด้วย ID เดียวกันอย่างราบรื่น เมื่อการส่งต่อพร้อมใช้งาน ไอคอนจะปรากฏในแท่นวางแอป %s",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"connected_to",
             "value":"เชื่อมต่อกับ %1$s แล้ว",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"learn_more",
-            "value":"เรียนรู้เพิ่มเติม",
             "attr":{
                 "priority":"translate"
             }
@@ -143,13 +115,6 @@
         {
             "name":"mech_center",
             "value":"ตรงกลาง",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue_title",
-            "value":"การส่งต่อ",
             "attr":{
                 "priority":"LT"
             }

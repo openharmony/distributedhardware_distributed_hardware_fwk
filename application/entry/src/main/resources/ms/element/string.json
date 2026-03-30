@@ -29,13 +29,6 @@
             }
         },
         {
-            "name":"update_version_prompt",
-            "value":"Kedua-dua peranti mestilah menggunakan NEXT",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"mech_right",
             "value":"Kanan",
             "attr":{
@@ -47,13 +40,6 @@
             "value":"Penjejakan pintar dihidupkan, dwiketik untuk mematikan",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"Perkhidmatan ini menggunakan Bluetooth dan WLAN dan perlu menghantar nama peranti ini kepada peranti penyerahan anda. Dengan menghidupkan ini, anda bersetuju dengan terma ini.",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -78,22 +64,8 @@
             }
         },
         {
-            "name":"continue_desc_text",
-            "value":"Lihat atau edit kandungan pada satu peranti. Kemudian teruskan pada peranti berdekatan yang dilog masuk ke ID yang sama. Apabila Penyerahan tersedia, ikon akan muncul dalam dok aplikasi. %s",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"connected_to",
             "value":"Disambungkan ke %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"learn_more",
-            "value":"Ketahui lebih lanjut",
             "attr":{
                 "priority":"translate"
             }
@@ -143,13 +115,6 @@
         {
             "name":"mech_center",
             "value":"Tengah",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue_title",
-            "value":"Penyerahan",
             "attr":{
                 "priority":"LT"
             }

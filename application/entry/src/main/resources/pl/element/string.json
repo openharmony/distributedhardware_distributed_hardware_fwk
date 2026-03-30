@@ -29,13 +29,6 @@
             }
         },
         {
-            "name":"update_version_prompt",
-            "value":"Na obu urządzeniach musi być uruchomiony system NEXT",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"mech_right",
             "value":"Po prawej",
             "attr":{
@@ -47,13 +40,6 @@
             "value":"Inteligentne śledzenie jest włączone, dotknij dwukrotnie, aby je wyłączyć",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"Ta usługa korzysta z Bluetooth i WLAN i musi wysyłać nazwę tego urządzenia do urządzeń, na które przekazujesz zawartość. Włączenie tej opcji oznacza zaakceptowanie tych warunków.",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -78,22 +64,8 @@
             }
         },
         {
-            "name":"continue_desc_text",
-            "value":"Zacznij wyświetlać lub edytować zawartość na jednym urządzeniu i bezproblemowo kontynuuj korzystanie z niej na urządzeniu znajdującym się w pobliżu, które jest zalogowane w tym samym ID. Jeśli Przekazywanie jest dostępne, w doku aplikacji pojawi się ikona. %s",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"connected_to",
             "value":"Połączono z %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"learn_more",
-            "value":"Dowiedz się więcej",
             "attr":{
                 "priority":"translate"
             }
@@ -143,13 +115,6 @@
         {
             "name":"mech_center",
             "value":"Na środku",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue_title",
-            "value":"Przekazywanie",
             "attr":{
                 "priority":"LT"
             }
