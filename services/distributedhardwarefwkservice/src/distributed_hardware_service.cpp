@@ -66,6 +66,7 @@ namespace {
     constexpr int32_t DHMS_SERVICE_SA_ID = 4801;
     constexpr uint32_t RETRY_CHECK_DHFWK_INIT_MAX_TIMES = 25;
     constexpr int32_t WAIT_INIT_TIME_MS = 200;
+    constexpr int32_t SYSTEM_UID = 1000;
 }
 
 DistributedHardwareService::DistributedHardwareService(int32_t saId, bool runOnCreate)
@@ -559,6 +560,7 @@ void DistributedHardwareService::CleanupExpiredRequests()
         for (auto iter = pendingGetDHRequests_.begin(); iter != pendingGetDHRequests_.end(); ++iter) {
             StartGetDeviceDhInfo(iter->networkId, iter->enableStep, iter->callback);
         }
+        pendingGetDHRequests_.clear();
         cleanupRunning_.store(false);
         return;
     }
@@ -569,6 +571,7 @@ void DistributedHardwareService::CleanupExpiredRequests()
                 iter->callback->OnError(iter->networkId, ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT);
             }
         }
+        pendingGetDHRequests_.clear();
         cleanupRunning_.store(false);
         return;
     }
@@ -756,7 +759,10 @@ int32_t DistributedHardwareService::UnLoadDistributedHDF(const DHType dhType)
 
 int32_t DistributedHardwareService::LoadSinkDMSDPService(const std::string &udid)
 {
-    (void)udid;
+    if (CheckDHAccessPermission(udid) != DH_FWK_SUCCESS && !CheckRemoteDeviceTypeAndUid(udid)) {
+        DHLOGE("check permission failed.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
     DHLOGI("Load DMSDP SA start");
     sptr<ISystemAbilityManager> saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (saMgr == nullptr) {
@@ -793,6 +799,10 @@ void DistributedHardwareService::LoadDMSDPServiceCallback::OnLoadSystemAbilityFa
 
 int32_t DistributedHardwareService::NotifySinkRemoteSourceStarted(const std::string &udid)
 {
+    if (CheckDHAccessPermission(udid) != DH_FWK_SUCCESS && !CheckRemoteDeviceTypeAndUid(udid)) {
+        DHLOGE("check permission failed.");
+        return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
+    }
     DHLOGI("Notify sink remote init source DHMS ready start.");
     Publisher::GetInstance().PublishMessage(DHTopic::TOPIC_SOURCE_DHMS_READY, udid);
     DHLOGI("Notify sink remote init source DHMS ready end.");
@@ -818,6 +828,29 @@ int32_t DistributedHardwareService::CheckDHAccessPermission(const std::string &u
         return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL;
     }
     return DH_FWK_SUCCESS;
+}
+
+bool DistributedHardwareService::CheckRemoteDeviceTypeAndUid(const std::string &udid)
+{
+    DHLOGI("check remote device identity");
+    auto networkId = DHContext::GetInstance().GetNetworkIdByUDID(udid);
+    if (!IsIdLengthValid(networkId)) {
+        DHLOGE("the networkId: %{public}s is invalid, remote udid: %{public}s", GetAnonyString(networkId).c_str(),
+            GetAnonyString(udid).c_str());
+        return false;
+    }
+
+    if (!DHContext::GetInstance().IsDoubleFwkDevice(networkId)) {
+        DHLOGE("remote device is not double frame device");
+        return false;
+    }
+
+    auto uid = IPCSkeleton::GetDCallingUid();
+    if (uid != SYSTEM_UID) {
+        DHLOGE("the uid: %{public}d is invalid", uid);
+        return false;
+    }
+    return true;
 }
 
 int32_t DistributedHardwareService::RegisterHardwareAccessListener(const DHType dhType,
