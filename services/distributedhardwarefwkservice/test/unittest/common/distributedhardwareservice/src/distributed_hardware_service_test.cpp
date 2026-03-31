@@ -759,5 +759,31 @@ HWTEST_F(DistributedHardwareServiceTest, CleanupExpiredRequests_001, TestSize.Le
     DistributedHardwareManager::GetInstance().isAllInit_.store(true);
     ASSERT_NO_FATAL_FAILURE(service.CleanupExpiredRequests());
 }
+
+HWTEST_F(DistributedHardwareServiceTest, CheckRemoteDeviceTypeAndUid_001, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string udid = "";
+    auto ret = service.CheckRemoteDeviceTypeAndUid(udid);
+    EXPECT_EQ(false, ret);
+
+    udid = "udid_1";
+    std::string uuid = "uuid_1";
+    std::string networkId = "networkId_1";
+    DHContext::GetInstance().AddOnlineDevice(udid, uuid, networkId);
+    ret = service.CheckRemoteDeviceTypeAndUid(udid);
+    EXPECT_EQ(false, ret);
+
+    int32_t osType = 1;
+    DHContext::GetInstance().AddOnlineDeviceOSType(networkId, osType);
+    ret = service.CheckRemoteDeviceTypeAndUid(udid);
+    EXPECT_EQ(false, ret);
+    DHContext::GetInstance().DeleteOnlineDeviceOSType(networkId);
+
+    osType = -1;
+    DHContext::GetInstance().AddOnlineDeviceOSType(networkId, osType);
+    ret = service.CheckRemoteDeviceTypeAndUid(udid);
+    EXPECT_EQ(false, ret);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

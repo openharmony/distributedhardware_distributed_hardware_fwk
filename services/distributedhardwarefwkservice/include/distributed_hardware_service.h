@@ -74,6 +74,7 @@ public:
         const std::string &pkgName) override;
     void SetAuthorizationResult(const DHType dhType, const std::string &requestId, bool &granted) override;
     int32_t CheckDHAccessPermission(const std::string &udid);
+    bool CheckRemoteDeviceTypeAndUid(const std::string &udid);
 
 public:
     class LoadDMSDPServiceCallback : public SystemAbilityLoadCallbackStub {
