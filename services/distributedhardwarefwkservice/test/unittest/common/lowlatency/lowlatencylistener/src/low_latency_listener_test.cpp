@@ -175,7 +175,7 @@ HWTEST_F(LowLatencyListenerTest, OnMessage_007, TestSize.Level1)
     ASSERT_TRUE(json != nullptr);
     const char* DH_TYPE = "dh_type";
     const char* LOW_LATENCY_ENABLE = "low_latency_enable";
-    cJSON_AddNumberToObject(json, DH_TYPE, 0x01);
+    cJSON_AddNumberToObject(json, DH_TYPE, 0x02);
     cJSON_AddBoolToObject(json, LOW_LATENCY_ENABLE, false);
     char* cjson = cJSON_PrintUnformatted(json);
     if (cjson == nullptr) {
