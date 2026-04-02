@@ -58,14 +58,6 @@
     ],
     "extensionAbilities": [
       {
-        "name": "ContinueSwitchAbility",
-        "srcEntry": "./ets/continueswitchability/ContinueSwitchAbility.ets",
-        "description": "$string:ContinueSwitchAbility_desc",
-        "label": "$string:ContinueSwitchAbility_label",
-        "type": "sys/commonUI",
-        "exported": false
-      },
-      {
         "name": "MechExtAbility",
         "srcEntry": "./ets/mechextability/MechExtAbility.ets",
         "description": "$string:MechExtAbility_desc",
