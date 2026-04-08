@@ -52,7 +52,7 @@ int32_t AccessListenerStub::OnRemoteRequest(
     return DH_FWK_SUCCESS;
 }
 
-int32_t AccessListenerStub::ReadDeviceInfo(MessageParcel &data, AuthDeviceInfo info)
+int32_t AccessListenerStub::ReadDeviceInfo(MessageParcel &data, AuthDeviceInfo &info)
 {
     info.networkId = data.ReadString();
     info.deviceName = data.ReadString();

@@ -147,7 +147,11 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
     uint32_t index = 0;
     int64_t latestPts = 0;
     size_t unitSize = sizeof(uint32_t) + sizeof(int64_t);
-    while (index < MAX_CLOCK_UNIT_COUNT) {
+    size_t maxCount = memory.size / unitSize;
+    if (maxCount > MAX_CLOCK_UNIT_COUNT) {
+        maxCount = MAX_CLOCK_UNIT_COUNT;
+    }
+    while (index < maxCount) {
         uint32_t frameNum = U8ToU32(base + (index * unitSize), NUM_FOUR);
         int64_t pts = static_cast<int64_t>(U8ToU64(base + (index * unitSize) + sizeof(uint32_t), NUM_EIGHT));
         if (pts > latestPts) {
