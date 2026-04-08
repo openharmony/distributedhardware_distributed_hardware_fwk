@@ -29,13 +29,6 @@
             }
         },
         {
-            "name":"update_version_prompt",
-            "value":"​ອຸ​ປະ​ກອນ​ທັງ​ສອງ​ເຄື່ອງ​ຕ້ອງ​ເປີດໃຊ້​ NEXT",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"mech_right",
             "value":"ຂວາ",
             "attr":{
@@ -47,13 +40,6 @@
             "value":"ການຕິດຕາມອັດສະລິຍະເປີດຢູ່, ແຕະສອງຄັ້ງເພື່ອປິດມັນ",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"ການ​ບໍ​ລິ​ການ​ນີ້​ໃຊ້ Bluetooth ແລະ WLAN ແລະ ຈຳ​ເປັນ​ຕ້ອງ​ສົ່ງ​ຊື່​ຂອງ​ອຸ​ປະ​ກອນ​ນີ້​ໄປ​ຫາ​ອຸ​ປະ​ກອນ​ທີ່​ທ່ານ​ສົ່ງ​ມອບ​ຫາ. ໂດຍການເປີດສິ່ງນີ້, ສະແດງວ່າທ່ານເຫັນດີນຳຂໍ້ກຳນົດເຫຼົ່ານີ້.",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -78,22 +64,8 @@
             }
         },
         {
-            "name":"continue_desc_text",
-            "value":"ເລີ່ມຕົ້ນການເບິ່ງ ຫຼື ການແກ້ໄຂເນື້ອຫາໃນອຸປະກອນໜຶ່ງ ແລະ ຈາກນັ້ນສືບຕໍ່ຢູ່ໃນອຸປະກອນໃກ້ຄຽງທີ່ເຂົ້າສູ່ລະບົບ ID ດຽວກັັນຢ່າງຄ່ອງແຄ້ວ. ເມື່ອການສົ່ງມອບມີໃຫ້, ໄອຄອນຈະປະກົດໃນດັອກແອັບ. %s",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"connected_to",
             "value":"ເຊື່ອມຕໍ່ກັບ %1$s ແລ້ວ",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"learn_more",
-            "value":"ຮຽນຮູ້ເພີ່ມເຕີມ",
             "attr":{
                 "priority":"translate"
             }
@@ -143,13 +115,6 @@
         {
             "name":"mech_center",
             "value":"ໃຈກາງ",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue_title",
-            "value":"ການສົ່ງມອບ",
             "attr":{
                 "priority":"LT"
             }

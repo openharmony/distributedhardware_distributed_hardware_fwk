@@ -29,13 +29,6 @@
             }
         },
         {
-            "name":"update_version_prompt",
-            "value":"Both devices must be running NEXT",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"mech_right",
             "value":"Right",
             "attr":{
@@ -45,13 +38,6 @@
         {
             "name":"audio_tracking_switch_on",
             "value":"Smart tracking is turned on, double-tap to turn it off",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"This service uses Bluetooth and WLAN and needs to send this device's name to devices you handover to. By turning this on, you agree to these terms.",
             "attr":{
                 "priority":"translate"
             }
@@ -78,22 +64,8 @@
             }
         },
         {
-            "name":"continue_desc_text",
-            "value":"Start viewing or editing content on one device, and then seamlessly continue on a nearby device logged in to the same ID. When Handover is available, an icon will appear in the app dock. %s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"connected_to",
             "value":"Connected to %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"learn_more",
-            "value":"Learn more",
             "attr":{
                 "priority":"translate"
             }
@@ -145,13 +117,6 @@
             "value":"Centre",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"continue_title",
-            "value":"Handover",
-            "attr":{
-                "priority":"translate"
             }
         }
     ]

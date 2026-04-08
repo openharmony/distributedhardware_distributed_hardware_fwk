@@ -29,13 +29,6 @@
             }
         },
         {
-            "name":"update_version_prompt",
-            "value":"Auf beiden Geräten muss NEXT ausgeführt werden",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"mech_right",
             "value":"Rechts",
             "attr":{
@@ -47,13 +40,6 @@
             "value":"Intelligente Verfolgung ist aktiviert. Tippen Sie zweimal, um sie zu deaktivieren",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"Dieser Service nutzt Bluetooth und WLAN und muss den Namen dieses Geräts an die Geräte senden, mit denen Sie die Übergabe vornehmen. Durch Aktivieren dieser Option stimmen Sie diesen Bedingungen zu.",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -78,22 +64,8 @@
             }
         },
         {
-            "name":"continue_desc_text",
-            "value":"Beginnen Sie mit dem Anzeigen oder Bearbeiten von Inhalten auf einem Gerät und fahren Sie dann nahtlos auf einem Gerät in der Nähe fort, das bei derselben ID angemeldet ist. Wenn Übergabe verfügbar ist, wird im App-Dock ein Symbol angezeigt. %s",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"connected_to",
             "value":"Mit %1$s verbunden",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"learn_more",
-            "value":"Mehr erfahren",
             "attr":{
                 "priority":"translate"
             }
@@ -143,13 +115,6 @@
         {
             "name":"mech_center",
             "value":"Zentrieren",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue_title",
-            "value":"Übergabe",
             "attr":{
                 "priority":"LT"
             }

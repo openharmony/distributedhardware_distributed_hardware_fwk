@@ -29,13 +29,6 @@
             }
         },
         {
-            "name":"update_version_prompt",
-            "value":"Ambos os dispositivos devem ter o NEXT",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"mech_right",
             "value":"Direita",
             "attr":{
@@ -47,13 +40,6 @@
             "value":"Rastreamento inteligente ativado, toque duas vezes para desativar",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"Este serviço utiliza o Bluetooth e a WLAN, e necessita de enviar o nome deste dispositivo para os dispositivos para os quais efetuar a transferência. Ao ativar isto, está a concordar com estes termos.",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -78,22 +64,8 @@
             }
         },
         {
-            "name":"continue_desc_text",
-            "value":"Comece a ver ou a editar conteúdos num dispositivo e continue instantaneamente num dispositivo nas proximidades com sessão iniciada na mesma Conta. Aparece um ícone na doca de aplicações quando a Transferência está disponível. %s",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"connected_to",
             "value":"Ligado a %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"learn_more",
-            "value":"Saber mais",
             "attr":{
                 "priority":"translate"
             }
@@ -143,13 +115,6 @@
         {
             "name":"mech_center",
             "value":"Centro",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue_title",
-            "value":"Transferência",
             "attr":{
                 "priority":"LT"
             }

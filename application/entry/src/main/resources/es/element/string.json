@@ -15,24 +15,10 @@
             }
         },
         {
-            "name":"continue_desc_text",
-            "value":"Comienza a ver o editar contenido en un dispositivo y continúa inmediatamente en otro dispositivo que haya iniciado sesión con el mismo ID de. Cuando Continuidad entre dispositivos esté disponible, aparecerá un icono en el panel de aplicaciones. %s",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"connected_to",
             "value":"Conectado a %1$s",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"learn_more",
-            "value":"Conocer más",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -50,13 +36,6 @@
             }
         },
         {
-            "name":"update_version_prompt",
-            "value":"Ambos dispositivos deben tener OpenHarmony NEXT instalado",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"stop_device",
             "value":"Desconecta para dejar de usar %1$s de este dispositivo.",
             "attr":{
@@ -68,20 +47,6 @@
             "value":"el micrófono",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"continue_title",
-            "value":"Continuidad entre dispositivos",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue_privacy_text",
-            "value":"Este servicio utiliza el Bluetooth y la red WLAN, y necesita enviar el nombre de este dispositivo a los dispositivos con los que establezca conexión. Si activas esta opción, significa que aceptas estos términos.",
-            "attr":{
-                "priority":"LT"
             }
         },
         {

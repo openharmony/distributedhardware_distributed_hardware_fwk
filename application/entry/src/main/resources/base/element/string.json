@@ -62,53 +62,6 @@
       }
     },
     {
-      "name": "ContinueSwitchAbility_desc",
-      "value": "description"
-    },
-    {
-      "name": "ContinueSwitchAbility_label",
-      "value": "label"
-    },
-    {
-      "name": "continue_title",
-      "value": "Handover",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "continue_desc_text",
-      "value": "Start viewing or editing content on one device, and then seamlessly continue on a nearby device logged in to the same ID. When Handover is available, an icon will appear in the app dock. %s",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "multi_device_collaboration",
-      "value": "More connectivity options"
-    },
-    {
-      "name": "continue_privacy_text",
-      "value": "This service uses Bluetooth and WLAN and needs to send this device's name to devices you handover to. By turning this on, you agree to these terms.",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "update_version_prompt",
-      "value": "Both devices must be running OpenHarmony NEXT",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "learn_more",
-      "value": "Learn more",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
       "name": "MechExtAbility_desc",
       "value": "description"
     },
