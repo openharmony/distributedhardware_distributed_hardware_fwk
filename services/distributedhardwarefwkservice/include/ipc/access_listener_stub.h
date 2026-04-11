@@ -28,7 +28,7 @@ public:
     virtual ~AccessListenerStub() override;
     int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 private:
-    int32_t ReadDeviceInfo(MessageParcel &data, AuthDeviceInfo info);
+    int32_t ReadDeviceInfo(MessageParcel &data, AuthDeviceInfo &info);
 private:
     DISALLOW_COPY_AND_MOVE(AccessListenerStub);
 };
