@@ -24,7 +24,7 @@
 namespace OHOS {
 namespace DistributedHardware {
 namespace {
-    constexpr int32_t DISABLE_TIMEOUT_MS = 500;
+    constexpr int32_t DISABLE_TIMEOUT_MS = 1000;
 }
 #undef DH_LOG_TAG
 #define DH_LOG_TAG "ComponentDisable"
