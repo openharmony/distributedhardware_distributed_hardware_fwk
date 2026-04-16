@@ -53,6 +53,7 @@ ohos_unittest("AvTransportPipelineTest") {
     "dsoftbus:softbus_client",
     "googletest:gmock",
     "googletest:gtest",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "libevdev:libevdev",
   ]

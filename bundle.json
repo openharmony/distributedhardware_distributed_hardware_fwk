@@ -61,7 +61,8 @@
         "libevdev",
         "selinux_adapter",
         "os_account",
-        "memmgr"
+        "memmgr",
+        "graphic_surface"
       ]
     },
     "build": {

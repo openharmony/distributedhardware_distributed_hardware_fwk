@@ -73,6 +73,7 @@ ohos_unittest("AvTransportOutputFilterTest") {
     "c_utils:utils",
     "dsoftbus:softbus_client",
     "googletest:gtest",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "libevdev:libevdev",
   ]
