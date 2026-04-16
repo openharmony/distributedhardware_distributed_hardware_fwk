@@ -65,6 +65,7 @@ ohos_unittest("DaudioInputPluginTest") {
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "googletest:gtest",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",

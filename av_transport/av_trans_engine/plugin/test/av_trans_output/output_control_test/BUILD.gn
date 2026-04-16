@@ -59,6 +59,7 @@ ohos_unittest("OutputControllerTest") {
     "dsoftbus:softbus_client",
     "eventhandler:libeventhandler",
     "googletest:gtest",
+    "graphic_surface:surface",
     "hilog:libhilog",
   ]
 
