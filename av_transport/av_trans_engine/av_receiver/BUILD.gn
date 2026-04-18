@@ -114,6 +114,7 @@ ohos_shared_library("distributed_av_receiver") {
     "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "ipc:ipc_core",
   ]

@@ -74,6 +74,7 @@ ohos_shared_library("distributed_av_pipeline_fwk") {
     "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "ipc:ipc_core",
     "media_foundation:media_foundation",
