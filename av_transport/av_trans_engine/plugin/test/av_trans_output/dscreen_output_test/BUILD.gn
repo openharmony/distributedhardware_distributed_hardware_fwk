@@ -58,6 +58,7 @@ ohos_unittest("DscreenOutputPluginTest") {
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "googletest:gtest",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
