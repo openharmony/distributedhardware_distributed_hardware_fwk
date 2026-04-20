@@ -126,7 +126,7 @@ int32_t ReadClockUnitFromMemory(const AVTransSharedMemory &memory, AVSyncClockUn
         memory.name.c_str(), memory.size, memory.fd);
     TRUE_RETURN_V_MSG_E(IsInValidSharedMemory(memory), ERR_DH_AVT_INVALID_PARAM, "invalid input shared memory");
 
-    int mSize = 12;
+    int mSize = (sizeof(uint32_t) + sizeof(int64_t)) * MAX_CLOCK_UNIT_COUNT + sizeof(uint32_t);
     TRUE_RETURN_V_MSG_E(memory.size < mSize, ERR_DH_AVT_INVALID_PARAM,
         "Memory.size is too small, future access may exceed the limit");
     AVTRANS_LOGI("clock unit index=%{public}" PRId32 ", frameNum=%{public}" PRId32,
