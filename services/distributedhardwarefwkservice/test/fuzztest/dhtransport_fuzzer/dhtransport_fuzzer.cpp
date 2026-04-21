@@ -15,32 +15,20 @@
 
 #include "dhtransport_fuzzer.h"
 
-#include <algorithm>
-#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <string>
-#include <unistd.h>
 
 #include <fuzzer/FuzzedDataProvider.h>
 
-#include "constants.h"
 #include "dh_transport.h"
 #include "dh_comm_tool.h"
-#include "socket.h"
-#include "softbus_bus_center.h"
 
 namespace OHOS {
 namespace DistributedHardware {
 namespace {
     const int32_t SOCKETID = 1;
 }
-
-void OnBind(int32_t socket, PeerSocketInfo info);
-void OnShutdown(int32_t socket, ShutdownReason reason);
-void OnBind(int32_t socket, PeerSocketInfo info);
-void OnBytes(int32_t socket, const void *data, uint32_t dataLen);
-std::shared_ptr<DHCommTool> GetDHCommToolPtr();
 
 void DhTransportOnBytesReceivedFuzzTest(const uint8_t* data, size_t size)
 {
