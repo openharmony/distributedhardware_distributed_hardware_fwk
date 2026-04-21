@@ -98,5 +98,5 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     OHOS::DistributedHardware::PublishMessageFuzzTest(data, size);
     OHOS::DistributedHardware::UnregisterPublisherListenerFuzzTest(data, size);
     OHOS::DistributedHardware::InitializeAVCenterFuzzTest(data, size);
-将     return 0;
+    return 0;
 }
