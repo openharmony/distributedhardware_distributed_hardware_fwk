@@ -27,6 +27,8 @@ group("fuzztest") {
     "dhcommtool_fuzzer:fuzztest",
     "dhcommtoolone_fuzzer:fuzztest",
     "dhtransport_fuzzer:fuzztest",
+    "dhtransportone_fuzzer:fuzztest",
+    "dhtransporttwo_fuzzer:fuzztest",
     "distributedfwkservices_fuzzer:fuzztest",
     "distributedfwkstub_fuzzer:fuzztest",
     "handlenotifyload_fuzzer:fuzztest",

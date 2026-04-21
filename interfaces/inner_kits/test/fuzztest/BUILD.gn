@@ -16,6 +16,12 @@ group("fuzztest") {
 
   deps = [
     "distributedhardwarefwkkit_fuzzer:fuzztest",
+    "distributedhardwarefwkkitone_fuzzer:fuzztest",
+    "distributedhardwarefwkkittwo_fuzzer:fuzztest",
+    "distributedhardwarefwkkitthree_fuzzer:fuzztest",
+    "distributedhardwarefwkkitfour_fuzzer:fuzztest",
+    "distributedhardwarefwkkitfive_fuzzer:fuzztest",
+    "distributedhardwarefwkkitsix_fuzzer:fuzztest",
     "distributedhardwarefwkstub_fuzzer:fuzztest",
     "getdhdescriptorscallbackstub_fuzzer:fuzztest",
     "hardwarestatuslistenerstub_fuzzer:fuzztest",
