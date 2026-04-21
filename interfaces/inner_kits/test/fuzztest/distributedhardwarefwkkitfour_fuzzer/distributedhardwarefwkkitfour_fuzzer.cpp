@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "distributedhardwarefwkkit_fuzzer.h"
+#include "distributedhardwarefwkkitfour_fuzzer.h"
 
 #include <algorithm>
 #include <chrono>
@@ -96,59 +96,60 @@ void TestAuthorizationResultCallback::OnAuthorizationResult(const std::string &n
     (void)networkId;
     (void)requestId;
 }
-void RegisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
+
+void DisableSinkFuzzTest(const uint8_t *data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+
+    DistributedHardwareFwkKit dhfwkKit;
+    std::vector<DHDescriptor> descriptors;
+    std::string dhId(reinterpret_cast<const char*>(data), size);
+    DHType dhType = DHType::AUDIO;
+    DHDescriptor dhDescriptor {
+        .id = dhId,
+        .dhType = dhType
+    };
+    descriptors.push_back(dhDescriptor);
+    dhfwkKit.DisableSink(descriptors);
+}
+
+void LoadDistributedHDFFuzzTest(const uint8_t *data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
 
-    sptr<TestPublisherListener> listener(new TestPublisherListener());
+    DHType dhType = static_cast<DHType>(*(reinterpret_cast<const uint32_t*>(data)));
+
     DistributedHardwareFwkKit dhfwkKit;
-    DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
-    dhfwkKit.RegisterPublisherListener(topic, listener);
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
+    dhfwkKit.LoadDistributedHDF(dhType);
 }
 
-void PublishMessageFuzzTest(const uint8_t *data, size_t size)
+void UnLoadDistributedHDFFuzzTest(const uint8_t *data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
 
-    sptr<TestPublisherListener> listener(new TestPublisherListener());
+    DHType dhType = static_cast<DHType>(*(reinterpret_cast<const uint32_t*>(data)));
+
     DistributedHardwareFwkKit dhfwkKit;
-    DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
-    std::string message(reinterpret_cast<const char*>(data), size);
-    dhfwkKit.PublishMessage(topic, message);
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
+    dhfwkKit.UnLoadDistributedHDF(dhType);
 }
 
-void UnregisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
+void QueryLocalSysSpecFuzzTest(const uint8_t *data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
 
-    sptr<TestPublisherListener> listener(new TestPublisherListener());
     DistributedHardwareFwkKit dhfwkKit;
-    DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
-    dhfwkKit.UnregisterPublisherListener(topic, listener);
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
+    enum QueryLocalSysSpecType specType =
+            static_cast<QueryLocalSysSpecType>(*(reinterpret_cast<const uint32_t*>(data)));
+    dhfwkKit.QueryLocalSysSpec(specType);
 }
-
-void InitializeAVCenterFuzzTest(const uint8_t *data, size_t size)
-{
-    if ((data == nullptr) || (size < sizeof(int32_t))) {
-        return;
-    }
-
-    sptr<TestPublisherListener> listener(new TestPublisherListener());
-    DistributedHardwareFwkKit dhfwkKit;
-    TransRole transRole = TransRole::UNKNOWN;
-    int32_t engineId = *(reinterpret_cast<const int32_t*>(data));
-    dhfwkKit.InitializeAVCenter(transRole, engineId);
-}
-
 } // namespace DistributedHardware
 } // namespace OHOS
 
@@ -156,9 +157,9 @@ void InitializeAVCenterFuzzTest(const uint8_t *data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DistributedHardware::RegisterPublisherListenerFuzzTest(data, size);
-    OHOS::DistributedHardware::PublishMessageFuzzTest(data, size);
-    OHOS::DistributedHardware::UnregisterPublisherListenerFuzzTest(data, size);
-    OHOS::DistributedHardware::InitializeAVCenterFuzzTest(data, size);
-将     return 0;
+    OHOS::DistributedHardware::DisableSinkFuzzTest(data, size);
+    OHOS::DistributedHardware::LoadDistributedHDFFuzzTest(data, size);
+    OHOS::DistributedHardware::UnLoadDistributedHDFFuzzTest(data, size);
+    OHOS::DistributedHardware::QueryLocalSysSpecFuzzTest(data, size);
+    return 0;
 }

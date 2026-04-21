@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "distributedhardwarefwkkit_fuzzer.h"
+#include "distributedhardwarefwkkittwo_fuzzer.h"
 
 #include <algorithm>
 #include <chrono>
@@ -96,59 +96,57 @@ void TestAuthorizationResultCallback::OnAuthorizationResult(const std::string &n
     (void)networkId;
     (void)requestId;
 }
-void RegisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
+
+void ResumeDistributedHardwareFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size < sizeof(uint32_t))) {
+    if ((data == nullptr) || (size == 0)) {
         return;
     }
 
     sptr<TestPublisherListener> listener(new TestPublisherListener());
     DistributedHardwareFwkKit dhfwkKit;
-    DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
-    dhfwkKit.RegisterPublisherListener(topic, listener);
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
+    DHType dhType = DHType::AUDIO;
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    dhfwkKit.ResumeDistributedHardware(dhType, networkId);
 }
 
-void PublishMessageFuzzTest(const uint8_t *data, size_t size)
+void StopDistributedHardwareFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size < sizeof(uint32_t))) {
+    if ((data == nullptr) || (size == 0)) {
         return;
     }
 
     sptr<TestPublisherListener> listener(new TestPublisherListener());
     DistributedHardwareFwkKit dhfwkKit;
-    DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
-    std::string message(reinterpret_cast<const char*>(data), size);
-    dhfwkKit.PublishMessage(topic, message);
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
+    DHType dhType = DHType::AUDIO;
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    dhfwkKit.StopDistributedHardware(dhType, networkId);
 }
 
-void UnregisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
+void GetDistributedHardwareFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size < sizeof(uint32_t))) {
+    if ((data == nullptr) || (size == 0)) {
         return;
     }
 
-    sptr<TestPublisherListener> listener(new TestPublisherListener());
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
     DistributedHardwareFwkKit dhfwkKit;
-    DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
-    dhfwkKit.UnregisterPublisherListener(topic, listener);
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    EnableStep enableStep = EnableStep::ENABLE_SOURCE;
+    dhfwkKit.GetDistributedHardware(networkId, enableStep, callback);
 }
 
-void InitializeAVCenterFuzzTest(const uint8_t *data, size_t size)
+void RegisterDHStatusListenerFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size < sizeof(int32_t))) {
+    if ((data == nullptr) || (size == 0)) {
         return;
     }
 
-    sptr<TestPublisherListener> listener(new TestPublisherListener());
     DistributedHardwareFwkKit dhfwkKit;
-    TransRole transRole = TransRole::UNKNOWN;
-    int32_t engineId = *(reinterpret_cast<const int32_t*>(data));
-    dhfwkKit.InitializeAVCenter(transRole, engineId);
+    std::string networkId(reinterpret_cast<const char*>(data), size);
+    sptr<IHDSourceStatusListener> listener(new TestHDSourceStatusListener());
+    dhfwkKit.RegisterDHStatusListener(networkId, listener);
 }
-
 } // namespace DistributedHardware
 } // namespace OHOS
 
@@ -156,9 +154,9 @@ void InitializeAVCenterFuzzTest(const uint8_t *data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DistributedHardware::RegisterPublisherListenerFuzzTest(data, size);
-    OHOS::DistributedHardware::PublishMessageFuzzTest(data, size);
-    OHOS::DistributedHardware::UnregisterPublisherListenerFuzzTest(data, size);
-    OHOS::DistributedHardware::InitializeAVCenterFuzzTest(data, size);
-将     return 0;
+    OHOS::DistributedHardware::ResumeDistributedHardwareFuzzTest(data, size);
+    OHOS::DistributedHardware::StopDistributedHardwareFuzzTest(data, size);
+    OHOS::DistributedHardware::GetDistributedHardwareFuzzTest(data, size);
+    OHOS::DistributedHardware::RegisterDHStatusListenerFuzzTest(data, size);
+    return 0;
 }

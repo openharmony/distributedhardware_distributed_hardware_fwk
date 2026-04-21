@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "distributedhardwarefwkkit_fuzzer.h"
+#include "distributedhardwarefwkkitfive_fuzzer.h"
 
 #include <algorithm>
 #include <chrono>
@@ -96,59 +96,47 @@ void TestAuthorizationResultCallback::OnAuthorizationResult(const std::string &n
     (void)networkId;
     (void)requestId;
 }
-void RegisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
+
+void RegisterDHStatusListenerOneParamFuzzTest(const uint8_t *data, size_t size)
+{
+    (void)data;
+    (void)size;
+    DistributedHardwareFwkKit dhfwkKit;
+    sptr<IHDSinkStatusListener> listener(new TestHDSinkStatusListener());
+    dhfwkKit.RegisterDHStatusListener(listener);
+}
+
+void UnregisterDHStatusListenerOneParamFuzzTest(const uint8_t *data, size_t size)
+{
+    (void)data;
+    (void)size;
+    DistributedHardwareFwkKit dhfwkKit;
+    sptr<IHDSinkStatusListener> listener(new TestHDSinkStatusListener());
+    dhfwkKit.UnregisterDHStatusListener(listener);
+}
+
+void IsQueryLocalSysSpecTypeValidFuzzTest(const uint8_t *data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return;
     }
 
-    sptr<TestPublisherListener> listener(new TestPublisherListener());
     DistributedHardwareFwkKit dhfwkKit;
-    DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
-    dhfwkKit.RegisterPublisherListener(topic, listener);
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
+    QueryLocalSysSpecType specType = static_cast<QueryLocalSysSpecType>(*(reinterpret_cast<const uint32_t*>(data)));
+    dhfwkKit.IsQueryLocalSysSpecTypeValid(specType);
 }
 
-void PublishMessageFuzzTest(const uint8_t *data, size_t size)
-{
-    if ((data == nullptr) || (size < sizeof(uint32_t))) {
-        return;
-    }
-
-    sptr<TestPublisherListener> listener(new TestPublisherListener());
-    DistributedHardwareFwkKit dhfwkKit;
-    DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
-    std::string message(reinterpret_cast<const char*>(data), size);
-    dhfwkKit.PublishMessage(topic, message);
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
-}
-
-void UnregisterPublisherListenerFuzzTest(const uint8_t *data, size_t size)
-{
-    if ((data == nullptr) || (size < sizeof(uint32_t))) {
-        return;
-    }
-
-    sptr<TestPublisherListener> listener(new TestPublisherListener());
-    DistributedHardwareFwkKit dhfwkKit;
-    DHTopic topic = static_cast<DHTopic>(*(reinterpret_cast<const uint32_t*>(data)));
-    dhfwkKit.UnregisterPublisherListener(topic, listener);
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
-}
-
-void InitializeAVCenterFuzzTest(const uint8_t *data, size_t size)
+void RegisterCtlCenterCallbackFuzzTest(const uint8_t *data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(int32_t))) {
         return;
     }
 
-    sptr<TestPublisherListener> listener(new TestPublisherListener());
     DistributedHardwareFwkKit dhfwkKit;
-    TransRole transRole = TransRole::UNKNOWN;
     int32_t engineId = *(reinterpret_cast<const int32_t*>(data));
-    dhfwkKit.InitializeAVCenter(transRole, engineId);
+    sptr<IAvTransControlCenterCallback> listener(new TestAVTransControlCenterCallback());
+    dhfwkKit.RegisterCtlCenterCallback(engineId, listener);
 }
-
 } // namespace DistributedHardware
 } // namespace OHOS
 
@@ -156,9 +144,9 @@ void InitializeAVCenterFuzzTest(const uint8_t *data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DistributedHardware::RegisterPublisherListenerFuzzTest(data, size);
-    OHOS::DistributedHardware::PublishMessageFuzzTest(data, size);
-    OHOS::DistributedHardware::UnregisterPublisherListenerFuzzTest(data, size);
-    OHOS::DistributedHardware::InitializeAVCenterFuzzTest(data, size);
-将     return 0;
+    OHOS::DistributedHardware::RegisterDHStatusListenerOneParamFuzzTest(data, size);
+    OHOS::DistributedHardware::UnregisterDHStatusListenerOneParamFuzzTest(data, size);
+    OHOS::DistributedHardware::IsQueryLocalSysSpecTypeValidFuzzTest(data, size);
+    OHOS::DistributedHardware::RegisterCtlCenterCallbackFuzzTest(data, size);
+    return 0;
 }
