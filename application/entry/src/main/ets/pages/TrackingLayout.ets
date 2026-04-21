@@ -115,11 +115,6 @@ struct TrackingLayout {
         .accessibilityLevel('no')
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
-    .margin({
-      left: CommonConstants.TEXT_MARGIN_LEFT,
-      top: CommonConstants.LAYOUT_ICON_MARGIN_TOP,
-      right: LanguagesUtil.isMirrorLanguages() ? CommonConstants.LAYOUT_MARGIN_RIGHT_MIRROR : 0,
-    })
   }
 
   @Builder
@@ -156,7 +151,6 @@ struct TrackingLayout {
         .width(CommonConstants.BUTTON_SIZE)
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
-    .margin({ left: CommonConstants.LEFT_ICON_MARGIN_LEFT, top: CommonConstants.LAYOUT_ICON_MARGIN_TOP })
   }
 
   @Builder
@@ -195,7 +189,6 @@ struct TrackingLayout {
         .width(CommonConstants.BUTTON_SIZE)
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
-    .margin({ left: CommonConstants.OTHER_ICON_MARGIN_LEFT, top: CommonConstants.LAYOUT_ICON_MARGIN_TOP })
   }
 
   @Builder
@@ -232,13 +225,12 @@ struct TrackingLayout {
         .width(CommonConstants.BUTTON_SIZE)
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
-    .margin({ left: CommonConstants.OTHER_ICON_MARGIN_LEFT, top: CommonConstants.LAYOUT_ICON_MARGIN_TOP })
   }
 
   build() {
     Column() {
       Flex({
-        direction: FlexDirection.Row, justifyContent: FlexAlign.Start, alignItems: ItemAlign.Start
+        direction: FlexDirection.Row, justifyContent: FlexAlign.SpaceEvenly, alignItems: ItemAlign.Start
       }) {
         this.BackButton();
         this.TrackingLayoutLeft();
@@ -247,6 +239,9 @@ struct TrackingLayout {
       }
       .width('100%')
       .height('100%')
+      .padding({
+        top: CommonConstants.LAYOUT_ICON_MARGIN_TOP
+      })
 
     }
     .width('100%')

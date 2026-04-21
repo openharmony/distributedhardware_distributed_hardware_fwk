@@ -38,6 +38,7 @@ struct MechControl {
   @State fontSizeScale: number = AppStorage.get('currentFontSizeScale') as number;
   @State pageOpacity: number = 1;
   @State visibilityState: Visibility = Visibility.Hidden;
+  @State isOneButton: boolean = !this.isTrackingEnabled;
   @StorageProp('controlCenterIsDarkMode') isShowAsDarkMode: boolean = false;
   private context = getContext(this) as common.UIAbilityContext;
 
@@ -53,6 +54,13 @@ struct MechControl {
 
   onSwitchChange() {
     logger.info(`${TAG} onSwitchChange in`);
+    animateTo({
+      duration: 100,
+      curve: curves.springMotion(CommonConstants.SPRING_MOTION_RESPONSE,
+        CommonConstants.SPRING_MOTION_DAMPING_FRACTION, CommonConstants.SPRING_MOTION_OVERLAP_DURATION)
+    }, () => {
+      this.isOneButton = !this.isTrackingEnabled;
+    })
   }
 
   onLayoutChange() {
@@ -200,21 +208,7 @@ struct MechControl {
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
     }
-    .translate({
-      x: this.isTrackingEnabled ? 0 :
-        (LanguagesUtil.isMirrorLanguages() ? -CommonConstants.TRANSLATE_X : CommonConstants.TRANSLATE_X)
-    })
-    .animation({
-      curve: curves.springMotion(CommonConstants.SPRING_MOTION_RESPONSE,
-        CommonConstants.SPRING_MOTION_DAMPING_FRACTION, CommonConstants.SPRING_MOTION_OVERLAP_DURATION)
-    })
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
-    .margin({
-      left: CommonConstants.NORMAL_SWITCH_MARGIN_LEFT,
-      right: LanguagesUtil.isMirrorLanguages() ? CommonConstants.NORMAL_SWITCH_MARGIN_LEFT : 0,
-      top: LanguagesUtil.isUltraLongLanguages() ? CommonConstants.SWITCH_ICON_MARGIN_TOP_ULTRA :
-        CommonConstants.SWITCH_ICON_MARGIN_TOP
-    })
   }
 
   @Builder
@@ -262,11 +256,6 @@ struct MechControl {
         .maxFontScale(FontSizeScale.MD)
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
-    .margin({
-      left: LanguagesUtil.isMirrorLanguages() ? 0 :CommonConstants.NORMAL_LAYOUT_MARGIN_LEFT,
-      top: LanguagesUtil.isUltraLongLanguages() ? CommonConstants.SWITCH_ICON_MARGIN_TOP_ULTRA :
-        CommonConstants.SWITCH_ICON_MARGIN_TOP
-    })
   }
 
   build() {
@@ -274,15 +263,19 @@ struct MechControl {
         Row() {
           this.IntelligentTracking();
 
-          if (this.isTrackingEnabled) {
+          if (!this.isOneButton) {
             this.TrackingLayout();
           }
 
         }
         .width('100%')
         .height('100%')
-        .justifyContent(FlexAlign.Start)
+        .justifyContent(FlexAlign.SpaceEvenly)
         .alignItems(VerticalAlign.Top)
+        .padding({
+          top: LanguagesUtil.isUltraLongLanguages() ? CommonConstants.SWITCH_ICON_MARGIN_TOP_ULTRA :
+            CommonConstants.SWITCH_ICON_MARGIN_TOP
+        })
     }
     .width('100%')
     .height('100%')
