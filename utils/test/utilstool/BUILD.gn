@@ -47,6 +47,7 @@ ohos_unittest("UtilsToolTest") {
     "hitrace:hitrace_meter",
     "hilog:libhilog",
     "init:libbegetutil",
+    "ipc:ipc_single",
   ]
 
   cflags = [ "-Dprivate=public" ]
