@@ -41,7 +41,7 @@ struct DHardwareUI {
     srcNetworkId: this.srcNetworkId
   }
   private context = getContext(this) as common.UIAbilityContext;
-  private callbackId: number = 0;
+  private callbackId: number | undefined = 0;
 
   subscribeConfigurationUpdate() {
     let systemLanguage: string | undefined = this.context.config.language;
@@ -188,6 +188,11 @@ struct DHardwareUI {
 
   aboutToDisappear() {
     console.info(TAG + 'aboutToDisappear');
+    if (this.callbackId) {
+      let applicationContext = this.context.getApplicationContext();
+      applicationContext.off('environment',this.callbackId);
+      this.callbackId = undefined;
+    }
   }
 
   build() {
