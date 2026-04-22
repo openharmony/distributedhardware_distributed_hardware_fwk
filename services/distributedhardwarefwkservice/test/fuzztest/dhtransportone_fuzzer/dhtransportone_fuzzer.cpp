@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <string>
 
 #include <fuzzer/FuzzedDataProvider.h>
@@ -80,15 +81,21 @@ void DhTransportOnSocketOpenedFuzzTest(const uint8_t* data, size_t size)
     int32_t socketId = fdp.ConsumeIntegral<int32_t>();
     std::string peerSocketName = fdp.ConsumeRandomLengthString();
     std::string remoteNetworkId = fdp.ConsumeRandomLengthString();
+    char *nameBuf = strdup(peerSocketName.c_str());
+    char *networkIdBuf = strdup(remoteNetworkId.c_str());
+    char *pkgNameBuf = strdup(DH_FWK_PKG_NAME.c_str());
     PeerSocketInfo info = {
-        .name = const_cast<char*>(peerSocketName.c_str()),
-        .networkId = const_cast<char*>(remoteNetworkId.c_str()),
-        .pkgName = const_cast<char*>(DH_FWK_PKG_NAME.c_str()),
+        .name = nameBuf,
+        .networkId = networkIdBuf,
+        .pkgName = pkgNameBuf,
         .dataType = DATA_TYPE_BYTES
     };
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     std::shared_ptr<DHTransport> dhTransportTest = std::make_shared<DHTransport>(dhCommTool);
     dhTransportTest->OnSocketOpened(socketId, info);
+    free(nameBuf);
+    free(networkIdBuf);
+    free(pkgNameBuf);
 }
 }
 }

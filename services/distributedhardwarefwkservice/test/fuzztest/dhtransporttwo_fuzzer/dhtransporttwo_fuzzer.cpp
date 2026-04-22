@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <string>
 
 #include <fuzzer/FuzzedDataProvider.h>
@@ -40,7 +41,8 @@ void DhTransportOnSocketClosedFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size < sizeof(int32_t))) {
         return;
     }
-    int32_t socketId = *(reinterpret_cast<const int32_t*>(data));
+    FuzzedDataProvider fdp(data, size);
+    int32_t socketId = fdp.ConsumeIntegral<int32_t>();
     ShutdownReason reason = ShutdownReason::SHUTDOWN_REASON_UNKNOWN;
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     std::shared_ptr<DHTransport> dhTransportTest = std::make_shared<DHTransport>(dhCommTool);
@@ -57,13 +59,19 @@ void DhTransportOnBindFuzzTest(const uint8_t* data, size_t size)
     int32_t socketId = fdp.ConsumeIntegral<int32_t>();
     std::string peerSocketName = fdp.ConsumeRandomLengthString();
     std::string remoteNetworkId = fdp.ConsumeRandomLengthString();
+    char *nameBuf = strdup(peerSocketName.c_str());
+    char *networkIdBuf = strdup(remoteNetworkId.c_str());
+    char *pkgNameBuf = strdup(DH_FWK_PKG_NAME.c_str());
     PeerSocketInfo info = {
-        .name = const_cast<char*>(peerSocketName.c_str()),
-        .networkId = const_cast<char*>(remoteNetworkId.c_str()),
-        .pkgName = const_cast<char*>(DH_FWK_PKG_NAME.c_str()),
+        .name = nameBuf,
+        .networkId = networkIdBuf,
+        .pkgName = pkgNameBuf,
         .dataType = DATA_TYPE_BYTES
     };
     OnBind(socketId, info);
+    free(nameBuf);
+    free(networkIdBuf);
+    free(pkgNameBuf);
 }
 
 void DhTransportOnShutdownFuzzTest(const uint8_t* data, size_t size)
@@ -71,7 +79,8 @@ void DhTransportOnShutdownFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size < sizeof(int32_t))) {
         return;
     }
-    int32_t socketId = *(reinterpret_cast<const int32_t*>(data));
+    FuzzedDataProvider fdp(data, size);
+    int32_t socketId = fdp.ConsumeIntegral<int32_t>();
     ShutdownReason reason = ShutdownReason::SHUTDOWN_REASON_UNKNOWN;
     std::shared_ptr<DHCommTool> dhCommTool = std::make_shared<DHCommTool>();
     std::shared_ptr<DHTransport> dhTransportTest = std::make_shared<DHTransport>(dhCommTool);
@@ -84,8 +93,12 @@ void DhTransportOnBytesFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size < sizeof(int32_t) + sizeof(uint32_t))) {
         return;
     }
-    int32_t socketId = *(reinterpret_cast<const int32_t*>(data));
-    uint32_t dataLen = *(reinterpret_cast<const uint32_t*>(data + sizeof(int32_t)));
+    FuzzedDataProvider fdp(data, size);
+    int32_t socketId = fdp.ConsumeIntegral<int32_t>();
+    uint32_t dataLen = fdp.ConsumeIntegral<uint32_t>();
+    if (dataLen > (size - sizeof(int32_t) - sizeof(uint32_t))) {
+        return;
+    }
     OnBytes(socketId, data, dataLen);
 }
 }
