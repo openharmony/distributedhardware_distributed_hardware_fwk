@@ -31,15 +31,16 @@ void TestAuthorizationResultCallback::OnAuthorizationResult(const std::string &n
 
 void RegisterHardwareAccessListenerFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size < sizeof(int32_t))) {
+    if ((data == nullptr) || (size < sizeof(uint32_t) + sizeof(int32_t))) {
         return;
     }
 
     DistributedHardwareFwkKit dhfwkKit;
     DHType dhType = static_cast<DHType>(*(reinterpret_cast<const uint32_t*>(data)));
     sptr<IAuthorizationResultCallback> callback(new TestAuthorizationResultCallback());
-    int32_t timeOut = *(reinterpret_cast<const int32_t*>(data));
-    std::string pkgName(reinterpret_cast<const char*>(data), size);
+    int32_t timeOut = *(reinterpret_cast<const int32_t*>(data + sizeof(uint32_t)));
+    std::string pkgName(reinterpret_cast<const char*>(data + sizeof(uint32_t) + sizeof(int32_t)),
+        size - sizeof(uint32_t) - sizeof(int32_t));
     dhfwkKit.RegisterHardwareAccessListener(dhType, callback, timeOut, pkgName);
 }
 
@@ -52,7 +53,7 @@ void UnregisterHardwareAccessListenerFuzzTest(const uint8_t *data, size_t size)
     DistributedHardwareFwkKit dhfwkKit;
     DHType dhType = static_cast<DHType>(*(reinterpret_cast<const uint32_t*>(data)));
     sptr<IAuthorizationResultCallback> callback(new TestAuthorizationResultCallback());
-    std::string pkgName(reinterpret_cast<const char*>(data), size);
+    std::string pkgName(reinterpret_cast<const char*>(data + sizeof(int32_t)), size - sizeof(int32_t));
     dhfwkKit.UnregisterHardwareAccessListener(dhType, callback, pkgName);
 }
 
@@ -64,7 +65,7 @@ void SetAuthorizationResultFuzzTest(const uint8_t *data, size_t size)
 
     DistributedHardwareFwkKit dhfwkKit;
     DHType dhType = static_cast<DHType>(*(reinterpret_cast<const uint32_t*>(data)));
-    std::string requestId(reinterpret_cast<const char*>(data), size);
+    std::string requestId(reinterpret_cast<const char*>(data + sizeof(int32_t)), size - sizeof(int32_t));
     bool granted = false;
     dhfwkKit.SetAuthorizationResult(dhType, requestId, granted);
 }

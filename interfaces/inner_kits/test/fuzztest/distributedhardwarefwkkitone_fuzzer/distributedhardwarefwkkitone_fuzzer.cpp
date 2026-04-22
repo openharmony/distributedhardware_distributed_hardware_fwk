@@ -42,7 +42,7 @@ void CreateControlChannelFuzzTest(const uint8_t *data, size_t size)
 
     DistributedHardwareFwkKit dhfwkKit;
     int32_t engineId = *(reinterpret_cast<const int32_t*>(data));
-    std::string peerDevId(reinterpret_cast<const char*>(data), size);
+    std::string peerDevId(reinterpret_cast<const char*>(data + sizeof(int32_t)), size - sizeof(int32_t));
     dhfwkKit.CreateControlChannel(engineId, peerDevId);
 }
 

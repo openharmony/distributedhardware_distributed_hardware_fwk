@@ -23,6 +23,9 @@
 
 namespace OHOS {
 namespace DistributedHardware {
+namespace {
+    const size_t MAX_SIZE = 4096;
+}
 void TestHDSourceStatusListener::OnEnable(
     const std::string &networkId, const DHDescriptor &dhDescriptor)
 {
@@ -39,7 +42,7 @@ void TestHDSourceStatusListener::OnDisable(
 
 void UnregisterDHStatusListenerFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size == 0) || (size > MAX_SIZE)) {
         return;
     }
 
@@ -51,7 +54,7 @@ void UnregisterDHStatusListenerFuzzTest(const uint8_t *data, size_t size)
 
 void EnableSourceFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size == 0) || (size > MAX_SIZE)) {
         return;
     }
 
@@ -63,7 +66,7 @@ void EnableSourceFuzzTest(const uint8_t *data, size_t size)
 
 void DisableSourceFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size == 0) || (size > MAX_SIZE)) {
         return;
     }
 
@@ -75,7 +78,7 @@ void DisableSourceFuzzTest(const uint8_t *data, size_t size)
 
 void EnableSinkFuzzTest(const uint8_t *data, size_t size)
 {
-    if ((data == nullptr) || (size == 0)) {
+    if ((data == nullptr) || (size == 0) || (size > MAX_SIZE)) {
         return;
     }
 
