@@ -44,6 +44,7 @@ void DHDataSyncTriggerListener::OnDataSyncTrigger(const std::string &networkId)
         return;
     }
     DHLOGI("Receive data sync trigger, networkId: %{public}s", GetAnonyString(networkId).c_str());
+    ComponentManager::GetInstance().RegisterSyncDataRequest(networkId);
     std::shared_ptr<std::string> networkIdPtr = std::make_shared<std::string>(networkId);
     AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(EVENT_DATA_SYNC_MANUAL, networkIdPtr);
     if (ComponentManager::GetInstance().GetEventHandler() == nullptr) {
