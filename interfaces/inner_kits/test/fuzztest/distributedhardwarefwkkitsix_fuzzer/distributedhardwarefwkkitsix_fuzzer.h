@@ -13,23 +13,23 @@
  * limitations under the License.
  */
 
-#ifndef TEST_DISTRIBUTEDHARDWAREFWK_KIT_FUZZER_H
-#define TEST_DISTRIBUTEDHARDWAREFWK_KIT_FUZZER_H
+#ifndef TEST_DISTRIBUTEDHARDWAREFWK_KIT_SIX_FUZZER_H
+#define TEST_DISTRIBUTEDHARDWAREFWK_KIT_SIX_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "distributedhardwarefwkkit_fuzzer"
+#define FUZZ_PROJECT_NAME "distributedhardwarefwkkitsix_fuzzer"
 
 #include <string>
-#include "publisher_listener_stub.h"
+#include "authorization_result_callback_stub.h"
 
 namespace OHOS {
 namespace DistributedHardware {
-class TestPublisherListener : public PublisherListenerStub {
+class TestAuthorizationResultCallback : public AuthorizationResultCallbackStub {
 public:
-    TestPublisherListener() = default;
-    virtual ~TestPublisherListener() = default;
-    void OnMessage(const DHTopic topic, const std::string &message);
+    TestAuthorizationResultCallback() = default;
+    virtual ~TestAuthorizationResultCallback() = default;
+protected:
+    void OnAuthorizationResult(const std::string &networkId, const std::string &requestId) override;
 };
-
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif

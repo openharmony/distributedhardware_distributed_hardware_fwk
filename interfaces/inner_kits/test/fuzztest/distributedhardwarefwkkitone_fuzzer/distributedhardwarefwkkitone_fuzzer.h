@@ -13,23 +13,9 @@
  * limitations under the License.
  */
 
-#ifndef TEST_DISTRIBUTEDHARDWAREFWK_KIT_FUZZER_H
-#define TEST_DISTRIBUTEDHARDWAREFWK_KIT_FUZZER_H
+#ifndef TEST_DISTRIBUTEDHARDWAREFWK_KIT_ONE_FUZZER_H
+#define TEST_DISTRIBUTEDHARDWAREFWK_KIT_ONE_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "distributedhardwarefwkkit_fuzzer"
+#define FUZZ_PROJECT_NAME "distributedhardwarefwkkitone_fuzzer"
 
-#include <string>
-#include "publisher_listener_stub.h"
-
-namespace OHOS {
-namespace DistributedHardware {
-class TestPublisherListener : public PublisherListenerStub {
-public:
-    TestPublisherListener() = default;
-    virtual ~TestPublisherListener() = default;
-    void OnMessage(const DHTopic topic, const std::string &message);
-};
-
-} // namespace DistributedHardware
-} // namespace OHOS
 #endif
