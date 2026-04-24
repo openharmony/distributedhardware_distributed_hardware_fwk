@@ -2436,6 +2436,22 @@ bool ComponentManager::IsRequestSyncData(const std::string &networkId)
     return false;
 }
 
+void ComponentManager::RegisterSyncDataRequest(const std::string &networkId)
+{
+    if (!IsIdLengthValid(networkId)) {
+        DHLOGE("networkId is invalid");
+        return;
+    }
+    std::lock_guard<std::mutex> lock(syncDeviceInfoMapMutex_);
+    if (syncDeviceInfoMap_.find(networkId) != syncDeviceInfoMap_.end()) {
+        DHLOGI("The networkId already has request sync, no need register, networkId: %{public}s",
+            GetAnonyString(networkId).c_str());
+        return;
+    }
+    DHLOGI("Register sync data request, networkId: %{public}s", GetAnonyString(networkId).c_str());
+    syncDeviceInfoMap_[networkId] = {EnableStep::ENABLE_SOURCE, {}};
+}
+
 int32_t ComponentManager::AddAccessListener(const DHType dhType, int32_t &timeOut, const std::string &pkgName,
     const sptr<IAuthorizationResultCallback> &callback)
 {

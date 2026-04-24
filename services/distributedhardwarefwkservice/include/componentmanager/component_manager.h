@@ -124,6 +124,7 @@ public:
     bool IsSourceEnabled();
     bool IsSinkActiveEnabled();
     bool IsRequestSyncData(const std::string &networkId);
+    void RegisterSyncDataRequest(const std::string &networkId);
     class ComponentManagerEventHandler : public AppExecFwk::EventHandler {
     public:
         ComponentManagerEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> runner);
