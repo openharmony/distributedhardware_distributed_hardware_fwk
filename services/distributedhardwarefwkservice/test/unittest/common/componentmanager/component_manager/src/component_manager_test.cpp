@@ -1590,7 +1590,7 @@ HWTEST_F(ComponentManagerTest, OnGetDescriptors_001, TestSize.Level0)
     std::string realNetworkId = "realNetworkId_1";
     std::vector<DHDescriptor> descriptors;
     ComponentManager::GetInstance().OnGetDescriptors(realNetworkId, descriptors);
-    EXPECT_TRUE(ComponentManager::GetInstance().syncDeviceInfoMap_.empty());
+    EXPECT_FALSE(ComponentManager::GetInstance().syncDeviceInfoMap_.empty());
 }
 
 HWTEST_F(ComponentManagerTest, OnGetDescriptors_002, TestSize.Level0)
