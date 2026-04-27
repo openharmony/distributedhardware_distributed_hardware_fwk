@@ -22,6 +22,7 @@
 #include <string>
 #include <thread>
 
+#include "cJSON.h"
 #include "ffrt.h"
 #include "ipc_object_stub.h"
 #include "iservice_registry.h"
@@ -279,6 +280,8 @@ int32_t ComponentManager::Enable(const std::string &networkId, const std::string
             return ret;
         }
     }
+    
+    AddTokenIdToSinkAttrs(customParams, param);
 
     auto compEnable = std::make_shared<ComponentEnable>();
     auto result = compEnable->Enable(networkId, dhId, param, (compSource_.find(dhType))->second, customParams);
@@ -319,6 +322,46 @@ int32_t ComponentManager::CheckSubtypeResource(const std::string &subtype, const
     }
 #endif
     return DH_FWK_SUCCESS;
+}
+
+void ComponentManager::AddTokenIdToSinkAttrs(const std::string &customParams, EnableParam &param)
+{
+    if (customParams.empty()) {
+        DHLOGD("customParams is empty");
+        return;
+    }
+    
+    cJSON *json = cJSON_Parse(customParams.c_str());
+    if (json == nullptr) {
+        DHLOGE("Parse customParams json failed");
+        return;
+    }
+    
+    cJSON *tokenIdJson = cJSON_GetObjectItem(json, "tokenId");
+    if (tokenIdJson == nullptr || !cJSON_IsNumber(tokenIdJson)) {
+        DHLOGD("tokenId not found or not number type in customParams");
+        cJSON_Delete(json);
+        return;
+    }
+    
+    cJSON *sinkAttrsJson = cJSON_Parse(param.sinkAttrs.empty() ? "{}" : param.sinkAttrs.c_str());
+    if (sinkAttrsJson == nullptr) {
+        DHLOGE("Parse sinkAttrs json failed");
+        cJSON_Delete(json);
+        return;
+    }
+    
+    cJSON_AddNumberToObject(sinkAttrsJson, "tokenId", tokenIdJson->valuedouble);
+    
+    char *sinkAttrsStr = cJSON_PrintUnformatted(sinkAttrsJson);
+    if (sinkAttrsStr != nullptr) {
+        param.sinkAttrs = std::string(sinkAttrsStr);
+        cJSON_free(sinkAttrsStr);
+    }
+    
+    cJSON_Delete(sinkAttrsJson);
+    cJSON_Delete(json);
+    DHLOGI("Add tokenId to sinkAttrs success");
 }
 
 int32_t ComponentManager::RetryGetEnableParam(const std::string &networkId, const std::string &uuid,

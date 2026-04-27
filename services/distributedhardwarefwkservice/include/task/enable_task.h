@@ -36,6 +36,8 @@ public:
     int32_t GetCallingUid();
     void SetCallingPid(int32_t callingPid);
     int32_t GetCallingPid();
+    void SetCallingTokenId(uint32_t callingTokenId);
+    uint32_t GetCallingTokenId();
     void SetCustomParams(const std::string &customParams);
     std::string GetCustomParams();
 
@@ -45,6 +47,7 @@ private:
     void DoTaskInner();
     int32_t DoAutoEnable();
     int32_t DoActiveEnable();
+    void AppendTokenIdToParams(std::string &params);
 
 private:
     // effect sink
@@ -55,6 +58,8 @@ private:
     int32_t callingUid_{ 0 };
     // enable or disable calling pid
     int32_t callingPid_{ 0 };
+    // enable or disable calling token id
+    uint32_t callingTokenId_{ 0 };
     // custom params for enable
     std::string customParams_;
 };

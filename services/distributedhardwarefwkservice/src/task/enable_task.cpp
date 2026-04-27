@@ -17,6 +17,7 @@
 
 #include <pthread.h>
 
+#include "cJSON.h"
 #include "ffrt.h"
 
 #include "anonymous_string.h"
@@ -144,6 +145,16 @@ int32_t EnableTask::GetCallingPid()
     return callingPid_;
 }
 
+void EnableTask::SetCallingTokenId(uint32_t callingTokenId)
+{
+    callingTokenId_ = callingTokenId;
+}
+
+uint32_t EnableTask::GetCallingTokenId()
+{
+    return callingTokenId_;
+}
+
 void EnableTask::SetCustomParams(const std::string &customParams)
 {
     customParams_ = customParams;
@@ -201,6 +212,24 @@ int32_t EnableTask::DoAutoEnable()
     return ret;
 }
 
+void EnableTask::AppendTokenIdToParams(std::string &params)
+{
+    DHLOGI("Add tokenId to customParams before, original customParams: %{public}s", GetAnonyString(params).c_str());
+    cJSON *json = cJSON_Parse(params.empty() ? "{}" : params.c_str());
+    if (json == nullptr) {
+        DHLOGE("Parse customParams json failed!");
+        return;
+    }
+    cJSON_AddNumberToObject(json, "tokenId", static_cast<double>(GetCallingTokenId()));
+    char *jsonStr = cJSON_PrintUnformatted(json);
+    if (jsonStr != nullptr) {
+        params = std::string(jsonStr);
+        cJSON_free(jsonStr);
+    }
+    cJSON_Delete(json);
+    DHLOGI("Add tokenId to customParams after, customParams: %{public}s", GetAnonyString(params).c_str());
+}
+
 int32_t EnableTask::DoActiveEnable()
 {
     int32_t ret = DH_FWK_SUCCESS;
@@ -215,12 +244,16 @@ int32_t EnableTask::DoActiveEnable()
             DHLOGE("EnableSink failed!");
         }
     }
-    if (GetEffectSource()) {
-        ret = ComponentManager::GetInstance().EnableSource(
-            GetNetworkId(), dhDescriptor, GetCallingUid(), GetCallingPid());
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGE("EnableSource failed!");
-        }
+    if (!GetEffectSource()) {
+        return ret;
+    }
+    if (GetDhType() == static_cast<DHType>(DHType::AUDIO) && GetCallingTokenId() != 0) {
+        AppendTokenIdToParams(dhDescriptor.customParams);
+    }
+    ret = ComponentManager::GetInstance().EnableSource(
+        GetNetworkId(), dhDescriptor, GetCallingUid(), GetCallingPid());
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("EnableSource failed!");
     }
     return ret;
 }

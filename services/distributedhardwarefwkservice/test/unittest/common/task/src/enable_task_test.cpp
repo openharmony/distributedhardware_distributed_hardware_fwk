@@ -39,6 +39,14 @@ const TaskParam TASK_PARAM_1 = {
     .dhType = DHType::UNKNOWN
 };
 
+const TaskParam TASK_PARAM_AUDIO_MIC = {
+    .networkId = DEV_NETWORK_ID_1,
+    .uuid = DEV_ID_1,
+    .udid = DEV_DID_1,
+    .dhId = "audio_mic_001",
+    .dhType = static_cast<DHType>(DHSubtype::AUDIO_MIC)
+};
+
 }
 
 void EnableTaskTest::SetUpTestCase()
@@ -219,6 +227,73 @@ HWTEST_F(EnableTaskTest, DoActiveEnable_004, TestSize.Level0)
     EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(-1));
     auto ret = enableTask->DoActiveEnable();
     EXPECT_EQ(-1, ret);
+}
+
+HWTEST_F(EnableTaskTest, AppendTokenIdToParams_001, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_AUDIO_MIC.networkId, TASK_PARAM_AUDIO_MIC.uuid,
+        TASK_PARAM_AUDIO_MIC.udid, TASK_PARAM_AUDIO_MIC.dhId, TASK_PARAM_AUDIO_MIC.dhType);
+    enableTask->SetCallingTokenId(12345u);
+    std::string params = R"({"key":"value"})";
+    enableTask->AppendTokenIdToParams(params);
+    EXPECT_NE(params.find("tokenId"), std::string::npos);
+    EXPECT_NE(params.find("12345"), std::string::npos);
+}
+
+HWTEST_F(EnableTaskTest, AppendTokenIdToParams_002, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_AUDIO_MIC.networkId, TASK_PARAM_AUDIO_MIC.uuid,
+        TASK_PARAM_AUDIO_MIC.udid, TASK_PARAM_AUDIO_MIC.dhId, TASK_PARAM_AUDIO_MIC.dhType);
+    enableTask->SetCallingTokenId(67890u);
+    std::string params;
+    enableTask->AppendTokenIdToParams(params);
+    EXPECT_NE(params.find("tokenId"), std::string::npos);
+    EXPECT_NE(params.find("67890"), std::string::npos);
+}
+
+HWTEST_F(EnableTaskTest, AppendTokenIdToParams_003, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_AUDIO_MIC.networkId, TASK_PARAM_AUDIO_MIC.uuid,
+        TASK_PARAM_AUDIO_MIC.udid, TASK_PARAM_AUDIO_MIC.dhId, TASK_PARAM_AUDIO_MIC.dhType);
+    enableTask->SetCallingTokenId(11111u);
+    std::string params = "invalid_json";
+    enableTask->AppendTokenIdToParams(params);
+    EXPECT_EQ(params, "invalid_json");
+}
+
+HWTEST_F(EnableTaskTest, DoActiveEnable_005, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_AUDIO_MIC.networkId, TASK_PARAM_AUDIO_MIC.uuid,
+        TASK_PARAM_AUDIO_MIC.udid, TASK_PARAM_AUDIO_MIC.dhId, TASK_PARAM_AUDIO_MIC.dhType);
+    enableTask->SetEffectSource(true);
+    enableTask->SetCallingTokenId(12345u);
+    enableTask->SetCustomParams(R"({"key":"value"})");
+    EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(0));
+    auto ret = enableTask->DoActiveEnable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(EnableTaskTest, DoActiveEnable_006, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_AUDIO_MIC.networkId, TASK_PARAM_AUDIO_MIC.uuid,
+        TASK_PARAM_AUDIO_MIC.udid, TASK_PARAM_AUDIO_MIC.dhId, TASK_PARAM_AUDIO_MIC.dhType);
+    enableTask->SetEffectSource(true);
+    enableTask->SetCallingTokenId(0u);
+    enableTask->SetCustomParams(R"({"key":"value"})");
+    EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _)).Times(1).WillRepeatedly(Return(0));
+    auto ret = enableTask->DoActiveEnable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+}
+
+HWTEST_F(EnableTaskTest, DoActiveEnable_007, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_AUDIO_MIC.networkId, TASK_PARAM_AUDIO_MIC.uuid,
+        TASK_PARAM_AUDIO_MIC.udid, TASK_PARAM_AUDIO_MIC.dhId, TASK_PARAM_AUDIO_MIC.dhType);
+    enableTask->SetEffectSink(true);
+    enableTask->SetCallingTokenId(12345u);
+    EXPECT_CALL(*componentManager_, EnableSink(_, _, _)).Times(1).WillRepeatedly(Return(0));
+    auto ret = enableTask->DoActiveEnable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 } // namespace DistributedHardware
 } // namespace OHOS
