@@ -21,7 +21,6 @@ import curves from '@ohos.curves';
 import accessibility from '@ohos.accessibility';
 import common from '@ohos.app.ability.common';
 import CommonConstants,{ FontSizeScale, LanguagesUtil } from '../common/constants/CommonConstants';
-import uiMaterial from '@ohos.arkui.uiMaterial';
 
 const TAG = '[MechControl_Page] : ';
 let localStorage = LocalStorage.getShared();
@@ -161,14 +160,10 @@ struct MechControl {
           .height(CommonConstants.SWITCH_ICON_SIZE)
           .margin({ left: CommonConstants.SWITCH_ICON_MARGIN, top: CommonConstants.SWITCH_ICON_MARGIN })
       }
-      .buttonStyle(ButtonStyleMode.TEXTUAL)
-      .systemMaterial(new uiMaterial.ImmersiveMaterial({ 
-        style: uiMaterial.ImmersiveStyle.THIN, 
-        applyShadow: true, 
-        materialColor: this.isTrackingEnabled ? $r('sys.color.ohos_id_color_emphasize') : $r('sys.color.ohos_id_color_component_normal')
-      }))
       .width(CommonConstants.BUTTON_SIZE)
       .height(CommonConstants.BUTTON_SIZE)
+      .backgroundColor(this.isTrackingEnabled ? $r('sys.color.ohos_id_color_emphasize') :
+      $r('sys.color.ohos_id_color_component_normal'))
       .accessibilityText($r('app.string.mech_intelligent_tracking'))
       .type(ButtonType.Circle)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: CommonConstants.BUTTON_CLICK_SCALE })
@@ -224,15 +219,10 @@ struct MechControl {
           .width(CommonConstants.SWITCH_ICON_SIZE)
           .height(CommonConstants.SWITCH_ICON_SIZE)
       }
-      .buttonStyle(ButtonStyleMode.TEXTUAL)
-      .systemMaterial(new uiMaterial.ImmersiveMaterial({ 
-        style: uiMaterial.ImmersiveStyle.THIN, 
-        applyShadow: true, 
-        materialColor: $r('sys.color.ohos_id_color_emphasize') 
-      }))
       .width(CommonConstants.BUTTON_SIZE)
       .height(CommonConstants.BUTTON_SIZE)
       .accessibilityText($r('app.string.mech_tracking_layout'))
+      .backgroundColor($r('sys.color.ohos_id_color_emphasize'))
       .type(ButtonType.Circle)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: CommonConstants.BUTTON_CLICK_SCALE })
       .onClick(() => {
