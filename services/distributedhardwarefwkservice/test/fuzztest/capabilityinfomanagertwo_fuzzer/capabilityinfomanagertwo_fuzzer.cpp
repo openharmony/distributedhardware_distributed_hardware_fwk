@@ -199,6 +199,24 @@ void DumpCapabilityInfosFuzzTest(const uint8_t* data, size_t size)
 }
 }
 
+/* Fuzzer initialize */
+extern "C" int LLVMFuzzerInitialize(int *argc, char ***argv)
+{
+    CapabilityInfoManagerOnChangeInsertFuzzTest();
+    OHOS::DistributedHardware::CapabilityInfoManager::GetInstance()->Init();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    CapabilityInfoManagerOnChangeUpdateFuzzTest();
+    OHOS::DistributedHardware::CapabilityInfoManager::GetInstance()->Init();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    CapabilityInfoManagerOnChangeDeleteFuzzTest();
+    OHOS::DistributedHardware::CapabilityInfoManager::GetInstance()->Init();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    return 0;
+}
+
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
