@@ -48,7 +48,7 @@ void TestGetDistributedHardwareCallback::OnError(const std::string &networkId, i
 void CapabilityInfoManagerOnChangeInsertFuzzTest(const uint8_t* data, size_t size)
 {
     OHOS::DistributedHardware::CapabilityInfoManager::GetInstance()->Init();
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(3));
     if ((data == nullptr) || (size == 0)) {
         return;
     }
