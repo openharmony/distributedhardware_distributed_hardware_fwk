@@ -29,6 +29,7 @@ namespace OHOS {
 namespace DistributedHardware {
 namespace {
     constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
+    constexpr int32_t SLEEP_SECONDS = 3;
 }
 
 void TestGetDistributedHardwareCallback::OnSuccess(const std::string &networkId,
@@ -47,6 +48,8 @@ void TestGetDistributedHardwareCallback::OnError(const std::string &networkId, i
 
 void CapabilityInfoManagerOnChangeInsertFuzzTest(const uint8_t* data, size_t size)
 {
+    OHOS::DistributedHardware::CapabilityInfoManager::GetInstance()->Init();
+    std::this_thread::sleep_for(std::chrono::seconds(SLEEP_SECONDS));
     if ((data == nullptr) || (size == 0)) {
         return;
     }
