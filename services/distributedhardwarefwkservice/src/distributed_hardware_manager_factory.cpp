@@ -327,6 +327,8 @@ void DistributedHardwareManagerFactory::DelaySaStatusTask()
             int pid = getpid();
             Memory::MemMgrClient::GetInstance().SetCritical(pid, false, DISTRIBUTED_HARDWARE_SA_ID);
             DHLOGI("Delay task timeout, set sa status to Non-critical");
+            HiSysEventWriteMsg(DHFWK_EXIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+                "dhfwk sa ready to be unloaded.");
             return;
         }
         DHLOGI("Has business use, no need set sa status");

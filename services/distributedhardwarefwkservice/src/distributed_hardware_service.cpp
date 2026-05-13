@@ -927,6 +927,8 @@ void DistributedHardwareService::OnAddSystemAbility(int32_t systemAbilityId, con
         int pid = getpid();
         Memory::MemMgrClient::GetInstance().NotifyProcessStatus(pid, 1, 1, DISTRIBUTED_HARDWARE_SA_ID);
         Memory::MemMgrClient::GetInstance().SetCritical(pid, true, DISTRIBUTED_HARDWARE_SA_ID);
+        HiSysEventWriteMsg(DHFWK_INIT_END, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+            "dhfwk sa online and ready to serve.");
     }
 }
 } // namespace DistributedHardware
