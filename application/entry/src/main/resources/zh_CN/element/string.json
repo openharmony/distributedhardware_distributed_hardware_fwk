@@ -138,6 +138,26 @@
       "attr":{
           "priority":"translate"
       }
+    },
+    {
+        "name": "trace_enabled",
+        "value": "跟踪开启"
+    },
+    {
+        "name": "trace_disabled",
+        "value": "跟踪关闭"
+    },
+    {
+        "name": "smart_tracking_enabled",
+        "value": "智能跟踪已开启"
+    },
+    {
+        "name": "smart_tracking_disabled",
+        "value": "智能跟踪已关闭"
+    },
+    {
+        "name": "device_connected",
+        "value": "设备已连接"
     }
   ]
 }

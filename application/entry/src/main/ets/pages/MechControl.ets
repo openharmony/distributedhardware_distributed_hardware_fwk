@@ -153,12 +153,10 @@ struct MechControl {
   IntelligentTracking() {
     Column() {
       Button() {
-        Image((this.isTrackingEnabled || this.isShowAsDarkMode) ?
-        $r('app.media.intelligent_tracking') :
-        $r('app.media.intelligent_tracking_dark'))
-          .width(CommonConstants.SWITCH_ICON_SIZE)
-          .height(CommonConstants.SWITCH_ICON_SIZE)
-          .margin({ left: CommonConstants.SWITCH_ICON_MARGIN, top: CommonConstants.SWITCH_ICON_MARGIN })
+        SymbolGlyph($r('sys.symbol.AI_best_expression'))
+          .fontSize(20)
+          .draggable(false)
+          .fontColor([(this.isTrackingEnabled || this.isShowAsDarkMode) ? Color.White : Color.Black])
       }
       .width(CommonConstants.BUTTON_SIZE)
       .height(CommonConstants.BUTTON_SIZE)
