@@ -158,10 +158,6 @@
     {
         "name": "device_connected",
         "value": "设备已连接"
-    },
-    {
-        "name": "smart_tracking",
-        "value": "智能跟踪"
     }
   ]
 }
