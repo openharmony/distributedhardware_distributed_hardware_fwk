@@ -138,6 +138,30 @@
       "attr":{
           "priority":"translate"
       }
+    },
+    {
+        "name": "trace_enabled",
+        "value": "Trace enabled"
+    },
+    {
+        "name": "trace_disabled",
+        "value": "Trace disabled"
+    },
+    {
+        "name": "smart_tracking_enabled",
+        "value": "Smart tracking enabled"
+    },
+    {
+        "name": "smart_tracking_disabled",
+        "value": "Smart tracking disabled"
+    },
+    {
+        "name": "device_connected",
+        "value": "Device connected"
+    },
+    {
+        "name": "smart_tracking",
+        "value": "Smart tracking"
     }
   ]
 }
