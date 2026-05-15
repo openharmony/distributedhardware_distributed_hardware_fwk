@@ -21,6 +21,7 @@ import curves from '@ohos.curves';
 import accessibility from '@ohos.accessibility';
 import common from '@ohos.app.ability.common';
 import CommonConstants,{ FontSizeScale, LanguagesUtil } from '../common/constants/CommonConstants';
+import { UEPointUtils } from '../utils/UEPointUtils';
 
 const TAG = '[MechControl_Page] : ';
 let localStorage = LocalStorage.getShared();
@@ -92,10 +93,12 @@ struct MechControl {
       if (!this.isTrackingEnabled) {
         logger.info(`${TAG} enable camera tracking`);
         mechanicManager.setCameraTrackingEnabled(true);
+        UEPointUtils.getInstance().reportFocusTrackingSwitchStateEvent(true);
         this.isTrackingEnabled = true;
       } else {
         logger.info(`${TAG} disable camera tracking`);
         mechanicManager.setCameraTrackingEnabled(false);
+        UEPointUtils.getInstance().reportFocusTrackingSwitchStateEvent(false);
         this.isTrackingEnabled = false;
       }
     } catch (error) {
