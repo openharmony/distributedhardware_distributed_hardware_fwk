@@ -270,6 +270,7 @@ private:
     int32_t GetMetaParam(const std::string &uuid, const std::string &dhId,
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
     int32_t CheckSubtypeResource(const std::string &subtype, const std::string &networkId);
+    void AddTokenIdToSinkAttrs(const std::string &customParams, EnableParam &param);
 
     int32_t GetRemoteVerInfo(CompVersion &compVersion, const std::string &udid, const std::string &uuid, DHType dhType);
     bool IsFeatureMatched(const std::vector<std::string> &sourceFeatureFilters,

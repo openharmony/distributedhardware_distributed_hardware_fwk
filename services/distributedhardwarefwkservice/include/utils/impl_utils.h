@@ -93,6 +93,8 @@ struct TaskParam {
     int32_t callingUid{ 0 };
     // enable or disable calling pid
     int32_t callingPid{ 0 };
+    // enable or disable calling token id
+    uint32_t callingTokenId{ 0 };
     // custom params for enable (JSON format)
     std::string customParams;
 };
