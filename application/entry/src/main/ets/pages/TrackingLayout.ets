@@ -18,6 +18,7 @@ import router from '@ohos.router';
 import mechanicManager from '@ohos.distributedHardware.mechanicManager';
 import { BusinessError } from '@ohos.base';
 import CommonConstants, { FontSizeScale, LanguagesUtil } from '../common/constants/CommonConstants';
+import { UEPointUtils } from '../utils/UEPointUtils';
 
 const TAG = '[TrackingLayout_Page] : ';
 let localStorage = LocalStorage.getShared();
@@ -257,6 +258,7 @@ struct TrackingLayout {
     let originalLayout = this.currentLayout;
     try {
       mechanicManager.setCameraTrackingLayout(layout);
+      UEPointUtils.getInstance().reportCameraTrackingLayoutEvent(layout);
       this.currentLayout = layout;
     } catch (error) {
       this.currentLayout = originalLayout;
