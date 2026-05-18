@@ -259,12 +259,49 @@ ohos_unittest("MetaEnableTaskTest") {
   ]
 }
 
+ohos_unittest("MetaDisableTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/meta_disable_task_test.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/meta_disable_task.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"MetaDisableTaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
 group("dh_task_test") {
   testonly = true
   deps = [
     ":DHDisableTaskTest",
     ":DHEnableTaskTest",
     ":DHTaskTest",
+    ":MetaDisableTaskTest",
     ":MetaEnableTaskTest",
     ":OnlineTaskTest",
   ]
