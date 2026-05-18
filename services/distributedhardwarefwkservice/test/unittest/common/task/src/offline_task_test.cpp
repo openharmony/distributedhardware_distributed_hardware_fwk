@@ -55,7 +55,9 @@ HWTEST_F(OffLineTaskTest, test_notify_father_finish, TestSize.Level1)
 
 HWTEST_F(OffLineTaskTest, test_add_children_task, TestSize.Level1)
 {
-    auto task = std::make_shared<OffLineTask>("network_id", "uuid", "udid", "dh_id", DHType::CAMERA);
-    auto childTask = std::make_shared<OffLineTask>("child_network_id", "child_uuid", "child_udid", "child_dh_id", DHType::CAMERA);
+    auto task = std::make_shared<OffLineTask>("network_id", "uuid",
+        "udid", "dh_id", DHType::CAMERA);
+    auto childTask = std::make_shared<OffLineTask>("child_network_id",
+        "child_uuid", "child_udid", "child_dh_id", DHType::CAMERA);
     EXPECT_NO_FATAL_FAILURE(task->AddChildrenTask(childTask));
 }
