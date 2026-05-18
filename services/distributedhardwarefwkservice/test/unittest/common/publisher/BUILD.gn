@@ -53,7 +53,39 @@ ohos_unittest("PublisherItemTest") {
   ]
 }
 
+ohos_unittest("PublisherTest") {
+  module_out_path = module_out_path
+
+  sources = [ "src/publisher_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "ipc:ipc_core",
+    "kv_store:distributeddata_inner",
+    "safwk:system_ability_fwk",
+    "hilog:libhilog",
+  ]
+}
+
 group("publisher_item_test") {
   testonly = true
   deps = [ ":PublisherItemTest" ]
+}
+
+group("publisher_test") {
+  testonly = true
+  deps = [ ":PublisherTest" ]
 }
