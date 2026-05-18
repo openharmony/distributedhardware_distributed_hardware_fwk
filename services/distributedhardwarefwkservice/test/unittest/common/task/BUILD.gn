@@ -223,6 +223,125 @@ ohos_unittest("DHTaskTest") {
   ]
 }
 
+ohos_unittest("MetaEnableTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/meta_enable_task_test.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/meta_enable_task.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"MetaEnableTaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+group("dh_task_test") {
+  testonly = true
+  deps = [
+    ":DHDisableTaskTest",
+    ":DHEnableTaskTest",
+    ":DHTaskTest",
+    ":MetaEnableTaskTest",
+    ":OnlineTaskTest",
+  ]
+}
+
+ohos_unittest("ExitDfwkTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/exit_dfwk_task_test.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/exit_dfwk_task.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"ExitDfwkTaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+ohos_unittest("OffLineTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/offline_task_test.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/offline_task.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"OffLineTaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
 group("dh_task_test") {
   testonly = true
   deps = [
@@ -230,5 +349,7 @@ group("dh_task_test") {
     ":DHEnableTaskTest",
     ":OnlineTaskTest",
     ":DHTaskTest",
+    ":ExitDfwkTaskTest",
+    ":OffLineTaskTest",
   ]
 }
