@@ -261,9 +261,37 @@ ohos_unittest("CapabilityUtilsTest") {
   ]
 }
 
+ohos_unittest("CapabilityInfoMgrTest") {
+  module_out_path = module_out_path
+
+  sources = [ "capability_info_manager_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "kv_store:distributeddata_inner",
+  ]
+}
+
 group("resource_manager_test") {
   testonly = true
   deps = [
+    ":CapabilityInfoMgrTest",
     ":CapabilityInfoTest",
     ":CapabilityUtilsTest",
     ":DBAdapterTest",
