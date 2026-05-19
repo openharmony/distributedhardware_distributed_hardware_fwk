@@ -15,10 +15,27 @@
 
 #include "get_dh_descriptors_callback_proxy.h"
 #include "constants.h"
+#include "distributed_hardware_errno.h"
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
+#include "iremote_object.h"
+#include "refbase.h"
 
 using namespace testing::ext;
+using namespace testing;
+using namespace OHOS;
 using namespace OHOS::DistributedHardware;
+
+class MockRemoteObjectForGetDh : public IRemoteObject {
+public:
+    MockRemoteObjectForGetDh() : IRemoteObject(u"") {}
+    MOCK_METHOD4(SendRequest, int32_t(uint32_t, MessageParcel&, MessageParcel&, MessageOption&));
+    MOCK_METHOD0(GetObjectRefPtr, sptr<IRemoteObject>());
+    MOCK_METHOD0(GetObjectRefCount, int32_t());
+    MOCK_METHOD2(Dump, int(int fd, const std::vector<std::u16string>& args));
+    MOCK_METHOD1(AddDeathRecipient, bool(const sptr<IRemoteObject::DeathRecipient>&));
+    MOCK_METHOD1(RemoveDeathRecipient, bool(const sptr<IRemoteObject::DeathRecipient>&));
+};
 
 class GetDhDescriptorsCallbackProxyTest : public testing::Test {
 protected:
@@ -32,7 +49,7 @@ HWTEST_F(GetDhDescriptorsCallbackProxyTest, test_write_descriptors_success, Test
     std::vector<DHDescriptor> descriptors;
     descriptors.push_back({.id = "dh_id_1", .dhType = DHType::CAMERA});
     descriptors.push_back({.id = "dh_id_2", .dhType = DHType::CAMERA});
-    sptr<IRemoteObject> remote = new IRemoteObject("");
+    sptr<MockRemoteObjectForGetDh> remote = new MockRemoteObjectForGetDh();
     auto proxy = std::make_shared<GetDhDescriptorsCallbackProxy>(remote);
     int32_t ret = proxy->WriteDescriptors(data, descriptors);
     EXPECT_EQ(ret, NO_ERROR);
@@ -45,7 +62,7 @@ HWTEST_F(GetDhDescriptorsCallbackProxyTest, test_write_descriptors_over_size, Te
     for (uint32_t i = 0; i < MAX_DH_DESCRIPTOR_ARRAY_SIZE + 1; i++) {
         descriptors.push_back({.id = "dh_id_" + std::to_string(i), .dhType = DHType::CAMERA});
     }
-    sptr<IRemoteObject> remote = new IRemoteObject("");
+    sptr<MockRemoteObjectForGetDh> remote = new MockRemoteObjectForGetDh();
     auto proxy = std::make_shared<GetDhDescriptorsCallbackProxy>(remote);
     int32_t ret = proxy->WriteDescriptors(data, descriptors);
     EXPECT_EQ(ret, ERR_DH_FWK_PARA_INVALID);
@@ -55,7 +72,7 @@ HWTEST_F(GetDhDescriptorsCallbackProxyTest, test_write_descriptors_empty, TestSi
 {
     MessageParcel data;
     std::vector<DHDescriptor> descriptors;
-    sptr<IRemoteObject> remote = new IRemoteObject("");
+    sptr<MockRemoteObjectForGetDh> remote = new MockRemoteObjectForGetDh();
     auto proxy = std::make_shared<GetDhDescriptorsCallbackProxy>(remote);
     int32_t ret = proxy->WriteDescriptors(data, descriptors);
     EXPECT_EQ(ret, NO_ERROR);

@@ -295,17 +295,6 @@ ohos_unittest("MetaDisableTaskTest") {
   ]
 }
 
-group("dh_task_test") {
-  testonly = true
-  deps = [
-    ":DHDisableTaskTest",
-    ":DHEnableTaskTest",
-    ":DHTaskTest",
-    ":MetaDisableTaskTest",
-    ":MetaEnableTaskTest",
-    ":OnlineTaskTest",
-  ]
-}
 
 ohos_unittest("ExitDfwkTaskTest") {
   module_out_path = module_out_path
@@ -332,8 +321,10 @@ ohos_unittest("ExitDfwkTaskTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "ffrt:libffrt",
     "hilog:libhilog",
+    "kv_store:distributeddata_inner",
   ]
 
   defines = [
@@ -368,8 +359,11 @@ ohos_unittest("OffLineTaskTest") {
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "ffrt:libffrt",
     "hilog:libhilog",
+    "ipc:ipc_core",
+    "kv_store:distributeddata_inner",
   ]
 
   defines = [

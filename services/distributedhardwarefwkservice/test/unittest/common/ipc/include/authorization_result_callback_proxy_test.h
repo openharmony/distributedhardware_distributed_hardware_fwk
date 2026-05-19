@@ -20,6 +20,7 @@
 #include <gmock/gmock.h>
 #include "iremote_object.h"
 #include "iremote_stub.h"
+#include "refbase.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -34,6 +35,8 @@ public:
     MockRemoteObject() : IRemoteObject(u"") {}
     MOCK_METHOD4(SendRequest, int32_t(uint32_t, MessageParcel&, MessageParcel&, MessageOption&));
     MOCK_METHOD0(GetObjectRefPtr, sptr<IRemoteObject>());
+    MOCK_METHOD0(GetObjectRefCount, int32_t());
+    MOCK_METHOD2(Dump, int(int fd, const std::vector<std::u16string>& args));
     MOCK_METHOD1(AddDeathRecipient, bool(const sptr<IRemoteObject::DeathRecipient>&));
     MOCK_METHOD1(RemoveDeathRecipient, bool(const sptr<IRemoteObject::DeathRecipient>&));
 };

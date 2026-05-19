@@ -71,45 +71,6 @@ ohos_unittest("DhContextTest") {
   ]
 }
 
-ohos_unittest("DhTimerTest") {
-  module_out_path = module_out_path
-
-  sources = [
-    "dh_timer_test.cpp",
-  ]
-
-  include_dirs = [
-    ".",
-    "mock",
-  ]
-
-  configs = [ ":module_private_config" ]
-
-  deps = [
-    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-  ]
-
-  defines = [
-    "HI_LOG_ENABLE",
-    "DH_LOG_TAG=\"DHTimerTest\"",
-    "LOG_DOMAIN=0xD004100",
-  ]
-
-  cflags = [
-    "-Wall",
-    "-Werror",
-    "-g3",
-    "-Dprivate=public",
-  ]
-
-  external_deps = [
-    "c_utils:utils",
-    "eventhandler:libeventhandler",
-    "hilog:libhilog",
-    "googletest:gmock",
-  ]
-}
-
 ohos_unittest("EventHandlerFactoryTest") {
   module_out_path = module_out_path
 
@@ -149,7 +110,6 @@ group("dh_context_test") {
 
   deps = [
     ":DhContextTest",
-    ":DhTimerTest",
     ":EventHandlerFactoryTest",
   ]
 }

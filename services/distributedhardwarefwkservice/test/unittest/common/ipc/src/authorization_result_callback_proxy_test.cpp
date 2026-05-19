@@ -17,6 +17,8 @@
 #include "authorization_result_callback_proxy.h"
 
 using namespace testing::ext;
+using namespace testing;
+using namespace OHOS;
 using namespace OHOS::DistributedHardware;
 
 void AuthorizationResultCallbackProxyTest::SetUp() {}

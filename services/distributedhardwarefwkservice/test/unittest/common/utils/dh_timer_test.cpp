@@ -21,6 +21,8 @@
 #include <thread>
 
 using namespace testing::ext;
+using namespace testing;
+using namespace OHOS;
 using namespace OHOS::DistributedHardware;
 
 class DHTimerTest : public testing::Test {

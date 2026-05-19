@@ -18,6 +18,8 @@
 #include <gmock/gmock.h>
 
 using namespace testing::ext;
+using namespace testing;
+using namespace OHOS;
 using namespace OHOS::DistributedHardware;
 
 class MockAccessListenerStub : public AccessListenerStub {
@@ -33,7 +35,7 @@ protected:
 
 HWTEST_F(AccessListenerStubTest, test_on_remote_request_invalid_token, TestSize.Level1)
 {
-    auto stub = std::make_shared<AccessListenerStub>();
+    auto stub = std::make_shared<MockAccessListenerStub>();
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
