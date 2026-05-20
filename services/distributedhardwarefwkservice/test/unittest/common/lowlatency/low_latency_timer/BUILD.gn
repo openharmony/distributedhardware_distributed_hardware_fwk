@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2022-2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -20,18 +20,25 @@ module_out_path = unittest_output_path
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "include",
-    "${services_path}/distributedhardwarefwkservice/include/publisher",
+    "src",
+    "../mock",
     "${common_path}/utils/include",
+    "${services_path}/distributedhardwarefwkservice/include/lowlatency",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
   ]
 }
 
-ohos_unittest("PublisherItemTest") {
+ohos_unittest("LowLatencyTimerTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/publisher_item_test.cpp" ]
+  sources = [ "src/low_latency_timer_test.cpp" ]
 
   configs = [ ":module_private_config" ]
+
+  deps = [
+    "${innerkits_path}:libdhfwk_sdk",
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+  ]
 
   cflags = [
     "-Wall",
@@ -40,52 +47,24 @@ ohos_unittest("PublisherItemTest") {
     "-Dprivate=public",
   ]
 
-  deps = [
-    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"LowLatencyTimerTest\"",
+    "LOG_DOMAIN=0xD004100",
   ]
 
   external_deps = [
+    "cJSON:cjson",
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "ipc:ipc_core",
-    "kv_store:distributeddata_inner",
     "safwk:system_ability_fwk",
     "hilog:libhilog",
+    "googletest:gmock",
   ]
 }
 
-ohos_unittest("PublisherTest") {
-  module_out_path = module_out_path
-
-  sources = [ "src/publisher_test.cpp" ]
-
-  configs = [ ":module_private_config" ]
-
-  cflags = [
-    "-Wall",
-    "-Werror",
-    "-g3",
-    "-Dprivate=public",
-  ]
-
-  deps = [
-    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
-  ]
-
-  external_deps = [
-    "c_utils:utils",
-    "ipc:ipc_core",
-    "kv_store:distributeddata_inner",
-    "safwk:system_ability_fwk",
-    "hilog:libhilog",
-  ]
-}
-
-group("publisher_item_test") {
+group("low_latency_timer_test") {
   testonly = true
-  deps = [ ":PublisherItemTest" ]
-}
-
-group("publisher_test") {
-  testonly = true
-  deps = [ ":PublisherTest" ]
+  deps = [ ":LowLatencyTimerTest" ]
 }

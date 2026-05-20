@@ -1,0 +1,89 @@
+# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import(
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+
+module_out_path = unittest_output_path
+
+config("module_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "${av_trans_path}/common/include",
+    "include",
+    "${innerkits_path}/include",
+    "${utils_path}/include",
+    "${innerkits_path}/include/ipc",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/componentloader",
+    "${services_path}/distributedhardwarefwkservice/include/componentmanager",
+    "${services_path}/distributedhardwarefwkservice/include/ipc",
+    "${services_path}/distributedhardwarefwkservice/include/lowlatency",
+    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "${services_path}/distributedhardwarefwkservice/include/versionmanager",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
+    "${services_path}/distributedhardwarefwkservice/include/task",
+    "${services_path}/distributedhardwarefwkservice/include/transport",
+    "${common_path}/utils/include",
+    "${common_path}/log/include",
+  ]
+}
+
+ohos_unittest("DHListenersTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/dh_listeners_test.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/componentmanager/dh_state_listener.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/componentmanager/dh_data_sync_trigger_listener.cpp",
+  ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"DHListenersTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+group("dh_listeners_test") {
+  testonly = true
+  deps = [
+    ":DHListenersTest",
+  ]
+}

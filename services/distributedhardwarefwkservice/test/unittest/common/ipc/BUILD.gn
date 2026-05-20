@@ -22,6 +22,7 @@ config("module_private_config") {
     "include",
     "${common_path}/utils/include",
     "${services_path}/distributedhardwarefwkservice/include/ipc",
+    "${services_path}/distributedhardwarefwkservice/include",
   ]
 }
 
@@ -52,12 +53,167 @@ ohos_unittest("PublisherListenerProxyTest") {
 
   external_deps = [
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "ipc:ipc_core",
     "hilog:libhilog",
   ]
 }
 
+ohos_unittest("GetDhDescriptorsCallbackProxyTest") {
+  module_out_path = module_out_path
+
+  sources = [ "src/get_dh_descriptors_callback_proxy_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${innerkits_path}:libdhfwk_sdk",
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+  ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"GetDhDescriptorsCallbackProxyTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "googletest:gmock",
+    "googletest:gmock_main",
+    "ipc:ipc_core",
+    "hilog:libhilog",
+  ]
+}
+
+ohos_unittest("AccessListenerStubTest") {
+  module_out_path = module_out_path
+
+  sources = [ "src/access_listener_stub_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${innerkits_path}:libdhfwk_sdk",
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+  ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"AccessListenerStubTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gmock_main",
+    "ipc:ipc_core",
+    "hilog:libhilog",
+  ]
+}
+
+ohos_unittest("AuthorizationResultCallbackProxyTest") {
+  module_out_path = module_out_path
+
+  sources = [ "src/authorization_result_callback_proxy_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${innerkits_path}:libdhfwk_sdk",
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+  ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"AuthorizationResultCallbackProxyTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gmock_main",
+    "ipc:ipc_core",
+    "hilog:libhilog",
+  ]
+}
+
+ohos_unittest("AccessListenerServiceTest") {
+  module_out_path = module_out_path
+
+  sources = [ "src/access_listener_service_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${innerkits_path}:libdhfwk_sdk",
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+  ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"AccessListenerServiceTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "ipc:ipc_core",
+    "hilog:libhilog",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+}
+
+group("authorization_result_callback_proxy_test") {
+  testonly = true
+  deps = [ ":AuthorizationResultCallbackProxyTest" ]
+}
+
+group("access_listener_stub_test") {
+  testonly = true
+  deps = [ ":AccessListenerStubTest" ]
+}
+
 group("publisher_listener_proxy_test") {
   testonly = true
-  deps = [ ":PublisherListenerProxyTest" ]
+  deps = [
+    ":PublisherListenerProxyTest",
+    ":AuthorizationResultCallbackProxyTest",
+    ":AccessListenerStubTest",
+    ":GetDhDescriptorsCallbackProxyTest",
+    ":AccessListenerServiceTest",
+  ]
 }

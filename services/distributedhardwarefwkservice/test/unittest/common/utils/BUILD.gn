@@ -71,8 +71,45 @@ ohos_unittest("DhContextTest") {
   ]
 }
 
+ohos_unittest("EventHandlerFactoryTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "event_handler_factory_test.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"EventHandlerFactoryTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+  ]
+}
+
 group("dh_context_test") {
   testonly = true
 
-  deps = [ ":DhContextTest" ]
+  deps = [
+    ":DhContextTest",
+    ":EventHandlerFactoryTest",
+  ]
 }
