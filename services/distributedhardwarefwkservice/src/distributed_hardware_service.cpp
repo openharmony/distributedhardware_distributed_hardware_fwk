@@ -29,6 +29,7 @@
 #include "mem_mgr_proxy.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
+#include "token_setproc.h"
 
 #include "access_manager.h"
 #include "anonymous_string.h"
@@ -696,9 +697,10 @@ int32_t DistributedHardwareService::EnableSource(
             .effectSource = true,
             .callingUid = IPCSkeleton::GetCallingUid(),
             .callingPid = IPCSkeleton::GetCallingPid(),
-            .callingTokenId = IPCSkeleton::GetCallingTokenID(),
+            .callingTokenId = IPCSkeleton::GetFirstTokenID(),
             .customParams = descriptor.customParams
         };
+
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
         TaskExecutor::GetInstance().PushTask(task);
     }
