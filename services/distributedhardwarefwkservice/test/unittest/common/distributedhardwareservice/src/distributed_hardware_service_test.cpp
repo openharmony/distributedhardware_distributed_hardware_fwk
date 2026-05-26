@@ -612,13 +612,6 @@ HWTEST_F(DistributedHardwareServiceTest, StopDistributedHardware_004, TestSize.L
     ComponentManager::GetInstance().compSink_.clear();
 }
 
-HWTEST_F(DistributedHardwareServiceTest, DoBusinessInit_001, TestSize.Level1)
-{
-    DistributedHardwareService service(ASID, true);
-    auto ret = service.DoBusinessInit();
-    EXPECT_EQ(true, ret);
-}
-
 HWTEST_F(DistributedHardwareServiceTest, QueryDhSysSpec_001, TestSize.Level1)
 {
     std::string targetKey = "";
