@@ -50,74 +50,109 @@
             }
         },
         {
-          "name": "mech_intelligent_tracking",
-          "value": "스마트 추적",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_intelligent_tracking",
+            "value":"스마트 추적",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_tracking_layout",
-          "value": "추적 모드",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_tracking_layout",
+            "value":"추적 모드",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_enable",
-          "value": "켬",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"mech_enable",
+            "value":"켬",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "mech_close",
-          "value": "꺼짐",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_close",
+            "value":"꺼짐",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_left",
-          "value": "왼쪽",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_left",
+            "value":"왼쪽",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_center",
-          "value": "중앙",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_center",
+            "value":"중앙",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_right",
-          "value": "오른쪽",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_right",
+            "value":"오른쪽",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "audio_tracking_switch_on",
-          "value": "스마트 추적 켜짐, 두 번 탭하여 끄기",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_on",
+            "value":"스마트 추적 켜짐, 두 번 탭하여 끄기",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_tracking_switch_off",
-          "value": "스마트 추적 꺼짐, 두 번 탭하여 켜기",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_off",
+            "value":"스마트 추적 꺼짐, 두 번 탭하여 켜기",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_back",
-          "value": "뒤로",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_back",
+            "value":"뒤로",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"스마트 추적 종료됨",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"장치 연결됨",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"추적 실행됨",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"스마트 추적 실행됨",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"추적 종료됨",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
