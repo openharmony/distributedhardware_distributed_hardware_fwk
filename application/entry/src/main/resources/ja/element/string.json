@@ -50,74 +50,109 @@
             }
         },
         {
-          "name": "mech_intelligent_tracking",
-          "value": "スマート追跡",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_intelligent_tracking",
+            "value":"スマート追跡",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_tracking_layout",
-          "value": "追跡モード",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_tracking_layout",
+            "value":"追跡モード",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_enable",
-          "value": "オン",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"mech_enable",
+            "value":"オン",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "mech_close",
-          "value": "オフ",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_close",
+            "value":"オフ",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_left",
-          "value": "左",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_left",
+            "value":"左",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_center",
-          "value": "中央",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_center",
+            "value":"中央",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_right",
-          "value": "右",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_right",
+            "value":"右",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "audio_tracking_switch_on",
-          "value": "スマート追跡はオン、ダブルタップでオフにします",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_on",
+            "value":"スマート追跡はオン、ダブルタップでオフにします",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_tracking_switch_off",
-          "value": "スマート追跡はオフ、ダブルタップでオンにします",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_off",
+            "value":"スマート追跡はオフ、ダブルタップでオンにします",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_back",
-          "value": "戻る",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_back",
+            "value":"戻る",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"スマート追跡が無効化されました",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"デバイスが接続されました",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"追跡が有効になりました",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"スマート追跡が有効になりました",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"追跡が無効化されました",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
