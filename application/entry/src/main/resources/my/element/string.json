@@ -118,6 +118,41 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"စမတ် ခြေရာခံခြင်းကို ပိတ်ထားသည်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"စက် ချိတ်ဆက်ပြီး",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"ခြေရာခံခြင်းကို ဖွင့်ထားသည်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"စမတ် ခြေရာခံခြင်းကို ဖွင့်ထားသည်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"ခြေရာခံခြင်းကို ပိတ်ထားသည်",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
