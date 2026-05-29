@@ -50,74 +50,109 @@
             }
         },
         {
-          "name": "mech_intelligent_tracking",
-          "value": "རིག་ལྡན་རྗེས་འདེད།",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_intelligent_tracking",
+            "value":"རིག་ལྡན་རྗེས་འདེད།",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_tracking_layout",
-          "value": "འགྲེམ་ཚུལ་རྗེས་འདེད།",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_tracking_layout",
+            "value":"འགྲེམ་ཚུལ་རྗེས་འདེད།",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_enable",
-          "value": "ཁ་འབྱེད།",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"mech_enable",
+            "value":"ཁ་འབྱེད།",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "mech_close",
-          "value": "ཁ་རྒྱག",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_close",
+            "value":"ཁ་རྒྱག",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_left",
-          "value": "གཡོན་སྒྲིག",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_left",
+            "value":"གཡོན་སྒྲིག",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_center",
-          "value": "དཀྱིལ་དུ་འཇོག་པ།",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_center",
+            "value":"དཀྱིལ་དུ་འཇོག་པ།",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_right",
-          "value": "གཡས་སྒྲིག",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_right",
+            "value":"གཡས་སྒྲིག",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "audio_tracking_switch_on",
-          "value": "༼རིག་ལྡན་རྗེས་འདེད་༽ཀྱི་བསད་སྤར་ཁ་ཕྱེ་ཟིན། མཛུབ་མོ་གཅིག་གིས་ཉིས་རྡེབ་བྱས་ཏེ་ཁ་རྒྱག་ཐུབ།",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_on",
+            "value":"༼རིག་ལྡན་རྗེས་འདེད་༽ཀྱི་བསད་སྤར་ཁ་ཕྱེ་ཟིན། མཛུབ་མོ་གཅིག་གིས་ཉིས་རྡེབ་བྱས་ཏེ་ཁ་རྒྱག་ཐུབ།",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_tracking_switch_off",
-          "value": "༼རིག་ལྡན་རྗེས་འདེད་༽ཀྱི་བསད་སྤར་ཁ་བརྒྱབ་ཟིན། མཛུབ་མོ་གཅིག་གིས་ཉིས་རྡེབ་བྱས་ཏེ་ཁ་འབྱེད་ཐུབ།",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_off",
+            "value":"༼རིག་ལྡན་རྗེས་འདེད་༽ཀྱི་བསད་སྤར་ཁ་བརྒྱབ་ཟིན། མཛུབ་མོ་གཅིག་གིས་ཉིས་རྡེབ་བྱས་ཏེ་ཁ་འབྱེད་ཐུབ།",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_back",
-          "value": "ཕྱིར་ལོག",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_back",
+            "value":"ཕྱིར་ལོག",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"རིག་ལྡན་རྗེས་འདེད་ཁ་བརྒྱབ་ཟིན།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"སྒྲིག་ཆས་ལ་སྦྲེལ་མཐུད་བྱས་ཟིན།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"རྗེས་འདེད་ཁ་འབྱེད།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"རིག་ལྡན་རྗེས་འདེད་ཁ་ཕྱེ་ཟིན།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"རྗེས་འདེད་ཁ་རྒྱག",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
