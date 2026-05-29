@@ -1,163 +1,178 @@
 {
-  "string": [
-    {
-      "name": "module_desc",
-      "value": "模块描述"
-    },
-    {
-      "name": "EntryAbility_desc",
-      "value": "description"
-    },
-    {
-      "name": "EntryAbility_label",
-      "value": "分布式硬件控制UI"
-    },
-    {
-      "name": "connected_to",
-      "value": "已连接至%1$s",
-      "attr": {
-        "priority": "translate"
+  "string":[
+      {
+          "name":"module_desc",
+          "value":"模块描述"
+      },
+      {
+          "name":"EntryAbility_desc",
+          "value":"description"
+      },
+      {
+          "name":"EntryAbility_label",
+          "value":"分布式硬件控制UI"
+      },
+      {
+          "name":"connected_to",
+          "value":"已连接至%1$s",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"stop_device",
+          "value":"您可以断开连接以停止使用此设备的%1$s",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"pause",
+          "value":"暂停",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"continue",
+          "value":"继续",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"DHTypeName_Camera",
+          "value":"相机",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"DHTypeName_Mic",
+          "value":"麦克风",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"disconnect",
+          "value":"断开连接",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MechExtAbility_desc",
+          "value":"description"
+      },
+      {
+          "name":"MechExtAbility_label",
+          "value":"label"
+      },
+      {
+          "name":"mech_intelligent_tracking",
+          "value":"智能跟踪",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_tracking_layout",
+          "value":"跟踪布局",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_enable",
+          "value":"开启",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_close",
+          "value":"关闭",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_left",
+          "value":"居左",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_center",
+          "value":"居中",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_right",
+          "value":"居右",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"audio_tracking_switch_on",
+          "value":"已开启“智能跟踪”开关，单指双击即可关闭",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"audio_tracking_switch_off",
+          "value":"已关闭“智能跟踪”开关，单指双击即可开启",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"audio_back",
+          "value":"返回",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"trace_enabled",
+          "value":"跟踪开启",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"trace_disabled",
+          "value":"跟踪关闭",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"smart_tracking_enabled",
+          "value":"智能跟踪已开启",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"smart_tracking_disabled",
+          "value":"智能跟踪已关闭",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"device_connected",
+          "value":"设备已连接",
+          "attr":{
+              "priority":"translate"
+          }
       }
-    },
-    {
-      "name": "stop_device",
-      "value": "您可以断开连接以停止使用此设备的%1$s",
-      "attr": {
-        "priority": "translate"
-      }
-    },
-    {
-      "name": "pause",
-      "value": "暂停",
-      "attr": {
-        "priority": "translate"
-      }
-    },
-    {
-      "name": "continue",
-      "value": "继续",
-      "attr": {
-        "priority": "translate"
-      }
-    },
-    {
-      "name": "DHTypeName_Camera",
-      "value": "相机",
-      "attr": {
-        "priority": "translate"
-      }
-    },
-    {
-      "name": "DHTypeName_Mic",
-      "value": "麦克风",
-      "attr": {
-        "priority": "translate"
-      }
-    },
-    {
-      "name": "disconnect",
-      "value": "断开连接",
-      "attr": {
-        "priority": "translate"
-      }
-    },
-    {
-      "name": "MechExtAbility_desc",
-      "value": "description"
-    },
-    {
-      "name": "MechExtAbility_label",
-      "value": "label"
-    },
-    {
-      "name": "mech_intelligent_tracking",
-      "value": "智能跟踪",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "mech_tracking_layout",
-      "value": "跟踪布局",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "mech_enable",
-      "value": "开启",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "mech_close",
-      "value": "关闭",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "mech_left",
-      "value": "居左",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "mech_center",
-      "value": "居中",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "mech_right",
-      "value": "居右",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "audio_tracking_switch_on",
-      "value": "已开启“智能跟踪”开关，单指双击即可关闭",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "audio_tracking_switch_off",
-      "value": "已关闭“智能跟踪”开关，单指双击即可开启",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "audio_back",
-      "value": "返回",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-        "name": "trace_enabled",
-        "value": "跟踪开启"
-    },
-    {
-        "name": "trace_disabled",
-        "value": "跟踪关闭"
-    },
-    {
-        "name": "smart_tracking_enabled",
-        "value": "智能跟踪已开启"
-    },
-    {
-        "name": "smart_tracking_disabled",
-        "value": "智能跟踪已关闭"
-    },
-    {
-        "name": "device_connected",
-        "value": "设备已连接"
-    }
   ]
 }
