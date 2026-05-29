@@ -118,6 +118,41 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"Tracciamento intelligente disabilitato",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"Dispositivo connesso",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"Tracciamento abilitato",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"Tracciamento intelligente abilitato",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"Tracciamento disabilitato",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
