@@ -50,74 +50,109 @@
             }
         },
         {
-          "name": "mech_intelligent_tracking",
-          "value": "ئاڭلىق ئىزلاش",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_intelligent_tracking",
+            "value":"ئاڭلىق ئىزلاش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_tracking_layout",
-          "value": "ئىزلاش لايىھەسى",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_tracking_layout",
+            "value":"ئىزلاش لايىھەسى",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_enable",
-          "value": "ئوچۇق",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"mech_enable",
+            "value":"ئوچۇق",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "mech_close",
-          "value": "ئېتىك",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_close",
+            "value":"ئېتىك",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_left",
-          "value": "سول",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_left",
+            "value":"سول",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_center",
-          "value": "مەركەز",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_center",
+            "value":"مەركەز",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_right",
-          "value": "ئوڭ",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_right",
+            "value":"ئوڭ",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "audio_tracking_switch_on",
-          "value": "ئاڭلىق ئىزلاش تاللانمىسى ئوچۇق، بىر بارماقتا قوش چەكسىڭىز ئېتىلىدۇ",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_on",
+            "value":"ئاڭلىق ئىزلاش تاللانمىسى ئوچۇق، بىر بارماقتا قوش چەكسىڭىز ئېتىلىدۇ",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_tracking_switch_off",
-          "value": "ئاڭلىق ئىزلاش تاللانمىسى ئېتىك، بىر بارماقتا قوش چەكسىڭىز ئېچىلىدۇ",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_off",
+            "value":"ئاڭلىق ئىزلاش تاللانمىسى ئېتىك، بىر بارماقتا قوش چەكسىڭىز ئېچىلىدۇ",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_back",
-          "value": "قايتىش",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_back",
+            "value":"قايتىش",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"ئاڭلىق ئىزلاش ئېتىك",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"ئۈسكۈنە ئۇلاندى.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"ئىزلاش ئوچۇق",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"ئاڭلىق ئىزلاش ئوچۇق",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"ئىزلاش ئېتىك",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
