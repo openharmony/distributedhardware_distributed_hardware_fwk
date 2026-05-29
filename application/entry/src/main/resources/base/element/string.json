@@ -1,163 +1,178 @@
 {
-  "string": [
-    {
-      "name": "module_desc",
-      "value": "module description"
-    },
-    {
-      "name": "EntryAbility_desc",
-      "value": "description"
-    },
-    {
-      "name": "EntryAbility_label",
-      "value": "DHardwareUI"
-    },
-    {
-      "name": "connected_to",
-      "value": "Connected to %1$s",
-      "attr": {
-        "priority": "LT"
+  "string":[
+      {
+          "name":"module_desc",
+          "value":"module description"
+      },
+      {
+          "name":"EntryAbility_desc",
+          "value":"description"
+      },
+      {
+          "name":"EntryAbility_label",
+          "value":"DHardwareUI"
+      },
+      {
+          "name":"connected_to",
+          "value":"Connected to %1$s",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"stop_device",
+          "value":"Disconnect to stop using this device's %1$s.",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"pause",
+          "value":"Pause",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"continue",
+          "value":"Resume",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"DHTypeName_Camera",
+          "value":"camera",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"DHTypeName_Mic",
+          "value":"microphone",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"disconnect",
+          "value":"Disconnect",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"MechExtAbility_desc",
+          "value":"description"
+      },
+      {
+          "name":"MechExtAbility_label",
+          "value":"label"
+      },
+      {
+          "name":"mech_intelligent_tracking",
+          "value":"Smart tracking",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"mech_tracking_layout",
+          "value":"Tracking mode",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"mech_enable",
+          "value":"On",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_close",
+          "value":"Off",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"mech_left",
+          "value":"Left",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"mech_center",
+          "value":"Center",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"mech_right",
+          "value":"Right",
+          "attr":{
+              "priority":"LT"
+          }
+      },
+      {
+          "name":"audio_tracking_switch_on",
+          "value":"Smart tracking is turned on, double-tap to turn it off",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"audio_tracking_switch_off",
+          "value":"Smart tracking is turned off, double-tap to turn it on",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"audio_back",
+          "value":"Back",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"trace_enabled",
+          "value":"Tracking enabled",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"trace_disabled",
+          "value":"Tracking disabled",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"smart_tracking_enabled",
+          "value":"Smart tracking enabled",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"smart_tracking_disabled",
+          "value":"Smart tracking disabled",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"device_connected",
+          "value":"Device connected",
+          "attr":{
+              "priority":"translate"
+          }
       }
-    },
-    {
-      "name": "stop_device",
-      "value": "Disconnect to stop using this device's %1$s.",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "pause",
-      "value": "Pause",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "continue",
-      "value": "Resume",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "DHTypeName_Camera",
-      "value": "camera",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "DHTypeName_Mic",
-      "value": "microphone",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "disconnect",
-      "value": "Disconnect",
-      "attr": {
-        "priority": "LT"
-      }
-    },
-    {
-      "name": "MechExtAbility_desc",
-      "value": "description"
-    },
-    {
-      "name": "MechExtAbility_label",
-      "value": "label"
-    },
-    {
-      "name": "mech_intelligent_tracking",
-      "value": "Smart tracking",
-      "attr":{
-          "priority":"LT"
-      }
-    },
-    {
-      "name": "mech_tracking_layout",
-      "value": "Tracking mode",
-      "attr":{
-          "priority":"LT"
-      }
-    },
-    {
-      "name": "mech_enable",
-      "value": "On",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "mech_close",
-      "value": "Off",
-      "attr":{
-          "priority":"LT"
-      }
-    },
-    {
-      "name": "mech_left",
-      "value": "Left",
-      "attr":{
-          "priority":"LT"
-      }
-    },
-    {
-      "name": "mech_center",
-      "value": "Center",
-      "attr":{
-          "priority":"LT"
-      }
-    },
-    {
-      "name": "mech_right",
-      "value": "Right",
-      "attr":{
-          "priority":"LT"
-      }
-    },
-    {
-      "name": "audio_tracking_switch_on",
-      "value": "Smart tracking is turned on, double-tap to turn it off",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "audio_tracking_switch_off",
-      "value": "Smart tracking is turned off, double-tap to turn it on",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-      "name": "audio_back",
-      "value": "Back",
-      "attr":{
-          "priority":"translate"
-      }
-    },
-    {
-        "name": "trace_enabled",
-        "value": "Trace enabled"
-    },
-    {
-        "name": "trace_disabled",
-        "value": "Trace disabled"
-    },
-    {
-        "name": "smart_tracking_enabled",
-        "value": "Smart tracking enabled"
-    },
-    {
-        "name": "smart_tracking_disabled",
-        "value": "Smart tracking disabled"
-    },
-    {
-        "name": "device_connected",
-        "value": "Device connected"
-    }
   ]
 }
