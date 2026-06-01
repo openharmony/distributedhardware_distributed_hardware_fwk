@@ -108,15 +108,17 @@ void PrintInteractiveUsage()
 
 void SetDMAccessPermission()
 {
-    const int32_t permsNum = 3;
+    const int32_t permsNum = 4;
     const int32_t indexZero = 0;
     const int32_t indexOne = 1;
     const int32_t indexTwo = 2;
+    const int32_t indexThree = 3;
     uint64_t tokenId;
     const char *perms[permsNum];
     perms[indexZero] = "ohos.permission.DISTRIBUTED_SOFTBUS_CENTER";
     perms[indexOne] = "ohos.permission.DISTRIBUTED_DATASYNC";
     perms[indexTwo] = "ohos.permission.ACCESS_SERVICE_DM";
+    perms[indexThree] = "ohos.permission.ACCESS_DISTRIBUTED_HARDWARE";
     NativeTokenInfoParams infoInstance = {
         .dcapsNum = 0,
         .permsNum = permsNum,
