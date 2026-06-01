@@ -106,6 +106,8 @@ void ComponentManagerTest::SetUp()
 {
     ComponentManager::GetInstance().compSource_.clear();
     ComponentManager::GetInstance().compSink_.clear();
+    ComponentManager::GetInstance().compSrcSaId_.clear();
+    ComponentManager::GetInstance().compSinkSaId_.clear();
     uint64_t tokenId;
     const char *perms[2];
     perms[0] = OHOS_PERMISSION_DISTRIBUTED_SOFTBUS_CENTER;
@@ -129,6 +131,8 @@ void ComponentManagerTest::TearDown()
 {
     ComponentManager::GetInstance().compSource_.clear();
     ComponentManager::GetInstance().compSink_.clear();
+    ComponentManager::GetInstance().compSrcSaId_.clear();
+    ComponentManager::GetInstance().compSinkSaId_.clear();
 }
 
 void SetUpComponentLoaderConfig()
@@ -251,9 +255,11 @@ HWTEST_F(ComponentManagerTest, init_compSink_test_001, TestSize.Level1)
 {
     ComponentLoader::GetInstance().Init();
     ComponentManager::GetInstance().compSink_.clear();
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
     SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().InitCompSink(DHType::AUDIO);
     SetDownComponentLoaderConfig();
+    ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
     EXPECT_EQ(ComponentManager::GetInstance().compSink_.empty(), false);
 }
@@ -480,9 +486,11 @@ HWTEST_F(ComponentManagerTest, WaitForResult_001, TestSize.Level1)
  */
 HWTEST_F(ComponentManagerTest, InitCompSink_001, TestSize.Level1)
 {
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
     SetUpComponentLoaderConfig();
     bool ret = ComponentManager::GetInstance().InitCompSink(DHType::AUDIO);
     SetDownComponentLoaderConfig();
+    ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
 
@@ -1444,10 +1452,12 @@ HWTEST_F(ComponentManagerTest, EnableSink_001, TestSize.Level1)
         .id = AUDIO_ID_TEST,
         .dhType = DHType::AUDIO
     };
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
     SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, 0, 0);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
     ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, 0, 0);
+    ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
@@ -1457,10 +1467,12 @@ HWTEST_F(ComponentManagerTest, DisableSink_001, TestSize.Level1)
         .id = AUDIO_ID_TEST,
         .dhType = DHType::AUDIO
     };
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
     auto ret = ComponentManager::GetInstance().DisableSink(dhDescriptor, 0, 0);
     EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
     ret = ComponentManager::GetInstance().DisableSink(dhDescriptor, 0, 0);
     SetDownComponentLoaderConfig();
+    ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
     EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
 }
 
@@ -1517,22 +1529,26 @@ HWTEST_F(ComponentManagerTest, UninitCompSource_001, TestSize.Level1)
     SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().UninitCompSource(DHType::AUDIO);
     SetDownComponentLoaderConfig();
-    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_MONITOR_NULL);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
 HWTEST_F(ComponentManagerTest, UninitCompSink_001, TestSize.Level1)
 {
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
     ComponentLoader::GetInstance().compHandlerMap_.clear();
     auto ret = ComponentManager::GetInstance().UninitCompSink(DHType::AUDIO);
+    ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
     EXPECT_EQ(ret, ERR_DH_FWK_LOADER_HANDLER_IS_NULL);
 }
 
 HWTEST_F(ComponentManagerTest, UninitCompSink_002, TestSize.Level1)
 {
     ComponentLoader::GetInstance().compHandlerMap_.clear();
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
     SetUpComponentLoaderConfig();
     auto ret = ComponentManager::GetInstance().UninitCompSink(DHType::AUDIO);
     SetDownComponentLoaderConfig();
+    ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
@@ -1701,6 +1717,150 @@ HWTEST_F(ComponentManagerTest, HandleSyncDataTimeout_002, testing::ext::TestSize
     auto ret = ComponentManager::GetInstance().IsRequestSyncData(realNetworkId);
     ComponentManager::GetInstance().HandleSyncDataTimeout(realNetworkId);
     EXPECT_EQ(ret, true);
+}
+
+/**
+ * @tc.name: InitCompSink_002
+ * @tc.desc: Verify the InitCompSink function when compMonitorPtr_ is null
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, InitCompSink_002, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().Init();
+    ComponentManager::GetInstance().compSink_.clear();
+    ComponentManager::GetInstance().compSinkSaId_.clear();
+    SetUpComponentLoaderConfig();
+    ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
+    auto ret = ComponentManager::GetInstance().InitCompSink(DHType::AUDIO);
+    SetDownComponentLoaderConfig();
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_MONITOR_NULL);
+}
+
+/**
+ * @tc.name: InitCompSink_003
+ * @tc.desc: Verify the InitCompSink function registers sink SA Monitor
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, InitCompSink_003, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().Init();
+    ComponentManager::GetInstance().compSink_.clear();
+    ComponentManager::GetInstance().compSinkSaId_.clear();
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
+    SetUpComponentLoaderConfig();
+    auto ret = ComponentManager::GetInstance().InitCompSink(DHType::AUDIO);
+    SetDownComponentLoaderConfig();
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    EXPECT_EQ(ComponentManager::GetInstance().compSink_.empty(), false);
+    auto it = ComponentManager::GetInstance().compSinkSaId_.find(DHType::AUDIO);
+    EXPECT_NE(it, ComponentManager::GetInstance().compSinkSaId_.end());
+    ComponentManager::GetInstance().compSink_.clear();
+    ComponentManager::GetInstance().compSinkSaId_.clear();
+}
+
+/**
+ * @tc.name: UninitCompSink_003
+ * @tc.desc: Verify the UninitCompSink function with keepSAMonitor=true
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, UninitCompSink_003, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().compHandlerMap_.clear();
+    SetUpComponentLoaderConfig();
+    ComponentManager::GetInstance().compSinkSaId_[DHType::AUDIO] = TEST_SINK_SA_ID;
+    auto ret = ComponentManager::GetInstance().UninitCompSink(DHType::AUDIO, true);
+    SetDownComponentLoaderConfig();
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    EXPECT_EQ(ComponentManager::GetInstance().compSinkSaId_.find(DHType::AUDIO),
+        ComponentManager::GetInstance().compSinkSaId_.end());
+}
+
+/**
+ * @tc.name: UninitCompSink_004
+ * @tc.desc: Verify the UninitCompSink function with keepSAMonitor=false (default)
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, UninitCompSink_004, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().compHandlerMap_.clear();
+    SetUpComponentLoaderConfig();
+    ComponentManager::GetInstance().compSinkSaId_[DHType::AUDIO] = TEST_SINK_SA_ID;
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
+    auto ret = ComponentManager::GetInstance().UninitCompSink(DHType::AUDIO, false);
+    SetDownComponentLoaderConfig();
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: UninitCompSource_002
+ * @tc.desc: Verify the UninitCompSource function with keepSAMonitor=true
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, UninitCompSource_002, TestSize.Level1)
+{
+    SetUpComponentLoaderConfig();
+    ComponentManager::GetInstance().compSrcSaId_[DHType::AUDIO] = TEST_SOURCE_SA_ID;
+    ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
+    auto ret = ComponentManager::GetInstance().UninitCompSource(DHType::AUDIO, true);
+    SetDownComponentLoaderConfig();
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_MONITOR_NULL);
+}
+
+/**
+ * @tc.name: UninitCompSource_003
+ * @tc.desc: Verify the UninitCompSource function with keepSAMonitor=true and valid compMonitorPtr_
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, UninitCompSource_003, TestSize.Level1)
+{
+    SetUpComponentLoaderConfig();
+    ComponentManager::GetInstance().compSrcSaId_[DHType::AUDIO] = TEST_SOURCE_SA_ID;
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
+    auto ret = ComponentManager::GetInstance().UninitCompSource(DHType::AUDIO, true);
+    SetDownComponentLoaderConfig();
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    EXPECT_EQ(ComponentManager::GetInstance().compSrcSaId_.find(DHType::AUDIO),
+        ComponentManager::GetInstance().compSrcSaId_.end());
+}
+
+/**
+ * @tc.name: ResetSinkEnableStatus_001
+ * @tc.desc: Verify the ResetSinkEnableStatus function with keepSAMonitor=true
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, ResetSinkEnableStatus_001, TestSize.Level1)
+{
+    SetUpComponentLoaderConfig();
+    ComponentManager::GetInstance().compSinkSaId_[DHType::AUDIO] = TEST_SINK_SA_ID;
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
+    ComponentManager::GetInstance().ResetSinkEnableStatus(DHType::AUDIO, true);
+    SetDownComponentLoaderConfig();
+    EXPECT_EQ(ComponentManager::GetInstance().compSinkSaId_.find(DHType::AUDIO),
+        ComponentManager::GetInstance().compSinkSaId_.end());
+}
+
+/**
+ * @tc.name: ResetSourceEnableStatus_001
+ * @tc.desc: Verify the ResetSourceEnableStatus function with keepSAMonitor=true
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(ComponentManagerTest, ResetSourceEnableStatus_001, TestSize.Level1)
+{
+    SetUpComponentLoaderConfig();
+    ComponentManager::GetInstance().compSrcSaId_[DHType::AUDIO] = TEST_SOURCE_SA_ID;
+    ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
+    ComponentManager::GetInstance().ResetSourceEnableStatus(DHType::AUDIO, true);
+    SetDownComponentLoaderConfig();
+    EXPECT_EQ(ComponentManager::GetInstance().compSrcSaId_.find(DHType::AUDIO),
+        ComponentManager::GetInstance().compSrcSaId_.end());
 }
 } // namespace DistributedHardware
 } // namespace OHOS
