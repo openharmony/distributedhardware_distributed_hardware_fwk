@@ -118,6 +118,41 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"Pelacakan pintar dinonaktifkan",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"Perangkat terhubung",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"Pelacakan diaktifkan",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"Pelacakan pintar diaktifkan",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"Pelacakan dinonaktifkan",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -50,74 +50,109 @@
             }
         },
         {
-          "name": "mech_intelligent_tracking",
-          "value": "Seguimiento inteligente",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_intelligent_tracking",
+            "value":"Seguimiento inteligente",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_tracking_layout",
-          "value": "Modo Seguimiento",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_tracking_layout",
+            "value":"Modo Seguimiento",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_enable",
-          "value": "Sí",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"mech_enable",
+            "value":"Sí",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "mech_close",
-          "value": "No",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_close",
+            "value":"No",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_left",
-          "value": "Izquierda",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_left",
+            "value":"Izquierda",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_center",
-          "value": "Centro",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_center",
+            "value":"Centro",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_right",
-          "value": "Derecha",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_right",
+            "value":"Derecha",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "audio_tracking_switch_on",
-          "value": "Seguimiento inteligente activado, pulsa dos veces para desactivarlo",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_on",
+            "value":"Seguimiento inteligente activado, pulsa dos veces para desactivarlo",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_tracking_switch_off",
-          "value": "Seguimiento inteligente desactivado, pulsa dos veces para activarlo",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_off",
+            "value":"Seguimiento inteligente desactivado, pulsa dos veces para activarlo",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_back",
-          "value": "Volver",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_back",
+            "value":"Volver",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"Seguimiento inteligente deshabilitado",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"Dispositivo conectado",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"Seguimiento habilitado",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"Seguimiento inteligente habilitado",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"Seguimiento deshabilitado",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -50,74 +50,109 @@
             }
         },
         {
-          "name": "mech_intelligent_tracking",
-          "value": "智慧追蹤",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_intelligent_tracking",
+            "value":"智慧追蹤",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_tracking_layout",
-          "value": "追蹤版面配置",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_tracking_layout",
+            "value":"追蹤版面配置",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_enable",
-          "value": "開啟",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"mech_enable",
+            "value":"開啟",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "mech_close",
-          "value": "關閉",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_close",
+            "value":"關閉",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_left",
-          "value": "靠左",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_left",
+            "value":"靠左",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_center",
-          "value": "置中",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_center",
+            "value":"置中",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_right",
-          "value": "靠右",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_right",
+            "value":"靠右",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "audio_tracking_switch_on",
-          "value": "已開啟「智慧追蹤」開關，單指輕觸兩下即可關閉",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_on",
+            "value":"已開啟「智慧追蹤」開關，單指輕觸兩下即可關閉",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_tracking_switch_off",
-          "value": "已關閉「智慧追蹤」開關，單指輕觸兩下即可開啟",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_off",
+            "value":"已關閉「智慧追蹤」開關，單指輕觸兩下即可開啟",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_back",
-          "value": "返回",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_back",
+            "value":"返回",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"智慧追蹤已停用",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"裝置已連線",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"追蹤啟用",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"智慧追蹤已啟用",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"追蹤停用",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

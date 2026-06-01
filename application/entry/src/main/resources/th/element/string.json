@@ -118,6 +118,41 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"ปิดใช้งานการติดตามอัจฉริยะแล้ว",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"เชื่อมต่ออุปกรณ์แล้ว",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"เปิดใช้งานการติดตามแล้ว",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"เปิดใช้งานการติดตามอัจฉริยะแล้ว",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"ปิดใช้งานการติดตามแล้ว",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

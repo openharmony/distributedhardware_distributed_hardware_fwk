@@ -50,74 +50,109 @@
             }
         },
         {
-          "name": "mech_intelligent_tracking",
-          "value": "التتبع الذكي",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_intelligent_tracking",
+            "value":"التتبع الذكي",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_tracking_layout",
-          "value": "وضع التتبع",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_tracking_layout",
+            "value":"وضع التتبع",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_enable",
-          "value": "تشغيل",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"mech_enable",
+            "value":"تشغيل",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "mech_close",
-          "value": "مغلق",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_close",
+            "value":"مغلق",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_left",
-          "value": "على اليسار",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_left",
+            "value":"على اليسار",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_center",
-          "value": "في الوسط",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_center",
+            "value":"في الوسط",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_right",
-          "value": "على اليمين",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_right",
+            "value":"على اليمين",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "audio_tracking_switch_on",
-          "value": "تم تشغيل التتبع الذكي، انقر مرتين لإيقافه",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_on",
+            "value":"تم تشغيل التتبع الذكي، انقر مرتين لإيقافه",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_tracking_switch_off",
-          "value": "تم إيقاف التتبع الذكي، انقر مرتين لتشغيله",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_off",
+            "value":"تم إيقاف التتبع الذكي، انقر مرتين لتشغيله",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_back",
-          "value": "رجوع",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_back",
+            "value":"رجوع",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"التتبع الذكي مغلق",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"تم توصيل الجهاز",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"التتبع مُشغّل",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"التتبع الذكي مُشغّل",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"التتبع مغلق",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

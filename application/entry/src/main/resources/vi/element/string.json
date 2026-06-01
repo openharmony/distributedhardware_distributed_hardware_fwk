@@ -50,74 +50,109 @@
             }
         },
         {
-          "name": "mech_intelligent_tracking",
-          "value": "Theo dõi thông minh",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_intelligent_tracking",
+            "value":"Theo dõi thông minh",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_tracking_layout",
-          "value": "Chế độ theo dõi",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_tracking_layout",
+            "value":"Chế độ theo dõi",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_enable",
-          "value": "Bật",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"mech_enable",
+            "value":"Bật",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "mech_close",
-          "value": "Tắt",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_close",
+            "value":"Tắt",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_left",
-          "value": "Trái",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_left",
+            "value":"Trái",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_center",
-          "value": "Giữa",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_center",
+            "value":"Giữa",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "mech_right",
-          "value": "Phải",
-          "attr":{
-              "priority":"LT"
-          }
+            "name":"mech_right",
+            "value":"Phải",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
-          "name": "audio_tracking_switch_on",
-          "value": "Tính năng Theo dõi thông minh đang bật, chạm đúp để tắt",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_on",
+            "value":"Tính năng Theo dõi thông minh đang bật, chạm đúp để tắt",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_tracking_switch_off",
-          "value": "Tính năng Theo dõi thông minh đã tắt, chạm đúp để bật",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_tracking_switch_off",
+            "value":"Tính năng Theo dõi thông minh đã tắt, chạm đúp để bật",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-          "name": "audio_back",
-          "value": "Trở lại",
-          "attr":{
-              "priority":"translate"
-          }
+            "name":"audio_back",
+            "value":"Trở lại",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"Đã tắt Theo dõi thông minh",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"Đã kết nối thiết bị",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"Đã bật Theo dõi",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"Đã bật Theo dõi thông minh",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"Đã tắt Theo dõi",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

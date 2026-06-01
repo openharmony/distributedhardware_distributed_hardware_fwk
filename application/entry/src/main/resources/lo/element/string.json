@@ -118,6 +118,41 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"ປິດໃຊ້ງານການຕິດຕາມອັດສະລິຍະແລ້ວ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"ເຊື່ອມຕໍ່ອຸປະກອນແລ້ວ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"ເປີດໃຊ້ງານການຕິດຕາມແລ້ວ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"ເປີດໃຊ້ງານການຕິດຕາມອັດສະລິຍະແລ້ວ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"ປິດໃຊ້ງານການຕິດຕາມແລ້ວ",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
