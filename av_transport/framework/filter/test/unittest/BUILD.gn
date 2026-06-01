@@ -60,6 +60,7 @@ ohos_unittest("AvTransportFilterTest") {
     "graphic_surface:surface",
     "hilog:libhilog",
     "libevdev:libevdev",
+    "media_foundation:media_foundation",
   ]
 }
 

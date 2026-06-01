@@ -59,6 +59,7 @@ ohos_fuzztest("FilterFactoryFuzzTest") {
     "cJSON:cjson",
     "c_utils:utils",
     "ipc:ipc_core",
+    "media_foundation:media_foundation",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
