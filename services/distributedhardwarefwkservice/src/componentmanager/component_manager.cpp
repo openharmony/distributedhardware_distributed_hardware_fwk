@@ -75,7 +75,7 @@ namespace {
     const std::string SYNC_TIMEOUT_TASK_NAME = "sync_timeout";
 }
 
-ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}),
+ComponentManager::ComponentManager() : compSource_({}), compSink_({}), compSrcSaId_({}), compSinkSaId_({}),
     compMonitorPtr_(std::make_shared<ComponentMonitor>()),
     lowLatencyListener_(sptr<LowLatencyListener>(new(std::nothrow) LowLatencyListener())),
     isUnInitTimeOut_(false), dhBizStates_({}), dhStateListener_(std::make_shared<DHStateListener>()),
@@ -684,8 +684,8 @@ void ComponentManager::DoRecover(DHType dhType)
     }
     // reset enable status
     DHLOGI("Reset enable status for DHType %{public}" PRIu32, (uint32_t)dhType);
-    ResetSinkEnableStatus(dhType);
-    ResetSourceEnableStatus(dhType);
+    ResetSinkEnableStatus(dhType, true);
+    ResetSourceEnableStatus(dhType, true);
     // recover distributed hardware virtual driver
     DHLOGI("Recover distributed hardware virtual driver for DHType %{public}" PRIu32, (uint32_t)dhType);
     RecoverAutoEnableSink(dhType);
@@ -1862,11 +1862,11 @@ int32_t ComponentManager::RealDisableSource(const std::string &networkId, const 
     return DH_FWK_SUCCESS;
 }
 
-void ComponentManager::ResetSinkEnableStatus(DHType dhType)
+void ComponentManager::ResetSinkEnableStatus(DHType dhType, bool keepSAMonitor)
 {
     DHLOGI("ResetSinkEnableStatus begin, dhType = %{public}#X.", dhType);
     std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
-    auto ret = UninitCompSink(dhType);
+    auto ret = UninitCompSink(dhType, keepSAMonitor);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("UninitCompSink failed, ret = %{public}d, but want to continue!", ret);
     }
@@ -1894,11 +1894,11 @@ void ComponentManager::ResetSinkEnableStatus(DHType dhType)
     DHLOGI("ResetSinkEnableStatus end, dhType = %{public}#X.", dhType);
 }
 
-void ComponentManager::ResetSourceEnableStatus(DHType dhType)
+void ComponentManager::ResetSourceEnableStatus(DHType dhType, bool keepSAMonitor)
 {
     DHLOGI("ResetSourceEnableStatus begin, dhType = %{public}#X.", dhType);
     std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
-    auto ret = UninitCompSource(dhType);
+    auto ret = UninitCompSource(dhType, keepSAMonitor);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("UninitCompSource failed, ret = %{public}d, but want to continue!", ret);
     }
@@ -2097,7 +2097,7 @@ int32_t ComponentManager::InitCompSource(DHType dhType)
     return DH_FWK_SUCCESS;
 }
 
-int32_t ComponentManager::UninitCompSource(DHType dhType)
+int32_t ComponentManager::UninitCompSource(DHType dhType, bool keepSAMonitor)
 {
     std::unique_lock<std::shared_mutex> lock(compSourceMutex_);
     IDistributedHardwareSource *sourcePtr = nullptr;
@@ -2118,7 +2118,9 @@ int32_t ComponentManager::UninitCompSource(DHType dhType)
             DHLOGE("compMonitorPtr_ is null.");
             return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
         }
-        compMonitorPtr_->RemoveSAMonitor(it->second);
+        if (!keepSAMonitor) {
+            compMonitorPtr_->RemoveSAMonitor(it->second);
+        }
         compSrcSaId_.erase(it);
     }
     ret = ComponentLoader::GetInstance().ReleaseSource(dhType);
@@ -2145,10 +2147,21 @@ int32_t ComponentManager::InitCompSink(DHType dhType)
     }
     sinkPtr->RegisterDistributedHardwareSinkStateListener(dhSinkStateListener_);
     compSink_.insert(std::make_pair(dhType, sinkPtr));
+    auto saId = ComponentLoader::GetInstance().GetSinkSaId(dhType);
+    if (saId != INVALID_SA_ID) {
+        compSinkSaId_.insert(std::make_pair(dhType, saId));
+        if (compMonitorPtr_ == nullptr) {
+            DHLOGE("compMonitorPtr_ is null.");
+            return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
+        }
+        compMonitorPtr_->AddSAMonitor(saId);
+    } else {
+        DHLOGE("GetSinkSaId return INVALID_SA_ID, compType = %{public}#X.", dhType);
+    }
     return DH_FWK_SUCCESS;
 }
 
-int32_t ComponentManager::UninitCompSink(DHType dhType)
+int32_t ComponentManager::UninitCompSink(DHType dhType, bool keepSAMonitor)
 {
     std::unique_lock<std::shared_mutex> lock(compSinkMutex_);
     IDistributedHardwareSink *sinkPtr = nullptr;
@@ -2162,6 +2175,17 @@ int32_t ComponentManager::UninitCompSink(DHType dhType)
         return ERR_DH_FWK_LOADER_HANDLER_IS_NULL;
     }
     sinkPtr->UnregisterDistributedHardwareSinkStateListener();
+    auto it = compSinkSaId_.find(dhType);
+    if (it != compSinkSaId_.end()) {
+        if (compMonitorPtr_ == nullptr) {
+            DHLOGE("compMonitorPtr_ is null.");
+            return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
+        }
+        if (!keepSAMonitor) {
+            compMonitorPtr_->RemoveSAMonitor(it->second);
+        }
+        compSinkSaId_.erase(it);
+    }
     ret = ComponentLoader::GetInstance().ReleaseSink(dhType);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("ReleaseSink failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);

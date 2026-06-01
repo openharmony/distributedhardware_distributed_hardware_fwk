@@ -82,7 +82,8 @@ public:
     void GetAllCompTypes(std::vector<DHType> &dhTypeVec);
     int32_t GetLocalDHVersion(DHVersion &dhVersion);
     int32_t GetSourceSaId(const DHType dhType);
-    DHType GetDHTypeBySrcSaId(const int32_t saId);
+    int32_t GetSinkSaId(const DHType dhType);
+    DHType GetDHTypeBySaId(const int32_t saId);
     std::map<std::string, bool> GetCompResourceDesc();
 
     int32_t GetSource(const DHType dhType);

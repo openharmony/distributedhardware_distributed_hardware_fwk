@@ -53,7 +53,7 @@ void ComponentMonitor::CompSystemAbilityListener::OnAddSystemAbility(int32_t saI
 void ComponentMonitor::CompSystemAbilityListener::OnRemoveSystemAbility(int32_t saId, const std::string &deviceId)
 {
     DHLOGI("OnRemoveSystemAbility, saId: %{public}d, deviceId: %{public}s", saId, GetAnonyString(deviceId).c_str());
-    DHType dhType = ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId);
+    DHType dhType = ComponentLoader::GetInstance().GetDHTypeBySaId(saId);
     if (dhType == DHType::UNKNOWN) {
         DHLOGE("Can not find DHType by sa Id: %{public}d", saId);
         return;
