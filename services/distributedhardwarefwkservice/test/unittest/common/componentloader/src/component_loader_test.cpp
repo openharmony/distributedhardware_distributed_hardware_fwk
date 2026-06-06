@@ -365,6 +365,7 @@ HWTEST_F(ComponentLoaderTest, GetSinkSaId_001, TestSize.Level1)
 {
     CompHandler comHandler;
     ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = comHandler;
+    
     int32_t ret = ComponentLoader::GetInstance().GetSinkSaId(DHType::UNKNOWN);
     EXPECT_EQ(DEFAULT_SA_ID, ret);
 
