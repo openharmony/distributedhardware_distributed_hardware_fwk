@@ -121,7 +121,7 @@ HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_001, TestSize.Level1)
     std::string deviceId;
     compMonitorPtr_->AddSAMonitor(saId);
     listener->OnRemoveSystemAbility(saId, deviceId);
-    EXPECT_EQ(DHType::UNKNOWN, ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId));
+    EXPECT_EQ(DHType::UNKNOWN, ComponentLoader::GetInstance().GetDHTypeBySaId(saId));
 }
 
 /**
@@ -138,7 +138,7 @@ HWTEST_F(ComponentMonitorTest, OnRemoveSystemAbility_002, TestSize.Level1)
     std::string deviceId;
     compMonitorPtr_->AddSAMonitor(saId);
     listener->OnRemoveSystemAbility(saId, deviceId);
-    EXPECT_EQ(DHType::UNKNOWN, ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId));
+    EXPECT_EQ(DHType::UNKNOWN, ComponentLoader::GetInstance().GetDHTypeBySaId(saId));
 }
 } // namespace DistributedHardware
 } // namespace OHOS

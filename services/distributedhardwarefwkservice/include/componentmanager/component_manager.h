@@ -240,9 +240,9 @@ private:
 
     DHType GetDHType(const std::string &uuid, const std::string &dhId) const;
     int32_t InitCompSource(DHType dhType);
-    int32_t UninitCompSource(DHType dhType);
+    int32_t UninitCompSource(DHType dhType, bool keepSAMonitor = false);
     int32_t InitCompSink(DHType dhType);
-    int32_t UninitCompSink(DHType dhType);
+    int32_t UninitCompSink(DHType dhType, bool keepSAMonitor = false);
     void InitDHCommTool();
     void UnInitDHCommTool();
     int32_t StartSource(DHType dhType, ActionResult &sourceResult);
@@ -298,8 +298,8 @@ private:
     int32_t DisableMetaSourceInternal(const std::string &networkId, const DHDescriptor &dhDescriptor,
         DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status,
         std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr);
-    void ResetSinkEnableStatus(DHType dhType);
-    void ResetSourceEnableStatus(DHType dhType);
+    void ResetSinkEnableStatus(DHType dhType, bool keepSAMonitor = false);
+    void ResetSourceEnableStatus(DHType dhType, bool keepSAMonitor = false);
     void RecoverAutoEnableSink(DHType dhType);
     void RecoverAutoEnableSource(DHType dhType);
     void RecoverActiveEnableSink(DHType dhType);
@@ -311,6 +311,7 @@ private:
     std::map<DHType, IDistributedHardwareSink*> compSink_;
     std::shared_mutex compSinkMutex_;
     std::map<DHType, int32_t> compSrcSaId_;
+    std::map<DHType, int32_t> compSinkSaId_;
     std::shared_ptr<ComponentPrivacy> audioCompPrivacy_ = nullptr;
     std::shared_ptr<ComponentPrivacy> cameraCompPrivacy_ = nullptr;
     std::shared_ptr<ComponentMonitor> compMonitorPtr_ = nullptr;

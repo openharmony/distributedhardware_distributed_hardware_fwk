@@ -356,6 +356,25 @@ HWTEST_F(ComponentLoaderTest, GetSourceSaId_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: GetSinkSaId_001
+ * @tc.desc: Verify the GetSinkSaId function.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, GetSinkSaId_001, TestSize.Level1)
+{
+    CompHandler comHandler;
+    ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = comHandler;
+    int32_t ret = ComponentLoader::GetInstance().GetSinkSaId(DHType::UNKNOWN);
+    EXPECT_EQ(DEFAULT_SA_ID, ret);
+
+    comHandler.sinkSaId = 2;
+    ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = comHandler;
+    ret = ComponentLoader::GetInstance().GetSinkSaId(DHType::AUDIO);
+    EXPECT_EQ(2, ret);
+}
+
+/**
  * @tc.name: component_loader_test_022
  * @tc.desc: Verify the ParseConfig function.
  * @tc.type: FUNC
@@ -434,14 +453,14 @@ HWTEST_F(ComponentLoaderTest, component_loader_test_027, TestSize.Level1)
 
 /**
  * @tc.name: component_loader_test_028
- * @tc.desc: Verify the GetDHTypeBySrcSaId function.
+ * @tc.desc: Verify the GetDHTypeBySaId function.
  * @tc.type: FUNC
  * @tc.require: AR000GHSK3
  */
 HWTEST_F(ComponentLoaderTest, component_loader_test_028, TestSize.Level1)
 {
     int32_t saId = 4801;
-    DHType dhType = ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId);
+    DHType dhType = ComponentLoader::GetInstance().GetDHTypeBySaId(saId);
     EXPECT_EQ(dhType, DHType::UNKNOWN);
 }
 
@@ -551,13 +570,16 @@ HWTEST_F(ComponentLoaderTest, ReleaseHardwareHandler_002, TestSize.Level1)
 
     ret = ComponentLoader::GetInstance().GetSourceSaId(dhType);
     EXPECT_EQ(ret, DEFAULT_SA_ID);
+
+    ret = ComponentLoader::GetInstance().GetSinkSaId(dhType);
+    EXPECT_EQ(ret, DEFAULT_SA_ID);
 }
 
-HWTEST_F(ComponentLoaderTest, GetDHTypeBySrcSaId_001, TestSize.Level1)
+HWTEST_F(ComponentLoaderTest, GetDHTypeBySaId_001, TestSize.Level1)
 {
     ComponentLoader::GetInstance().compHandlerMap_.clear();
     int32_t saId = 4801;
-    auto ret = ComponentLoader::GetInstance().GetDHTypeBySrcSaId(saId);
+    auto ret = ComponentLoader::GetInstance().GetDHTypeBySaId(saId);
     EXPECT_EQ(ret, DHType::UNKNOWN);
 }
 
@@ -583,6 +605,25 @@ HWTEST_F(ComponentLoaderTest, IsDHTypeSupport_001, TestSize.Level1)
 {
     auto ret = ComponentLoader::GetInstance().IsDHTypeSupport(DHType::AUDIO);
     EXPECT_EQ(ret, false);
+}
+
+/**
+ * @tc.name: GetDHTypeBySaId_002
+ * @tc.desc: Verify the GetDHTypeBySaId function matches sourceSaId and sinkSaId.
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSK3
+ */
+HWTEST_F(ComponentLoaderTest, GetDHTypeBySaId_002, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().compHandlerMap_.clear();
+    CompHandler comHandler;
+    comHandler.type = DHType::AUDIO;
+    comHandler.sourceSaId = 4805;
+    comHandler.sinkSaId = 4806;
+    ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = comHandler;
+    EXPECT_EQ(DHType::AUDIO, ComponentLoader::GetInstance().GetDHTypeBySaId(4805));
+    EXPECT_EQ(DHType::AUDIO, ComponentLoader::GetInstance().GetDHTypeBySaId(4806));
+    EXPECT_EQ(DHType::UNKNOWN, ComponentLoader::GetInstance().GetDHTypeBySaId(4807));
 }
 
 HWTEST_F(ComponentLoaderTest, ParseSourceFeatureFiltersFromJson_001, TestSize.Level1)

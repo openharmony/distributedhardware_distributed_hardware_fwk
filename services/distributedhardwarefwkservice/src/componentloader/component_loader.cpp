@@ -609,12 +609,22 @@ int32_t ComponentLoader::GetSourceSaId(const DHType dhType)
     return compHandlerMap_[dhType].sourceSaId;
 }
 
-DHType ComponentLoader::GetDHTypeBySrcSaId(const int32_t saId)
+int32_t ComponentLoader::GetSinkSaId(const DHType dhType)
+{
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+    if (compHandlerMap_.find(dhType) == compHandlerMap_.end()) {
+        DHLOGE("DHType not exist, dhType: %{public}" PRIu32, (uint32_t)dhType);
+        return DEFAULT_SA_ID;
+    }
+    return compHandlerMap_[dhType].sinkSaId;
+}
+
+DHType ComponentLoader::GetDHTypeBySaId(const int32_t saId)
 {
     std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
     DHType type = DHType::UNKNOWN;
     for (const auto &handler : compHandlerMap_) {
-        if (handler.second.sourceSaId == saId) {
+        if (handler.second.sourceSaId == saId || handler.second.sinkSaId == saId) {
             type = handler.second.type;
             break;
         }
