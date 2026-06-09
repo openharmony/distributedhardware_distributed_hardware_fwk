@@ -33,12 +33,17 @@ config("module_private_config") {
 ohos_unittest("HistreamerAbilityQuerierTest") {
   module_out_path = module_out_path
 
-  sources = [ "src/histreamer_ability_querier_test.cpp" ]
+  sources = [
+    "src/histreamer_ability_querier_test.cpp",
+    "src/plugin_manager_mock.cpp",
+    "${handler_path}/histreamer_ability_querier/src/histreamer_ability_querier.cpp",
+    "${common_path}/src/av_trans_log.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 
-  deps = [
-    "${handler_path}/histreamer_ability_querier:histreamer_ability_querier",
+  deps = [ 
+    "${handler_path}/histreamer_ability_querier:histreamer_ability_querier", 
   ]
 
   if (histreamer_compile_part) {
@@ -60,6 +65,24 @@ ohos_unittest("HistreamerAbilityQuerierTest") {
   defines = [
     "HI_LOG_ENABLE",
     "DH_LOG_TAG=\"HistreamerAbilityQuerierTest\"",
+    "HST_ANY_WITH_NO_RTTI",
+  ]
+
+  ldflags = [
+    "-Wl,--allow-multiple-definition",
+  ]
+
+  cflags = [
+    "-O2",
+    "-fPIC",
+    "-Wall",
+    "-fexceptions",
+    "-Wno-unused-but-set-variable",
+    "-Wno-format",
+  ]
+
+  remove_configs = [
+    "//build/config/compiler:no_exceptions",
   ]
 }
 
