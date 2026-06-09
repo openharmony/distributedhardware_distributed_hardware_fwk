@@ -16,6 +16,7 @@ import(
     "//foundation/distributedhardware/distributed_hardware_fwk/av_transport/distributed_av_transport.gni")
 
 ohos_source_set("plugin_AVTransDsoftbusOutput") {
+  branch_protector_ret = "pac_ret"
   include_dirs = [
     "${common_path}/include",
     "${plugin_path}/interface",
