@@ -44,6 +44,7 @@ config("dhfwk_idl_hardware_config") {
 }
 
 ohos_source_set("dhfwk_idl_hardware_source") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -69,6 +70,7 @@ ohos_source_set("dhfwk_idl_hardware_source") {
 }
 
 ohos_source_set("dhfwk_idl_hardware_head") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
