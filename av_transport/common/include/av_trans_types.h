@@ -23,34 +23,34 @@
 
 namespace OHOS {
 namespace DistributedHardware {
-const std::string OWNER_NAME_D_CAMERA = "ohos.dhardware.dcamera";
-const std::string OWNER_NAME_D_SCREEN = "ohos.dhardware.dscreen";
-const std::string OWNER_NAME_D_MIC = "ohos.dhardware.daudio.dmic";
-const std::string OWNER_NAME_D_SPEAKER = "ohos.dhardware.daudio.dspeaker";
-const std::string OWNER_NAME_D_VIRMODEM_MIC = "ohos.dhardware.dcall.dmic";
-const std::string OWNER_NAME_D_VIRMODEM_SPEAKER = "ohos.dhardware.dcall.dspeaker";
+constexpr const char* OWNER_NAME_D_CAMERA = "ohos.dhardware.dcamera";
+constexpr const char* OWNER_NAME_D_SCREEN = "ohos.dhardware.dscreen";
+constexpr const char* OWNER_NAME_D_MIC = "ohos.dhardware.daudio.dmic";
+constexpr const char* OWNER_NAME_D_SPEAKER = "ohos.dhardware.daudio.dspeaker";
+constexpr const char* OWNER_NAME_D_VIRMODEM_MIC = "ohos.dhardware.dcall.dmic";
+constexpr const char* OWNER_NAME_D_VIRMODEM_SPEAKER = "ohos.dhardware.dcall.dspeaker";
 
-const std::string SCENE_TYPE_D_MIC = "dmic_stream";
-const std::string SCENE_TYPE_D_SCREEN = "dscreen_stream";
-const std::string SCENE_TYPE_D_SPEAKER = "dspeaker_stream";
-const std::string SCENE_TYPE_D_CAMERA_STR = "dcamera_stream";
-const std::string SCENE_TYPE_D_CAMERA_PIC = "dcamera_picture";
+constexpr const char* SCENE_TYPE_D_MIC = "dmic_stream";
+constexpr const char* SCENE_TYPE_D_SCREEN = "dscreen_stream";
+constexpr const char* SCENE_TYPE_D_SPEAKER = "dspeaker_stream";
+constexpr const char* SCENE_TYPE_D_CAMERA_STR = "dcamera_stream";
+constexpr const char* SCENE_TYPE_D_CAMERA_PIC = "dcamera_picture";
 
-const std::string PKG_NAME_DH_FWK = "ohos.dhardware";
-const std::string PKG_NAME_D_AUDIO = "ohos.dhardware.daudio";
-const std::string PKG_NAME_D_CALL = "ohos.dhardware.dcall";
-const std::string PKG_NAME_D_CAMERA = "ohos.dhardware.dcamera";
-const std::string PKG_NAME_D_SCREEN = "ohos.dhardware.dscreen";
+constexpr const char* PKG_NAME_DH_FWK = "ohos.dhardware";
+constexpr const char* PKG_NAME_D_AUDIO = "ohos.dhardware.daudio";
+constexpr const char* PKG_NAME_D_CALL = "ohos.dhardware.dcall";
+constexpr const char* PKG_NAME_D_CAMERA = "ohos.dhardware.dcamera";
+constexpr const char* PKG_NAME_D_SCREEN = "ohos.dhardware.dscreen";
 
-const std::string MIME_VIDEO_RAW = "video/raw";
-const std::string MIME_VIDEO_H264 = "video/avc";
-const std::string MIME_VIDEO_H265 = "video/hevc";
+constexpr const char* MIME_VIDEO_RAW = "video/raw";
+constexpr const char* MIME_VIDEO_H264 = "video/avc";
+constexpr const char* MIME_VIDEO_H265 = "video/hevc";
 
-const std::string VIDEO_FORMAT_NV12 = "nv12";
-const std::string VIDEO_FORMAT_NV21 = "nv21";
-const std::string VIDEO_FORMAT_JEPG = "jpeg";
-const std::string VIDEO_FORMAT_YUVI420 = "yuvi420";
-const std::string VIDEO_FORMAT_RGBA8888 = "rgba8888";
+constexpr const char* VIDEO_FORMAT_NV12 = "nv12";
+constexpr const char* VIDEO_FORMAT_NV21 = "nv21";
+constexpr const char* VIDEO_FORMAT_JEPG = "jpeg";
+constexpr const char* VIDEO_FORMAT_YUVI420 = "yuvi420";
+constexpr const char* VIDEO_FORMAT_RGBA8888 = "rgba8888";
 
 enum struct TransRole : uint32_t {
     AV_SENDER = 0,

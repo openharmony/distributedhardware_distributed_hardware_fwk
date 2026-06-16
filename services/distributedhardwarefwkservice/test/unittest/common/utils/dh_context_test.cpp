@@ -224,7 +224,7 @@ HWTEST_F(DhContextTest, GetDeviceIdByDBGetPrefix_001, TestSize.Level1)
     ret = DHContext::GetInstance().GetDeviceIdByDBGetPrefix(prefix);
     EXPECT_EQ(prefix, ret);
 
-    prefix = "prefix" + RESOURCE_SEPARATOR;
+    prefix = std::string("prefix") + RESOURCE_SEPARATOR;
     ret = DHContext::GetInstance().GetDeviceIdByDBGetPrefix(prefix);
     EXPECT_EQ("prefix", ret);
 }

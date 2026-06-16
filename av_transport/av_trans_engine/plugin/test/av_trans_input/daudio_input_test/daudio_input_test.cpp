@@ -651,8 +651,8 @@ HWTEST_F(DaudioInputTest, OnSoftbusStreamReceived_001, TestSize.Level1)
 
 HWTEST_F(DaudioInputTest, OnSoftbusChannelOpened_001, TestSize.Level1)
 {
-    std::string peerSessionName = OWNER_NAME_D_SCREEN + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX;
-    std::string sessionName = OWNER_NAME_D_SCREEN + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
+    std::string peerSessionName = std::string(OWNER_NAME_D_SCREEN) + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX;
+    std::string sessionName = std::string(OWNER_NAME_D_SCREEN) + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
     int32_t sessionId = 1;
     SoftbusChannelAdapter::GetInstance().devId2SessIdMap_.insert(
         std::make_pair(sessionName + std::string("devid"), sessionId));
@@ -663,7 +663,7 @@ HWTEST_F(DaudioInputTest, OnSoftbusChannelOpened_001, TestSize.Level1)
 
 HWTEST_F(DaudioInputTest, SendStreamData_001, TestSize.Level1)
 {
-    std::string sessionName = OWNER_NAME_D_SCREEN + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
+    std::string sessionName = std::string(OWNER_NAME_D_SCREEN) + "_" + RECEIVER_CONTROL_SESSION_NAME_SUFFIX;
     char bytes[] = {0, 0, 0, 0};
     StreamData data = {bytes, sizeof(bytes)};
     StreamData extdata = {bytes, sizeof(bytes)};
@@ -673,7 +673,7 @@ HWTEST_F(DaudioInputTest, SendStreamData_001, TestSize.Level1)
 
 HWTEST_F(DaudioInputTest, FindSessionName_001, TestSize.Level1)
 {
-    std::string peerSessionName = OWNER_NAME_D_SCREEN + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX;
+    std::string peerSessionName = std::string(OWNER_NAME_D_SCREEN) + "_" + SENDER_CONTROL_SESSION_NAME_SUFFIX;
     std::string ret = SoftbusChannelAdapter::GetInstance().FindSessNameByPeerSessName(peerSessionName);
     EXPECT_NE(ret.size(), 0);
     ret = SoftbusChannelAdapter::GetInstance().FindSessNameByPeerSessName("name");

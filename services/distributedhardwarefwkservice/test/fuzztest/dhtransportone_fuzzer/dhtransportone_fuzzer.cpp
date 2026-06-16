@@ -83,7 +83,7 @@ void DhTransportOnSocketOpenedFuzzTest(const uint8_t* data, size_t size)
     std::string remoteNetworkId = fdp.ConsumeRandomLengthString();
     char *nameBuf = strdup(peerSocketName.c_str());
     char *networkIdBuf = strdup(remoteNetworkId.c_str());
-    char *pkgNameBuf = strdup(DH_FWK_PKG_NAME.c_str());
+    char *pkgNameBuf = strdup(DH_FWK_PKG_NAME);
     PeerSocketInfo info = {
         .name = nameBuf,
         .networkId = networkIdBuf,
