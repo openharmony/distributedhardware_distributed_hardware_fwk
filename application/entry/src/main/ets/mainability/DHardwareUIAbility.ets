@@ -108,7 +108,6 @@ export default class DHardwareUIAbility extends UIAbility {
     if (want.parameters != undefined) {
       console.info(TAG + 'onCreate : want.parameters.type : ' + JSON.stringify(want.parameters['type']));
       console.info(TAG + 'onCreate : want.parameters.srcNetWorkId : ' + JSON.stringify(want.parameters['srcNetWorkId']));
-      console.info(TAG + 'onCreate : want.parameters.deviceName : ' + JSON.stringify(want.parameters['deviceName']));
       console.info(TAG + 'onCreate : want.parameters.deviceType : ' + JSON.stringify(want.parameters['deviceType']));
       console.info(TAG + 'onCreate : want.parameters.returnCode : ' + JSON.stringify(want.parameters['returnCode']));
 
