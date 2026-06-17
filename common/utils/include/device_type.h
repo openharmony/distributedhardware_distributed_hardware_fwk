@@ -46,7 +46,7 @@ enum class DHSubtype : uint32_t {
     AUDIO_SPEAKER = 0x800     // AUDIO Speaker
 };
 
-const std::unordered_map<DHType, std::string> DHTypeStrMap = {
+inline const std::unordered_map<DHType, std::string> DHTypeStrMap = {
     { DHType::CAMERA, "CAMERA" },
     { DHType::AUDIO, "AUDIO" },
     { DHType::SCREEN, "SCREEN" },
@@ -81,7 +81,7 @@ struct DeviceInfo {
 };
 
 /* The key is DHType, the value is the prefix of DHId */
-const std::unordered_map<DHType, std::string> DHTypePrefixMap = {
+inline const std::unordered_map<DHType, std::string> DHTypePrefixMap = {
     {DHType::CAMERA, "Camera"},
     {DHType::SCREEN, "Screen"},
     {DHType::INPUT, "Input"},

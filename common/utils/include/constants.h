@@ -30,8 +30,8 @@ namespace DistributedHardware {
     constexpr uint32_t EVENT_DATA_SYNC_MANUAL = 301;
     constexpr uint32_t EVENT_META_INFO_DB_RECOVER = 401;
 
-    const std::string RESOURCE_SEPARATOR = "###";
-    const std::string DH_FWK_PKG_NAME = "ohos.dhardware";
+    constexpr const char *RESOURCE_SEPARATOR = "###";
+    constexpr const char *DH_FWK_PKG_NAME = "ohos.dhardware";
 
     constexpr const char *APP_ID = "dtbhardware_manager_service";
     constexpr const char *DH_ID = "dh_id";

@@ -315,7 +315,7 @@ int32_t DHTransport::CreateServerSocket()
         GetAnonyString(networkId).c_str(), localSocketName_.c_str());
     SocketInfo info = {
         .name = const_cast<char*>(localSocketName_.c_str()),
-        .pkgName = const_cast<char*>(DH_FWK_PKG_NAME.c_str()),
+        .pkgName = const_cast<char*>(DH_FWK_PKG_NAME),
         .dataType = DATA_TYPE_BYTES
     };
     int32_t socket = Socket(info);
@@ -334,7 +334,7 @@ int32_t DHTransport::CreateClientSocket(const std::string &remoteNetworkId)
         .name = const_cast<char*>(localSocketName_.c_str()),
         .peerName = const_cast<char*>(peerSocketName.c_str()),
         .peerNetworkId = const_cast<char*>(remoteNetworkId.c_str()),
-        .pkgName = const_cast<char*>(DH_FWK_PKG_NAME.c_str()),
+        .pkgName = const_cast<char*>(DH_FWK_PKG_NAME),
         .dataType = DATA_TYPE_BYTES
     };
     int32_t socket = Socket(info);
@@ -458,7 +458,7 @@ int32_t DHTransport::StartSocket(const std::string &remoteNetworkId)
     PeerSocketInfo peerSocketInfo = {
         .name = const_cast<char*>(peerSocketName.c_str()),
         .networkId = const_cast<char*>(remoteNetworkId.c_str()),
-        .pkgName = const_cast<char*>(DH_FWK_PKG_NAME.c_str()),
+        .pkgName = const_cast<char*>(DH_FWK_PKG_NAME),
         .dataType = DATA_TYPE_BYTES
     };
     OnSocketOpened(socket, peerSocketInfo);

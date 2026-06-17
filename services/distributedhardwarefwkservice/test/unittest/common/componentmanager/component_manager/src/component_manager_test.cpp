@@ -274,7 +274,7 @@ HWTEST_F(ComponentManagerTest, get_enableparam_test_001, TestSize.Level1)
 {
     DeviceInfo devInfo { "", "", "", "", "", "", 0 };
     auto info = std::make_unique<MockDmDeviceInfo>();
-    MockGetLocalNodeDeviceInfo(DH_FWK_PKG_NAME.c_str(), info.get());
+    MockGetLocalNodeDeviceInfo(DH_FWK_PKG_NAME, info.get());
     devInfo.uuid = GetUUIDByDm(info->networkId);
     devInfo.udid = GetUDIDByDm(info->networkId);
     devInfo.deviceId = GetDeviceIdByUUID(devInfo.uuid);
