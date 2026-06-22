@@ -65,6 +65,7 @@ ohos_unittest("AvTransAudioInputFilterTest") {
   external_deps += [
     "av_codec:av_codec_client",
     "av_codec:native_media_acodec",
+    "media_foundation:media_foundation",
     "bounds_checking_function:libsec_shared",
     "cJSON:cjson",
     "c_utils:utils",
@@ -114,6 +115,7 @@ ohos_unittest("AVTransBusInputFilterTest") {
   external_deps += [
     "av_codec:av_codec_client",
     "av_codec:native_media_acodec",
+    "media_foundation:media_foundation",
     "bounds_checking_function:libsec_shared",
     "cJSON:cjson",
     "c_utils:utils",

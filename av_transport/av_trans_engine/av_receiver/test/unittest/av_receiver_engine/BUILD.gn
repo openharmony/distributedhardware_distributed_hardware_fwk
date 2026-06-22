@@ -165,6 +165,7 @@ ohos_unittest("AvAudioReceiverEngineTest") {
   external_deps += [
     "av_codec:av_codec_client",
     "av_codec:native_media_acodec",
+    "media_foundation:media_foundation",
     "cJSON:cjson",
     "c_utils:utils",
     "dsoftbus:softbus_client",
