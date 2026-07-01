@@ -62,7 +62,8 @@
         "selinux_adapter",
         "os_account",
         "memmgr",
-        "graphic_surface"
+        "graphic_surface",
+        "node"
       ]
     },
     "build": {

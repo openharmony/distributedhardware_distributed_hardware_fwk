@@ -65,6 +65,7 @@ ohos_shared_library("hardwaremanager") {
     "hilog:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",
+    "node:node_header_notice"
   ]
 
   subsystem_name = "distributedhardware"
