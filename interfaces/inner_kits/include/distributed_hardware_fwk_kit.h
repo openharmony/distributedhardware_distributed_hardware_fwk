@@ -255,7 +255,7 @@ public:
      *
      * @param dhType distributed hardware type.
      * @param callback hardware access listener.
-     * @param timeOut time out ms.
+     * @param timeOut time out seconds.
      * @param pkgName owner info.
      * @return Returns 0 if success.
      */
