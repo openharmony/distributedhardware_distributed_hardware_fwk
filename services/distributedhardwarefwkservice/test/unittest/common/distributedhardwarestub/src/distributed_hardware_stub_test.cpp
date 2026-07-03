@@ -865,7 +865,7 @@ HWTEST_F(DistributedHardwareStubTest, WriteDescriptors_001, TestSize.Level1)
     const std::string customParams = "{\"scene\":\"enable\"}";
     MessageParcel data;
     std::vector<DHDescriptor> descriptors{
-        { .id = descriptorId, .dhType = DHType::AUDIO, .customParams = customParams }
+        { .id = descriptorId, .dhType = DHType::AUDIO, .customParams = customParams, .firstCallingTokenId = 12345u }
     };
 
     auto ret = stubTest_->WriteDescriptors(data, descriptors);

@@ -38,6 +38,8 @@ public:
     int32_t GetCallingPid();
     void SetCallingTokenId(uint32_t callingTokenId);
     uint32_t GetCallingTokenId();
+    void SetFirstCallingTokenId(uint32_t firstCallingTokenId);
+    uint32_t GetFirstCallingTokenId();
     void SetCustomParams(const std::string &customParams);
     std::string GetCustomParams();
 
@@ -47,7 +49,7 @@ private:
     void DoTaskInner();
     int32_t DoAutoEnable();
     int32_t DoActiveEnable();
-    void AppendTokenIdToParams(std::string &params);
+    void AppendTokenIdToParams(std::string &params, uint32_t firstCallingTokenId);
 
 private:
     // effect sink
@@ -60,6 +62,8 @@ private:
     int32_t callingPid_{ 0 };
     // enable or disable calling token id
     uint32_t callingTokenId_{ 0 };
+    // token id passed in from DHDescriptor
+    uint32_t firstCallingTokenId_{ 0 };
     // custom params for enable
     std::string customParams_;
 };

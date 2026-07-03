@@ -28,6 +28,7 @@ struct DHDescriptor {
     std::string id;
     DHType dhType;
     std::string customParams;
+    uint32_t firstCallingTokenId{0};
 };
 
 enum class EnableStep : uint32_t {

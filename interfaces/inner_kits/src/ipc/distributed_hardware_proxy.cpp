@@ -919,6 +919,7 @@ int32_t DistributedHardwareProxy::ReadDescriptors(MessageParcel &data, std::vect
         descriptor.dhType = static_cast<DHType>(data.ReadInt32());
         descriptor.id = data.ReadString();
         descriptor.customParams = data.ReadString();
+        descriptor.firstCallingTokenId = data.ReadUint32();
         descriptors.push_back(descriptor);
     }
     return NO_ERROR;
@@ -948,6 +949,10 @@ int32_t DistributedHardwareProxy::WriteDescriptors(MessageParcel &data, const st
         }
         if (!data.WriteString(descriptor.customParams)) {
             DHLOGE("Write descriptor.customParams failed!");
+            return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
+        }
+        if (!data.WriteUint32(descriptor.firstCallingTokenId)) {
+            DHLOGE("Write descriptor.firstCallingTokenId failed!");
             return ERR_DH_AVT_SERVICE_WRITE_INFO_FAIL;
         }
     }
