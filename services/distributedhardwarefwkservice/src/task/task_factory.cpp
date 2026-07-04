@@ -86,6 +86,7 @@ std::shared_ptr<Task> TaskFactory::CreateEnableTask(const TaskParam &taskParam)
         enableTask->SetCallingUid(taskParam.callingUid);
         enableTask->SetCallingPid(taskParam.callingPid);
         enableTask->SetCallingTokenId(taskParam.callingTokenId);
+        enableTask->SetFirstCallingTokenId(taskParam.firstCallingTokenId);
         enableTask->SetCustomParams(taskParam.customParams);
     }
     return enableTask;

@@ -843,6 +843,7 @@ HWTEST_F(DistributedHardwareProxyTest, WriteDescriptors_002, TestSize.Level1)
     data.WriteInt32(static_cast<int32_t>(DHType::CAMERA));
     data.WriteString(descriptorId);
     data.WriteString(customParams);
+    data.WriteUint32(0u);
 
     sptr<IRemoteObject> dhStubPtr(new TestDistributedHardwareStub());
     ASSERT_TRUE(dhStubPtr != nullptr);

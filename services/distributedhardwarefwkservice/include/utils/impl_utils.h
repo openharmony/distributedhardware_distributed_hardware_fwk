@@ -95,6 +95,8 @@ struct TaskParam {
     int32_t callingPid{ 0 };
     // enable or disable calling token id
     uint32_t callingTokenId{ 0 };
+    // token id passed in from DHDescriptor
+    uint32_t firstCallingTokenId{ 0 };
     // custom params for enable (JSON format)
     std::string customParams;
 };

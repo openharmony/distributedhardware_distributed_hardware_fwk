@@ -698,6 +698,7 @@ int32_t DistributedHardwareService::EnableSource(
             .callingUid = IPCSkeleton::GetCallingUid(),
             .callingPid = IPCSkeleton::GetCallingPid(),
             .callingTokenId = IPCSkeleton::GetFirstTokenID(),
+            .firstCallingTokenId = descriptor.firstCallingTokenId,
             .customParams = descriptor.customParams
         };
 
