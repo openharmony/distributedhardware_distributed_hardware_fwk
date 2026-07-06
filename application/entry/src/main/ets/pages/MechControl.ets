@@ -156,9 +156,9 @@ struct MechControl {
   IntelligentTracking() {
     Column() {
       Button() {
-        SymbolGlyph($r('sys.symbol.AI_best_expression'))	 
-          .fontSize(20)	 
-          .draggable(false)	 
+        SymbolGlyph($r('sys.symbol.AI_best_expression'))
+          .fontSize(20)
+          .draggable(false)
           .fontColor([(this.isTrackingEnabled || this.isShowAsDarkMode) ? Color.White : Color.Black])
       }
       .buttonStyle(ButtonStyleMode.TEXTUAL)
