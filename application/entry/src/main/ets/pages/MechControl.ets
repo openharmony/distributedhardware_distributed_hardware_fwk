@@ -161,10 +161,11 @@ struct MechControl {
           .draggable(false)
           .fontColor([(this.isTrackingEnabled || this.isShowAsDarkMode) ? Color.White : Color.Black])
       }
-      .width(CommonConstants.BUTTON_SIZE)
-      .height(CommonConstants.BUTTON_SIZE)
+      .buttonStyle(ButtonStyleMode.TEXTUAL)
       .backgroundColor(this.isTrackingEnabled ? $r('sys.color.ohos_id_color_emphasize') :
       $r('sys.color.ohos_id_color_component_normal'))
+      .width(CommonConstants.BUTTON_SIZE)
+      .height(CommonConstants.BUTTON_SIZE)
       .accessibilityText($r('app.string.mech_intelligent_tracking'))
       .type(ButtonType.Circle)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: CommonConstants.BUTTON_CLICK_SCALE })
@@ -220,14 +221,19 @@ struct MechControl {
           .width(CommonConstants.SWITCH_ICON_SIZE)
           .height(CommonConstants.SWITCH_ICON_SIZE)
       }
+      .buttonStyle(ButtonStyleMode.TEXTUAL)
+      .backgroundColor($r('sys.color.ohos_id_color_emphasize'))
       .width(CommonConstants.BUTTON_SIZE)
       .height(CommonConstants.BUTTON_SIZE)
       .accessibilityText($r('app.string.mech_tracking_layout'))
-      .backgroundColor($r('sys.color.ohos_id_color_emphasize'))
       .type(ButtonType.Circle)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: CommonConstants.BUTTON_CLICK_SCALE })
       .onClick(() => {
         logger.info(`${TAG} onClick TrackingLayout in`);
+        if (this.visibilityState === Visibility.Hidden) {
+          logger.warn(`${TAG} repeated onClick!`);
+          return;
+        }
         // Trigger the exit animation
         this.visibilityState = Visibility.Hidden;
         setTimeout(() => {
