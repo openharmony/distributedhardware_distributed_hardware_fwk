@@ -156,10 +156,12 @@ struct MechControl {
   IntelligentTracking() {
     Column() {
       Button() {
-        SymbolGlyph($r('sys.symbol.AI_best_expression'))
-          .fontSize(20)
-          .draggable(false)
-          .fontColor([(this.isTrackingEnabled || this.isShowAsDarkMode) ? Color.White : Color.Black])
+        Image((this.isTrackingEnabled || this.isShowAsDarkMode) ?
+        $r('app.media.intelligent_tracking') :
+        $r('app.media.intelligent_tracking_dark'))
+          .width(CommonConstants.SWITCH_ICON_SIZE)
+          .height(CommonConstants.SWITCH_ICON_SIZE)
+          .margin({ left: CommonConstants.SWITCH_ICON_MARGIN, top: CommonConstants.SWITCH_ICON_MARGIN })
       }
       .buttonStyle(ButtonStyleMode.TEXTUAL)
       .backgroundColor(this.isTrackingEnabled ? $r('sys.color.ohos_id_color_emphasize') :
@@ -201,7 +203,7 @@ struct MechControl {
         .maxFontScale(FontSizeScale.MD)
         .width(CommonConstants.SWITCH_TEXT_WIDTH)
 
-      Text(this.isTrackingEnabled ? $r('app.string.mech_enable') : $r('app.string.mech_close'))
+      Text(this.isTrackingEnabled ? $r('app.string.mech_enable') : $r('app.string.pause'))
         .fontSize($r('sys.float.Caption_M'))
         .lineHeight(CommonConstants.SMALL_LINE_HEIGHT)
         .fontWeight(FontWeight.Regular)
