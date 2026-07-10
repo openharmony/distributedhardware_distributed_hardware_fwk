@@ -33,8 +33,8 @@ ohos_app("DHardware_UI") {
   build_modules = [ "entry" ]
   if (defined(sign_hap_py_path)) {
     certificate_profile = "${certificate_profile_path}"
-    key_alias = "DHardwareUI Release"
-    private_key_path = "DHardwareUI Release"
+    key_alias = "DHardwareUI Release V2"
+    private_key_path = "DHardwareUI Release V2"
     compatible_version = "12"
   }
 }
