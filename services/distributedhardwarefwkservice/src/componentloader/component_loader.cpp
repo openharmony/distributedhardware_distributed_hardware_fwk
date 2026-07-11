@@ -511,60 +511,73 @@ int32_t ComponentLoader::UnInit()
 
 int32_t ComponentLoader::ReleaseHardwareHandler(const DHType dhType)
 {
-    if (!IsDHTypeExist(dhType)) {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+    auto iter = compHandlerMap_.find(dhType);
+    if (iter == compHandlerMap_.end()) {
+        DHLOGE("fail, dhType: %{public}#X not exist", dhType);
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
-    if (!IsDHTypeHandlerLoaded(dhType)) {
+    if (iter->second.hardwareHandler == nullptr) {
+        DHLOGE("fail, dhType: %{public}#X handler not loaded", dhType);
         return ERR_DH_FWK_LOADER_HANDLER_UNLOAD;
     }
-    int32_t ret = ReleaseHandler(compHandlerMap_[dhType].hardwareHandler);
+    int32_t ret = ReleaseHandler(iter->second.hardwareHandler);
     if (ret) {
         DHLOGE("fail, dhType: %{public}#X", dhType);
         HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             dhType, ret, "dhfwk release hardware handler failed.");
     }
-    compHandlerMap_[dhType].hardwareHandler = nullptr;
+    iter->second.hardwareHandler = nullptr;
     return ret;
 }
 
 int32_t ComponentLoader::ReleaseSource(const DHType dhType)
 {
-    if (!IsDHTypeExist(dhType)) {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+    auto iter = compHandlerMap_.find(dhType);
+    if (iter == compHandlerMap_.end()) {
+        DHLOGE("fail, dhType: %{public}#X not exist", dhType);
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
-    if (!IsDHTypeSourceLoaded(dhType)) {
+    if (iter->second.sourceHandler == nullptr) {
+        DHLOGE("fail, dhType: %{public}#X source not loaded", dhType);
         return ERR_DH_FWK_LOADER_SOURCE_UNLOAD;
     }
-    int32_t ret = ReleaseHandler(compHandlerMap_[dhType].sourceHandler);
+    int32_t ret = ReleaseHandler(iter->second.sourceHandler);
     if (ret) {
         DHLOGE("fail, dhType: %{public}#X", dhType);
         HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             dhType, ret, "dhfwk release source failed.");
     }
-    compHandlerMap_[dhType].sourceHandler = nullptr;
+    iter->second.sourceHandler = nullptr;
     return ret;
 }
 
 int32_t ComponentLoader::ReleaseSink(const DHType dhType)
 {
-    if (!IsDHTypeExist(dhType)) {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+    auto iter = compHandlerMap_.find(dhType);
+    if (iter == compHandlerMap_.end()) {
+        DHLOGE("fail, dhType: %{public}#X not exist", dhType);
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
-    if (!IsDHTypeSinkLoaded(dhType)) {
+    if (iter->second.sinkHandler == nullptr) {
+        DHLOGE("fail, dhType: %{public}#X sink not loaded", dhType);
         return ERR_DH_FWK_LOADER_SINK_UNLOAD;
     }
-    int32_t ret = ReleaseHandler(compHandlerMap_[dhType].sinkHandler);
+    int32_t ret = ReleaseHandler(iter->second.sinkHandler);
     if (ret) {
         DHLOGE("fail, dhType: %{public}#X", dhType);
         HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             dhType, ret, "dhfwk release sink failed.");
     }
-    compHandlerMap_[dhType].sinkHandler = nullptr;
+    iter->second.sinkHandler = nullptr;
     return ret;
 }
 
 bool ComponentLoader::IsDHTypeExist(DHType dhType)
 {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
     if (compHandlerMap_.find(dhType) == compHandlerMap_.end()) {
         DHLOGE("fail, dhType: %{public}#X not exist", dhType);
         return false;
@@ -574,7 +587,13 @@ bool ComponentLoader::IsDHTypeExist(DHType dhType)
 
 bool ComponentLoader::IsDHTypeSinkLoaded(DHType dhType)
 {
-    if (compHandlerMap_[dhType].sinkHandler == nullptr) {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+    auto iter = compHandlerMap_.find(dhType);
+    if (iter == compHandlerMap_.end()) {
+        DHLOGE("fail, dhType: %{public}#X not exist", dhType);
+        return false;
+    }
+    if (iter->second.sinkHandler == nullptr) {
         DHLOGE("fail, dhType: %{public}#X sink not loaded", dhType);
         return false;
     }
@@ -583,7 +602,13 @@ bool ComponentLoader::IsDHTypeSinkLoaded(DHType dhType)
 
 bool ComponentLoader::IsDHTypeSourceLoaded(DHType dhType)
 {
-    if (compHandlerMap_[dhType].sourceHandler == nullptr) {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+    auto iter = compHandlerMap_.find(dhType);
+    if (iter == compHandlerMap_.end()) {
+        DHLOGE("fail, dhType: %{public}#X not exist", dhType);
+        return false;
+    }
+    if (iter->second.sourceHandler == nullptr) {
         DHLOGE("fail, dhType: %{public}#X source not loaded", dhType);
         return false;
     }
@@ -592,7 +617,13 @@ bool ComponentLoader::IsDHTypeSourceLoaded(DHType dhType)
 
 bool ComponentLoader::IsDHTypeHandlerLoaded(DHType dhType)
 {
-    if (compHandlerMap_[dhType].hardwareHandler == nullptr) {
+    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+    auto iter = compHandlerMap_.find(dhType);
+    if (iter == compHandlerMap_.end()) {
+        DHLOGE("fail, dhType: %{public}#X not exist", dhType);
+        return false;
+    }
+    if (iter->second.hardwareHandler == nullptr) {
         DHLOGE("fail, dhType: %{public}#X handler not loaded", dhType);
         return false;
     }
