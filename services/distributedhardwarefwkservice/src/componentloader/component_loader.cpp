@@ -511,67 +511,79 @@ int32_t ComponentLoader::UnInit()
 
 int32_t ComponentLoader::ReleaseHardwareHandler(const DHType dhType)
 {
-    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
-    auto iter = compHandlerMap_.find(dhType);
-    if (iter == compHandlerMap_.end()) {
-        DHLOGE("fail, dhType: %{public}#X not exist", dhType);
-        return ERR_DH_FWK_TYPE_NOT_EXIST;
+    void *handler = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+        auto iter = compHandlerMap_.find(dhType);
+        if (iter == compHandlerMap_.end()) {
+            DHLOGE("fail, dhType: %{public}#X not exist", dhType);
+            return ERR_DH_FWK_TYPE_NOT_EXIST;
+        }
+        if (iter->second.hardwareHandler == nullptr) {
+            DHLOGE("fail, dhType: %{public}#X handler not loaded", dhType);
+            return ERR_DH_FWK_LOADER_HANDLER_UNLOAD;
+        }
+        handler = iter->second.hardwareHandler;
+        iter->second.hardwareHandler = nullptr;
     }
-    if (iter->second.hardwareHandler == nullptr) {
-        DHLOGE("fail, dhType: %{public}#X handler not loaded", dhType);
-        return ERR_DH_FWK_LOADER_HANDLER_UNLOAD;
-    }
-    int32_t ret = ReleaseHandler(iter->second.hardwareHandler);
+    int32_t ret = ReleaseHandler(handler);
     if (ret) {
         DHLOGE("fail, dhType: %{public}#X", dhType);
         HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             dhType, ret, "dhfwk release hardware handler failed.");
     }
-    iter->second.hardwareHandler = nullptr;
     return ret;
 }
 
 int32_t ComponentLoader::ReleaseSource(const DHType dhType)
 {
-    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
-    auto iter = compHandlerMap_.find(dhType);
-    if (iter == compHandlerMap_.end()) {
-        DHLOGE("fail, dhType: %{public}#X not exist", dhType);
-        return ERR_DH_FWK_TYPE_NOT_EXIST;
+    void *handler = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+        auto iter = compHandlerMap_.find(dhType);
+        if (iter == compHandlerMap_.end()) {
+            DHLOGE("fail, dhType: %{public}#X not exist", dhType);
+            return ERR_DH_FWK_TYPE_NOT_EXIST;
+        }
+        if (iter->second.sourceHandler == nullptr) {
+            DHLOGE("fail, dhType: %{public}#X source not loaded", dhType);
+            return ERR_DH_FWK_LOADER_SOURCE_UNLOAD;
+        }
+        handler = iter->second.sourceHandler;
+        iter->second.sourceHandler = nullptr;
     }
-    if (iter->second.sourceHandler == nullptr) {
-        DHLOGE("fail, dhType: %{public}#X source not loaded", dhType);
-        return ERR_DH_FWK_LOADER_SOURCE_UNLOAD;
-    }
-    int32_t ret = ReleaseHandler(iter->second.sourceHandler);
+    int32_t ret = ReleaseHandler(handler);
     if (ret) {
         DHLOGE("fail, dhType: %{public}#X", dhType);
         HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             dhType, ret, "dhfwk release source failed.");
     }
-    iter->second.sourceHandler = nullptr;
     return ret;
 }
 
 int32_t ComponentLoader::ReleaseSink(const DHType dhType)
 {
-    std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
-    auto iter = compHandlerMap_.find(dhType);
-    if (iter == compHandlerMap_.end()) {
-        DHLOGE("fail, dhType: %{public}#X not exist", dhType);
-        return ERR_DH_FWK_TYPE_NOT_EXIST;
+    void *handler = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(compHandlerMapMutex_);
+        auto iter = compHandlerMap_.find(dhType);
+        if (iter == compHandlerMap_.end()) {
+            DHLOGE("fail, dhType: %{public}#X not exist", dhType);
+            return ERR_DH_FWK_TYPE_NOT_EXIST;
+        }
+        if (iter->second.sinkHandler == nullptr) {
+            DHLOGE("fail, dhType: %{public}#X sink not loaded", dhType);
+            return ERR_DH_FWK_LOADER_SINK_UNLOAD;
+        }
+        handler = iter->second.sinkHandler;
+        iter->second.sinkHandler = nullptr;
     }
-    if (iter->second.sinkHandler == nullptr) {
-        DHLOGE("fail, dhType: %{public}#X sink not loaded", dhType);
-        return ERR_DH_FWK_LOADER_SINK_UNLOAD;
-    }
-    int32_t ret = ReleaseHandler(iter->second.sinkHandler);
+    int32_t ret = ReleaseHandler(handler);
     if (ret) {
         DHLOGE("fail, dhType: %{public}#X", dhType);
         HiSysEventWriteReleaseMsg(DHFWK_RELEASE_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             dhType, ret, "dhfwk release sink failed.");
     }
-    iter->second.sinkHandler = nullptr;
     return ret;
 }
 
