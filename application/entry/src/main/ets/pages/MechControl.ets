@@ -202,6 +202,8 @@ struct MechControl {
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
         .width(CommonConstants.SWITCH_TEXT_WIDTH)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
 
       Text(this.isTrackingEnabled ? $r('app.string.mech_enable') : $r('app.string.pause'))
         .fontSize($r('sys.float.Caption_M'))
@@ -211,6 +213,8 @@ struct MechControl {
         .margin({ top: CommonConstants.SMALL_TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
   }
@@ -254,6 +258,8 @@ struct MechControl {
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
         .width(CommonConstants.SWITCH_TEXT_WIDTH)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
 
       Text(this.currentTrackingLayoutText)
         .fontSize($r('sys.float.Caption_M'))
@@ -263,6 +269,8 @@ struct MechControl {
         .margin({ top: CommonConstants.SMALL_TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
   }
