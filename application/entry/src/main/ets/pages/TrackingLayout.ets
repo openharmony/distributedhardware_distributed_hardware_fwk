@@ -151,7 +151,8 @@ struct TrackingLayout {
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
-        .width(CommonConstants.BUTTON_SIZE)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
   }
@@ -190,7 +191,8 @@ struct TrackingLayout {
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
-        .width(CommonConstants.BUTTON_SIZE)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
   }
@@ -227,7 +229,8 @@ struct TrackingLayout {
         .margin({ top: CommonConstants.TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
-        .width(CommonConstants.BUTTON_SIZE)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
   }
