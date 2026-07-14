@@ -21,6 +21,7 @@
 #include <mutex>
 #include <string>
 #include <securec.h>
+#include "ashmem.h"
 #include "parcel.h"
 #include "message_parcel.h"
 #include "iaccess_listener.h"
@@ -30,6 +31,7 @@ namespace DistributedHardware {
 constexpr uint8_t INVALID_VALUE_FALG = 0;
 constexpr uint32_t MAX_CLOCK_UNIT_COUNT = 50;
 constexpr uint32_t DEFAULT_INVALID_FRAME_NUM = 0;
+constexpr uint32_t MAX_SHARED_MEMORY_SIZE = 40 * 1024 * 1024;
 constexpr size_t NUM_ZERO = 0;
 constexpr size_t NUM_FOUR = 4;
 constexpr size_t NUM_EIGHT = 8;
@@ -56,6 +58,13 @@ struct AVTransSharedMemoryExt : public AVTransSharedMemory, public Parcelable {
         fd = avTransSharedMemory.fd;
         size = avTransSharedMemory.size;
         name = avTransSharedMemory.name;
+        if (size <= 0 || static_cast<uint32_t>(size) > MAX_SHARED_MEMORY_SIZE ||
+            avTransSharedMemory.addr == nullptr || AshmemGetSize(fd) != size) {
+            fd = 0;
+            size = 0;
+            addr = nullptr;
+            return;
+        }
         addr = (char*)malloc(size);
         if (addr) {
             auto ret = memcpy_s(addr, size, avTransSharedMemory.addr, size);
