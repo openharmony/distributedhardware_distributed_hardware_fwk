@@ -63,7 +63,8 @@
         "os_account",
         "memmgr",
         "graphic_surface",
-        "node"
+        "node",
+        "taihe_ffi_gen"
       ]
     },
     "build": {
