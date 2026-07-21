@@ -17,6 +17,11 @@ import(
 
 ohos_source_set("plugin_AVTransDsoftbusOutputAudio") {
   branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "${common_path}/include",
     "${plugin_path}/interface",

@@ -116,7 +116,7 @@ std::string AVAudioSenderEngineProvider::TransName2PkgName(const std::string &ow
 } // namespace OHOS
 
 extern "C" __attribute__((visibility("default")))
-    OHOS::DistributedHardware::IAVEngineProvider* GetAVAudioSenderEngineProvider(const std::string ownerName)
+    OHOS::DistributedHardware::IAVEngineProvider* GetAVAudioSenderEngineProvider(const std::string &ownerName)
 {
     return new (std::nothrow) OHOS::DistributedHardware::AVAudioSenderEngineProvider(ownerName);
 }
