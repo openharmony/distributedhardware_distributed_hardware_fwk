@@ -17,6 +17,11 @@ import(
 
 ohos_source_set("avtrans_input_filter") {
   branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "${plugin_path}/core",
     "${plugin_path}/interface",
@@ -71,6 +76,11 @@ ohos_source_set("avtrans_input_filter") {
 
 ohos_source_set("avtrans_output_filter") {
   branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "${plugin_path}/core",
     "${plugin_path}/interface",
