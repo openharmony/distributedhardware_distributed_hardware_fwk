@@ -153,7 +153,7 @@
             "attr":{
                 "priority":"translate"
             }
-        }
+        },
         {
           "name": "smart_focus_tracking",
           "value": "التتبع الذكي قيد التشغيل",
