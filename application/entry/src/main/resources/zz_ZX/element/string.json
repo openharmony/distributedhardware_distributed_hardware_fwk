@@ -107,6 +107,30 @@
         {
             "name":"trace_disabled",
             "value":"[TS_1210028]_Tracking disabled"
+        },
+        {
+            "name": "smart_focus_tracking",
+            "value": "[TS_1232402]_Smart tracking on"
+        },
+        {
+            "name": "smart_focus_paused",
+            "value": "[TS_1232403]_Smart tracking paused"
+        },
+        {
+            "name": "focus_tracking",
+            "value": "[TS_1232399]_Tracking"
+        },
+        {
+            "name": "focus_paused",
+            "value": "[TS_1232400]_Tracking paused"
+        },
+        {
+            "name": "gimbal_connected",
+            "value": "[TS_1232401]_Gimbal connected."
+        },
+        {
+            "name": "wheel_base_connected",
+            "value": "[TS_1232398]_Wheel base connected."
         }
   ]
 }
