@@ -195,6 +195,48 @@
             "attr": {
                 "priority": "translate"
             }
+        },
+        {
+            "name": "smart_focus_tracking",
+            "value": "스마트 추적 켜짐",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "smart_focus_paused",
+            "value": "스마트 추적 일시 중지됨",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_tracking",
+            "value": "추적",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_paused",
+            "value": "추적 일시 정지됨",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "gimbal_connected",
+            "value": "짐벌이 연결되었습니다.",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "wheel_base_connected",
+            "value": "휠 베이스가 연결되었습니다.",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }
