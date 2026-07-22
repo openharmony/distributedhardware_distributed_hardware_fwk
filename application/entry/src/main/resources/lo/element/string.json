@@ -153,6 +153,48 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name": "smart_focus_tracking",
+            "value": "ການຕິດຕາມອັດສະລິຍະເປີດຢູ່",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "smart_focus_paused",
+            "value": "ຢຸດການຕິດຕາມອັດສະລິຍະຊົ່ວຄາວແລ້ວ",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_tracking",
+            "value": "ການຕິດຕາມ",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_paused",
+            "value": "ຢຸດການຕິດຕາມຊົ່ວຄາວແລ້ວ",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "gimbal_connected",
+            "value": "ເຊື່ອມຕໍ່ໄມ້ກັນສັ່ນແລ້ວ.",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "wheel_base_connected",
+            "value": "ເຊື່ອມຕໍ່ຖານລໍ້ແລ້ວ.",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }
