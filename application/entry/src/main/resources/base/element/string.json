@@ -175,30 +175,6 @@
             }
         },
         {
-            "name": "smart_focus_tracking",
-            "value": "Smart focus tracking"
-        },
-        {
-            "name": "smart_focus_paused",
-            "value": "Smart focus paused"
-        },
-        {
-            "name": "focus_tracking",
-            "value": "Focus tracking"
-        },
-        {
-            "name": "focus_paused",
-            "value": "Focus paused"
-        },
-        {
-            "name": "gimbal_connected",
-            "value": "Gimbal connected"
-        },
-        {
-            "name": "wheel_base_connected",
-            "value": "Wheel base connected"
-        },
-        {
           "name": "smart_focus_tracking",
           "value": "Smart tracking on",
           "attr": {
