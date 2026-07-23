@@ -153,6 +153,48 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name": "smart_focus_tracking",
+            "value": "རིག་ལྡན་མདོ་འདེད་བཞིན་པ།",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "smart_focus_paused",
+            "value": "རིག་ལྡན་མདོ་འདེད་མཚམས་བཞག་ཟིན།",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_tracking",
+            "value": "མདོ་འདེད་བཞིན་པ།",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_paused",
+            "value": "མདོ་འདེད་མཚམས་འཇོག",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "gimbal_connected",
+            "value": "སྤྲིན་སྟེགས་སྦྲེལ་ཟིན།",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "wheel_base_connected",
+            "value": "ཅོག་ངོས་འཕྲུལ་མི་སྦྲེལ་ཟིན།",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }

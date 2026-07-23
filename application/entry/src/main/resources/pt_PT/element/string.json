@@ -153,6 +153,48 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name": "smart_focus_tracking",
+            "value": "Rastreamento inteligente ativado",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "smart_focus_paused",
+            "value": "Rastreamento inteligente pausado",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_tracking",
+            "value": "Rastreamento",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_paused",
+            "value": "Rastreamento pausado",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "gimbal_connected",
+            "value": "Gimbal ligado.",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "wheel_base_connected",
+            "value": "Base das rodas ligada.",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }

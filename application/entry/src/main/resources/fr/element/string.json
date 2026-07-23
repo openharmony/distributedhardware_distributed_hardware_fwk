@@ -153,6 +153,48 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name": "smart_focus_tracking",
+            "value": "Suivi intelligent en cours",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "smart_focus_paused",
+            "value": "Suivi intelligent mis en pause",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_tracking",
+            "value": "Suivi en cours",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_paused",
+            "value": "Suivi mis en pause",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "gimbal_connected",
+            "value": "Le stabilisateur à cardan est connecté.",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "wheel_base_connected",
+            "value": "La base mobile est connectée.",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }

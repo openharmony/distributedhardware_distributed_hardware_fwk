@@ -153,6 +153,48 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name": "smart_focus_tracking",
+            "value": "Akıllı izleme açık",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "smart_focus_paused",
+            "value": "Akıllı izleme duraklatıldı",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_tracking",
+            "value": "İzleniyor",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_paused",
+            "value": "İzleme duraklatıldı",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "gimbal_connected",
+            "value": "Gimbal bağlandı.",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "wheel_base_connected",
+            "value": "Tekerlek tabanı bağlandı.",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }

@@ -175,28 +175,46 @@
           }
       },
       {
-          "name": "smart_focus_tracking",
-          "value": "智能追焦中"
+        "name": "smart_focus_tracking",
+        "value": "智能追焦中",
+        "attr": {
+          "priority": "translate"
+        }
       },
       {
-          "name": "smart_focus_paused",
-          "value": "智能追焦已暂停"
+        "name": "smart_focus_paused",
+        "value": "智能追焦已暂停",
+        "attr": {
+          "priority": "translate"
+        }
       },
       {
-          "name": "focus_tracking",
-          "value": "追焦中"
+        "name": "focus_tracking",
+        "value": "追焦中",
+        "attr": {
+          "priority": "translate"
+        }
       },
       {
-          "name": "focus_paused",
-          "value": "追焦暂停"
+        "name": "focus_paused",
+        "value": "追焦暂停",
+        "attr": {
+          "priority": "translate"
+        }
       },
       {
-          "name": "gimbal_connected",
-          "value": "云台已连接"
+        "name": "gimbal_connected",
+        "value": "云台已连接",
+        "attr": {
+          "priority": "translate"
+        }
       },
       {
-          "name": "wheel_base_connected",
-          "value": "桌面机器人已连接"
+        "name": "wheel_base_connected",
+        "value": "桌面机器人已连接",
+        "attr": {
+          "priority": "translate"
+        }
       }
   ]
 }

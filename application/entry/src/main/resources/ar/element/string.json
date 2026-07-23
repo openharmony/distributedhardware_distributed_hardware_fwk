@@ -153,6 +153,48 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+          "name": "smart_focus_tracking",
+          "value": "التتبع الذكي قيد التشغيل",
+          "attr": {
+            "priority": "translate"
+          }
+        },
+        {
+          "name": "smart_focus_paused",
+          "value": "توقف التتبع الذكي مؤقتًا",
+          "attr": {
+            "priority": "translate"
+          }
+        },
+        {
+          "name": "focus_tracking",
+          "value": "التتبع",
+          "attr": {
+            "priority": "translate"
+          }
+        },
+        {
+          "name": "focus_paused",
+          "value": "توقف التتبع مؤقتًا",
+          "attr": {
+            "priority": "translate"
+          }
+        },
+        {
+          "name": "gimbal_connected",
+          "value": "تم توصيل حامل الكاميرا.",
+          "attr": {
+            "priority": "translate"
+          }
+        },
+        {
+          "name": "wheel_base_connected",
+          "value": "تم توصيل قاعدة العجلات.",
+          "attr": {
+            "priority": "translate"
+          }
         }
     ]
 }

@@ -175,28 +175,46 @@
             }
         },
         {
-            "name": "smart_focus_tracking",
-            "value": "Smart focus tracking"
+          "name": "smart_focus_tracking",
+          "value": "Smart tracking on",
+          "attr": {
+            "priority": "translate"
+          }
         },
         {
-            "name": "smart_focus_paused",
-            "value": "Smart focus paused"
+          "name": "smart_focus_paused",
+          "value": "Smart tracking paused",
+          "attr": {
+            "priority": "translate"
+          }
         },
         {
-            "name": "focus_tracking",
-            "value": "Focus tracking"
+          "name": "focus_tracking",
+          "value": "Tracking",
+          "attr": {
+            "priority": "translate"
+          }
         },
         {
-            "name": "focus_paused",
-            "value": "Focus paused"
+          "name": "focus_paused",
+          "value": "Tracking paused",
+          "attr": {
+            "priority": "translate"
+          }
         },
         {
-            "name": "gimbal_connected",
-            "value": "Gimbal connected"
+          "name": "gimbal_connected",
+          "value": "Gimbal connected.",
+          "attr": {
+            "priority": "translate"
+          }
         },
         {
-            "name": "wheel_base_connected",
-            "value": "Wheel base connected"
+          "name": "wheel_base_connected",
+          "value": "Wheel base connected.",
+          "attr": {
+            "priority": "translate"
+          }
         }
   ]
 }

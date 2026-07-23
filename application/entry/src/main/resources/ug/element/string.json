@@ -153,6 +153,48 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name": "smart_focus_tracking",
+            "value": "ئاڭلىق ئىزلاپ فوكۇسلاۋاتىدۇ",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "smart_focus_paused",
+            "value": "ئاڭلىق ئىزلاپ فوكۇسلاش تورمۇزلاندى",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_tracking",
+            "value": "ئىزلاپ فوكۇسلاۋاتىدۇ",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_paused",
+            "value": "ئىزلاپ فوكۇسلاش تورمۇزلاندى",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "gimbal_connected",
+            "value": "پۇت ئۇلاندى.",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "wheel_base_connected",
+            "value": "ئۈستەليۈزى روبوت ئۇلاندى.",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }

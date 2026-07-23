@@ -153,6 +153,48 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name": "smart_focus_tracking",
+            "value": "စမတ်ခြေရာခံမှုကို ဖွင့်ထားသည်",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "smart_focus_paused",
+            "value": "စမတ်ခြေရာခံမှုကို ခေတ္တရပ်ထားသည်",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_tracking",
+            "value": "ခြေရာခံမှု",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_paused",
+            "value": "ခြေရာခံမှုကို ခေတ္တရပ်ထားသည်",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "gimbal_connected",
+            "value": "Gimbal ချိတ်ဆက်ပြီး။",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "wheel_base_connected",
+            "value": "ဘီးတပ်အောက်ခံ ချိတ်ဆက်ပြီးပါပြီ။",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }

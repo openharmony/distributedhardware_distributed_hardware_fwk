@@ -153,6 +153,48 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name": "smart_focus_tracking",
+            "value": "การติดตามอัจฉริยะเปิดอยู่",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "smart_focus_paused",
+            "value": "หยุดการติดตามอัจฉริยะชั่วคราวแล้ว",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_tracking",
+            "value": "การติดตาม",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_paused",
+            "value": "หยุดการติดตามชั่วคราวแล้ว",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "gimbal_connected",
+            "value": "เชื่อมต่อไม้กันสั่นแล้ว",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "wheel_base_connected",
+            "value": "เชื่อมต่อฐานล้อแล้ว",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }
