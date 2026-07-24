@@ -60,6 +60,7 @@ void PauseDistributedHardwareSync(::ohos::distributedHardware::hardwareManager::
     }
     if (!HasAccessDHPermission()) {
         taihe::set_business_error(ERR_NO_PERMISSION, "Permission verify failed.");
+        return;
     }
     int32_t hardwareType = description.type;
     DHType dhType = DHType::UNKNOWN;
@@ -91,6 +92,7 @@ void ResumeDistributedHardwareSync(::ohos::distributedHardware::hardwareManager:
     }
     if (!HasAccessDHPermission()) {
         taihe::set_business_error(ERR_NO_PERMISSION, "Permission verify failed.");
+        return;
     }
     int32_t hardwareType = description.type;
     DHType dhType = DHType::UNKNOWN;
@@ -122,6 +124,7 @@ void StopDistributedHardwareSync(::ohos::distributedHardware::hardwareManager::H
     }
     if (!HasAccessDHPermission()) {
         taihe::set_business_error(ERR_NO_PERMISSION, "Permission verify failed.");
+        return;
     }
     int32_t hardwareType = description.type;
     DHType dhType = DHType::UNKNOWN;
