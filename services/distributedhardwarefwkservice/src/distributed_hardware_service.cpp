@@ -701,7 +701,7 @@ int32_t DistributedHardwareService::EnableSource(
             .firstCallingTokenId = descriptor.firstCallingTokenId,
             .customParams = descriptor.customParams
         };
-
+        DHLOGI("EnableSource IPCSkeleton::GetFirstTokenID: %{public}d", IPCSkeleton::GetFirstTokenID());
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
         TaskExecutor::GetInstance().PushTask(task);
     }
