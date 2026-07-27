@@ -215,6 +215,26 @@
           "attr": {
             "priority": "translate"
           }
+        },
+        {
+            "name": "harmony_mech_intelligent_tracking",
+            "value": "HarmonyOS Smart Focus Tracking"
+        },
+        {
+            "name": "mech_first_connect_text1",
+            "value": "Global intelligent focus ensures your phone always faces you."
+        },
+        {
+            "name": "mech_first_connect_text2",
+            "value": "This service does not collect or store your facial information. It can be turned off via the Control Center or the live view window after being enabled."
+        },
+        {
+            "name": "open_soon",
+            "value": "Open Soon"
+        },
+        {
+            "name": "open_now",
+            "value": "Open Now"
         }
   ]
 }
