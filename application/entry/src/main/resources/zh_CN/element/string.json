@@ -215,6 +215,26 @@
         "attr": {
           "priority": "translate"
         }
+      },
+      {
+        "name": "harmony_mech_intelligent_tracking",
+        "value": "鸿蒙智能追焦"
+      },
+      {
+        "name": "mech_first_connect_text1",
+        "value": "全局智能追焦，让手机始终面向您。"
+      },
+      {
+        "name": "mech_first_connect_text2",
+        "value": "本服务不会收集和存储您的人脸信息，开启后可通过控制中心或实况窗关闭。"
+      },
+      {
+        "name": "open_soon",
+        "value": "暂不开启"
+      },
+      {
+        "name": "open_now",
+        "value": "立即开启"
       }
   ]
 }
