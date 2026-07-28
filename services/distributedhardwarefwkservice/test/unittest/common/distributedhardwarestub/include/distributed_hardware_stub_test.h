@@ -22,6 +22,7 @@
 #include "distributed_hardware_errno.h"
 #include "distributed_hardware_fwk_kit_paras.h"
 #include "distributed_hardware_stub.h"
+#include "ipc_skeleton_mock.h"
 
 namespace OHOS {
 namespace DistributedHardware {
@@ -33,6 +34,7 @@ public:
     void TearDown();
     std::shared_ptr<DistributedHardwareStub> stubTest_ = nullptr;
     std::shared_ptr<AccessTokenKitMock> token_ = nullptr;
+    IPCSkeletonMock* ipcSkeleton_ = nullptr;
 };
 
 class MockDistributedHardwareStub : public DistributedHardwareStub {

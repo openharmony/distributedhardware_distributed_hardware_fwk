@@ -19,6 +19,7 @@
 
 #include "iremote_stub.h"
 #include "dhardware_ipc_interface_code.h"
+#include "ipc_skeleton_mock.h"
 
 using namespace OHOS::Security::AccessToken;
 using namespace testing;
@@ -37,6 +38,12 @@ void DistributedHardwareStubTest::SetUp()
     token_ = std::static_pointer_cast<AccessTokenKitMock>(token);
     ASSERT_TRUE(token_ != nullptr);
     EXPECT_CALL(*token_, VerifyAccessToken(_, _)).WillRepeatedly(Return(PERMISSION_DENIED));
+
+    ipcSkeleton_ = static_cast<IPCSkeletonMock*>(IPCSkeletonInterface::GetOrCreateIPCSkeletonMock());
+    ASSERT_TRUE(ipcSkeleton_ != nullptr);
+    EXPECT_CALL(*ipcSkeleton_, IsLocalCalling()).WillRepeatedly(Return(true));
+    EXPECT_CALL(*ipcSkeleton_, GetCallingTokenID()).WillRepeatedly(Return(0));
+    EXPECT_CALL(*ipcSkeleton_, GetCallingFullTokenID()).WillRepeatedly(Return(0));
 }
 
 void DistributedHardwareStubTest::TearDown()
@@ -44,6 +51,8 @@ void DistributedHardwareStubTest::TearDown()
     stubTest_ = nullptr;
     AccessTokenKitInterface::ReleaseAccessTokenKit();
     token_ = nullptr;
+    IPCSkeletonInterface::ReleaseIPCSkeletonMock();
+    ipcSkeleton_ = nullptr;
 }
 
 /**
