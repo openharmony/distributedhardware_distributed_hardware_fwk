@@ -23,14 +23,15 @@ const TAG = 'UE_POINT_UTILS';
 
 const DOMAIN = 'HIMECH_UE';
 const PKG_NAME = 'com.ohos.dhardwareui';
-const MECH_CENTER_LAYOUT_SWITCH_EVENT = 'MECH_CENTER_LAYOUT_SWITCH';
-const MECH_CENTER_TRACKING_SWITCH_EVENT = 'MECH_CENTER_TRACKING_SWITCH';
+const MECHKIT_FOCUSTRACKING_START_EVENT = 'MECHKIT_FOCUSTRACKING_START';
 
 
 export class UEPointUtils {
   private static instance: UEPointUtils;
+  private cameraTrackingLayoutList: mechanicManager.CameraTrackingLayout[];
 
   private constructor() {
+    this.cameraTrackingLayoutList = [0, 0, 0, 0];
   }
 
   public static getInstance(): UEPointUtils {
@@ -50,13 +51,27 @@ export class UEPointUtils {
 
   public reportCameraTrackingLayoutEvent(cameraTrackingLayout: mechanicManager.CameraTrackingLayout): void {
     logger.info(`${TAG} reportLayoutSwitchStateEvent enter`);
+    switch (cameraTrackingLayout) {
+      case mechanicManager.CameraTrackingLayout.DEFAULT:
+        this.cameraTrackingLayoutList[0] += 1;
+        break;
+      case mechanicManager.CameraTrackingLayout.LEFT:
+        this.cameraTrackingLayoutList[1] += 1;
+        break;
+      case mechanicManager.CameraTrackingLayout.MIDDLE:
+        this.cameraTrackingLayoutList[2] += 1;
+        break;
+      case mechanicManager.CameraTrackingLayout.RIGHT:
+        this.cameraTrackingLayoutList[3] += 1;
+        break;
+    }
     let info: hiSysEvent.SysEventInfo = {
       domain: DOMAIN,
-      name: MECH_CENTER_LAYOUT_SWITCH_EVENT,
+      name: MECHKIT_FOCUSTRACKING_START_EVENT,
       eventType: hiSysEvent.EventType.BEHAVIOR,
       params: {
-        PNAMEID: PKG_NAME,
-        CAMERA_TRACKING_LAYOUT: cameraTrackingLayout
+        'PNAMEID': PKG_NAME,
+        'CAMERA_TRACKING_LAYOUT': this.cameraTrackingLayoutList
       }
     };
     this.writeEvent(info);
@@ -66,11 +81,11 @@ export class UEPointUtils {
     logger.info(`${TAG} reportFocusTrackingSwitchStateEvent enter`);
     let info: hiSysEvent.SysEventInfo = {
       domain: DOMAIN,
-      name: MECH_CENTER_TRACKING_SWITCH_EVENT,
+      name: MECHKIT_FOCUSTRACKING_START_EVENT,
       eventType: hiSysEvent.EventType.BEHAVIOR,
       params: {
-        PNAMEID: PKG_NAME,
-        FOCUSTRACKING_SWITCH: focusTrackingSwitchState
+        'PNAMEID': PKG_NAME,
+        'FOCUSTRACKING_SWITCH': focusTrackingSwitchState ? 1 : 0
       }
     };
     this.writeEvent(info);
