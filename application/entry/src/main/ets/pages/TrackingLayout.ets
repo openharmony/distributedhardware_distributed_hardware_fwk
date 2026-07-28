@@ -93,7 +93,6 @@ struct TrackingLayout {
       .width(CommonConstants.BUTTON_SIZE)
       .height(CommonConstants.BUTTON_SIZE)
       .accessibilityText($r('app.string.audio_back'))
-      .backgroundColor($r('sys.color.ohos_id_color_component_normal'))
       .onClick(() => {
         logger.info(`${TAG} onClick BackButton`);
         // Trigger the exit animation
@@ -104,6 +103,8 @@ struct TrackingLayout {
       })
       .type(ButtonType.Circle)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: CommonConstants.BUTTON_CLICK_SCALE })
+      .buttonStyle(ButtonStyleMode.TEXTUAL)
+      .backgroundColor($r('sys.color.ohos_id_color_component_normal'))
 
       Text(' ')
         .fontSize($r('sys.float.Body_S'))
@@ -132,14 +133,15 @@ struct TrackingLayout {
       .width(CommonConstants.BUTTON_SIZE)
       .height(CommonConstants.BUTTON_SIZE)
       .accessibilityText($r('app.string.mech_left'))
-      .backgroundColor(this.currentLayout == mechanicManager.CameraTrackingLayout.LEFT ?
-      $r('sys.color.ohos_id_color_emphasize') : $r('sys.color.ohos_id_color_component_normal'))
       .onClick(() => {
         logger.info(`${TAG} onClick TrackingLayoutLeft in`);
         this.onLeftIconClick();
       })
       .type(ButtonType.Circle)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: CommonConstants.BUTTON_CLICK_SCALE })
+      .buttonStyle(ButtonStyleMode.TEXTUAL)
+      .backgroundColor(this.currentLayout == mechanicManager.CameraTrackingLayout.LEFT ?
+      $r('sys.color.ohos_id_color_emphasize') : $r('sys.color.ohos_id_color_component_normal'))
 
       Text($r('app.string.mech_left'))
         .fontSize($r('sys.float.Body_S'))
@@ -169,15 +171,16 @@ struct TrackingLayout {
       .width(CommonConstants.BUTTON_SIZE)
       .height(CommonConstants.BUTTON_SIZE)
       .accessibilityText($r('app.string.mech_center'))
-      .backgroundColor((this.currentLayout == mechanicManager.CameraTrackingLayout.MIDDLE ||
-        this.currentLayout == mechanicManager.CameraTrackingLayout.DEFAULT) ? $r('sys.color.ohos_id_color_emphasize') :
-      $r('sys.color.ohos_id_color_component_normal'))
       .onClick(() => {
         logger.info(`${TAG} onClick TrackingLayoutCenter in`);
         this.onCenterIconClick();
       })
       .type(ButtonType.Circle)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: CommonConstants.BUTTON_CLICK_SCALE })
+      .buttonStyle(ButtonStyleMode.TEXTUAL)
+      .backgroundColor((this.currentLayout == mechanicManager.CameraTrackingLayout.MIDDLE ||
+        this.currentLayout == mechanicManager.CameraTrackingLayout.DEFAULT) ? $r('sys.color.ohos_id_color_emphasize') :
+      $r('sys.color.ohos_id_color_component_normal'))
 
       Text($r('app.string.mech_center'))
         .fontSize($r('sys.float.Body_S'))
@@ -206,14 +209,15 @@ struct TrackingLayout {
       .width(CommonConstants.BUTTON_SIZE)
       .height(CommonConstants.BUTTON_SIZE)
       .accessibilityText($r('app.string.mech_right'))
-      .backgroundColor(this.currentLayout == mechanicManager.CameraTrackingLayout.RIGHT ?
-      $r('sys.color.ohos_id_color_emphasize') : $r('sys.color.ohos_id_color_component_normal'))
       .onClick(() => {
         logger.info(`${TAG} onClick TrackingLayoutRight in`);
         this.onRightIconClick();
       })
       .type(ButtonType.Circle)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: CommonConstants.BUTTON_CLICK_SCALE })
+      .buttonStyle(ButtonStyleMode.TEXTUAL)
+      .backgroundColor(this.currentLayout == mechanicManager.CameraTrackingLayout.RIGHT ?
+      $r('sys.color.ohos_id_color_emphasize') : $r('sys.color.ohos_id_color_component_normal'))
 
       Text($r('app.string.mech_right'))
         .fontSize($r('sys.float.Body_S'))
