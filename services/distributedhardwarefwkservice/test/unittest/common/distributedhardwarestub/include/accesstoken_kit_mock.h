@@ -34,11 +34,11 @@ public:
     virtual ~AccessTokenKitInterface() = default;
 
     virtual ATokenTypeEnum GetTokenTypeFlag(AccessTokenID) = 0;
-    virtual int GetHapTokenInfo(AccessTokenID, HapTokenInfo &) = 0;
-    virtual int GetNativeTokenInfo(AccessTokenID, NativeTokenInfo &) = 0;
+    virtual int32_t GetHapTokenInfo(AccessTokenID, HapTokenInfo &) = 0;
+    virtual int32_t GetNativeTokenInfo(AccessTokenID, NativeTokenInfo &) = 0;
     virtual AccessTokenID GetNativeTokenId(const std::string &) = 0;
     virtual AccessTokenID GetHapTokenID(int32_t, const std::string &, int32_t) = 0;
-    virtual int VerifyAccessToken(AccessTokenID tokenID, const std::string& permissionName) = 0;
+    virtual int32_t VerifyAccessToken(AccessTokenID tokenID, const std::string& permissionName) = 0;
 
     static std::shared_ptr<AccessTokenKitInterface> GetOrCreateAccessTokenKit();
     static void ReleaseAccessTokenKit();
@@ -52,11 +52,11 @@ public:
     ~AccessTokenKitMock() override = default;
 
     MOCK_METHOD(ATokenTypeEnum, GetTokenTypeFlag, (AccessTokenID));
-    MOCK_METHOD(int, GetHapTokenInfo, (AccessTokenID, HapTokenInfo &));
-    MOCK_METHOD(int, GetNativeTokenInfo, (AccessTokenID, NativeTokenInfo &));
+    MOCK_METHOD(int32_t, GetHapTokenInfo, (AccessTokenID, HapTokenInfo &));
+    MOCK_METHOD(int32_t, GetNativeTokenInfo, (AccessTokenID, NativeTokenInfo &));
     MOCK_METHOD(AccessTokenID, GetNativeTokenId, (const std::string &));
     MOCK_METHOD(AccessTokenID, GetHapTokenID, (int32_t, const std::string &, int32_t));
-    MOCK_METHOD(int, VerifyAccessToken, (AccessTokenID, const std::string&));
+    MOCK_METHOD(int32_t, VerifyAccessToken, (AccessTokenID, const std::string&));
 };
 } // namespace DistributedHardware
 } // namespace OHOS

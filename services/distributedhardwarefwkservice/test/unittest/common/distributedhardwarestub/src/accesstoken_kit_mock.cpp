@@ -25,12 +25,12 @@ ATokenTypeEnum AccessTokenKit::GetTokenTypeFlag(AccessTokenID tokenID)
     return AccessTokenKitInterface::GetOrCreateAccessTokenKit()->GetTokenTypeFlag(tokenID);
 }
 
-int AccessTokenKit::GetHapTokenInfo(AccessTokenID tokenID, HapTokenInfo &hapTokenInfoRes)
+int32_t AccessTokenKit::GetHapTokenInfo(AccessTokenID tokenID, HapTokenInfo &hapTokenInfoRes)
 {
     return AccessTokenKitInterface::GetOrCreateAccessTokenKit()->GetHapTokenInfo(tokenID, hapTokenInfoRes);
 }
 
-int AccessTokenKit::GetNativeTokenInfo(AccessTokenID tokenID, NativeTokenInfo &nativeTokenInfoRes)
+int32_t AccessTokenKit::GetNativeTokenInfo(AccessTokenID tokenID, NativeTokenInfo &nativeTokenInfoRes)
 {
     return AccessTokenKitInterface::GetOrCreateAccessTokenKit()->GetNativeTokenInfo(tokenID, nativeTokenInfoRes);
 }
@@ -45,7 +45,7 @@ AccessTokenID AccessTokenKit::GetHapTokenID(int32_t userID, const std::string &b
     return AccessTokenKitInterface::GetOrCreateAccessTokenKit()->GetHapTokenID(userID, bundleName, instIndex);
 }
 
-int AccessTokenKit::VerifyAccessToken(AccessTokenID tokenID, const std::string& permissionName)
+int32_t AccessTokenKit::VerifyAccessToken(AccessTokenID tokenID, const std::string& permissionName)
 {
     return AccessTokenKitInterface::GetOrCreateAccessTokenKit()->VerifyAccessToken(tokenID, permissionName);
 }
