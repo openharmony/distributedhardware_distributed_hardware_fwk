@@ -43,7 +43,7 @@ void OnDeviceOnlineFuzzTest(const uint8_t* data, size_t size)
     FuzzedDataProvider fdp(data, size);
     std::string networkId = fdp.ConsumeRandomLengthString();
     DmDeviceInfo deviceInfo;
-    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), size);
+    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), networkId.size());
     if (ret != EOK) {
         return;
     }
@@ -60,7 +60,7 @@ void OnDeviceOfflineFuzzTest(const uint8_t* data, size_t size)
     FuzzedDataProvider fdp(data, size);
     std::string networkId = fdp.ConsumeRandomLengthString();
     DmDeviceInfo deviceInfo;
-    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), size);
+    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), networkId.size());
     if (ret != EOK) {
         return;
     }
@@ -77,7 +77,7 @@ void OnDeviceReadyFuzzTest(const uint8_t* data, size_t size)
     FuzzedDataProvider fdp(data, size);
     std::string networkId = fdp.ConsumeRandomLengthString();
     DmDeviceInfo deviceInfo;
-    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), size);
+    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), networkId.size());
     if (ret != EOK) {
         return;
     }
@@ -95,7 +95,7 @@ void OnDeviceChangedFuzzTest(const uint8_t* data, size_t size)
     FuzzedDataProvider fdp(data, size);
     std::string networkId = fdp.ConsumeRandomLengthString();
     DmDeviceInfo deviceInfo;
-    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), size);
+    int32_t ret = memcpy_s(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN, networkId.c_str(), networkId.size());
     if (ret != EOK) {
         return;
     }

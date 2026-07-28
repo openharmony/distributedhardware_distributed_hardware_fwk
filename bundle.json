@@ -63,6 +63,7 @@
         "os_account",
         "memmgr",
         "graphic_surface",
+        "taihe_ffi_gen",
         "node"
       ]
     },
