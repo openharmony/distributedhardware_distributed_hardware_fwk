@@ -15,9 +15,11 @@
 
 #include "distributedhardwarefwkkitfour_fuzzer.h"
 
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <thread>
 
 #include "distributed_hardware_fwk_kit.h"
 
@@ -79,6 +81,17 @@ void QueryLocalSysSpecFuzzTest(const uint8_t *data, size_t size)
 } // namespace DistributedHardware
 } // namespace OHOS
 
+namespace {
+class FuzzExitGuard {
+public:
+    ~FuzzExitGuard()
+    {
+        int32_t sleepSecond = 3;
+        std::this_thread::sleep_for(std::chrono::seconds(sleepSecond));
+    }
+};
+} // namespace
+
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
@@ -87,5 +100,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     OHOS::DistributedHardware::LoadDistributedHDFFuzzTest(data, size);
     OHOS::DistributedHardware::UnLoadDistributedHDFFuzzTest(data, size);
     OHOS::DistributedHardware::QueryLocalSysSpecFuzzTest(data, size);
+    static FuzzExitGuard guard;
     return 0;
 }

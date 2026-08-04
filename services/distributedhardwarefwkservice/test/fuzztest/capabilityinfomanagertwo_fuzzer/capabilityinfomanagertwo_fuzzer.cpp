@@ -15,6 +15,9 @@
 
 #include "capabilityinfomanagertwo_fuzzer.h"
 
+#include <mutex>
+#include <thread>
+#include <chrono>
 #include <fuzzer/FuzzedDataProvider.h>
 
 #include "constants.h"
@@ -30,6 +33,7 @@ namespace DistributedHardware {
 namespace {
     constexpr uint16_t TEST_DEV_TYPE_PAD = 0x11;
     constexpr int32_t SLEEP_SECONDS = 3;
+    std::once_flag g_initFlag;
 }
 
 void TestGetDistributedHardwareCallback::OnSuccess(const std::string &networkId,
@@ -48,8 +52,10 @@ void TestGetDistributedHardwareCallback::OnError(const std::string &networkId, i
 
 void CapabilityInfoManagerOnChangeInsertFuzzTest(const uint8_t* data, size_t size)
 {
-    OHOS::DistributedHardware::CapabilityInfoManager::GetInstance()->Init();
-    std::this_thread::sleep_for(std::chrono::seconds(SLEEP_SECONDS));
+    std::call_once(g_initFlag, []() {
+        OHOS::DistributedHardware::CapabilityInfoManager::GetInstance()->Init();
+        std::this_thread::sleep_for(std::chrono::seconds(SLEEP_SECONDS));
+    });
     if ((data == nullptr) || (size == 0)) {
         return;
     }
@@ -88,6 +94,7 @@ void CapabilityInfoManagerOnChangeInsertFuzzTest(const uint8_t* data, size_t siz
     DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds),
         deviceId, true);
     CapabilityInfoManager::GetInstance()->OnChange(changeIn);
+    std::this_thread::sleep_for(std::chrono::seconds(SLEEP_SECONDS));
     DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
     cJSON_free(cjson);
     cJSON_Delete(insertJson);
@@ -133,6 +140,7 @@ void CapabilityInfoManagerOnChangeUpdateFuzzTest(const uint8_t* data, size_t siz
     DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds),
         deviceId, true);
     CapabilityInfoManager::GetInstance()->OnChange(changeIn);
+    std::this_thread::sleep_for(std::chrono::seconds(SLEEP_SECONDS));
     DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
     cJSON_free(cjson);
     cJSON_Delete(updateJson);
@@ -178,6 +186,7 @@ void CapabilityInfoManagerOnChangeDeleteFuzzTest(const uint8_t* data, size_t siz
     DistributedKv::ChangeNotification changeIn(std::move(inserts), std::move(updates), std::move(deleteds),
         deviceId, true);
     CapabilityInfoManager::GetInstance()->OnChange(changeIn);
+    std::this_thread::sleep_for(std::chrono::seconds(SLEEP_SECONDS));
     DHContext::GetInstance().RemoveOnlineDeviceIdEntryByNetworkId(networkId);
     cJSON_free(cjson);
     cJSON_Delete(deleteJson);
@@ -202,6 +211,23 @@ void DumpCapabilityInfosFuzzTest(const uint8_t* data, size_t size)
 }
 }
 
+namespace {
+class FuzzExitGuard {
+public:
+    ~FuzzExitGuard()
+    {
+        OHOS::DistributedHardware::DHContext::GetInstance().eventHandler_.reset();
+        auto mgr = OHOS::DistributedHardware::CapabilityInfoManager::GetInstance();
+        if (mgr != nullptr) {
+            mgr->UnInit();
+            mgr->eventHandler_.reset();
+        }
+        int32_t sleepSecond = 3;
+        std::this_thread::sleep_for(std::chrono::seconds(sleepSecond));
+    }
+};
+} // namespace
+
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
@@ -210,6 +236,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::CapabilityInfoManagerOnChangeUpdateFuzzTest(data, size);
     OHOS::DistributedHardware::CapabilityInfoManagerOnChangeDeleteFuzzTest(data, size);
     OHOS::DistributedHardware::DumpCapabilityInfosFuzzTest(data, size);
+    static FuzzExitGuard guard;
     return 0;
 }
 
