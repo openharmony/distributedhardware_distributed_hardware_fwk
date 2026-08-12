@@ -1,200 +1,200 @@
 {
-    "string": [
-      {
-        "name": "pause",
-        "value": "หยุดชั่วคราว",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_close",
-        "value": "ปิด",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "mech_enable",
-        "value": "เปิด",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "mech_left",
-        "value": "ซ้าย",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "mech_right",
-        "value": "ขวา",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "audio_tracking_switch_on",
-        "value": "เปิดการติดตามอัจฉริยะแล้ว แตะสองครั้งเพื่อปิด",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "DHTypeName_Camera",
-        "value": "กล้องถ่ายรูป",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_intelligent_tracking",
-        "value": "การติดตามอัจฉริยะ",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "audio_tracking_switch_off",
-        "value": "ปิดการติดตามอัจฉริยะแล้ว แตะสองครั้งเพื่อเปิด",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "connected_to",
-        "value": "เชื่อมต่อกับ %1$s แล้ว",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_tracking_layout",
-        "value": "โหมดการจัดเฟรม",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "continue",
-        "value": "ดำเนินการต่อ",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "disconnect",
-        "value": "ยกเลิกการเชื่อมต่อ",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "audio_back",
-        "value": "ย้อนกลับ",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "stop_device",
-        "value": "ยกเลิกการเชื่อมต่อเพื่อหยุดใช้ %1$s ของอุปกรณ์",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "DHTypeName_Mic",
-        "value": "ไมโครโฟน",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_center",
-        "value": "ตรงกลาง",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "smart_focus_tracking",
-        "value": "การติดตามอัจฉริยะเปิดอยู่",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "smart_focus_paused",
-        "value": "หยุดการติดตามอัจฉริยะชั่วคราวแล้ว",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "focus_tracking",
-        "value": "การติดตาม",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "focus_paused",
-        "value": "หยุดการติดตามชั่วคราวแล้ว",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "gimbal_connected",
-        "value": "เชื่อมต่อไม้กันสั่นแล้ว",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "wheel_base_connected",
-        "value": "เชื่อมต่อฐานล้อแล้ว",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "harmony_mech_intelligent_tracking",
-        "value": "ระบบโฟกัสตามติดอัจฉริยะ",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_first_connect_text1",
-        "value": "จัดให้คุณโดดเด่นอยู่ตรงกลางเฟรมเสมอ",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_first_connect_text2",
-        "value": "บริการนี้จะไม่รวบรวมหรือจัดเก็บข้อมูลใบหน้าของคุณ คุณสามารถปิดใช้งานได้จากแผงควบคุมหรือหน้าต่างมุมมองกิจกรรมเรียลไทม์",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "open_soon",
-        "value": "ไม่ใช่ตอนนี้",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "open_now",
-        "value": "เปิดใช้งาน",
-        "attr": {
-          "priority": "translate"
-        }
+  "string": [
+    {
+      "name": "pause",
+      "value": "หยุดชั่วคราว",
+      "attr": {
+        "priority": "translate"
       }
-    ]
-  }
+    },
+    {
+      "name": "mech_close",
+      "value": "ปิด",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_enable",
+      "value": "เปิด",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_left",
+      "value": "ซ้าย",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_right",
+      "value": "ขวา",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "เปิดการติดตามอัจฉริยะแล้ว แตะสองครั้งเพื่อปิด",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Camera",
+      "value": "กล้องถ่ายรูป",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "การติดตามอัจฉริยะ",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "ปิดการติดตามอัจฉริยะแล้ว แตะสองครั้งเพื่อเปิด",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "connected_to",
+      "value": "เชื่อมต่อกับ %1$s แล้ว",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "โหมดการจัดเฟรม",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "continue",
+      "value": "ดำเนินการต่อ",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "disconnect",
+      "value": "ยกเลิกการเชื่อมต่อ",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_back",
+      "value": "ย้อนกลับ",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "stop_device",
+      "value": "ยกเลิกการเชื่อมต่อเพื่อหยุดใช้ %1$s ของอุปกรณ์",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "ไมโครโฟน",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_center",
+      "value": "ตรงกลาง",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "smart_focus_tracking",
+      "value": "การติดตามอัจฉริยะเปิดอยู่",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_paused",
+      "value": "หยุดการติดตามอัจฉริยะชั่วคราวแล้ว",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_tracking",
+      "value": "การติดตาม",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_paused",
+      "value": "หยุดการติดตามชั่วคราวแล้ว",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "gimbal_connected",
+      "value": "เชื่อมต่อไม้กันสั่นแล้ว",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "wheel_base_connected",
+      "value": "เชื่อมต่อฐานล้อแล้ว",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "harmony_mech_intelligent_tracking",
+      "value": "ระบบโฟกัสตามติดอัจฉริยะ",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text1",
+      "value": "จัดให้คุณโดดเด่นอยู่ตรงกลางเฟรมเสมอ",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text2",
+      "value": "บริการนี้จะไม่รวบรวมหรือจัดเก็บข้อมูลใบหน้าของคุณ คุณสามารถปิดใช้งานได้จากแผงควบคุมหรือหน้าต่างมุมมองกิจกรรมเรียลไทม์",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_soon",
+      "value": "ไม่ใช่ตอนนี้",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_now",
+      "value": "เปิดใช้งาน",
+      "attr": {
+        "priority": "translate"
+      }
+    }
+  ]
+}
