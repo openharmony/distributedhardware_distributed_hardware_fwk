@@ -1,158 +1,200 @@
 {
-    "string":[
-        {
-            "name":"pause",
-            "value":"Wstrzymaj",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_close",
-            "value":"Wył.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_enable",
-            "value":"Wł.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_left",
-            "value":"Po lewej",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_right",
-            "value":"Po prawej",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_on",
-            "value":"Inteligentne śledzenie jest włączone, dotknij dwukrotnie, aby je wyłączyć",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Camera",
-            "value":"aparatu",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_intelligent_tracking",
-            "value":"Inteligentne śledzenie",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_off",
-            "value":"Inteligentne śledzenie jest wyłączone, dotknij dwukrotnie, aby je włączyć",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"connected_to",
-            "value":"Połączono z %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_tracking_layout",
-            "value":"Tryb śledzenia",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue",
-            "value":"Wznów",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"disconnect",
-            "value":"Rozłącz",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_back",
-            "value":"Wstecz",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"stop_device",
-            "value":"Rozłącz, aby przestać korzystać z %1$s tego urządzenia.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"mikrofonu",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_center",
-            "value":"Na środku",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"smart_tracking_disabled",
-            "value":"Inteligentne śledzenie wyłączone",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"device_connected",
-            "value":"Połączono z urządzeniem",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_enabled",
-            "value":"Śledzenie włączone",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_enabled",
-            "value":"Inteligentne śledzenie włączone",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_disabled",
-            "value":"Śledzenie wyłączone",
-            "attr":{
-                "priority":"translate"
-            }
+    "string": [
+      {
+        "name": "pause",
+        "value": "Wstrzymaj",
+        "attr": {
+          "priority": "translate"
         }
+      },
+      {
+        "name": "mech_close",
+        "value": "Wył.",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_enable",
+        "value": "Wł.",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_left",
+        "value": "Po lewej",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_right",
+        "value": "Po prawej",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "audio_tracking_switch_on",
+        "value": "Inteligentne śledzenie jest włączone, dotknij dwukrotnie, aby je wyłączyć",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "DHTypeName_Camera",
+        "value": "aparatu",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_intelligent_tracking",
+        "value": "Inteligentne śledzenie",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "audio_tracking_switch_off",
+        "value": "Inteligentne śledzenie jest wyłączone, dotknij dwukrotnie, aby je włączyć",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "connected_to",
+        "value": "Połączono z %1$s",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_tracking_layout",
+        "value": "Tryb kadrowania",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "continue",
+        "value": "Wznów",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "disconnect",
+        "value": "Rozłącz",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "audio_back",
+        "value": "Wstecz",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "stop_device",
+        "value": "Rozłącz, aby przestać korzystać z %1$s tego urządzenia.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "DHTypeName_Mic",
+        "value": "mikrofonu",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_center",
+        "value": "Na środku",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "smart_focus_tracking",
+        "value": "Inteligentne śledzenie włączone",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "smart_focus_paused",
+        "value": "Wstrzymano Inteligentne śledzenie",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "focus_tracking",
+        "value": "Śledzenie",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "focus_paused",
+        "value": "Wstrzymano śledzenie",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "gimbal_connected",
+        "value": "Połączono z gimbalem.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "wheel_base_connected",
+        "value": "Podłączono podstawę z kołami.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "harmony_mech_intelligent_tracking",
+        "value": "Inteligentne śledzenie skupienia",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_first_connect_text1",
+        "value": "Zawsze bądź w centrum uwagi.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_first_connect_text2",
+        "value": "Ta usługa nie gromadzi ani nie przechowuje danych Twojej twarzy. Wyłączyć ją można w Panelu sterowania lub w oknie widoku Live.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "open_soon",
+        "value": "Nie teraz",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "open_now",
+        "value": "Włącz",
+        "attr": {
+          "priority": "translate"
+        }
+      }
     ]
-}
+  }
