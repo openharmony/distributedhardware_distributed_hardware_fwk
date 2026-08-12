@@ -1,158 +1,200 @@
 {
-    "string":[
-        {
-            "name":"DHTypeName_Camera",
-            "value":"l'appareil photo",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"pause",
-            "value":"Pause",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"connected_to",
-            "value":"Connecté à %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"continue",
-            "value":"Reprendre",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"disconnect",
-            "value":"Déconnecter",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"stop_device",
-            "value":"Veuillez déconnecter pour arrêter d'utiliser %1$s de cet appareil.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"le micro",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_intelligent_tracking",
-            "value":"Suivi intelligent",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_tracking_layout",
-            "value":"Mode suivi",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_enable",
-            "value":"Activé",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_close",
-            "value":"Désactivé",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_left",
-            "value":"Gauche",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_center",
-            "value":"Centre",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_right",
-            "value":"Droite",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_on",
-            "value":"Le Suivi intelligent est activé, toucher deux fois pour le désactiver",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_off",
-            "value":"Le Suivi intelligent est désactivé, toucher deux fois pour l'activer",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_back",
-            "value":"Retour",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_disabled",
-            "value":"Suivi intelligent désactivé",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"device_connected",
-            "value":"Appareil connecté",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_enabled",
-            "value":"Suivi activé",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_enabled",
-            "value":"Suivi intelligent activé",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_disabled",
-            "value":"Suivi désactivé",
-            "attr":{
-                "priority":"translate"
-            }
-        }
-    ]
+  "string": [
+    {
+      "name": "DHTypeName_Camera",
+      "value": "l'appareil photo",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "pause",
+      "value": "Pause",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "connected_to",
+      "value": "Connecté à %1$s",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "continue",
+      "value": "Reprendre",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "disconnect",
+      "value": "Déconnecter",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "stop_device",
+      "value": "Veuillez déconnecter pour arrêter d'utiliser %1$s de cet appareil.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "le micro",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "Suivi intelligent",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "Mode de cadrage",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_enable",
+      "value": "Activé",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_close",
+      "value": "Désactivé",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_left",
+      "value": "Gauche",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_center",
+      "value": "Centre",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_right",
+      "value": "Droite",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "Le Suivi intelligent est activé, toucher deux fois pour le désactiver",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "Le Suivi intelligent est désactivé, toucher deux fois pour l'activer",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_back",
+      "value": "Retour",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_tracking",
+      "value": "Suivi intelligent en cours",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_paused",
+      "value": "Suivi intelligent mis en pause",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_tracking",
+      "value": "Suivi en cours",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_paused",
+      "value": "Suivi mis en pause",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "gimbal_connected",
+      "value": "Le stabilisateur à cardan est connecté.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "wheel_base_connected",
+      "value": "La base mobile est connectée.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "harmony_mech_intelligent_tracking",
+      "value": "Suivi intelligent de la mise au point",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text1",
+      "value": "Restez toujours au centre et au premier plan.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text2",
+      "value": "Ce service ne recueille ni ne stocke vos informations faciales. Vous pouvez le désactiver depuis le panneau de contrôle ou la fenêtre de vue en direct.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_soon",
+      "value": "Ultérieurement",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_now",
+      "value": "Activer",
+      "attr": {
+        "priority": "translate"
+      }
+    }
+  ]
 }

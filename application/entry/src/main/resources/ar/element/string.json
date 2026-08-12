@@ -1,158 +1,200 @@
 {
-    "string":[
-        {
-            "name":"DHTypeName_Camera",
-            "value":"الكاميرا",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"pause",
-            "value":"الإيقاف مؤقتًا",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"connected_to",
-            "value":"متصل بجهاز %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"continue",
-            "value":"استئناف",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"disconnect",
-            "value":"قطع الاتصال",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"stop_device",
-            "value":"اقطع الاتصال لإيقاف استخدام %1$s لهذا الجهاز.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"الميكروفون",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_intelligent_tracking",
-            "value":"التتبع الذكي",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_tracking_layout",
-            "value":"وضع التتبع",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_enable",
-            "value":"تشغيل",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_close",
-            "value":"مغلق",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_left",
-            "value":"على اليسار",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_center",
-            "value":"في الوسط",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_right",
-            "value":"على اليمين",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_on",
-            "value":"تم تشغيل التتبع الذكي، انقر مرتين لإيقافه",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_off",
-            "value":"تم إيقاف التتبع الذكي، انقر مرتين لتشغيله",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_back",
-            "value":"رجوع",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_disabled",
-            "value":"التتبع الذكي مغلق",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"device_connected",
-            "value":"تم توصيل الجهاز",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_enabled",
-            "value":"التتبع مُشغّل",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_enabled",
-            "value":"التتبع الذكي مُشغّل",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_disabled",
-            "value":"التتبع مغلق",
-            "attr":{
-                "priority":"translate"
-            }
-        }
-    ]
+  "string": [
+    {
+      "name": "DHTypeName_Camera",
+      "value": "الكاميرا",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "pause",
+      "value": "الإيقاف مؤقتًا",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "connected_to",
+      "value": "متصل بجهاز %1$s",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "continue",
+      "value": "استئناف",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "disconnect",
+      "value": "قطع الاتصال",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "stop_device",
+      "value": "اقطع الاتصال لإيقاف استخدام %1$s لهذا الجهاز.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "الميكروفون",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "التتبع الذكي",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "وضع التأطير",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_enable",
+      "value": "تشغيل",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_close",
+      "value": "مغلق",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_left",
+      "value": "على اليسار",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_center",
+      "value": "في الوسط",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_right",
+      "value": "على اليمين",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "تم تشغيل التتبع الذكي، انقر مرتين لإيقافه",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "تم إيقاف التتبع الذكي، انقر مرتين لتشغيله",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_back",
+      "value": "رجوع",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_tracking",
+      "value": "التتبع الذكي قيد التشغيل",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_paused",
+      "value": "توقف التتبع الذكي مؤقتًا",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_tracking",
+      "value": "التتبع",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_paused",
+      "value": "توقف التتبع مؤقتًا",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "gimbal_connected",
+      "value": "تم توصيل حامل الكاميرا.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "wheel_base_connected",
+      "value": "تم توصيل قاعدة العجلات.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "harmony_mech_intelligent_tracking",
+      "value": "تتبع التركيز الذكي",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text1",
+      "value": "ابقَ دائمًا في المقدمة.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text2",
+      "value": "لا تجمع هذه الخدمة معلومات وجهك ولا تخزنها. يمكنك إيقافها من لوحة التحكم أو نافذة العرض الحي.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_soon",
+      "value": "ليس الآن",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_now",
+      "value": "تشغيل",
+      "attr": {
+        "priority": "translate"
+      }
+    }
+  ]
 }

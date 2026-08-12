@@ -1,158 +1,200 @@
 {
-    "string":[
-        {
-            "name":"DHTypeName_Camera",
-            "value":"相機",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"pause",
-            "value":"暫停",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"disconnect",
-            "value":"中斷連線",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"connected_to",
-            "value":"已連線至 %1$s",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"stop_device",
-            "value":"您可以中斷連線，以停止使用此裝置的%1$s",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"麥克風",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue",
-            "value":"繼續",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_intelligent_tracking",
-            "value":"智慧追蹤",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_tracking_layout",
-            "value":"追蹤版面配置",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_enable",
-            "value":"開啟",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_close",
-            "value":"關閉",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_left",
-            "value":"靠左",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_center",
-            "value":"置中",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_right",
-            "value":"靠右",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_on",
-            "value":"已開啟「智慧追蹤」開關，單指輕觸兩下即可關閉",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_off",
-            "value":"已關閉「智慧追蹤」開關，單指輕觸兩下即可開啟",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_back",
-            "value":"返回",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_disabled",
-            "value":"智慧追蹤已停用",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"device_connected",
-            "value":"裝置已連線",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_enabled",
-            "value":"追蹤啟用",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_enabled",
-            "value":"智慧追蹤已啟用",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_disabled",
-            "value":"追蹤停用",
-            "attr":{
-                "priority":"translate"
-            }
-        }
-    ]
+  "string": [
+    {
+      "name": "DHTypeName_Camera",
+      "value": "相機",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "pause",
+      "value": "暫停",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "disconnect",
+      "value": "中斷連線",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "connected_to",
+      "value": "已連線至 %1$s",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "stop_device",
+      "value": "您可以中斷連線，以停止使用此裝置的%1$s",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "麥克風",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "continue",
+      "value": "繼續",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "智慧追焦",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "追焦配置",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_enable",
+      "value": "開啟",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_close",
+      "value": "關閉",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_left",
+      "value": "靠左",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_center",
+      "value": "置中",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_right",
+      "value": "靠右",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "已開啟「智慧追焦」開關，單指輕觸兩下即可關閉",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "已關閉「智慧追焦」開關，單指輕觸兩下即可開啟",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_back",
+      "value": "返回",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_tracking",
+      "value": "正在智慧追焦",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_paused",
+      "value": "智慧追焦已暫停",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_tracking",
+      "value": "追焦中",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_paused",
+      "value": "追焦暫停",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "gimbal_connected",
+      "value": "雲台已連接",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "wheel_base_connected",
+      "value": "桌面機器人已連線",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "harmony_mech_intelligent_tracking",
+      "value": "鴻蒙智慧追焦",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text1",
+      "value": "全域智慧追焦，讓手機始終面向您。",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text2",
+      "value": "本服務不會收集和儲存您的人臉資訊，啟用後，可透過控制中心或即時視窗停用。",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_soon",
+      "value": "暫不啟用",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_now",
+      "value": "立即啟用",
+      "attr": {
+        "priority": "translate"
+      }
+    }
+  ]
 }

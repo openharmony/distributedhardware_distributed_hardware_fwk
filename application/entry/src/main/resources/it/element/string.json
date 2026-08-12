@@ -1,158 +1,200 @@
 {
-    "string":[
-        {
-            "name":"pause",
-            "value":"Sospendi",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_close",
-            "value":"Disattivato",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_enable",
-            "value":"Attivato",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_left",
-            "value":"Sinistra",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_right",
-            "value":"Destra",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_on",
-            "value":"Il Tracciamento intelligente è attivato, tocca due volte per disattivarlo",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Camera",
-            "value":"fotocamera",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_intelligent_tracking",
-            "value":"Tracciamento intelligente",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_off",
-            "value":"Il Tracciamento intelligente è disattivato, tocca due volte per attivarlo",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"connected_to",
-            "value":"Connesso a %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_tracking_layout",
-            "value":"Modalità di tracciamento",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue",
-            "value":"Riprendi",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"disconnect",
-            "value":"Disconnetti",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_back",
-            "value":"Indietro",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"stop_device",
-            "value":"Disconnetti per interrompere l'utilizzo della %1$s di questo dispositivo.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"microfono",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_center",
-            "value":"Centro",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"smart_tracking_disabled",
-            "value":"Tracciamento intelligente disabilitato",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"device_connected",
-            "value":"Dispositivo connesso",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_enabled",
-            "value":"Tracciamento abilitato",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_enabled",
-            "value":"Tracciamento intelligente abilitato",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_disabled",
-            "value":"Tracciamento disabilitato",
-            "attr":{
-                "priority":"translate"
-            }
-        }
-    ]
+  "string": [
+    {
+      "name": "pause",
+      "value": "Sospendi",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_close",
+      "value": "Disattivato",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_enable",
+      "value": "Attivato",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_left",
+      "value": "Sinistra",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_right",
+      "value": "Destra",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "Il Tracciamento intelligente è attivato, tocca due volte per disattivarlo",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Camera",
+      "value": "fotocamera",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "Tracciamento intelligente",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "Il Tracciamento intelligente è disattivato, tocca due volte per attivarlo",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "connected_to",
+      "value": "Connesso a %1$s",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "Modalità inquadratura",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "continue",
+      "value": "Riprendi",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "disconnect",
+      "value": "Disconnetti",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_back",
+      "value": "Indietro",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "stop_device",
+      "value": "Disconnetti per interrompere l'utilizzo della %1$s di questo dispositivo.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "microfono",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_center",
+      "value": "Centro",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "smart_focus_tracking",
+      "value": "Tracciamento intelligente attivo",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_paused",
+      "value": "Tracciamento intelligente sospeso",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_tracking",
+      "value": "Tracciamento",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_paused",
+      "value": "Tracciamento sospeso",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "gimbal_connected",
+      "value": "Gimbal collegato.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "wheel_base_connected",
+      "value": "Base con ruote connessa.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "harmony_mech_intelligent_tracking",
+      "value": "Tracciamento intelligente della messa a fuoco",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text1",
+      "value": "Rimani sempre al centro dell'attenzione.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text2",
+      "value": "Questo servizio non raccoglie né archivia le tue informazioni facciali. Puoi disabilitarlo dal Pannello di controllo o dalla finestra di Vista dal vivo.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_soon",
+      "value": "Non ora",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_now",
+      "value": "Abilita",
+      "attr": {
+        "priority": "translate"
+      }
+    }
+  ]
 }

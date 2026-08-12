@@ -64,6 +64,13 @@
         "label": "$string:MechExtAbility_label",
         "type": "sys/commonUI",
         "exported": false
+      },
+      {
+        "name": "MechFirstConnectAbility",
+        "description": "UIExtAbility",
+        "type": "sys/commonUI",
+        "exported": false,
+        "srcEntry": "./ets/mechextability/MechFirstConnectAbility.ets"
       }
     ],
     "metadata": [
