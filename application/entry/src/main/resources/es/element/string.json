@@ -1,158 +1,200 @@
 {
-    "string":[
-        {
-            "name":"DHTypeName_Camera",
-            "value":"la cámara",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"pause",
-            "value":"Pausar",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"connected_to",
-            "value":"Conectado a %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"continue",
-            "value":"Reanudar",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"disconnect",
-            "value":"Desconectar",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"stop_device",
-            "value":"Desconecta para dejar de usar %1$s de este dispositivo.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"el micrófono",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_intelligent_tracking",
-            "value":"Seguimiento inteligente",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_tracking_layout",
-            "value":"Modo Seguimiento",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_enable",
-            "value":"Sí",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_close",
-            "value":"No",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_left",
-            "value":"Izquierda",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_center",
-            "value":"Centro",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_right",
-            "value":"Derecha",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_on",
-            "value":"Seguimiento inteligente activado, pulsa dos veces para desactivarlo",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_off",
-            "value":"Seguimiento inteligente desactivado, pulsa dos veces para activarlo",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_back",
-            "value":"Volver",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_disabled",
-            "value":"Seguimiento inteligente deshabilitado",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"device_connected",
-            "value":"Dispositivo conectado",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_enabled",
-            "value":"Seguimiento habilitado",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_enabled",
-            "value":"Seguimiento inteligente habilitado",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_disabled",
-            "value":"Seguimiento deshabilitado",
-            "attr":{
-                "priority":"translate"
-            }
+    "string": [
+      {
+        "name": "DHTypeName_Camera",
+        "value": "la cámara",
+        "attr": {
+          "priority": "translate"
         }
+      },
+      {
+        "name": "pause",
+        "value": "Pausar",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "connected_to",
+        "value": "Conectado a %1$s",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "continue",
+        "value": "Reanudar",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "disconnect",
+        "value": "Desconectar",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "stop_device",
+        "value": "Desconecta para dejar de usar %1$s de este dispositivo.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "DHTypeName_Mic",
+        "value": "el micrófono",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_intelligent_tracking",
+        "value": "Seguimiento inteligente",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_tracking_layout",
+        "value": "Modo de Encuadre",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_enable",
+        "value": "Sí",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_close",
+        "value": "No",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_left",
+        "value": "Izquierda",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_center",
+        "value": "Centro",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_right",
+        "value": "Derecha",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "audio_tracking_switch_on",
+        "value": "Seguimiento inteligente activado, pulsa dos veces para desactivarlo",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "audio_tracking_switch_off",
+        "value": "Seguimiento inteligente desactivado, pulsa dos veces para activarlo",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "audio_back",
+        "value": "Volver",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "smart_focus_tracking",
+        "value": "Seguimiento inteligente habilitado",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "smart_focus_paused",
+        "value": "Seguimiento inteligente pausado",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "focus_tracking",
+        "value": "Siguiendo",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "focus_paused",
+        "value": "Seguimiento pausado",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "gimbal_connected",
+        "value": "Estabilizador conectado.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "wheel_base_connected",
+        "value": "Base con ruedas conectada.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "harmony_mech_intelligent_tracking",
+        "value": "Seguimiento con enfoque inteligente",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_first_connect_text1",
+        "value": "Mantente siempre al frente y en el centro.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_first_connect_text2",
+        "value": "Este servicio no recopila ni almacena tu información facial. Puedes deshabilitarlo desde el Panel de control o desde la ventana de Info actualizada.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "open_soon",
+        "value": "Ahora no",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "open_now",
+        "value": "Habilitar",
+        "attr": {
+          "priority": "translate"
+        }
+      }
     ]
-}
+  }
