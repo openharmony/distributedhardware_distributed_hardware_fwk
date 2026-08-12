@@ -156,10 +156,12 @@ struct MechControl {
   IntelligentTracking() {
     Column() {
       Button() {
-        Image(this.isTrackingEnabled ? $r('app.media.intelligent_tracking') :
-        (this.isShowAsDarkMode ? $r('app.media.intelligent_tracking_close') : $r('app.media.intelligent_tracking_close_dark')))
+        Image((this.isTrackingEnabled || this.isShowAsDarkMode) ?
+        $r('app.media.intelligent_tracking') :
+        $r('app.media.intelligent_tracking_dark'))
           .width(CommonConstants.SWITCH_ICON_SIZE)
           .height(CommonConstants.SWITCH_ICON_SIZE)
+          .margin({ left: CommonConstants.SWITCH_ICON_MARGIN, top: CommonConstants.SWITCH_ICON_MARGIN })
       }
       .buttonStyle(ButtonStyleMode.TEXTUAL)
       .backgroundColor(this.isTrackingEnabled ? $r('sys.color.ohos_id_color_emphasize') :
@@ -200,8 +202,10 @@ struct MechControl {
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
         .width(CommonConstants.SWITCH_TEXT_WIDTH)
+        .maxLines(2)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
 
-      Text(this.isTrackingEnabled ? $r('app.string.mech_enable') : $r('app.string.mech_close'))
+      Text(this.isTrackingEnabled ? $r('app.string.mech_enable') : $r('app.string.pause'))
         .fontSize($r('sys.float.Caption_M'))
         .lineHeight(CommonConstants.SMALL_LINE_HEIGHT)
         .fontWeight(FontWeight.Regular)
@@ -209,6 +213,8 @@ struct MechControl {
         .margin({ top: CommonConstants.SMALL_TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
+        .maxLines(2)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
   }
@@ -252,6 +258,8 @@ struct MechControl {
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
         .width(CommonConstants.SWITCH_TEXT_WIDTH)
+        .maxLines(2)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
 
       Text(this.currentTrackingLayoutText)
         .fontSize($r('sys.float.Caption_M'))
@@ -261,6 +269,8 @@ struct MechControl {
         .margin({ top: CommonConstants.SMALL_TEXT_MARGIN_TOP })
         .textAlign(TextAlign.Center)
         .maxFontScale(FontSizeScale.MD)
+        .maxLines(2)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
     }
     .transition(TransitionEffect.OPACITY.animation({ duration: CommonConstants.ANIMATE_DURATION, curve: Curve.Sharp }))
   }
