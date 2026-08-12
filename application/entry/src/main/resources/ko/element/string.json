@@ -1,200 +1,200 @@
 {
-    "string": [
-      {
-        "name": "DHTypeName_Camera",
-        "value": "카메라",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "pause",
-        "value": "일시 정지",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "connected_to",
-        "value": "%1$s에 연결됨",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "continue",
-        "value": "재개",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "disconnect",
-        "value": "연결 해제",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "stop_device",
-        "value": "이 장치의 %1$s 사용을 중단하려면 연결 해제하십시오.",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "DHTypeName_Mic",
-        "value": "마이크",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_intelligent_tracking",
-        "value": "스마트 추적",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "mech_tracking_layout",
-        "value": "프레이밍 모드",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "mech_enable",
-        "value": "켬",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_close",
-        "value": "꺼짐",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "mech_left",
-        "value": "왼쪽",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "mech_center",
-        "value": "중앙",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "mech_right",
-        "value": "오른쪽",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "audio_tracking_switch_on",
-        "value": "스마트 추적 켜짐, 두 번 탭하여 끄기",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "audio_tracking_switch_off",
-        "value": "스마트 추적 꺼짐, 두 번 탭하여 켜기",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "audio_back",
-        "value": "뒤로",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "smart_focus_tracking",
-        "value": "스마트 추적 켜짐",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "smart_focus_paused",
-        "value": "스마트 추적 일시 중지됨",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "focus_tracking",
-        "value": "추적",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "focus_paused",
-        "value": "추적 일시 정지됨",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "gimbal_connected",
-        "value": "짐벌이 연결되었습니다.",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "wheel_base_connected",
-        "value": "휠 베이스가 연결되었습니다.",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "harmony_mech_intelligent_tracking",
-        "value": "스마트 포커스 추적",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_first_connect_text1",
-        "value": "내 얼굴을 정면 가운데로 맞추세요.",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_first_connect_text2",
-        "value": "이 서비스는 사용자의 얼굴 정보를 수집하거나 저장하지 않습니다. 제어판 또는 라이브 보기 창에서 종료할 수 있습니다.",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "open_soon",
-        "value": "나중에",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "open_now",
-        "value": "실행",
-        "attr": {
-          "priority": "translate"
-        }
+  "string": [
+    {
+      "name": "DHTypeName_Camera",
+      "value": "카메라",
+      "attr": {
+        "priority": "translate"
       }
-    ]
-  }
+    },
+    {
+      "name": "pause",
+      "value": "일시 정지",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "connected_to",
+      "value": "%1$s에 연결됨",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "continue",
+      "value": "재개",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "disconnect",
+      "value": "연결 해제",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "stop_device",
+      "value": "이 장치의 %1$s 사용을 중단하려면 연결 해제하십시오.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "마이크",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "스마트 추적",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "프레이밍 모드",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_enable",
+      "value": "켬",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_close",
+      "value": "꺼짐",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_left",
+      "value": "왼쪽",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_center",
+      "value": "중앙",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_right",
+      "value": "오른쪽",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "스마트 추적 켜짐, 두 번 탭하여 끄기",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "스마트 추적 꺼짐, 두 번 탭하여 켜기",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_back",
+      "value": "뒤로",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_tracking",
+      "value": "스마트 추적 켜짐",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_paused",
+      "value": "스마트 추적 일시 중지됨",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_tracking",
+      "value": "추적",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_paused",
+      "value": "추적 일시 정지됨",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "gimbal_connected",
+      "value": "짐벌이 연결되었습니다.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "wheel_base_connected",
+      "value": "휠 베이스가 연결되었습니다.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "harmony_mech_intelligent_tracking",
+      "value": "스마트 포커스 추적",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text1",
+      "value": "내 얼굴을 정면 가운데로 맞추세요.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text2",
+      "value": "이 서비스는 사용자의 얼굴 정보를 수집하거나 저장하지 않습니다. 제어판 또는 라이브 보기 창에서 종료할 수 있습니다.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_soon",
+      "value": "나중에",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_now",
+      "value": "실행",
+      "attr": {
+        "priority": "translate"
+      }
+    }
+  ]
+}
