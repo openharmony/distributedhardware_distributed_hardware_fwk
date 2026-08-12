@@ -1,158 +1,200 @@
 {
-    "string":[
-        {
-            "name":"pause",
-            "value":"Jeda",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_close",
-            "value":"Dimatikan",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_enable",
-            "value":"Dihidupkan",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_left",
-            "value":"Kiri",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_right",
-            "value":"Kanan",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_on",
-            "value":"Penjejakan pintar dihidupkan, dwiketik untuk mematikan",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Camera",
-            "value":"kamera",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_intelligent_tracking",
-            "value":"Penjejakan pintar",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_off",
-            "value":"Penjejakan pintar dimatikan, dwiketik untuk menghidupkan",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"connected_to",
-            "value":"Disambungkan ke %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_tracking_layout",
-            "value":"Mod penjejakan",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue",
-            "value":"Sambung semula",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"disconnect",
-            "value":"Putuskan sambungan",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_back",
-            "value":"Kembali",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"stop_device",
-            "value":"Putuskan sambungan untuk menghentikan penggunaan %1$s peranti ini.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"mikrofon",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_center",
-            "value":"Tengah",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"smart_tracking_disabled",
-            "value":"Penjejakan pintar dinyahdayakan",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"device_connected",
-            "value":"Peranti disambungkan",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_enabled",
-            "value":"Penjejakan didayakan",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_enabled",
-            "value":"Penjejakan pintar didayakan",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_disabled",
-            "value":"Penjejakan dinyahdayakan",
-            "attr":{
-                "priority":"translate"
-            }
+    "string": [
+      {
+        "name": "pause",
+        "value": "Jeda",
+        "attr": {
+          "priority": "translate"
         }
+      },
+      {
+        "name": "mech_close",
+        "value": "Dimatikan",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_enable",
+        "value": "Dihidupkan",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_left",
+        "value": "Kiri",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_right",
+        "value": "Kanan",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "audio_tracking_switch_on",
+        "value": "Penjejakan pintar dihidupkan, dwiketik untuk mematikan",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "DHTypeName_Camera",
+        "value": "kamera",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_intelligent_tracking",
+        "value": "Penjejakan pintar",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "audio_tracking_switch_off",
+        "value": "Penjejakan pintar dimatikan, dwiketik untuk menghidupkan",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "connected_to",
+        "value": "Disambungkan ke %1$s",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_tracking_layout",
+        "value": "Mod pembingkaian",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "continue",
+        "value": "Sambung semula",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "disconnect",
+        "value": "Putuskan sambungan",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "audio_back",
+        "value": "Kembali",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "stop_device",
+        "value": "Putuskan sambungan untuk menghentikan penggunaan %1$s peranti ini.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "DHTypeName_Mic",
+        "value": "mikrofon",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_center",
+        "value": "Tengah",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "smart_focus_tracking",
+        "value": "Penjejakan pintar dihidupkan",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "smart_focus_paused",
+        "value": "Penjejakan pintar dijeda",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "focus_tracking",
+        "value": "Menjejak",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "focus_paused",
+        "value": "Penjejakan dijeda",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "gimbal_connected",
+        "value": "Gimbal disambungkan.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "wheel_base_connected",
+        "value": "Asas roda disambungkan.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "harmony_mech_intelligent_tracking",
+        "value": "Penjejakan fokus pintar",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_first_connect_text1",
+        "value": "Kekalkan diri anda di depan dan tengah.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_first_connect_text2",
+        "value": "Perkhidmatan ini tidak mengumpulkan atau menyimpan maklumat wajah anda. Anda boleh menyahdayakannya daripada Panel Kawalan atau tetingkap paparan langsung.",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "open_soon",
+        "value": "Bukan sekarang",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "open_now",
+        "value": "Dayakan",
+        "attr": {
+          "priority": "translate"
+        }
+      }
     ]
-}
+  }
