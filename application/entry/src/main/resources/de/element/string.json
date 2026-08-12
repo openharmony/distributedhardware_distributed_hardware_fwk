@@ -1,200 +1,200 @@
 {
-    "string": [
-      {
-        "name": "pause",
-        "value": "Pausieren",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_close",
-        "value": "Deaktiviert",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "mech_enable",
-        "value": "Aktiviert",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "mech_left",
-        "value": "Links",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "mech_right",
-        "value": "Rechts",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "audio_tracking_switch_on",
-        "value": "Intelligente Verfolgung ist aktiviert. Tippen Sie zweimal, um sie zu deaktivieren",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "DHTypeName_Camera",
-        "value": "Kamera",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_intelligent_tracking",
-        "value": "Intelligente Verfolgung",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "audio_tracking_switch_off",
-        "value": "Intelligente Verfolgung ist deaktiviert. Tippen Sie zweimal, um sie zu aktivieren",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "connected_to",
-        "value": "Mit %1$s verbunden",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_tracking_layout",
-        "value": "Bildausschnittmodus",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "continue",
-        "value": "Fortsetzen",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "disconnect",
-        "value": "Trennen",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "audio_back",
-        "value": "Zurück",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "stop_device",
-        "value": "Verbindung trennen, um die Nutzung von %1$s dieses Geräts zu beenden.",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "DHTypeName_Mic",
-        "value": "Mikrofon",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_center",
-        "value": "Zentrieren",
-        "attr": {
-          "priority": "LT"
-        }
-      },
-      {
-        "name": "smart_focus_tracking",
-        "value": "Intelligente Verfolgung eingeschaltet",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "smart_focus_paused",
-        "value": "Intelligente Verfolgung angehalten",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "focus_tracking",
-        "value": "Verfolgung",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "focus_paused",
-        "value": "Verfolgung angehalten",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "gimbal_connected",
-        "value": "Kardanaufhängung verbunden.",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "wheel_base_connected",
-        "value": "Radsockel verbunden.",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "harmony_mech_intelligent_tracking",
-        "value": "Verfolgung des Intelligenten Fokus",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_first_connect_text1",
-        "value": "Halten Sie sich im Vordergrund und in der Mitte.",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "mech_first_connect_text2",
-        "value": "Dieser Service erfasst oder speichert keine Gesichtsinformationen. Sie können ihn im Steuerfeld oder im Fenster der Live-Ansicht deaktivieren.",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "open_soon",
-        "value": "Nicht jetzt",
-        "attr": {
-          "priority": "translate"
-        }
-      },
-      {
-        "name": "open_now",
-        "value": "Aktivieren",
-        "attr": {
-          "priority": "translate"
-        }
+  "string": [
+    {
+      "name": "pause",
+      "value": "Pausieren",
+      "attr": {
+        "priority": "translate"
       }
-    ]
+    },
+    {
+      "name": "mech_close",
+      "value": "Deaktiviert",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_enable",
+      "value": "Aktiviert",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_left",
+      "value": "Links",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_right",
+      "value": "Rechts",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "Intelligente Verfolgung ist aktiviert. Tippen Sie zweimal, um sie zu deaktivieren",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Camera",
+      "value": "Kamera",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "Intelligente Verfolgung",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "Intelligente Verfolgung ist deaktiviert. Tippen Sie zweimal, um sie zu aktivieren",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "connected_to",
+      "value": "Mit %1$s verbunden",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "Bildausschnittmodus",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "continue",
+      "value": "Fortsetzen",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "disconnect",
+      "value": "Trennen",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_back",
+      "value": "Zurück",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "stop_device",
+      "value": "Verbindung trennen, um die Nutzung von %1$s dieses Geräts zu beenden.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "Mikrofon",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_center",
+      "value": "Zentrieren",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "smart_focus_tracking",
+      "value": "Intelligente Verfolgung eingeschaltet",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_paused",
+      "value": "Intelligente Verfolgung angehalten",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_tracking",
+      "value": "Verfolgung",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_paused",
+      "value": "Verfolgung angehalten",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "gimbal_connected",
+      "value": "Kardanaufhängung verbunden.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "wheel_base_connected",
+      "value": "Radsockel verbunden.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "harmony_mech_intelligent_tracking",
+      "value": "Verfolgung des Intelligenten Fokus",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text1",
+      "value": "Halten Sie sich im Vordergrund und in der Mitte.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text2",
+      "value": "Dieser Service erfasst oder speichert keine Gesichtsinformationen. Sie können ihn im Steuerfeld oder im Fenster der Live-Ansicht deaktivieren.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_soon",
+      "value": "Nicht jetzt",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_now",
+      "value": "Aktivieren",
+      "attr": {
+        "priority": "translate"
+      }
+    }
+  ]
 }
