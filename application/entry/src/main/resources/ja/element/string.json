@@ -1,158 +1,200 @@
 {
-    "string":[
-        {
-            "name":"DHTypeName_Camera",
-            "value":"カメラ",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"pause",
-            "value":"一時停止",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"connected_to",
-            "value":"%1$sに接続されました",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"continue",
-            "value":"再開",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"disconnect",
-            "value":"切断",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"stop_device",
-            "value":"このデバイスの%1$sの使用を停止するには、接続を切断してください。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"マイク",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_intelligent_tracking",
-            "value":"スマート追跡",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_tracking_layout",
-            "value":"追跡モード",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_enable",
-            "value":"オン",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_close",
-            "value":"オフ",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_left",
-            "value":"左",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_center",
-            "value":"中央",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_right",
-            "value":"右",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_on",
-            "value":"スマート追跡はオン、ダブルタップでオフにします",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_off",
-            "value":"スマート追跡はオフ、ダブルタップでオンにします",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_back",
-            "value":"戻る",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_disabled",
-            "value":"スマート追跡が無効化されました",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"device_connected",
-            "value":"デバイスが接続されました",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_enabled",
-            "value":"追跡が有効になりました",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_enabled",
-            "value":"スマート追跡が有効になりました",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_disabled",
-            "value":"追跡が無効化されました",
-            "attr":{
-                "priority":"translate"
-            }
+    "string": [
+      {
+        "name": "DHTypeName_Camera",
+        "value": "カメラ",
+        "attr": {
+          "priority": "translate"
         }
+      },
+      {
+        "name": "pause",
+        "value": "一時停止",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "connected_to",
+        "value": "%1$sに接続されました",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "continue",
+        "value": "再開",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "disconnect",
+        "value": "切断",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "stop_device",
+        "value": "このデバイスの%1$sの使用を停止するには、接続を切断してください。",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "DHTypeName_Mic",
+        "value": "マイク",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_intelligent_tracking",
+        "value": "スマート追跡",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_tracking_layout",
+        "value": "フレーミングモード",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_enable",
+        "value": "オン",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_close",
+        "value": "オフ",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_left",
+        "value": "左",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_center",
+        "value": "中央",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "mech_right",
+        "value": "右",
+        "attr": {
+          "priority": "LT"
+        }
+      },
+      {
+        "name": "audio_tracking_switch_on",
+        "value": "スマート追跡はオン、ダブルタップでオフにします",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "audio_tracking_switch_off",
+        "value": "スマート追跡はオフ、ダブルタップでオンにします",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "audio_back",
+        "value": "戻る",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "smart_focus_tracking",
+        "value": "スマート追跡がオン",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "smart_focus_paused",
+        "value": "スマート追跡が一時停止中",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "focus_tracking",
+        "value": "追跡中",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "focus_paused",
+        "value": "追跡が一時停止中",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "gimbal_connected",
+        "value": "ジンバルが接続されました。",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "wheel_base_connected",
+        "value": "ホイールベースが接続されました。",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "harmony_mech_intelligent_tracking",
+        "value": "スマートフォーカス追跡",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_first_connect_text1",
+        "value": "常にあなたを画面の中心に映します。",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "mech_first_connect_text2",
+        "value": "このサービスは顔情報を収集または保存しません。コントロールパネルまたはライブビューウィンドウからこのサービスを無効にできます。",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "open_soon",
+        "value": "今はしない",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "open_now",
+        "value": "有効化",
+        "attr": {
+          "priority": "translate"
+        }
+      }
     ]
-}
+  }
