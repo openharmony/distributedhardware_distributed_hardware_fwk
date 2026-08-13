@@ -1,0 +1,386 @@
+{
+  "challenge_required_count": 0,
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "frozen_view_policy": "Git objects by full SHA; detached worktree for execution",
+  "generated_at": "2026-08-13T06:03:55+00:00",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "indexed_unit_count": 24,
+  "integration_date_basis": "first-parent committer-date",
+  "network_policy": "local-only",
+  "primary_dimension_counts": {
+    "API and compatibility": 0,
+    "Build and portability": 3,
+    "Functional correctness": 17,
+    "Maintainability": 0,
+    "Performance and scalability": 0,
+    "Reliability and recovery": 0,
+    "Resource and memory": 0,
+    "Security and privacy": 0,
+    "State, lifecycle, concurrency": 0,
+    "Test adequacy and observability": 0
+  },
+  "resolved_stage": {
+    "head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+    "kind": "date-range",
+    "since": "2026-03-01T00:00:00+08:00",
+    "until": "2026-08-13T00:00:00+08:00"
+  },
+  "review_protocol_version": 2,
+  "risk_policy_version": 2,
+  "sampling_policy": "deterministic SHA-256 selection of 10% low-risk non-empty units; minimum one",
+  "sampling_selected_count": 0,
+  "scan_since": "2026-03-01T00:00:00+08:00",
+  "scan_until": "2026-08-13T00:00:00+08:00",
+  "schema_version": 3,
+  "scope": {
+    "event_count_before_filter": 71,
+    "path_filters": [
+      "services"
+    ]
+  },
+  "selected_ref": "HEAD",
+  "shallow_history": false,
+  "skipped_events": [
+    {
+      "commit": "c8cf6c9ef505e8436a8993bc49791cbfb502e4cc",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "6dfa0aecdec0f31eec9eca61e413465043db1bd1",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "6ef49e2519b778a1ff8beab2e64f17bb2cb46d5a",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "182c85ca398bfc51972a87120d1a901c62a86e00",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "d1200cfd6823949706bfc09d445528f730ccc0a5",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "5ba5aced1a9f4856f5a1050fe8acbe4268ed2ec9",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "604d08d3bbd17f355033ea5440e62dbc5d134075",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "a06dbe3f46e456e4d0039eb7dc09638ece6e52da",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "bced16e235f3b310e7ff02b43e7f7c7c1d175c31",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "e50f487e20cfc4af52be2286757f124085dedb6f",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "23a72dda0c88ab151662f58d8467e9d19385b505",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "4b69f8e5e78915fa097ffd96144f4052915860c1",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "20b774669caa85ad25eb028fd18cf8b9898aafe3",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "b453b7f17fbf41f86d74340621805674e1463428",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "bf45b121189f8ee375f9c8df76a8591c5592871c",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "8831f9eb7ee9c25fbf7f405dd0830314877d6549",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "bf3802287c6fffa48ef831186ccf1f8fa28797c2",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "761aa56652394630b90ba1d5c1b5cb87f50dfb4a",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "cb3d21fe436b91ed60496f1f726f9ed180956c10",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "7ca574bef283ed414ac69aa391a6b4d0f26a0668",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "57fc55b5f1ec6da07e04a75de95199c60d8d8d5a",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "d2a18317b75ee3e05b277d06a950c14616c765bf",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "954c27d42b88bbd979399149532cacd2c1851f65",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "989e9f2d91b2fcf3b22a79967af9a931b904dd34",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "d265752408d443b4b1bcb0494089cc44c3751807",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "2497d0b6506538baa9e807bd936f109cdebbe6a1",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "209072a8ac8a2d18fed542d4f71101d06b247cb4",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "7c39c63112fc034db907cb9820711b286de74de8",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "c78385ce02eaa111f9efb2006fd18ad6d44bcf98",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "eab674bc9cb066f425a3125dd5cdb870ec1ac221",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "89375b03c04dace756c7451b28af88371be41d74",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "ad86c9c40eb3331bc6873216ff87585bca093a18",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "2b9bfdfc5da4c8bc368e1aff9a38e32a7a8cab57",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "7cf8c07a776b1cbd5b25b44af913893c1111be89",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "1a0062d87468af4289409a2e55e09df330c78924",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "ec0fbbd233904edef3091a816d1dbf994094ff2d",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "7506f2aebab458ce8b1650f45ed41c976102976a",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "adde98345b7e3c1121843956ba8f0e9459b164c5",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "0fbb4ab986c71bea3b0b10aa9fdf1478c0900d48",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "69183ef438e44821b6ce42fb56402bf7f0b41531",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "79ca496757f833d25ef3562da64ee56adffee19b",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "1ba91718d8e5f3af9ab7d58b96703083a856a574",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "dd45028c42c25ac1f28e47d4c88e606673f0979b",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "3dfc607ed28894ca306c80b24a57fd8dcded92cd",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "8005fbff02b1b2612351cd47697679758beab313",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "8611d866e176ca3ca391a66fea783b2ae88f0029",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    },
+    {
+      "commit": "2716dc174c974f902e4ed2035e7c3035b9b80251",
+      "path_filter": [
+        "services"
+      ],
+      "reason": "outside explicit path_filter"
+    }
+  ],
+  "source_repo_path": "C:\\code\\0813\\ai-code-harness-7.0\\03-distributed-ai\\distributed_hardware_fwk",
+  "stage_selector": {
+    "type": "date-range",
+    "user_input": {
+      "base": null,
+      "commits": [],
+      "head": null,
+      "release_name": null,
+      "since": "2026-03-01",
+      "until": "2026-08-12"
+    }
+  }
+}

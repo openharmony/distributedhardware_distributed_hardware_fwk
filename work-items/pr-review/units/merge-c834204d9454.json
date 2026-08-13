@@ -1,0 +1,82 @@
+{
+  "base": "95c2b253a6ec5d31326b1e463be420553f6f1c16",
+  "baseline_review_depth": "focused",
+  "challenge_reason": "single primary review permitted by deterministic risk policy",
+  "challenge_required": false,
+  "changed_path_summary": "23 changed paths",
+  "changed_paths": [
+    "av_transport/av_trans_control_center/test/fuzztest/onstreamreceived_fuzzer/onstreamreceived_fuzzer.cpp",
+    "services/distributedhardwarefwkservice/test/fuzztest/BUILD.gn",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanager_fuzzer/capabilityinfomanager_fuzzer.cpp",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerone_fuzzer/BUILD.gn",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerone_fuzzer/capabilityinfomanagerone_fuzzer.cpp",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerone_fuzzer/capabilityinfomanagerone_fuzzer.h",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerone_fuzzer/corpus/init",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerone_fuzzer/project.xml",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerthree_fuzzer/BUILD.gn",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerthree_fuzzer/capabilityinfomanagerthree_fuzzer.cpp",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerthree_fuzzer/capabilityinfomanagerthree_fuzzer.h",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerthree_fuzzer/corpus/init",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerthree_fuzzer/project.xml",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagertwo_fuzzer/BUILD.gn",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagertwo_fuzzer/capabilityinfomanagertwo_fuzzer.cpp",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagertwo_fuzzer/capabilityinfomanagertwo_fuzzer.h",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagertwo_fuzzer/corpus/init",
+    "services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagertwo_fuzzer/project.xml",
+    "services/distributedhardwarefwkservice/test/fuzztest/dhcommtoolone_fuzzer/BUILD.gn",
+    "services/distributedhardwarefwkservice/test/fuzztest/dhcommtoolone_fuzzer/corpus/init",
+    "services/distributedhardwarefwkservice/test/fuzztest/dhcommtoolone_fuzzer/dhcommtoolone_fuzzer.cpp",
+    "services/distributedhardwarefwkservice/test/fuzztest/dhcommtoolone_fuzzer/dhcommtoolone_fuzzer.h",
+    "services/distributedhardwarefwkservice/test/fuzztest/dhcommtoolone_fuzzer/project.xml"
+  ],
+  "commit_assignments": [
+    {
+      "role": "integration merge",
+      "sha": "c834204d94541936056043ffd56aa33c0153a9f7"
+    },
+    {
+      "role": "merged member",
+      "sha": "affee5925a5c0d61584bda0fce5d7b90b2c72dfb"
+    }
+  ],
+  "depth_reason": "test-only change retained for integration accounting; test adequacy is out of scope",
+  "diff_evidence": [
+    "git diff --find-renames 95c2b253a6ec5d31326b1e463be420553f6f1c16..c834204d94541936056043ffd56aa33c0153a9f7",
+    "git diff --find-renames 95c2b253a6ec5d31326b1e463be420553f6f1c16..affee5925a5c0d61584bda0fce5d7b90b2c72dfb",
+    "git diff-tree -m --find-renames c834204d94541936056043ffd56aa33c0153a9f7"
+  ],
+  "expected_challenge_report": "challenge-results/merge-c834204d9454.md",
+  "expected_challenge_result": "challenge-results/merge-c834204d9454.json",
+  "expected_report": "results/merge-c834204d9454.md",
+  "expected_result": "results/merge-c834204d9454.json",
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "head": "affee5925a5c0d61584bda0fce5d7b90b2c72dfb",
+  "integration_date": "2026-03-14T16:03:05+08:00",
+  "member_commits": [
+    "affee5925a5c0d61584bda0fce5d7b90b2c72dfb"
+  ],
+  "merge": "c834204d94541936056043ffd56aa33c0153a9f7",
+  "network_policy": "local-only",
+  "ordinal": 21,
+  "parents": [
+    "95c2b253a6ec5d31326b1e463be420553f6f1c16",
+    "affee5925a5c0d61584bda0fce5d7b90b2c72dfb"
+  ],
+  "pr_identity": null,
+  "primary_dimensions": [
+    "Build and portability"
+  ],
+  "priority": "medium",
+  "resolution": "two-parent-local-graph",
+  "review_depth": "focused",
+  "review_protocol_version": 2,
+  "risk_signals": [
+    "build-or-packaging"
+  ],
+  "sampling_selected": false,
+  "schema_version": 3,
+  "stage_evidence": "c834204d94541936056043ffd56aa33c0153a9f7 is a first-parent integration selected by date-range; committer date 2026-03-14T16:03:05+08:00",
+  "subject": "!1204 merge master into master",
+  "unit_id": "merge-c834204d9454",
+  "unit_type": "merge"
+}

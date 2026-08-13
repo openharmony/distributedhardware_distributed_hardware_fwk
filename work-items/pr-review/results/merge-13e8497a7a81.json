@@ -1,0 +1,304 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "Two method declarations removed"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/resourcemanager/db_adapter.h",
+      "rationale": "Removes CloudSyncData() and static CloudSyncCallback() from public interface"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "One method declaration removed"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/resourcemanager/meta_info_manager.h",
+      "rationale": "Removes ActiveCloudSyncData() from public interface"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "Two method declarations removed"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/task/online_task.h",
+      "rationale": "Removes ActiveSyncMetaData() and IsNeedActiveSyncData() private methods"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "CloudSyncData called kvStoragePtr_->CloudSync with callback; CloudSyncCallback logged sync results"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/resourcemanager/db_adapter.cpp",
+      "rationale": "Removes CloudSyncData implementation (38 lines) and CloudSyncCallback implementation (12 lines), plus <functional> include"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "11-line method removed"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/resourcemanager/meta_info_manager.cpp",
+      "rationale": "Removes ActiveCloudSyncData implementation that called dbAdapterPtr_->CloudSyncData()"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "DoSyncInfo no longer calls ActiveSyncMetaData after SyncMetaInfoFromDB failure; 55 lines of ActiveSyncMetaData/IsNeedActiveSyncData code removed"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/task/online_task.cpp",
+      "rationale": "Removes ActiveSyncMetaData() call from DoSyncInfo failure path, removes ActiveSyncMetaData and IsNeedActiveSyncData implementations, removes component_loader.h include"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "CloudSyncData_001, CloudSyncCallback_001 through _005 removed"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/resourcemanager/db_adapter_test.cpp",
+      "rationale": "Removes 6 unit tests for CloudSyncData and CloudSyncCallback"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "ActiveCloudSyncData_001 and _002 removed"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/resourcemanager/meta_info_manager_test.cpp",
+      "rationale": "Removes 2 unit tests for ActiveCloudSyncData"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "1 test removed"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/task/src/online_task_test.cpp",
+      "rationale": "Removes ActiveSyncMetaData_001 test"
+    }
+  ],
+  "checked_safe": [
+    "Reviewed all changed paths; no code defect found"
+  ],
+  "claim_id": "a782492397708ed9b3fdb7468860e7c7",
+  "classification": "Quality improvement",
+  "context_inspection": {
+    "changed_symbols": [
+      "OnLineTask::DoSyncInfo",
+      "OnLineTask::ActiveSyncMetaData (removed)",
+      "OnLineTask::IsNeedActiveSyncData (removed)",
+      "DBAdapter::CloudSyncData (removed)",
+      "DBAdapter::CloudSyncCallback (removed)",
+      "MetaInfoManager::ActiveCloudSyncData (removed)"
+    ],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "ctx-1",
+        "path": "services/distributedhardwarefwkservice/src/task/online_task.cpp",
+        "relation": "caller-of-removed-method",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "DoSyncInfo"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "ctx-2",
+        "path": "services/distributedhardwarefwkservice/include/resourcemanager/db_adapter.h",
+        "relation": "class-definition",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "DBAdapter"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "ctx-3",
+        "path": "services/distributedhardwarefwkservice/include/resourcemanager/meta_info_manager.h",
+        "relation": "class-definition",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "MetaInfoManager"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "ctx-4",
+        "path": "services/distributedhardwarefwkservice/include/task/online_task.h",
+        "relation": "class-definition",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "OnLineTask"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "ctx-1"
+        ],
+        "from": "OnLineTask::DoSyncInfo",
+        "relation": "calls",
+        "to": "MetaInfoManager::SyncMetaInfoFromDB"
+      },
+      {
+        "evidence_refs": [
+          "ctx-1"
+        ],
+        "from": "OnLineTask::DoSyncInfo",
+        "relation": "formerly-called-on-failure",
+        "to": "(removed) OnLineTask::ActiveSyncMetaData"
+      }
+    ],
+    "level": "direct-flow",
+    "rationale": "Change is self-contained within modified files; no cross-boundary flow observed",
+    "self_contained": true,
+    "unresolved": []
+  },
+  "coverage_gaps": [],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "DoSyncInfo in online_task.cpp no longer calls ActiveSyncMetaData after SyncMetaInfoFromDB fails",
+        "ActiveSyncMetaData and IsNeedActiveSyncData methods removed from online_task.h and online_task.cpp",
+        "CloudSyncData and CloudSyncCallback removed from db_adapter.h and db_adapter.cpp",
+        "ActiveCloudSyncData removed from meta_info_manager.h and meta_info_manager.cpp",
+        "component_loader.h include removed from online_task.cpp (was only needed for IsNeedActiveSyncData's MODEM source check)",
+        "DoSyncInfo still logs the error on SyncMetaInfoFromDB failure but takes no recovery action"
+      ],
+      "rationale": "Removes active cloud sync fallback from the online task device sync flow. Must verify that removal does not break the online task pipeline and that the error path is handled correctly.",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Reliability and recovery",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Performance and scalability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Build and portability",
+      "evidence": [],
+      "rationale": "No build system changes.",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [],
+      "rationale": "Test adequacy is outside current finding scope",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Security and privacy",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    }
+  ],
+  "exclusions": [
+    "Fallback removed; no active defect at scan HEAD"
+  ],
+  "executed_checks": [
+    {
+      "command": "Dangling reference check for all removed methods across codebase",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Flow impact analysis for DoSyncInfo error path",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Include dependency check (component_loader.h)",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Test-production consistency check",
+      "outcome": "reviewed",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "DoSyncInfo at online_task.cpp:105-109 logs error but takes no action",
+        "CreateEnableTask at line 136-152 falls through to meta info lookup and may find empty results",
+        "The ActiveSyncMetaData call was specifically designed as a fallback for this scenario"
+      ],
+      "expected_failure": "No enable tasks created for the online device; hardware not enabled until next sync event",
+      "hypothesis_id": "H1",
+      "outcome": "ruled-out",
+      "statement": "When SyncMetaInfoFromDB fails during device online, there is no longer a fallback mechanism to actively sync meta data, so CreateEnableTask may find no meta capability info and fail to create enable tasks for the device",
+      "trigger": "Device comes online but meta DB sync fails (e.g., KV store temporarily unavailable)",
+      "verification": "Simulate SyncMetaInfoFromDB failure during device online and verify whether enable tasks are created"
+    }
+  ],
+  "findings": [],
+  "flow_coverage": [
+    {
+      "affected_flow": "Device online -> DoSyncInfo -> SyncMetaInfoFromDB fails -> previously ActiveSyncMetaData (now nothing) -> CreateEnableTask may find no meta data",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "OnLineTask::DoTask",
+      "evidence": [
+        "online_task.cpp:105-109: SyncMetaInfoFromDB failure is logged but no recovery action taken"
+      ],
+      "flow_id": "F1"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "Removes CloudSyncData/CloudSyncCallback from DBAdapter, ActiveCloudSyncData from MetaInfoManager, and ActiveSyncMetaData/IsNeedActiveSyncData from OnLineTask. The online_task.cpp DoSyncInfo no longer calls ActiveSyncMetaData on SyncMetaInfoFromDB failure. This means when meta info DB sync fails, there is no longer any fallback active sync mechanism. The removal is intentional (the feature was added in unit 24 and removed here), but the fallback gap remains: if SyncMetaInfoFromDB fails, meta data will simply be unavailable with no recovery path.",
+  "temporal_status": "current",
+  "unit_id": "merge-13e8497a7a81",
+  "verification_disposition": {
+    "evidence": [
+      "Traced DoSyncInfo flow with and without ActiveSyncMetaData",
+      "Verified all removed methods have no remaining callers"
+    ],
+    "rationale": "No build environment available; analysis based on code flow tracing and removal impact assessment.",
+    "status": "static-analysis"
+  }
+}

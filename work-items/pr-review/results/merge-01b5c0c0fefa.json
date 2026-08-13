@@ -1,0 +1,475 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "uint32_t firstCallingTokenId{0} member added"
+      ],
+      "path": "common/utils/include/dhardware_descriptor.h",
+      "rationale": "DHDescriptor struct gains firstCallingTokenId field; struct layout and default value reviewed"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "ReadUint32/WriteUint32 added for firstCallingTokenId"
+      ],
+      "path": "interfaces/inner_kits/src/ipc/distributed_hardware_proxy.cpp",
+      "rationale": "ReadDescriptors/WriteDescriptors add uint32 field; serialization format change reviewed for compatibility"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "data.WriteUint32(0u) added"
+      ],
+      "path": "interfaces/inner_kits/test/unittest/common/ipc/distributed_hardware_proxy/src/distributed_hardware_proxy_test.cpp",
+      "rationale": "Test updated to write uint32(0) for firstCallingTokenId in manual parcel construction"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "SetFirstCallingTokenId/GetFirstCallingTokenId added",
+        "AppendTokenIdToParams now takes uint32_t firstCallingTokenId parameter"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/task/enable_task.h",
+      "rationale": "EnableTask gains firstCallingTokenId accessors and member; AppendTokenIdToParams signature changed"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "uint32_t firstCallingTokenId{0} member added"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/utils/impl_utils.h",
+      "rationale": "TaskParam gains firstCallingTokenId field"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        ".firstCallingTokenId = descriptor.firstCallingTokenId"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+      "rationale": "EnableSource populates firstCallingTokenId from DHDescriptor into TaskParam"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "ReadUint32/WriteUint32 added for firstCallingTokenId"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/distributed_hardware_stub.cpp",
+      "rationale": "Stub-side ReadDescriptors/WriteDescriptors add uint32 field; same serialization format change as proxy"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "Condition: if (GetFirstCallingTokenId() != 0)",
+        "cJSON_AddNumberToObject(json, \"tokenId\", static_cast<double>(firstCallingTokenId))"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/task/enable_task.cpp",
+      "rationale": "AppendTokenIdToParams now uses firstCallingTokenId parameter; DoActiveEnable condition changed from AUDIO-only to firstCallingTokenId!=0"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "enableTask->SetFirstCallingTokenId(taskParam.firstCallingTokenId)"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/task/task_factory.cpp",
+      "rationale": "CreateEnableTask propagates firstCallingTokenId from TaskParam to EnableTask"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        ".firstCallingTokenId = 12345u"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/distributedhardwarestub/src/distributed_hardware_stub_test.cpp",
+      "rationale": "Test updated to include firstCallingTokenId in DHDescriptor construction"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "SetFirstCallingTokenId(12345u)",
+        "AppendTokenIdToParams(params, 12345u)"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/task/src/enable_task_test.cpp",
+      "rationale": "Tests updated from SetCallingTokenId to SetFirstCallingTokenId; AppendTokenIdToParams calls updated with explicit parameter"
+    }
+  ],
+  "checked_safe": [
+    "firstCallingTokenId default value 0 preserves no-injection behavior when not explicitly set",
+    "cJSON_AddNumberToObject with static_cast<double>(uint32_t) preserves full uint32 range (53-bit mantissa)",
+    "TaskFactory::CreateEnableTask correctly propagates firstCallingTokenId from TaskParam to EnableTask"
+  ],
+  "claim_id": "867a4ed90d689149d9a0d663ca6a654f",
+  "classification": "Introduces defect",
+  "context_inspection": {
+    "changed_symbols": [
+      "DHDescriptor::firstCallingTokenId",
+      "DistributedHardwareProxy::ReadDescriptors",
+      "DistributedHardwareProxy::WriteDescriptors",
+      "DistributedHardwareStub::ReadDescriptors",
+      "DistributedHardwareStub::WriteDescriptors",
+      "TaskParam::firstCallingTokenId",
+      "EnableTask::SetFirstCallingTokenId",
+      "EnableTask::GetFirstCallingTokenId",
+      "EnableTask::AppendTokenIdToParams",
+      "EnableTask::DoActiveEnable",
+      "TaskFactory::CreateEnableTask",
+      "DistributedHardwareService::EnableSource"
+    ],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "E1",
+        "path": "common/utils/include/dhardware_descriptor.h",
+        "relation": "added-field",
+        "source_ref": "772d1d30c5edb27b4521dc8b91655e06ef668ca5",
+        "symbol": "DHDescriptor::firstCallingTokenId"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E2",
+        "path": "interfaces/inner_kits/src/ipc/distributed_hardware_proxy.cpp",
+        "relation": "modified",
+        "source_ref": "772d1d30c5edb27b4521dc8b91655e06ef668ca5",
+        "symbol": "DistributedHardwareProxy::ReadDescriptors"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E3",
+        "path": "interfaces/inner_kits/src/ipc/distributed_hardware_proxy.cpp",
+        "relation": "modified",
+        "source_ref": "772d1d30c5edb27b4521dc8b91655e06ef668ca5",
+        "symbol": "DistributedHardwareProxy::WriteDescriptors"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E4",
+        "path": "services/distributedhardwarefwkservice/src/distributed_hardware_stub.cpp",
+        "relation": "modified",
+        "source_ref": "772d1d30c5edb27b4521dc8b91655e06ef668ca5",
+        "symbol": "DistributedHardwareStub::ReadDescriptors"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E5",
+        "path": "services/distributedhardwarefwkservice/src/distributed_hardware_stub.cpp",
+        "relation": "modified",
+        "source_ref": "772d1d30c5edb27b4521dc8b91655e06ef668ca5",
+        "symbol": "DistributedHardwareStub::WriteDescriptors"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E6",
+        "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+        "relation": "modified",
+        "source_ref": "772d1d30c5edb27b4521dc8b91655e06ef668ca5",
+        "symbol": "DistributedHardwareService::EnableSource"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E7",
+        "path": "services/distributedhardwarefwkservice/src/task/enable_task.cpp",
+        "relation": "modified",
+        "source_ref": "772d1d30c5edb27b4521dc8b91655e06ef668ca5",
+        "symbol": "EnableTask::DoActiveEnable"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E8",
+        "path": "services/distributedhardwarefwkservice/src/task/enable_task.cpp",
+        "relation": "modified",
+        "source_ref": "772d1d30c5edb27b4521dc8b91655e06ef668ca5",
+        "symbol": "EnableTask::AppendTokenIdToParams"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E9",
+        "path": "services/distributedhardwarefwkservice/src/task/task_factory.cpp",
+        "relation": "modified",
+        "source_ref": "772d1d30c5edb27b4521dc8b91655e06ef668ca5",
+        "symbol": "TaskFactory::CreateEnableTask"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E10",
+        "path": "services/distributedhardwarefwkservice/include/task/enable_task.h",
+        "relation": "added-field",
+        "source_ref": "772d1d30c5edb27b4521dc8b91655e06ef668ca5",
+        "symbol": "EnableTask::firstCallingTokenId_"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E11",
+        "path": "services/distributedhardwarefwkservice/include/utils/impl_utils.h",
+        "relation": "added-field",
+        "source_ref": "772d1d30c5edb27b4521dc8b91655e06ef668ca5",
+        "symbol": "TaskParam::firstCallingTokenId"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "E1",
+          "E2"
+        ],
+        "from": "DHDescriptor::firstCallingTokenId",
+        "relation": "deserialized-from-parcel",
+        "to": "DistributedHardwareProxy::ReadDescriptors"
+      },
+      {
+        "evidence_refs": [
+          "E2",
+          "E6"
+        ],
+        "from": "DistributedHardwareProxy::ReadDescriptors",
+        "relation": "ipc-receive",
+        "to": "DistributedHardwareService::EnableSource"
+      },
+      {
+        "evidence_refs": [
+          "E6",
+          "E11"
+        ],
+        "from": "DistributedHardwareService::EnableSource",
+        "relation": "copies-from-descriptor",
+        "to": "TaskParam::firstCallingTokenId"
+      },
+      {
+        "evidence_refs": [
+          "E9",
+          "E10"
+        ],
+        "from": "TaskParam::firstCallingTokenId",
+        "relation": "set-via-TaskFactory",
+        "to": "EnableTask::firstCallingTokenId_"
+      },
+      {
+        "evidence_refs": [
+          "E7",
+          "E8"
+        ],
+        "from": "EnableTask::firstCallingTokenId_",
+        "relation": "used-as-tokenId",
+        "to": "EnableTask::AppendTokenIdToParams"
+      },
+      {
+        "evidence_refs": [
+          "E3",
+          "E4"
+        ],
+        "from": "DistributedHardwareProxy::WriteDescriptors",
+        "relation": "ipc-wire-format",
+        "to": "DistributedHardwareStub::ReadDescriptors"
+      }
+    ],
+    "level": "direct-flow",
+    "rationale": "Change is self-contained within modified files; no cross-boundary flow observed",
+    "self_contained": true,
+    "unresolved": []
+  },
+  "coverage_gaps": [
+    "Cannot verify whether downstream non-AUDIO components handle tokenId in customParams correctly",
+    "Cannot verify if old-version processes can call EnableSource on new-version services in production deployment scenarios"
+  ],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "AppendTokenIdToParams now uses firstCallingTokenId parameter instead of GetCallingTokenId()",
+        "DoActiveEnable condition changed from DHType::AUDIO check to firstCallingTokenId!=0",
+        "firstCallingTokenId flows from DHDescriptor through TaskParam to EnableTask"
+      ],
+      "rationale": "Core change modifies enable flow to use firstCallingTokenId from DHDescriptor instead of callingTokenId from IPCSkeleton, and expands tokenId injection to all DH types",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [],
+      "rationale": "No concurrency changes",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Reliability and recovery",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Performance and scalability",
+      "evidence": [],
+      "rationale": "Adding one uint32 to IPC has negligible performance impact",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Build and portability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [],
+      "rationale": "Test adequacy is outside current finding scope",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Security and privacy",
+      "evidence": [
+        "AppendTokenIdToParams now injects firstCallingTokenId into customParams.tokenId"
+      ],
+      "rationale": "Token ID propagation affects access control; using firstCallingTokenId (original caller) instead of callingTokenId (immediate IPC caller) changes which identity is forwarded to components",
+      "review_level": "screen"
+    }
+  ],
+  "exclusions": [],
+  "executed_checks": [
+    {
+      "command": "git diff + source read",
+      "outcome": "Reviewed changed code paths against invariants",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "proxy.cpp WriteDescriptors: WriteString(id) + WriteInt32(dhType) + WriteString(customParams) + WriteUint32(firstCallingTokenId)",
+        "stub.cpp ReadDescriptors: ReadString(id) + ReadInt32(dhType) + ReadString(customParams) + ReadUint32(firstCallingTokenId)",
+        "No version field or length prefix to allow backward-compatible parsing"
+      ],
+      "expected_failure": "Parcel data corruption: firstCallingTokenId reads garbage, subsequent descriptor fields are misaligned, possible crash or wrong enable behavior",
+      "hypothesis_id": "H1",
+      "outcome": "supported",
+      "statement": "IPC parcel misalignment: old proxy writes 3 fields per descriptor (id, dhType, customParams), new stub reads 4 fields; the stub's ReadUint32 for firstCallingTokenId reads from the next descriptor's data or trailing parcel data",
+      "trigger": "An old-version process uses DistributedHardwareProxy::WriteDescriptors (3 fields) to call a new-version service running DistributedHardwareStub::ReadDescriptors (4 fields)",
+      "verification": "Static analysis of ReadDescriptors/WriteDescriptors serialization format; confirmed no version negotiation mechanism exists"
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "Old condition: GetDhType() == DHType::AUDIO && GetCallingTokenId() != 0",
+        "New condition: GetFirstCallingTokenId() != 0",
+        "Default firstCallingTokenId is 0, so only explicitly-set values trigger the injection"
+      ],
+      "expected_failure": "Non-AUDIO component receives unexpected tokenId field in customParams, potentially causing parsing errors or incorrect behavior",
+      "hypothesis_id": "H2",
+      "outcome": "inconclusive",
+      "statement": "tokenId injection expanded from AUDIO-only to all DH types: non-AUDIO components may not expect or correctly handle a tokenId field in their customParams JSON",
+      "trigger": "A non-AUDIO component (e.g., CAMERA, SCREEN) is enabled with firstCallingTokenId != 0",
+      "verification": "Cannot verify downstream component behavior statically; depends on whether callers set firstCallingTokenId for non-AUDIO types"
+    }
+  ],
+  "findings": [
+    {
+      "changed_code": [
+        "see diff evidence"
+      ],
+      "confidence": "medium",
+      "current_at_scan_head": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "proxy.cpp:919-951 WriteDescriptors writes id(dhType,customParams,firstCallingTokenId",
+        "stub.cpp:657-693 ReadDescriptors reads id,dhType,customParams,firstCallingTokenId",
+        "No parcel version/length field for DHDescriptor array"
+      ],
+      "finding_id": "F-01b5c0-001",
+      "finding_type": "code-defect",
+      "impact": "Cross-version IPC calls between processes with mismatched DHDescriptor serialization will corrupt parcel data, potentially causing enable operations to fail or crash",
+      "judgment": "defect identified",
+      "location": "interfaces/inner_kits/src/ipc/distributed_hardware_proxy.cpp:919-951 and services/distributedhardwarefwkservice/src/distributed_hardware_stub.cpp:657-693",
+      "relevant_flow": "Changed code path to affected behavior",
+      "severity": "medium",
+      "statement": "DHDescriptor IPC serialization format is changed by adding a WriteUint32/ReadUint32 for firstCallingTokenId without backward compatibility. If an old proxy (writing 3 fields per descriptor) communicates with a new stub (reading 4 fields), the stub's ReadUint32 for firstCallingTokenId reads from the wrong position in the parcel, causing data corruption. Conversely, a new proxy writing 4 fields to an old stub leaves unread data in the parcel, corrupting subsequent reads. No version field or length prefix exists to allow format negotiation.",
+      "symbol": "DistributedHardwareProxy::ReadDescriptors/WriteDescriptors, DistributedHardwareStub::ReadDescriptors/WriteDescriptors",
+      "temporal_status": "Current at scan HEAD; not yet fixed",
+      "title": "Finding 1",
+      "trigger": "Execution of the changed code path",
+      "type": "behavioral-compatibility",
+      "verification": "Static code path review",
+      "violated_invariant": "Correctness invariant violated by changed code"
+    }
+  ],
+  "flow_coverage": [
+    {
+      "affected_flow": "Enable source with tokenId: DHDescriptor.firstCallingTokenId flows through TaskParam to EnableTask and is injected into customParams via AppendTokenIdToParams for all DH types (not just AUDIO)",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "DistributedHardwareService::EnableSource",
+      "evidence": [
+        "enable_task.cpp:260 if (GetFirstCallingTokenId() != 0) AppendTokenIdToParams(...)"
+      ],
+      "flow_id": "F1"
+    },
+    {
+      "affected_flow": "IPC serialization: DHDescriptor is written to MessageParcel with 4 fields per descriptor (id, dhType, customParams, firstCallingTokenId); old version writes 3 fields, causing parcel misalignment across versions",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "DistributedHardwareProxy::WriteDescriptors",
+      "evidence": [
+        "proxy.cpp: WriteString(id), WriteInt32(dhType), WriteString(customParams), WriteUint32(firstCallingTokenId)"
+      ],
+      "flow_id": "F2"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [
+    {
+      "affected_surface": "services code path",
+      "candidate_id": "C-001",
+      "dimension": "Functional correctness",
+      "finding_id": "F-01b5c0-001",
+      "finding_ref": "F-01b5c0-001",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "root_cause_key": "defect-in-changed-code",
+      "severity": "medium",
+      "suggested_verification": "Run relevant unit test with the trigger condition"
+    }
+  ],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed-with-gaps",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "Introduces firstCallingTokenId field to DHDescriptor and propagates it through IPC (proxy/stub ReadDescriptors/WriteDescriptors), TaskParam, and EnableTask. Two behavioral concerns: (1) The IPC serialization format is changed without backward compatibility - adding ReadUint32/WriteUint32 for firstCallingTokenId breaks old proxy-to-new-stub and new-proxy-to-old-stub communication due to parcel data misalignment. (2) The tokenId append condition changed from AUDIO-only to all DH types when firstCallingTokenId!=0, which expands tokenId injection to non-AUDIO components. The IPC format change is a concrete behavioral-compatibility defect.",
+  "temporal_status": "current",
+  "unit_id": "merge-01b5c0c0fefa",
+  "verification_disposition": {
+    "evidence": [
+      "ReadDescriptors/WriteDescriptors format confirmed incompatible across versions"
+    ],
+    "rationale": "IPC compatibility defect verified by code inspection; no runtime test executed",
+    "status": "static-analysis"
+  }
+}

@@ -1,0 +1,346 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "std::string(OWNER_NAME_D_SCREEN) + \"_\" + suffix"
+      ],
+      "path": "av_transport/av_trans_engine/plugin/test/av_trans_input/daudio_input_test/daudio_input_test.cpp",
+      "rationale": "Test code wraps OWNER_NAME_D_SCREEN in std::string() for concatenation; correct adaptation"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "constexpr const char* OWNER_NAME_D_CAMERA = \"ohos.dhardware.dcamera\""
+      ],
+      "path": "av_transport/common/include/av_trans_types.h",
+      "rationale": "25 constants changed from const std::string to constexpr const char*; all values preserved"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "std::string(OWNER_NAME_D_MIC) + \"_\" + SENDER_CONTROL_SESSION_NAME_SUFFIX"
+      ],
+      "path": "av_transport/common/src/softbus_channel_adapter.cpp",
+      "rationale": "LOCAL_TO_PEER_SESSION_NAME_MAP entries wrapped with std::string() for concatenation with SENDER/RECEIVER suffixes (still const std::string in av_trans_constants.h)"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "constexpr const char *RESOURCE_SEPARATOR = \"###\""
+      ],
+      "path": "common/utils/include/constants.h",
+      "rationale": "RESOURCE_SEPARATOR and DH_FWK_PKG_NAME changed from const std::string to constexpr const char*"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "inline const std::unordered_map<DHType, std::string> DHTypeStrMap = { ... }"
+      ],
+      "path": "common/utils/include/device_type.h",
+      "rationale": "DHTypeStrMap and DHTypePrefixMap changed from const to inline const; C++17 inline variables for proper ODR"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "const_cast<char*>(DH_FWK_PKG_NAME) instead of const_cast<char*>(DH_FWK_PKG_NAME.c_str())"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/transport/dh_transport.cpp",
+      "rationale": "DH_FWK_PKG_NAME.c_str() changed to DH_FWK_PKG_NAME (now const char*); correct for const_cast<char*> and strdup"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "strdup(DH_FWK_PKG_NAME)"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/fuzztest/dhtransportone_fuzzer/dhtransportone_fuzzer.cpp",
+      "rationale": "strdup(DH_FWK_PKG_NAME.c_str()) changed to strdup(DH_FWK_PKG_NAME); correct since DH_FWK_PKG_NAME is now const char*"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "strdup(DH_FWK_PKG_NAME)"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/fuzztest/dhtransporttwo_fuzzer/dhtransporttwo_fuzzer.cpp",
+      "rationale": "Same adaptation as dhtransportone_fuzzer"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "MockGetLocalNodeDeviceInfo(DH_FWK_PKG_NAME, info.get())"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/src/component_manager_test.cpp",
+      "rationale": "DH_FWK_PKG_NAME.c_str() changed to DH_FWK_PKG_NAME for MockGetLocalNodeDeviceInfo call"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "std::string(\"prefix\") + RESOURCE_SEPARATOR"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/utils/dh_context_test.cpp",
+      "rationale": "\"prefix\" + RESOURCE_SEPARATOR changed to std::string(\"prefix\") + RESOURCE_SEPARATOR; prevents pointer arithmetic on const char*"
+    }
+  ],
+  "checked_safe": [
+    "std::string() wrapping for constexpr const char* concatenation in softbus_channel_adapter.cpp",
+    "DH_FWK_PKG_NAME direct use (no .c_str()) in dh_transport.cpp",
+    "inline keyword for DHTypeStrMap and DHTypePrefixMap provides correct ODR semantics",
+    "std::string(\"prefix\") + RESOURCE_SEPARATOR prevents pointer arithmetic in dh_context_test.cpp",
+    "SENDER_CONTROL_SESSION_NAME_SUFFIX remains const std::string in av_trans_constants.h - compatible with std::string + std::string concatenation"
+  ],
+  "claim_id": "92a7e62d5be0ec5694e681e3b7cb58f8",
+  "classification": "Quality improvement",
+  "context_inspection": {
+    "changed_symbols": [
+      "OWNER_NAME_D_CAMERA",
+      "OWNER_NAME_D_SCREEN",
+      "OWNER_NAME_D_MIC",
+      "OWNER_NAME_D_SPEAKER",
+      "OWNER_NAME_D_VIRMODEM_MIC",
+      "OWNER_NAME_D_VIRMODEM_SPEAKER",
+      "SCENE_TYPE_D_MIC",
+      "SCENE_TYPE_D_SCREEN",
+      "SCENE_TYPE_D_SPEAKER",
+      "SCENE_TYPE_D_CAMERA_STR",
+      "SCENE_TYPE_D_CAMERA_PIC",
+      "PKG_NAME_DH_FWK",
+      "PKG_NAME_D_AUDIO",
+      "PKG_NAME_D_CALL",
+      "PKG_NAME_D_CAMERA",
+      "PKG_NAME_D_SCREEN",
+      "MIME_VIDEO_RAW",
+      "MIME_VIDEO_H264",
+      "MIME_VIDEO_H265",
+      "VIDEO_FORMAT_NV12",
+      "VIDEO_FORMAT_NV21",
+      "VIDEO_FORMAT_JEPG",
+      "VIDEO_FORMAT_YUVI420",
+      "VIDEO_FORMAT_RGBA8888",
+      "RESOURCE_SEPARATOR",
+      "DH_FWK_PKG_NAME",
+      "DHTypeStrMap",
+      "DHTypePrefixMap"
+    ],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "E1",
+        "path": "av_transport/common/include/av_trans_types.h",
+        "relation": "type-changed",
+        "source_ref": "74fc6846b46b7f35d773e9b94497632f23607386",
+        "symbol": "OWNER_NAME_D_*"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E2",
+        "path": "av_transport/common/include/av_trans_constants.h",
+        "relation": "unchanged-type-still-const-std-string",
+        "source_ref": "74fc6846b46b7f35d773e9b94497632f23607386",
+        "symbol": "SENDER_CONTROL_SESSION_NAME_SUFFIX"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E3",
+        "path": "av_transport/common/src/softbus_channel_adapter.cpp",
+        "relation": "adapted-concatenation",
+        "source_ref": "74fc6846b46b7f35d773e9b94497632f23607386",
+        "symbol": "LOCAL_TO_PEER_SESSION_NAME_MAP"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E4",
+        "path": "common/utils/include/constants.h",
+        "relation": "type-changed",
+        "source_ref": "74fc6846b46b7f35d773e9b94497632f23607386",
+        "symbol": "DH_FWK_PKG_NAME"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E5",
+        "path": "common/utils/include/device_type.h",
+        "relation": "inline-added",
+        "source_ref": "74fc6846b46b7f35d773e9b94497632f23607386",
+        "symbol": "DHTypeStrMap"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E6",
+        "path": "common/utils/include/device_type.h",
+        "relation": "inline-added",
+        "source_ref": "74fc6846b46b7f35d773e9b94497632f23607386",
+        "symbol": "DHTypePrefixMap"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E7",
+        "path": "services/distributedhardwarefwkservice/src/transport/dh_transport.cpp",
+        "relation": "adapted-c_str-removed",
+        "source_ref": "74fc6846b46b7f35d773e9b94497632f23607386",
+        "symbol": "DHTransport::CreateServerSocket"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "E1",
+          "E3"
+        ],
+        "from": "OWNER_NAME_D_MIC",
+        "relation": "string-concatenation",
+        "to": "softbus_channel_adapter.cpp:LOCAL_TO_PEER_SESSION_NAME_MAP"
+      },
+      {
+        "evidence_refs": [
+          "E4",
+          "E7"
+        ],
+        "from": "DH_FWK_PKG_NAME",
+        "relation": "used-as-pkgName",
+        "to": "DHTransport::CreateServerSocket"
+      }
+    ],
+    "level": "local-symbol",
+    "rationale": "Changes are type substitutions for compile-time constants; all use sites within the same repository are adapted in the same commit",
+    "self_contained": true,
+    "unresolved": []
+  },
+  "coverage_gaps": [],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "av_trans_types.h: 25 constants changed to constexpr const char*",
+        "constants.h: RESOURCE_SEPARATOR and DH_FWK_PKG_NAME changed to constexpr const char*",
+        "All concatenation sites in softbus_channel_adapter.cpp wrapped with std::string()",
+        "dh_transport.cpp: DH_FWK_PKG_NAME used directly without .c_str() - correct for const char*"
+      ],
+      "rationale": "const std::string to constexpr const char* refactoring changes string literal type and requires adaptation at all concatenation sites; reviewed all use sites for correctness",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [],
+      "rationale": "No concurrency changes",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Reliability and recovery",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Performance and scalability",
+      "evidence": [
+        "Compile-time constants replace runtime-initialized std::string objects"
+      ],
+      "rationale": "constexpr const char* eliminates static initialization overhead for string constants",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Build and portability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [],
+      "rationale": "Test adequacy is outside current finding scope",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Security and privacy",
+      "evidence": [],
+      "rationale": "No security-relevant changes",
+      "review_level": "not-applicable"
+    }
+  ],
+  "exclusions": [],
+  "executed_checks": [
+    {
+      "command": "git diff + source read",
+      "outcome": "Reviewed changed code paths against invariants",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "All concatenation sites correctly wrap at least the first operand in std::string()",
+        "softbus_channel_adapter.cpp uses std::string(OWNER_NAME_D_MIC) + \"_\" + suffix pattern",
+        "dh_context_test.cpp uses std::string(\"prefix\") + RESOURCE_SEPARATOR"
+      ],
+      "expected_failure": "Pointer arithmetic produces wrong memory address, crash or garbage string",
+      "hypothesis_id": "H1",
+      "outcome": "ruled-out",
+      "statement": "String concatenation with constexpr const char* and const char* literal without std::string wrapper would perform pointer arithmetic instead of string concatenation",
+      "trigger": "Code does OWNER_NAME_D_MIC + \"_\" + SENDER_CONTROL_SESSION_NAME_SUFFIX where OWNER_NAME_D_MIC is constexpr const char* and the literal is const char*",
+      "verification": "Reviewed all concatenation sites in the diff; all correctly use std::string() wrapper"
+    }
+  ],
+  "findings": [],
+  "flow_coverage": [
+    {
+      "affected_flow": "Session name map construction: constexpr const char* OWNER_NAME_* constants concatenated with const std::string SENDER/RECEIVER suffixes via std::string() wrapper",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "softbus_channel_adapter.cpp:LOCAL_TO_PEER_SESSION_NAME_MAP",
+      "evidence": [
+        "std::string(OWNER_NAME_D_MIC) + \"_\" + SENDER_CONTROL_SESSION_NAME_SUFFIX yields correct std::string result"
+      ],
+      "flow_id": "F1"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "Refactors const std::string constants in av_trans_types.h and constants.h to constexpr const char* to avoid static initialization order fiasco (SIOF) and reduce runtime overhead. Adds inline to DHTypeStrMap and DHTypePrefixMap in device_type.h to fix ODR violations across translation units. All concatenation sites in softbus_channel_adapter.cpp and dh_transport.cpp are correctly adapted with std::string() wrappers. RESOURCE_SEPARATOR concatenation in dh_context_test.cpp correctly wrapped. No code defects found.",
+  "temporal_status": "current",
+  "unit_id": "merge-c2fe6a5cd366",
+  "verification_disposition": {
+    "evidence": [
+      "Reviewed all changed files and concatenation patterns"
+    ],
+    "rationale": "Type refactoring verified by code inspection; all use sites adapted correctly",
+    "status": "static-analysis"
+  }
+}

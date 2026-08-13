@@ -1,0 +1,264 @@
+{
+  "schema_version": 2,
+  "case_id": "reconnect-callback-001",
+  "result_status": "Probable",
+  "summary": "The device online event is received by AccessManager::OnDeviceOnline but fails to reach the enable flow. The most likely root cause is a race condition in DistributedHardwareManagerFactory where flagUnInit_ is set to true during offline processing (when no real-time online devices remain) and is not properly reset before the next online event arrives. The flagUnInit_ guard at SendOnLineEvent:185 blocks the online event, returning ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED without creating an OnLineTask. A secondary likely contributor is that the isInit_ re-initialization at SendOnLineEvent:200-203 can also fail if UnInit is still in progress (releaseProcessMutex_ held), or the IsDeviceOnline duplicate check at line 190 can swallow the re-online event if the previous offline did not fully clean up DHContext device records.",
+  "hypotheses": [
+    {
+      "id": "H1",
+      "title": "flagUnInit_ guard blocks online event after offline sets it to true",
+      "status": "Probable",
+      "evidence_summary": "SendOffLineEvent sets flagUnInit_=true at line 246 when GetRealTimeOnlineDeviceCount()==0. SendOnLineEvent checks flagUnInit_ at line 185 and returns early with ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED. In a reconnection scenario where the last device goes offline then comes back online, flagUnInit_ may still be true when the online callback fires, blocking the entire enable chain."
+    },
+    {
+      "id": "H2",
+      "title": "IsDeviceOnline duplicate check swallows re-online event",
+      "status": "Possible",
+      "evidence_summary": "SendOnLineEvent checks DHContext::IsDeviceOnline(uuid) at line 190 and returns ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE if true. The offline path calls DeleteRealTimeOnlineDeviceNetworkId but does NOT call RemoveOnlineDeviceIdEntryByNetworkId (the broader online device set), so the device may still appear online in DHContext, causing the re-online to be silently dropped."
+    },
+    {
+      "id": "H3",
+      "title": "isInit_==false forces re-Init which may fail during UnInit release",
+      "status": "Possible",
+      "evidence_summary": "SendOnLineEvent at line 200-203 checks isInit_ and calls Init() if false. UnInit at line 117 sets isInit_=false. If UnInit is still in progress (holding releaseProcessMutex_), the Init() call inside SendOnLineEvent may fail or deadlock, preventing the online flow."
+    },
+    {
+      "id": "H4",
+      "title": "OnLineTask::CreateEnableTask finds no capabilities",
+      "status": "Ruled out as root cause but possible contributor",
+      "evidence_summary": "CreateEnableTask looks up capabilities from CapabilityInfoManager, LocalCapabilityInfoManager, and MetaInfoManager. If DoSyncInfo fails or data is not synced, capabilities may be empty, causing CreateEnableTask to return without creating enable tasks. However, this would produce a warning log, not silently fail at the online entry point."
+    },
+    {
+      "id": "H5",
+      "title": "CheckDemandStart/CheckSinkConfigStart rejects auto-enable",
+      "status": "Possible contributor",
+      "evidence_summary": "EnableTask::DoAutoEnable calls CheckDemandStart/CheckSinkConfigStart which check version and feature compatibility. If the remote version info is not available (meta info not synced), CheckDemandStart returns ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND, preventing source enable."
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "F1",
+      "judgment": "Probable",
+      "role": "root cause",
+      "dimension": "State/lifecycle/concurrency",
+      "title": "flagUnInit_ race condition blocks device re-online enable flow",
+      "severity": "critical",
+      "confidence": "high",
+      "causal_chain": "Last device goes offline -> SendOffLineEvent sets flagUnInit_=true (line 246) when GetRealTimeOnlineDeviceCount==0 -> Device comes back online -> AccessManager::OnDeviceOnline -> SendOnLineEvent checks flagUnInit_.load() (line 185) which is still true -> returns ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED without creating OnLineTask -> enable flow never executes",
+      "evidence": [
+        "distributed_hardware_manager_factory.cpp:246 sets flagUnInit_.store(true) in SendOffLineEvent when GetRealTimeOnlineDeviceCount()==0",
+        "distributed_hardware_manager_factory.cpp:185-188 checks if (flagUnInit_.load()) and returns ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED",
+        "flagUnInit_ is only reset to false in UnInit() at line 118 and in the Init() method indirectly via isAllInit_",
+        "There is no explicit path that resets flagUnInit_ to false when a new device comes online BEFORE the online event is processed",
+        "The UnInit path at line 117 sets isInit_=false, and Init() sets isInit_=true but flagUnInit_ is only reset at line 118 inside UnInit which may have already completed"
+      ],
+      "affected_scope": "All device reconnection scenarios where the device was the last online device before going offline",
+      "impact": "Device re-online is completely blocked from triggering enable, breaking distributed communication after reconnection",
+      "verification": "Add logging at SendOnLineEvent:185-188 to confirm flagUnInit_ is true when the online event is received in a reconnection scenario. Alternatively, check if UnInit has been called between offline and online events."
+    },
+    {
+      "finding_id": "F2",
+      "judgment": "Possible",
+      "role": "contributor",
+      "dimension": "State/lifecycle/concurrency",
+      "title": "DHContext online device set not cleaned during offline, causing IsDeviceOnline duplicate check to block re-online",
+      "severity": "high",
+      "confidence": "medium",
+      "causal_chain": "Device goes offline -> SendOffLineEvent calls DeleteRealTimeOnlineDeviceNetworkId but NOT RemoveOnlineDeviceIdEntryByNetworkId -> Device comes back online -> SendOnLineEvent checks IsDeviceOnline(uuid) which checks devIdEntrySet_ -> finds device still in set (because Remove was not called) -> returns ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE -> online event silently dropped",
+      "evidence": [
+        "SendOffLineEvent at line 243 calls DeleteRealTimeOnlineDeviceNetworkId but does NOT call RemoveOnlineDeviceIdEntryByNetworkId on the devIdEntrySet_",
+        "SendOnLineEvent at line 190 checks DHContext::IsDeviceOnline(uuid) which searches devIdEntrySet_",
+        "IsDeviceOnline returning true causes SendOnLineEvent to return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE at line 192",
+        "The AddOnlineDevice at line 195 inserts into devIdEntrySet_, but RemoveOnlineDeviceIdEntryByNetworkId is not called in the offline path"
+      ],
+      "affected_scope": "Device reconnection where the offline path does not fully clean up DHContext device tracking",
+      "impact": "Re-online events may be treated as duplicate online and silently dropped",
+      "verification": "Check if RemoveOnlineDeviceIdEntryByNetworkId is called during the offline flow. Trace DHContext::devIdEntrySet_ contents during a reconnection scenario."
+    },
+    {
+      "finding_id": "F3",
+      "judgment": "Possible",
+      "role": "contributor",
+      "dimension": "State/lifecycle/concurrency",
+      "title": "isInit_ re-initialization in SendOnLineEvent may race with UnInit release process",
+      "severity": "medium",
+      "confidence": "medium",
+      "causal_chain": "Device goes offline -> UnInit called -> sets isInit_=false, acquires releaseProcessMutex_ -> Device comes back online -> SendOnLineEvent checks isInit_==false (line 200) -> calls Init() -> Init() may fail if subsystem managers are not ready or if release is still in progress -> SendOnLineEvent returns ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED",
+      "evidence": [
+        "distributed_hardware_manager_factory.cpp:200-203 checks !isInit_.load() && !Init() and returns error",
+        "UnInit at line 105 acquires releaseProcessMutex_ and at line 117 sets isInit_=false",
+        "Init at line 84-99 calls DistributedHardwareManager::Initialize() which may fail if subsystems are not ready",
+        "The race between UnInit release and new online event Init is not protected by a common mutex"
+      ],
+      "affected_scope": "Reconnection scenarios where the system is transitioning between initialized and uninitialized states",
+      "impact": "Online event processing fails because re-initialization cannot complete",
+      "verification": "Add logging around Init() call in SendOnLineEvent to check if it returns failure. Check timing between UnInit completion and online event arrival."
+    },
+    {
+      "finding_id": "F4",
+      "judgment": "Possible",
+      "role": "manifestation",
+      "dimension": "Functional correctness",
+      "title": "OnLineTask::CreateEnableTask finds no capability data after reconnection",
+      "severity": "medium",
+      "confidence": "low",
+      "causal_chain": "Device goes offline -> ClearRemoteDeviceMetaInfoData/ClearRemoteDeviceLocalInfoData called for double-frame devices -> Device comes back online -> OnLineTask::DoSyncInfo syncs data from DB -> If DB sync is slow or fails, capability info is empty -> CreateEnableTask finds no capabilities -> returns without creating EnableTask -> enable flow never executes",
+      "evidence": [
+        "online_task.cpp:126-152 shows CreateEnableTask checks CapabilityInfoManager, LocalCapabilityInfoManager, and MetaInfoManager in sequence",
+        "If all three return empty, CreateEnableTask returns without creating enable tasks (line 148-152)",
+        "SendOnLineEvent at line 215-217 calls ClearRemoteDeviceMetaInfoData and ClearRemoteDeviceLocalInfoData for double-frame devices (osType == -1 or 11), which may clear data that has not yet been re-synced"
+      ],
+      "affected_scope": "Double-frame device reconnection where capability data is cleared before being re-synced",
+      "impact": "Enable tasks are not created because capability data is not available",
+      "verification": "Check if CreateEnableTask logs 'Can not get cap info' during reconnection. Verify that DoSyncInfo successfully syncs data before CreateEnableTask runs."
+    },
+    {
+      "finding_id": "F5",
+      "judgment": "Possible",
+      "role": "contributor",
+      "dimension": "Functional correctness",
+      "title": "CheckDemandStart fails because remote version info is unavailable after reconnection",
+      "severity": "medium",
+      "confidence": "low",
+      "causal_chain": "Device comes back online -> OnLineTask creates EnableTask -> EnableTask::DoAutoEnable calls CheckDemandStart -> CheckDemandStart calls GetRemoteVerInfo -> MetaInfoManager has no data for the remote device yet -> returns ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND -> DoAutoEnable returns error -> enable fails",
+      "evidence": [
+        "enable_task.cpp:203-208 calls CheckDemandStart and returns its error code if it fails",
+        "component_manager.cpp:1134-1145 CheckDemandStart calls GetRemoteVerInfo which searches MetaInfoManager",
+        "If meta info has not been synced yet, GetRemoteVerInfo returns ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND",
+        "The online task runs DoSyncInfo before CreateEnableTask, but the sync may not complete before the enable task runs"
+      ],
+      "affected_scope": "Reconnection scenarios where meta info data sync has not completed before enable task runs",
+      "impact": "Auto-enable fails because remote version compatibility cannot be determined",
+      "verification": "Check if CheckDemandStart logs 'GetRemoteVerInfo fail' during reconnection. Verify the ordering of DoSyncInfo and CreateEnableTask execution."
+    }
+  ],
+  "excluded_candidates": [
+    {
+      "candidate": "AccessManager callback registration is missing or broken",
+      "excluding_invariant": "The symptom description says logs show device online is received, meaning the callback IS firing",
+      "evidence": "AccessManager::Init calls RegisterDevStateCallback at line 63-66, and OnDeviceOnline is the callback being invoked"
+    },
+    {
+      "candidate": "TaskExecutor queue is full, dropping the OnLineTask",
+      "excluding_invariant": "MAX_TASK_QUEUE_LENGTH=256 is very large and unlikely to be full; also the symptom says online event does not REACH enable, not that it's queued and dropped",
+      "evidence": "task_executor.cpp:54-57 checks queue size and logs 'Task queue is full', which would appear in logs"
+    },
+    {
+      "candidate": "Component source/sink SO fails to load via dlopen",
+      "excluding_invariant": "This would fail at ComponentManager::Enable time, not at the online event entry point; the symptom says the online event does not reach enable flow at all",
+      "evidence": "Component loading happens much later in the chain after OnLineTask is already created and executing"
+    },
+    {
+      "candidate": "EventHandler is null in TaskExecutor::TriggerTask",
+      "excluding_invariant": "DHContext::GetEventHandler() is initialized in DHContext constructor and would only be null in catastrophic failure",
+      "evidence": "task_executor.cpp:97-99 checks for null eventHandler and logs error, which would be visible"
+    }
+  ],
+  "executed_checks": [
+    {
+      "check_id": "CHK01",
+      "command": "Read services/distributedhardwarefwkservice/src/distributed_hardware_manager_factory.cpp",
+      "outcome": "Found flagUnInit_ guard at line 185 that blocks online events; found flagUnInit_=true set at line 246 during offline; found isInit_ check and Init() call at line 200-203; found IsDeviceOnline duplicate check at line 190"
+    },
+    {
+      "check_id": "CHK02",
+      "command": "Read services/distributedhardwarefwkservice/src/accessmanager/access_manager.cpp",
+      "outcome": "Confirmed OnDeviceOnline calls DistributedHardwareManagerFactory::SendOnLineEvent at line 147-148; callback registration at line 63-66; CheckTrustedDeviceOnline at line 214-233 also sends online events"
+    },
+    {
+      "check_id": "CHK03",
+      "command": "Read services/distributedhardwarefwkservice/src/distributed_hardware_manager.cpp",
+      "outcome": "Confirmed SendOnLineEvent creates OnLineTask via TaskFactory and pushes to TaskExecutor"
+    },
+    {
+      "check_id": "CHK04",
+      "command": "Read services/distributedhardwarefwkservice/src/task/online_task.cpp",
+      "outcome": "OnLineTask::DoTask runs SYNC_ONLINE_INFO, REGISTER_ONLINE_DISTRIBUTED_HARDWARE (CreateEnableTask), ENABLE_SINK, META_ENABLE_TASK; CreateEnableTask looks up capabilities from three managers and creates EnableTask for each"
+    },
+    {
+      "check_id": "CHK05",
+      "command": "Read services/distributedhardwarefwkservice/src/task/enable_task.cpp",
+      "outcome": "EnableTask::RegisterHardware determines active vs auto enable based on callingUid/callingPid; DoAutoEnable calls CheckSinkConfigStart/CheckDemandStart before EnableSink/EnableSource"
+    },
+    {
+      "check_id": "CHK06",
+      "command": "Read services/distributedhardwarefwkservice/src/utils/dh_context.cpp",
+      "outcome": "Confirmed IsDeviceOnline checks devIdEntrySet_; RemoveOnlineDeviceIdEntryByNetworkId removes from devIdEntrySet_ but is NOT called in SendOffLineEvent; only DeleteRealTimeOnlineDeviceNetworkId is called in offline path"
+    },
+    {
+      "check_id": "CHK07",
+      "command": "Read services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+      "outcome": "Enable/EnableSinkInternal/EnableSourceInternal have multiple guard conditions including IsDHTypeSupport, duplicate check, ref counting; Recover methods exist but are triggered by ComponentMonitor SA death, not by online events"
+    },
+    {
+      "check_id": "CHK08",
+      "command": "Read services/distributedhardwarefwkservice/src/task/task_executor.cpp",
+      "outcome": "TaskExecutor::PushTask queues task with MAX_TASK_QUEUE_LENGTH=256; TriggerTask posts to EventHandler; null handler check exists but unlikely in normal flow"
+    },
+    {
+      "check_id": "CHK09",
+      "command": "Read services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+      "outcome": "DoBusinessInit checks dependent SAs and retries; GetDistributedHardware has pending request queue for when DHFWK is not initialized; CleanupExpiredRequests retries up to 25 times"
+    },
+    {
+      "check_id": "CHK10",
+      "command": "Read services/distributedhardwarefwkservice/src/componentloader/component_loader.cpp",
+      "outcome": "ComponentLoader::Init parses config and loads component handlers; CheckComponentEnable checks sys params for enable flags"
+    },
+    {
+      "check_id": "CHK11",
+      "command": "Git log for key files in online/enable path",
+      "outcome": "Multiple commits related to multi-device timing, kill recovery, low-memory SA unloading, and feature matching; commit 1757b4f0 '接入最小子系统降低dhardware进程驻留比' and 3b04c40d 'Add HiSysEvent tracking for SA online and killable status' are most relevant to the flagUnInit_ and SA lifecycle issues"
+    },
+    {
+      "check_id": "CHK12",
+      "command": "Grep for flagUnInit_ across services",
+      "outcome": "flagUnInit_ is set to true at line 246 in SendOffLineEvent, reset to false at line 118 in UnInit, checked at line 185 in SendOnLineEvent; no other reset path exists"
+    }
+  ],
+  "history_correlation": [
+    "1757b4f0: introduced SA lifecycle management with flagUnInit_ and isInit_ flags for unload/reload",
+    "3b04c40d: added HiSysEvent tracking around SA killable/critical status transitions",
+    "e70feaac: fixed recovery after kill but may not cover the reconnection timing",
+    "a2c6e71a: addressed multi-device offline timing but flagUnInit_ race remains"
+  ],
+  "coverage_gaps": [
+    "No unit test coverage for the flagUnInit_ race condition between offline and re-online events",
+    "No integration test for device reconnection when SA is in uninitializing state",
+    "The offline path does not call RemoveOnlineDeviceIdEntryByNetworkId, leaving stale entries in devIdEntrySet_",
+    "No logging of the specific guard condition that blocks the online event (flagUnInit_, IsDeviceOnline, or isInit_)"
+  ],
+  "next_verification": [
+    "Add detailed logging at DistributedHardwareManagerFactory::SendOnLineEvent line 185 to log which guard condition blocks the online event",
+    "Check if RemoveOnlineDeviceIdEntryByNetworkId should be called in SendOffLineEvent to clean up devIdEntrySet_",
+    "Add a reset of flagUnInit_ to false at the beginning of SendOnLineEvent or before the flagUnInit_ check, since the online event itself indicates the system should be active",
+    "Write a unit test that simulates offline->online sequence and verifies flagUnInit_ does not block re-online",
+    "Verify the timing: check if UnInit has completed before the next online event arrives"
+  ],
+  "ledger_candidates": [
+    {
+      "candidate_id": "LC1",
+      "finding_id": "F1",
+      "root_cause_key": "flagUnInit_not_reset_before_online_event",
+      "affected_surface": "DistributedHardwareManagerFactory::SendOnLineEvent line 185-188",
+      "question_to_confirm": "Is flagUnInit_ still true when the device re-online event is received after a previous offline event set it to true?",
+      "suggested_verification": "Add logging of flagUnInit_.load() value at SendOnLineEvent:185 and reproduce with device offline/online cycle"
+    },
+    {
+      "candidate_id": "LC2",
+      "finding_id": "F2",
+      "root_cause_key": "devIdEntrySet_not_cleaned_on_offline",
+      "affected_surface": "DistributedHardwareManagerFactory::SendOffLineEvent missing RemoveOnlineDeviceIdEntryByNetworkId call",
+      "question_to_confirm": "Is the device still present in DHContext::devIdEntrySet_ after going offline, causing IsDeviceOnline to return true and block re-online?",
+      "suggested_verification": "Dump DHContext::devIdEntrySet_ contents after device offline and before re-online"
+    },
+    {
+      "candidate_id": "LC3",
+      "finding_id": "F3",
+      "root_cause_key": "isInit_reinit_race_with_uninit",
+      "affected_surface": "DistributedHardwareManagerFactory::SendOnLineEvent line 200-203, UnInit line 105-121",
+      "question_to_confirm": "Does Init() fail when called from SendOnLineEvent while UnInit is still in progress or recently completed?",
+      "suggested_verification": "Add logging of Init() return value in SendOnLineEvent and check timing with UnInit completion"
+    }
+  ]
+}

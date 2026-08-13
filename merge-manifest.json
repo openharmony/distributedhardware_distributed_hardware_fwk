@@ -1,0 +1,9 @@
+{
+  "digests": {
+    "merged-pr-review.md": "sha256:ed83de4267ac4222c8f0d0df20a22a29b64012521ba9ff57b6842843ab25e342",
+    "quality-ledger.json": "sha256:924530dd2be477712de3862cc8e010ace7a85075be43fc0550783ea62e327431",
+    "quality-ledger.md": "sha256:4cd0ba79d895b6d5f8e35dd90bf62062a4fbacfdf5096228cbaffb89d58be3d8"
+  },
+  "kind": "pr-review",
+  "schema_version": 2
+}

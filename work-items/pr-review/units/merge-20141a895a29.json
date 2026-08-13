@@ -1,0 +1,59 @@
+{
+  "base": "2670b5596434697cce03ff908da65ed717b5a32d",
+  "baseline_review_depth": "full",
+  "challenge_reason": "single primary review permitted by deterministic risk policy",
+  "challenge_required": false,
+  "changed_path_summary": "2 changed paths",
+  "changed_paths": [
+    "services/distributedhardwarefwkservice/src/distributed_hardware_manager_factory.cpp",
+    "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp"
+  ],
+  "commit_assignments": [
+    {
+      "role": "integration merge",
+      "sha": "20141a895a292c38fd5b11e8092626b117a8406c"
+    },
+    {
+      "role": "merged member",
+      "sha": "3b04c40d10591e2e83acf4b57eabb959a901b28f"
+    }
+  ],
+  "depth_reason": "behavioral source change",
+  "diff_evidence": [
+    "git diff --find-renames 2670b5596434697cce03ff908da65ed717b5a32d..20141a895a292c38fd5b11e8092626b117a8406c",
+    "git diff --find-renames 2670b5596434697cce03ff908da65ed717b5a32d..3b04c40d10591e2e83acf4b57eabb959a901b28f",
+    "git diff-tree -m --find-renames 20141a895a292c38fd5b11e8092626b117a8406c"
+  ],
+  "expected_challenge_report": "challenge-results/merge-20141a895a29.md",
+  "expected_challenge_result": "challenge-results/merge-20141a895a29.json",
+  "expected_report": "results/merge-20141a895a29.md",
+  "expected_result": "results/merge-20141a895a29.json",
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "head": "3b04c40d10591e2e83acf4b57eabb959a901b28f",
+  "integration_date": "2026-05-13T19:06:20+08:00",
+  "member_commits": [
+    "3b04c40d10591e2e83acf4b57eabb959a901b28f"
+  ],
+  "merge": "20141a895a292c38fd5b11e8092626b117a8406c",
+  "network_policy": "local-only",
+  "ordinal": 9,
+  "parents": [
+    "2670b5596434697cce03ff908da65ed717b5a32d",
+    "3b04c40d10591e2e83acf4b57eabb959a901b28f"
+  ],
+  "pr_identity": null,
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "priority": "medium",
+  "resolution": "two-parent-local-graph",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "risk_signals": [],
+  "sampling_selected": false,
+  "schema_version": 3,
+  "stage_evidence": "20141a895a292c38fd5b11e8092626b117a8406c is a first-parent integration selected by date-range; committer date 2026-05-13T19:06:20+08:00",
+  "subject": "!1247 merge feat/dhfwk-sa-status-hisysevent into master",
+  "unit_id": "merge-20141a895a29",
+  "unit_type": "merge"
+}

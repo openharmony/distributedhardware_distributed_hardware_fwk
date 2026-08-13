@@ -1,0 +1,258 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "git diff shows gid change from [dhardware, input] to [dhardware, input, access_token]"
+      ],
+      "path": "sa_profile/dhardware.cfg",
+      "rationale": "Added 'access_token' to gid list; required for token-based access control APIs"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "git diff shows IPCSkeleton::GetCallingTokenID() replaced with IPCSkeleton::GetFirstTokenID()",
+        "Added #include token_setproc.h"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+      "rationale": "Changed callingTokenId source from GetCallingTokenID to GetFirstTokenID in EnableSource"
+    }
+  ],
+  "checked_safe": [
+    "GetFirstTokenID vs GetCallingTokenID change preserves token identity semantics for proxy chains",
+    "access_token gid addition is prerequisite for token_setproc.h APIs",
+    "tokenId=0 direct-call scenario handled by downstream guard"
+  ],
+  "claim_id": "cf405910d5ab0e50e8cc0b100c26150e",
+  "classification": "Quality improvement",
+  "context_inspection": {
+    "changed_symbols": [
+      "DistributedHardwareService::EnableSource",
+      "TaskParam::callingTokenId",
+      "EnableTask::SetCallingTokenId",
+      "EnableTask::GetCallingTokenId"
+    ],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "E1",
+        "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+        "relation": "changed",
+        "source_ref": "4ae91473711501f72e397d7761cbec257e6fd8ab",
+        "symbol": "DistributedHardwareService::EnableSource"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E2",
+        "path": "services/distributedhardwarefwkservice/include/utils/impl_utils.h",
+        "relation": "consumed",
+        "source_ref": "4ae91473711501f72e397d7761cbec257e6fd8ab",
+        "symbol": "TaskParam::callingTokenId"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E3",
+        "path": "services/distributedhardwarefwkservice/src/task/task_factory.cpp",
+        "relation": "consumed",
+        "source_ref": "4ae91473711501f72e397d7761cbec257e6fd8ab",
+        "symbol": "TaskFactory::CreateEnableTask"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E4",
+        "path": "services/distributedhardwarefwkservice/src/task/enable_task.cpp",
+        "relation": "consumed",
+        "source_ref": "4ae91473711501f72e397d7761cbec257e6fd8ab",
+        "symbol": "EnableTask::DoActiveEnable"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E5",
+        "path": "sa_profile/dhardware.cfg",
+        "relation": "changed",
+        "source_ref": "4ae91473711501f72e397d7761cbec257e6fd8ab",
+        "symbol": "dhardware.gid"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "E1"
+        ],
+        "from": "IPCSkeleton::GetFirstTokenID",
+        "relation": "assigns",
+        "to": "TaskParam::callingTokenId"
+      },
+      {
+        "evidence_refs": [
+          "E3"
+        ],
+        "from": "TaskParam::callingTokenId",
+        "relation": "passes",
+        "to": "EnableTask::SetCallingTokenId"
+      },
+      {
+        "evidence_refs": [
+          "E4"
+        ],
+        "from": "EnableTask::GetCallingTokenId",
+        "relation": "consumed",
+        "to": "EnableTask::DoActiveEnable"
+      }
+    ],
+    "level": "direct-flow",
+    "rationale": "Traced callingTokenId flow from IPCSkeleton::GetFirstTokenID through TaskParam into EnableTask; confirmed downstream consumers handle token=0 case correctly",
+    "self_contained": true,
+    "unresolved": []
+  },
+  "coverage_gaps": [],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "GetCallingTokenID changed to GetFirstTokenID at distributed_hardware_service.cpp:700",
+        "access_token gid added to dhardware.cfg",
+        "GetFirstTokenID returns the first/original caller token in an IPC chain vs GetCallingTokenID which returns the immediate caller"
+      ],
+      "rationale": "Primary dimension; token identity change and SA profile gid change both affect functional behavior of IPC caller identification",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [
+        "No synchronization or threading changes"
+      ],
+      "rationale": "No concurrent behavior change",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Reliability and recovery",
+      "evidence": [
+        "No error path or retry logic changed"
+      ],
+      "rationale": "No reliability-affecting change",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": false,
+      "dimension": "Performance and scalability",
+      "evidence": [
+        "Both GetCallingTokenID and GetFirstTokenID are simple getter calls"
+      ],
+      "rationale": "Token ID API change has no performance impact",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Build and portability",
+      "evidence": [
+        "access_token group must exist in the target system for the SA to start correctly"
+      ],
+      "rationale": "SA profile change may require corresponding system image support",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [
+        "No logging or telemetry changes"
+      ],
+      "rationale": "No observability change",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Security and privacy",
+      "evidence": [
+        "GetFirstTokenID provides the original caller identity which is more accurate for access control decisions",
+        "access_token gid enables the process to use token-related APIs"
+      ],
+      "rationale": "Token ID change affects access control identity; screened for security implications",
+      "review_level": "screen"
+    }
+  ],
+  "exclusions": [],
+  "executed_checks": [
+    {
+      "command": "git diff + source read",
+      "outcome": "Reviewed changed code paths against invariants",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "EnableTask::DoActiveEnable checks GetCallingTokenId() != 0 before AppendTokenIdToParams (in commit c05632ffcde9)",
+        "When tokenId is 0, the flow continues without token injection which is correct for direct calls",
+        "GetFirstTokenID returns 0 only when there is no first caller, which is a valid scenario"
+      ],
+      "expected_failure": "callingTokenId=0 passed to EnableTask; downstream AppendTokenIdToParams skips token injection when tokenId==0",
+      "hypothesis_id": "H1",
+      "outcome": "ruled-out",
+      "statement": "GetFirstTokenID returns 0 for direct IPC calls (no proxy chain), causing downstream token-based access control to fail",
+      "trigger": "Application calls EnableSource directly without going through an IPC proxy",
+      "verification": "Traced callingTokenId flow through TaskFactory::CreateEnableTask and EnableTask::DoActiveEnable; 0 value is handled correctly by downstream guard condition"
+    }
+  ],
+  "findings": [],
+  "flow_coverage": [
+    {
+      "affected_flow": "IPC caller token propagation: GetFirstTokenID -> TaskParam.callingTokenId -> EnableTask.callingTokenId_ -> DoActiveEnable",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "DistributedHardwareService::EnableSource",
+      "evidence": [
+        "GetFirstTokenID returns the original caller's token in an IPC proxy chain, enabling correct access control for proxied calls"
+      ],
+      "flow_id": "F1"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "Two changes: (1) sa_profile adds 'access_token' gid to the dhardware SA process, required for token-based access control; (2) EnableSource changes callingTokenId from IPCSkeleton::GetCallingTokenID() to IPCSkeleton::GetFirstTokenID() to propagate the original caller's token through IPC proxy chains. Both changes are functionally consistent and improve security identity propagation. No defect found.",
+  "temporal_status": "superseded-by-later-commit",
+  "unit_id": "merge-e80e8469cfc3",
+  "verification_disposition": {
+    "evidence": [
+      "EnableTask::DoActiveEnable checks callingTokenId != 0 before AppendTokenIdToParams",
+      "No runtime verification possible for IPC proxy chain scenarios"
+    ],
+    "rationale": "Traced token ID propagation flow from IPCSkeleton through TaskParam to EnableTask; confirmed downstream guard handles tokenId=0",
+    "status": "static-analysis"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "case_id": "reconnect-callback-001",
+  "digests": {
+    "case-spec.json": "sha256:90a695ba2f86996aad88e0f70ad5164f39c4434f3edae73f011dcf5bb303ba0e",
+    "case.md": "sha256:0eaf5a83447c7583143fe90f4c1f6fd77f08725227d8972f24a9b24cfcc86369",
+    "investigation.json": "sha256:e2a08180e7acb041c2fd3134c70fa1ad433021f460f92e34e0128e19de5253ab",
+    "investigation.md": "sha256:01d95c045ef751dbb626c7e008c2f0b5e407abe116271c8cce9e03119648c13c"
+  },
+  "schema_version": 2
+}

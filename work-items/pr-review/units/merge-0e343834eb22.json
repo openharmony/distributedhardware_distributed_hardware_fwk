@@ -1,0 +1,68 @@
+{
+  "base": "e50f487e20cfc4af52be2286757f124085dedb6f",
+  "baseline_review_depth": "full",
+  "challenge_reason": "single primary review permitted by deterministic risk policy",
+  "challenge_required": false,
+  "changed_path_summary": "1 changed paths",
+  "changed_paths": [
+    "services/distributedhardwarefwkservice/src/componentloader/component_loader.cpp"
+  ],
+  "commit_assignments": [
+    {
+      "role": "integration merge",
+      "sha": "0e343834eb2242d15f380666b304899bbbd84253"
+    },
+    {
+      "role": "merged member",
+      "sha": "4ef2126333253eaa0c4778853758dd6be807f2ec"
+    },
+    {
+      "role": "merged member",
+      "sha": "48207937bd8ee87b224cc7c4624ebb089ac3d479"
+    },
+    {
+      "role": "merged member",
+      "sha": "3a4cb350f6a3d4081f676e9b9230e692d92eedcc"
+    }
+  ],
+  "depth_reason": "behavioral source change",
+  "diff_evidence": [
+    "git diff --find-renames e50f487e20cfc4af52be2286757f124085dedb6f..0e343834eb2242d15f380666b304899bbbd84253",
+    "git diff --find-renames e50f487e20cfc4af52be2286757f124085dedb6f..3a4cb350f6a3d4081f676e9b9230e692d92eedcc",
+    "git diff-tree -m --find-renames 0e343834eb2242d15f380666b304899bbbd84253"
+  ],
+  "expected_challenge_report": "challenge-results/merge-0e343834eb22.md",
+  "expected_challenge_result": "challenge-results/merge-0e343834eb22.json",
+  "expected_report": "results/merge-0e343834eb22.md",
+  "expected_result": "results/merge-0e343834eb22.json",
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "head": "3a4cb350f6a3d4081f676e9b9230e692d92eedcc",
+  "integration_date": "2026-07-14T11:17:50+08:00",
+  "member_commits": [
+    "4ef2126333253eaa0c4778853758dd6be807f2ec",
+    "48207937bd8ee87b224cc7c4624ebb089ac3d479",
+    "3a4cb350f6a3d4081f676e9b9230e692d92eedcc"
+  ],
+  "merge": "0e343834eb2242d15f380666b304899bbbd84253",
+  "network_policy": "local-only",
+  "ordinal": 1,
+  "parents": [
+    "e50f487e20cfc4af52be2286757f124085dedb6f",
+    "3a4cb350f6a3d4081f676e9b9230e692d92eedcc"
+  ],
+  "pr_identity": null,
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "priority": "medium",
+  "resolution": "two-parent-local-graph",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "risk_signals": [],
+  "sampling_selected": false,
+  "schema_version": 3,
+  "stage_evidence": "0e343834eb2242d15f380666b304899bbbd84253 is a first-parent integration selected by date-range; committer date 2026-07-14T11:17:50+08:00",
+  "subject": "!1303 merge master into master",
+  "unit_id": "merge-0e343834eb22",
+  "unit_type": "merge"
+}

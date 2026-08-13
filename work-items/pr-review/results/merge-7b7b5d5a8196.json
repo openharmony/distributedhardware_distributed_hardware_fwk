@@ -1,0 +1,313 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "access_listener_stub.h:31 int32_t ReadDeviceInfo(MessageParcel &data, AuthDeviceInfo &info);"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/ipc/access_listener_stub.h",
+      "rationale": "ReadDeviceInfo signature changed from value to reference parameter."
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "access_listener_stub.cpp:55 int32_t ReadDeviceInfo(MessageParcel &data, AuthDeviceInfo &info)"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/ipc/access_listener_stub.cpp",
+      "rationale": "ReadDeviceInfo definition changed from value to reference parameter."
+    }
+  ],
+  "checked_safe": [
+    "ReadDeviceInfo is private with single call site in same TU; no ABI risk",
+    "IAccessListener interface unchanged; OnRequestHardwareAccess still takes AuthDeviceInfo by value per interface contract"
+  ],
+  "claim_id": "444dcb3105d7d46ae19a6c431ec150ac",
+  "classification": "Fixes defect",
+  "context_inspection": {
+    "changed_symbols": [
+      "AccessListenerStub::ReadDeviceInfo"
+    ],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "E1",
+        "path": "services/distributedhardwarefwkservice/include/ipc/access_listener_stub.h",
+        "relation": "declaration-site",
+        "source_ref": "d8e620f774f0a9c5731f6bbb528a39ee4273c996",
+        "symbol": "AccessListenerStub::ReadDeviceInfo"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E2",
+        "path": "services/distributedhardwarefwkservice/src/ipc/access_listener_stub.cpp",
+        "relation": "definition-site",
+        "source_ref": "d8e620f774f0a9c5731f6bbb528a39ee4273c996",
+        "symbol": "AccessListenerStub::ReadDeviceInfo"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E3",
+        "path": "services/distributedhardwarefwkservice/src/ipc/access_listener_stub.cpp",
+        "relation": "caller-of-ReadDeviceInfo",
+        "source_ref": "d8e620f774f0a9c5731f6bbb528a39ee4273c996",
+        "symbol": "AccessListenerStub::OnRemoteRequest"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E4",
+        "path": "common/utils/include/iaccess_listener.h",
+        "relation": "interface-contract",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "IAccessListener::OnRequestHardwareAccess"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E5",
+        "path": "interfaces/inner_kits/src/ipc/access_listener_proxy.cpp",
+        "relation": "proxy-side-serialization",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "AccessListenerProxy::OnRequestHardwareAccess"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "E3",
+          "E2"
+        ],
+        "from": "AccessListenerStub::OnRemoteRequest",
+        "relation": "calls",
+        "to": "AccessListenerStub::ReadDeviceInfo"
+      },
+      {
+        "evidence_refs": [
+          "E2",
+          "E3"
+        ],
+        "from": "AccessListenerStub::ReadDeviceInfo",
+        "relation": "writes-via-reference",
+        "to": "AccessListenerStub::OnRemoteRequest::info"
+      },
+      {
+        "evidence_refs": [
+          "E3",
+          "E4"
+        ],
+        "from": "AccessListenerStub::OnRemoteRequest::info",
+        "relation": "passes-by-value-per-interface",
+        "to": "OnRequestHardwareAccess"
+      }
+    ],
+    "level": "direct-flow",
+    "rationale": "Traced the data flow from OnRemoteRequest through ReadDeviceInfo to OnRequestHardwareAccess to verify the fix resolves a real data-loss bug. Also checked the IAccessListener interface and proxy to confirm no ABI impact.",
+    "self_contained": false,
+    "unresolved": []
+  },
+  "coverage_gaps": [],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "access_listener_stub.h:31 ReadDeviceInfo(MessageParcel &data, AuthDeviceInfo &info)",
+        "access_listener_stub.cpp:55 ReadDeviceInfo(MessageParcel &data, AuthDeviceInfo &info)",
+        "access_listener_stub.cpp:43 AuthDeviceInfo info {\"\", \"\", 0}; ReadDeviceInfo(data, info);"
+      ],
+      "rationale": "Pass-by-value to pass-by-reference fix in IPC stub is a correctness-critical change; verified the call site in OnRemoteRequest and the IAccessListener interface to confirm the data flow.",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Reliability and recovery",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Performance and scalability",
+      "evidence": [],
+      "rationale": "Pass-by-reference avoids a copy of AuthDeviceInfo (small struct), marginal improvement only.",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": false,
+      "dimension": "Build and portability",
+      "evidence": [],
+      "rationale": "Header and source signature match; no build issue.",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [],
+      "rationale": "Test adequacy is outside current finding scope",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Security and privacy",
+      "evidence": [],
+      "rationale": "No security-relevant change; the data is the same, just correctly populated now.",
+      "review_level": "not-applicable"
+    }
+  ],
+  "exclusions": [],
+  "executed_checks": [
+    {
+      "command": "Verified ReadDeviceInfo is private and only called from OnRemoteRequest in same .cpp",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified IAccessListener::OnRequestHardwareAccess signature unchanged",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified AccessListenerProxy serialization is unaffected",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified AuthDeviceInfo struct has no special copy semantics that would mask the bug",
+      "outcome": "reviewed",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "access_listener_stub.cpp:42-43: info is default-constructed as {\"\", \"\", 0}, then ReadDeviceInfo(data, info) is called",
+        "With pass-by-value, ReadDeviceInfo modifies its own copy; the caller's 'info' stays {\"\", \"\", 0}",
+        "access_listener_stub.cpp:46: OnRequestHardwareAccess(requestId, info, dhType, pkgName) passes unmodified info"
+      ],
+      "expected_failure": "OnRequestHardwareAccess receives AuthDeviceInfo with empty networkId, empty deviceName, and deviceType=0, causing access listener to operate on invalid device identity",
+      "hypothesis_id": "H1",
+      "outcome": "supported",
+      "statement": "Before the fix, ReadDeviceInfo's pass-by-value parameter meant the deserialized AuthDeviceInfo fields (networkId, deviceName, deviceType) were written into a temporary copy that was discarded, so OnRequestHardwareAccess always received empty/default AuthDeviceInfo.",
+      "trigger": "Any IPC call to ON_REQUEST_HARDWARE_ACCESS via AccessListenerStub",
+      "verification": "Static analysis: C++ pass-by-value semantics confirm the writes in ReadDeviceInfo do not propagate to the caller's variable"
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "ReadDeviceInfo is a private method of AccessListenerStub, only called from OnRemoteRequest in the same .cpp file",
+        "No external callers exist"
+      ],
+      "expected_failure": "Link error or undefined reference at build time",
+      "hypothesis_id": "H2",
+      "outcome": "ruled-out",
+      "statement": "The fix may break binary compatibility if ReadDeviceInfo was called across translation units with the old mangled symbol name.",
+      "trigger": "Linking against old object file referencing the pass-by-value mangled name",
+      "verification": "ReadDeviceInfo is private; grep confirms single call site in access_listener_stub.cpp"
+    }
+  ],
+  "findings": [
+    {
+      "changed_code": [
+        "see diff evidence"
+      ],
+      "confidence": "medium",
+      "current_at_scan_head": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "access_listener_stub.cpp:42-47",
+        "access_listener_stub.cpp:55-60"
+      ],
+      "finding_id": "F1",
+      "finding_type": "code-defect",
+      "impact": "Functional degradation or incorrect behavior",
+      "judgment": "defect identified",
+      "location": "services/distributedhardwarefwkservice/src/ipc/access_listener_stub.cpp:55",
+      "relevant_flow": "Changed code path to affected behavior",
+      "remediation": "Already fixed: parameter changed to AuthDeviceInfo &info in both .h and .cpp",
+      "severity": "high",
+      "statement": "ReadDeviceInfo previously took AuthDeviceInfo by value, causing IPC-deserialized device info to be lost. The fix corrects this to pass-by-reference.",
+      "status": "fixed-by-this-change",
+      "symbol": "AccessListenerStub::ReadDeviceInfo",
+      "temporal_status": "Current at scan HEAD; not yet fixed",
+      "title": "Finding 1",
+      "trigger": "Execution of the changed code path",
+      "type": "code-defect",
+      "verification": "Static code path review",
+      "violated_invariant": "Correctness invariant violated by changed code"
+    }
+  ],
+  "flow_coverage": [
+    {
+      "affected_flow": "IPC deserialization: OnRemoteRequest creates local AuthDeviceInfo, calls ReadDeviceInfo(data, info) to populate it, then passes info to OnRequestHardwareAccess. With the old pass-by-value signature, ReadDeviceInfo wrote into a copy and the local info remained uninitialized, causing OnRequestHardwareAccess to receive empty/zero fields.",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "AccessListenerStub::OnRemoteRequest",
+      "evidence": [
+        "access_listener_stub.cpp:41-47",
+        "access_listener_stub.cpp:55-60"
+      ],
+      "flow_id": "F1"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [
+    {
+      "affected_surface": "services code path",
+      "candidate_id": "C-001",
+      "finding_id": "F1",
+      "finding_ref": "F1",
+      "ledger_type": "defect-fix",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "root_cause_key": "defect-in-changed-code",
+      "suggested_verification": "Run relevant unit test with the trigger condition",
+      "summary": "AccessListenerStub::ReadDeviceInfo pass-by-value caused IPC deserialized AuthDeviceInfo to be silently discarded"
+    }
+  ],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "ReadDeviceInfo parameter changed from pass-by-value (AuthDeviceInfo info) to pass-by-reference (AuthDeviceInfo &info), fixing a defect where the IPC stub deserialized device info into a stack copy that was immediately discarded. The caller in OnRemoteRequest reads into a local 'info' variable and passes it to ReadDeviceInfo, so with pass-by-value the writes to 'info' inside ReadDeviceInfo were lost. This was a functional correctness bug.",
+  "temporal_status": "current",
+  "unit_id": "merge-7b7b5d5a8196",
+  "verification_disposition": {
+    "evidence": [
+      "access_listener_stub.cpp:42-47 call-site analysis"
+    ],
+    "rationale": "C++ language semantics definitively confirm pass-by-value vs pass-by-reference behavior. No runtime verification needed.",
+    "status": "static-analysis"
+  }
+}

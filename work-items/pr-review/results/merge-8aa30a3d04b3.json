@@ -1,0 +1,428 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test sub-targets added to group deps"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/BUILD.gn",
+      "rationale": "Top-level test BUILD.gn; adds new test group dependencies"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New ohos_unittest target declared"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/dh_listeners/BUILD.gn",
+      "rationale": "New BUILD.gn for DH listeners test target"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test file"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/dh_listeners/src/dh_listeners_test.cpp",
+      "rationale": "New test source for DHStateListener and DHDataSyncTriggerListener"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "5 new ohos_unittest targets added"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/ipc/BUILD.gn",
+      "rationale": "Adds new IPC test targets: GetDhDescriptorsCallbackProxyTest, AccessListenerStubTest, AuthorizationResultCallbackProxyTest, AccessListenerServiceTest"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test header file"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/ipc/include/authorization_result_callback_proxy_test.h",
+      "rationale": "New test header for authorization proxy test"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/ipc/src/access_listener_service_test.cpp",
+      "rationale": "New test for AccessListenerService"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/ipc/src/access_listener_stub_test.cpp",
+      "rationale": "New test for AccessListenerStub OnRemoteRequest"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/ipc/src/authorization_result_callback_proxy_test.cpp",
+      "rationale": "New test for AuthorizationResultCallbackProxy"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/ipc/src/get_dh_descriptors_callback_proxy_test.cpp",
+      "rationale": "New test for GetDhDescriptorsCallbackProxy WriteDescriptors"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New ohos_unittest target"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/lowlatency/low_latency_timer/BUILD.gn",
+      "rationale": "New BUILD.gn for low latency timer test"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/lowlatency/low_latency_timer/src/low_latency_timer_test.cpp",
+      "rationale": "New test for LowLatencyTimer"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New mock source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/lowlatency/mock/mock_res_sched_client.cpp",
+      "rationale": "Mock implementation for ResSchedClient"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New mock header"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/lowlatency/mock/mock_res_sched_client.h",
+      "rationale": "Mock header for ResSchedClient"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New ohos_unittest target"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/publisher/BUILD.gn",
+      "rationale": "Adds PublisherTest target"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/publisher/src/publisher_test.cpp",
+      "rationale": "New test for Publisher singleton"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New ohos_unittest target"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/resourcemanager/BUILD.gn",
+      "rationale": "Adds CapabilityInfoMgrTest target"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/resourcemanager/capability_info_manager_test.cpp",
+      "rationale": "New test for CapabilityInfoManager"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "4 new ohos_unittest targets"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/task/BUILD.gn",
+      "rationale": "Adds MetaEnableTaskTest, MetaDisableTaskTest, ExitDfwkTaskTest, OffLineTaskTest targets"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/task/src/exit_dfwk_task_test.cpp",
+      "rationale": "New test for ExitDfwkTask"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/task/src/meta_disable_task_test.cpp",
+      "rationale": "New test for MetaDisableTask"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/task/src/meta_enable_task_test.cpp",
+      "rationale": "New test for MetaEnableTask"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/task/src/offline_task_test.cpp",
+      "rationale": "New test for OffLineTask"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New ohos_unittest target"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/utils/BUILD.gn",
+      "rationale": "Adds EventHandlerFactoryTest target"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New test source"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/utils/event_handler_factory_test.cpp",
+      "rationale": "New test for EventHandlerFactory"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New mock header"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/utils/mock/mock_dh_timer.h",
+      "rationale": "New mock header for DHTimer"
+    }
+  ],
+  "checked_safe": [
+    "All BUILD.gn dependency declarations are consistent with tested interfaces",
+    "No production code changes in this unit",
+    "Mock classes correctly inherit from production interfaces"
+  ],
+  "claim_id": "d2f9180cb0449ce9c93c0819cccbd460",
+  "classification": "No material quality impact",
+  "context_inspection": {
+    "changed_symbols": [],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "E1",
+        "path": "services/distributedhardwarefwkservice/test/unittest/common/ipc/BUILD.gn",
+        "relation": "declared",
+        "source_ref": "8aa30a3d04b390928f3521685d3afa2ece6852a6",
+        "symbol": "ohos_unittest targets"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E2",
+        "path": "services/distributedhardwarefwkservice/test/unittest/common/task/BUILD.gn",
+        "relation": "declared",
+        "source_ref": "8aa30a3d04b390928f3521685d3afa2ece6852a6",
+        "symbol": "ohos_unittest targets"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E3",
+        "path": "services/distributedhardwarefwkservice/test/unittest/common/lowlatency/low_latency_timer/BUILD.gn",
+        "relation": "declared",
+        "source_ref": "8aa30a3d04b390928f3521685d3afa2ece6852a6",
+        "symbol": "ohos_unittest target"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E4",
+        "path": "services/distributedhardwarefwkservice/test/unittest/common/resourcemanager/BUILD.gn",
+        "relation": "declared",
+        "source_ref": "8aa30a3d04b390928f3521685d3afa2ece6852a6",
+        "symbol": "ohos_unittest target"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E5",
+        "path": "services/distributedhardwarefwkservice/test/unittest/common/publisher/BUILD.gn",
+        "relation": "declared",
+        "source_ref": "8aa30a3d04b390928f3521685d3afa2ece6852a6",
+        "symbol": "ohos_unittest target"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E6",
+        "path": "services/distributedhardwarefwkservice/test/unittest/common/utils/BUILD.gn",
+        "relation": "declared",
+        "source_ref": "8aa30a3d04b390928f3521685d3afa2ece6852a6",
+        "symbol": "ohos_unittest target"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E7",
+        "path": "services/distributedhardwarefwkservice/test/unittest/BUILD.gn",
+        "relation": "declared",
+        "source_ref": "8aa30a3d04b390928f3521685d3afa2ece6852a6",
+        "symbol": "top-level test group"
+      }
+    ],
+    "flow_edges": [],
+    "level": "diff-only",
+    "rationale": "All changes are test-only; BUILD.gn dependency declarations checked against tested interfaces; no production code flow to trace",
+    "self_contained": true,
+    "unresolved": []
+  },
+  "coverage_gaps": [],
+  "dimension_reviews": [
+    {
+      "applicable": false,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "All changed paths are under test/unittest"
+      ],
+      "rationale": "Test-only change; no production behavioral code",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [
+        "No concurrent production code changed"
+      ],
+      "rationale": "Test-only change",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Reliability and recovery",
+      "evidence": [
+        "No reliability-affecting production code changed"
+      ],
+      "rationale": "Test-only change",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": false,
+      "dimension": "Performance and scalability",
+      "evidence": [
+        "No runtime code changed"
+      ],
+      "rationale": "Test-only change",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Build and portability",
+      "evidence": [
+        "7 BUILD.gn files modified with new ohos_unittest targets and dependency declarations",
+        "New test source files added for IPC, task, lowlatency, publisher, resourcemanager, and utils modules"
+      ],
+      "rationale": "Primary dimension; 25 changed paths include BUILD.gn files and new test targets that declare dependencies",
+      "review_level": "deep"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [
+        "No observability code changed"
+      ],
+      "rationale": "Test-only change",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Security and privacy",
+      "evidence": [
+        "No security-relevant production code changed"
+      ],
+      "rationale": "Test-only change",
+      "review_level": "not-applicable"
+    }
+  ],
+  "exclusions": [
+    "Test adequacy and coverage are out of scope per unit depth_reason"
+  ],
+  "executed_checks": [
+    {
+      "command": "git diff + source read",
+      "outcome": "Reviewed changed code paths against invariants",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Build and portability",
+      "evidence": [
+        "ipc/BUILD.gn includes correct include path for services/distributedhardwarefwkservice/include",
+        "All targets reference existing deps: distributedhardwarefwksvr, libdhfwk_sdk, distributedhardwareutils",
+        "External_deps match the APIs used in test sources (ipc:ipc_core, c_utils:utils, etc.)"
+      ],
+      "expected_failure": "Link error or include path resolution failure during compilation",
+      "hypothesis_id": "H1",
+      "outcome": "ruled-out",
+      "statement": "New test BUILD.gn targets have missing or incorrect dependency declarations causing build failures",
+      "trigger": "Building any of the new test targets on target platform",
+      "verification": "Static inspection of BUILD.gn dependency declarations against test source includes"
+    }
+  ],
+  "findings": [],
+  "flow_coverage": [
+    {
+      "affected_flow": "Build target declaration -> dependency resolution -> test compilation and linking",
+      "dimensions": [
+        "Build and portability"
+      ],
+      "entrypoint": "BUILD.gn test targets",
+      "evidence": [
+        "All new ohos_unittest targets declare consistent deps and external_deps matching the interfaces they test",
+        "include_dirs in module_private_config match the tested header locations"
+      ],
+      "flow_id": "F1"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [],
+  "primary_dimensions": [
+    "Build and portability"
+  ],
+  "result_status": "completed",
+  "review_depth": "focused",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "Test-only changes: adds unit tests for IPC proxies, task types, low latency timer, publisher, capability info manager, event handler factory, and DH listeners. All changes are in test directories and BUILD.gn test targets. No production code changes. Build dependency declarations are consistent with tested interfaces.",
+  "temporal_status": "current",
+  "unit_id": "merge-8aa30a3d04b3",
+  "verification_disposition": {
+    "evidence": [
+      "All new ohos_unittest targets have consistent deps and external_deps",
+      "Include directories cover all referenced headers"
+    ],
+    "rationale": "Verified BUILD.gn dependency declarations match test source includes and linked interfaces",
+    "status": "static-analysis"
+  }
+}

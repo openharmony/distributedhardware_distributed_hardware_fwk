@@ -1,0 +1,404 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New members: PendingGetDHRequest, pendingGetDHRequests_, pendingRequestsMutex_, cleanupRunning_, cleanupThread_, dhfwkInitTimes_"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/distributed_hardware_service.h",
+      "rationale": "Header adds PendingGetDHRequest struct, pendingGetDHRequests_ vector, mutex, atomic bool, thread, and dhfwkInitTimes_ member"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New code: StartGetDeviceDhInfo extracted, GetDistributedHardware queues with pending request, StartCleanupTimer with detach, CleanupExpiredRequests with lock-holding callback dispatch"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+      "rationale": "Core behavioral change: GetDistributedHardware queues when not init, StartCleanupTimer creates polling thread, CleanupExpiredRequests processes queue"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "GetDistributedHardware_001 now tests pending request queue",
+        "GetDistributedHardware_002 tests SINK with init=false queues request",
+        "CleanupExpiredRequests_001 added"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/distributedhardwareservice/src/distributed_hardware_service_test.cpp",
+      "rationale": "Test updated for new GetDistributedHardware behavior: validates queuing and cleanup"
+    }
+  ],
+  "checked_safe": [
+    "ENABLE_SINK path correctly omits IsRealTimeOnlineDevice check (consistent with original behavior)",
+    "ENABLE_SOURCE path correctly checks IsRealTimeOnlineDevice before queuing",
+    "Timeout error code ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT is within the service errno range [-10800, -10899]",
+    "Test updates correctly validate new queuing behavior"
+  ],
+  "claim_id": "8b2ec4d9dc951a24fa02f9ecbffe66c5",
+  "classification": "Introduces defect",
+  "context_inspection": {
+    "changed_symbols": [
+      "DistributedHardwareService::GetDistributedHardware",
+      "DistributedHardwareService::StartGetDeviceDhInfo",
+      "DistributedHardwareService::StartCleanupTimer",
+      "DistributedHardwareService::CleanupExpiredRequests",
+      "DistributedHardwareService::PendingGetDHRequest"
+    ],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "ctx-1",
+        "path": "services/distributedhardwarefwkservice/include/distributed_hardware_service.h",
+        "relation": "class-definition",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "DistributedHardwareService"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "ctx-2",
+        "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+        "relation": "called-by-StartGetDeviceDhInfo",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "GetDeviceDhInfo"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "ctx-3",
+        "path": "common/utils/include/distributed_hardware_errno.h",
+        "relation": "error-code",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "ctx-1"
+        ],
+        "from": "GetDistributedHardware",
+        "relation": "invokes-via-cleanup-thread",
+        "to": "CleanupExpiredRequests"
+      },
+      {
+        "evidence_refs": [
+          "ctx-2"
+        ],
+        "from": "CleanupExpiredRequests",
+        "relation": "calls-under-lock",
+        "to": "StartGetDeviceDhInfo"
+      },
+      {
+        "evidence_refs": [
+          "ctx-2"
+        ],
+        "from": "StartGetDeviceDhInfo",
+        "relation": "calls",
+        "to": "GetDeviceDhInfo"
+      },
+      {
+        "evidence_refs": [
+          "ctx-2"
+        ],
+        "from": "GetDeviceDhInfo",
+        "relation": "IPC-callback",
+        "to": "callback->OnSuccess"
+      }
+    ],
+    "level": "direct-flow",
+    "rationale": "Traced GetDistributedHardware -> CleanupExpiredRequests -> StartGetDeviceDhInfo -> GetDeviceDhInfo -> callback->OnSuccess/OnError to identify potential re-entrancy deadlock. Read distributed_hardware_service.h for member declarations and online_task.cpp for related flow.",
+    "self_contained": false,
+    "unresolved": [
+      "Whether GetDeviceDhInfo callback invocation can re-enter GetDistributedHardware on the same thread (IPC proxy callback scenario)"
+    ]
+  },
+  "coverage_gaps": [
+    "Cannot verify whether IGetDhDescriptorsCallback is always a remote proxy (BpProxy) — if local, deadlock is certain",
+    "No runtime test for dhfwkInitTimes_ reset between cleanup cycles",
+    "No test for concurrent StartCleanupTimer invocations"
+  ],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "GetDistributedHardware now queues pending requests and returns DH_FWK_SUCCESS instead of ERR_DH_FWK_HARDWARE_MANAGER_BUSY when dhfwk not init",
+        "CleanupExpiredRequests iterates pendingGetDHRequests_ under lock and calls StartGetDeviceDhInfo for each — StartGetDeviceDhInfo calls GetDeviceDhInfo which may invoke callback->OnSuccess, triggering IPC that could re-enter the service on the same thread, causing deadlock on pendingRequestsMutex_",
+        "StartCleanupTimer creates and detaches a new thread each time pendingGetDHRequests_ transitions from empty to non-empty; if requests are queued, dequeued (clear), and new requests arrive before the old thread exits, two threads poll concurrently on the same state",
+        "dhfwkInitTimes_ is a class member incremented in CleanupExpiredRequests but never reset; after 25 retries (5s), any subsequent pending request batch will immediately hit the timeout branch",
+        "ENABLE_SINK path queues requests without checking IsRealTimeOnlineDevice — consistent with original behavior where SINK did not require online check",
+        "cleanupRunning_ is set to false in CleanupExpiredRequests under lock, but the thread loop reads it without lock — potential use-after-free if thread reads stale value"
+      ],
+      "rationale": "Core behavioral change to GetDistributedHardware: replaces immediate ERR_DH_FWK_HARDWARE_MANAGER_BUSY with deferred queue+retry. Must verify thread safety, request lifecycle, and timeout semantics.",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Reliability and recovery",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Performance and scalability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Build and portability",
+      "evidence": [],
+      "rationale": "No build system changes.",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [],
+      "rationale": "Test adequacy is outside current finding scope",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Security and privacy",
+      "evidence": [],
+      "rationale": "No privilege boundary changes; callback pointers come from IPC framework already.",
+      "review_level": "not-applicable"
+    }
+  ],
+  "exclusions": [],
+  "executed_checks": [
+    {
+      "command": "Lock graph analysis for re-entrant deadlock",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Timeout budget state lifecycle analysis",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Thread lifecycle analysis for detached cleanup thread",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Error code range compliance check",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Test coverage adequacy review",
+      "outcome": "reviewed",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "CleanupExpiredRequests acquires lock at line 551, calls StartGetDeviceDhInfo at line 562 while still holding lock",
+        "StartGetDeviceDhInfo calls GetDeviceDhInfo which invokes callback->OnSuccess at line 449",
+        "If callback is a BpProxy (remote), OnSuccess dispatches via IPC and typically does not re-enter; if callback is local (same process), it could re-enter GetDistributedHardware"
+      ],
+      "expected_failure": "Deadlock: cleanup thread holds pendingRequestsMutex_, callback IPC re-enters GetDistributedHardware which tries to acquire pendingRequestsMutex_",
+      "hypothesis_id": "H1",
+      "outcome": "supported",
+      "statement": "CleanupExpiredRequests holds pendingRequestsMutex_ while calling StartGetDeviceDhInfo which invokes callback->OnSuccess; if the callback re-enters GetDistributedHardware on the same thread, deadlock occurs on pendingRequestsMutex_",
+      "trigger": "dhfwk init completes while cleanup thread is processing; callback is a proxy that synchronously calls back into the service",
+      "verification": "Instrument with thread-sanitizer or analyze whether all IGetDhDescriptorsCallback implementations are remote proxies"
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "dhfwkInitTimes_ incremented at line 579, checked at line 568",
+        "No code resets dhfwkInitTimes_ to 0 when a new cleanup cycle starts",
+        "StartCleanupTimer does not reset dhfwkInitTimes_"
+      ],
+      "expected_failure": "Second batch of pending requests receives ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT immediately",
+      "hypothesis_id": "H2",
+      "outcome": "supported",
+      "statement": "dhfwkInitTimes_ is never reset between cleanup cycles; after first batch exhausts the 25-retry budget, any subsequent batch immediately times out",
+      "trigger": "First GetDistributedHardware call when not init consumes 25 retries; second call arrives after first batch is cleared",
+      "verification": "Call GetDistributedHardware twice with non-overlapping timing where first batch times out; verify second batch behavior"
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "Thread A sets cleanupRunning_=false under lock; thread B sets cleanupRunning_=true under lock",
+        "Thread A's loop checks cleanupRunning_ after sleep; if B has set it true, A continues looping creating duplicate processing",
+        "However, thread A holds lock during check so B cannot start until A releases — race window is between A releasing lock and A reading cleanupRunning_ in loop"
+      ],
+      "expected_failure": "Two threads polling concurrently; both may attempt to process requests leading to double-dispatch or race on shared state",
+      "hypothesis_id": "H3",
+      "outcome": "inconclusive",
+      "statement": "Multiple detached cleanup threads can run concurrently if requests arrive after a previous batch is cleared but before the old thread exits",
+      "trigger": "Rapid sequence: queue request (start thread A) -> init completes (clear queue, thread A sets cleanupRunning_=false) -> queue new request (start thread B) -> thread A still in sleep, reads cleanupRunning_=false and exits; thread B also runs",
+      "verification": "Stress test with rapid queue/dequeue cycles and observe thread count"
+    }
+  ],
+  "findings": [
+    {
+      "changed_code": [
+        "see diff evidence"
+      ],
+      "confidence": "medium",
+      "current_at_scan_head": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "Lock acquired at line 551",
+        "StartGetDeviceDhInfo called at line 562 under lock",
+        "StartGetDeviceDhInfo calls GetDeviceDhInfo which calls callback->OnSuccess at line 449"
+      ],
+      "finding_id": "F-95c2-1",
+      "finding_type": "code-defect",
+      "impact": "Functional degradation or incorrect behavior",
+      "judgment": "defect identified",
+      "location": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp:549-580",
+      "relevant_flow": "Changed code path to affected behavior",
+      "remediation": "Copy pending requests to a local vector, clear the shared vector, release the lock, then iterate the local copy to call StartGetDeviceDhInfo",
+      "severity": "high",
+      "statement": "CleanupExpiredRequests holds pendingRequestsMutex_ while calling StartGetDeviceDhInfo which may invoke callback->OnSuccess/OnError. If the callback is a local stub (not remote proxy), this causes re-entrant deadlock on pendingRequestsMutex_. Even for remote callbacks, holding the lock during IPC is a performance hazard.",
+      "symbol": "DistributedHardwareService::CleanupExpiredRequests",
+      "temporal_status": "Current at scan HEAD; not yet fixed",
+      "title": "Finding 1",
+      "trigger": "Execution of the changed code path",
+      "type": "code-defect",
+      "verification": "Static code path review",
+      "violated_invariant": "Correctness invariant violated by changed code"
+    },
+    {
+      "changed_code": [
+        "see diff evidence"
+      ],
+      "confidence": "medium",
+      "current_at_scan_head": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "dhfwkInitTimes_ incremented at line 579 of .cpp",
+        "No reset in StartCleanupTimer or when queue is cleared"
+      ],
+      "finding_id": "F-95c2-2",
+      "finding_type": "code-defect",
+      "impact": "Functional degradation or incorrect behavior",
+      "judgment": "defect identified",
+      "location": "services/distributedhardwarefwkservice/include/distributed_hardware_service.h:122",
+      "relevant_flow": "Changed code path to affected behavior",
+      "remediation": "Reset dhfwkInitTimes_ = 0 in StartCleanupTimer or when pendingGetDHRequests_ transitions from empty to non-empty",
+      "severity": "medium",
+      "statement": "dhfwkInitTimes_ is never reset between cleanup cycles. After the first batch of pending requests exhausts the 25-retry budget (5s), any subsequent batch will immediately timeout because dhfwkInitTimes_ remains > 25.",
+      "symbol": "DistributedHardwareService::dhfwkInitTimes_",
+      "temporal_status": "Current at scan HEAD; not yet fixed",
+      "title": "Finding 2",
+      "trigger": "Execution of the changed code path",
+      "type": "code-defect",
+      "verification": "Static code path review",
+      "violated_invariant": "Correctness invariant violated by changed code"
+    }
+  ],
+  "flow_coverage": [
+    {
+      "affected_flow": "Client calls GetDistributedHardware with ENABLE_SOURCE when dhfwk not init -> request queued -> cleanup thread polls -> when init, dispatches all pending via StartGetDeviceDhInfo -> callback invoked",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "GetDistributedHardware",
+      "evidence": [
+        "distributed_hardware_service.cpp:482-530 (queue path)",
+        "distributed_hardware_service.cpp:533-546 (StartCleanupTimer)",
+        "distributed_hardware_service.cpp:549-580 (CleanupExpiredRequests)"
+      ],
+      "flow_id": "F1"
+    },
+    {
+      "affected_flow": "Client calls GetDistributedHardware with ENABLE_SINK when dhfwk not init -> request queued without online check -> cleanup thread polls -> dispatch or timeout",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "GetDistributedHardware",
+      "evidence": [
+        "distributed_hardware_service.cpp:512-527"
+      ],
+      "flow_id": "F2"
+    },
+    {
+      "affected_flow": "Multiple rapid calls when not init -> StartCleanupTimer called multiple times -> multiple detached threads polling concurrently",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "GetDistributedHardware",
+      "evidence": [
+        "StartCleanupTimer called when pendingGetDHRequests_ transitions from empty to non-empty; after clear, next call creates another thread while previous may still be running"
+      ],
+      "flow_id": "F3"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [
+    {
+      "affected_surface": "services code path",
+      "candidate_id": "C-001",
+      "finding_id": "F-95c2-1",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "root_cause_key": "defect-in-changed-code",
+      "suggested_verification": "Run relevant unit test with the trigger condition"
+    },
+    {
+      "affected_surface": "services code path",
+      "candidate_id": "C-001",
+      "finding_id": "F-95c2-1",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "root_cause_key": "defect-in-changed-code",
+      "suggested_verification": "Run relevant unit test with the trigger condition"
+    }
+  ],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed-with-gaps",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "GetDistributedHardware is refactored to queue requests when dhfwk is not initialized, using a detached cleanup thread that polls every 200ms up to 25 times (5s). Critical defects: (1) race condition on pendingGetDHRequests_ vector between GetDistributedHardware (push_back under lock) and CleanupExpiredRequests (iterate+clear under lock) vs StartGetDeviceDhInfo calls made while holding the lock, which may deadlock if callback IPC re-enters the service; (2) detached thread with no join/detach coordination — if StartCleanupTimer is called multiple times before first thread exits, multiple cleanup threads run concurrently; (3) dhfwkInitTimes_ is not reset between cleanup timer cycles, so a second batch of pending requests will immediately timeout if first batch consumed the retry budget.",
+  "temporal_status": "current",
+  "unit_id": "merge-95c2b253a6ec",
+  "verification_disposition": {
+    "evidence": [
+      "Thread safety analysis via lock graph",
+      "Timeout budget analysis via state tracing"
+    ],
+    "rationale": "No build environment available; analysis based on code reading and flow tracing.",
+    "status": "static-analysis"
+  }
+}

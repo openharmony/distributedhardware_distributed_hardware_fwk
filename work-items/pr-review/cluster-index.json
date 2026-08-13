@@ -1,0 +1,194 @@
+{
+  "cluster_count": 1,
+  "cluster_digest": "sha256:0a5bcf630e4894f8f1c96f7f5bbca4991324f9160813fd1fc3e86645ca2f021f",
+  "clusters": [
+    {
+      "cluster_id": "cluster-0001",
+      "expected_result": "cluster-results/cluster-0001.json",
+      "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+      "member_reviews": [
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-0e343834eb22.json",
+          "primary_result_digest": "sha256:894ccb98140b645b8ccb5ec4128c9dd3b16c5bfec5081e4652834e16d60c691a",
+          "unit_id": "merge-0e343834eb22"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-01b5c0c0fefa.json",
+          "primary_result_digest": "sha256:7353f534f0d6eb2b21a766b3bfeda0002a6f749da86c100d43a011b3e858dffd",
+          "unit_id": "merge-01b5c0c0fefa"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-c2fe6a5cd366.json",
+          "primary_result_digest": "sha256:6baf643595798bbb57f0929307790da98306f4073c91b3ce8a0874131e54c69d",
+          "unit_id": "merge-c2fe6a5cd366"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-7be94f4daad0.json",
+          "primary_result_digest": "sha256:045757813c67f9c2fc6a160bc123ba95586240dec844cc710d07b4a49a2f04de",
+          "unit_id": "merge-7be94f4daad0"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-8377b7721594.json",
+          "primary_result_digest": "sha256:5656ff984e0b1fd7c820b5adf4f896e521b2cd06854d671418e6fc78b1e95a6c",
+          "unit_id": "merge-8377b7721594"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-e80e8469cfc3.json",
+          "primary_result_digest": "sha256:eefc1bb69f21038b9cc892904c88cd169296be4289614d05315ca43efd0bc742",
+          "unit_id": "merge-e80e8469cfc3"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-c05632ffcde9.json",
+          "primary_result_digest": "sha256:59bed8faff12c61cb5bd10999180f86a5b57a0ffd33b78162a2aca0ff1940582",
+          "unit_id": "merge-c05632ffcde9"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-20141a895a29.json",
+          "primary_result_digest": "sha256:5d864938bc7e5f6407f99f1a613d4067666d55e1103f568fdbaa602da1380eaf",
+          "unit_id": "merge-20141a895a29"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-2670b5596434.json",
+          "primary_result_digest": "sha256:2d1fb660294df30c1591f57d1a6660d8684e4e52a9dd89a4ebab6aa5b7c34d3d",
+          "unit_id": "merge-2670b5596434"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-df3392cc534b.json",
+          "primary_result_digest": "sha256:6078fc036824bdc0f0275fe1570d7d99057cd477e3286c01f67de995622c98c2",
+          "unit_id": "merge-df3392cc534b"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-d87b5c819567.json",
+          "primary_result_digest": "sha256:9627bdcac1c908c32dca9c9c8711c0cdff5f9fdf3f49f5a6e6281ddf094ad946",
+          "unit_id": "merge-d87b5c819567"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-82a3c808df82.json",
+          "primary_result_digest": "sha256:5fe1c6b85446ddae9f2c73a657629d01685ca93aecce2330a53747cea2b25968",
+          "unit_id": "merge-82a3c808df82"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-ee08d9a1042a.json",
+          "primary_result_digest": "sha256:7f5d87cf9431ce783a8138657bdf0403cd714240d60af14752ebd69d34b03cb8",
+          "unit_id": "merge-ee08d9a1042a"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-f9cbdac4550c.json",
+          "primary_result_digest": "sha256:7fdef8638b1227fa7616c4e00c6c18ed5d3d5a915a1a0a2bc23ba360e1c756b0",
+          "unit_id": "merge-f9cbdac4550c"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-63c841fd613b.json",
+          "primary_result_digest": "sha256:61977e337d0bdeea827b8ad6789596fc647bc23b3d970b65eb430af1411f0ae7",
+          "unit_id": "merge-63c841fd613b"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-c834204d9454.json",
+          "primary_result_digest": "sha256:864db10e658219864646a28d66574c7c18c4424427d3f99199e98146506c24b0",
+          "unit_id": "merge-c834204d9454"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-95c2b253a6ec.json",
+          "primary_result_digest": "sha256:e37e2f001e6d3545c5be578011d3997a8879783dcd08c5456a1bf7b4c263c02f",
+          "unit_id": "merge-95c2b253a6ec"
+        },
+        {
+          "challenge_result": null,
+          "challenge_result_digest": null,
+          "primary_result": "results/merge-660ebe708b80.json",
+          "primary_result_digest": "sha256:446446a45deac2d794236b218b25947a953a1e10c6a4fe2172917c169f8e9def",
+          "unit_id": "merge-660ebe708b80"
+        }
+      ],
+      "review_protocol_version": 2,
+      "risk_signals": [
+        "build-or-packaging"
+      ],
+      "schema_version": 3,
+      "shared_surfaces": [
+        "build-scope:services/distributedhardwarefwkservice/test/fuzztest",
+        "contract-dir:services/distributedhardwarefwkservice/test/fuzztest",
+        "file:common/utils/include/dhardware_descriptor.h",
+        "file:interfaces/inner_kits/src/ipc/distributed_hardware_proxy.cpp",
+        "file:interfaces/inner_kits/test/unittest/common/ipc/distributed_hardware_proxy/src/distributed_hardware_proxy_test.cpp",
+        "file:services/distributedhardwarefwkservice/include/componentmanager/component_manager.h",
+        "file:services/distributedhardwarefwkservice/include/distributed_hardware_service.h",
+        "file:services/distributedhardwarefwkservice/include/task/enable_task.h",
+        "file:services/distributedhardwarefwkservice/include/utils/impl_utils.h",
+        "file:services/distributedhardwarefwkservice/src/componentloader/component_loader.cpp",
+        "file:services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+        "file:services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+        "file:services/distributedhardwarefwkservice/src/distributed_hardware_stub.cpp",
+        "file:services/distributedhardwarefwkservice/src/task/enable_task.cpp",
+        "file:services/distributedhardwarefwkservice/src/task/task_factory.cpp",
+        "file:services/distributedhardwarefwkservice/test/fuzztest/BUILD.gn",
+        "file:services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerone_fuzzer/capabilityinfomanagerone_fuzzer.cpp",
+        "file:services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagerthree_fuzzer/capabilityinfomanagerthree_fuzzer.cpp",
+        "file:services/distributedhardwarefwkservice/test/fuzztest/capabilityinfomanagertwo_fuzzer/capabilityinfomanagertwo_fuzzer.cpp",
+        "file:services/distributedhardwarefwkservice/test/fuzztest/dhtransportone_fuzzer/dhtransportone_fuzzer.cpp",
+        "file:services/distributedhardwarefwkservice/test/fuzztest/dhtransporttwo_fuzzer/dhtransporttwo_fuzzer.cpp",
+        "file:services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/src/component_manager_test.cpp",
+        "file:services/distributedhardwarefwkservice/test/unittest/common/distributedhardwareservice/src/distributed_hardware_service_test.cpp",
+        "file:services/distributedhardwarefwkservice/test/unittest/common/distributedhardwarestub/src/distributed_hardware_stub_test.cpp",
+        "file:services/distributedhardwarefwkservice/test/unittest/common/task/src/enable_task_test.cpp"
+      ],
+      "unit_ids": [
+        "merge-0e343834eb22",
+        "merge-01b5c0c0fefa",
+        "merge-c2fe6a5cd366",
+        "merge-7be94f4daad0",
+        "merge-8377b7721594",
+        "merge-e80e8469cfc3",
+        "merge-c05632ffcde9",
+        "merge-20141a895a29",
+        "merge-2670b5596434",
+        "merge-df3392cc534b",
+        "merge-d87b5c819567",
+        "merge-82a3c808df82",
+        "merge-ee08d9a1042a",
+        "merge-f9cbdac4550c",
+        "merge-63c841fd613b",
+        "merge-c834204d9454",
+        "merge-95c2b253a6ec",
+        "merge-660ebe708b80"
+      ]
+    }
+  ],
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "review_protocol_version": 2,
+  "schema_version": 3
+}

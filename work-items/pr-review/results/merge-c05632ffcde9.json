@@ -1,0 +1,471 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New method signature: void AddTokenIdToSinkAttrs(const std::string&, EnableParam&)"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/componentmanager/component_manager.h",
+      "rationale": "Added AddTokenIdToSinkAttrs private method declaration"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New: SetCallingTokenId/GetCallingTokenId, callingTokenId_ uint32_t, AppendTokenIdToParams"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/task/enable_task.h",
+      "rationale": "Added callingTokenId_ member, Set/Get methods, and AppendTokenIdToParams declaration"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New: uint32_t callingTokenId{0}"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/utils/impl_utils.h",
+      "rationale": "Added callingTokenId field to TaskParam"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "New AddTokenIdToSinkAttrs extracts tokenId from customParams JSON and injects into sinkAttrs JSON",
+        "Called unconditionally in Enable() after CheckSubtypeResource"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+      "rationale": "Implemented AddTokenIdToSinkAttrs and added cJSON include; called from Enable"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "One line addition in TaskParam initializer"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+      "rationale": "Minor: added .callingTokenId = IPCSkeleton::GetCallingTokenID() in EnableSource TaskParam (already present before in earlier commit)"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "DoActiveEnable refactored from nested-if to early-return; AUDIO type guard added for AppendTokenIdToParams",
+        "AppendTokenIdToParams uses cJSON_AddNumberToObject with static_cast<double>"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/task/enable_task.cpp",
+      "rationale": "Implemented Set/GetCallingTokenId, AppendTokenIdToParams; refactored DoActiveEnable; added cJSON include"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "enableTask->SetCallingTokenId(taskParam.callingTokenId) added"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/task/task_factory.cpp",
+      "rationale": "Added SetCallingTokenId propagation in CreateEnableTask"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "5 new test cases covering tokenId append, empty params, invalid JSON, and DoActiveEnable AUDIO scenarios"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/task/src/enable_task_test.cpp",
+      "rationale": "Added unit tests for AppendTokenIdToParams and DoActiveEnable with AUDIO type"
+    }
+  ],
+  "checked_safe": [
+    "DoActiveEnable refactoring from nested-if to early-return is semantically equivalent",
+    "cJSON memory management has no leak paths in AppendTokenIdToParams or AddTokenIdToSinkAttrs",
+    "ipc:ipc_single removal from utils/BUILD.gn is safe (no IPC usage in utils sources)",
+    "static_cast<DHType>(DHType::AUDIO) is redundant but not a defect",
+    "AddTokenIdToSinkAttrs handles missing tokenId in customParams gracefully",
+    "AppendTokenIdToParams handles invalid JSON gracefully"
+  ],
+  "claim_id": "36c611f21e8ce3f6fec0907647778e93",
+  "classification": "Residual quality risk",
+  "context_inspection": {
+    "changed_symbols": [
+      "TaskParam::callingTokenId",
+      "EnableTask::SetCallingTokenId",
+      "EnableTask::GetCallingTokenId",
+      "EnableTask::AppendTokenIdToParams",
+      "EnableTask::DoActiveEnable",
+      "ComponentManager::AddTokenIdToSinkAttrs",
+      "DistributedHardwareManagerFactory::DelaySaStatusTask",
+      "DistributedHardwareService::OnAddSystemAbility"
+    ],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "E1",
+        "path": "services/distributedhardwarefwkservice/include/utils/impl_utils.h",
+        "relation": "declared",
+        "source_ref": "b827f9f6dfff76ff7045c5e995d4659cf0165259",
+        "symbol": "TaskParam::callingTokenId"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E2",
+        "path": "services/distributedhardwarefwkservice/include/task/enable_task.h",
+        "relation": "declared",
+        "source_ref": "b827f9f6dfff76ff7045c5e995d4659cf0165259",
+        "symbol": "EnableTask::callingTokenId_"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E3",
+        "path": "services/distributedhardwarefwkservice/src/task/enable_task.cpp",
+        "relation": "defined",
+        "source_ref": "b827f9f6dfff76ff7045c5e995d4659cf0165259",
+        "symbol": "EnableTask::AppendTokenIdToParams"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E4",
+        "path": "services/distributedhardwarefwkservice/src/task/enable_task.cpp",
+        "relation": "defined",
+        "source_ref": "b827f9f6dfff76ff7045c5e995d4659cf0165259",
+        "symbol": "EnableTask::DoActiveEnable"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E5",
+        "path": "services/distributedhardwarefwkservice/include/componentmanager/component_manager.h",
+        "relation": "declared",
+        "source_ref": "b827f9f6dfff76ff7045c5e995d4659cf0165259",
+        "symbol": "ComponentManager::AddTokenIdToSinkAttrs"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E6",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+        "relation": "defined",
+        "source_ref": "b827f9f6dfff76ff7045c5e995d4659cf0165259",
+        "symbol": "ComponentManager::AddTokenIdToSinkAttrs"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E7",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+        "relation": "consumed",
+        "source_ref": "b827f9f6dfff76ff7045c5e995d4659cf0165259",
+        "symbol": "ComponentManager::Enable"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E8",
+        "path": "services/distributedhardwarefwkservice/src/task/task_factory.cpp",
+        "relation": "consumed",
+        "source_ref": "b827f9f6dfff76ff7045c5e995d4659cf0165259",
+        "symbol": "TaskFactory::CreateEnableTask"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E9",
+        "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+        "relation": "consumed",
+        "source_ref": "b827f9f6dfff76ff7045c5e995d4659cf0165259",
+        "symbol": "DistributedHardwareService::EnableSource"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E10",
+        "path": "common/utils/include/device_type.h",
+        "relation": "referenced",
+        "source_ref": "b827f9f6dfff76ff7045c5e995d4659cf0165259",
+        "symbol": "DHType::AUDIO"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E11",
+        "path": "utils/BUILD.gn",
+        "relation": "changed",
+        "source_ref": "b827f9f6dfff76ff7045c5e995d4659cf0165259",
+        "symbol": "distributedhardwareutils external_deps"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "E8"
+        ],
+        "from": "TaskParam::callingTokenId",
+        "relation": "passes",
+        "to": "EnableTask::SetCallingTokenId"
+      },
+      {
+        "evidence_refs": [
+          "E3",
+          "E4"
+        ],
+        "from": "EnableTask::GetCallingTokenId",
+        "relation": "passes",
+        "to": "EnableTask::AppendTokenIdToParams"
+      },
+      {
+        "evidence_refs": [
+          "E4",
+          "E7"
+        ],
+        "from": "EnableTask::DoActiveEnable",
+        "relation": "calls",
+        "to": "ComponentManager::EnableSource"
+      },
+      {
+        "evidence_refs": [
+          "E6",
+          "E7"
+        ],
+        "from": "ComponentManager::Enable",
+        "relation": "calls",
+        "to": "ComponentManager::AddTokenIdToSinkAttrs"
+      },
+      {
+        "evidence_refs": [
+          "E6"
+        ],
+        "from": "ComponentManager::AddTokenIdToSinkAttrs",
+        "relation": "modifies",
+        "to": "EnableParam::sinkAttrs"
+      }
+    ],
+    "level": "direct-flow",
+    "rationale": "Traced callingTokenId flow from TaskParam through EnableTask into ComponentManager::EnableSource and AddTokenIdToSinkAttrs; verified JSON manipulation correctness and memory management",
+    "self_contained": true,
+    "unresolved": []
+  },
+  "coverage_gaps": [
+    "Inconclusive hypothesis requires runtime verification"
+  ],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "DoActiveEnable refactored from nested-if to early-return; semantically equivalent",
+        "AppendTokenIdToParams adds tokenId via cJSON_AddNumberToObject using static_cast<double>",
+        "AddTokenIdToSinkAttrs reads tokenId from customParams JSON and injects into sinkAttrs JSON",
+        "GetDhType() == static_cast<DHType>(DHType::AUDIO) is redundant but not wrong; equivalent to GetDhType() == DHType::AUDIO",
+        "cJSON valuedouble used for reading tokenId; valueint would truncate for values > 2^31-1"
+      ],
+      "rationale": "Primary dimension; tokenId propagation through Enable pipeline and JSON manipulation in both EnableTask::AppendTokenIdToParams and ComponentManager::AddTokenIdToSinkAttrs require careful correctness analysis",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [
+        "No synchronization changes"
+      ],
+      "rationale": "No concurrency changes",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Reliability and recovery",
+      "evidence": [
+        "Both functions handle nullptr from cJSON_Parse with early return",
+        "AddTokenIdToSinkAttrs handles missing/non-number tokenId gracefully"
+      ],
+      "rationale": "cJSON_Parse failure paths in AddTokenIdToSinkAttrs and AppendTokenIdToParams are handled with early return",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Performance and scalability",
+      "evidence": [
+        "cJSON operations are lightweight"
+      ],
+      "rationale": "No performance-affecting change",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Build and portability",
+      "evidence": [
+        "utils/src/*.cpp do not use IPCSkeleton or any IPC symbols",
+        "ipc:ipc_single removal from utils/test/utilstool/BUILD.gn also safe"
+      ],
+      "rationale": "ipc:ipc_single removed from utils/BUILD.gn; verified safe",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [],
+      "rationale": "Test adequacy is outside current finding scope",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Security and privacy",
+      "evidence": [
+        "tokenId in sinkAttrs allows sink-side components to verify caller identity",
+        "token_setproc.h included for token-related operations"
+      ],
+      "rationale": "Token ID is security-sensitive; propagation to sink side enables access control",
+      "review_level": "screen"
+    }
+  ],
+  "exclusions": [],
+  "executed_checks": [
+    {
+      "command": "git diff + source read",
+      "outcome": "Reviewed changed code paths against invariants",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "cJSON_AddNumberToObject(json, \"tokenId\", static_cast<double>(...)) stores as double with 53-bit mantissa",
+        "AddTokenIdToSinkAttrs reads tokenIdJson->valuedouble which is correct",
+        "Unknown: how downstream component handlers read the tokenId from sinkAttrs/customParams JSON",
+        "uint32_t max is 4294967295 which fits in double but exceeds INT_MAX"
+      ],
+      "expected_failure": "Token ID truncated when read as cJSON.valueint, causing access control mismatch on sink side",
+      "hypothesis_id": "H1",
+      "outcome": "inconclusive",
+      "statement": "cJSON_AddNumberToObject stores tokenId as double; downstream consumer reading valueint (int) instead of valuedouble will truncate tokenId values > 2^31-1",
+      "trigger": "A token ID with value > 2147483647 is passed through AppendTokenIdToParams or AddTokenIdToSinkAttrs",
+      "verification": "Cannot verify downstream component JSON parsing without examining distributed_audio/distributed_camera component code which is external to this repository"
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "AppendTokenIdToParams on invalid JSON leaves params unchanged which is the same as if the function were never called",
+        "EnableSource proceeds with whatever customParams it has; this is consistent behavior",
+        "Test AppendTokenIdToParams_003 validates invalid_json input leaves params unchanged"
+      ],
+      "expected_failure": "EnableSource called without tokenId in customParams; sink-side access control fails or rejects the enable",
+      "hypothesis_id": "H2",
+      "outcome": "ruled-out",
+      "statement": "AppendTokenIdToParams silently fails on invalid JSON leaving customParams unchanged, but caller still proceeds with EnableSource using the original (unmodified) customParams",
+      "trigger": "customParams contains invalid JSON string and DHType==AUDIO and callingTokenId!=0",
+      "verification": "Traced code path for invalid JSON input; early return preserves original params value"
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "AddTokenIdToSinkAttrs checks cJSON_GetObjectItem(json, \"tokenId\") and returns if null or non-number",
+        "Non-AUDIO customParams typically do not contain tokenId field",
+        "Test coverage confirms silent skip behavior"
+      ],
+      "expected_failure": "No failure; function correctly handles missing tokenId with early return",
+      "hypothesis_id": "H3",
+      "outcome": "ruled-out",
+      "statement": "AddTokenIdToSinkAttrs called unconditionally for all DHTypes but only AUDIO sources have tokenId in customParams; for non-AUDIO types the function silently returns without modifying sinkAttrs",
+      "trigger": "Non-AUDIO DHType enable with customParams that do not contain tokenId",
+      "verification": "Code path verified: missing tokenId -> early return -> no modification to sinkAttrs"
+    }
+  ],
+  "findings": [
+    {
+      "changed_code": [
+        "see diff evidence"
+      ],
+      "confidence": "medium",
+      "current_at_scan_head": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "cJSON_AddNumberToObject(json, \"tokenId\", static_cast<double>(tokenId)) at enable_task.cpp:233 and component_manager.cpp:354",
+        "cJSON valuedouble field has 53-bit mantissa sufficient for uint32_t",
+        "cJSON valueint field is int32_t which truncates values > 2147483647"
+      ],
+      "finding_id": "F1",
+      "finding_type": "code-defect",
+      "impact": "Functional degradation or incorrect behavior",
+      "judgment": "defect identified",
+      "location": "services/distributedhardwarefwkservice/src/task/enable_task.cpp:233, services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp:354",
+      "relevant_flow": "Changed code path to affected behavior",
+      "severity": "low",
+      "statement": "tokenId is stored as JSON number via cJSON_AddNumberToObject which uses double representation; downstream consumers that read cJSON.valueint (capped at INT_MAX=2^31-1) instead of valuedouble will truncate uint32_t token IDs in the range (2^31-1, 2^32-1]. The current code reads valuedouble correctly, but the JSON wire format carries a double and external component parsers may use integer-only deserialization.",
+      "symbol": "EnableTask::AppendTokenIdToParams, ComponentManager::AddTokenIdToSinkAttrs",
+      "temporal_status": "Current at scan HEAD; not yet fixed",
+      "title": "Finding 1",
+      "trigger": "Token ID value > 2147483647 passed through the pipeline and read by a downstream consumer using integer-only JSON parsing",
+      "type": "behavioral-compatibility",
+      "verification": "Static code path review",
+      "violated_invariant": "Correctness invariant violated by changed code"
+    }
+  ],
+  "flow_coverage": [
+    {
+      "affected_flow": "IPCSkeleton::GetCallingTokenID -> TaskParam.callingTokenId -> EnableTask.callingTokenId_ -> DoActiveEnable -> AppendTokenIdToParams (AUDIO only) -> ComponentManager::EnableSource(customParams with tokenId)",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "DistributedHardwareService::EnableSource",
+      "evidence": [
+        "Token ID is added to customParams JSON only when DHType==AUDIO and callingTokenId!=0",
+        "static_cast<DHType>(DHType::AUDIO) is redundant but equivalent to DHType::AUDIO"
+      ],
+      "flow_id": "F1"
+    },
+    {
+      "affected_flow": "AddTokenIdToSinkAttrs(customParams, param) extracts tokenId from customParams -> injects into param.sinkAttrs JSON",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "ComponentManager::Enable",
+      "evidence": [
+        "AddTokenIdToSinkAttrs called unconditionally in Enable(); silently skips if customParams has no tokenId",
+        "cJSON valuedouble used for reading which preserves uint32_t precision"
+      ],
+      "flow_id": "F2"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [
+    {
+      "affected_surface": "services code path",
+      "candidate_id": "C-001",
+      "dimension": "Functional correctness",
+      "finding_id": "F1",
+      "finding_ref": "F1",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "root_cause_key": "defect-in-changed-code",
+      "severity": "low",
+      "statement": "cJSON double-precision tokenId in JSON wire format may be truncated by integer-only downstream parsers",
+      "suggested_verification": "Run relevant unit test with the trigger condition"
+    }
+  ],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed-with-gaps",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "Introduces callingTokenId propagation through the Enable pipeline (TaskParam -> EnableTask -> ComponentManager::AddTokenIdToSinkAttrs) and adds tokenId to customParams/sinkAttrs via cJSON. The DoActiveEnable control flow is refactored from nested-if to early-return, which is semantically equivalent. Two HiSysEventWriteMsg calls are removed from OnAddSystemAbility and DelaySaStatusTask, reducing observability. The ipc:ipc_single dependency is removed from utils/BUILD.gn (safe: no IPC usage in utils sources). A cJSON precision risk exists: tokenId is stored as cJSON double which has 53-bit mantissa, sufficient for uint32_t but downstream consumers must read valuedouble not valueint to avoid truncation for values > 2^31-1.",
+  "temporal_status": "superseded-by-later-commit",
+  "unit_id": "merge-c05632ffcde9",
+  "verification_disposition": {
+    "evidence": [
+      "All cJSON objects are freed via cJSON_Delete",
+      "cJSON_PrintUnformatted output freed via cJSON_free",
+      "valuedouble used for reading which preserves uint32_t range",
+      "Downstream component JSON parsing behavior unknown"
+    ],
+    "rationale": "Traced token ID propagation and JSON manipulation code paths; verified cJSON memory management; identified cJSON double precision risk as inconclusive without external component verification",
+    "status": "static-analysis"
+  }
+}

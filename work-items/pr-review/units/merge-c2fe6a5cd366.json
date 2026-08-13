@@ -1,0 +1,67 @@
+{
+  "base": "761aa56652394630b90ba1d5c1b5cb87f50dfb4a",
+  "baseline_review_depth": "full",
+  "challenge_reason": "single primary review permitted by deterministic risk policy",
+  "challenge_required": false,
+  "changed_path_summary": "10 changed paths",
+  "changed_paths": [
+    "av_transport/av_trans_engine/plugin/test/av_trans_input/daudio_input_test/daudio_input_test.cpp",
+    "av_transport/common/include/av_trans_types.h",
+    "av_transport/common/src/softbus_channel_adapter.cpp",
+    "common/utils/include/constants.h",
+    "common/utils/include/device_type.h",
+    "services/distributedhardwarefwkservice/src/transport/dh_transport.cpp",
+    "services/distributedhardwarefwkservice/test/fuzztest/dhtransportone_fuzzer/dhtransportone_fuzzer.cpp",
+    "services/distributedhardwarefwkservice/test/fuzztest/dhtransporttwo_fuzzer/dhtransporttwo_fuzzer.cpp",
+    "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/src/component_manager_test.cpp",
+    "services/distributedhardwarefwkservice/test/unittest/common/utils/dh_context_test.cpp"
+  ],
+  "commit_assignments": [
+    {
+      "role": "integration merge",
+      "sha": "c2fe6a5cd36613c512a82f7bc741e8c396d11e25"
+    },
+    {
+      "role": "merged member",
+      "sha": "74fc6846b46b7f35d773e9b94497632f23607386"
+    }
+  ],
+  "depth_reason": "behavioral source change",
+  "diff_evidence": [
+    "git diff --find-renames 761aa56652394630b90ba1d5c1b5cb87f50dfb4a..c2fe6a5cd36613c512a82f7bc741e8c396d11e25",
+    "git diff --find-renames 761aa56652394630b90ba1d5c1b5cb87f50dfb4a..74fc6846b46b7f35d773e9b94497632f23607386",
+    "git diff-tree -m --find-renames c2fe6a5cd36613c512a82f7bc741e8c396d11e25"
+  ],
+  "expected_challenge_report": "challenge-results/merge-c2fe6a5cd366.md",
+  "expected_challenge_result": "challenge-results/merge-c2fe6a5cd366.json",
+  "expected_report": "results/merge-c2fe6a5cd366.md",
+  "expected_result": "results/merge-c2fe6a5cd366.json",
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "head": "74fc6846b46b7f35d773e9b94497632f23607386",
+  "integration_date": "2026-06-17T16:54:52+08:00",
+  "member_commits": [
+    "74fc6846b46b7f35d773e9b94497632f23607386"
+  ],
+  "merge": "c2fe6a5cd36613c512a82f7bc741e8c396d11e25",
+  "network_policy": "local-only",
+  "ordinal": 3,
+  "parents": [
+    "761aa56652394630b90ba1d5c1b5cb87f50dfb4a",
+    "74fc6846b46b7f35d773e9b94497632f23607386"
+  ],
+  "pr_identity": null,
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "priority": "medium",
+  "resolution": "two-parent-local-graph",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "risk_signals": [],
+  "sampling_selected": false,
+  "schema_version": 3,
+  "stage_evidence": "c2fe6a5cd36613c512a82f7bc741e8c396d11e25 is a first-parent integration selected by date-range; committer date 2026-06-17T16:54:52+08:00",
+  "subject": "!1284 merge master into master",
+  "unit_id": "merge-c2fe6a5cd366",
+  "unit_type": "merge"
+}

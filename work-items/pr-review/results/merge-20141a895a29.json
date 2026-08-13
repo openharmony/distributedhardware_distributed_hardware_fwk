@@ -1,0 +1,268 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "diff +330-331: HiSysEventWriteMsg after SetCritical(false) in timeout branch"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/distributed_hardware_manager_factory.cpp",
+      "rationale": "HiSysEventWriteMsg(DHFWK_EXIT_END) added in timeout lambda of DelaySaStatusTask"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "diff +934-935: HiSysEventWriteMsg after NotifyProcessStatus and SetCritical"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+      "rationale": "HiSysEventWriteMsg(DHFWK_INIT_END) added after SetCritical(true) in OnAddSystemAbility"
+    }
+  ],
+  "checked_safe": [
+    "DelaySaStatusTask timeout path HiSysEvent placement correct after SetCritical(false)",
+    "OnAddSystemAbility HiSysEvent placement correct after SetCritical(true)",
+    "DHFWK_INIT_END and DHFWK_EXIT_END constants defined in dh_utils_hisysevent.h",
+    "BEHAVIOR event type consistent with codebase conventions"
+  ],
+  "claim_id": "ec1ec7c1a17f0f8e02da7c026ac07659",
+  "classification": "No material quality impact",
+  "context_inspection": {
+    "changed_symbols": [
+      "DistributedHardwareManagerFactory::DelaySaStatusTask",
+      "DistributedHardwareService::OnAddSystemAbility"
+    ],
+    "context_reads": [
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E1",
+        "path": "utils/include/dh_utils_hisysevent.h",
+        "relation": "constant-definition",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "DHFWK_INIT_END"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E2",
+        "path": "utils/include/dh_utils_hisysevent.h",
+        "relation": "constant-definition",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "DHFWK_EXIT_END"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E3",
+        "path": "services/distributedhardwarefwkservice/src/distributed_hardware_manager_factory.cpp",
+        "relation": "modified-function",
+        "source_ref": "3b04c40d10591e2e83acf4b57eabb959a901b28f",
+        "symbol": "DelaySaStatusTask"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E4",
+        "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+        "relation": "modified-function",
+        "source_ref": "3b04c40d10591e2e83acf4b57eabb959a901b28f",
+        "symbol": "OnAddSystemAbility"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "E4"
+        ],
+        "from": "DistributedHardwareService::OnAddSystemAbility",
+        "relation": "calls",
+        "to": "HiSysEventWriteMsg"
+      },
+      {
+        "evidence_refs": [
+          "E3"
+        ],
+        "from": "DistributedHardwareManagerFactory::DelaySaStatusTask",
+        "relation": "calls",
+        "to": "HiSysEventWriteMsg"
+      }
+    ],
+    "level": "local-symbol",
+    "rationale": "Changes are self-contained HiSysEvent additions using pre-existing constants. Only need to verify constant definitions and call-site correctness.",
+    "self_contained": true,
+    "unresolved": []
+  },
+  "coverage_gaps": [],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "distributed_hardware_manager_factory.cpp:330-331 adds HiSysEventWriteMsg(DHFWK_EXIT_END) in timeout path of DelaySaStatusTask",
+        "distributed_hardware_service.cpp:934-935 adds HiSysEventWriteMsg(DHFWK_INIT_END) in OnAddSystemAbility after SetCritical",
+        "DHFWK_EXIT_END and DHFWK_INIT_END defined in utils/include/dh_utils_hisysevent.h:29-32",
+        "BEHAVIOR event type is consistent with other HiSysEvent calls in the codebase"
+      ],
+      "rationale": "Source behavioral change adds HiSysEvent calls; must verify placement and event semantics are correct.",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Reliability and recovery",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Performance and scalability",
+      "evidence": [
+        "Both calls are in infrequent lifecycle paths (SA init and timeout)"
+      ],
+      "rationale": "HiSysEventWriteMsg is a lightweight call, no hot-path concern.",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Build and portability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [],
+      "rationale": "Test adequacy is outside current finding scope",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Security and privacy",
+      "evidence": [],
+      "rationale": "HiSysEvent writes with fixed strings do not expose secrets.",
+      "review_level": "not-applicable"
+    }
+  ],
+  "exclusions": [
+    "No defect observed in primary dimensions"
+  ],
+  "executed_checks": [
+    {
+      "command": "Verified DHFWK_INIT_END constant exists in dh_utils_hisysevent.h",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified DHFWK_EXIT_END constant exists in dh_utils_hisysevent.h",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified HiSysEvent placement follows existing critical-path calls in both modified functions",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified BEHAVIOR event type usage is consistent with other HiSysEvent calls in the codebase",
+      "outcome": "reviewed",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "OnAddSystemAbility for MEMORY_MANAGER_SA_ID only fires after SA system ability registration; the existing NotifyProcessStatus and SetCritical calls already assume SA readiness at this point"
+      ],
+      "expected_failure": "Misleading HiSysEvent indicating SA ready when components are not yet initialized",
+      "hypothesis_id": "H1",
+      "outcome": "ruled-out",
+      "statement": "DHFWK_INIT_END HiSysEvent may fire before SA is truly ready, logging misleading observability data.",
+      "trigger": "OnAddSystemAbility called with MEMORY_MANAGER_SA_ID before all component managers are initialized",
+      "verification": "Read OnAddSystemAbility context; HiSysEvent is placed after existing critical-path calls"
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "Other exit events in the codebase (DHFWK_DEV_OFFLINE) also use BEHAVIOR type; DHFWK_EXIT_END indicates a deliberate SA lifecycle action, not a fault"
+      ],
+      "expected_failure": "Event categorized incorrectly in HiSysEvent pipeline",
+      "hypothesis_id": "H2",
+      "outcome": "ruled-out",
+      "statement": "DHFWK_EXIT_END event name semantics may not match the BEHAVIOR event type.",
+      "trigger": "HiSysEventWriteMsg called with BEHAVIOR type for an exit/unload event",
+      "verification": "Read dh_utils_hisysevent.h; confirmed DHFWK_EXIT_END is an existing constant with BEHAVIOR precedent"
+    }
+  ],
+  "findings": [],
+  "flow_coverage": [
+    {
+      "affected_flow": "MEMORY_MANAGER_SA_ID handling -> HiSysEventWriteMsg(DHFWK_INIT_END)",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "DistributedHardwareService::OnAddSystemAbility",
+      "evidence": [
+        "E4"
+      ],
+      "flow_id": "F1"
+    },
+    {
+      "affected_flow": "SA timeout lambda -> SetCritical(false) -> HiSysEventWriteMsg(DHFWK_EXIT_END)",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "DistributedHardwareManagerFactory::DelaySaStatusTask",
+      "evidence": [
+        "E3"
+      ],
+      "flow_id": "F2"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "Adds HiSysEvent observability calls (DHFWK_EXIT_END and DHFWK_INIT_END) at SA lifecycle points. Both event names are pre-defined constants, BEHAVIOR event type is appropriate, and no behavioral logic is modified.",
+  "temporal_status": "current-at-scan-head",
+  "unit_id": "merge-20141a895a29",
+  "verification_disposition": {
+    "evidence": [
+      "Both HiSysEvent calls use pre-defined constants from dh_utils_hisysevent.h",
+      "No conditional logic or data flow changes"
+    ],
+    "rationale": "Changes are observability-only (HiSysEvent calls with fixed strings), no runtime behavior modification. Static analysis of call-site placement and constant definitions suffices.",
+    "status": "static-analysis"
+  }
+}

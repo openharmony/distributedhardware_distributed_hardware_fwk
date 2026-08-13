@@ -1,0 +1,361 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "diff: +void RegisterSyncDataRequest(const std::string &networkId)"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/componentmanager/component_manager.h",
+      "rationale": "Declares new RegisterSyncDataRequest method"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "diff: +16 lines implementing RegisterSyncDataRequest"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+      "rationale": "Implements RegisterSyncDataRequest with networkId validation and mutex-guarded map insertion"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "diff: +ComponentManager::GetInstance().RegisterSyncDataRequest(networkId)"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/componentmanager/dh_data_sync_trigger_listener.cpp",
+      "rationale": "Adds RegisterSyncDataRequest call before event dispatch in OnDataSyncTrigger"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "diff: -EXPECT_TRUE, +EXPECT_FALSE for syncDeviceInfoMap_.empty()"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/src/component_manager_test.cpp",
+      "rationale": "OnGetDescriptors_001 assertion changed from EXPECT_TRUE to EXPECT_FALSE(syncDeviceInfoMap_.empty())"
+    }
+  ],
+  "checked_safe": [
+    "RegisterSyncDataRequest implementation correctly validates networkId length",
+    "RegisterSyncDataRequest correctly acquires syncDeviceInfoMapMutex_ before map access",
+    "RegisterSyncDataRequest deduplicates by checking existing networkId entry",
+    "OnDataSyncTrigger call to RegisterSyncDataRequest is placed before event dispatch which is logically correct"
+  ],
+  "claim_id": "0af14a0dc5d0ff980455df69c7a7cbd3",
+  "classification": "Introduces defect",
+  "context_inspection": {
+    "changed_symbols": [
+      "ComponentManager::RegisterSyncDataRequest",
+      "DHDataSyncTriggerListener::OnDataSyncTrigger",
+      "ComponentManagerTest::OnGetDescriptors_001"
+    ],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "E1",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+        "relation": "new-method",
+        "source_ref": "90b9f58aa036ab344253e7d9118527a871f09a16",
+        "symbol": "RegisterSyncDataRequest"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E2",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+        "relation": "shared-state-writer",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "SyncRemoteDeviceInfoBySoftbus"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E3",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+        "relation": "shared-state-reader",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "OnGetDescriptors"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E4",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/dh_data_sync_trigger_listener.cpp",
+        "relation": "new-caller-of-RegisterSyncDataRequest",
+        "source_ref": "90b9f58aa036ab344253e7d9118527a871f09a16",
+        "symbol": "OnDataSyncTrigger"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E5",
+        "path": "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/src/component_manager_test.cpp",
+        "relation": "test-with-incorrect-assertion",
+        "source_ref": "90b9f58aa036ab344253e7d9118527a871f09a16",
+        "symbol": "OnGetDescriptors_001"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "E4"
+        ],
+        "from": "DHDataSyncTriggerListener::OnDataSyncTrigger",
+        "relation": "calls",
+        "to": "ComponentManager::RegisterSyncDataRequest"
+      },
+      {
+        "evidence_refs": [
+          "E1"
+        ],
+        "from": "ComponentManager::RegisterSyncDataRequest",
+        "relation": "writes",
+        "to": "syncDeviceInfoMap_"
+      },
+      {
+        "evidence_refs": [
+          "E2"
+        ],
+        "from": "ComponentManager::SyncRemoteDeviceInfoBySoftbus",
+        "relation": "writes",
+        "to": "syncDeviceInfoMap_"
+      },
+      {
+        "evidence_refs": [
+          "E3"
+        ],
+        "from": "ComponentManager::OnGetDescriptors",
+        "relation": "reads-and-erases",
+        "to": "syncDeviceInfoMap_"
+      }
+    ],
+    "level": "direct-flow",
+    "rationale": "Change is self-contained within modified files; no cross-boundary flow observed",
+    "self_contained": true,
+    "unresolved": []
+  },
+  "coverage_gaps": [
+    "Inconclusive hypothesis requires runtime verification"
+  ],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "RegisterSyncDataRequest adds entry to syncDeviceInfoMap_ with empty callback list",
+        "OnDataSyncTrigger now calls RegisterSyncDataRequest before sending event",
+        "OnGetDescriptors_001 test assertion changed from EXPECT_TRUE to EXPECT_FALSE without calling RegisterSyncDataRequest"
+      ],
+      "rationale": "New RegisterSyncDataRequest method modifies shared syncDeviceInfoMap_ state; test assertion change may be incorrect.",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Reliability and recovery",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Performance and scalability",
+      "evidence": [],
+      "rationale": "RegisterSyncDataRequest is a lightweight map insertion under existing mutex.",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Build and portability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [],
+      "rationale": "Test adequacy is outside current finding scope",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Security and privacy",
+      "evidence": [],
+      "rationale": "No security-relevant changes (no auth, no IPC, no secrets).",
+      "review_level": "not-applicable"
+    }
+  ],
+  "exclusions": [],
+  "executed_checks": [
+    {
+      "command": "Verified RegisterSyncDataRequest acquires mutex before map access",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified RegisterSyncDataRequest validates networkId length via IsIdLengthValid",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified OnDataSyncTrigger calls RegisterSyncDataRequest before SendEvent",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified SyncRemoteDeviceInfoBySoftbus properly handles pre-existing entries by appending callbacks",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified test fixture does not clear syncDeviceInfoMap_ between test cases",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified OnGetDescriptors returns early for empty descriptors without modifying syncDeviceInfoMap_",
+      "outcome": "reviewed",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "OnGetDescriptors returns early at line 2454 when descriptors.size() == 0",
+        "OnGetDescriptors_001 passes empty descriptors vector",
+        "SetUp/TearDown do not clear syncDeviceInfoMap_ (confirmed by reading fixture code at lines 105-136)",
+        "No call to RegisterSyncDataRequest or SyncRemoteDeviceInfoBySoftbus in the test body"
+      ],
+      "expected_failure": "Test assertion failure (EXPECT_FALSE on empty map)",
+      "hypothesis_id": "H1",
+      "outcome": "supported",
+      "statement": "OnGetDescriptors_001 test assertion EXPECT_FALSE(syncDeviceInfoMap_.empty()) is incorrect because OnGetDescriptors with empty descriptors returns early without modifying syncDeviceInfoMap_.",
+      "trigger": "Test runs in isolation or before any test that populates syncDeviceInfoMap_",
+      "verification": "Read OnGetDescriptors code path: empty descriptors -> DHLOGE -> return without lock/mutex/map access. Read test fixture: SetUp clears compSource_/compSink_ but not syncDeviceInfoMap_."
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "RegisterSyncDataRequest adds entry with empty callback list {}",
+        "SyncRemoteDeviceInfoBySoftbus checks if entry exists and pushes callback if so (line 2425)",
+        "Order of calls depends on runtime timing"
+      ],
+      "expected_failure": "Callbacks from SyncRemoteDeviceInfoBySoftbus are appended to empty list instead of being the primary entry; OnGetDescriptors notifies empty callback list",
+      "hypothesis_id": "H2",
+      "outcome": "inconclusive",
+      "statement": "RegisterSyncDataRequest creates a deduplication entry that prevents SyncRemoteDeviceInfoBySoftbus from creating its own entry with callbacks.",
+      "trigger": "OnDataSyncTrigger fires before SyncRemoteDeviceInfoBySoftbus for the same networkId",
+      "verification": "Read SyncRemoteDeviceInfoBySoftbus: it pushes callbacks to existing entries, so callbacks are properly accumulated. Risk is low but behavior depends on call order."
+    }
+  ],
+  "findings": [
+    {
+      "changed_code": [
+        "see diff evidence"
+      ],
+      "confidence": "medium",
+      "current_at_scan_head": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "OnGetDescriptors returns early when descriptors.size() == 0 (component_manager.cpp:2454-2457)",
+        "Test does not call RegisterSyncDataRequest or SyncRemoteDeviceInfoBySoftbus before OnGetDescriptors",
+        "TestFixture SetUp/TearDown do not clear syncDeviceInfoMap_ (lines 105-136)",
+        "Previous assertion EXPECT_TRUE was correct for the code path being tested"
+      ],
+      "finding_id": "F-DF3392-001",
+      "finding_type": "code-defect",
+      "impact": "Functional degradation or incorrect behavior",
+      "judgment": "defect identified",
+      "location": "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/src/component_manager_test.cpp:1609",
+      "relevant_flow": "Changed code path to affected behavior",
+      "remediation": "Either revert to EXPECT_TRUE(syncDeviceInfoMap_.empty()) or add RegisterSyncDataRequest(networkId) call before OnGetDescriptors to properly test the new flow",
+      "severity": "medium",
+      "statement": "OnGetDescriptors_001 asserts EXPECT_FALSE(syncDeviceInfoMap_.empty()) but calls OnGetDescriptors with empty descriptors, which returns early without modifying syncDeviceInfoMap_. The test depends on leaked state from prior test cases; in isolation the assertion would fail.",
+      "temporal_status": "Current at scan HEAD; not yet fixed",
+      "title": "Finding 1",
+      "trigger": "Execution of the changed code path",
+      "type": "code-defect",
+      "verification": "Static code path review",
+      "violated_invariant": "Correctness invariant violated by changed code"
+    }
+  ],
+  "flow_coverage": [
+    {
+      "affected_flow": "OnDataSyncTrigger -> RegisterSyncDataRequest -> syncDeviceInfoMap_[networkId]={ENABLE_SOURCE,{}} -> EVENT_DATA_SYNC_MANUAL -> OnGetDescriptors",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "DHDataSyncTriggerListener::OnDataSyncTrigger",
+      "evidence": [
+        "E4",
+        "E1"
+      ],
+      "flow_id": "F1"
+    },
+    {
+      "affected_flow": "OnGetDescriptors(empty descriptors) -> early return -> syncDeviceInfoMap_ unchanged -> EXPECT_FALSE(empty) fails if map was empty",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "ComponentManagerTest::OnGetDescriptors_001",
+      "evidence": [
+        "E5"
+      ],
+      "flow_id": "F2"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [
+    {
+      "affected_surface": "services code path",
+      "candidate_id": "C-001",
+      "finding_id": "F-DF3392-001",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "root_cause_key": "defect-in-changed-code",
+      "suggested_verification": "Run relevant unit test with the trigger condition"
+    }
+  ],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed-with-gaps",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "Adds RegisterSyncDataRequest method to ComponentManager and integrates it into OnDataSyncTrigger flow. The OnGetDescriptors_001 test assertion was changed from EXPECT_TRUE to EXPECT_FALSE(syncDeviceInfoMap_.empty()), but the test calls OnGetDescriptors with empty descriptors which triggers early return without modifying syncDeviceInfoMap_. The assertion now depends on leaked state from prior test cases.",
+  "temporal_status": "current-at-scan-head",
+  "unit_id": "merge-df3392cc534b",
+  "verification_disposition": {
+    "evidence": [
+      "Read OnGetDescriptors early-return path for empty descriptors",
+      "Read test fixture SetUp/TearDown confirming syncDeviceInfoMap_ is not reset"
+    ],
+    "rationale": "Static analysis of code paths and test fixture setup is sufficient to identify the test assertion defect. Build and runtime verification require OpenHarmony build environment.",
+    "status": "static-analysis"
+  }
+}

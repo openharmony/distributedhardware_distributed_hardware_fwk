@@ -1,0 +1,80 @@
+{
+  "base": "57fc55b5f1ec6da07e04a75de95199c60d8d8d5a",
+  "baseline_review_depth": "full",
+  "challenge_reason": "single primary review permitted by deterministic risk policy",
+  "challenge_required": false,
+  "changed_path_summary": "8 changed paths",
+  "changed_paths": [
+    "services/distributedhardwarefwkservice/include/componentloader/component_loader.h",
+    "services/distributedhardwarefwkservice/include/componentmanager/component_manager.h",
+    "services/distributedhardwarefwkservice/src/componentloader/component_loader.cpp",
+    "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+    "services/distributedhardwarefwkservice/src/componentmanager/component_monitor.cpp",
+    "services/distributedhardwarefwkservice/test/unittest/common/componentloader/src/component_loader_test.cpp",
+    "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/src/component_manager_test.cpp",
+    "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_monitior/src/component_monitor_test.cpp"
+  ],
+  "commit_assignments": [
+    {
+      "role": "integration merge",
+      "sha": "7be94f4daad0dc0df838c84db05526fdedb1d24c"
+    },
+    {
+      "role": "merged member",
+      "sha": "cb7feb8318960c1110fdaca53d6f0376ec08b473"
+    },
+    {
+      "role": "merged member",
+      "sha": "161031aca5dbcb7a33ac1b9b13bcc629319905b9"
+    },
+    {
+      "role": "merged member",
+      "sha": "78d1da5b3d5afd1c509d429aeb0126daeeb1ff2a"
+    },
+    {
+      "role": "merged member",
+      "sha": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6"
+    }
+  ],
+  "depth_reason": "behavioral source change",
+  "diff_evidence": [
+    "git diff --find-renames 57fc55b5f1ec6da07e04a75de95199c60d8d8d5a..7be94f4daad0dc0df838c84db05526fdedb1d24c",
+    "git diff --find-renames 57fc55b5f1ec6da07e04a75de95199c60d8d8d5a..4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+    "git diff-tree -m --find-renames 7be94f4daad0dc0df838c84db05526fdedb1d24c"
+  ],
+  "expected_challenge_report": "challenge-results/merge-7be94f4daad0.md",
+  "expected_challenge_result": "challenge-results/merge-7be94f4daad0.json",
+  "expected_report": "results/merge-7be94f4daad0.md",
+  "expected_result": "results/merge-7be94f4daad0.json",
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "head": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+  "integration_date": "2026-06-08T11:53:50+08:00",
+  "member_commits": [
+    "cb7feb8318960c1110fdaca53d6f0376ec08b473",
+    "161031aca5dbcb7a33ac1b9b13bcc629319905b9",
+    "78d1da5b3d5afd1c509d429aeb0126daeeb1ff2a",
+    "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6"
+  ],
+  "merge": "7be94f4daad0dc0df838c84db05526fdedb1d24c",
+  "network_policy": "local-only",
+  "ordinal": 4,
+  "parents": [
+    "57fc55b5f1ec6da07e04a75de95199c60d8d8d5a",
+    "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6"
+  ],
+  "pr_identity": null,
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "priority": "medium",
+  "resolution": "two-parent-local-graph",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "risk_signals": [],
+  "sampling_selected": false,
+  "schema_version": 3,
+  "stage_evidence": "7be94f4daad0dc0df838c84db05526fdedb1d24c is a first-parent integration selected by date-range; committer date 2026-06-08T11:53:50+08:00",
+  "subject": "!1269 merge master into master",
+  "unit_id": "merge-7be94f4daad0",
+  "unit_type": "merge"
+}

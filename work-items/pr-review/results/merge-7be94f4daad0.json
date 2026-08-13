@@ -1,0 +1,494 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "int32_t GetSinkSaId(const DHType dhType);",
+        "DHType GetDHTypeBySaId(const int32_t saId);"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/componentloader/component_loader.h",
+      "rationale": "GetDHTypeBySrcSaId renamed to GetDHTypeBySaId; GetSinkSaId added"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "std::map<DHType, int32_t> compSinkSaId_;",
+        "int32_t UninitCompSource(DHType dhType, bool keepSAMonitor = false);"
+      ],
+      "path": "services/distributedhardwarefwkservice/include/componentmanager/component_manager.h",
+      "rationale": "UninitCompSource/UninitCompSink gain keepSAMonitor parameter; ResetSinkEnableStatus/ResetSourceEnableStatus gain keepSAMonitor; compSinkSaId_ map added"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "if (handler.second.sourceSaId == saId || handler.second.sinkSaId == saId)"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/componentloader/component_loader.cpp",
+      "rationale": "GetSinkSaId implemented; GetDHTypeBySaId matches both sourceSaId and sinkSaId"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "InitCompSink: compMonitorPtr_->AddSAMonitor(saId)",
+        "UninitCompSink: if (!keepSAMonitor) compMonitorPtr_->RemoveSAMonitor(it->second)",
+        "DoRecover: ResetSinkEnableStatus(dhType, true)"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+      "rationale": "InitCompSink adds sink SA monitoring; UninitCompSink adds SA monitor cleanup with keepSAMonitor; DoRecover passes keepSAMonitor=true"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "DHType dhType = ComponentLoader::GetInstance().GetDHTypeBySaId(saId);"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/componentmanager/component_monitor.cpp",
+      "rationale": "OnRemoveSystemAbility uses GetDHTypeBySaId instead of GetDHTypeBySrcSaId"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "GetSinkSaId_001, GetDHTypeBySaId_001, GetDHTypeBySaId_002"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/componentloader/src/component_loader_test.cpp",
+      "rationale": "Tests added for GetSinkSaId and GetDHTypeBySaId (matching both source and sink saIds)"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "InitCompSink_002, InitCompSink_003, UninitCompSink_003, UninitCompSink_004, UninitCompSource_002, UninitCompSource_003"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/src/component_manager_test.cpp",
+      "rationale": "Tests added for InitCompSink with compMonitorPtr_ null/valid, UninitCompSink with keepSAMonitor, ResetSinkEnableStatus/ResetSourceEnableStatus with keepSAMonitor"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "ComponentLoader::GetInstance().GetDHTypeBySaId(saId)"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_monitior/src/component_monitor_test.cpp",
+      "rationale": "OnRemoveSystemAbility tests updated from GetDHTypeBySrcSaId to GetDHTypeBySaId"
+    }
+  ],
+  "checked_safe": [
+    "GetDHTypeBySaId correctly matches both sourceSaId and sinkSaId",
+    "GetSinkSaId uses mutex and find() pattern consistent with GetSourceSaId",
+    "keepSAMonitor=true in DoRecover correctly preserves SA subscription during recovery cycle",
+    "AddSAMonitor correctly skips if SA ID is already monitored (idempotent)",
+    "compSinkSaId_ initialized in constructor and cleared in tests",
+    "keepSAMonitor=false default preserves existing UninitComp* behavior for non-recovery callers"
+  ],
+  "claim_id": "79de17f8e960893f72570e9437f4757c",
+  "classification": "Introduces defect",
+  "context_inspection": {
+    "changed_symbols": [
+      "ComponentLoader::GetSinkSaId",
+      "ComponentLoader::GetDHTypeBySaId",
+      "ComponentManager::InitCompSink",
+      "ComponentManager::UninitCompSink",
+      "ComponentManager::UninitCompSource",
+      "ComponentManager::ResetSinkEnableStatus",
+      "ComponentManager::ResetSourceEnableStatus",
+      "ComponentManager::DoRecover",
+      "ComponentMonitor::CompSystemAbilityListener::OnRemoveSystemAbility",
+      "ComponentManager::compSinkSaId_"
+    ],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "E1",
+        "path": "services/distributedhardwarefwkservice/include/componentloader/component_loader.h",
+        "relation": "added-declaration",
+        "source_ref": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+        "symbol": "ComponentLoader::GetSinkSaId"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E2",
+        "path": "services/distributedhardwarefwkservice/include/componentloader/component_loader.h",
+        "relation": "renamed-from-GetDHTypeBySrcSaId",
+        "source_ref": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+        "symbol": "ComponentLoader::GetDHTypeBySaId"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E3",
+        "path": "services/distributedhardwarefwkservice/src/componentloader/component_loader.cpp",
+        "relation": "added-implementation",
+        "source_ref": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+        "symbol": "ComponentLoader::GetSinkSaId"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E4",
+        "path": "services/distributedhardwarefwkservice/src/componentloader/component_loader.cpp",
+        "relation": "modified-matches-both-saIds",
+        "source_ref": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+        "symbol": "ComponentLoader::GetDHTypeBySaId"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E5",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+        "relation": "modified-adds-sink-SA-monitor",
+        "source_ref": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+        "symbol": "ComponentManager::InitCompSink"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E6",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+        "relation": "modified-adds-SA-monitor-cleanup",
+        "source_ref": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+        "symbol": "ComponentManager::UninitCompSink"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E7",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+        "relation": "modified-adds-keepSAMonitor",
+        "source_ref": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+        "symbol": "ComponentManager::UninitCompSource"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E8",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+        "relation": "modified-passes-keepSAMonitor-true",
+        "source_ref": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+        "symbol": "ComponentManager::DoRecover"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E9",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_monitor.cpp",
+        "relation": "uses-GetDHTypeBySaId",
+        "source_ref": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+        "symbol": "OnRemoveSystemAbility"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E10",
+        "path": "services/distributedhardwarefwkservice/include/componentmanager/component_monitor.h",
+        "relation": "contains-both-source-and-sink-SA-IDs",
+        "source_ref": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+        "symbol": "saIdProcessNameMap_"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E11",
+        "path": "services/distributedhardwarefwkservice/include/componentmanager/component_manager.h",
+        "relation": "added-member",
+        "source_ref": "4ac767a3a8c8d9ebe7430aaeaa0979ca58bc14c6",
+        "symbol": "compSinkSaId_"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "E9",
+          "E4"
+        ],
+        "from": "OnRemoveSystemAbility",
+        "relation": "resolves-DHType-from-saId",
+        "to": "ComponentLoader::GetDHTypeBySaId"
+      },
+      {
+        "evidence_refs": [
+          "E9"
+        ],
+        "from": "OnRemoveSystemAbility",
+        "relation": "triggers-recovery",
+        "to": "ComponentManager::Recover"
+      },
+      {
+        "evidence_refs": [
+          "E8"
+        ],
+        "from": "ComponentManager::DoRecover",
+        "relation": "preserves-SA-monitor-during-recovery",
+        "to": "ResetSinkEnableStatus(keepSAMonitor=true)"
+      },
+      {
+        "evidence_refs": [
+          "E6"
+        ],
+        "from": "ResetSinkEnableStatus",
+        "relation": "uninitializes-sink-without-removing-monitor",
+        "to": "UninitCompSink(keepSAMonitor=true)"
+      },
+      {
+        "evidence_refs": [
+          "E3",
+          "E5"
+        ],
+        "from": "ComponentLoader::GetSinkSaId",
+        "relation": "provides-sink-SA-ID-for-monitoring",
+        "to": "InitCompSink"
+      }
+    ],
+    "level": "direct-flow",
+    "rationale": "Sink SA monitoring introduces a new recovery trigger path (OnRemoveSystemAbility→Recover→DoRecover) and new error paths in InitCompSink/UninitCompSink; traced the full flow from SA monitor callback through recovery to re-initialization",
+    "self_contained": false,
+    "unresolved": []
+  },
+  "coverage_gaps": [
+    "Inconclusive hypothesis requires runtime verification"
+  ],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "InitCompSink returns ERR_DH_FWK_COMPONENT_MONITOR_NULL after compSink_.insert and compSinkSaId_.insert",
+        "UninitCompSink returns ERR_DH_FWK_COMPONENT_MONITOR_NULL after UnregisterDistributedHardwareSinkStateListener but before ReleaseSink and compSink_.erase"
+      ],
+      "rationale": "Core change adds sink SA monitoring and recovery flow; error paths in InitCompSink/UninitCompSink leave partial state on compMonitorPtr_==null",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [
+        "Both sourceSaId and sinkSaId OnRemoveSystemAbility can trigger Recover for same DHType"
+      ],
+      "rationale": "Dual SA monitoring (source+sink) for same DHType creates concurrent recovery scenarios",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Reliability and recovery",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Performance and scalability",
+      "evidence": [],
+      "rationale": "Minimal performance impact from additional map lookups and SA subscriptions",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Build and portability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [],
+      "rationale": "Test adequacy is outside current finding scope",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Security and privacy",
+      "evidence": [],
+      "rationale": "No security-relevant changes",
+      "review_level": "not-applicable"
+    }
+  ],
+  "exclusions": [],
+  "executed_checks": [
+    {
+      "command": "git diff + source read",
+      "outcome": "Reviewed changed code paths against invariants",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "component_manager.cpp:2149 compSink_.insert(std::make_pair(dhType, sinkPtr))",
+        "component_manager.cpp:2152 compSinkSaId_.insert(std::make_pair(dhType, saId))",
+        "component_manager.cpp:2154-2155 DHLOGE + return ERR_DH_FWK_COMPONENT_MONITOR_NULL without erasing compSink_ or compSinkSaId_ entries"
+      ],
+      "expected_failure": "Caller believes initialization failed but the sink is actually in compSink_ and compSinkSaId_; subsequent calls may find the sink already loaded (GetSink returns ERR_DH_FWK_LOADER_SOURCE_LOAD) causing double-initialization or inconsistent state",
+      "hypothesis_id": "H1",
+      "outcome": "supported",
+      "statement": "InitCompSink returns ERR_DH_FWK_COMPONENT_MONITOR_NULL after partially initializing the sink: compSink_ and compSinkSaId_ are populated, sink handler is loaded and listener registered, but the function signals failure",
+      "trigger": "compMonitorPtr_ is nullptr when InitCompSink is called and GetSinkSaId returns a valid SA ID",
+      "verification": "Static code path analysis; confirmed compMonitorPtr_ is always initialized in constructor but error path leaves inconsistent state"
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "component_manager.cpp:2177 sinkPtr->UnregisterDistributedHardwareSinkStateListener()",
+        "component_manager.cpp:2180-2182 return ERR_DH_FWK_COMPONENT_MONITOR_NULL without calling ReleaseSink or erasing compSink_"
+      ],
+      "expected_failure": "Sink listener is unregistered but sink handler is not released; compSink_ still has the entry; subsequent re-initialization would see sink already loaded and fail",
+      "hypothesis_id": "H2",
+      "outcome": "supported",
+      "statement": "UninitCompSink returns ERR_DH_FWK_COMPONENT_MONITOR_NULL after UnregisterDistributedHardwareSinkStateListener but before ReleaseSink and compSink_.erase, leaving the sink handler loaded and tracked",
+      "trigger": "compMonitorPtr_ is nullptr when UninitCompSink is called and compSinkSaId_ has an entry for the DHType",
+      "verification": "Static code path analysis"
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "component_monitor.cpp:56 GetDHTypeBySaId matches both sourceSaId and sinkSaId for same DHType",
+        "component_monitor.cpp:71 ComponentManager::GetInstance().Recover(dhType) called from both callbacks",
+        "DoRecover uses locks for individual Reset* calls but not for the entire recovery sequence"
+      ],
+      "expected_failure": "Two DoRecover(AUDIO) tasks run concurrently; first uninitializes and starts recovery, second finds component already uninitialized and may cause double-recovery or inconsistent state",
+      "hypothesis_id": "H3",
+      "outcome": "inconclusive",
+      "statement": "Concurrent recovery: both source and sink SA going down for the same DHType triggers two concurrent DoRecover operations via ffrt::submit, which could race on ResetSinkEnableStatus/ResetSourceEnableStatus and recovery re-initialization",
+      "trigger": "Source SA (e.g., 4805) and sink SA (e.g., 4806) for AUDIO both crash simultaneously or in quick succession",
+      "verification": "Cannot fully verify concurrency behavior statically; existing locking provides partial serialization but recovery sequence as a whole is not atomic"
+    }
+  ],
+  "findings": [
+    {
+      "changed_code": [
+        "see diff evidence"
+      ],
+      "confidence": "medium",
+      "current_at_scan_head": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "component_manager.cpp:2149 compSink_.insert(std::make_pair(dhType, sinkPtr))",
+        "component_manager.cpp:2152 compSinkSaId_.insert(std::make_pair(dhType, saId))",
+        "component_manager.cpp:2154-2155 return ERR_DH_FWK_COMPONENT_MONITOR_NULL without rollback"
+      ],
+      "finding_id": "F-7be94f-001",
+      "finding_type": "code-defect",
+      "impact": "If triggered, leaves ComponentManager in inconsistent state: sink is loaded and tracked but caller believes init failed; subsequent operations may malfunction",
+      "judgment": "defect identified",
+      "location": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp:2149-2155",
+      "relevant_flow": "Changed code path to affected behavior",
+      "severity": "low",
+      "statement": "InitCompSink returns ERR_DH_FWK_COMPONENT_MONITOR_NULL after partially initializing the sink. The sink handler is loaded, listener registered, and inserted into compSink_ and compSinkSaId_ before the null-check on compMonitorPtr_. On error return, these partial modifications are not rolled back. If the caller retries or checks compSink_, it will find the sink already present despite being told initialization failed. The defect is currently unreachable because compMonitorPtr_ is always initialized in the constructor, but it represents a latent error-path leak that would surface if the invariant is violated (e.g., by future refactoring).",
+      "symbol": "ComponentManager::InitCompSink",
+      "temporal_status": "Current at scan HEAD; not yet fixed",
+      "title": "Finding 1",
+      "trigger": "Execution of the changed code path",
+      "type": "code-defect",
+      "verification": "Static code path review",
+      "violated_invariant": "Correctness invariant violated by changed code"
+    },
+    {
+      "changed_code": [
+        "see diff evidence"
+      ],
+      "confidence": "medium",
+      "current_at_scan_head": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "component_manager.cpp:2177 sinkPtr->UnregisterDistributedHardwareSinkStateListener()",
+        "component_manager.cpp:2180-2182 return ERR_DH_FWK_COMPONENT_MONITOR_NULL before ReleaseSink/compSink_.erase"
+      ],
+      "finding_id": "F-7be94f-002",
+      "finding_type": "code-defect",
+      "impact": "If triggered, sink handler is leaked (not released via ReleaseSink) and compSink_ entry persists; component is in partially uninitialized state with listener unregistered but handler still loaded",
+      "judgment": "defect identified",
+      "location": "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp:2177-2182",
+      "relevant_flow": "Changed code path to affected behavior",
+      "severity": "low",
+      "statement": "UninitCompSink returns ERR_DH_FWK_COMPONENT_MONITOR_NULL after unregistering the sink state listener but before calling ReleaseSink, erasing from compSinkSaId_, or erasing from compSink_. The sink handler remains loaded and tracked in compSink_ despite the caller being told uninitialization failed. The sink listener is already unregistered, creating a partially uninitialized component. Same pattern as pre-existing defect in UninitCompSource (not introduced by this unit, but replicated for sink side).",
+      "symbol": "ComponentManager::UninitCompSink",
+      "temporal_status": "Current at scan HEAD; not yet fixed",
+      "title": "Finding 2",
+      "trigger": "Execution of the changed code path",
+      "type": "code-defect",
+      "verification": "Static code path review",
+      "violated_invariant": "Correctness invariant violated by changed code"
+    }
+  ],
+  "flow_coverage": [
+    {
+      "affected_flow": "Sink SA crash recovery: OnRemoveSystemAbility resolves DHType via GetDHTypeBySaId (matching sink saIds), triggers Recover→DoRecover which calls ResetSinkEnableStatus(keepSAMonitor=true) to uninitialize sink while preserving SA subscription, then RecoverAutoEnableSink re-initializes via InitCompSink",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "ComponentMonitor::OnRemoveSystemAbility",
+      "evidence": [
+        "component_monitor.cpp:56 GetDHTypeBySaId resolves both source and sink SA IDs",
+        "component_manager.cpp:687 ResetSinkEnableStatus(dhType, true)",
+        "InitCompSink AddSAMonitor skips if already subscribed (component_monitor.cpp:78-80)"
+      ],
+      "flow_id": "F1"
+    },
+    {
+      "affected_flow": "Error path: InitCompSink inserts sink into compSink_ and compSinkSaId_ then returns ERR_DH_FWK_COMPONENT_MONITOR_NULL if compMonitorPtr_ is null, without rolling back the insertions",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "ComponentManager::InitCompSink",
+      "evidence": [
+        "component_manager.cpp:2149 compSink_.insert before null check",
+        "component_manager.cpp:2152 compSinkSaId_.insert before null check",
+        "component_manager.cpp:2154 return ERR_DH_FWK_COMPONENT_MONITOR_NULL without cleanup"
+      ],
+      "flow_id": "F2"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [
+    {
+      "affected_surface": "services code path",
+      "candidate_id": "C-001",
+      "dimension": "Functional correctness",
+      "finding_id": "F-7be94f-001",
+      "finding_ref": "F-7be94f-001",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "root_cause_key": "defect-in-changed-code",
+      "severity": "low",
+      "suggested_verification": "Run relevant unit test with the trigger condition"
+    },
+    {
+      "affected_surface": "services code path",
+      "candidate_id": "C-001",
+      "dimension": "Functional correctness",
+      "finding_id": "F-7be94f-001",
+      "finding_ref": "F-7be94f-002",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "root_cause_key": "defect-in-changed-code",
+      "severity": "low",
+      "suggested_verification": "Run relevant unit test with the trigger condition"
+    }
+  ],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed-with-gaps",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "Adds sink SA monitoring to ComponentManager, enabling recovery when sink SAs crash. Introduces GetSinkSaId and GetDHTypeBySaId (matching both source and sink saIds), compSinkSaId_ tracking map, and keepSAMonitor parameter to preserve SA subscription during recovery. Introduces a code defect: InitCompSink returns ERR_DH_FWK_COMPONENT_MONITOR_NULL after partially initializing the sink (loaded, listener registered, inserted into compSink_ and compSinkSaId_), without rollback. Similarly, UninitCompSink returns the same error after unregistering the sink listener but before releasing the handler or erasing from compSink_, leaving a partially uninitialized component. These paths are currently unreachable (compMonitorPtr_ is always initialized in the constructor) but represent latent error-path leaks that would cause inconsistent state if the invariant is violated.",
+  "temporal_status": "current",
+  "unit_id": "merge-7be94f4daad0",
+  "verification_disposition": {
+    "evidence": [
+      "Read InitCompSink, UninitCompSink, DoRecover, and OnRemoveSystemAbility at head SHA"
+    ],
+    "rationale": "Error-path defects verified by code inspection; concurrent recovery concern identified but cannot be fully verified statically",
+    "status": "static-analysis"
+  }
+}

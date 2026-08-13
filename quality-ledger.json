@@ -1,0 +1,178 @@
+{
+  "rows": [
+    {
+      "confirmation_records": [],
+      "dedup_key": {
+        "affected_surface": "LoadSinkDMSDPService and NotifySinkRemoteSourceStarted SA entry points",
+        "root_cause_key": "security-check-removal-gap-dhaccesspermission"
+      },
+      "dimension": "Security and privacy",
+      "evidence": [
+        "distributed_hardware_service.cpp modified by multiple units including merge-63c841fd613b",
+        "merge-63c841fd613b explicitly removes CheckDHAccessPermission calls",
+        "shared surface: distributed_hardware_service.h and .cpp across units"
+      ],
+      "impact": "Unauthorized access to distributed hardware SA methods during the gap period",
+      "issue_or_candidate": "Security check removal and partial re-introduction across units",
+      "judgment": "Open candidate",
+      "ledger_id": "AQH-22B441E144A63981",
+      "question_to_confirm": "Was the security gap between permission check removal and re-introduction exploitable?",
+      "sources": [
+        "cluster:cluster-0001"
+      ],
+      "status": "Open",
+      "suggested_verification": "Check device logs for unauthorized SA calls during the gap window"
+    },
+    {
+      "confirmation_records": [],
+      "dedup_key": {
+        "affected_surface": "DistributedHardwareManagerFactory::SendOnLineEvent line 185-188",
+        "root_cause_key": "flagUnInit_not_reset_before_online_event"
+      },
+      "dimension": "State/lifecycle/concurrency",
+      "evidence": [
+        "distributed_hardware_manager_factory.cpp:246 sets flagUnInit_.store(true) in SendOffLineEvent when GetRealTimeOnlineDeviceCount()==0",
+        "distributed_hardware_manager_factory.cpp:185-188 checks if (flagUnInit_.load()) and returns ERR_DH_FWK_HARDWARE_MANAGER_INIT_FAILED",
+        "flagUnInit_ is only reset to false in UnInit() at line 118 and in the Init() method indirectly via isAllInit_",
+        "There is no explicit path that resets flagUnInit_ to false when a new device comes online BEFORE the online event is processed",
+        "The UnInit path at line 117 sets isInit_=false, and Init() sets isInit_=true but flagUnInit_ is only reset at line 118 inside UnInit which may have already completed"
+      ],
+      "impact": "Device re-online is completely blocked from triggering enable, breaking distributed communication after reconnection",
+      "issue_or_candidate": "flagUnInit_ race condition blocks device re-online enable flow",
+      "judgment": "Probable",
+      "ledger_id": "AQH-5C1FC14A8C5A84AB",
+      "question_to_confirm": "Is flagUnInit_ still true when the device re-online event is received after a previous offline event set it to true?",
+      "sources": [
+        "case:reconnect-callback-001"
+      ],
+      "status": "Open",
+      "suggested_verification": "Add logging of flagUnInit_.load() value at SendOnLineEvent:185 and reproduce with device offline/online cycle"
+    },
+    {
+      "confirmation_records": [],
+      "dedup_key": {
+        "affected_surface": "DistributedHardwareManagerFactory::SendOnLineEvent line 200-203, UnInit line 105-121",
+        "root_cause_key": "isInit_reinit_race_with_uninit"
+      },
+      "dimension": "State/lifecycle/concurrency",
+      "evidence": [
+        "distributed_hardware_manager_factory.cpp:200-203 checks !isInit_.load() && !Init() and returns error",
+        "UnInit at line 105 acquires releaseProcessMutex_ and at line 117 sets isInit_=false",
+        "Init at line 84-99 calls DistributedHardwareManager::Initialize() which may fail if subsystems are not ready",
+        "The race between UnInit release and new online event Init is not protected by a common mutex"
+      ],
+      "impact": "Online event processing fails because re-initialization cannot complete",
+      "issue_or_candidate": "isInit_ re-initialization in SendOnLineEvent may race with UnInit release process",
+      "judgment": "Possible",
+      "ledger_id": "AQH-7CE63DB21D52BCCE",
+      "question_to_confirm": "Does Init() fail when called from SendOnLineEvent while UnInit is still in progress or recently completed?",
+      "sources": [
+        "case:reconnect-callback-001"
+      ],
+      "status": "Open",
+      "suggested_verification": "Add logging of Init() return value in SendOnLineEvent and check timing with UnInit completion"
+    },
+    {
+      "confirmation_records": [],
+      "dedup_key": {
+        "affected_surface": "services code path",
+        "root_cause_key": "defect-in-changed-code"
+      },
+      "dimension": "Functional correctness",
+      "evidence": [
+        "DHLOGE at line 1968-1969 calls GetAnonyString(metaInfo.second->GetDeviceId()) while line 1966 calls GetUUIDByDeviceId(metaInfo.second->GetUdidHash())",
+        "Lock acquired at line 551",
+        "No parcel version/length field for DHDescriptor array",
+        "No version negotiation or backward-compatible padding",
+        "OnGetDescriptors returns early when descriptors.size() == 0 (component_manager.cpp:2454-2457)",
+        "Original: if (CheckDHAccessPermission(udid) != DH_FWK_SUCCESS) { return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL; }",
+        "Previous assertion EXPECT_TRUE was correct for the code path being tested",
+        "Replaced with: (void)udid;",
+        "StartGetDeviceDhInfo called at line 562 under lock",
+        "StartGetDeviceDhInfo calls GetDeviceDhInfo which calls callback->OnSuccess at line 449",
+        "Test does not call RegisterSyncDataRequest or SyncRemoteDeviceInfoBySoftbus before OnGetDescriptors",
+        "TestFixture SetUp/TearDown do not clear syncDeviceInfoMap_ (lines 105-136)",
+        "WriteDescriptors writes 3 fields per descriptor (dhType, id, customParams) where previously only 2 were written",
+        "access_listener_stub.cpp:42-47",
+        "access_listener_stub.cpp:55-60",
+        "cJSON valuedouble field has 53-bit mantissa sufficient for uint32_t",
+        "cJSON valueint field is int32_t which truncates values > 2147483647",
+        "cJSON_AddNumberToObject(json, \"tokenId\", static_cast<double>(tokenId)) at enable_task.cpp:233 and component_manager.cpp:354",
+        "component_manager.cpp:2149 compSink_.insert(std::make_pair(dhType, sinkPtr))",
+        "component_manager.cpp:2152 compSinkSaId_.insert(std::make_pair(dhType, saId))",
+        "component_manager.cpp:2154-2155 return ERR_DH_FWK_COMPONENT_MONITOR_NULL without rollback",
+        "distributed_hardware_service.cpp:561-565 (init success path)",
+        "distributed_hardware_service.cpp:570-577 (timeout path)",
+        "proxy.cpp:919-951 WriteDescriptors writes id(dhType,customParams,firstCallingTokenId",
+        "stub.cpp:657-693 ReadDescriptors reads id,dhType,customParams,firstCallingTokenId"
+      ],
+      "impact": "Cross-version IPC calls between processes with mismatched DHDescriptor serialization will corrupt parcel data, potentially causing enable operations to fail or crash",
+      "issue_or_candidate": "Finding 1",
+      "judgment": "defect identified",
+      "ledger_id": "AQH-93F2FF4CA8F9D328",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "sources": [
+        "pr:merge-01b5c0c0fefa",
+        "pr:merge-63c841fd613b",
+        "pr:merge-660ebe708b80",
+        "pr:merge-7b7b5d5a8196",
+        "pr:merge-7be94f4daad0",
+        "pr:merge-82a3c808df82",
+        "pr:merge-95c2b253a6ec",
+        "pr:merge-c05632ffcde9",
+        "pr:merge-df3392cc534b",
+        "pr:merge-f9cbdac4550c"
+      ],
+      "status": "Open",
+      "suggested_verification": "Run relevant unit test with the trigger condition"
+    },
+    {
+      "confirmation_records": [],
+      "dedup_key": {
+        "affected_surface": "DistributedHardwareManagerFactory::SendOffLineEvent missing RemoveOnlineDeviceIdEntryByNetworkId call",
+        "root_cause_key": "devIdEntrySet_not_cleaned_on_offline"
+      },
+      "dimension": "State/lifecycle/concurrency",
+      "evidence": [
+        "SendOffLineEvent at line 243 calls DeleteRealTimeOnlineDeviceNetworkId but does NOT call RemoveOnlineDeviceIdEntryByNetworkId on the devIdEntrySet_",
+        "SendOnLineEvent at line 190 checks DHContext::IsDeviceOnline(uuid) which searches devIdEntrySet_",
+        "IsDeviceOnline returning true causes SendOnLineEvent to return ERR_DH_FWK_HARDWARE_MANAGER_DEVICE_REPEAT_ONLINE at line 192",
+        "The AddOnlineDevice at line 195 inserts into devIdEntrySet_, but RemoveOnlineDeviceIdEntryByNetworkId is not called in the offline path"
+      ],
+      "impact": "Re-online events may be treated as duplicate online and silently dropped",
+      "issue_or_candidate": "DHContext online device set not cleaned during offline, causing IsDeviceOnline duplicate check to block re-online",
+      "judgment": "Possible",
+      "ledger_id": "AQH-E1B6A0C088EA2C25",
+      "question_to_confirm": "Is the device still present in DHContext::devIdEntrySet_ after going offline, causing IsDeviceOnline to return true and block re-online?",
+      "sources": [
+        "case:reconnect-callback-001"
+      ],
+      "status": "Open",
+      "suggested_verification": "Dump DHContext::devIdEntrySet_ contents after device offline and before re-online"
+    },
+    {
+      "confirmation_records": [],
+      "dedup_key": {
+        "affected_surface": "DHDescriptor parcel wire format across proxy/stub boundary",
+        "root_cause_key": "ipc-serialization-format-drift-dhdescriptor"
+      },
+      "dimension": "API and compatibility",
+      "evidence": [
+        "merge-01b5c0c0fefa adds ReadUint32/WriteUint32 for firstCallingTokenId in DHDescriptor",
+        "merge-660ebe708b80 further modifies IPC proxy/stub serialization",
+        "shared surface: distributed_hardware_proxy.cpp modified by both units"
+      ],
+      "impact": "Parcel data misalignment causing IPC failure or data corruption",
+      "issue_or_candidate": "IPC serialization format drift across multiple units modifying DHDescriptor",
+      "judgment": "Open candidate",
+      "ledger_id": "AQH-F95A6C4D0ECF327A",
+      "question_to_confirm": "Does the cumulative DHDescriptor IPC format change cause ABI break when old and new versions communicate?",
+      "sources": [
+        "cluster:cluster-0001"
+      ],
+      "status": "Open",
+      "suggested_verification": "Test IPC between old-format proxy and new-format stub with firstCallingTokenId field"
+    }
+  ],
+  "schema_version": 2
+}

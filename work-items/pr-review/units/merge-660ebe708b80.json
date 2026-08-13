@@ -1,0 +1,75 @@
+{
+  "base": "8005fbff02b1b2612351cd47697679758beab313",
+  "baseline_review_depth": "full",
+  "challenge_reason": "single primary review permitted by deterministic risk policy",
+  "challenge_required": false,
+  "changed_path_summary": "18 changed paths",
+  "changed_paths": [
+    "common/utils/include/dhardware_descriptor.h",
+    "common/utils/include/distributed_hardware_errno.h",
+    "interfaces/inner_kits/src/ipc/distributed_hardware_proxy.cpp",
+    "interfaces/inner_kits/src/ipc/get_dh_descriptors_callback_stub.cpp",
+    "interfaces/inner_kits/test/unittest/common/ipc/distributed_hardware_proxy/src/distributed_hardware_proxy_test.cpp",
+    "services/distributedhardwarefwkservice/include/componentmanager/component_enable.h",
+    "services/distributedhardwarefwkservice/include/componentmanager/component_manager.h",
+    "services/distributedhardwarefwkservice/include/task/enable_task.h",
+    "services/distributedhardwarefwkservice/include/utils/impl_utils.h",
+    "services/distributedhardwarefwkservice/src/componentmanager/component_enable.cpp",
+    "services/distributedhardwarefwkservice/src/componentmanager/component_manager.cpp",
+    "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+    "services/distributedhardwarefwkservice/src/distributed_hardware_stub.cpp",
+    "services/distributedhardwarefwkservice/src/task/enable_task.cpp",
+    "services/distributedhardwarefwkservice/src/task/task_factory.cpp",
+    "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_enable/component_enable_test.cpp",
+    "services/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/src/mock_component_enable.cpp",
+    "services/distributedhardwarefwkservice/test/unittest/common/distributedhardwarestub/src/distributed_hardware_stub_test.cpp"
+  ],
+  "commit_assignments": [
+    {
+      "role": "integration merge",
+      "sha": "660ebe708b804bb121728af10c2c2928866dd0cb"
+    },
+    {
+      "role": "merged member",
+      "sha": "d46d9daf392e62b155fb4e77467b784d701ee61e"
+    }
+  ],
+  "depth_reason": "behavioral source change",
+  "diff_evidence": [
+    "git diff --find-renames 8005fbff02b1b2612351cd47697679758beab313..660ebe708b804bb121728af10c2c2928866dd0cb",
+    "git diff --find-renames 8005fbff02b1b2612351cd47697679758beab313..d46d9daf392e62b155fb4e77467b784d701ee61e",
+    "git diff-tree -m --find-renames 660ebe708b804bb121728af10c2c2928866dd0cb"
+  ],
+  "expected_challenge_report": "challenge-results/merge-660ebe708b80.md",
+  "expected_challenge_result": "challenge-results/merge-660ebe708b80.json",
+  "expected_report": "results/merge-660ebe708b80.md",
+  "expected_result": "results/merge-660ebe708b80.json",
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "head": "d46d9daf392e62b155fb4e77467b784d701ee61e",
+  "integration_date": "2026-03-05T18:41:15+08:00",
+  "member_commits": [
+    "d46d9daf392e62b155fb4e77467b784d701ee61e"
+  ],
+  "merge": "660ebe708b804bb121728af10c2c2928866dd0cb",
+  "network_policy": "local-only",
+  "ordinal": 24,
+  "parents": [
+    "8005fbff02b1b2612351cd47697679758beab313",
+    "d46d9daf392e62b155fb4e77467b784d701ee61e"
+  ],
+  "pr_identity": null,
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "priority": "medium",
+  "resolution": "two-parent-local-graph",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "risk_signals": [],
+  "sampling_selected": false,
+  "schema_version": 3,
+  "stage_evidence": "660ebe708b804bb121728af10c2c2928866dd0cb is a first-parent integration selected by date-range; committer date 2026-03-05T18:41:15+08:00",
+  "subject": "!1194 merge master into master",
+  "unit_id": "merge-660ebe708b80",
+  "unit_type": "merge"
+}

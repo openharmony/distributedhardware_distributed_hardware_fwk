@@ -1,0 +1,213 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "component_disable.cpp:27 constexpr int32_t DISABLE_TIMEOUT_MS = 1000"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/componentmanager/component_disable.cpp",
+      "rationale": "Only changed file; DISABLE_TIMEOUT_MS constant changed from 500 to 1000."
+    }
+  ],
+  "checked_safe": [
+    "DISABLE_TIMEOUT_MS increase from 500 to 1000 is consistent with ENABLE_TIMEOUT_MS and does not introduce correctness defects",
+    "ComponentDisable::Disable wait_for pattern correctly uses the constant and has bounded blocking"
+  ],
+  "claim_id": "54435d888d394a16c5754e4d6b131fd1",
+  "classification": "No material quality impact",
+  "context_inspection": {
+    "changed_symbols": [
+      "DISABLE_TIMEOUT_MS"
+    ],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "E1",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_disable.cpp",
+        "relation": "definition-site",
+        "source_ref": "570a9fb9ea590fe7d44d7bc4493ac390a4d8672a",
+        "symbol": "DISABLE_TIMEOUT_MS"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E2",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_disable.cpp",
+        "relation": "sole-consumer",
+        "source_ref": "570a9fb9ea590fe7d44d7bc4493ac390a4d8672a",
+        "symbol": "ComponentDisable::Disable"
+      },
+      {
+        "disposition": "unchanged",
+        "evidence_id": "E3",
+        "path": "services/distributedhardwarefwkservice/src/componentmanager/component_enable.cpp",
+        "relation": "consistency-reference",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "ENABLE_TIMEOUT_MS"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "E2",
+          "E1"
+        ],
+        "from": "ComponentDisable::Disable",
+        "relation": "read",
+        "to": "DISABLE_TIMEOUT_MS"
+      }
+    ],
+    "level": "local-symbol",
+    "rationale": "Change is confined to a single constexpr in component_disable.cpp; the only consumer is the wait_for call in the same file. Cross-referenced component_enable.cpp to verify consistency of timeout values.",
+    "self_contained": true,
+    "unresolved": []
+  },
+  "coverage_gaps": [],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "component_disable.cpp:27 DISABLE_TIMEOUT_MS changed 500->1000",
+        "component_disable.cpp:59 conVar_.wait_for(lock, std::chrono::milliseconds(DISABLE_TIMEOUT_MS), ...)",
+        "component_enable.cpp:27 ENABLE_TIMEOUT_MS = 1000 (unchanged, consistent)"
+      ],
+      "rationale": "Timeout constant change affects disable flow behavior; verified that the wait_for pattern in ComponentDisable::Disable is the sole consumer and the increase is consistent with the enable-side timeout.",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Reliability and recovery",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Performance and scalability",
+      "evidence": [
+        "component_disable.cpp:59 wait_for uses DISABLE_TIMEOUT_MS"
+      ],
+      "rationale": "Doubling the timeout worst-case blocking time from 500ms to 1000ms is acceptable for a disable operation that was likely timing out spuriously.",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Build and portability",
+      "evidence": [],
+      "rationale": "Single constexpr change cannot affect build.",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [],
+      "rationale": "Test adequacy is outside current finding scope",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Security and privacy",
+      "evidence": [],
+      "rationale": "No security-relevant change; timeout constant does not affect auth or data exposure.",
+      "review_level": "not-applicable"
+    }
+  ],
+  "exclusions": [
+    "No defect observed in primary dimensions"
+  ],
+  "executed_checks": [
+    {
+      "command": "Verified DISABLE_TIMEOUT_MS sole consumer is wait_for in ComponentDisable::Disable",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified ENABLE_TIMEOUT_MS = 1000 in component_enable.cpp for consistency",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "Verified no other references to DISABLE_TIMEOUT_MS value",
+      "outcome": "reviewed",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "The previous 500ms timeout was already spurious per the change intent; 1000ms aligns with ENABLE_TIMEOUT_MS and is still bounded",
+        "The caller already handles ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT; longer wait does not change error handling"
+      ],
+      "expected_failure": "Caller thread blocks for 1000ms instead of 500ms before timeout error",
+      "hypothesis_id": "H1",
+      "outcome": "ruled-out",
+      "statement": "Increased timeout may cause the Disable call to block longer than expected if the callback never arrives, degrading caller responsiveness.",
+      "trigger": "UnregisterDistributedHardware callback never arrives (component crash or IPC failure)",
+      "verification": "Static analysis: wait_for is bounded by the constant; no infinite block possible"
+    }
+  ],
+  "findings": [],
+  "flow_coverage": [
+    {
+      "affected_flow": "Disable wait-for-callback timeout: conVar_.wait_for now blocks up to 1000ms instead of 500ms before reporting ERR_DH_FWK_COMPONENT_DISABLE_TIMEOUT",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "ComponentDisable::Disable",
+      "evidence": [
+        "component_disable.cpp:59-67"
+      ],
+      "flow_id": "F1"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "DISABLE_TIMEOUT_MS increased from 500ms to 1000ms, aligning with the existing ENABLE_TIMEOUT_MS of 1000ms. The change is a single constant value adjustment with no control flow or logic changes. The timeout increase is conservative and reduces spurious timeout failures without introducing correctness risks.",
+  "temporal_status": "current",
+  "unit_id": "merge-4a9c9ffe4cfd",
+  "verification_disposition": {
+    "evidence": [
+      "ENABLE_TIMEOUT_MS = 1000 in component_enable.cpp:27"
+    ],
+    "rationale": "Single constexpr change with single consumer in same file; no runtime verification needed beyond confirming consistency with ENABLE_TIMEOUT_MS.",
+    "status": "static-analysis"
+  }
+}

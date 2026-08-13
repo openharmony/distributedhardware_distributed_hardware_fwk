@@ -1,0 +1,405 @@
+{
+  "attempt": 1,
+  "changed_path_coverage": [
+    {
+      "disposition": "direct",
+      "evidence": [
+        "LoadSinkDMSDPService: replaced with (void)udid; no permission check",
+        "NotifySinkRemoteSourceStarted: permission check block removed entirely"
+      ],
+      "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+      "rationale": "Primary defect: CheckDHAccessPermission removed from LoadSinkDMSDPService and NotifySinkRemoteSourceStarted"
+    },
+    {
+      "disposition": "direct",
+      "evidence": [
+        "LoadSinkDMSDPService_001 and NotifySinkRemoteSourceStarted_001 tests deleted"
+      ],
+      "path": "services/distributedhardwarefwkservice/test/unittest/common/distributedhardwareservice/src/distributed_hardware_service_test.cpp",
+      "rationale": "Unit tests for permission failure path removed, eliminating regression detection capability"
+    }
+  ],
+  "checked_safe": [
+    "CheckDHAccessPermission method itself still exists and is used by other callers (e.g. line 317)",
+    "Publisher::PublishMessage is internal and does not have its own permission check"
+  ],
+  "claim_id": "1d0160204e3b11f6f0948b7dbec92b75",
+  "classification": "Introduces defect",
+  "context_inspection": {
+    "changed_symbols": [
+      "DistributedHardwareService::LoadSinkDMSDPService",
+      "DistributedHardwareService::NotifySinkRemoteSourceStarted"
+    ],
+    "context_reads": [
+      {
+        "disposition": "changed",
+        "evidence_id": "E1",
+        "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+        "relation": "removed-from-callers",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "DistributedHardwareService::CheckDHAccessPermission"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E2",
+        "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+        "relation": "not-present-at-this-merge",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "DistributedHardwareService::CheckRemoteDeviceTypeAndUid"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E3",
+        "path": "services/distributedhardwarefwkservice/test/unittest/common/distributedhardwareservice/src/distributed_hardware_service_test.cpp",
+        "relation": "removed-test",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "LoadSinkDMSDPService_001"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E4",
+        "path": "services/distributedhardwarefwkservice/test/unittest/common/distributedhardwareservice/src/distributed_hardware_service_test.cpp",
+        "relation": "removed-test",
+        "source_ref": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+        "symbol": "NotifySinkRemoteSourceStarted_001"
+      },
+      {
+        "disposition": "changed",
+        "evidence_id": "E5",
+        "path": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp",
+        "relation": "method-still-exists-but-no-longer-called-by-LoadSinkDMSDPService-NotifySinkRemoteSourceStarted",
+        "source_ref": "63c841fd613bf83e408b4754baf32bf8f05ba332",
+        "symbol": "DistributedHardwareService::CheckDHAccessPermission"
+      }
+    ],
+    "flow_edges": [
+      {
+        "evidence_refs": [
+          "E1",
+          "E5"
+        ],
+        "from": "DistributedHardwareService::LoadSinkDMSDPService",
+        "relation": "unauthenticated-SA-load",
+        "to": "SystemAbilityManager::LoadSystemAbility"
+      },
+      {
+        "evidence_refs": [
+          "E1",
+          "E5"
+        ],
+        "from": "DistributedHardwareService::NotifySinkRemoteSourceStarted",
+        "relation": "unauthenticated-publish",
+        "to": "Publisher::PublishMessage"
+      }
+    ],
+    "level": "cross-boundary",
+    "rationale": "Change is self-contained within modified files; no cross-boundary flow observed",
+    "self_contained": true,
+    "unresolved": []
+  },
+  "coverage_gaps": [],
+  "dimension_reviews": [
+    {
+      "applicable": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "CheckDHAccessPermission removed from LoadSinkDMSDPService and NotifySinkRemoteSourceStarted",
+        "Unit tests for permission failure removed"
+      ],
+      "rationale": "Removal of permission check fundamentally changes the behavioral contract of two public service methods",
+      "review_level": "deep"
+    },
+    {
+      "applicable": true,
+      "dimension": "API and compatibility",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "State, lifecycle, concurrency",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Resource and memory",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Reliability and recovery",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": false,
+      "dimension": "Performance and scalability",
+      "evidence": [
+        "Permission check removal reduces overhead but is not a performance optimization"
+      ],
+      "rationale": "No performance-relevant changes",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": false,
+      "dimension": "Build and portability",
+      "evidence": [
+        "Only .cpp and test .cpp changed"
+      ],
+      "rationale": "No build system changes",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": false,
+      "dimension": "Test adequacy and observability",
+      "evidence": [],
+      "rationale": "Test adequacy is outside current finding scope",
+      "review_level": "not-applicable"
+    },
+    {
+      "applicable": true,
+      "dimension": "Maintainability",
+      "evidence": [],
+      "rationale": "Screened for defect risk; no routed signal",
+      "review_level": "screen"
+    },
+    {
+      "applicable": true,
+      "dimension": "Security and privacy",
+      "evidence": [
+        "CheckDHAccessPermission verifies ACCESS_DISTRIBUTED_HARDWARE permission via AccessTokenKit",
+        "No replacement guard added"
+      ],
+      "rationale": "Access permission check removed from two SA-facing entry points; directly weakens security boundary",
+      "review_level": "deep"
+    }
+  ],
+  "exclusions": [],
+  "executed_checks": [
+    {
+      "command": "diff-reviewed",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "CheckDHAccessPermission-callers-audited",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "CheckRemoteDeviceTypeAndUid-availability-checked",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "unit-test-removal-impact-assessed",
+      "outcome": "reviewed",
+      "status": "passed"
+    },
+    {
+      "command": "subsequent-fix-verified-at-HEAD",
+      "outcome": "reviewed",
+      "status": "passed"
+    }
+  ],
+  "failure_hypotheses": [
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "CheckDHAccessPermission was the only guard; removed without replacement at this commit",
+        "Commit message explicitly says 'temporary solution' acknowledging incompleteness"
+      ],
+      "expected_failure": "DMSDP system ability loaded by unauthorized caller, potential for privilege escalation or resource abuse",
+      "hypothesis_id": "H1",
+      "outcome": "supported",
+      "statement": "Unprivileged IPC caller can trigger LoadSinkDMSDPService without ACCESS_DISTRIBUTED_HARDWARE permission",
+      "trigger": "Any SA or app process calls LoadSinkDMSDPService via IPC without the required permission",
+      "verification": "static-analysis of LoadSinkDMSDPService at commit 63c841fd"
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "CheckDHAccessPermission was the only guard; removed without replacement at this commit"
+      ],
+      "expected_failure": "TOPIC_SOURCE_DHMS_READY published with arbitrary udid, causing unintended DHMS readiness notification to subscribers",
+      "hypothesis_id": "H2",
+      "outcome": "supported",
+      "statement": "Unprivileged IPC caller can trigger NotifySinkRemoteSourceStarted without ACCESS_DISTRIBUTED_HARDWARE permission",
+      "trigger": "Any SA or app process calls NotifySinkRemoteSourceStarted via IPC without the required permission",
+      "verification": "static-analysis of NotifySinkRemoteSourceStarted at commit 63c841fd"
+    },
+    {
+      "dimension": "Functional correctness",
+      "evidence": [
+        "LoadSinkDMSDPService_001 and NotifySinkRemoteSourceStarted_001 were the only tests verifying permission failure path"
+      ],
+      "expected_failure": "No test will catch the regression",
+      "hypothesis_id": "H3",
+      "outcome": "supported",
+      "statement": "Removed unit tests eliminate ability to detect regression if permission checks are accidentally removed in future",
+      "trigger": "Future changes further weaken or remove permission checks",
+      "verification": "static-analysis of test file at commit 63c841fd"
+    }
+  ],
+  "findings": [
+    {
+      "changed_code": [
+        "see diff evidence"
+      ],
+      "confidence": "medium",
+      "current_at_scan_head": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "Original: if (CheckDHAccessPermission(udid) != DH_FWK_SUCCESS) { return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL; }",
+        "Replaced with: (void)udid;"
+      ],
+      "finding_id": "F-19-1",
+      "finding_type": "code-defect",
+      "impact": "Functional degradation or incorrect behavior",
+      "judgment": "defect identified",
+      "location": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp:764",
+      "relevant_flow": "Changed code path to affected behavior",
+      "remediation": "Restore permission check or add alternative authorization mechanism (subsequently addressed in a later commit with CheckRemoteDeviceTypeAndUid fallback)",
+      "severity": "high",
+      "statement": "CheckDHAccessPermission removed without replacement, allowing any IPC caller to trigger DMSDP SA loading without ACCESS_DISTRIBUTED_HARDWARE permission verification",
+      "symbol": "DistributedHardwareService::LoadSinkDMSDPService",
+      "temporal_status": "Current at scan HEAD; not yet fixed",
+      "title": "Finding 1",
+      "trigger": "Execution of the changed code path",
+      "type": "security-defect",
+      "verification": "Static code path review",
+      "violated_invariant": "Correctness invariant violated by changed code"
+    },
+    {
+      "changed_code": [
+        "see diff evidence"
+      ],
+      "confidence": "medium",
+      "current_at_scan_head": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "Original: if (CheckDHAccessPermission(udid) != DH_FWK_SUCCESS) { return ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL; }",
+        "Removed entirely, no replacement"
+      ],
+      "finding_id": "F-19-2",
+      "finding_type": "code-defect",
+      "impact": "Functional degradation or incorrect behavior",
+      "judgment": "defect identified",
+      "location": "services/distributedhardwarefwkservice/src/distributed_hardware_service.cpp:804",
+      "relevant_flow": "Changed code path to affected behavior",
+      "remediation": "Restore permission check or add alternative authorization mechanism (subsequently addressed in a later commit with CheckRemoteDeviceTypeAndUid fallback)",
+      "severity": "high",
+      "statement": "CheckDHAccessPermission removed without replacement, allowing any IPC caller to publish TOPIC_SOURCE_DHMS_READY without ACCESS_DISTRIBUTED_HARDWARE permission verification",
+      "symbol": "DistributedHardwareService::NotifySinkRemoteSourceStarted",
+      "temporal_status": "Current at scan HEAD; not yet fixed",
+      "title": "Finding 2",
+      "trigger": "Execution of the changed code path",
+      "type": "security-defect",
+      "verification": "Static code path review",
+      "violated_invariant": "Correctness invariant violated by changed code"
+    },
+    {
+      "changed_code": [
+        "see diff evidence"
+      ],
+      "confidence": "medium",
+      "current_at_scan_head": true,
+      "dimension": "Functional correctness",
+      "evidence": [
+        "Two HWTEST_F cases deleted that verified ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL return on empty udid"
+      ],
+      "finding_id": "F-19-3",
+      "finding_type": "code-defect",
+      "impact": "Functional degradation or incorrect behavior",
+      "judgment": "defect identified",
+      "location": "services/distributedhardwarefwkservice/test/unittest/common/distributedhardwareservice/src/distributed_hardware_service_test.cpp:724-739",
+      "relevant_flow": "Changed code path to affected behavior",
+      "remediation": "Add replacement tests that verify the new permission check logic (CheckDHAccessPermission + CheckRemoteDeviceTypeAndUid)",
+      "severity": "medium",
+      "statement": "Unit tests for permission check failure path removed, eliminating regression detection for security-critical authorization logic",
+      "symbol": "LoadSinkDMSDPService_001, NotifySinkRemoteSourceStarted_001",
+      "temporal_status": "Current at scan HEAD; not yet fixed",
+      "title": "Finding 3",
+      "trigger": "Execution of the changed code path",
+      "type": "behavioral-compatibility",
+      "verification": "Static code path review",
+      "violated_invariant": "Correctness invariant violated by changed code"
+    }
+  ],
+  "flow_coverage": [
+    {
+      "affected_flow": "IPC caller -> LoadSinkDMSDPService (no permission check) -> SystemAbilityManager::LoadSystemAbility(DMSDP_ADAPTER_SA_ID) -> DMSDP service loaded",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "DistributedHardwareService::LoadSinkDMSDPService",
+      "evidence": [
+        "CheckDHAccessPermission removed, no replacement guard"
+      ],
+      "flow_id": "F1"
+    },
+    {
+      "affected_flow": "IPC caller -> NotifySinkRemoteSourceStarted (no permission check) -> Publisher::PublishMessage(TOPIC_SOURCE_DHMS_READY, udid)",
+      "dimensions": [
+        "Functional correctness"
+      ],
+      "entrypoint": "DistributedHardwareService::NotifySinkRemoteSourceStarted",
+      "evidence": [
+        "CheckDHAccessPermission removed, no replacement guard"
+      ],
+      "flow_id": "F2"
+    }
+  ],
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "index_digest": "sha256:adea0290dcdb4b7b9d767a6a478a0dcd7ba3a63552e8513a169c4efd633c9e64",
+  "ledger_candidates": [
+    {
+      "affected_surface": "services code path",
+      "candidate_id": "C-001",
+      "finding_id": "F-19-1",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "root_cause_key": "defect-in-changed-code",
+      "suggested_verification": "Run relevant unit test with the trigger condition"
+    },
+    {
+      "affected_surface": "services code path",
+      "candidate_id": "C-001",
+      "finding_id": "F-19-1",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "root_cause_key": "defect-in-changed-code",
+      "suggested_verification": "Run relevant unit test with the trigger condition"
+    },
+    {
+      "affected_surface": "services code path",
+      "candidate_id": "C-001",
+      "finding_id": "F-19-1",
+      "question_to_confirm": "Does the defect reproduce under the described trigger?",
+      "root_cause_key": "defect-in-changed-code",
+      "suggested_verification": "Run relevant unit test with the trigger condition"
+    }
+  ],
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "result_status": "completed",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "schema_version": 3,
+  "summary": "Removes CheckDHAccessPermission from both LoadSinkDMSDPService and NotifySinkRemoteSourceStarted without replacement, eliminating access control verification for two SA-facing entry points. The commit message describes this as a 'temporary solution' (临时方案). LoadSinkDMSDPService can now load the DMSDP system ability from any caller without permission check, and NotifySinkRemoteSourceStarted publishes TOPIC_SOURCE_DHMS_READY to any caller. This is a security regression. Corresponding unit tests that verified the permission check failure path were also removed. Note: a subsequent commit reintroduced a combined CheckDHAccessPermission && CheckRemoteDeviceTypeAndUid check, but at the time of this merge the protection gap exists.",
+  "temporal_status": "contemporaneous",
+  "unit_id": "merge-63c841fd613b",
+  "verification_disposition": {
+    "evidence": [
+      "Diff clearly shows CheckDHAccessPermission removed from both methods",
+      "No replacement guard present at commit 63c841fd"
+    ],
+    "rationale": "The permission check removal is unambiguous from the diff. No device-side execution needed to confirm the defect.",
+    "status": "static-analysis"
+  }
+}

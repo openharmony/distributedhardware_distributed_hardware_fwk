@@ -1,0 +1,66 @@
+{
+  "base": "3dfc607ed28894ca306c80b24a57fd8dcded92cd",
+  "baseline_review_depth": "full",
+  "challenge_reason": "single primary review permitted by deterministic risk policy",
+  "challenge_required": false,
+  "changed_path_summary": "9 changed paths",
+  "changed_paths": [
+    "services/distributedhardwarefwkservice/include/resourcemanager/db_adapter.h",
+    "services/distributedhardwarefwkservice/include/resourcemanager/meta_info_manager.h",
+    "services/distributedhardwarefwkservice/include/task/online_task.h",
+    "services/distributedhardwarefwkservice/src/resourcemanager/db_adapter.cpp",
+    "services/distributedhardwarefwkservice/src/resourcemanager/meta_info_manager.cpp",
+    "services/distributedhardwarefwkservice/src/task/online_task.cpp",
+    "services/distributedhardwarefwkservice/test/unittest/common/resourcemanager/db_adapter_test.cpp",
+    "services/distributedhardwarefwkservice/test/unittest/common/resourcemanager/meta_info_manager_test.cpp",
+    "services/distributedhardwarefwkservice/test/unittest/common/task/src/online_task_test.cpp"
+  ],
+  "commit_assignments": [
+    {
+      "role": "integration merge",
+      "sha": "13e8497a7a811f1bdb413da777f3fd4f6dddf0d5"
+    },
+    {
+      "role": "merged member",
+      "sha": "1e6512337bdfbf8ff08d46c076b49f4d9b8830db"
+    }
+  ],
+  "depth_reason": "behavioral source change",
+  "diff_evidence": [
+    "git diff --find-renames 3dfc607ed28894ca306c80b24a57fd8dcded92cd..13e8497a7a811f1bdb413da777f3fd4f6dddf0d5",
+    "git diff --find-renames 3dfc607ed28894ca306c80b24a57fd8dcded92cd..1e6512337bdfbf8ff08d46c076b49f4d9b8830db",
+    "git diff-tree -m --find-renames 13e8497a7a811f1bdb413da777f3fd4f6dddf0d5"
+  ],
+  "expected_challenge_report": "challenge-results/merge-13e8497a7a81.md",
+  "expected_challenge_result": "challenge-results/merge-13e8497a7a81.json",
+  "expected_report": "results/merge-13e8497a7a81.md",
+  "expected_result": "results/merge-13e8497a7a81.json",
+  "frozen_scan_head": "5061f60a70ddf0a5e60feae364c792b228b4bd94",
+  "head": "1e6512337bdfbf8ff08d46c076b49f4d9b8830db",
+  "integration_date": "2026-03-06T11:51:48+08:00",
+  "member_commits": [
+    "1e6512337bdfbf8ff08d46c076b49f4d9b8830db"
+  ],
+  "merge": "13e8497a7a811f1bdb413da777f3fd4f6dddf0d5",
+  "network_policy": "local-only",
+  "ordinal": 23,
+  "parents": [
+    "3dfc607ed28894ca306c80b24a57fd8dcded92cd",
+    "1e6512337bdfbf8ff08d46c076b49f4d9b8830db"
+  ],
+  "pr_identity": null,
+  "primary_dimensions": [
+    "Functional correctness"
+  ],
+  "priority": "medium",
+  "resolution": "two-parent-local-graph",
+  "review_depth": "full",
+  "review_protocol_version": 2,
+  "risk_signals": [],
+  "sampling_selected": false,
+  "schema_version": 3,
+  "stage_evidence": "13e8497a7a811f1bdb413da777f3fd4f6dddf0d5 is a first-parent integration selected by date-range; committer date 2026-03-06T11:51:48+08:00",
+  "subject": "!1196 merge master into master",
+  "unit_id": "merge-13e8497a7a81",
+  "unit_type": "merge"
+}
