@@ -1,136 +1,136 @@
 {
-  "string":[
-        {
-            "name":"EntryAbility_label",
-            "value":"[TS_867710]_DHardwareUI"
-        },
-        {
-            "name":"DHTypeName_Camera",
-            "value":"[TS_894802]_camera"
-        },
-        {
-            "name":"EntryAbility_desc",
-            "value":"[TS_867705]_description"
-        },
-        {
-            "name":"pause",
-            "value":"[TS_867692]_Pause"
-        },
-        {
-            "name":"disconnect",
-            "value":"[TS_867695]_Disconnect"
-        },
-        {
-            "name":"connected_to",
-            "value":"[TS_867693]_Connected to %1$s"
-        },
-        {
-            "name":"stop_device",
-            "value":"[TS_867698]_Disconnect to stop using this device's %1$s."
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"[TS_894803]_microphone"
-        },
-        {
-            "name":"module_desc",
-            "value":"[TS_867699]_module description"
-        },
-        {
-            "name":"continue",
-            "value":"[TS_867711]_Resume"
-        },
-        {
-            "name":"mech_close",
-            "value":"[TS_1101060]_Off"
-        },
-        {
-            "name":"MechExtAbility_label",
-            "value":"[TS_1101056]_label"
-        },
-        {
-            "name":"mech_enable",
-            "value":"[TS_1101061]_On"
-        },
-        {
-            "name":"mech_left",
-            "value":"[TS_1101053]_Left"
-        },
-        {
-            "name":"mech_right",
-            "value":"[TS_1101054]_Right"
-        },
-        {
-            "name":"MechExtAbility_desc",
-            "value":"[TS_1101057]_description"
-        },
-        {
-            "name":"mech_intelligent_tracking",
-            "value":"[TS_1101058]_Smart tracking"
-        },
-        {
-            "name":"mech_tracking_layout",
-            "value":"[TS_1101055]_Tracking mode"
-        },
-        {
-            "name":"mech_center",
-            "value":"[TS_1101059]_Center"
-        },
-        {
-            "name":"audio_tracking_switch_on",
-            "value":"[TS_1122064]_Smart tracking is turned on, double-tap to turn it off"
-        },
-        {
-            "name":"audio_tracking_switch_off",
-            "value":"[TS_1122065]_Smart tracking is turned off, double-tap to turn it on"
-        },
-        {
-            "name":"audio_back",
-            "value":"[TS_1122066]_Back"
-        },
-        {
-            "name":"smart_tracking_disabled",
-            "value":"[TS_1210030]_Smart tracking disabled"
-        },
-        {
-            "name":"device_connected",
-            "value":"[TS_1210032]_Device connected"
-        },
-        {
-            "name":"trace_enabled",
-            "value":"[TS_1210029]_Tracking enabled"
-        },
-        {
-            "name":"smart_tracking_enabled",
-            "value":"[TS_1210031]_Smart tracking enabled"
-        },
-        {
-            "name":"trace_disabled",
-            "value":"[TS_1210028]_Tracking disabled"
-        },
-        {
-            "name": "smart_focus_tracking",
-            "value": "[TS_1232402]_Smart tracking on"
-        },
-        {
-            "name": "smart_focus_paused",
-            "value": "[TS_1232403]_Smart tracking paused"
-        },
-        {
-            "name": "focus_tracking",
-            "value": "[TS_1232399]_Tracking"
-        },
-        {
-            "name": "focus_paused",
-            "value": "[TS_1232400]_Tracking paused"
-        },
-        {
-            "name": "gimbal_connected",
-            "value": "[TS_1232401]_Gimbal connected."
-        },
-        {
-            "name": "wheel_base_connected",
-            "value": "[TS_1232398]_Wheel base connected."
-        }
+  "string": [
+    {
+      "name": "EntryAbility_label",
+      "value": "[TS_867710]_DHardwareUI"
+    },
+    {
+      "name": "DHTypeName_Camera",
+      "value": "[TS_894802]_camera"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "[TS_867705]_description"
+    },
+    {
+      "name": "pause",
+      "value": "[TS_867692]_Pause"
+    },
+    {
+      "name": "disconnect",
+      "value": "[TS_867695]_Disconnect"
+    },
+    {
+      "name": "connected_to",
+      "value": "[TS_867693]_Connected to %1$s"
+    },
+    {
+      "name": "stop_device",
+      "value": "[TS_867698]_Disconnect to stop using this device's %1$s."
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "[TS_894803]_microphone"
+    },
+    {
+      "name": "module_desc",
+      "value": "[TS_867699]_module description"
+    },
+    {
+      "name": "continue",
+      "value": "[TS_867711]_Resume"
+    },
+    {
+      "name": "mech_close",
+      "value": "[TS_1101060]_Off"
+    },
+    {
+      "name": "MechExtAbility_label",
+      "value": "[TS_1101056]_label"
+    },
+    {
+      "name": "mech_enable",
+      "value": "[TS_1101061]_On"
+    },
+    {
+      "name": "mech_left",
+      "value": "[TS_1101053]_Left"
+    },
+    {
+      "name": "mech_right",
+      "value": "[TS_1101054]_Right"
+    },
+    {
+      "name": "MechExtAbility_desc",
+      "value": "[TS_1101057]_description"
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "[TS_1101058]_Smart tracking"
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "[TS_1101055]_Tracking mode"
+    },
+    {
+      "name": "mech_center",
+      "value": "[TS_1101059]_Center"
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "[TS_1122064]_Smart tracking is turned on, double-tap to turn it off"
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "[TS_1122065]_Smart tracking is turned off, double-tap to turn it on"
+    },
+    {
+      "name": "audio_back",
+      "value": "[TS_1122066]_Back"
+    },
+    {
+      "name": "smart_focus_tracking",
+      "value": "[TS_1232402]_Smart tracking on"
+    },
+    {
+      "name": "smart_focus_paused",
+      "value": "[TS_1232403]_Smart tracking paused"
+    },
+    {
+      "name": "focus_tracking",
+      "value": "[TS_1232399]_Tracking"
+    },
+    {
+      "name": "focus_paused",
+      "value": "[TS_1232400]_Tracking paused"
+    },
+    {
+      "name": "gimbal_connected",
+      "value": "[TS_1232401]_Gimbal connected."
+    },
+    {
+      "name": "wheel_base_connected",
+      "value": "[TS_1232398]_Wheel base connected."
+    },
+    {
+      "name": "harmony_mech_intelligent_tracking",
+      "value": "[TS_1238642]_Smart focus tracking"
+    },
+    {
+      "name": "mech_first_connect_text1",
+      "value": "[TS_1238644]_Keep yourself front and center."
+    },
+    {
+      "name": "mech_first_connect_text2",
+      "value": "[TS_1238646]_This service does not collect or store your facial information. You can disable it from the Control Panel or live view window."
+    },
+    {
+      "name": "open_soon",
+      "value": "[TS_1238645]_Not now"
+    },
+    {
+      "name": "open_now",
+      "value": "[TS_1238643]_Enable"
+    }
   ]
 }
