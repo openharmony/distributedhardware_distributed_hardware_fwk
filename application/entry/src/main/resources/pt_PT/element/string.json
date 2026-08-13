@@ -1,200 +1,200 @@
 {
-    "string":[
-        {
-            "name":"pause",
-            "value":"Pausa",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_close",
-            "value":"Desativado",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_enable",
-            "value":"Ativado",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_left",
-            "value":"Esquerda",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_right",
-            "value":"Direita",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_on",
-            "value":"Rastreamento inteligente ativado, toque duas vezes para desativar",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Camera",
-            "value":"a câmara",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_intelligent_tracking",
-            "value":"Rastreamento inteligente",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_off",
-            "value":"Rastreamento inteligente desativado, toque duas vezes para ativar",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"connected_to",
-            "value":"Ligado a %1$s",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_tracking_layout",
-            "value":"Modo de rastreamento",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue",
-            "value":"Retomar",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"disconnect",
-            "value":"Desligar",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_back",
-            "value":"Anterior",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"stop_device",
-            "value":"Desligue para parar de utilizar %1$s deste dispositivo.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"o microfone",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_center",
-            "value":"Centro",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"smart_tracking_disabled",
-            "value":"Seguimento inteligente desativado",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"device_connected",
-            "value":"Dispositivo ligado",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_enabled",
-            "value":"Seguimento ativado",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_enabled",
-            "value":"Seguimento inteligente ativado",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_disabled",
-            "value":"Seguimento desativado",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name": "smart_focus_tracking",
-            "value": "Rastreamento inteligente ativado",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "smart_focus_paused",
-            "value": "Rastreamento inteligente pausado",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "focus_tracking",
-            "value": "Rastreamento",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "focus_paused",
-            "value": "Rastreamento pausado",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "gimbal_connected",
-            "value": "Gimbal ligado.",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "wheel_base_connected",
-            "value": "Base das rodas ligada.",
-            "attr": {
-                "priority": "translate"
-            }
-        }
-    ]
+  "string": [
+    {
+      "name": "pause",
+      "value": "Pausa",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_close",
+      "value": "Desativado",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_enable",
+      "value": "Ativado",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_left",
+      "value": "Esquerda",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_right",
+      "value": "Direita",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "Rastreamento inteligente ativado, toque duas vezes para desativar",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Camera",
+      "value": "a câmara",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "Rastreamento inteligente",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "Rastreamento inteligente desativado, toque duas vezes para ativar",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "connected_to",
+      "value": "Ligado a %1$s",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "Modo de enquadramento",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "continue",
+      "value": "Retomar",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "disconnect",
+      "value": "Desligar",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_back",
+      "value": "Anterior",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "stop_device",
+      "value": "Desligue para parar de utilizar %1$s deste dispositivo.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "o microfone",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_center",
+      "value": "Centro",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "smart_focus_tracking",
+      "value": "Rastreamento inteligente ativado",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_paused",
+      "value": "Rastreamento inteligente pausado",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_tracking",
+      "value": "Rastreamento",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_paused",
+      "value": "Rastreamento pausado",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "gimbal_connected",
+      "value": "Gimbal ligado.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "wheel_base_connected",
+      "value": "Suporte para telemóvel ligado.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "harmony_mech_intelligent_tracking",
+      "value": "Seguimento inteligente",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text1",
+      "value": "Mantenha-se no centro da imagem.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text2",
+      "value": "Este serviço não recolhe nem armazena informações faciais. Pode desativá-lo a partir do Painel de controlo ou do visor.",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_soon",
+      "value": "Mais tarde",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_now",
+      "value": "Ativar",
+      "attr": {
+        "priority": "translate"
+      }
+    }
+  ]
 }
