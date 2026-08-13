@@ -1,0 +1,386 @@
+# Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import(
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+
+module_out_path = unittest_output_path
+
+config("module_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "${av_trans_path}/common/include",
+    "include",
+    "${innerkits_path}/include",
+    "${utils_path}/include",
+    "${services_path}/distributedhardwarefwkservice/include",
+    "${services_path}/distributedhardwarefwkservice/include/componentloader",
+    "${services_path}/distributedhardwarefwkservice/include/componentmanager",
+    "${services_path}/distributedhardwarefwkservice/include/lowlatency",
+    "${services_path}/distributedhardwarefwkservice/include/resourcemanager",
+    "${services_path}/distributedhardwarefwkservice/include/utils",
+    "${services_path}/distributedhardwarefwkservice/include/task",
+    "${services_path}/distributedhardwarefwkservice/include/transport",
+    "${services_path}/distributedhardwarefwkservice/test/unittest/common/componentmanager/component_manager/include",
+    "${common_path}/utils/include",
+    "${common_path}/log/include",
+  ]
+}
+
+## UnitTest dh_disable_task_test
+ohos_unittest("DHDisableTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/disable_task_test.cpp",
+    "src/mock_component_manager.cpp",
+    "src/mock_dh_context.cpp",
+    "src/mock_dh_utils_tool.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/disable_task.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "eventhandler:libeventhandler",
+    "ffrt:libffrt",
+    "googletest:gmock",
+    "googletest:gmock_main",
+    "hilog:libhilog",
+    "hitrace:hitrace_meter",
+    "ipc:ipc_single",
+    "kv_store:distributeddata_inner",
+    "samgr:samgr_proxy",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"TaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+## UnitTest dh_enable_task_test
+ohos_unittest("DHEnableTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/enable_task_test.cpp",
+    "src/mock_component_manager.cpp",
+    "src/mock_dh_context.cpp",
+    "src/mock_dh_utils_tool.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/enable_task.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "dsoftbus:softbus_client",
+    "eventhandler:libeventhandler",
+    "ffrt:libffrt",
+    "googletest:gmock",
+    "googletest:gmock_main",
+    "hilog:libhilog",
+    "hitrace:hitrace_meter",
+    "ipc:ipc_single",
+    "kv_store:distributeddata_inner",
+    "samgr:samgr_proxy",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"TaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+ohos_unittest("OnlineTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/online_task_test.cpp",
+    "src/mock_dh_utils_tool.cpp",
+    ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "device_manager:devicemanagersdk",
+    "eventhandler:libeventhandler",
+    "ffrt:libffrt",
+    "googletest:gmock",
+    "googletest:gmock_main",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "kv_store:distributeddata_inner",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"OnlineTaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  if (distributed_hardware_fwk_low_latency) {
+    defines += [ "UT_COVER_SPECIAL" ]
+  }
+}
+
+## UnitTest dh_task_test
+ohos_unittest("DHTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/mock_disable_task.cpp",
+    "src/mock_enable_task.cpp",
+    "src/mock_meta_disable_task.cpp",
+    "src/mock_meta_enable_task.cpp",
+    "src/mock_offline_task.cpp",
+    "src/mock_online_task.cpp",
+    "src/mock_task_factory.cpp",
+    "src/task_test.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"TaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+ohos_unittest("MetaEnableTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/meta_enable_task_test.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/meta_enable_task.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"MetaEnableTaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+ohos_unittest("MetaDisableTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/meta_disable_task_test.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/meta_disable_task.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"MetaDisableTaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+
+ohos_unittest("ExitDfwkTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/exit_dfwk_task_test.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/exit_dfwk_task.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+    "kv_store:distributeddata_inner",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"ExitDfwkTaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+ohos_unittest("OffLineTaskTest") {
+  module_out_path = module_out_path
+
+  sources = [
+    "src/offline_task_test.cpp",
+    "${services_path}/distributedhardwarefwkservice/src/task/offline_task.cpp",
+  ]
+
+  configs = [ ":module_private_config" ]
+
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+    "-Dprivate=public",
+  ]
+
+  deps = [
+    "${services_path}/distributedhardwarefwkservice:distributedhardwarefwksvr",
+    "${utils_path}:distributedhardwareutils",
+  ]
+
+  external_deps = [
+    "cJSON:cjson",
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "kv_store:distributeddata_inner",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"OffLineTaskTest\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+}
+
+group("dh_task_test") {
+  testonly = true
+  deps = [
+    ":DHDisableTaskTest",
+    ":DHEnableTaskTest",
+    ":OnlineTaskTest",
+    ":DHTaskTest",
+    ":ExitDfwkTaskTest",
+    ":OffLineTaskTest",
+  ]
+}

@@ -1,0 +1,18 @@
+{
+    "string":[
+        {
+            "name":"mech_left",
+            "value":"Sini\u200bstra",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"mech_intelligent_tracking",
+            "value":"Tracciamen\u200bto intelligente",
+            "attr":{
+                "priority":"LT"
+            }
+        }
+    ]
+}

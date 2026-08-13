@@ -1,0 +1,240 @@
+{
+  "string":[
+      {
+          "name":"module_desc",
+          "value":"模块描述"
+      },
+      {
+          "name":"EntryAbility_desc",
+          "value":"description"
+      },
+      {
+          "name":"EntryAbility_label",
+          "value":"分布式硬件控制UI"
+      },
+      {
+          "name":"connected_to",
+          "value":"已连接至%1$s",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"stop_device",
+          "value":"您可以断开连接以停止使用此设备的%1$s",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"pause",
+          "value":"暂停",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"continue",
+          "value":"继续",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"DHTypeName_Camera",
+          "value":"相机",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"DHTypeName_Mic",
+          "value":"麦克风",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"disconnect",
+          "value":"断开连接",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MechExtAbility_desc",
+          "value":"description"
+      },
+      {
+          "name":"MechExtAbility_label",
+          "value":"label"
+      },
+      {
+          "name":"mech_intelligent_tracking",
+          "value":"智能追焦",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_tracking_layout",
+          "value":"追焦布局",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_enable",
+          "value":"开启",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_close",
+          "value":"关闭",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_left",
+          "value":"居左",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_center",
+          "value":"居中",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"mech_right",
+          "value":"居右",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"audio_tracking_switch_on",
+          "value":"已开启“智能追焦”开关，单指双击即可关闭",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"audio_tracking_switch_off",
+          "value":"已关闭“智能追焦”开关，单指双击即可开启",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"audio_back",
+          "value":"返回",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"trace_enabled",
+          "value":"跟踪开启",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"trace_disabled",
+          "value":"跟踪关闭",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"smart_tracking_enabled",
+          "value":"智能跟踪已开启",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"smart_tracking_disabled",
+          "value":"智能跟踪已关闭",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"device_connected",
+          "value":"设备已连接",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+        "name": "smart_focus_tracking",
+        "value": "智能追焦中",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "smart_focus_paused",
+        "value": "智能追焦已暂停",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "focus_tracking",
+        "value": "追焦中",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "focus_paused",
+        "value": "追焦暂停",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "gimbal_connected",
+        "value": "云台已连接",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "wheel_base_connected",
+        "value": "桌面机器人已连接",
+        "attr": {
+          "priority": "translate"
+        }
+      },
+      {
+        "name": "harmony_mech_intelligent_tracking",
+        "value": "鸿蒙智能追焦"
+      },
+      {
+        "name": "mech_first_connect_text1",
+        "value": "全局智能追焦，让手机始终面向您。"
+      },
+      {
+        "name": "mech_first_connect_text2",
+        "value": "本服务不会收集和存储您的人脸信息，开启后可通过控制中心或实况窗关闭。"
+      },
+      {
+        "name": "open_soon",
+        "value": "暂不开启"
+      },
+      {
+        "name": "open_now",
+        "value": "立即开启"
+      }
+  ]
+}

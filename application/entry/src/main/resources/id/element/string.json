@@ -1,0 +1,200 @@
+{
+    "string":[
+        {
+            "name":"pause",
+            "value":"Jeda",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"mech_close",
+            "value":"Mati",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"mech_enable",
+            "value":"Hidup",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"mech_left",
+            "value":"Kiri",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"mech_right",
+            "value":"Kanan",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"audio_tracking_switch_on",
+            "value":"Pelacakan pintar dihidupkan, ketuk dua kali untuk mematikannya",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"DHTypeName_Camera",
+            "value":"kamera",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"mech_intelligent_tracking",
+            "value":"Pelacakan pintar",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"audio_tracking_switch_off",
+            "value":"Pelacakan pintar dimatikan, ketuk dua kali untuk menghidupkannya",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"connected_to",
+            "value":"Terhubung ke %1$s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"mech_tracking_layout",
+            "value":"Mode pelacakan",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"continue",
+            "value":"Lanjutkan",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"disconnect",
+            "value":"Putuskan",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"audio_back",
+            "value":"Kembali",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stop_device",
+            "value":"Putuskan koneksi untuk berhenti menggunakan %1$s perangkat ini.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"DHTypeName_Mic",
+            "value":"mikrofon",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"mech_center",
+            "value":"Tengah",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"smart_tracking_disabled",
+            "value":"Pelacakan pintar dinonaktifkan",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"device_connected",
+            "value":"Perangkat terhubung",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_enabled",
+            "value":"Pelacakan diaktifkan",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"smart_tracking_enabled",
+            "value":"Pelacakan pintar diaktifkan",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"trace_disabled",
+            "value":"Pelacakan dinonaktifkan",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name": "smart_focus_tracking",
+            "value": "Pelacakan pintar hidup",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "smart_focus_paused",
+            "value": "Pelacakan pintar dijeda",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_tracking",
+            "value": "Pelacakan",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "focus_paused",
+            "value": "Pelacakan dijeda",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "gimbal_connected",
+            "value": "Gimbal terhubung.",
+            "attr": {
+                "priority": "translate"
+            }
+        },
+        {
+            "name": "wheel_base_connected",
+            "value": "Alas roda terhubung.",
+            "attr": {
+                "priority": "translate"
+            }
+        }
+    ]
+}

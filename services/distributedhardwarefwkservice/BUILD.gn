@@ -1,0 +1,199 @@
+# Copyright (c) 2021-2026 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import("//build/ohos_var.gni")
+import(
+    "//foundation/distributedhardware/distributed_hardware_fwk/distributedhardwarefwk.gni")
+
+ohos_shared_library("distributedhardwarefwksvr") {
+  sanitize = {
+    boundary_sanitize = true
+    integer_overflow = true
+    ubsan = true
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  branch_protector_ret = "pac_ret"
+  include_dirs = [
+    "include",
+    "include/accessmanager",
+    "${av_center_svc_path}/include",
+    "${av_center_svc_path}/include/ipc",
+    "${av_trans_path}/common/include",
+    "${av_trans_path}/interface",
+    "${innerkits_path}/include",
+    "${innerkits_path}/include/ipc",
+    "${common_path}/log/include",
+    "${common_path}/utils/include",
+    "${utils_path}/include",
+    "include/componentloader",
+    "include/versionmanager",
+    "include/componentmanager",
+    "include/task",
+    "include/transport",
+    "include/utils",
+    "include/localhardwaremanager",
+    "include/publisher",
+    "include/resourcemanager",
+    "include/hidumphelper",
+    "include/ipc",
+    "include/lowlatency",
+    "include/hdfoperate",
+  ]
+
+  sources = [
+    "${av_center_svc_path}/src/av_sync_manager.cpp",
+    "${av_center_svc_path}/src/av_trans_control_center.cpp",
+    "${av_trans_path}/common/src/av_sync_utils.cpp",
+    "${av_trans_path}/common/src/av_trans_message.cpp",
+    "${av_trans_path}/common/src/softbus_channel_adapter.cpp",
+    "src/accessmanager/access_manager.cpp",
+    "src/componentloader/component_loader.cpp",
+    "src/componentmanager/component_disable.cpp",
+    "src/componentmanager/component_enable.cpp",
+    "src/componentmanager/component_manager.cpp",
+    "src/componentmanager/component_monitor.cpp",
+    "src/componentmanager/component_privacy.cpp",
+    "src/componentmanager/dh_data_sync_trigger_listener.cpp",
+    "src/componentmanager/dh_state_listener.cpp",
+    "src/access_listener_service.cpp",
+    "src/distributed_hardware_manager.cpp",
+    "src/distributed_hardware_manager_factory.cpp",
+    "src/distributed_hardware_service.cpp",
+    "src/distributed_hardware_stub.cpp",
+    "src/hdfoperate/hdf_operate.cpp",
+    "src/hidumphelper/enabled_comps_dump.cpp",
+    "src/hidumphelper/hidump_helper.cpp",
+    "src/ipc/authorization_result_callback_proxy.cpp",
+    "src/ipc/access_listener_stub.cpp",
+    "src/ipc/get_dh_descriptors_callback_proxy.cpp",
+    "src/ipc/hardware_status_listener_proxy.cpp",
+    "src/ipc/publisher_listener_proxy.cpp",
+    "src/localhardwaremanager/local_hardware_manager.cpp",
+    "src/localhardwaremanager/plugin_listener_impl.cpp",
+    "src/lowlatency/low_latency.cpp",
+    "src/lowlatency/low_latency_listener.cpp",
+    "src/lowlatency/low_latency_timer.cpp",
+    "src/publisher/publisher.cpp",
+    "src/publisher/publisher_item.cpp",
+    "src/resourcemanager/capability_info.cpp",
+    "src/resourcemanager/capability_info_manager.cpp",
+    "src/resourcemanager/capability_utils.cpp",
+    "src/resourcemanager/db_adapter.cpp",
+    "src/resourcemanager/local_capability_info_manager.cpp",
+    "src/resourcemanager/meta_capability_info.cpp",
+    "src/resourcemanager/meta_info_manager.cpp",
+    "src/resourcemanager/version_info.cpp",
+    "src/resourcemanager/version_info_manager.cpp",
+    "src/task/disable_task.cpp",
+    "src/task/enable_task.cpp",
+    "src/task/exit_dfwk_task.cpp",
+    "src/task/meta_disable_task.cpp",
+    "src/task/meta_enable_task.cpp",
+    "src/task/offline_task.cpp",
+    "src/task/online_task.cpp",
+    "src/task/task.cpp",
+    "src/task/task_board.cpp",
+    "src/task/task_executor.cpp",
+    "src/task/task_factory.cpp",
+    "src/transport/dh_comm_tool.cpp",
+    "src/transport/dh_transport.cpp",
+    "src/transport/dh_transport_obj.cpp",
+    "src/utils/dh_context.cpp",
+    "src/utils/dh_modem_context_ext.cpp",
+    "src/utils/dh_timer.cpp",
+    "src/utils/event_handler_factory.cpp",
+    "src/versionmanager/version_manager.cpp",
+  ]
+
+  deps = [
+    "${utils_path}:distributedhardwareutils",
+    "${innerkits_path}:dhfwk_idl_hardware_source",
+  ]
+
+  defines = [
+    "HI_LOG_ENABLE",
+    "DH_LOG_TAG=\"dhfwksvr\"",
+    "LOG_DOMAIN=0xD004100",
+  ]
+
+  cflags = [
+    "-fstack-protector-strong",
+    "-D_FORTIFY_SOURCE=2",
+    "-O2",
+  ]
+
+  cflags_cc = cflags
+
+  ldflags = [
+    "-fpie",
+    "-Wl,-z,relro",
+    "-Wl,-z,now",
+  ]
+
+  if (distributed_hardware_fwk_low_latency) {
+    defines += [ "DHARDWARE_LOW_LATENCY" ]
+  }
+
+  if (!distributed_hardware_fwk_low_latency) {
+    defines += [ "DHARDWARE_OPEN_SOURCE" ]
+  }
+
+  if (distributed_hardware_fwk_low_latency) {
+    defines += [ "DHARDWARE_CHECK_RESOURCE" ]
+  }
+
+  external_deps = [
+    "ability_base:want",
+    "ability_runtime:ability_manager",
+    "access_token:libaccesstoken_sdk",
+    "access_token:libtokenid_sdk",
+    "access_token:libtokensetproc_shared",
+    "cJSON:cjson",
+    "c_utils:utils",
+    "config_policy:configpolicy_util",
+    "device_manager:devicemanagersdk",
+    "dsoftbus:softbus_client",
+    "eventhandler:libeventhandler",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+    "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
+    "init:libbegetutil",
+    "ipc:ipc_core",
+    "kv_store:distributeddata_inner",
+    "memmgr:memmgrclient",
+    "resource_schedule_service:ressched_client",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+
+  if (dhfwk_os_account) {
+    external_deps += [
+      "os_account:libaccountkits",
+      "os_account:os_account_innerkits",
+    ]
+  }
+
+  if (dhfwk_os_account) {
+    defines += [ "OS_ACCOUNT_PART" ]
+  }
+
+  subsystem_name = "distributedhardware"
+
+  part_name = "distributed_hardware_fwk"
+
+  public_configs = [ "${innerkits_path}:dhfwk_idl_hardware_config" ]
+}

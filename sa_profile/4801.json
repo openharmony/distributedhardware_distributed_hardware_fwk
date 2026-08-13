@@ -1,0 +1,34 @@
+{
+    "process": "dhardware",
+    "systemability": [
+        {
+            "name": 4801,
+            "libpath": "libdistributedhardwarefwksvr.z.so",
+            "run-on-create": false,
+            "distributed": true,
+            "dump_level": 1,
+            "start-on-demand": {
+                "commonevent":[
+                  {
+                    "name":"usual.event.BOOT_COMPLETED"
+                  }
+                ],
+                "deviceonline": [
+                  {
+                      "name": "deviceonline",
+                      "value": "on"
+                  }
+                ]
+            },
+            "stop-on-demand": {
+                "param": [
+                  {
+                    "name": "resourceschedule.memmgr.low.memory.prepare",
+                    "value": "true"
+                  }
+                ]
+            },
+            "min_hdi_proxy_version": []
+        }
+    ]
+}
