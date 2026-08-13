@@ -16,6 +16,7 @@
 #include "softbus_channel_adapter.h"
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <condition_variable>
 #include <iomanip>
@@ -552,7 +553,17 @@ void SoftbusChannelAdapter::OnSoftbusBytesReceived(int32_t sessionId, const void
     std::lock_guard<std::mutex> lock(idMapMutex_);
     for (auto it = devId2SessIdMap_.begin(); it != devId2SessIdMap_.end(); it++) {
         if (it->second == sessionId) {
-            std::thread(&SoftbusChannelAdapter::SendChannelEvent, this, it->first, event).detach();
+            if (inflightEventThreadCnt_.load(std::memory_order_relaxed) >= DSOFTBUS_MAX_INFLIGHT_EVENT_THREADS) {
+                AVTRANS_LOGW("OnSoftbusBytesReceived dropped, inflight threads cnt:%{public}d over limit:%{public}d",
+                    inflightEventThreadCnt_.load(std::memory_order_relaxed), DSOFTBUS_MAX_INFLIGHT_EVENT_THREADS);
+                continue;
+            }
+            inflightEventThreadCnt_.fetch_add(1, std::memory_order_relaxed);
+            std::string sessName = it->first;
+            std::thread([this, sessName, event]() {
+                SendChannelEvent(sessName, event);
+                inflightEventThreadCnt_.fetch_sub(1, std::memory_order_relaxed);
+            }).detach();
         }
     }
 }

@@ -16,6 +16,7 @@
 #ifndef OHOS_SOFTBUS_CHANNEL_ADAPTER
 #define OHOS_SOFTBUS_CHANNEL_ADAPTER
 
+#include <atomic>
 #include <map>
 #include <mutex>
 #include <set>
@@ -98,6 +99,8 @@ private:
     std::mutex listenerMtx_;
     std::mutex serverMapMtx_;
     std::mutex authRequestMutex_;
+
+    std::atomic<int32_t> inflightEventThreadCnt_{0};
 
     ISocketListener sessListener_;
     std::map<std::string, int32_t> serverMap_;
