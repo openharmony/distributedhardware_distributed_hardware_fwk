@@ -1,200 +1,200 @@
 {
-    "string":[
-        {
-            "name":"DHTypeName_Camera",
-            "value":"པར་ཆས་",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"pause",
-            "value":"སྐབས་སྡོད།",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"disconnect",
-            "value":"སྦྲེལ་ལམ་གཅོད་པ།",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"connected_to",
-            "value":"%1$sལ་སྦྲེལ་མཐུད་བྱུང་ཟིན།",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"stop_device",
-            "value":"སྒྲིག་ཆས་འདིའི་%1$sབཀོལ་མཚམས་འཇོག་པའི་ཆེད་དུ་སྦྲེལ་མཐུད་གཅད་ཆོག",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"DHTypeName_Mic",
-            "value":"སྐད་སྦུག་",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"continue",
-            "value":"མུ་མཐུད།",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_intelligent_tracking",
-            "value":"རིག་ལྡན་རྗེས་འདེད།",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_tracking_layout",
-            "value":"འགྲེམ་ཚུལ་རྗེས་འདེད།",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_enable",
-            "value":"ཁ་འབྱེད།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"mech_close",
-            "value":"ཁ་རྒྱག",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_left",
-            "value":"གཡོན་སྒྲིག",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_center",
-            "value":"དཀྱིལ་དུ་འཇོག་པ།",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"mech_right",
-            "value":"གཡས་སྒྲིག",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_on",
-            "value":"༼རིག་ལྡན་རྗེས་འདེད་༽ཀྱི་བསད་སྤར་ཁ་ཕྱེ་ཟིན། མཛུབ་མོ་གཅིག་གིས་ཉིས་རྡེབ་བྱས་ཏེ་ཁ་རྒྱག་ཐུབ།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_tracking_switch_off",
-            "value":"༼རིག་ལྡན་རྗེས་འདེད་༽ཀྱི་བསད་སྤར་ཁ་བརྒྱབ་ཟིན། མཛུབ་མོ་གཅིག་གིས་ཉིས་རྡེབ་བྱས་ཏེ་ཁ་འབྱེད་ཐུབ།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"audio_back",
-            "value":"ཕྱིར་ལོག",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_disabled",
-            "value":"རིག་ལྡན་རྗེས་འདེད་ཁ་བརྒྱབ་ཟིན།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"device_connected",
-            "value":"སྒྲིག་ཆས་ལ་སྦྲེལ་མཐུད་བྱས་ཟིན།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_enabled",
-            "value":"རྗེས་འདེད་ཁ་འབྱེད།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"smart_tracking_enabled",
-            "value":"རིག་ལྡན་རྗེས་འདེད་ཁ་ཕྱེ་ཟིན།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"trace_disabled",
-            "value":"རྗེས་འདེད་ཁ་རྒྱག",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name": "smart_focus_tracking",
-            "value": "རིག་ལྡན་མདོ་འདེད་བཞིན་པ།",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "smart_focus_paused",
-            "value": "རིག་ལྡན་མདོ་འདེད་མཚམས་བཞག་ཟིན།",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "focus_tracking",
-            "value": "མདོ་འདེད་བཞིན་པ།",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "focus_paused",
-            "value": "མདོ་འདེད་མཚམས་འཇོག",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "gimbal_connected",
-            "value": "སྤྲིན་སྟེགས་སྦྲེལ་ཟིན།",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "wheel_base_connected",
-            "value": "ཅོག་ངོས་འཕྲུལ་མི་སྦྲེལ་ཟིན།",
-            "attr": {
-                "priority": "translate"
-            }
-        }
-    ]
+  "string": [
+    {
+      "name": "DHTypeName_Camera",
+      "value": "པར་ཆས་",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "pause",
+      "value": "སྐབས་སྡོད།",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "disconnect",
+      "value": "སྦྲེལ་ལམ་གཅོད་པ།",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "connected_to",
+      "value": "%1$sལ་སྦྲེལ་མཐུད་བྱུང་ཟིན།",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "stop_device",
+      "value": "སྒྲིག་ཆས་འདིའི་%1$sབཀོལ་མཚམས་འཇོག་པའི་ཆེད་དུ་སྦྲེལ་མཐུད་གཅད་ཆོག",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "DHTypeName_Mic",
+      "value": "སྐད་སྦུག་",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "continue",
+      "value": "མུ་མཐུད།",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_intelligent_tracking",
+      "value": "རིག་ལྡན་མདོ་འདེད།",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_tracking_layout",
+      "value": "མདོ་འདེད་འགྲེམ་ཚུལ།",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_enable",
+      "value": "ཁ་འབྱེད།",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_close",
+      "value": "ཁ་རྒྱག",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_left",
+      "value": "གཡོན་སྒྲིག",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_center",
+      "value": "དཀྱིལ་དུ་འཇོག་པ།",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "mech_right",
+      "value": "གཡས་སྒྲིག",
+      "attr": {
+        "priority": "LT"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_on",
+      "value": "༼རིག་ལྡན་མདོ་འདེད་༽ཀྱི་བསད་སྤར་ཁ་ཕྱེ་ཟིན། མཛུབ་མོ་གཅིག་གིས་ཉིས་རྡེབ་བྱས་ཏེ་ཁ་རྒྱག་ཐུབ།",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_tracking_switch_off",
+      "value": "༼རིག་ལྡན་མདོ་འདེད་༽ཀྱི་བསད་སྤར་ཁ་བརྒྱབ་ཟིན། མཛུབ་མོ་གཅིག་གིས་ཉིས་རྡེབ་བྱས་ཏེ་ཁ་འབྱེད་ཐུབ།",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "audio_back",
+      "value": "ཕྱིར་ལོག",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_tracking",
+      "value": "རིག་ལྡན་མདོ་འདེད་བཞིན་པ།",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "smart_focus_paused",
+      "value": "རིག་ལྡན་མདོ་འདེད་མཚམས་བཞག་ཟིན།",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_tracking",
+      "value": "མདོ་འདེད་བཞིན་པ།",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "focus_paused",
+      "value": "མདོ་འདེད་མཚམས་འཇོག",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "gimbal_connected",
+      "value": "སྤྲིན་སྟེགས་སྦྲེལ་ཟིན།",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "wheel_base_connected",
+      "value": "ཅོག་ངོས་འཕྲུལ་མི་སྦྲེལ་ཟིན།",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "harmony_mech_intelligent_tracking",
+      "value": "ཧུང་མེང་རིག་ལྡན་མདོ་འདེད།",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text1",
+      "value": "ཁྱོན་ཡོངས་རིག་ལྡན་མདོ་འདེད། ཁ་པར་རྟག་པར་ཁྱེད་ལ་ཕྱོགས་སུ་འཇུག",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "mech_first_connect_text2",
+      "value": "ཞབས་ཞུ་འདིས་ཁྱེད་ཀྱི་མིའི་ཆ་འཕྲིན་འཚོལ་སྡུད་དང་ཉར་གསོག་མི་བྱེད། ཁ་ཕྱེ་རྗེས་ཚོད་འཛིན་ལྟེ་གནས་སམ་ཚུལ་དངོས་སྒྲོམ་བརྒྱུད་ནས་ཁ་བརྒྱབ་ཆོག",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_soon",
+      "value": "ཁ་མི་འབྱེད།",
+      "attr": {
+        "priority": "translate"
+      }
+    },
+    {
+      "name": "open_now",
+      "value": "ལམ་སེང་ཁ་འབྱེད།",
+      "attr": {
+        "priority": "translate"
+      }
+    }
+  ]
 }
