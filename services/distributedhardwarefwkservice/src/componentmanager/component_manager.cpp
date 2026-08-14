@@ -1965,8 +1965,8 @@ void ComponentManager::RecoverAutoEnableSource(DHType dhType)
     for (const auto &metaInfo : metaInfoMap) {
         std::string uuid = DHContext::GetInstance().GetUUIDByDeviceId(metaInfo.second->GetUdidHash());
         if (uuid.empty()) {
-            DHLOGE("Can not find uuid by capability deviceId: %{public}s",
-                GetAnonyString(metaInfo.second->GetDeviceId()).c_str());
+            DHLOGE("Can not find uuid by capability udidHash: %{public}s",
+                GetAnonyString(metaInfo.second->GetUdidHash()).c_str());
             continue;
         }
 
@@ -2152,6 +2152,8 @@ int32_t ComponentManager::InitCompSink(DHType dhType)
         compSinkSaId_.insert(std::make_pair(dhType, saId));
         if (compMonitorPtr_ == nullptr) {
             DHLOGE("compMonitorPtr_ is null.");
+            compSink_.erase(dhType);
+            compSinkSaId_.erase(dhType);
             return ERR_DH_FWK_COMPONENT_MONITOR_NULL;
         }
         compMonitorPtr_->AddSAMonitor(saId);

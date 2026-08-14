@@ -548,35 +548,43 @@ void DistributedHardwareService::StartCleanupTimer()
 
 void DistributedHardwareService::CleanupExpiredRequests()
 {
-    std::lock_guard<std::mutex> lock(pendingRequestsMutex_);
-    if (pendingGetDHRequests_.empty()) {
-        // 没有待处理请求，停止清理线程
-        cleanupRunning_.store(false);
-        return;
-    }
-    bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
-    if (isInit) {
-        // 同步数据
-        DHLOGI("dhfwk init finished");
-        for (auto iter = pendingGetDHRequests_.begin(); iter != pendingGetDHRequests_.end(); ++iter) {
-            StartGetDeviceDhInfo(iter->networkId, iter->enableStep, iter->callback);
+    std::vector<PendingGetDHRequest> pendingRequests;
+    bool isTimeout = false;
+    {
+        std::lock_guard<std::mutex> lock(pendingRequestsMutex_);
+        if (pendingGetDHRequests_.empty()) {
+            cleanupRunning_.store(false);
+            return;
         }
-        pendingGetDHRequests_.clear();
-        cleanupRunning_.store(false);
-        return;
+        bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
+        if (isInit) {
+            DHLOGI("dhfwk init finished");
+            pendingRequests = std::move(pendingGetDHRequests_);
+            pendingGetDHRequests_.clear();
+            dhfwkInitTimes_ = 0;
+            cleanupRunning_.store(false);
+        } else if (dhfwkInitTimes_ > RETRY_CHECK_DHFWK_INIT_MAX_TIMES) {
+            DHLOGI("dhfwk init timeout");
+            isTimeout = true;
+            pendingRequests = std::move(pendingGetDHRequests_);
+            pendingGetDHRequests_.clear();
+            cleanupRunning_.store(false);
+        } else {
+            dhfwkInitTimes_++;
+            return;
+        }
     }
-    if (dhfwkInitTimes_ > RETRY_CHECK_DHFWK_INIT_MAX_TIMES) {
-        DHLOGI("dhfwk init timeout");
-        for (auto iter = pendingGetDHRequests_.begin(); iter != pendingGetDHRequests_.end(); ++iter) {
-            if (iter->callback != nullptr) {
-                iter->callback->OnError(iter->networkId, ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT);
+    if (isTimeout) {
+        for (const auto &req : pendingRequests) {
+            if (req.callback != nullptr) {
+                req.callback->OnError(req.networkId, ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT);
             }
         }
-        pendingGetDHRequests_.clear();
-        cleanupRunning_.store(false);
-        return;
+    } else {
+        for (const auto &req : pendingRequests) {
+            StartGetDeviceDhInfo(req.networkId, req.enableStep, req.callback);
+        }
     }
-    dhfwkInitTimes_++;
 }
 
 int32_t DistributedHardwareService::RegisterDHStatusListener(sptr<IHDSinkStatusListener> listener)
