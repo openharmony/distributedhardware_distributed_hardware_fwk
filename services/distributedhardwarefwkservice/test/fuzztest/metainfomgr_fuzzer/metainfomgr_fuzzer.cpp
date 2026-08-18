@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <mutex>
 #include <fuzzer/FuzzedDataProvider.h>
 #include <string>
 #include <vector>
@@ -34,7 +35,10 @@ void SyncMetaInfoFromDBFuzzTest(const uint8_t* data, size_t size)
 
     FuzzedDataProvider fdp(data, size);
     std::string deviceId = fdp.ConsumeRandomLengthString();
-    MetaInfoManager::GetInstance()->Init();
+    static std::once_flag initFlag;
+    std::call_once(initFlag, []() {
+        MetaInfoManager::GetInstance()->Init();
+    });
     MetaInfoManager::GetInstance()->SyncMetaInfoFromDB(deviceId);
 }
 
@@ -71,6 +75,20 @@ void GetMetaCapInfoFuzzTest(const uint8_t* data, size_t size)
 }
 }
 
+namespace {
+class FuzzExitGuard {
+public:
+    ~FuzzExitGuard()
+    {
+        auto mgr = OHOS::DistributedHardware::MetaInfoManager::GetInstance();
+        if (mgr != nullptr) {
+            mgr->UnInit();
+            mgr->eventHandler_.reset();
+        }
+    }
+};
+} // namespace
+
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
@@ -78,6 +96,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DistributedHardware::SyncMetaInfoFromDBFuzzTest(data, size);
     OHOS::DistributedHardware::GetDataByKeyPrefixFuzzTest(data, size);
     OHOS::DistributedHardware::GetMetaCapInfoFuzzTest(data, size);
+    static FuzzExitGuard guard;
     return 0;
 }
 
