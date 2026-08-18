@@ -161,6 +161,7 @@ int32_t DBAdapter::InitLocal()
 void DBAdapter::UnInit()
 {
     DHLOGI("DBAdapter UnInit");
+    DHContext::GetInstance().GetEventHandler()->RemoveTask("reInitTask");
     std::lock_guard<std::mutex> lock(dbAdapterMutex_);
     if (kvStoragePtr_ == nullptr) {
         DHLOGE("kvStoragePtr_ is null");
@@ -445,10 +446,16 @@ void DBAdapter::UnRegisterKvStoreDeathListener()
 void DBAdapter::OnRemoteDied()
 {
     DHLOGI("OnRemoteDied, recover db begin");
-    auto reInitTask = [this] {
+    std::weak_ptr<DBAdapter> weakThis = shared_from_this();
+    auto reInitTask = [weakThis] {
+        auto dbAdapter = weakThis.lock();
+        if (dbAdapter == nullptr) {
+            DHLOGE("DBAdapter already destroyed, skip reInitTask.");
+            return;
+        }
         int32_t times = 0;
         while (times < DIED_CHECK_MAX_TIMES) {
-            if (DBDiedOpt(times)) {
+            if (dbAdapter->DBDiedOpt(times)) {
                 DHLOGI("ReInit DB success");
                 break;
             }
