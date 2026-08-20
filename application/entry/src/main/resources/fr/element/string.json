@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "La base mobile est connectée.",
+      "value": "Wheelbot connecté.",
       "attr": {
         "priority": "translate"
       }

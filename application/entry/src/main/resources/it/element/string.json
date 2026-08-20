@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "Base con ruote connessa.",
+      "value": "Robot su ruote connesso.",
       "attr": {
         "priority": "translate"
       }

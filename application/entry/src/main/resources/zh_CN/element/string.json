@@ -176,7 +176,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "桌面机器人已连接",
+      "value": "桌面精灵已连接",
       "attr": {
         "priority": "translate"
       }

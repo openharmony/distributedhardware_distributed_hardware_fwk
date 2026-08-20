@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "Шасси подключено.",
+      "value": "Колесный блок подключен.",
       "attr": {
         "priority": "translate"
       }

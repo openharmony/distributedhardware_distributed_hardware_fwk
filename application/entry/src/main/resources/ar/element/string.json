@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "تم توصيل قاعدة العجلات.",
+      "value": "تم توصيل القاعدة المتحركة.",
       "attr": {
         "priority": "translate"
       }

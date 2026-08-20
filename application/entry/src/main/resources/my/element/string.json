@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "ဘီးတပ်အောက်ခံ ချိတ်ဆက်ပြီးပါပြီ။",
+      "value": "Wheelbot ချိတ်ဆက်ပြီးပါပြီ။",
       "attr": {
         "priority": "translate"
       }

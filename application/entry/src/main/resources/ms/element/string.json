@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "Tapak roda disambungkan.",
+      "value": "Wheelbot disambungkan.",
       "attr": {
         "priority": "translate"
       }

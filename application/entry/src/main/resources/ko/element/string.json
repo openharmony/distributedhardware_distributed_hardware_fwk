@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "휠 베이스가 연결되었습니다.",
+      "value": "휠봇이 연결되었습니다.",
       "attr": {
         "priority": "translate"
       }
