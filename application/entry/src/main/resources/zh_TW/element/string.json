@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "桌面機器人已連線",
+      "value": "桌面精靈已連線",
       "attr": {
         "priority": "translate"
       }
