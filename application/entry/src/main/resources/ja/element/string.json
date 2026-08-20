@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "ホイールベースが接続されました。",
+      "value": "ホイールボットが接続されました。",
       "attr": {
         "priority": "translate"
       }
