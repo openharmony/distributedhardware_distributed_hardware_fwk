@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "Radsockel verbunden.",
+      "value": "Wheelbot verbunden",
       "attr": {
         "priority": "translate"
       }
