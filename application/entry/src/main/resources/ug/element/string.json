@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "ئۈستەليۈزى روبوت ئۇلاندى.",
+      "value": "زېرەكچاق ئۇلاندى.",
       "attr": {
         "priority": "translate"
       }
