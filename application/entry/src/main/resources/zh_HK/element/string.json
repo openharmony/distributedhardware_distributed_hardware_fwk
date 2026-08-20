@@ -156,7 +156,7 @@
     },
     {
       "name": "wheel_base_connected",
-      "value": "主屏幕機器人已連接",
+      "value": "主屏幕精靈已連接",
       "attr": {
         "priority": "translate"
       }
