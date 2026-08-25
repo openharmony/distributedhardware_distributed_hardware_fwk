@@ -89,7 +89,7 @@ private:
     sptr<HdfLoadRefRecipient> cameraHdfLoadRefRecipient_ = sptr(new HdfLoadRefRecipient(DHType::CAMERA));
     std::mutex sourceHandlerDataMapMutex_;
     std::map<DHType, SourceHandlerData> sourceHandlerDataMap_;
-    int32_t hdfInuseRefCount_ = 0;
+    std::atomic<int32_t> hdfInuseRefCount_ = 0;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

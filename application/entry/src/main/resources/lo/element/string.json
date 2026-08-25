@@ -72,7 +72,7 @@
     },
     {
       "name": "mech_tracking_layout",
-      "value": "ໂໝດການໃສ່ກອບ",
+      "value": "ໂໝດການຈັດກອບ",
       "attr": {
         "priority": "LT"
       }

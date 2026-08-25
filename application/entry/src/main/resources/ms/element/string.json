@@ -72,7 +72,7 @@
     },
     {
       "name": "mech_tracking_layout",
-      "value": "Mod pembingkaian",
+      "value": "Mod bingkai",
       "attr": {
         "priority": "LT"
       }
