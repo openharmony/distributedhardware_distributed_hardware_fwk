@@ -872,6 +872,7 @@ HWTEST_F(AvAudioSenderEngineTest, OnCallback_004, testing::ext::TestSize.Level1)
     std::string peerDevId = "pEid";
     auto sender = std::make_shared<AVAudioSenderEngine>(ownerName, peerDevId);
     sender->currentState_ = StateId::INITIALIZED;
+    sender->pipeline_ = std::make_shared<Pipeline::Pipeline>();
 
     EXPECT_EQ(Status::ERROR_NULL_POINTER, sender->OnCallback(nullptr,
         Pipeline::FilterCallBackCommand::NEXT_FILTER_NEEDED, Pipeline::StreamType::STREAMTYPE_ENCODED_AUDIO));

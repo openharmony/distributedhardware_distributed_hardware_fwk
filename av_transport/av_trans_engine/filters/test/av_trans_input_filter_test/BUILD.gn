@@ -30,6 +30,13 @@ config("module_private_config") {
 ohos_unittest("AvTransAudioInputFilterTest") {
   module_out_path = unittest_output_path
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    cfi_no_nvcall = true
+    debug = false
+  }
+
   configs = [ ":module_private_config" ]
 
   sources = [ "av_trans_audio_input_filter_test.cpp" ]
@@ -54,15 +61,7 @@ ohos_unittest("AvTransAudioInputFilterTest") {
     "${distributed_av_transport_path}/framework:distributed_av_pipeline_fwk",
   ]
 
-  if (histreamer_compile_part) {
-    external_deps = [
-      "media_foundation:histreamer_base",
-      "media_foundation:histreamer_codec_filters",
-      "media_foundation:histreamer_ffmpeg_convert",
-    ]
-  }
-
-  external_deps += [
+  external_deps = [
     "av_codec:av_codec_client",
     "av_codec:native_media_acodec",
     "media_foundation:media_foundation",
@@ -78,6 +77,13 @@ ohos_unittest("AvTransAudioInputFilterTest") {
 
 ohos_unittest("AVTransBusInputFilterTest") {
   module_out_path = unittest_output_path
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    cfi_no_nvcall = true
+    debug = false
+  }
 
   configs = [ ":module_private_config" ]
 
@@ -104,15 +110,7 @@ ohos_unittest("AVTransBusInputFilterTest") {
     "${engine_path}/av_receiver:distributed_av_receiver",
   ]
 
-  if (histreamer_compile_part) {
-    external_deps = [
-      "media_foundation:histreamer_base",
-      "media_foundation:histreamer_codec_filters",
-      "media_foundation:histreamer_ffmpeg_convert",
-    ]
-  }
-
-  external_deps += [
+  external_deps = [
     "av_codec:av_codec_client",
     "av_codec:native_media_acodec",
     "media_foundation:media_foundation",
