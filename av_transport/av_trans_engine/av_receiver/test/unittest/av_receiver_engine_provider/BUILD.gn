@@ -35,6 +35,13 @@ config("module_private_config") {
 ohos_unittest("AvReceiverEngineProviderTest") {
   module_out_path = unittest_output_path
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    cfi_no_nvcall = true
+    debug = false
+  }
+
   sources = [ "src/av_receiver_engine_provider_test.cpp" ]
 
   configs = [ ":module_private_config" ]
@@ -121,6 +128,13 @@ config("module_audio_private_config") {
 
 ohos_unittest("AvAudioReceiverEngineProviderTest") {
   module_out_path = unittest_output_path
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    cfi_no_nvcall = true
+    debug = false
+  }
 
   sources = [ "src/av_audio_receiver_engine_provider_test.cpp" ]
 

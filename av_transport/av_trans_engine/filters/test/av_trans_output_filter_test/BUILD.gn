@@ -80,6 +80,13 @@ ohos_unittest("AvTransAudioOutputFilterTest") {
 ohos_unittest("AVTransAudioDSoftbusOutputFilterTest") {
   module_out_path = unittest_output_path
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    cfi_no_nvcall = true
+    debug = false
+  }
+
   configs = [ ":module_private_config" ]
 
   sources = [ "av_trans_dsoftbus_output_filter_test.cpp" ]
@@ -105,15 +112,7 @@ ohos_unittest("AVTransAudioDSoftbusOutputFilterTest") {
     "${engine_path}/av_sender:distributed_av_sender",
   ]
 
-  if (histreamer_compile_part) {
-    external_deps = [
-      "media_foundation:histreamer_base",
-      "media_foundation:histreamer_codec_filters",
-      "media_foundation:histreamer_ffmpeg_convert",
-    ]
-  }
-
-  external_deps += [
+  external_deps = [
     "av_codec:av_codec_client",
     "av_codec:native_media_acodec",
     "media_foundation:media_foundation",

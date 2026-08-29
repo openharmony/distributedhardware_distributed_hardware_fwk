@@ -37,6 +37,13 @@ config("module_private_config") {
 ohos_unittest("AvTransControlCenterTest") {
   module_out_path = unittest_output_path
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    cfi_no_nvcall = true
+    debug = false
+  }
+
   sources = [
     "${control_center_path}/test/unittest/inner_kits/av_trans_control_center_callback_test.cpp",
     "${control_center_path}/test/unittest/services/av_sync_manager_test.cpp",

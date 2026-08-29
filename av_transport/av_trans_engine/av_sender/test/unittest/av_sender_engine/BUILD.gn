@@ -35,6 +35,13 @@ config("module_private_config") {
 ohos_unittest("AvSenderEngineTest") {
   module_out_path = unittest_output_path
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    cfi_no_nvcall = true
+    debug = false
+  }
+
   sources = [ "src/av_sender_engine_test.cpp" ]
 
   configs = [ ":module_private_config" ]
@@ -121,6 +128,13 @@ config("module_audio_private_config") {
 ohos_unittest("AvAudioSenderEngineTest") {
   module_out_path = unittest_output_path
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    cfi_no_nvcall = true
+    debug = false
+  }
+
   sources = [ "src/av_audio_sender_engine_test.cpp" ]
 
   configs = [ ":module_audio_private_config" ]
@@ -161,15 +175,7 @@ ohos_unittest("AvAudioSenderEngineTest") {
     "HST_ANY_WITH_NO_RTTI",
   ]
 
-  if (histreamer_compile_part) {
-    external_deps = [
-      "media_foundation:histreamer_base",
-      "media_foundation:histreamer_codec_filters",
-      "media_foundation:histreamer_ffmpeg_convert",
-    ]
-  }
-
-  external_deps += [
+  external_deps = [
     "av_codec:av_codec_client",
     "av_codec:native_media_acodec",
     "media_foundation:media_foundation",
