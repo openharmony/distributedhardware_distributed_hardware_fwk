@@ -91,31 +91,35 @@ FWK_IMPLEMENT_SINGLE_INSTANCE(HdfOperateManager);
 int32_t HdfOperateManager::LoadDistributedHDF(DHType dhType)
 {
     DHLOGI("HdfOperateManager load hdf, dhType = %{public}#X!", dhType);
-    std::unique_lock<std::mutex> hdfOperateMapLocker(hdfOperateMapMutex_);
-    auto itHdfOperate = hdfOperateMap_.find(dhType);
-    if (itHdfOperate == hdfOperateMap_.end()) {
-        IDistributedHardwareSource *sourcePtr = nullptr;
-        auto ret = ComponentLoader::GetInstance().GetSource(dhType, sourcePtr);
-        if (ret != DH_FWK_SUCCESS) {
-            DHLOGE("GetSource failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
-            ret = RigidGetSourcePtr(dhType, sourcePtr);
+    std::shared_ptr<HdfOperator> hdfOperate;
+    {
+        std::unique_lock<std::mutex> hdfOperateMapLocker(hdfOperateMapMutex_);
+        auto itHdfOperate = hdfOperateMap_.find(dhType);
+        if (itHdfOperate == hdfOperateMap_.end()) {
+            IDistributedHardwareSource *sourcePtr = nullptr;
+            auto ret = ComponentLoader::GetInstance().GetSource(dhType, sourcePtr);
             if (ret != DH_FWK_SUCCESS) {
-                DHLOGE("RigidGetSourcePtr failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
-                return ret;
+                DHLOGE("GetSource failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
+                ret = RigidGetSourcePtr(dhType, sourcePtr);
+                if (ret != DH_FWK_SUCCESS) {
+                    DHLOGE("RigidGetSourcePtr failed, compType = %{public}#X, ret = %{public}d.", dhType, ret);
+                    return ret;
+                }
             }
+            auto result = hdfOperateMap_.insert(
+                std::pair<DHType, std::shared_ptr<HdfOperator>>(
+                    dhType, std::make_shared<HdfOperator>(dhType, sourcePtr)));
+            itHdfOperate = result.first;
         }
-        auto result = hdfOperateMap_.insert(
-            std::pair<DHType, std::shared_ptr<HdfOperator>>(
-                dhType, std::make_shared<HdfOperator>(dhType, sourcePtr)));
-        itHdfOperate = result.first;
+        hdfOperate = itHdfOperate->second;
     }
-    auto hdfOperate = itHdfOperate->second;
     if (hdfOperate == nullptr) {
         DHLOGE("Get hdf operator is nullptr, dhType = %{public}#X.", dhType);
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
     auto ret = hdfOperate->LoadDistributedHDF();
     if (ret == DH_FWK_SUCCESS) {
+        std::unique_lock<std::mutex> hdfOperateMapLocker(hdfOperateMapMutex_);
         hdfInuseRefCount_++;
     }
     return ret;
@@ -124,21 +128,28 @@ int32_t HdfOperateManager::LoadDistributedHDF(DHType dhType)
 int32_t HdfOperateManager::UnLoadDistributedHDF(DHType dhType)
 {
     DHLOGI("HdfOperateManager unload hdf, dhType = %{public}#X!", dhType);
-    std::unique_lock<std::mutex> hdfOperateMapLocker(hdfOperateMapMutex_);
-    auto itHdfOperate = hdfOperateMap_.find(dhType);
-    if (itHdfOperate == hdfOperateMap_.end()) {
-        DHLOGI("The hdf operate has not been created yet, dhType = %{public}#X!", dhType);
-        return DH_FWK_SUCCESS;
+    std::shared_ptr<HdfOperator> hdfOperate;
+    {
+        std::unique_lock<std::mutex> hdfOperateMapLocker(hdfOperateMapMutex_);
+        auto itHdfOperate = hdfOperateMap_.find(dhType);
+        if (itHdfOperate == hdfOperateMap_.end()) {
+            DHLOGI("The hdf operate has not been created yet, dhType = %{public}#X!", dhType);
+            return DH_FWK_SUCCESS;
+        }
+        hdfOperate = itHdfOperate->second;
     }
-    auto hdfOperate = itHdfOperate->second;
     if (hdfOperate == nullptr) {
         DHLOGE("Get hdf operator is nullptr, dhType = %{public}#X.", dhType);
         return ERR_DH_FWK_POINTER_IS_NULL;
     }
     auto ret = hdfOperate->UnLoadDistributedHDF();
     if (ret == DH_FWK_SUCCESS) {
+        std::unique_lock<std::mutex> hdfOperateMapLocker(hdfOperateMapMutex_);
         if (hdfOperate->IsNeedErase()) {
-            hdfOperateMap_.erase(itHdfOperate);
+            auto itHdfOperate = hdfOperateMap_.find(dhType);
+            if (itHdfOperate != hdfOperateMap_.end()) {
+                hdfOperateMap_.erase(itHdfOperate);
+            }
         }
         if (RigidReleaseSourcePtr(dhType) != DH_FWK_SUCCESS) {
             DHLOGE("RigidReleaseSourcePtr failed, dhType = %{public}#X.", dhType);
@@ -299,8 +310,7 @@ int32_t HdfOperateManager::RigidReleaseSourcePtr(DHType dhType)
 
 bool HdfOperateManager::IsAnyHdfInuse()
 {
-    std::unique_lock<std::mutex> hdfOperateMapLocker(hdfOperateMapMutex_);
-    return hdfInuseRefCount_ > 0;
+    return hdfInuseRefCount_.load(std::memory_order_acquire) > 0;
 }
 
 void HdfLoadRefRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
