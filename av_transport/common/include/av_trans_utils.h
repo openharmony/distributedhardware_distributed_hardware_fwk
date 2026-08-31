@@ -58,6 +58,7 @@ bool IsInt64(const cJSON *jsonObj, const std::string &key);
 bool IsString(const cJSON *jsonObj, const std::string &key);
 
 bool ConvertToInt(const std::string& str, int& value);
+bool ConvertToUint32(const std::string& str, uint32_t& value);
 
 int64_t GetCurrentTime();
 

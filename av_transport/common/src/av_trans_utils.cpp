@@ -33,6 +33,17 @@ using TransBufferMeta = OHOS::DistributedHardware::BufferMeta;
 const std::string KEY_OWNER_NAME = "ownerName";
 const std::string KEY_PEER_DEVID = "peerDevId";
 
+static bool ParseAvTransMetaUint32(const std::string &text, uint32_t &out, const char *tag)
+{
+    uint32_t value = 0;
+    if (!ConvertToUint32(text, value)) {
+        AVTRANS_LOGE("invalid %{public}s:%{public}s", tag, text.c_str());
+        return false;
+    }
+    out = value;
+    return true;
+}
+
 std::string TransName2PkgName(const std::string &ownerName)
 {
     const static std::pair<std::string, std::string> mapArray[] = {
@@ -153,15 +164,19 @@ void Convert2HiSBufferMeta(std::shared_ptr<AVTransBuffer> transBuffer, std::shar
 
         std::string value;
         transMeta->GetMetaItem(AVTransTag::BUFFER_DATA_TYPE, value);
-        uint32_t dataType = static_cast<uint32_t>(std::atoi(value.c_str()));
+        uint32_t dataType = 0;
+        (void)ParseAvTransMetaUint32(value, dataType, "BUFFER_DATA_TYPE");
         hisAMeta->dataType_ = (BufferDataType)dataType;
 
         transMeta->GetMetaItem(AVTransTag::AUDIO_SAMPLE_FORMAT, value);
-        uint32_t format = static_cast<uint32_t>(std::atoi(value.c_str()));
+        uint32_t format = 0;
+        (void)ParseAvTransMetaUint32(value, format, "AUDIO_SAMPLE_FORMAT");
         hisAMeta->format_ = (AudioSampleFormat)format;
 
         transMeta->GetMetaItem(AVTransTag::AUDIO_SAMPLE_RATE, value);
-        hisAMeta->sampleRate_ = static_cast<uint32_t>(std::atoi(value.c_str()));
+        uint32_t sampleRate = 0;
+        (void)ParseAvTransMetaUint32(value, sampleRate, "AUDIO_SAMPLE_RATE");
+        hisAMeta->sampleRate_ = sampleRate;
 
         hisBuffer->UpdateBufferMeta(*hisAMeta);
     } else {
@@ -169,18 +184,24 @@ void Convert2HiSBufferMeta(std::shared_ptr<AVTransBuffer> transBuffer, std::shar
 
         std::string value;
         transMeta->GetMetaItem(AVTransTag::BUFFER_DATA_TYPE, value);
-        uint32_t dataType = static_cast<uint32_t>(std::atoi(value.c_str()));
+        uint32_t dataType = 0;
+        (void)ParseAvTransMetaUint32(value, dataType, "BUFFER_DATA_TYPE");
         hisVMeta->dataType_ = (BufferDataType)dataType;
 
         transMeta->GetMetaItem(AVTransTag::VIDEO_PIXEL_FORMAT, value);
-        uint32_t format = static_cast<uint32_t>(std::atoi(value.c_str()));
+        uint32_t format = 0;
+        (void)ParseAvTransMetaUint32(value, format, "VIDEO_PIXEL_FORMAT");
         hisVMeta->format_ = (VideoPixelFormat)format;
 
         transMeta->GetMetaItem(AVTransTag::VIDEO_WIDTH, value);
-        hisVMeta->width_ = static_cast<uint32_t>(std::atoi(value.c_str()));
+        uint32_t width = 0;
+        (void)ParseAvTransMetaUint32(value, width, "VIDEO_WIDTH");
+        hisVMeta->width_ = width;
 
         transMeta->GetMetaItem(AVTransTag::VIDEO_HEIGHT, value);
-        hisVMeta->height_ = static_cast<uint32_t>(std::atoi(value.c_str()));
+        uint32_t height = 0;
+        (void)ParseAvTransMetaUint32(value, height, "VIDEO_HEIGHT");
+        hisVMeta->height_ = height;
 
         TRUE_LOG_MSG(!transMeta->GetMetaItem(AVTransTag::PRE_TIMESTAMP, value), "get PRE_TIMESTAMP meta failed");
 
@@ -280,6 +301,12 @@ bool IsString(const cJSON *jsonObj, const std::string &key)
 }
 
 bool ConvertToInt(const std::string& str, int& value)
+{
+    auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), value);
+    return ec == std::errc{} && ptr == str.data() + str.size();
+}
+
+bool ConvertToUint32(const std::string& str, uint32_t& value)
 {
     auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), value);
     return ec == std::errc{} && ptr == str.data() + str.size();
