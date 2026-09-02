@@ -170,7 +170,7 @@
     },
     {
       "name": "mech_first_connect_text1",
-      "value": "Restez toujours au centre et au premier plan.",
+      "value": "Veuillez rester toujours au centre et au premier plan.",
       "attr": {
         "priority": "translate"
       }
