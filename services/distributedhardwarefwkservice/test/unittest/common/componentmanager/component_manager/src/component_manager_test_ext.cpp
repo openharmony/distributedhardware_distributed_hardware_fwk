@@ -178,6 +178,170 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndDisableSink_002, testing::ext::Te
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
+HWTEST_F(ComponentManagerTestExt, EnableSinkWithCustomParams_001, testing::ext::TestSize.Level1)
+{
+    ASSERT_TRUE(componentLoader_ != nullptr);
+    ASSERT_TRUE(dhContext_ != nullptr);
+    ASSERT_TRUE(versionManager_ != nullptr);
+
+    auto sinkPtr = std::make_shared<MockIDistributedHardwareSink>();
+    EXPECT_CALL(*sinkPtr, InitSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, ReleaseSink()).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, RegisterPrivacyResources(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, ConfigDistributedHardware(_, _, _))
+        .WillOnce(Invoke([](const std::string &dhId, const std::string &key, const std::string &value) {
+            EXPECT_EQ(key, std::string(KEY_ENABLE_INIT_PARAMS));
+            EXPECT_EQ(value, std::string(R"({"sinkParam":"v1"})"));
+            return DH_FWK_SUCCESS;
+        }));
+
+    EXPECT_CALL(*componentLoader_, IsDHTypeSupport(_)).WillRepeatedly(Return(true));
+    EXPECT_CALL(*componentLoader_, GetSink(_, _))
+        .WillRepeatedly(DoAll(SetArgReferee<1>(sinkPtr.get()), Return(DH_FWK_SUCCESS)));
+
+    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
+    EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _)).Times(AtLeast(1));
+
+    auto sinkListener = sptr<MockHDSinkStatusListenerStub>(new (std::nothrow) MockHDSinkStatusListenerStub());
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
+    ComponentManager::GetInstance().RegisterDHStatusListener(sinkListener, CAMERA_UID, CAMERA_PID);
+
+    DHDescriptor cameraWithParams = { .id = "camera_1", .dhType = DHType::CAMERA,
+        .customParams = R"({"sinkParam":"v1"})" };
+    auto ret = ComponentManager::GetInstance().EnableSink(cameraWithParams, CAMERA_UID, CAMERA_PID);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    auto handler = std::make_shared<MockHardwareHandler>();
+    EXPECT_CALL(*componentLoader_, GetHardwareHandler(_, _))
+        .WillRepeatedly(DoAll(SetArgReferee<1>(handler.get()), Return(DH_FWK_SUCCESS)));
+    EXPECT_CALL(*componentLoader_, ReleaseSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+
+    ret = ComponentManager::GetInstance().DisableSink(cameraWithParams, CAMERA_UID, CAMERA_PID);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    ret = ComponentManager::GetInstance().UnregisterDHStatusListener(sinkListener, CAMERA_UID, CAMERA_PID);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+HWTEST_F(ComponentManagerTestExt, EnableSinkWithCustomParams_002, testing::ext::TestSize.Level1)
+{
+    ASSERT_TRUE(componentLoader_ != nullptr);
+    ASSERT_TRUE(dhContext_ != nullptr);
+    ASSERT_TRUE(versionManager_ != nullptr);
+
+    auto sinkPtr = std::make_shared<MockIDistributedHardwareSink>();
+    EXPECT_CALL(*sinkPtr, InitSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, ReleaseSink()).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, RegisterPrivacyResources(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, ConfigDistributedHardware(_, _, _)).Times(Exactly(0));
+
+    EXPECT_CALL(*componentLoader_, IsDHTypeSupport(_)).WillRepeatedly(Return(true));
+    EXPECT_CALL(*componentLoader_, GetSink(_, _))
+        .WillRepeatedly(DoAll(SetArgReferee<1>(sinkPtr.get()), Return(DH_FWK_SUCCESS)));
+
+    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
+    EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _)).Times(AtLeast(1));
+
+    auto sinkListener = sptr<MockHDSinkStatusListenerStub>(new (std::nothrow) MockHDSinkStatusListenerStub());
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
+    ComponentManager::GetInstance().RegisterDHStatusListener(sinkListener, CAMERA_UID, CAMERA_PID);
+
+    auto ret = ComponentManager::GetInstance().EnableSink(CAMERA_DESCRIPTOR, CAMERA_UID, CAMERA_PID);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    auto handler = std::make_shared<MockHardwareHandler>();
+    EXPECT_CALL(*componentLoader_, GetHardwareHandler(_, _))
+        .WillRepeatedly(DoAll(SetArgReferee<1>(handler.get()), Return(DH_FWK_SUCCESS)));
+    EXPECT_CALL(*componentLoader_, ReleaseSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+
+    ret = ComponentManager::GetInstance().DisableSink(CAMERA_DESCRIPTOR, CAMERA_UID, CAMERA_PID);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    ret = ComponentManager::GetInstance().UnregisterDHStatusListener(sinkListener, CAMERA_UID, CAMERA_PID);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+HWTEST_F(ComponentManagerTestExt, EnableSinkWithCustomParams_003, testing::ext::TestSize.Level2)
+{
+    ASSERT_TRUE(componentLoader_ != nullptr);
+    ASSERT_TRUE(dhContext_ != nullptr);
+    ASSERT_TRUE(versionManager_ != nullptr);
+
+    auto sinkPtr = std::make_shared<MockIDistributedHardwareSink>();
+    EXPECT_CALL(*sinkPtr, InitSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, ReleaseSink()).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, RegisterPrivacyResources(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, ConfigDistributedHardware(_, _, _)).Times(Exactly(0));
+
+    EXPECT_CALL(*componentLoader_, IsDHTypeSupport(_)).WillRepeatedly(Return(true));
+    EXPECT_CALL(*componentLoader_, GetSink(_, _))
+        .WillRepeatedly(DoAll(SetArgReferee<1>(sinkPtr.get()), Return(ERR_DH_FWK_LOADER_HANDLER_IS_NULL)));
+
+    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
+
+    auto sinkListener = sptr<MockHDSinkStatusListenerStub>(new (std::nothrow) MockHDSinkStatusListenerStub());
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
+    ComponentManager::GetInstance().RegisterDHStatusListener(sinkListener, CAMERA_UID, CAMERA_PID);
+
+    DHDescriptor cameraWithParams = { .id = "camera_1", .dhType = DHType::CAMERA,
+        .customParams = R"({"sinkParam":"v1"})" };
+    auto ret = ComponentManager::GetInstance().EnableSink(cameraWithParams, CAMERA_UID, CAMERA_PID);
+    EXPECT_NE(ret, DH_FWK_SUCCESS);
+
+    ret = ComponentManager::GetInstance().UnregisterDHStatusListener(sinkListener, CAMERA_UID, CAMERA_PID);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+HWTEST_F(ComponentManagerTestExt, EnableSinkWithCustomParams_004, testing::ext::TestSize.Level1)
+{
+    ASSERT_TRUE(componentLoader_ != nullptr);
+    ASSERT_TRUE(dhContext_ != nullptr);
+    ASSERT_TRUE(versionManager_ != nullptr);
+
+    auto sinkPtr = std::make_shared<MockIDistributedHardwareSink>();
+    EXPECT_CALL(*sinkPtr, InitSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, ReleaseSink()).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, RegisterPrivacyResources(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+    EXPECT_CALL(*sinkPtr, ConfigDistributedHardware(_, _, _))
+        .WillOnce(Invoke([](const std::string &dhId, const std::string &key, const std::string &value) {
+            EXPECT_EQ(key, std::string(KEY_ENABLE_INIT_PARAMS));
+            EXPECT_EQ(dhId, std::string("audio_1"));
+            return DH_FWK_SUCCESS;
+        }));
+
+    EXPECT_CALL(*componentLoader_, IsDHTypeSupport(_)).WillRepeatedly(Return(true));
+    EXPECT_CALL(*componentLoader_, GetSink(_, _))
+        .WillRepeatedly(DoAll(SetArgReferee<1>(sinkPtr.get()), Return(DH_FWK_SUCCESS)));
+
+    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
+    EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _)).Times(AtLeast(1));
+
+    auto sinkListener = sptr<MockHDSinkStatusListenerStub>(new (std::nothrow) MockHDSinkStatusListenerStub());
+    std::vector<DHType> dhTypeVec;
+    EXPECT_CALL(*componentLoader_, GetAllCompTypes(dhTypeVec)).WillRepeatedly(Return());
+    ComponentManager::GetInstance().RegisterDHStatusListener(sinkListener, AUDIO_UID, AUDIO_PID);
+
+    DHDescriptor audioWithParams = { .id = "audio_1", .dhType = DHType::AUDIO,
+        .customParams = R"({"audioKey":"audioVal"})" };
+    auto ret = ComponentManager::GetInstance().EnableSink(audioWithParams, AUDIO_UID, AUDIO_PID);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    auto handler = std::make_shared<MockHardwareHandler>();
+    EXPECT_CALL(*componentLoader_, GetHardwareHandler(_, _))
+        .WillRepeatedly(DoAll(SetArgReferee<1>(handler.get()), Return(DH_FWK_SUCCESS)));
+    EXPECT_CALL(*componentLoader_, ReleaseSink(_)).WillRepeatedly(Return(DH_FWK_SUCCESS));
+
+    ret = ComponentManager::GetInstance().DisableSink(audioWithParams, AUDIO_UID, AUDIO_PID);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    ret = ComponentManager::GetInstance().UnregisterDHStatusListener(sinkListener, AUDIO_UID, AUDIO_PID);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
 HWTEST_F(ComponentManagerTestExt, EnableSink_failed_001, testing::ext::TestSize.Level2)
 {
     ASSERT_TRUE(componentLoader_ != nullptr);

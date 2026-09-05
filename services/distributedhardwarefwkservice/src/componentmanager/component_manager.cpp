@@ -1428,64 +1428,63 @@ int32_t ComponentManager::EnableSinkInternal(const DHDescriptor &dhDescriptor,
 {
     DHLOGI("Start EnableSinkInternal, dhType: %{public}#X", dhDescriptor.dhType);
     std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
-
-    // Check if the input parameters and device type support it
     if (!ComponentLoader::GetInstance().IsDHTypeSupport(dhDescriptor.dhType)) {
         DHLOGE("Not support dhType: %{public}#X!", dhDescriptor.dhType);
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
-
     auto &status = dhSinkStatus_[dhDescriptor.dhType];
     auto &enableInfo = status.enableInfos[dhDescriptor.id];
-
-    // Check if the business is being called repeatedly
     DHStatusCtrlKey ctrlKey { .uid = callingUid, .pid = callingPid };
-
-    // Get business enable status listener
     auto itrListener = status.listeners.find(ctrlKey);
     if (itrListener != status.listeners.end()) {
         listener = itrListener->second;
     }
-
     auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
     if (statusCtrl.enableState == EnableState::ENABLED) {
-        DHLOGI("Repeat call EnableSink, uid = %{public}d, pid = %{public}d.", ctrlKey.uid, ctrlKey.pid);
         return DH_FWK_SUCCESS;
     }
-
-    // Check reference count
     if (enableInfo.refEnable || status.refLoad) {
-        // Change status, we won't call back directly here because there is a lock
         DHLOGI("Add reference count, dhType: %{public}#X", dhDescriptor.dhType);
         statusCtrl.enableState = EnableState::ENABLED;
         enableInfo.refEnable++;
         status.refLoad++;
         return DH_FWK_SUCCESS;
     }
+    auto ret = StartSinkAndWait(dhDescriptor.dhType);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGW("StartSinkAndWait failed. ret = %{public}d.", ret);
+        return ret;
+    }
+    if (!dhDescriptor.customParams.empty() && compSink_[dhDescriptor.dhType] != nullptr) {
+        compSink_[dhDescriptor.dhType]->ConfigDistributedHardware(dhDescriptor.id,
+            KEY_ENABLE_INIT_PARAMS, dhDescriptor.customParams);
+    }
+    statusCtrl.enableState = EnableState::ENABLED;
+    enableInfo.refEnable = 1;
+    status.refLoad = 1;
+    return DH_FWK_SUCCESS;
+}
 
-    // Start enabling hardware sink
-    auto ret = InitCompSink(dhDescriptor.dhType);
+int32_t ComponentManager::StartSinkAndWait(DHType dhType)
+{
+    auto ret = InitCompSink(dhType);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("InitCompSink failed, ret = %{public}d.", ret);
         return ret;
     }
     std::unordered_map<DHType, std::shared_future<int32_t>> sinkResult;
-    ret = StartSink(dhDescriptor.dhType, sinkResult);
+    ret = StartSink(dhType, sinkResult);
     if (ret != DH_FWK_SUCCESS) {
         DHLOGE("StartSink failed");
         return ret;
     }
     if (!WaitForResult(Action::START_SINK, sinkResult)) {
-        DHLOGE("StartSink failed, some virtual components maybe cannot work, but want to continue!");
+        DHLOGE("StartSink failed, some virtual components maybe cannot work!");
         HiSysEventWriteMsg(DHFWK_INIT_FAIL, OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
             "dhfwk start sink failed.");
-        UninitCompSink(dhDescriptor.dhType);
+        UninitCompSink(dhType);
         return ERR_DH_FWK_COMPONENT_ENABLE_TIMEOUT;
     }
-    // Change status, we won't call back directly here because there is a lock
-    statusCtrl.enableState = EnableState::ENABLED;
-    enableInfo.refEnable = 1;
-    status.refLoad = 1;
     return DH_FWK_SUCCESS;
 }
 

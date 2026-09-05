@@ -91,8 +91,8 @@ bool DHCommTool::CheckCallerAclRight(const std::string &localNetworkId, const st
     DmAccessCallee dmDstCallee = {
         .networkId = remoteNetworkId,
     };
-    DHLOGI("CheckAclRight dmSrcCaller localNetworkId: %{public}s, accountId: %{public}s, remoteNetworkId: %{public}s",
-        GetAnonyString(localNetworkId).c_str(), GetAnonyString(accountId_).c_str(),
+    DHLOGI("[MultiUserAcl] CheckCallerAclRight uid=%{public}d, local=%{public}s, acct=%{public}s, remote=%{public}s",
+        userId_, GetAnonyString(localNetworkId).c_str(), GetAnonyString(accountId_).c_str(),
         GetAnonyString(remoteNetworkId).c_str());
     if (!DeviceManager::GetInstance().CheckSrcAccessControl(dmSrcCaller, dmDstCallee)) {
         DHLOGE("Caller ACL check failed.");

@@ -64,6 +64,19 @@ ohos_unittest("ComponentManagerTest") {
   ]
 
   external_deps = [
+    "ability_base:want",
+    "ability_runtime:ability_manager",
+    "access_token:libaccesstoken_sdk",
+    "access_token:libtokenid_sdk",
+    "access_token:libtokensetproc_shared",
+    "config_policy:configpolicy_util",
+    "device_manager:devicemanagersdk",
+    "ffrt:libffrt",
+    "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
+    "init:libbegetutil",
+    "memmgr:memmgrclient",
+    "resource_schedule_service:ressched_client",
     "access_token:libaccesstoken_sdk",
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",

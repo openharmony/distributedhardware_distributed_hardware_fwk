@@ -119,32 +119,22 @@ void DHTransport::OnBytesReceived(int32_t socketId, const void *data, uint32_t d
 bool DHTransport::CheckCalleeAclRight(const std::shared_ptr<CommMsg> commMsg)
 {
     if (commMsg->userId == -1) {
-        DHLOGE("ACL not support");
+        DHLOGI("UserId is -1. From system");
         return true;
     }
     std::string localNetworkId = GetLocalNetworkId();
     if (localNetworkId.empty()) {
-        DHLOGE("Get local network id error");
+        DHLOGW("The localNetworkId is empty.");
         return false;
     }
     uint64_t localTokenId = IPCSkeleton::GetCallingTokenID();
+    int32_t userId = 0;
+    std::string accountId = "";
 #ifdef OS_ACCOUNT_PART
-    std::vector<int32_t> ids;
-    auto ret = AccountSA::OsAccountManager::QueryActiveOsAccountIds(ids);
-    if (ret != DH_FWK_SUCCESS || ids.empty()) {
-        DHLOGE("Get userId fail, ret: %{public}d", ret);
+    if (!GetForegroundUserInfo(commMsg->userId, userId, accountId)) {
         return false;
     }
-    int32_t userId = ids[0];
-    AccountSA::OhosAccountInfo osAccountInfo;
-    ret = AccountSA::OhosAccountKits::GetInstance().GetOhosAccountInfo(osAccountInfo);
-    if (ret != DH_FWK_SUCCESS) {
-        DHLOGE("Get accountId fail, ret: %{public}d", ret);
-        return false;
-    }
-    std::string accountId = osAccountInfo.uid_;
 #endif
-
     DmAccessCaller dmSrcCaller = {
         .accountId = commMsg->accountId,
         .pkgName = DH_FWK_PKG_NAME,
@@ -159,10 +149,47 @@ bool DHTransport::CheckCalleeAclRight(const std::shared_ptr<CommMsg> commMsg)
         .userId = userId,
         .tokenId = localTokenId,
     };
-    DHLOGI("CheckAclRight remotenetworkId: %{public}s, accountId: %{public}s, localNetworkId: %{public}s",
+    DHLOGI("[MultiUserAcl] CheckCalleeAclRight remote=%{public}s, acct=%{public}s, local=%{public}s, uid=%{public}d",
         GetAnonyString(commMsg->msg).c_str(), GetAnonyString(accountId).c_str(),
-        GetAnonyString(localNetworkId).c_str());
+        GetAnonyString(localNetworkId).c_str(), commMsg->userId);
     return DeviceManager::GetInstance().CheckSinkAccessControl(dmSrcCaller, dmDstCallee);
+}
+
+bool DHTransport::GetForegroundUserInfo(int32_t targetUserId, int32_t &userId, std::string &accountId)
+{
+#ifdef OS_ACCOUNT_PART
+    std::vector<AccountSA::ForegroundOsAccount> foregroundAccounts;
+    auto ret = AccountSA::OsAccountManager::GetForegroundOsAccounts(foregroundAccounts);
+    if (ret != DH_FWK_SUCCESS || foregroundAccounts.empty()) {
+        DHLOGE("[MultiUserAcl] GetForegroundOsAccounts failed, ret=%{public}d", ret);
+        return false;
+    }
+    bool foregroundMatch = false;
+    for (const auto &account : foregroundAccounts) {
+        if (account.localId == targetUserId) {
+            foregroundMatch = true;
+            break;
+        }
+    }
+    if (!foregroundMatch) {
+        DHLOGE("[MultiUserAcl] userId=%{public}d not in foreground", targetUserId);
+        return false;
+    }
+    userId = targetUserId;
+    AccountSA::OhosAccountInfo osAccountInfo;
+    ret = AccountSA::OhosAccountKits::GetInstance().GetOhosAccountInfo(osAccountInfo);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("Get accountId fail, ret: %{public}d", ret);
+        return false;
+    }
+    accountId = osAccountInfo.uid_;
+    return true;
+#else
+    (void)targetUserId;
+    (void)userId;
+    (void)accountId;
+    return false;
+#endif
 }
 
 void DHTransport::HandleReceiveMessage(const std::string &payload, const std::string &remoteNeworkId)

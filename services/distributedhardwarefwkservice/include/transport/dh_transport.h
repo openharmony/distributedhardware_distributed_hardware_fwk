@@ -54,6 +54,7 @@ private:
     void ClearDeviceSocketOpened(const std::string &remoteDevId);
     void HandleReceiveMessage(const std::string &payload, const std::string &remoteNeworkId);
     bool CheckCalleeAclRight(const std::shared_ptr<CommMsg> commMsg);
+    bool GetForegroundUserInfo(int32_t targetUserId, int32_t &userId, std::string &accountId);
 
 private:
     std::mutex rmtSocketIdMtx_;

@@ -295,5 +295,77 @@ HWTEST_F(EnableTaskTest, DoActiveEnable_007, TestSize.Level0)
     auto ret = enableTask->DoActiveEnable();
     EXPECT_EQ(DH_FWK_SUCCESS, ret);
 }
+
+HWTEST_F(EnableTaskTest, DoActiveEnable_008, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_AUDIO_MIC.networkId, TASK_PARAM_AUDIO_MIC.uuid,
+        TASK_PARAM_AUDIO_MIC.udid, TASK_PARAM_AUDIO_MIC.dhId, TASK_PARAM_AUDIO_MIC.dhType);
+    enableTask->SetEffectSink(true);
+    enableTask->SetFirstCallingTokenId(12345u);
+    DHDescriptor capturedDesc;
+    EXPECT_CALL(*componentManager_, EnableSink(_, _, _))
+        .WillOnce(DoAll(SaveArg<0>(&capturedDesc), Return(0)));
+    auto ret = enableTask->DoActiveEnable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_NE(capturedDesc.customParams.find("tokenId"), std::string::npos);
+    EXPECT_NE(capturedDesc.customParams.find("12345"), std::string::npos);
+}
+
+HWTEST_F(EnableTaskTest, DoActiveEnable_009, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_AUDIO_MIC.networkId, TASK_PARAM_AUDIO_MIC.uuid,
+        TASK_PARAM_AUDIO_MIC.udid, TASK_PARAM_AUDIO_MIC.dhId, TASK_PARAM_AUDIO_MIC.dhType);
+    enableTask->SetEffectSink(true);
+    enableTask->SetFirstCallingTokenId(0u);
+    DHDescriptor capturedDesc;
+    EXPECT_CALL(*componentManager_, EnableSink(_, _, _))
+        .WillOnce(DoAll(SaveArg<0>(&capturedDesc), Return(0)));
+    auto ret = enableTask->DoActiveEnable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(capturedDesc.customParams.find("tokenId"), std::string::npos);
+}
+
+HWTEST_F(EnableTaskTest, DoActiveEnable_010, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_AUDIO_MIC.networkId, TASK_PARAM_AUDIO_MIC.uuid,
+        TASK_PARAM_AUDIO_MIC.udid, TASK_PARAM_AUDIO_MIC.dhId, TASK_PARAM_AUDIO_MIC.dhType);
+    enableTask->SetEffectSink(true);
+    enableTask->SetEffectSource(true);
+    enableTask->SetFirstCallingTokenId(67890u);
+    DHDescriptor sinkCaptured;
+    DHDescriptor sourceCaptured;
+    EXPECT_CALL(*componentManager_, EnableSink(_, _, _))
+        .WillOnce(DoAll(SaveArg<0>(&sinkCaptured), Return(0)));
+    EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _))
+        .WillOnce(DoAll(SaveArg<1>(&sourceCaptured), Return(0)));
+    auto ret = enableTask->DoActiveEnable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_NE(sinkCaptured.customParams.find("tokenId"), std::string::npos);
+    EXPECT_NE(sinkCaptured.customParams.find("67890"), std::string::npos);
+    EXPECT_NE(sourceCaptured.customParams.find("tokenId"), std::string::npos);
+    EXPECT_NE(sourceCaptured.customParams.find("67890"), std::string::npos);
+}
+
+HWTEST_F(EnableTaskTest, DoActiveEnable_011, TestSize.Level0)
+{
+    auto enableTask = std::make_shared<EnableTask>(TASK_PARAM_AUDIO_MIC.networkId, TASK_PARAM_AUDIO_MIC.uuid,
+        TASK_PARAM_AUDIO_MIC.udid, TASK_PARAM_AUDIO_MIC.dhId, TASK_PARAM_AUDIO_MIC.dhType);
+    enableTask->SetEffectSink(true);
+    enableTask->SetEffectSource(true);
+    enableTask->SetFirstCallingTokenId(0u);
+    enableTask->SetCustomParams(R"({"origKey":"origVal"})");
+    DHDescriptor sinkCaptured;
+    DHDescriptor sourceCaptured;
+    EXPECT_CALL(*componentManager_, EnableSink(_, _, _))
+        .WillOnce(DoAll(SaveArg<0>(&sinkCaptured), Return(0)));
+    EXPECT_CALL(*componentManager_, EnableSource(_, _, _, _))
+        .WillOnce(DoAll(SaveArg<1>(&sourceCaptured), Return(0)));
+    auto ret = enableTask->DoActiveEnable();
+    EXPECT_EQ(DH_FWK_SUCCESS, ret);
+    EXPECT_EQ(sinkCaptured.customParams.find("tokenId"), std::string::npos);
+    EXPECT_NE(sinkCaptured.customParams.find("origKey"), std::string::npos);
+    EXPECT_EQ(sourceCaptured.customParams.find("tokenId"), std::string::npos);
+    EXPECT_NE(sourceCaptured.customParams.find("origKey"), std::string::npos);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

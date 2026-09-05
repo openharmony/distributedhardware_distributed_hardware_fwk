@@ -29,6 +29,7 @@ public:
     virtual ~DeviceOtherMethod() = default;
 public:
     virtual int QueryActiveOsAccountIds(std::vector<int32_t>& ids) = 0;
+    virtual int GetForegroundOsAccountIds(std::vector<AccountSA::ForegroundOsAccount>& accounts) = 0;
     virtual int GetOhosAccountInfo(AccountSA::OhosAccountInfo &accountInfo) = 0;
 public:
     static inline std::shared_ptr<DeviceOtherMethod> otherMethod = nullptr;
@@ -37,6 +38,7 @@ public:
 class DeviceOtherMethodMock : public DeviceOtherMethod {
 public:
     MOCK_METHOD1(QueryActiveOsAccountIds, int(std::vector<int32_t>& ids));
+    MOCK_METHOD1(GetForegroundOsAccountIds, int(std::vector<AccountSA::ForegroundOsAccount>& accounts));
     MOCK_METHOD1(GetOhosAccountInfo, int(AccountSA::OhosAccountInfo &accountInfo));
 };
 }

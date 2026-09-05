@@ -248,6 +248,7 @@ private:
     int32_t StartSource(DHType dhType, ActionResult &sourceResult);
     int32_t StopSource(DHType dhType, ActionResult &sourceResult);
     int32_t StartSink(DHType dhType, ActionResult &sinkResult);
+    int32_t StartSinkAndWait(DHType dhType);
     int32_t StopSink(DHType dhType, ActionResult &sinkResult);
     bool WaitForResult(const Action &action, ActionResult result);
     int32_t GetEnableParam(const std::string &networkId, const std::string &uuid, const std::string &dhId,

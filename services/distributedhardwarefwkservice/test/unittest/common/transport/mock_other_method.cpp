@@ -87,6 +87,11 @@ ErrCode OsAccountManager::QueryActiveOsAccountIds(std::vector<int32_t>& ids)
     return OHOS::DistributedHardware::DeviceOtherMethod::otherMethod->QueryActiveOsAccountIds(ids);
 }
 
+ErrCode OsAccountManager::GetForegroundOsAccounts(std::vector<ForegroundOsAccount>& accounts)
+{
+    return OHOS::DistributedHardware::DeviceOtherMethod::otherMethod->GetForegroundOsAccountIds(accounts);
+}
+
 ErrCode OhosAccountKitsImpl::GetOhosAccountInfo(AccountSA::OhosAccountInfo &accountInfo)
 {
     return OHOS::DistributedHardware::DeviceOtherMethod::otherMethod->GetOhosAccountInfo(accountInfo);
