@@ -397,22 +397,6 @@ HWTEST_F(DhTransportTest, FromJson_CommMsg_008, TestSize.Level1)
     EXPECT_FALSE(commMsg.msg.empty());
 }
 
-HWTEST_F(DhTransportTest, FromJson_CommMsg_009, TestSize.Level1)
-{
-    cJSON *jsonObject = cJSON_CreateObject();
-    ASSERT_TRUE(jsonObject != nullptr);
-    cJSON_AddNumberToObject(jsonObject, COMM_MSG_CODE_KEY, 1);
-    cJSON_AddNumberToObject(jsonObject, COMM_MSG_USERID_KEY, 1);
-    cJSON_AddNumberToObject(jsonObject, COMM_MSG_TOKENID_KEY, 1);
-    cJSON_AddStringToObject(jsonObject, COMM_MSG_MSG_KEY, "comm_msg_msg_test");
-    cJSON_AddStringToObject(jsonObject, COMM_MSG_ACCOUNTID_KEY, "account_test");
-    cJSON_AddBoolToObject(jsonObject, COMM_MSG_SYNC_META_KEY, true);
-    CommMsg commMsg;
-    FromJson(jsonObject, commMsg);
-    cJSON_Delete(jsonObject);
-    EXPECT_FALSE(commMsg.msg.empty());
-}
-
 HWTEST_F(DhTransportTest, CreateClientSocket_001, TestSize.Level1)
 {
     std::string remoteNetworkId = "";
@@ -444,9 +428,9 @@ HWTEST_F(DhTransportTest, CheckCalleeAclRight_003, TestSize.Level1)
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
     commMsg->userId = 1;
-    std::vector<int32_t> userIds;
-    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
-        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(INVALID_USER_ID)));
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds;
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(foregroundIds), Return(INVALID_USER_ID)));
     auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
     EXPECT_EQ(false, ret);
 }
@@ -456,9 +440,10 @@ HWTEST_F(DhTransportTest, CheckCalleeAclRight_004, TestSize.Level1)
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
     commMsg->userId = 1;
-    std::vector<int32_t> userIds{100, 101};
-    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
-        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(INVALID_USER_ID)));
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds{
+        AccountSA::ForegroundOsAccount(100, 0), AccountSA::ForegroundOsAccount(101, 0)};
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(foregroundIds), Return(INVALID_USER_ID)));
     auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
     EXPECT_EQ(false, ret);
 }
@@ -468,9 +453,9 @@ HWTEST_F(DhTransportTest, CheckCalleeAclRight_005, TestSize.Level1)
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
     commMsg->userId = 1;
-    std::vector<int32_t> userIds;
-    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
-        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds;
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(foregroundIds), Return(DH_FWK_SUCCESS)));
     auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
     EXPECT_EQ(false, ret);
 }
@@ -479,10 +464,11 @@ HWTEST_F(DhTransportTest, CheckCalleeAclRight_006, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
-    commMsg->userId = 1;
-    std::vector<int32_t> userIds{100, 101};
-    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
-        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+    commMsg->userId = 100;
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds{
+        AccountSA::ForegroundOsAccount(100, 0), AccountSA::ForegroundOsAccount(101, 0)};
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(foregroundIds), Return(DH_FWK_SUCCESS)));
 
     AccountSA::OhosAccountInfo osAccountInfo;
     EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
@@ -495,10 +481,11 @@ HWTEST_F(DhTransportTest, CheckCalleeAclRight_007, TestSize.Level1)
 {
     ASSERT_TRUE(dhTransportTest_ != nullptr);
     std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
-    commMsg->userId = 1;
-    std::vector<int32_t> userIds{100, 101};
-    EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
-        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(DH_FWK_SUCCESS)));
+    commMsg->userId = 100;
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds{
+        AccountSA::ForegroundOsAccount(100, 0), AccountSA::ForegroundOsAccount(101, 0)};
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(foregroundIds), Return(DH_FWK_SUCCESS)));
 
     AccountSA::OhosAccountInfo osAccountInfo;
     EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
@@ -506,6 +493,131 @@ HWTEST_F(DhTransportTest, CheckCalleeAclRight_007, TestSize.Level1)
     g_mockDMValue = true;
     auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
     EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(DhTransportTest, CheckCalleeAclRight_008, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    commMsg->userId = 200;
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds{
+        AccountSA::ForegroundOsAccount(100, 0), AccountSA::ForegroundOsAccount(101, 0)};
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(foregroundIds), Return(DH_FWK_SUCCESS)));
+    auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhTransportTest, CheckCalleeAclRight_009, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    commMsg->userId = -1;
+    auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
+    EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(DhTransportTest, CheckCalleeAclRight_010, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    commMsg->userId = 100;
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds;
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(foregroundIds), Return(DH_FWK_SUCCESS)));
+    auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhTransportTest, CheckCalleeAclRight_011, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::shared_ptr<CommMsg> commMsg = std::make_shared<CommMsg>();
+    commMsg->userId = 101;
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds{
+        AccountSA::ForegroundOsAccount(100, 0), AccountSA::ForegroundOsAccount(101, 0)};
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillRepeatedly(DoAll(SetArgReferee<0>(foregroundIds), Return(DH_FWK_SUCCESS)));
+    AccountSA::OhosAccountInfo osAccountInfo;
+    EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
+        .WillRepeatedly(DoAll(SetArgReferee<0>(osAccountInfo), Return(DH_FWK_SUCCESS)));
+    g_mockDMValue = true;
+    auto ret = dhTransportTest_->CheckCalleeAclRight(commMsg);
+    EXPECT_EQ(true, ret);
+}
+
+HWTEST_F(DhTransportTest, GetForegroundUserInfo_001, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds;
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(foregroundIds), Return(INVALID_USER_ID)));
+    int32_t userId = 0;
+    std::string accountId;
+    auto ret = dhTransportTest_->GetForegroundUserInfo(100, userId, accountId);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhTransportTest, GetForegroundUserInfo_002, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds{
+        AccountSA::ForegroundOsAccount(100, 0), AccountSA::ForegroundOsAccount(101, 0)};
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillRepeatedly(DoAll(SetArgReferee<0>(foregroundIds), Return(DH_FWK_SUCCESS)));
+    int32_t userId = 0;
+    std::string accountId;
+    auto ret = dhTransportTest_->GetForegroundUserInfo(100, userId, accountId);
+    EXPECT_EQ(true, ret);
+    EXPECT_EQ(100, userId);
+}
+
+HWTEST_F(DhTransportTest, GetForegroundUserInfo_003, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds{
+        AccountSA::ForegroundOsAccount(100, 0), AccountSA::ForegroundOsAccount(101, 0)};
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(foregroundIds), Return(DH_FWK_SUCCESS)));
+    AccountSA::OhosAccountInfo osAccountInfo;
+    osAccountInfo.uid_ = "account_uid_test";
+    EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
+        .WillOnce(DoAll(SetArgReferee<0>(osAccountInfo), Return(INVALID_ACCOUNT_INFO_VALUE)));
+    int32_t userId = 0;
+    std::string accountId;
+    auto ret = dhTransportTest_->GetForegroundUserInfo(101, userId, accountId);
+    EXPECT_EQ(false, ret);
+}
+
+HWTEST_F(DhTransportTest, GetForegroundUserInfo_004, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds{
+        AccountSA::ForegroundOsAccount(100, 0), AccountSA::ForegroundOsAccount(101, 0)};
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillOnce(DoAll(SetArgReferee<0>(foregroundIds), Return(DH_FWK_SUCCESS)));
+    AccountSA::OhosAccountInfo osAccountInfo;
+    osAccountInfo.uid_ = "account_uid_test";
+    EXPECT_CALL(*otherMethodMock_, GetOhosAccountInfo(_))
+        .WillOnce(DoAll(SetArgReferee<0>(osAccountInfo), Return(DH_FWK_SUCCESS)));
+    int32_t userId = 0;
+    std::string accountId;
+    auto ret = dhTransportTest_->GetForegroundUserInfo(101, userId, accountId);
+    EXPECT_EQ(true, ret);
+    EXPECT_EQ("account_uid_test", accountId);
+}
+
+HWTEST_F(DhTransportTest, GetForegroundUserInfo_005, TestSize.Level1)
+{
+    ASSERT_TRUE(dhTransportTest_ != nullptr);
+    std::vector<AccountSA::ForegroundOsAccount> foregroundIds{
+        AccountSA::ForegroundOsAccount(100, 0), AccountSA::ForegroundOsAccount(101, 0)};
+    EXPECT_CALL(*otherMethodMock_, GetForegroundOsAccountIds(_))
+        .WillRepeatedly(DoAll(SetArgReferee<0>(foregroundIds), Return(DH_FWK_SUCCESS)));
+    int32_t userId = 0;
+    std::string accountId;
+    auto ret = dhTransportTest_->GetForegroundUserInfo(999, userId, accountId);
+    EXPECT_EQ(false, ret);
 }
 
 HWTEST_F(DhTransportTest, HandleReceiveMessage_001, TestSize.Level1)
@@ -520,7 +632,7 @@ HWTEST_F(DhTransportTest, HandleReceiveMessage_001, TestSize.Level1)
     std::string compressedPayLoad = Compress(payload);
     std::vector<int32_t> userIds;
     EXPECT_CALL(*otherMethodMock_, QueryActiveOsAccountIds(_))
-        .WillOnce(DoAll(SetArgReferee<0>(userIds), Return(INVALID_USER_ID)));
+        .WillRepeatedly(DoAll(SetArgReferee<0>(userIds), Return(INVALID_USER_ID)));
     ASSERT_NO_FATAL_FAILURE(dhTransportTest_->HandleReceiveMessage(compressedPayLoad, networkId));
 }
 

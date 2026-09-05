@@ -23,6 +23,7 @@ namespace OHOS {
 namespace DistributedHardware {
 const std::string COMPONENT_LOADER_GET_SINK_HANDLER = "GetSinkHardwareHandler";
 const int32_t ERR_OK = 0;
+static constexpr const char *KEY_ENABLE_INIT_PARAMS = "enable_init_params";
 enum class ResourceEventType : int32_t {
     EVENT_TYPE_QUERY_RESOURCE = 0,
     EVENT_TYPE_PULL_UP_PAGE = 1,
@@ -71,6 +72,14 @@ public:
     virtual int32_t PauseDistributedHardware(const std::string &networkId) = 0;
     virtual int32_t ResumeDistributedHardware(const std::string &networkId) = 0;
     virtual int32_t StopDistributedHardware(const std::string &networkId) = 0;
+    virtual int32_t ConfigDistributedHardware(const std::string &dhId, const std::string &key,
+        const std::string &value)
+    {
+        (void)dhId;
+        (void)key;
+        (void)value;
+        return ERR_OK;
+    }
     virtual int32_t SetAccessListener(sptr<IAccessListener> listener, int32_t &timeOut,
         const std::string &pkgName)
     {

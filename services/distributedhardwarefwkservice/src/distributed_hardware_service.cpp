@@ -553,11 +553,13 @@ void DistributedHardwareService::CleanupExpiredRequests()
     {
         std::lock_guard<std::mutex> lock(pendingRequestsMutex_);
         if (pendingGetDHRequests_.empty()) {
+            // No pending requests, stop cleanup thread
             cleanupRunning_.store(false);
             return;
         }
         bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
         if (isInit) {
+            // Sync data
             DHLOGI("dhfwk init finished");
             pendingRequests = std::move(pendingGetDHRequests_);
             pendingGetDHRequests_.clear();
@@ -652,6 +654,7 @@ int32_t DistributedHardwareService::EnableSink(const std::vector<DHDescriptor> &
         DistributedHardwareManagerFactory::GetInstance().SetSaToCritical();
         DistributedHardwareManagerFactory::GetInstance().DelaySaStatusTask();
     }
+    DHLOGI("[MultiUserEnable] EnableSink");
     for (const auto &descriptor : descriptors) {
         TaskParam taskParam = {
             .dhId = descriptor.id,
@@ -659,7 +662,9 @@ int32_t DistributedHardwareService::EnableSink(const std::vector<DHDescriptor> &
             .effectSink = true,
             .effectSource = false,
             .callingUid = IPCSkeleton::GetCallingUid(),
-            .callingPid = IPCSkeleton::GetCallingPid()
+            .callingPid = IPCSkeleton::GetCallingPid(),
+            .firstCallingTokenId = descriptor.firstCallingTokenId,
+            .customParams = descriptor.customParams
         };
         auto task = TaskFactory::GetInstance().CreateTask(TaskType::ENABLE, taskParam, nullptr);
         TaskExecutor::GetInstance().PushTask(task);
@@ -696,6 +701,7 @@ int32_t DistributedHardwareService::EnableSource(
         DistributedHardwareManagerFactory::GetInstance().SetSaToCritical();
         DistributedHardwareManagerFactory::GetInstance().DelaySaStatusTask();
     }
+    DHLOGI("[MultiUserEnable] EnableSource");
     for (const auto &descriptor : descriptors) {
         TaskParam taskParam = {
             .networkId = networkId,

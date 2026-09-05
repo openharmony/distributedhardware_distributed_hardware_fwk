@@ -34,6 +34,7 @@ public:
     MOCK_METHOD(int32_t, PauseDistributedHardware, (const std::string &));
     MOCK_METHOD(int32_t, ResumeDistributedHardware, (const std::string &));
     MOCK_METHOD(int32_t, StopDistributedHardware, (const std::string &));
+    MOCK_METHOD(int32_t, ConfigDistributedHardware, (const std::string &, const std::string &, const std::string &));
 };
 } // namespace DistributedHardware
 } // namespace OHOS

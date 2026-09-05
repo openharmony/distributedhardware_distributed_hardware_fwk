@@ -468,6 +468,41 @@ HWTEST_F(DistributedHardwareServiceTest, EnableSink_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: EnableSink_002
+ * @tc.desc: Verify the EnableSink function with customParams and firstCallingTokenId
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, EnableSink_002, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    DHDescriptor descriptor;
+    descriptor.id = "id_test";
+    descriptor.dhType = DHType::AUDIO;
+    descriptor.customParams = R"({"sinkParam":"v1"})";
+    descriptor.firstCallingTokenId = 12345u;
+    std::vector<DHDescriptor> descriptors{descriptor};
+
+    auto ret = service.EnableSink(descriptors);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: EnableSink_003
+ * @tc.desc: Verify the EnableSink function with empty descriptors
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, EnableSink_003, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::vector<DHDescriptor> descriptors;
+
+    auto ret = service.EnableSink(descriptors);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
  * @tc.name: DisableSink_001
  * @tc.desc: Verify the DisableSink function
  * @tc.type: FUNC
@@ -498,6 +533,27 @@ HWTEST_F(DistributedHardwareServiceTest, EnableSource_001, TestSize.Level1)
 
     networkId = "networkId_test";
     ret = service.EnableSource(networkId, descriptors);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+/**
+ * @tc.name: EnableSource_002
+ * @tc.desc: Verify the EnableSource function with customParams and firstCallingTokenId
+ * @tc.type: FUNC
+ * @tc.require: AR000GHSJM
+ */
+HWTEST_F(DistributedHardwareServiceTest, EnableSource_002, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    DHDescriptor descriptor;
+    descriptor.id = "id_test";
+    descriptor.dhType = DHType::AUDIO;
+    descriptor.customParams = R"({"sourceParam":"v2"})";
+    descriptor.firstCallingTokenId = 67890u;
+    std::vector<DHDescriptor> descriptors{descriptor};
+    std::string networkId = "networkId_test";
+
+    auto ret = service.EnableSource(networkId, descriptors);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 

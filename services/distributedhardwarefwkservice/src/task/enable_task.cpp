@@ -248,6 +248,9 @@ int32_t EnableTask::DoActiveEnable()
         .dhType = GetDhType(),
         .customParams = customParams_
     };
+    if (GetFirstCallingTokenId() != 0) {
+        AppendTokenIdToParams(dhDescriptor.customParams, GetFirstCallingTokenId());
+    }
     if (GetEffectSink()) {
         ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, GetCallingUid(), GetCallingPid());
         if (ret != DH_FWK_SUCCESS) {
@@ -256,9 +259,6 @@ int32_t EnableTask::DoActiveEnable()
     }
     if (!GetEffectSource()) {
         return ret;
-    }
-    if (GetFirstCallingTokenId() != 0) {
-        AppendTokenIdToParams(dhDescriptor.customParams, GetFirstCallingTokenId());
     }
     ret = ComponentManager::GetInstance().EnableSource(
         GetNetworkId(), dhDescriptor, GetCallingUid(), GetCallingPid());

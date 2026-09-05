@@ -127,6 +127,12 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_ACCESS_PERMISSION_CHECK_FAIL = -11200;
     constexpr int32_t ERR_DH_FWK_IS_SYSTEM_HAP_CHECK_FAIL = -11201;
     constexpr int32_t ERR_DH_FWK_IS_LOCAL_PROCESS_FAIL = -11202;
+
+    /* MultiUser errno, range: [-11300, -11399] */
+    constexpr int32_t ERR_DH_FWK_USERID_MISMATCH = -11300;
+    constexpr int32_t ERR_DH_FWK_USERID_FOREGROUND_NO_MATCH = -11301;
+    constexpr int32_t ERR_DH_FWK_USERID_GET_FAILED = -11302;
+    constexpr int32_t ERR_DH_FWK_USERID_INVALID = -11303;
 } // namespace DistributedHardware
 } // namespace OHOS
 #endif // OHOS_DISTRIBUTED_HARDWARE_ERRNO
