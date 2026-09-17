@@ -56,6 +56,16 @@ namespace DistributedHardware {
     constexpr const char *SEND_ONLINE = "SendOnLine";
     constexpr const char *COMPONENTSLOAD_PROFILE_PATH =
         "etc/distributedhardware/distributed_hardware_components_cfg.json";
+    constexpr const char *AUDIO_COMP_NAME = "distributed_audio";
+    constexpr const char *AUDIO_HANDLER_LOC = "libdistributed_audio_handler.z.so";
+    constexpr const char *AUDIO_HANDLER_VERSION = "1.0";
+    constexpr const char *AUDIO_SOURCE_LOC = "libdistributed_audio_source_sdk.z.so";
+    constexpr const char *AUDIO_SOURCE_VERSION = "1.0";
+    constexpr int32_t AUDIO_SOURCE_SA_ID = 4805;
+    constexpr const char *AUDIO_SINK_LOC = "libdistributed_audio_sink_sdk.z.so";
+    constexpr const char *AUDIO_SINK_VERSION = "1.0";
+    constexpr int32_t AUDIO_SINK_SA_ID = 4806;
+    constexpr const char *COMPONENT_ENABLE_CONFIG = "component_enable_config";
     constexpr const char *BUSINESS_STATE = "business_state";
 } // namespace DistributedHardware
 } // namespace OHOS

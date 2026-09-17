@@ -30,6 +30,7 @@ public:
         std::shared_ptr<CapabilityInfo> &capPtr) = 0;
     virtual void GetCapabilitiesByDeviceId(const std::string &deviceId,
         std::vector<std::shared_ptr<CapabilityInfo>> &resInfos);
+    virtual std::string GetDhSubtype(const std::string &deviceId, const std::string &dhId) = 0;
     static std::shared_ptr<ICapabilityInfoManager> GetOrCreateInstance();
     static void ReleaseInstance();
 
@@ -43,6 +44,7 @@ public:
         std::shared_ptr<CapabilityInfo> &));
     MOCK_METHOD(void, GetCapabilitiesByDeviceId, (const std::string &,
         std::vector<std::shared_ptr<CapabilityInfo>> &));
+    MOCK_METHOD(std::string, GetDhSubtype, (const std::string &, const std::string &));
 };
 } // namespace DistributedHardware
 } // namespace OHOS

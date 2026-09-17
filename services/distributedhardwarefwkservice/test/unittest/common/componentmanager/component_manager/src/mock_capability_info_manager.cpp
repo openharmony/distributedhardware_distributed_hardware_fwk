@@ -44,5 +44,10 @@ void CapabilityInfoManager::GetCapabilitiesByDeviceId(const std::string &deviceI
 {
     ICapabilityInfoManager::GetOrCreateInstance()->GetCapabilitiesByDeviceId(deviceId, resInfos);
 }
+
+std::string CapabilityInfoManager::GetDhSubtype(const std::string &deviceId, const std::string &dhId)
+{
+    return ICapabilityInfoManager::GetOrCreateInstance()->GetDhSubtype(deviceId, dhId);
+}
 } // namespace DistributedHardware
 } // namespace OHOS

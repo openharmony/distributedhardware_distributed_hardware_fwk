@@ -42,6 +42,7 @@ private:
     std::shared_ptr<MockMetaInfoManager> metaInfoManager_;
     std::shared_ptr<MockVersionManager> versionManager_;
     std::shared_ptr<MockDeviceManager> deviceManager_;
+    DeviceInfo defaultDeviceInfo_ {"networkId-1", "uuid-1", "deviceId-1", "udid-1", "udidHash-1", "devName", 1};
 };
 } // namespace DistributedHardware
 } // namespace OHOS

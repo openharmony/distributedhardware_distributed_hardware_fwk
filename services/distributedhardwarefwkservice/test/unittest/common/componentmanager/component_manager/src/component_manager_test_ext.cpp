@@ -40,6 +40,7 @@ constexpr int32_t CAMERA_PID = 4083;
 constexpr int32_t AUDIO_UID = CURRENT_DEVICE_UID;
 constexpr int32_t AUDIO_PID = 4085;
 constexpr uint16_t DEV_TYPE_TEST = 14;
+constexpr int32_t WAIT_TIME = 5000;
 const CompVersion VERSION = { .sinkVersion = "1.0", .sourceVersion = "1.0" };
 const DHDescriptor CAMERA_DESCRIPTOR = { .id = "camera_1", .dhType = DHType::CAMERA };
 const DHDescriptor AUDIO_DESCRIPTOR = { .id = "audio_1", .dhType = DHType::AUDIO };
@@ -74,6 +75,12 @@ void ComponentManagerTestExt::TearDownTestCase(void)
 
 void ComponentManagerTestExt::SetUp()
 {
+    ComponentManager::GetInstance().dhSinkStatus_.clear();
+    ComponentManager::GetInstance().dhSourceStatus_.clear();
+    ComponentManager::GetInstance().compSource_.clear();
+    ComponentManager::GetInstance().compSink_.clear();
+    ComponentManager::GetInstance().compSrcSaId_.clear();
+    ComponentManager::GetInstance().compSinkSaId_.clear();
     auto capabilityInfoManager = ICapabilityInfoManager::GetOrCreateInstance();
     capabilityInfoManager_ = std::static_pointer_cast<MockCapabilityInfoManager>(capabilityInfoManager);
     auto componentLoader = IComponentLoader::GetOrCreateInstance();
@@ -88,10 +95,17 @@ void ComponentManagerTestExt::SetUp()
     versionManager_ = std::static_pointer_cast<MockVersionManager>(versionManager);
     auto deviceManager = IDeviceManager::GetOrCreateInstance();
     deviceManager_ = std::static_pointer_cast<MockDeviceManager>(deviceManager);
+    EXPECT_CALL(*capabilityInfoManager_, GetDhSubtype(_, _)).WillRepeatedly(Return("mic"));
+    EXPECT_CALL(*dhContext_, GetDeviceIdByNetworkId(_)).WillRepeatedly(Return("deviceId-1"));
+    EXPECT_CALL(*utilTool_, GetLocalDeviceInfo()).WillRepeatedly(Return(VALUABLE_DEVICE_INFO));
+    EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(defaultDeviceInfo_));
 }
 
 void ComponentManagerTestExt::TearDown()
 {
+    ComponentManager::GetInstance().eventHandler_ = nullptr;
+    ComponentManager::GetInstance().dhCommToolPtr_ = nullptr;
+    usleep(WAIT_TIME);
     ICapabilityInfoManager::ReleaseInstance();
     IComponentLoader::ReleaseInstance();
     IDHContext::ReleaseInstance();
@@ -119,7 +133,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndDisableSink_001, testing::ext::Te
     EXPECT_CALL(*componentLoader_, GetSink(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(sinkPtr.get()), Return(DH_FWK_SUCCESS)));
 
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _)).Times(AtLeast(1));
 
@@ -152,7 +166,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndDisableSink_002, testing::ext::Te
     ASSERT_TRUE(dhContext_ != nullptr);
     ASSERT_TRUE(versionManager_ != nullptr);
 
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _)).Times(AtLeast(1));
 
@@ -199,7 +213,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkWithCustomParams_001, testing::ext::
     EXPECT_CALL(*componentLoader_, GetSink(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(sinkPtr.get()), Return(DH_FWK_SUCCESS)));
 
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _)).Times(AtLeast(1));
 
@@ -240,7 +254,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkWithCustomParams_002, testing::ext::
     EXPECT_CALL(*componentLoader_, GetSink(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(sinkPtr.get()), Return(DH_FWK_SUCCESS)));
 
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _)).Times(AtLeast(1));
 
@@ -279,7 +293,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkWithCustomParams_003, testing::ext::
     EXPECT_CALL(*componentLoader_, GetSink(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(sinkPtr.get()), Return(ERR_DH_FWK_LOADER_HANDLER_IS_NULL)));
 
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
 
     auto sinkListener = sptr<MockHDSinkStatusListenerStub>(new (std::nothrow) MockHDSinkStatusListenerStub());
@@ -317,7 +331,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkWithCustomParams_004, testing::ext::
     EXPECT_CALL(*componentLoader_, GetSink(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(sinkPtr.get()), Return(DH_FWK_SUCCESS)));
 
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _)).Times(AtLeast(1));
 
@@ -399,7 +413,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_001, testing::ext
         .WillRepeatedly(DoAll(SetArgReferee<2>(capabilityInfo), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*capabilityInfoManager_, GetCapabilitiesByDeviceId(_, _))
         .Times(AtLeast(1));
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*dhContext_, GetUUIDByNetworkId(_)).WillRepeatedly(Return(VALUABLE_DEVICE_INFO.uuid));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _))
@@ -446,7 +460,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_002, testing::ext
         .WillRepeatedly(DoAll(SetArgReferee<2>(capabilityInfo), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*capabilityInfoManager_, GetCapabilitiesByDeviceId(_, _))
         .Times(AtLeast(1));
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*dhContext_, GetUUIDByNetworkId(_)).WillRepeatedly(Return(VALUABLE_DEVICE_INFO.uuid));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _))
@@ -488,7 +502,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_003, testing::ext
         .WillRepeatedly(DoAll(SetArgReferee<2>(capabilityInfo), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*capabilityInfoManager_, GetCapabilitiesByDeviceId(_, _))
         .Times(AtLeast(1));
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*dhContext_, GetUUIDByNetworkId(_)).WillRepeatedly(Return(VALUABLE_DEVICE_INFO.uuid));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _))
@@ -539,7 +553,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndDisableSource_004, testing::ext
         .WillRepeatedly(DoAll(SetArgReferee<2>(capabilityInfo), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*capabilityInfoManager_, GetCapabilitiesByDeviceId(_, _))
         .Times(AtLeast(1));
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*dhContext_, GetUUIDByNetworkId(_)).WillRepeatedly(Return(VALUABLE_DEVICE_INFO.uuid));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _))
@@ -608,7 +622,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSource_failed_002, testing::ext::TestSiz
         .WillRepeatedly(DoAll(SetArgReferee<2>(capabilityInfo), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*capabilityInfoManager_, GetCapabilitiesByDeviceId(_, _))
         .Times(AtLeast(1));
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*dhContext_, GetUUIDByNetworkId(_)).WillRepeatedly(Return(VALUABLE_DEVICE_INFO.uuid));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _))
@@ -641,7 +655,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSource_failed_003, testing::ext::TestSiz
         .WillRepeatedly(DoAll(SetArgReferee<2>(capabilityInfo), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*capabilityInfoManager_, GetCapabilitiesByDeviceId(_, _))
         .Times(AtLeast(1));
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*dhContext_, GetUUIDByNetworkId(_)).WillRepeatedly(Return(VALUABLE_DEVICE_INFO.uuid));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _))
@@ -678,7 +692,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSinkAndForceDisableSink_001, testing::ex
     EXPECT_CALL(*componentLoader_, GetSink(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(sinkPtr.get()), Return(DH_FWK_SUCCESS)));
 
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _)).Times(AtLeast(1));
 
@@ -737,7 +751,7 @@ HWTEST_F(ComponentManagerTestExt, EnableSourceAndForceDisableSource_001, testing
         .WillRepeatedly(DoAll(SetArgReferee<2>(capabilityInfo), Return(DH_FWK_SUCCESS)));
     EXPECT_CALL(*capabilityInfoManager_, GetCapabilitiesByDeviceId(_, _))
         .Times(AtLeast(1));
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*dhContext_, GetUUIDByNetworkId(_)).WillRepeatedly(Return(VALUABLE_DEVICE_INFO.uuid));
     EXPECT_CALL(*versionManager_, GetCompVersion(_, _, _))
@@ -1009,7 +1023,7 @@ HWTEST_F(ComponentManagerTestExt, RealEnableSource_001, testing::ext::TestSize.L
     auto sourcePtr = CreateDHSourcePtrWithSetExpectation();
     EXPECT_CALL(*componentLoader_, GetSource(_, _))
         .WillRepeatedly(DoAll(SetArgReferee<1>(sourcePtr.get()), Return(DH_FWK_SUCCESS)));
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*utilTool_, GetLocalDeviceInfo()).WillRepeatedly(Return(VALUABLE_DEVICE_INFO));
     auto ret = ComponentManager::GetInstance().RealEnableSource(VALUABLE_DEVICE_INFO.networkId,
@@ -1061,7 +1075,7 @@ HWTEST_F(ComponentManagerTestExt, GetEnableParam_001, testing::ext::TestSize.Lev
 {
     EnableParam param;
     std::shared_ptr<MetaCapabilityInfo> metaCapPtr = std::make_shared<MetaCapabilityInfo>();
-    DeviceInfo emptyInfo("", "", "", "", "", "", 0);
+    DeviceInfo emptyInfo("", "", "deviceId-1", "", "", "", 0);
     EXPECT_CALL(*dhContext_, GetDeviceInfo()).WillRepeatedly(ReturnRef(emptyInfo));
     EXPECT_CALL(*utilTool_, GetLocalDeviceInfo()).WillRepeatedly(Return(VALUABLE_DEVICE_INFO));
     EXPECT_CALL(*metaInfoManager_, GetMetaCapInfo(_, _, _))

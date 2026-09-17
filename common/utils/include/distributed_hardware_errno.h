@@ -52,6 +52,7 @@ namespace DistributedHardware {
     constexpr int32_t ERR_DH_FWK_COMPONENT_REPEAT_CALL = -10015;
     constexpr int32_t ERR_DH_FWK_COMPONENT_COMPVERSION_NOT_FOUND = -10016;
     constexpr int32_t ERR_DH_FWK_SA_HANDLER_IS_NULL = -10017;
+    constexpr int32_t ERR_DH_FWK_COMPONENT_DISABLED_BY_CONFIG = -10018;
 
     /* ResourceManager errno, range: [-10400, -10499] */
     constexpr int32_t ERR_DH_FWK_RESOURCE_DB_ADAPTER_POINTER_NULL = -10400;

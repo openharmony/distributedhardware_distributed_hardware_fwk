@@ -661,5 +661,331 @@ HWTEST_F(ComponentLoaderTest, ParseSinkSupportedFeaturesFromJson_001, TestSize.L
     EXPECT_FALSE(config.sinkSupportedFeatures.empty());
     cJSON_Delete(sinkFilters1);
 }
+
+HWTEST_F(ComponentLoaderTest, ParseComponentEnableConfig_001, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    cJSON *root = cJSON_CreateObject();
+    cJSON *audio = cJSON_CreateObject();
+    cJSON *mic = cJSON_CreateObject();
+    cJSON_AddBoolToObject(mic, "sink", false);
+    cJSON_AddBoolToObject(mic, "source", true);
+    cJSON *speaker = cJSON_CreateObject();
+    cJSON_AddBoolToObject(speaker, "sink", true);
+    cJSON_AddBoolToObject(speaker, "source", true);
+    cJSON_AddItemToObject(audio, "mic", mic);
+    cJSON_AddItemToObject(audio, "speaker", speaker);
+    cJSON_AddItemToObject(root, "AUDIO", audio);
+    ComponentLoader::GetInstance().ParseComponentEnableConfig(root);
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(true);
+    EXPECT_FALSE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "sink"));
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "source"));
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "speaker", "sink"));
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
+    cJSON_Delete(root);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, ParseComponentEnableConfig_002, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    cJSON *root = cJSON_CreateObject();
+    ComponentLoader::GetInstance().ParseComponentEnableConfig(root);
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "sink"));
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "source"));
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "speaker", "sink"));
+    cJSON_Delete(root);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, ParseComponentEnableConfig_003, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    cJSON *root = cJSON_CreateObject();
+    cJSON *audio = cJSON_CreateObject();
+    cJSON *mic = cJSON_CreateObject();
+    cJSON_AddBoolToObject(mic, "sink", false);
+    cJSON_AddBoolToObject(mic, "source", false);
+    cJSON *speaker = cJSON_CreateObject();
+    cJSON_AddBoolToObject(speaker, "sink", false);
+    cJSON_AddBoolToObject(speaker, "source", false);
+    cJSON_AddItemToObject(audio, "mic", mic);
+    cJSON_AddItemToObject(audio, "speaker", speaker);
+    cJSON_AddItemToObject(root, "AUDIO", audio);
+    ComponentLoader::GetInstance().ParseComponentEnableConfig(root);
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(true);
+    EXPECT_FALSE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "sink"));
+    EXPECT_FALSE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "source"));
+    EXPECT_FALSE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "speaker", "source"));
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
+    cJSON_Delete(root);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, AudioCompConfig_001, TestSize.Level1)
+{
+    EXPECT_STREQ(g_audioCompConfig.name.c_str(), AUDIO_COMP_NAME);
+    EXPECT_EQ(g_audioCompConfig.type, DHType::AUDIO);
+    EXPECT_EQ(g_audioCompConfig.compSourceSaId, AUDIO_SOURCE_SA_ID);
+    EXPECT_EQ(g_audioCompConfig.compSinkSaId, AUDIO_SINK_SA_ID);
+    EXPECT_STREQ(g_audioCompConfig.compHandlerLoc.c_str(), AUDIO_HANDLER_LOC);
+    EXPECT_STREQ(g_audioCompConfig.compSourceLoc.c_str(), AUDIO_SOURCE_LOC);
+    EXPECT_STREQ(g_audioCompConfig.compSinkLoc.c_str(), AUDIO_SINK_LOC);
+}
+
+HWTEST_F(ComponentLoaderTest, IsComponentSubtypeEnabled_001, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = false;
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(true);
+    EXPECT_FALSE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "sink"));
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "source"));
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "speaker", "sink"));
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, ParseComponentEnableConfig_004, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().ParseComponentEnableConfig(nullptr);
+    EXPECT_TRUE(ComponentLoader::GetInstance().componentEnableMap_.empty());
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "sink"));
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, ParseComponentEnableConfig_005, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    cJSON *root = cJSON_CreateObject();
+    cJSON *audio = cJSON_CreateObject();
+    cJSON_AddBoolToObject(audio, "mic", false);
+    cJSON_AddBoolToObject(audio, "speaker", true);
+    cJSON_AddItemToObject(root, "AUDIO", audio);
+    ComponentLoader::GetInstance().ParseComponentEnableConfig(root);
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(true);
+    EXPECT_FALSE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "sink"));
+    EXPECT_FALSE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "source"));
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "speaker", "sink"));
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "speaker", "source"));
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
+    cJSON_Delete(root);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, ParseComponentEnableConfig_006, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    cJSON *root = cJSON_CreateObject();
+    cJSON *audio = cJSON_CreateObject();
+    cJSON_AddNumberToObject(audio, "mic", 123);
+    cJSON_AddItemToObject(root, "AUDIO", audio);
+    ComponentLoader::GetInstance().ParseComponentEnableConfig(root);
+    EXPECT_TRUE(ComponentLoader::GetInstance().componentEnableMap_.empty());
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsComponentSubtypeEnabled(DHType::AUDIO, "mic", "sink"));
+    cJSON_Delete(root);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, IsSubtypeAnyRoleEnabled_001, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    EXPECT_FALSE(ComponentLoader::GetInstance().IsSubtypeAnyRoleEnabled("mic"));
+    EXPECT_FALSE(ComponentLoader::GetInstance().IsSubtypeAnyRoleEnabled("speaker"));
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, IsSubtypeAnyRoleEnabled_002, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["source"] = false;
+    EXPECT_FALSE(ComponentLoader::GetInstance().IsSubtypeAnyRoleEnabled("mic"));
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, IsSubtypeAnyRoleEnabled_003, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["source"] = true;
+    EXPECT_TRUE(ComponentLoader::GetInstance().IsSubtypeAnyRoleEnabled("mic"));
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, RegisterAudioComponentIfNeeded_001, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    std::map<DHType, CompConfig> dhtypeMap;
+    ComponentLoader::GetInstance().RegisterAudioComponentIfNeeded(dhtypeMap);
+    EXPECT_NE(dhtypeMap.find(DHType::AUDIO), dhtypeMap.end());
+    EXPECT_EQ(dhtypeMap[DHType::AUDIO].name, AUDIO_COMP_NAME);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, RegisterAudioComponentIfNeeded_002, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["source"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["sink"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["source"] = false;
+    std::map<DHType, CompConfig> dhtypeMap;
+    dhtypeMap[DHType::AUDIO] = g_audioCompConfig;
+    ComponentLoader::GetInstance().RegisterAudioComponentIfNeeded(dhtypeMap);
+    EXPECT_EQ(dhtypeMap.find(DHType::AUDIO), dhtypeMap.end());
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, RegisterAudioComponentIfNeeded_003, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["source"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["sink"] = true;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["source"] = true;
+    std::map<DHType, CompConfig> dhtypeMap;
+    ComponentLoader::GetInstance().RegisterAudioComponentIfNeeded(dhtypeMap);
+    EXPECT_NE(dhtypeMap.find(DHType::AUDIO), dhtypeMap.end());
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, RegisterAudioComponentIfNeeded_004, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = true;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["source"] = true;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["sink"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["source"] = false;
+    std::map<DHType, CompConfig> dhtypeMap;
+    ComponentLoader::GetInstance().RegisterAudioComponentIfNeeded(dhtypeMap);
+    EXPECT_NE(dhtypeMap.find(DHType::AUDIO), dhtypeMap.end());
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, RegisterAudioComponentIfNeeded_005, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().localDHVersion_.compVersions.clear();
+    std::map<DHType, CompConfig> dhtypeMap;
+    ComponentLoader::GetInstance().RegisterAudioComponentIfNeeded(dhtypeMap);
+    EXPECT_NE(dhtypeMap.find(DHType::AUDIO), dhtypeMap.end());
+    EXPECT_NE(ComponentLoader::GetInstance().localDHVersion_.compVersions.find(DHType::AUDIO),
+        ComponentLoader::GetInstance().localDHVersion_.compVersions.end());
+    auto &compVersion = ComponentLoader::GetInstance().localDHVersion_.compVersions[DHType::AUDIO];
+    EXPECT_EQ(compVersion.name, AUDIO_COMP_NAME);
+    EXPECT_EQ(compVersion.sourceVersion, AUDIO_SOURCE_VERSION);
+    EXPECT_EQ(compVersion.sinkVersion, AUDIO_SINK_VERSION);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().localDHVersion_.compVersions.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, RegisterAudioComponentIfNeeded_006, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().localDHVersion_.compVersions.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["source"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["sink"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["source"] = false;
+    CompVersion preVersion;
+    preVersion.dhType = DHType::AUDIO;
+    ComponentLoader::GetInstance().localDHVersion_.compVersions[DHType::AUDIO] = preVersion;
+    std::map<DHType, CompConfig> dhtypeMap;
+    ComponentLoader::GetInstance().RegisterAudioComponentIfNeeded(dhtypeMap);
+    EXPECT_EQ(dhtypeMap.find(DHType::AUDIO), dhtypeMap.end());
+    EXPECT_EQ(ComponentLoader::GetInstance().localDHVersion_.compVersions.find(DHType::AUDIO),
+        ComponentLoader::GetInstance().localDHVersion_.compVersions.end());
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().localDHVersion_.compVersions.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, RegisterAudioComponentIfNeeded_007, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().localDHVersion_.compVersions.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["source"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["sink"] = true;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["source"] = true;
+    std::map<DHType, CompConfig> dhtypeMap;
+    ComponentLoader::GetInstance().RegisterAudioComponentIfNeeded(dhtypeMap);
+    EXPECT_NE(dhtypeMap.find(DHType::AUDIO), dhtypeMap.end());
+    EXPECT_NE(ComponentLoader::GetInstance().localDHVersion_.compVersions.find(DHType::AUDIO),
+        ComponentLoader::GetInstance().localDHVersion_.compVersions.end());
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().localDHVersion_.compVersions.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, RegisterAudioComponentIfNeeded_008, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().localDHVersion_.compVersions.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = true;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["source"] = true;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["sink"] = false;
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["source"] = false;
+    std::map<DHType, CompConfig> dhtypeMap;
+    ComponentLoader::GetInstance().RegisterAudioComponentIfNeeded(dhtypeMap);
+    EXPECT_NE(dhtypeMap.find(DHType::AUDIO), dhtypeMap.end());
+    EXPECT_NE(ComponentLoader::GetInstance().localDHVersion_.compVersions.find(DHType::AUDIO),
+        ComponentLoader::GetInstance().localDHVersion_.compVersions.end());
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().localDHVersion_.compVersions.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, AudioCompConfig_002, TestSize.Level1)
+{
+    EXPECT_STREQ(g_audioCompConfig.compHandlerVersion.c_str(), AUDIO_HANDLER_VERSION);
+    EXPECT_STREQ(g_audioCompConfig.compSourceVersion.c_str(), AUDIO_SOURCE_VERSION);
+    EXPECT_STREQ(g_audioCompConfig.compSinkVersion.c_str(), AUDIO_SINK_VERSION);
+    EXPECT_TRUE(g_audioCompConfig.haveFeature);
+    EXPECT_TRUE(g_audioCompConfig.sourceFeatureFilters.empty());
+    EXPECT_TRUE(g_audioCompConfig.sinkSupportedFeatures.empty());
+    EXPECT_EQ(g_audioCompConfig.compResourceDesc.size(), 2u);
+    EXPECT_STREQ(g_audioCompConfig.compResourceDesc[0].subtype.c_str(), "mic");
+    EXPECT_TRUE(g_audioCompConfig.compResourceDesc[0].sensitiveValue);
+    EXPECT_STREQ(g_audioCompConfig.compResourceDesc[1].subtype.c_str(), "speaker");
+    EXPECT_TRUE(g_audioCompConfig.compResourceDesc[1].sensitiveValue);
+}
+
+HWTEST_F(ComponentLoaderTest, ParseComponentEnableConfig_nullptr_typeEntry, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddItemToArray(root, cJSON_CreateNull());
+    ComponentLoader::GetInstance().ParseComponentEnableConfig(root);
+    EXPECT_TRUE(ComponentLoader::GetInstance().componentEnableMap_.empty());
+    cJSON_Delete(root);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, ParseComponentEnableConfig_nullptr_subEntry, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    cJSON *root = cJSON_CreateObject();
+    cJSON *audio = cJSON_CreateObject();
+    cJSON_AddItemToArray(audio, cJSON_CreateNull());
+    cJSON_AddItemToObject(root, "AUDIO", audio);
+    ComponentLoader::GetInstance().ParseComponentEnableConfig(root);
+    EXPECT_TRUE(ComponentLoader::GetInstance().componentEnableMap_.empty());
+    cJSON_Delete(root);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentLoaderTest, ParseComponentEnableConfig_nullptr_roleEntry, TestSize.Level1)
+{
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    cJSON *root = cJSON_CreateObject();
+    cJSON *audio = cJSON_CreateObject();
+    cJSON *mic = cJSON_CreateObject();
+    cJSON_AddItemToArray(mic, cJSON_CreateNull());
+    cJSON_AddItemToObject(audio, "mic", mic);
+    cJSON_AddItemToObject(root, "AUDIO", audio);
+    ComponentLoader::GetInstance().ParseComponentEnableConfig(root);
+    EXPECT_TRUE(ComponentLoader::GetInstance().componentEnableMap_.empty());
+    cJSON_Delete(root);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
 } // namespace DistributedHardware
 } // namespace OHOS

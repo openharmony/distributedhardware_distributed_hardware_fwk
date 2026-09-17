@@ -85,6 +85,7 @@ public:
     int32_t GetSinkSaId(const DHType dhType);
     DHType GetDHTypeBySaId(const int32_t saId);
     std::map<std::string, bool> GetCompResourceDesc();
+    bool IsComponentSubtypeEnabled(DHType type, const std::string &subtype, const std::string &role);
 
     int32_t GetSource(const DHType dhType);
     int32_t ReleaseSource(const DHType dhType);
@@ -113,6 +114,10 @@ private:
     void ParseSinkSupportedFeaturesFromJson(cJSON *sinkSupportedFeatures, CompConfig &config);
     void CheckAndParseFeatures(cJSON *component, CompConfig &config);
     bool CheckComponentEnable(const CompConfig &config);
+    void ParseComponentEnableConfig(const cJSON *root);
+    void ParseSubtypeEnableConfig(DHType type, const std::string &subtype, cJSON *subEntry);
+    void RegisterAudioComponentIfNeeded(std::map<DHType, CompConfig> &dhtypeMap);
+    bool IsSubtypeAnyRoleEnabled(const std::string &subtype);
 
 private:
     DHVersion localDHVersion_;
@@ -120,6 +125,7 @@ private:
     std::mutex compHandlerMapMutex_;
     std::atomic<bool> isLocalVersionInit_;
     std::map<std::string, bool> resDescMap_;
+    std::map<std::pair<DHType, std::string>, std::map<std::string, bool>> componentEnableMap_;
 };
 } // namespace DistributedHardware
 } // namespace OHOS

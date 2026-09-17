@@ -71,6 +71,7 @@ namespace {
     constexpr int32_t UNINIT_COMPONENT_TIMEOUT_SECONDS = 2;
     constexpr int32_t SYNC_DATA_TIMEOUT_MS = 1000 * 9;
     constexpr const char *MIC = "mic";
+    constexpr const char *SPEAKER = "speaker";
     constexpr const char *CAMERA = "camera";
     const std::string SYNC_TIMEOUT_TASK_NAME = "sync_timeout";
 }
@@ -823,12 +824,43 @@ int32_t ComponentManager::GetDHSubtypeByDHId(DHSubtype &dhSubtype, const std::st
 
     if (dhSubtypeStr == MIC) {
         dhSubtype = DHSubtype::AUDIO_MIC;
+    } else if (dhSubtypeStr == SPEAKER) {
+        dhSubtype = DHSubtype::AUDIO_SPEAKER;
     } else if (dhSubtypeStr == CAMERA) {
         dhSubtype = DHSubtype::CAMERA;
     } else {
         dhSubtype = DHSubtype::UNKNOWN;
         DHLOGE("unable to obtain dhSubtype that matches dhId = %{public}s.", GetAnonyString(dhId).c_str());
         return ERR_DH_FWK_BAD_OPERATION;
+    }
+    return DH_FWK_SUCCESS;
+}
+
+int32_t ComponentManager::CheckAudioConfigGate(const std::string &networkId,
+    const DHDescriptor &dhDescriptor, const std::string &role)
+{
+    if (dhDescriptor.dhType != DHType::AUDIO) {
+        return DH_FWK_SUCCESS;
+    }
+    DHSubtype dhSubtype = DHSubtype::UNKNOWN;
+    int32_t ret = GetDHSubtypeByDHId(dhSubtype, networkId, dhDescriptor.id);
+    if (ret != DH_FWK_SUCCESS) {
+        DHLOGE("CheckAudioConfigGate: GetDHSubtypeByDHId failed, ret = %{public}d.", ret);
+        return ret;
+    }
+    std::string subtypeStr;
+    if (dhSubtype == DHSubtype::AUDIO_MIC) {
+        subtypeStr = MIC;
+    } else if (dhSubtype == DHSubtype::AUDIO_SPEAKER) {
+        subtypeStr = SPEAKER;
+    } else {
+        return DH_FWK_SUCCESS;
+    }
+    if (!ComponentLoader::GetInstance().IsComponentSubtypeEnabled(
+        dhDescriptor.dhType, subtypeStr, role)) {
+        DHLOGE("CheckAudioConfigGate: subtype %{public}s role %{public}s disabled by config.",
+            subtypeStr.c_str(), role.c_str());
+        return ERR_DH_FWK_COMPONENT_DISABLED_BY_CONFIG;
     }
     return DH_FWK_SUCCESS;
 }
@@ -1427,11 +1459,15 @@ int32_t ComponentManager::EnableSinkInternal(const DHDescriptor &dhDescriptor,
     int32_t callingUid, int32_t callingPid, sptr<IHDSinkStatusListener> &listener)
 {
     DHLOGI("Start EnableSinkInternal, dhType: %{public}#X", dhDescriptor.dhType);
-    std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
     if (!ComponentLoader::GetInstance().IsDHTypeSupport(dhDescriptor.dhType)) {
         DHLOGE("Not support dhType: %{public}#X!", dhDescriptor.dhType);
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
+    int32_t gateRet = CheckAudioConfigGate(GetLocalNetworkId(), dhDescriptor, "sink");
+    if (gateRet != DH_FWK_SUCCESS) {
+        return gateRet;
+    }
+    std::lock_guard<std::mutex> lock(dhSinkStatusMtx_);
     auto &status = dhSinkStatus_[dhDescriptor.dhType];
     auto &enableInfo = status.enableInfos[dhDescriptor.id];
     DHStatusCtrlKey ctrlKey { .uid = callingUid, .pid = callingPid };
@@ -1550,36 +1586,26 @@ int32_t ComponentManager::DisableSinkInternal(const DHDescriptor &dhDescriptor,
     return DH_FWK_SUCCESS;
 }
 
-int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
-    const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid, sptr<IHDSourceStatusListener> &listener)
+int32_t ComponentManager::CheckEnableSourceParam(const std::string &networkId, const DHDescriptor &dhDescriptor)
 {
-    DHLOGI("Start EnableSourceInternal, dhType: %{public}#X", dhDescriptor.dhType);
-    // Check if the input parameters and device type support it
     if (!ComponentLoader::GetInstance().IsDHTypeSupport(dhDescriptor.dhType)) {
         DHLOGE("Not support dhType: %{public}#X!", dhDescriptor.dhType);
         return ERR_DH_FWK_TYPE_NOT_EXIST;
     }
-
-    DHStatusSourceEnableInfoKey enableInfoKey { .networkId = networkId, .dhId = dhDescriptor.id };
-    DHStatusCtrlKey ctrlKey { .uid = callingUid, .pid = callingPid };
-    auto uuid = DHContext::GetInstance().GetUUIDByNetworkId(networkId);
-
-    std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
-
-    auto &status = dhSourceStatus_[dhDescriptor.dhType];
-    auto &enableInfo = status.enableInfos[enableInfoKey];
-
-    // Get business enable status listener
-    auto itrListener = status.listeners.find(ctrlKey);
-    if (itrListener != status.listeners.end()) {
-        listener = itrListener->second;
+    int32_t gateRet = CheckAudioConfigGate(networkId, dhDescriptor, "source");
+    if (gateRet != DH_FWK_SUCCESS) {
+        return gateRet;
     }
+    return DH_FWK_SUCCESS;
+}
 
+bool ComponentManager::CheckSourceRepeatRef(DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo,
+    DHSourceStatus &status, const DHDescriptor &dhDescriptor, DHStatusCtrlKey ctrlKey)
+{
     // Check if the business is being called repeatedly
-    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
     if (statusCtrl.enableState == EnableState::ENABLED) {
         DHLOGE("Repeat call EnableSource, uid = %{public}d, pid = %{public}d.", ctrlKey.uid, ctrlKey.pid);
-        return DH_FWK_SUCCESS;
+        return true;
     }
 
     // Check enable reference count
@@ -1589,9 +1615,38 @@ int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
         statusCtrl.enableState = EnableState::ENABLED;
         enableInfo.refEnable++;
         status.refLoad++;
-        return DH_FWK_SUCCESS;
+        return true;
     }
 
+    return false;
+}
+
+int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
+    const DHDescriptor &dhDescriptor, int32_t callingUid, int32_t callingPid, sptr<IHDSourceStatusListener> &listener)
+{
+    DHLOGI("Start EnableSourceInternal, dhType: %{public}#X", dhDescriptor.dhType);
+    int32_t paramRet = CheckEnableSourceParam(networkId, dhDescriptor);
+    if (paramRet != DH_FWK_SUCCESS) {
+        return paramRet;
+    }
+
+    DHStatusSourceEnableInfoKey enableInfoKey { .networkId = networkId, .dhId = dhDescriptor.id };
+    DHStatusCtrlKey ctrlKey { .uid = callingUid, .pid = callingPid };
+    auto uuid = DHContext::GetInstance().GetUUIDByNetworkId(networkId);
+
+    std::lock_guard<std::mutex> lock(dhSourceStatusMtx_);
+    auto &status = dhSourceStatus_[dhDescriptor.dhType];
+    auto &enableInfo = status.enableInfos[enableInfoKey];
+
+    // Get business enable status listener
+    auto itrListener = status.listeners.find(ctrlKey);
+    if (itrListener != status.listeners.end()) {
+        listener = itrListener->second;
+    }
+    auto &statusCtrl = enableInfo.dhStatusCtrl[ctrlKey];
+    if (CheckSourceRepeatRef(statusCtrl, enableInfo, status, dhDescriptor, ctrlKey)) {
+        return DH_FWK_SUCCESS;
+    }
     // Check load reference count
     if (status.refLoad) {
         auto ret = Enable(networkId, uuid, dhDescriptor.id, dhDescriptor.dhType,
@@ -1613,7 +1668,6 @@ int32_t ComponentManager::EnableSourceInternal(const std::string &networkId,
         DHLOGE("RealEnableSource failed, ret = %{public}d.", ret);
         return ret;
     }
-
     return DH_FWK_SUCCESS;
 }
 

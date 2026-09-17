@@ -272,6 +272,8 @@ private:
         std::shared_ptr<MetaCapabilityInfo> &metaCapPtr);
     int32_t CheckSubtypeResource(const std::string &subtype, const std::string &networkId);
     void AddTokenIdToSinkAttrs(const std::string &customParams, EnableParam &param);
+    int32_t CheckAudioConfigGate(const std::string &networkId, const DHDescriptor &dhDescriptor,
+        const std::string &role);
 
     int32_t GetRemoteVerInfo(CompVersion &compVersion, const std::string &udid, const std::string &uuid, DHType dhType);
     bool IsFeatureMatched(const std::vector<std::string> &sourceFeatureFilters,
@@ -293,6 +295,9 @@ private:
         const std::string &customParams = "");
     int32_t RealDisableSource(const std::string &networkId, const std::string &uuid, const DHDescriptor &dhDescriptor,
         DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status);
+    int32_t CheckEnableSourceParam(const std::string &networkId, const DHDescriptor &dhDescriptor);
+    bool CheckSourceRepeatRef(DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo,
+        DHSourceStatus &status, const DHDescriptor &dhDescriptor, DHStatusCtrlKey ctrlKey);
     int32_t EnableMetaSourceInternal(const std::string &networkId, const DHDescriptor &dhDescriptor,
         DHStatusCtrl &statusCtrl, DHStatusEnableInfo &enableInfo, DHSourceStatus &status,
         std::shared_ptr<IDistributedModemExt> dhModemExt, IDistributedHardwareSource *&sourcePtr);

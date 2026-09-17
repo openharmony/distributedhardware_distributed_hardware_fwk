@@ -47,5 +47,10 @@ std::string DHContext::GetUUIDByDeviceId(const std::string &deviceId)
 {
     return IDHContext::GetOrCreateInstance()->GetUUIDByDeviceId(deviceId);
 }
+
+std::string DHContext::GetDeviceIdByNetworkId(const std::string &networkId)
+{
+    return IDHContext::GetOrCreateInstance()->GetDeviceIdByNetworkId(networkId);
+}
 } // namespace DistributedHardware
 } // namespace OHOS
