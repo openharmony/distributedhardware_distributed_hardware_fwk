@@ -64,6 +64,10 @@ ohos_unittest("DistributedHardwareServiceTest") {
     "LOG_DOMAIN=0xD004100",
   ]
 
+  if (distributed_hardware_fwk_sink_local_init) {
+    defines += [ "DHARDWARE_SINK_LOCAL_INIT" ]
+  }
+  
   external_deps = [
     "cJSON:cjson",
     "c_utils:utils",

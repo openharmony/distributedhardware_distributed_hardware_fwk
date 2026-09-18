@@ -40,6 +40,7 @@ public:
 
     int32_t Dump(const std::vector<std::string> &argsStr, std::string &result) override;
     bool GetDHardwareInitState();
+    bool GetDHardwareLocalInitState();
 private:
     std::atomic<bool> isLocalInit_{false};
     std::atomic<bool> isAllInit_{false};

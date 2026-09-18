@@ -120,6 +120,12 @@ private:
     std::atomic<bool> cleanupRunning_{false};
     std::thread cleanupThread_;
     uint32_t dhfwkInitTimes_ = 0;
+
+private:
+    void QueuePendingRequest(const std::string &networkId, EnableStep enableStep,
+        const sptr<IGetDhDescriptorsCallback> callback);
+    void ProcessPendingRequests(std::vector<PendingGetDHRequest> &readyRequests,
+        std::vector<PendingGetDHRequest> &timeoutRequests);
 };
 } // namespace DistributedHardware
 } // namespace OHOS

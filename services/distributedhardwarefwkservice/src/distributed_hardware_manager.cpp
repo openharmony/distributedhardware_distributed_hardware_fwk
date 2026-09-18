@@ -181,5 +181,11 @@ bool DistributedHardwareManager::GetDHardwareInitState()
     DHLOGI("DHMgr init state: %{public}d", isAllInit_.load());
     return isAllInit_.load();
 }
+
+bool DistributedHardwareManager::GetDHardwareLocalInitState()
+{
+    DHLOGI("DHMgr local init state: %{public}d", isLocalInit_.load());
+    return isLocalInit_.load();
+}
 } // namespace DistributedHardware
 } // namespace OHOS

@@ -27,6 +27,7 @@ public:
     virtual ~IDeviceManager() = default;
     virtual int32_t GetTrustedDeviceList(const std::string &pkgName, const std::string &extra,
     std::vector<DmDeviceInfo> &deviceList) = 0;
+    virtual bool IsDeviceOnline(const std::string &pkgName) = 0;
     static std::shared_ptr<IDeviceManager> GetOrCreateInstance();
     static void ReleaseInstance();
 private:
@@ -37,6 +38,7 @@ class MockDeviceManager : public IDeviceManager {
 public:
     MOCK_METHOD(int32_t, GetTrustedDeviceList,
         (const std::string &, const std::string &, std::vector<DmDeviceInfo> &));
+    MOCK_METHOD(bool, IsDeviceOnline, (const std::string &));
 };
 } // namespace DistributedHardware
 } // namespace OHOS

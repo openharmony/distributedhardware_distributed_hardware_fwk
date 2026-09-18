@@ -356,11 +356,19 @@ HWTEST_F(DistributedHardwareServiceTest, GetDistributedHardware_002, TestSize.Le
     std::string networkId = "networkId_1";
     EnableStep enableSinkStep = EnableStep::ENABLE_SINK;
     sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+#ifdef DHARDWARE_SINK_LOCAL_INIT
+    DistributedHardwareManager::GetInstance().isLocalInit_.store(true);
+    auto ret = service.GetDistributedHardware(networkId, enableSinkStep, callback);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+
+    DistributedHardwareManager::GetInstance().isLocalInit_.store(false);
+#else
     DistributedHardwareManager::GetInstance().isAllInit_.store(true);
     auto ret = service.GetDistributedHardware(networkId, enableSinkStep, callback);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
 
     DistributedHardwareManager::GetInstance().isAllInit_.store(false);
+#endif
     ret = service.GetDistributedHardware(networkId, enableSinkStep, callback);
     EXPECT_EQ(ret, DH_FWK_SUCCESS);
     service.pendingGetDHRequests_.clear();
@@ -802,12 +810,44 @@ HWTEST_F(DistributedHardwareServiceTest, CleanupExpiredRequests_001, TestSize.Le
     sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
     DistributedHardwareService::PendingGetDHRequest request = { networkId, enableSourceStep, callback };
     service.pendingGetDHRequests_.push_back(request);
+#ifdef DHARDWARE_SINK_LOCAL_INIT
+    DistributedHardwareManager::GetInstance().isLocalInit_.store(false);
+#endif
     DistributedHardwareManager::GetInstance().isAllInit_.store(false);
     ASSERT_NO_FATAL_FAILURE(service.CleanupExpiredRequests());
 
     DistributedHardwareManager::GetInstance().isAllInit_.store(true);
     ASSERT_NO_FATAL_FAILURE(service.CleanupExpiredRequests());
 }
+
+#ifdef DHARDWARE_SINK_LOCAL_INIT
+HWTEST_F(DistributedHardwareServiceTest, CleanupExpiredRequests_002, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "networkId_sink";
+    EnableStep enableSinkStep = EnableStep::ENABLE_SINK;
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    DistributedHardwareService::PendingGetDHRequest request = { networkId, enableSinkStep, callback };
+    service.pendingGetDHRequests_.push_back(request);
+    DistributedHardwareManager::GetInstance().isLocalInit_.store(false);
+    DistributedHardwareManager::GetInstance().isAllInit_.store(false);
+    ASSERT_NO_FATAL_FAILURE(service.CleanupExpiredRequests());
+
+    DistributedHardwareManager::GetInstance().isLocalInit_.store(true);
+    ASSERT_NO_FATAL_FAILURE(service.CleanupExpiredRequests());
+}
+
+HWTEST_F(DistributedHardwareServiceTest, QueuePendingRequest_001, TestSize.Level1)
+{
+    DistributedHardwareService service(ASID, true);
+    std::string networkId = "networkId_queue";
+    EnableStep enableSinkStep = EnableStep::ENABLE_SINK;
+    sptr<IGetDhDescriptorsCallback> callback(new TestGetDistributedHardwareCallback());
+    service.QueuePendingRequest(networkId, enableSinkStep, callback);
+    EXPECT_EQ(1, static_cast<int32_t>(service.pendingGetDHRequests_.size()));
+    service.pendingGetDHRequests_.clear();
+}
+#endif
 
 HWTEST_F(DistributedHardwareServiceTest, CheckRemoteDeviceTypeAndUid_001, TestSize.Level1)
 {
