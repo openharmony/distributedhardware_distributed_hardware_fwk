@@ -494,40 +494,39 @@ int32_t DistributedHardwareService::GetDistributedHardware(const std::string &ne
         }
         bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
         if (!isInit) {
-            std::lock_guard<std::mutex> lock(pendingRequestsMutex_);
-            PendingGetDHRequest request = { networkId, enableStep, callback };
-            if (pendingGetDHRequests_.empty()) {
-                DHLOGI("dhfwk not initialized, request queued for networkId: %{public}s",
-                    GetAnonyString(networkId).c_str());
-                pendingGetDHRequests_.push_back(request);
-                StartCleanupTimer();
-            } else {
-                DHLOGI("Add new request, networkId: %{public}s", GetAnonyString(networkId).c_str());
-                pendingGetDHRequests_.push_back(request);
-            }
+            QueuePendingRequest(networkId, enableStep, callback);
             return DH_FWK_SUCCESS;
         }
     }
-
     if (enableStep == EnableStep::ENABLE_SINK) {
+#ifdef DHARDWARE_SINK_LOCAL_INIT
+        bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareLocalInitState();
+#else
         bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
+#endif
         if (!isInit) {
-            std::lock_guard<std::mutex> lock(pendingRequestsMutex_);
-            PendingGetDHRequest request = { networkId, enableStep, callback };
-            if (pendingGetDHRequests_.empty()) {
-                DHLOGI("dhfwk not initialized, request queued for networkId: %{public}s",
-                    GetAnonyString(networkId).c_str());
-                pendingGetDHRequests_.push_back(request);
-                StartCleanupTimer();
-            } else {
-                DHLOGI("Add new request, networkId: %{public}s", GetAnonyString(networkId).c_str());
-                pendingGetDHRequests_.push_back(request);
-            }
+            QueuePendingRequest(networkId, enableStep, callback);
             return DH_FWK_SUCCESS;
         }
     }
     StartGetDeviceDhInfo(networkId, enableStep, callback);
     return DH_FWK_SUCCESS;
+}
+
+void DistributedHardwareService::QueuePendingRequest(const std::string &networkId, EnableStep enableStep,
+    const sptr<IGetDhDescriptorsCallback> callback)
+{
+    std::lock_guard<std::mutex> lock(pendingRequestsMutex_);
+    PendingGetDHRequest request = { networkId, enableStep, callback };
+    if (pendingGetDHRequests_.empty()) {
+        DHLOGI("dhfwk not initialized, request queued for networkId: %{public}s",
+            GetAnonyString(networkId).c_str());
+        pendingGetDHRequests_.push_back(request);
+        StartCleanupTimer();
+    } else {
+        DHLOGI("Add new request, networkId: %{public}s", GetAnonyString(networkId).c_str());
+        pendingGetDHRequests_.push_back(request);
+    }
 }
 
 void DistributedHardwareService::StartCleanupTimer()
@@ -548,44 +547,66 @@ void DistributedHardwareService::StartCleanupTimer()
 
 void DistributedHardwareService::CleanupExpiredRequests()
 {
-    std::vector<PendingGetDHRequest> pendingRequests;
-    bool isTimeout = false;
+    std::vector<PendingGetDHRequest> readyRequests;
+    std::vector<PendingGetDHRequest> timeoutRequests;
     {
         std::lock_guard<std::mutex> lock(pendingRequestsMutex_);
         if (pendingGetDHRequests_.empty()) {
-            // No pending requests, stop cleanup thread
             cleanupRunning_.store(false);
             return;
         }
         bool isInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareInitState();
+#ifdef DHARDWARE_SINK_LOCAL_INIT
+        bool isLocalInit = DistributedHardwareManagerFactory::GetInstance().GetDHardwareLocalInitState();
+        std::vector<PendingGetDHRequest> remaining;
+        for (auto &req : pendingGetDHRequests_) {
+            bool ready = (req.enableStep == EnableStep::ENABLE_SINK) ? isLocalInit : isInit;
+            if (ready) {
+                readyRequests.push_back(std::move(req));
+            } else if (dhfwkInitTimes_ > RETRY_CHECK_DHFWK_INIT_MAX_TIMES) {
+                timeoutRequests.push_back(std::move(req));
+            } else {
+                remaining.push_back(std::move(req));
+            }
+        }
+        pendingGetDHRequests_ = std::move(remaining);
+        if (pendingGetDHRequests_.empty()) {
+            dhfwkInitTimes_ = 0;
+            cleanupRunning_.store(false);
+        } else {
+            dhfwkInitTimes_++;
+        }
+#else
         if (isInit) {
-            // Sync data
             DHLOGI("dhfwk init finished");
-            pendingRequests = std::move(pendingGetDHRequests_);
+            readyRequests = std::move(pendingGetDHRequests_);
             pendingGetDHRequests_.clear();
             dhfwkInitTimes_ = 0;
             cleanupRunning_.store(false);
         } else if (dhfwkInitTimes_ > RETRY_CHECK_DHFWK_INIT_MAX_TIMES) {
             DHLOGI("dhfwk init timeout");
-            isTimeout = true;
-            pendingRequests = std::move(pendingGetDHRequests_);
+            timeoutRequests = std::move(pendingGetDHRequests_);
             pendingGetDHRequests_.clear();
             cleanupRunning_.store(false);
         } else {
             dhfwkInitTimes_++;
             return;
         }
+#endif
     }
-    if (isTimeout) {
-        for (const auto &req : pendingRequests) {
-            if (req.callback != nullptr) {
-                req.callback->OnError(req.networkId, ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT);
-            }
+    ProcessPendingRequests(readyRequests, timeoutRequests);
+}
+
+void DistributedHardwareService::ProcessPendingRequests(std::vector<PendingGetDHRequest> &readyRequests,
+    std::vector<PendingGetDHRequest> &timeoutRequests)
+{
+    for (const auto &req : timeoutRequests) {
+        if (req.callback != nullptr) {
+            req.callback->OnError(req.networkId, ERR_DH_FWK_GETDISTRIBUTEDHARDWARE_TIMEOUT);
         }
-    } else {
-        for (const auto &req : pendingRequests) {
-            StartGetDeviceDhInfo(req.networkId, req.enableStep, req.callback);
-        }
+    }
+    for (const auto &req : readyRequests) {
+        StartGetDeviceDhInfo(req.networkId, req.enableStep, req.callback);
     }
 }
 

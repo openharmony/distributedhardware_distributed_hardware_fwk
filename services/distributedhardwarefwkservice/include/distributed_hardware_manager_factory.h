@@ -49,6 +49,7 @@ public:
     bool GetSAProcessState();
     void CheckExitSAOrNot();
     bool GetDHardwareInitState();
+    bool GetDHardwareLocalInitState();
     void ActiveSyncDataByNetworkId(const std::string &networkId);
     void DelaySaStatusTask();
     int32_t DestroySaStatusHandler();

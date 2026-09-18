@@ -63,16 +63,14 @@ FWK_IMPLEMENT_SINGLE_INSTANCE(DistributedHardwareManagerFactory);
 bool DistributedHardwareManagerFactory::InitLocalDevInfo()
 {
     DHLOGI("InitLocalDevInfo start");
-    std::vector<DmDeviceInfo> deviceList;
-    DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
-    if (deviceList.size() > 0 && deviceList.size() <= MAX_ONLINE_DEVICE_SIZE) {
-        DHLOGI("There is other device online, on need just init db, use normal logic");
-        return true;
-    }
     auto initResult = DistributedHardwareManager::GetInstance().LocalInit();
     if (initResult != DH_FWK_SUCCESS) {
-        DHLOGE("InitLocalDevInfo failed, errCode = %{public}d", initResult);
+        DHLOGE("LocalInit failed, errCode = %{public}d", initResult);
         return false;
+    }
+    if (DeviceManager::GetInstance().IsDeviceOnline(DH_FWK_PKG_NAME)) {
+        DHLOGI("There is other device online, on need just init db, use normal logic");
+        return true;
     }
     DHLOGI("init local dev info, create exit dfwk task!");
     TaskParam taskParam;
@@ -141,9 +139,7 @@ void DistributedHardwareManagerFactory::ExitDHFWK()
 
 void DistributedHardwareManagerFactory::CheckExitSAOrNot()
 {
-    std::vector<DmDeviceInfo> deviceList;
-    DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
-    if ((deviceList.size() == 0 || deviceList.size() > MAX_ONLINE_DEVICE_SIZE) &&
+    if (!DeviceManager::GetInstance().IsDeviceOnline(DH_FWK_PKG_NAME) &&
         DHContext::GetInstance().GetIsomerismConnectCount() == 0 &&
         HdfOperateManager::GetInstance().IsAnyHdfInuse() == false) {
         ExitDHFWK();
@@ -152,6 +148,12 @@ void DistributedHardwareManagerFactory::CheckExitSAOrNot()
 
     DHLOGI("After uninit, DM report devices online, reinit");
     Init();
+    std::vector<DmDeviceInfo> deviceList;
+    DeviceManager::GetInstance().GetTrustedDeviceList(DH_FWK_PKG_NAME, "", deviceList);
+    if (deviceList.size() > MAX_ONLINE_DEVICE_SIZE) {
+        DHLOGE("DeviceList size is invalid!");
+        return;
+    }
     for (const auto &deviceInfo : deviceList) {
         const auto networkId = std::string(deviceInfo.networkId, strnlen(deviceInfo.networkId, DM_MAX_DEVICE_ID_LEN));
         const auto uuid = GetUUIDByDm(networkId);
@@ -295,6 +297,11 @@ bool DistributedHardwareManagerFactory::GetSAProcessState()
 bool DistributedHardwareManagerFactory::GetDHardwareInitState()
 {
     return DistributedHardwareManager::GetInstance().GetDHardwareInitState();
+}
+
+bool DistributedHardwareManagerFactory::GetDHardwareLocalInitState()
+{
+    return DistributedHardwareManager::GetInstance().GetDHardwareLocalInitState();
 }
 
 void DistributedHardwareManagerFactory::ActiveSyncDataByNetworkId(const std::string &networkId)

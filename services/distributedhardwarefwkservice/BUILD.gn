@@ -155,6 +155,10 @@ ohos_shared_library("distributedhardwarefwksvr") {
     defines += [ "DHARDWARE_CHECK_RESOURCE" ]
   }
 
+  if (distributed_hardware_fwk_sink_local_init) {
+    defines += [ "DHARDWARE_SINK_LOCAL_INIT" ]
+  }
+
   external_deps = [
     "ability_base:want",
     "ability_runtime:ability_manager",
