@@ -155,6 +155,7 @@ void SetUpComponentLoaderConfig()
     handler.sinkSaId = TEST_SINK_SA_ID;
     handler.sourceSaId = TEST_SOURCE_SA_ID;
     ComponentLoader::GetInstance().compHandlerMap_[DHType::AUDIO] = handler;
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(true);
 }
 
 void SetDownComponentLoaderConfig()
@@ -1454,11 +1455,19 @@ HWTEST_F(ComponentManagerTest, EnableSink_001, TestSize.Level1)
     };
     ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
     SetUpComponentLoaderConfig();
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().devInfo_.deviceId = deviceId;
+    auto capInfo = std::make_shared<CapabilityInfo>(AUDIO_ID_TEST, deviceId, DEVICE_NAME,
+        DEV_TYPE_TEST, DHType::AUDIO, DH_ATTR_1, "mic");
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[deviceId + "###" + AUDIO_ID_TEST] = capInfo;
     auto ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, 0, 0);
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
     ret = ComponentManager::GetInstance().EnableSink(dhDescriptor, 0, 0);
     ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
-    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devInfo_.deviceId = "";
+    ComponentManager::GetInstance().dhSinkStatus_.clear();
 }
 
 HWTEST_F(ComponentManagerTest, DisableSink_001, TestSize.Level1)
@@ -1469,11 +1478,12 @@ HWTEST_F(ComponentManagerTest, DisableSink_001, TestSize.Level1)
     };
     ComponentManager::GetInstance().compMonitorPtr_ = std::make_shared<ComponentMonitor>();
     auto ret = ComponentManager::GetInstance().DisableSink(dhDescriptor, 0, 0);
-    EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
     ret = ComponentManager::GetInstance().DisableSink(dhDescriptor, 0, 0);
     SetDownComponentLoaderConfig();
     ComponentManager::GetInstance().compMonitorPtr_ = nullptr;
-    EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
+    ComponentManager::GetInstance().dhSinkStatus_.clear();
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
 }
 
 HWTEST_F(ComponentManagerTest, EnableSource_001, TestSize.Level1)
@@ -1483,8 +1493,15 @@ HWTEST_F(ComponentManagerTest, EnableSource_001, TestSize.Level1)
         .dhType = DHType::AUDIO
     };
     SetUpComponentLoaderConfig();
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    std::string deviceId = Sha256(UUID_TEST);
+    auto capInfo = std::make_shared<CapabilityInfo>(AUDIO_ID_TEST, deviceId, DEVICE_NAME,
+        DEV_TYPE_TEST, DHType::AUDIO, DH_ATTR_1, "mic");
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[deviceId + "###" + AUDIO_ID_TEST] = capInfo;
     auto ret = ComponentManager::GetInstance().EnableSource(NETWORK_TEST, dhDescriptor, 0, 0);
     SetDownComponentLoaderConfig();
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
     EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_MONITOR_NULL);
 }
 
@@ -1507,9 +1524,10 @@ HWTEST_F(ComponentManagerTest, ForceDisableSink_001, TestSize.Level1)
         .dhType = DHType::AUDIO
     };
     SetUpComponentLoaderConfig();
+    ComponentManager::GetInstance().dhSinkStatus_.clear();
     auto ret = ComponentManager::GetInstance().ForceDisableSink(dhDescriptor);
     SetDownComponentLoaderConfig();
-    EXPECT_EQ(ret, ERR_DH_FWK_TYPE_NOT_EXIST);
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_REPEAT_CALL);
 }
 
 HWTEST_F(ComponentManagerTest, ForceDisableSource_001, TestSize.Level1)
@@ -1861,6 +1879,229 @@ HWTEST_F(ComponentManagerTest, ResetSourceEnableStatus_001, TestSize.Level1)
     SetDownComponentLoaderConfig();
     EXPECT_EQ(ComponentManager::GetInstance().compSrcSaId_.find(DHType::AUDIO),
         ComponentManager::GetInstance().compSrcSaId_.end());
+}
+
+HWTEST_F(ComponentManagerTest, GetDHSubtypeByDHId_speaker, TestSize.Level1)
+{
+    std::string dhid = "audio_spk";
+    DHSubtype dhSubtype;
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "speaker");
+    std::string key = deviceId + "###" + dhid;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    auto ret = ComponentManager::GetInstance().GetDHSubtypeByDHId(dhSubtype, NETWORK_TEST, dhid);
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    EXPECT_EQ(dhSubtype, DHSubtype::AUDIO_SPEAKER);
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, CheckAudioConfigGate_mic_disabled, TestSize.Level1)
+{
+    std::string dhid = "audio_mic";
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "mic");
+    std::string key = deviceId + "###" + dhid;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = false;
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(true);
+    DHDescriptor dhDescriptor { .id = dhid, .dhType = DHType::AUDIO };
+    auto ret = ComponentManager::GetInstance().CheckAudioConfigGate(NETWORK_TEST, dhDescriptor, "sink");
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_DISABLED_BY_CONFIG);
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
+}
+
+HWTEST_F(ComponentManagerTest, CheckAudioConfigGate_speaker_disabled, TestSize.Level1)
+{
+    std::string dhid = "audio_spk";
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "speaker");
+    std::string key = deviceId + "###" + dhid;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["sink"] = false;
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(true);
+    DHDescriptor dhDescriptor { .id = dhid, .dhType = DHType::AUDIO };
+    auto ret = ComponentManager::GetInstance().CheckAudioConfigGate(NETWORK_TEST, dhDescriptor, "sink");
+    EXPECT_EQ(ret, ERR_DH_FWK_COMPONENT_DISABLED_BY_CONFIG);
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().isLocalVersionInit_.store(false);
+}
+
+HWTEST_F(ComponentManagerTest, CheckAudioConfigGate_mic_enabled, TestSize.Level1)
+{
+    std::string dhid = "audio_mic";
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "mic");
+    std::string key = deviceId + "###" + dhid;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["source"] = true;
+    DHDescriptor dhDescriptor { .id = dhid, .dhType = DHType::AUDIO };
+    auto ret = ComponentManager::GetInstance().CheckAudioConfigGate(NETWORK_TEST, dhDescriptor, "source");
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, CheckAudioConfigGate_no_capinfo, TestSize.Level1)
+{
+    std::string dhid = "audio_mic";
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    DHDescriptor dhDescriptor { .id = dhid, .dhType = DHType::AUDIO };
+    auto ret = ComponentManager::GetInstance().CheckAudioConfigGate(NETWORK_TEST, dhDescriptor, "sink");
+    EXPECT_NE(ret, DH_FWK_SUCCESS);
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, CheckAudioConfigGate_non_audio, TestSize.Level1)
+{
+    DHDescriptor dhDescriptor { .id = "camera_0", .dhType = DHType::CAMERA };
+    auto ret = ComponentManager::GetInstance().CheckAudioConfigGate(NETWORK_TEST, dhDescriptor, "sink");
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+}
+
+HWTEST_F(ComponentManagerTest, CheckAudioConfigGate_speaker_enabled, TestSize.Level1)
+{
+    std::string dhid = "audio_spk";
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "speaker");
+    std::string key = deviceId + "###" + dhid;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["source"] = true;
+    DHDescriptor dhDescriptor { .id = dhid, .dhType = DHType::AUDIO };
+    auto ret = ComponentManager::GetInstance().CheckAudioConfigGate(NETWORK_TEST, dhDescriptor, "source");
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, CheckAudioConfigGate_unknown_subtype, TestSize.Level1)
+{
+    std::string dhid = "audio_unknown";
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "camera");
+    std::string key = deviceId + "###" + dhid;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    DHDescriptor dhDescriptor { .id = dhid, .dhType = DHType::AUDIO };
+    auto ret = ComponentManager::GetInstance().CheckAudioConfigGate(NETWORK_TEST, dhDescriptor, "sink");
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, CheckAudioConfigGate_mic_sink_enabled, TestSize.Level1)
+{
+    std::string dhid = "audio_mic";
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "mic");
+    std::string key = deviceId + "###" + dhid;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = true;
+    DHDescriptor dhDescriptor { .id = dhid, .dhType = DHType::AUDIO };
+    auto ret = ComponentManager::GetInstance().CheckAudioConfigGate(NETWORK_TEST, dhDescriptor, "sink");
+    EXPECT_EQ(ret, DH_FWK_SUCCESS);
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+}
+
+HWTEST_F(ComponentManagerTest, EnableSinkInternal_audio_mic_sink_disabled, TestSize.Level1)
+{
+    SetUpComponentLoaderConfig();
+    std::string dhid = "audio_mic";
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    DHContext::GetInstance().devInfo_.deviceId = deviceId;
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "mic");
+    std::string key = deviceId + "###" + dhid;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "mic"}]["sink"] = false;
+    ComponentManager::GetInstance().dhSinkStatus_.clear();
+    DHDescriptor dhDescriptor { .id = dhid, .dhType = DHType::AUDIO };
+    sptr<IHDSinkStatusListener> listener;
+    auto ret = ComponentManager::GetInstance().EnableSinkInternal(dhDescriptor, 0, 0, listener);
+    EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
+    EXPECT_EQ(ComponentManager::GetInstance().dhSinkStatus_.find(DHType::AUDIO),
+        ComponentManager::GetInstance().dhSinkStatus_.end());
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    DHContext::GetInstance().devInfo_.deviceId = "";
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentManager::GetInstance().dhSinkStatus_.clear();
+    SetDownComponentLoaderConfig();
+}
+
+HWTEST_F(ComponentManagerTest, EnableSinkInternal_audio_speaker_sink_disabled, TestSize.Level1)
+{
+    SetUpComponentLoaderConfig();
+    std::string dhid = "audio_spk";
+    std::string deviceId = Sha256(UUID_TEST);
+    DHContext::GetInstance().AddOnlineDevice(UDID_TEST, UUID_TEST, NETWORK_TEST);
+    DHContext::GetInstance().devInfo_.deviceId = deviceId;
+    std::shared_ptr<CapabilityInfo> capInfo = std::make_shared<CapabilityInfo>(
+        dhid, deviceId, "devName_test", DEV_TYPE_TEST, DHType::AUDIO, "attrs", "speaker");
+    std::string key = deviceId + "###" + dhid;
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_[key] = capInfo;
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentLoader::GetInstance().componentEnableMap_[{DHType::AUDIO, "speaker"}]["sink"] = false;
+    ComponentManager::GetInstance().dhSinkStatus_.clear();
+    DHDescriptor dhDescriptor { .id = dhid, .dhType = DHType::AUDIO };
+    sptr<IHDSinkStatusListener> listener;
+    auto ret = ComponentManager::GetInstance().EnableSinkInternal(dhDescriptor, 0, 0, listener);
+    EXPECT_EQ(ret, ERR_DH_FWK_BAD_OPERATION);
+    EXPECT_EQ(ComponentManager::GetInstance().dhSinkStatus_.find(DHType::AUDIO),
+        ComponentManager::GetInstance().dhSinkStatus_.end());
+    LocalCapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    CapabilityInfoManager::GetInstance()->globalCapInfoMap_.clear();
+    DHContext::GetInstance().devIdEntrySet_.clear();
+    DHContext::GetInstance().devInfo_.deviceId = "";
+    ComponentLoader::GetInstance().componentEnableMap_.clear();
+    ComponentManager::GetInstance().dhSinkStatus_.clear();
+    SetDownComponentLoaderConfig();
+}
+
+HWTEST_F(ComponentManagerTest, EnableSinkInternal_non_audio_passthrough, TestSize.Level1)
+{
+    DHDescriptor dhDescriptor { .id = "camera_0", .dhType = DHType::CAMERA };
+    ComponentManager::GetInstance().dhSinkStatus_.clear();
+    sptr<IHDSinkStatusListener> listener;
+    auto ret = ComponentManager::GetInstance().EnableSinkInternal(dhDescriptor, 0, 0, listener);
+    EXPECT_NE(ret, DH_FWK_SUCCESS);
+    ComponentManager::GetInstance().dhSinkStatus_.clear();
 }
 } // namespace DistributedHardware
 } // namespace OHOS

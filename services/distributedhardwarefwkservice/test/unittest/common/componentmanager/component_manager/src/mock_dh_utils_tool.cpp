@@ -37,5 +37,10 @@ DeviceInfo GetLocalDeviceInfo()
 {
     return IDHUtilTool::GetOrCreateInstance()->GetLocalDeviceInfo();
 }
+
+std::string GetLocalNetworkId()
+{
+    return IDHUtilTool::GetOrCreateInstance()->GetLocalDeviceInfo().networkId;
+}
 } // namespace DistributedHardware
 } // namespace OHOS

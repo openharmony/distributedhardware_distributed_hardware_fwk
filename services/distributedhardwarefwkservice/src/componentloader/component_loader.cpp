@@ -81,6 +81,13 @@ std::map<DHType, std::string> g_mapPartsParamName = {
     { DHType::SCREEN, "sys.dhfwk.component.dscreen.enable" },
     { DHType::INPUT, "sys.dhfwk.component.dinput.enable" },
 };
+
+const CompConfig g_audioCompConfig = {
+    AUDIO_COMP_NAME, DHType::AUDIO, AUDIO_HANDLER_LOC, AUDIO_HANDLER_VERSION,
+    AUDIO_SOURCE_LOC, AUDIO_SOURCE_VERSION, AUDIO_SOURCE_SA_ID,
+    AUDIO_SINK_LOC, AUDIO_SINK_VERSION, AUDIO_SINK_SA_ID,
+    {{"mic", true}, {"speaker", true}}, true, {}, {},
+};
 }
 
 int32_t ComponentLoader::Init()
@@ -161,6 +168,10 @@ int32_t ComponentLoader::GetCompPathAndVersion(const std::string &jsonStr, std::
         CompVersion compVersion;
         GetCompVersionFromComConfig(config, compVersion);
         localDHVersion_.compVersions.insert(std::pair<DHType, CompVersion>(config.type, compVersion));
+    }
+    cJSON *enableConfig = cJSON_GetObjectItem(root, COMPONENT_ENABLE_CONFIG);
+    if (enableConfig != nullptr) {
+        ParseComponentEnableConfig(enableConfig);
     }
     cJSON_Delete(root);
     isLocalVersionInit_.store(true);
@@ -468,6 +479,7 @@ int32_t ComponentLoader::ParseConfig()
     if (ret != DH_FWK_SUCCESS) {
         return ret;
     }
+    RegisterAudioComponentIfNeeded(dhtypeMap);
     GetAllHandler(dhtypeMap);
     return DH_FWK_SUCCESS;
 }
@@ -666,6 +678,95 @@ DHType ComponentLoader::GetDHTypeBySaId(const int32_t saId)
 std::map<std::string, bool> ComponentLoader::GetCompResourceDesc()
 {
     return resDescMap_;
+}
+
+void ComponentLoader::ParseComponentEnableConfig(const cJSON *root)
+{
+    if (root == nullptr) {
+        return;
+    }
+    cJSON *typeEntry = nullptr;
+    cJSON_ArrayForEach(typeEntry, root) {
+        if (typeEntry->string == nullptr) {
+            continue;
+        }
+        DHType type = g_mapDhTypeName[typeEntry->string];
+        cJSON *subEntry = nullptr;
+        cJSON_ArrayForEach(subEntry, typeEntry) {
+            if (subEntry->string == nullptr) {
+                continue;
+            }
+            std::string subtype = subEntry->string;
+            if (cJSON_IsBool(subEntry)) {
+                bool enable = cJSON_IsTrue(subEntry);
+                componentEnableMap_[{type, subtype}]["sink"] = enable;
+                componentEnableMap_[{type, subtype}]["source"] = enable;
+            } else if (cJSON_IsObject(subEntry)) {
+                ParseSubtypeEnableConfig(type, subtype, subEntry);
+            }
+        }
+    }
+}
+
+void ComponentLoader::ParseSubtypeEnableConfig(DHType type, const std::string &subtype, cJSON *subEntry)
+{
+    cJSON *roleEntry = nullptr;
+    cJSON_ArrayForEach(roleEntry, subEntry) {
+        if (roleEntry->string == nullptr) {
+            continue;
+        }
+        std::string role = roleEntry->string;
+        componentEnableMap_[{type, subtype}][role] = cJSON_IsTrue(roleEntry);
+    }
+}
+
+bool ComponentLoader::IsComponentSubtypeEnabled(DHType type, const std::string &subtype,
+    const std::string &role)
+{
+    if (!isLocalVersionInit_.load()) {
+        return true;
+    }
+    auto it = componentEnableMap_.find({type, subtype});
+    if (it == componentEnableMap_.end()) {
+        return true;
+    }
+    auto roleIt = it->second.find(role);
+    if (roleIt == it->second.end()) {
+        return true;
+    }
+    return roleIt->second;
+}
+
+bool ComponentLoader::IsSubtypeAnyRoleEnabled(const std::string &subtype)
+{
+    bool enable = false;
+    auto it = componentEnableMap_.find({DHType::AUDIO, subtype});
+    if (it != componentEnableMap_.end()) {
+        for (auto &rolePair : it->second) {
+            if (rolePair.second) {
+                enable = true;
+                break;
+            }
+        }
+    }
+    return enable;
+}
+
+void ComponentLoader::RegisterAudioComponentIfNeeded(std::map<DHType, CompConfig> &dhtypeMap)
+{
+    auto micIt = componentEnableMap_.find({DHType::AUDIO, "mic"});
+    bool micEnable = (micIt == componentEnableMap_.end()) || IsSubtypeAnyRoleEnabled("mic");
+    auto spkIt = componentEnableMap_.find({DHType::AUDIO, "speaker"});
+    bool speakerEnable = (spkIt == componentEnableMap_.end()) || IsSubtypeAnyRoleEnabled("speaker");
+    if (micEnable || speakerEnable) {
+        dhtypeMap[DHType::AUDIO] = g_audioCompConfig;
+        CompVersion compVersion;
+        GetCompVersionFromComConfig(g_audioCompConfig, compVersion);
+        localDHVersion_.compVersions[DHType::AUDIO] = compVersion;
+    } else {
+        dhtypeMap.erase(DHType::AUDIO);
+        localDHVersion_.compVersions.erase(DHType::AUDIO);
+    }
 }
 
 int32_t ComponentLoader::GetSource(const DHType dhType)
